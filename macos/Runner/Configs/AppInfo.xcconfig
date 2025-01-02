@@ -8,7 +8,7 @@
 PRODUCT_NAME = revo
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.revo
+PRODUCT_BUNDLE_IDENTIFIER = com.grinch.rivo
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

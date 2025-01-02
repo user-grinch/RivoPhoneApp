@@ -1,4 +1,4 @@
-package com.example.revo
+package com.grinch.rivo
 
 import io.flutter.embedding.android.FlutterActivity
 
