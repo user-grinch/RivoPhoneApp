@@ -37,6 +37,7 @@ dependencies:
   dynamic_color: ^1.7.0
   google_fonts: ^6.2.1
   material_symbols_icons: ^4.2801.1
+  flutter_contacts: ^1.1.9+2
 
 dev_dependencies:
   flutter_test:

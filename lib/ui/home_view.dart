@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/ui/dialpad_view.dart';
 import 'package:revo/ui/home_view/appbar_view.dart';
 import 'package:revo/ui/home_view/contacts_view.dart';
 import 'package:revo/ui/home_view/fav_view.dart';
@@ -35,16 +37,25 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBarView(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: PageView(
-          controller: _pageController,
-          children: const [
-            RecentsView(),
-            ContactsView(),
-            FavView(),
+        child: Stack(
+          children: [
+            PageView(
+              controller: _pageController,
+              children: const [
+                RecentsView(),
+                ContactsView(),
+                FavView(),
+              ],
+            ),
           ],
         ),
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(dialpadRoute);
+          },
+          child: const Icon(Icons.dialpad)),
     );
   }
 }
