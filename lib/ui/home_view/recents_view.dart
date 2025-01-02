@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/extentions/theme.dart';
 
 class RecentsView extends StatelessWidget {
   const RecentsView({super.key});
@@ -11,9 +13,10 @@ class RecentsView extends StatelessWidget {
           child: Center(
             child: Text(
               'No recents',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.grey,
+              style: GoogleFonts.cabin(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),

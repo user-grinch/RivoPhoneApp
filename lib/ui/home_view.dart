@@ -37,16 +37,12 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBarView(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Stack(
-          children: [
-            PageView(
-              controller: _pageController,
-              children: const [
-                RecentsView(),
-                ContactsView(),
-                FavView(),
-              ],
-            ),
+        child: PageView(
+          controller: _pageController,
+          children: const [
+            RecentsView(),
+            ContactsView(),
+            FavView(),
           ],
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/extentions/theme.dart';
 
 class FavView extends StatelessWidget {
   const FavView({super.key});
@@ -11,9 +13,10 @@ class FavView extends StatelessWidget {
           child: Center(
             child: Text(
               'No favorites',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.grey,
+              style: GoogleFonts.cabin(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),
