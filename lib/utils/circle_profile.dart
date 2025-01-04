@@ -5,8 +5,10 @@ import 'package:revo/extentions/theme.dart';
 
 class CircleProfile extends StatelessWidget {
   final Uint8List? profile;
+  final String name;
   final double size;
-  const CircleProfile({super.key, this.profile, required this.size});
+  const CircleProfile(
+      {super.key, required this.name, this.profile, required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +16,17 @@ class CircleProfile extends StatelessWidget {
       radius: size,
       backgroundImage: profile != null ? MemoryImage(profile!) : null,
       child: profile == null
-          ? Icon(
-              Icons.person,
-              size: size,
-              color: context.colorScheme.onPrimaryContainer,
-            )
+          ? name.length > 0
+              ? Text(
+                  name[0].toUpperCase(),
+                  style: TextStyle(
+                      color: context.colorScheme.onSurface, fontSize: size),
+                )
+              : Icon(
+                  Icons.person,
+                  size: size,
+                  color: context.colorScheme.onPrimaryContainer,
+                )
           : null,
     );
   }

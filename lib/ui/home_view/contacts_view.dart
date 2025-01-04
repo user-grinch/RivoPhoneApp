@@ -29,28 +29,39 @@ class _ContactsViewState extends State<ContactsView> {
 
   Widget displayContacts(BuildContext context) {
     var contacts = ContactService().contacts;
-    return ListView.builder(
-        itemCount: contacts.length,
-        itemBuilder: (context, i) => ListTile(
-            title: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                CircleProfile(
-                  profile: contacts[i].photoOrThumbnail,
-                  size: 25,
+    return Scrollbar(
+      thumbVisibility: true,
+      interactive: true,
+      child: ListView.builder(
+          itemCount: contacts.length,
+          itemBuilder: (context, i) {
+            return ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                const SizedBox(width: 10),
-                Text(ContactService().contacts[i].displayName,
-                    style: GoogleFonts.cabin(
-                      fontSize: 16,
-                      color: context.colorScheme.onSurface,
-                    )),
-              ],
-            ),
-            onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) =>
-                      ContactInfoView(ContactService().contacts[i])));
-            }));
+                title: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const SizedBox(width: 10),
+                    CircleProfile(
+                      name: contacts[i].displayName,
+                      profile: contacts[i].photo,
+                      size: 30,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(ContactService().contacts[i].displayName,
+                        style: GoogleFonts.cabin(
+                          fontSize: 16,
+                          color: context.colorScheme.onSurface,
+                        )),
+                  ],
+                ),
+                onTap: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) =>
+                          ContactInfoView(ContactService().contacts[i])));
+                });
+          }),
+    );
   }
 }

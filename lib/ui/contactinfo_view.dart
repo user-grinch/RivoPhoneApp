@@ -96,7 +96,7 @@ class ContactInfoView extends StatelessWidget {
               phone.number,
               style: GoogleFonts.cabin(
                 textStyle: context.textTheme.bodyLarge,
-                color: context.colorScheme.primary,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),
@@ -164,7 +164,7 @@ class ContactInfoView extends StatelessWidget {
           label,
           style: GoogleFonts.cabin(
             textStyle: context.textTheme.bodyLarge,
-            color: context.colorScheme.primary,
+            color: context.colorScheme.onSurface,
             fontSize: 12,
           ),
         ),
@@ -189,7 +189,7 @@ class ContactInfoView extends StatelessWidget {
         label,
         style: GoogleFonts.cabin(
           textStyle: context.textTheme.bodyLarge,
-          color: context.colorScheme.primary,
+          color: context.colorScheme.onSurface,
         ),
       ),
       onTap: () {},
@@ -217,15 +217,16 @@ class ContactInfoView extends StatelessWidget {
         children: [
           Text(
             '$label:',
-            style: context.textTheme.bodyLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: context.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.colorScheme.onSurface),
           ),
           const SizedBox(width: 8),
           Text(
             value,
             style: GoogleFonts.cabin(
               textStyle: context.textTheme.bodyLarge,
-              color: context.colorScheme.primary,
+              color: context.colorScheme.onSurface,
             ),
           ),
         ],

@@ -47,8 +47,9 @@ class FavView extends StatelessWidget {
             child: Column(
               children: [
                 CircleProfile(
-                  profile: contact.photoOrThumbnail,
-                  size: 40,
+                  name: contact.displayName,
+                  profile: contact.photo,
+                  size: 45,
                 ),
                 const SizedBox(height: 10),
                 Center(
@@ -56,8 +57,8 @@ class FavView extends StatelessWidget {
                     contact.displayName,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cabin(
-                      fontSize: 18,
-                      color: context.colorScheme.primary,
+                      color: context.colorScheme.onSurface,
+                      fontSize: 14,
                     ),
                   ),
                 ),
