@@ -32,9 +32,9 @@ class _NavigationViewState extends State<NavigationView> {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
-          icon: Icon(Icons.phone_outlined),
+          icon: Icon(Icons.access_time),
           label: 'Recents',
-          selectedIcon: Icon(Icons.phone),
+          selectedIcon: Icon(Icons.access_time_filled),
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outlined),

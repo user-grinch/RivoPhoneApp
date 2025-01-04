@@ -24,7 +24,7 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               onPressed: () {},
               icon: Icon(
-                Icons.menu,
+                Icons.search,
                 color: context.colorScheme.primary,
               ),
             ),
@@ -37,9 +37,9 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.pushNamed(context, searchRoute);
               },
               child: Text(
-                'Search in Rivo',
+                'Search contacts',
                 style: GoogleFonts.cabin(
-                  fontSize: 20,
+                  fontSize: 16,
                   color: context.colorScheme.primary,
                 ),
               ),

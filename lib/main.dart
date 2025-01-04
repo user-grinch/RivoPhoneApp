@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/ui/contactinfo_view.dart';
 import 'package:revo/ui/dialpad_view.dart';
 import 'package:revo/ui/home_view.dart';
 import 'package:revo/ui/search_view.dart';
