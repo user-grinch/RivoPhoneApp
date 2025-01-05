@@ -47,7 +47,7 @@ class _RecentsViewState extends State<RecentsView> {
               itemCount: callLogs.length,
               controller: _controller,
               itemBuilder: (context, i) {
-                Widget w = drawList(context, callLogs[i]);
+                Widget w = drawLog(context, callLogs, i);
                 _prevDate = callLogs[i].date.weekday;
                 return w;
               },
@@ -84,12 +84,15 @@ class _RecentsViewState extends State<RecentsView> {
     return context.colorScheme.primary;
   }
 
-  Widget drawList(BuildContext context, CallLogData log) {
+  Widget drawLog(BuildContext context, List<CallLogData> callLogs, int index) {
+    bool showDateHeader = index == 0 ||
+        callLogs[index].date.weekday != callLogs[index - 1].date.weekday;
+    CallLogData log = callLogs[index];
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_prevDate != log.date.weekday)
+        if (showDateHeader)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
             child: Text(
@@ -117,14 +120,24 @@ class _RecentsViewState extends State<RecentsView> {
             ),
           ),
           trailing: Container(
-            width: 40,
-            height: 40,
+            width: 35,
+            height: 35,
             decoration: BoxDecoration(
               color: context.colorScheme.primary.withAlpha(25),
               shape: BoxShape.circle,
             ),
-            child:
-                Icon(Icons.call, color: context.colorScheme.primary, size: 24),
+            child: IconButton(
+              onPressed: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ContactInfoView(ContactService()
+                      .contacts
+                      .where((c) => c.displayName == log.name)
+                      .first),
+                ));
+              },
+              icon: Icon(Icons.arrow_forward_ios,
+                  color: context.colorScheme.primary, size: 20),
+            ),
           ),
           subtitle: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -153,14 +166,7 @@ class _RecentsViewState extends State<RecentsView> {
               ),
             ],
           ),
-          onTap: () async {
-            await Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => ContactInfoView(ContactService()
-                  .contacts
-                  .where((c) => c.displayName == log.name)
-                  .first),
-            ));
-          },
+          onTap: () async {},
         ),
       ],
     );

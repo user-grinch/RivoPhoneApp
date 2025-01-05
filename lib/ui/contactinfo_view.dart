@@ -1,12 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/ui/qr_view.dart';
+import 'package:revo/utils/share.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 
-class ContactInfoView extends StatelessWidget {
+class ContactInfoView extends StatefulWidget {
   final Contact contact;
   const ContactInfoView(this.contact, {super.key});
 
+  @override
+  State<ContactInfoView> createState() => _ContactInfoViewState();
+}
+
+class _ContactInfoViewState extends State<ContactInfoView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +46,7 @@ class ContactInfoView extends StatelessWidget {
                 _buildProfilePicture(context),
                 const SizedBox(height: 16),
                 Text(
-                  '${contact.name.first} ${contact.name.last}',
+                  '${widget.contact.name.first} ${widget.contact.name.last}',
                   style: context.textTheme.headlineSmall?.copyWith(
                     color: context.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -49,10 +61,57 @@ class ContactInfoView extends StatelessWidget {
                   spacing: 16,
                   runSpacing: 16,
                   children: [
-                    _buildActionIcon(context, Icons.star, 'Favourite'),
-                    _buildActionIcon(context, Icons.qr_code, 'QR Code'),
-                    _buildActionIcon(context, Icons.share, 'Share'),
-                    _buildActionIcon(context, Icons.edit, 'Edit'),
+                    _buildActionIcon(
+                        context: context,
+                        icon: widget.contact.isStarred
+                            ? Icons.star
+                            : Icons.star_border,
+                        label: 'Favourite',
+                        onClick: () {
+                          setState(() {
+                            widget.contact.isStarred =
+                                !widget.contact.isStarred;
+                          });
+                          FlutterContacts.updateContact(widget.contact);
+                        }),
+                    _buildActionIcon(
+                        context: context,
+                        icon: Icons.qr_code,
+                        label: 'QR Code',
+                        onClick: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => QRCodePopup(
+                                  data: generateVCardString(widget.contact)),
+                            ),
+                          );
+                        }),
+                    _buildActionIcon(
+                      context: context,
+                      icon: Icons.share,
+                      label: 'Share',
+                      onClick: () {
+                        Share.shareXFiles([
+                          XFile.fromData(
+                              utf8.encode(generateVCardString(widget.contact)),
+                              mimeType: 'text/plain')
+                        ], fileNameOverrides: [
+                          'contact.vcf'
+                        ]);
+                      },
+                    ),
+                    _buildActionIcon(
+                        context: context,
+                        icon: Icons.edit,
+                        label: 'Edit',
+                        onClick: () async {
+                          if (await FlutterContacts.requestPermission()) {
+                            await FlutterContacts.openExternalEdit(
+                                widget.contact.id);
+                          } else {
+                            print("Permission denied to access contacts");
+                          }
+                        }),
                   ],
                 ),
 
@@ -62,8 +121,7 @@ class ContactInfoView extends StatelessWidget {
                 _buildAdditionalDetailsSection(context),
                 const SizedBox(height: 24),
                 _buildFlatOption(context, Icons.history, 'Call History'),
-                const SizedBox(height: 16),
-                _buildFlatOption(context, Icons.music_note, 'Change Ringtone'),
+                const SizedBox(height: 50),
               ],
             ),
           ),
@@ -77,8 +135,8 @@ class ContactInfoView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Display all phone numbers
-        if (contact.phones.isNotEmpty)
-          ...contact.phones
+        if (widget.contact.phones.isNotEmpty)
+          ...widget.contact.phones
               .map((phone) => _buildPhoneWithActionIcons(context, phone)),
       ],
     );
@@ -120,7 +178,7 @@ class ContactInfoView extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: context.colorScheme.primary.withOpacity(0.1),
+        color: context.colorScheme.primary.withAlpha(25),
         shape: BoxShape.circle,
       ),
       child: Icon(icon,
@@ -133,10 +191,10 @@ class ContactInfoView extends StatelessWidget {
       top: 150,
       child: CircleAvatar(
         radius: 120,
-        backgroundImage: contact.photoOrThumbnail != null
-            ? MemoryImage(contact.photoOrThumbnail!)
+        backgroundImage: widget.contact.photoOrThumbnail != null
+            ? MemoryImage(widget.contact.photoOrThumbnail!)
             : null,
-        child: contact.photoOrThumbnail == null
+        child: widget.contact.photoOrThumbnail == null
             ? Icon(
                 Icons.person,
                 size: 100,
@@ -147,7 +205,12 @@ class ContactInfoView extends StatelessWidget {
     );
   }
 
-  Widget _buildActionIcon(BuildContext context, IconData icon, String label) {
+  Widget _buildActionIcon({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    Function()? onClick,
+  }) {
     return Column(
       children: [
         Container(
@@ -157,7 +220,9 @@ class ContactInfoView extends StatelessWidget {
             color: context.colorScheme.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: context.colorScheme.primary, size: 25),
+          child: IconButton(
+              onPressed: onClick,
+              icon: Icon(icon, color: context.colorScheme.primary, size: 25)),
         ),
         const SizedBox(height: 8),
         Text(
@@ -175,7 +240,10 @@ class ContactInfoView extends StatelessWidget {
 
   Widget _buildFlatOption(BuildContext context, IconData icon, String label) {
     return ListTile(
-      contentPadding: EdgeInsets.zero, // Remove default padding for consistency
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      contentPadding: EdgeInsets.zero,
       leading: Container(
         width: 40,
         height: 40,
@@ -200,12 +268,13 @@ class ContactInfoView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (contact.notes.isNotEmpty)
-          _buildDetail(context, 'Notes', contact.notes.first.note),
-        if (contact.groups.isNotEmpty)
-          _buildDetail(context, 'Groups', contact.groups.first.name),
-        if (contact.events.isNotEmpty)
-          _buildDetail(context, 'Birthday', contact.events.first.customLabel),
+        if (widget.contact.notes.isNotEmpty)
+          _buildDetail(context, 'Notes', widget.contact.notes.first.note),
+        if (widget.contact.groups.isNotEmpty)
+          _buildDetail(context, 'Groups', widget.contact.groups.first.name),
+        if (widget.contact.events.isNotEmpty)
+          _buildDetail(
+              context, 'Birthday', widget.contact.events.first.customLabel),
       ],
     );
   }

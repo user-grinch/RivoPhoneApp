@@ -83,7 +83,7 @@ class _DialPadViewState extends State<DialPadView> {
                                 _number,
                                 style: GoogleFonts.cabin(
                                   fontSize: 30,
-                                  color: context.colorScheme.primary,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                               Spacer(),
@@ -211,8 +211,8 @@ class DialActionButton extends StatelessWidget {
           ),
           Text(
             label,
-            style: TextStyle(
-                fontSize: 18, color: context.colorScheme.onPrimaryContainer),
+            style:
+                TextStyle(fontSize: 18, color: context.colorScheme.onSurface),
           ),
         ],
       ),

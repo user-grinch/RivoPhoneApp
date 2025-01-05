@@ -23,7 +23,7 @@ class CircleProfile extends StatelessWidget {
                       color: context.colorScheme.onSurface, fontSize: size),
                 )
               : Icon(
-                  Icons.person,
+                  Icons.person_rounded,
                   size: size,
                   color: context.colorScheme.onPrimaryContainer,
                 )

@@ -24,7 +24,7 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               onPressed: () {},
               icon: Icon(
-                Icons.search,
+                Icons.qr_code_scanner,
               ),
             ),
             TextButton(
@@ -48,7 +48,7 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.pushNamed(context, settingsRoute);
               },
               icon: Icon(
-                Icons.more_vert,
+                Icons.settings_rounded,
               ),
             ),
           ],

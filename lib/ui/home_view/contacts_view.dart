@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/contact_service.dart';
@@ -33,53 +34,73 @@ class _ContactsViewState extends State<ContactsView> {
     return FutureBuilder(
         future: ContactService().initialize(),
         builder: (context, snapshot) {
-          if (ContactService().contacts.length == 0) {
+          var contacts = ContactService().contacts;
+          if (contacts.isEmpty) {
             return CenterText(text: 'No contacts');
           } else {
-            return displayContacts(context);
+            return Scrollbar(
+                trackVisibility: true,
+                thickness: 2.5,
+                interactive: true,
+                radius: Radius.circular(30),
+                controller: _controller,
+                child: ListView.builder(
+                  itemCount: contacts.length,
+                  controller: _controller,
+                  itemBuilder: (context, i) =>
+                      displayContact(context, contacts, i),
+                ));
           }
         });
   }
 
-  Widget displayContacts(BuildContext context) {
-    var contacts = ContactService().contacts;
-    return Scrollbar(
-      trackVisibility: true,
-      thickness: 2.5,
-      interactive: true,
-      radius: Radius.circular(30),
-      controller: _controller,
-      child: ListView.builder(
-          itemCount: contacts.length,
-          controller: _controller,
-          itemBuilder: (context, i) {
-            return ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+  Widget displayContact(
+    BuildContext context,
+    List<Contact> contacts,
+    int i,
+  ) {
+    bool showDateHeader =
+        i == 0 || contacts[i].name.first[0] != contacts[i - 1].name.first[0];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (showDateHeader)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 50, 0, 0),
+            child: Text(
+              contacts[i].name.first[0],
+              style: GoogleFonts.cabin(
+                fontSize: 20,
+                color: context.colorScheme.primary,
+              ),
+            ),
+          ),
+        ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Row(
+              children: [
+                const SizedBox(width: 10),
+                CircleProfile(
+                  name: contacts[i].displayName,
+                  profile: contacts[i].photo,
+                  size: 30,
                 ),
-                title: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    const SizedBox(width: 10),
-                    CircleProfile(
-                      name: contacts[i].displayName,
-                      profile: contacts[i].photo,
-                      size: 30,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(ContactService().contacts[i].displayName,
-                        style: GoogleFonts.cabin(
-                          fontSize: 16,
-                          color: context.colorScheme.onSurface,
-                        )),
-                  ],
-                ),
-                onTap: () async {
-                  await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) =>
-                          ContactInfoView(ContactService().contacts[i])));
-                });
-          }),
+                const SizedBox(width: 10),
+                Text(ContactService().contacts[i].displayName,
+                    style: GoogleFonts.cabin(
+                      fontSize: 16,
+                      color: context.colorScheme.onSurface,
+                    )),
+              ],
+            ),
+            onTap: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) =>
+                      ContactInfoView(ContactService().contacts[i])));
+            }),
+      ],
     );
   }
 }
