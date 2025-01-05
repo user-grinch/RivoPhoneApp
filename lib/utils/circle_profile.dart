@@ -16,7 +16,7 @@ class CircleProfile extends StatelessWidget {
       radius: size,
       backgroundImage: profile != null ? MemoryImage(profile!) : null,
       child: profile == null
-          ? name.length > 0
+          ? name.isNotEmpty
               ? Text(
                   name[0].toUpperCase(),
                   style: TextStyle(

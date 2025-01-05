@@ -1,16 +1,23 @@
 import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:call_e_log/call_log.dart';
-import 'package:intl/intl.dart';
 import 'package:revo/modal/call_log_type.dart';
+
+String getDisplayName(entry) {
+  if (entry.name != null && entry.name!.isNotEmpty) {
+    return entry.name!;
+  } else if (entry.number != null) {
+    return entry.number!;
+  } else {
+    return 'Unknown';
+  }
+}
 
 class CallLogData {
   final Uint8List? profile;
-  final String name;
+  final String? name;
   final String number;
   final String simDisplayName;
-  final String date;
+  final DateTime date;
   final String duration;
   final CallLogType type;
 
@@ -24,14 +31,12 @@ class CallLogData {
 
   factory CallLogData.fromEntry(
       {required CallLogEntry entry, Uint8List? profile}) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0);
-    String formatDateTime = DateFormat('E hh:mm a').format(date);
     return CallLogData(
       profile,
-      name: entry.name ?? entry.number ?? 'Unknown',
+      name: entry.name,
       number: entry.number ?? 'Unknown',
       simDisplayName: entry.simDisplayName ?? 'Unknown',
-      date: formatDateTime,
+      date: DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0),
       duration: entry.duration.toString(),
       type: entry.callType == CallType.incoming
           ? CallLogType.incoming

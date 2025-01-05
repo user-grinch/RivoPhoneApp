@@ -36,17 +36,28 @@ class ContactService {
     }
     if (_callLog.isEmpty) {
       List<CallLogEntry> logs = (await CallLog.get() ?? []).toList();
-      _callLog = (logs.map((e) {
+      _callLog = logs.map((e) {
         Uint8List? photo;
+
+        String normalizePhoneNumber(String phoneNumber) {
+          return phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+        }
+
         try {
-          photo = _contacts
-              .firstWhere((element) => element.displayName == e.name)
-              .photo;
-        } catch (e) {
+          var contact = _contacts.firstWhere(
+            (element) => element.phones.any((phone) =>
+                normalizePhoneNumber(phone.number) ==
+                normalizePhoneNumber(e.number!)),
+          );
+
+          e.name = contact.displayName;
+          photo = contact.photoOrThumbnail;
+        } catch (_) {
+          e.name = '';
           photo = null;
         }
         return CallLogData.fromEntry(entry: e, profile: photo);
-      })).toList();
+      }).toList();
     }
   }
 

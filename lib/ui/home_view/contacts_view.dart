@@ -14,6 +14,20 @@ class ContactsView extends StatefulWidget {
 }
 
 class _ContactsViewState extends State<ContactsView> {
+  late final ScrollController _controller;
+
+  @override
+  void initState() {
+    _controller = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -30,10 +44,14 @@ class _ContactsViewState extends State<ContactsView> {
   Widget displayContacts(BuildContext context) {
     var contacts = ContactService().contacts;
     return Scrollbar(
-      thumbVisibility: true,
+      trackVisibility: true,
+      thickness: 2.5,
       interactive: true,
+      radius: Radius.circular(30),
+      controller: _controller,
       child: ListView.builder(
           itemCount: contacts.length,
+          controller: _controller,
           itemBuilder: (context, i) {
             return ListTile(
                 shape: RoundedRectangleBorder(
