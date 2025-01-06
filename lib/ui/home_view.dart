@@ -45,10 +45,12 @@ class _HomeViewState extends State<HomeView> {
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(dialpadRoute);
-          },
-          child: const Icon(Icons.dialpad)),
+        onPressed: () {
+          Navigator.of(context).pushNamed(dialpadRoute);
+        },
+        elevation: 1,
+        child: const Icon(Icons.dialpad),
+      ),
     );
   }
 }

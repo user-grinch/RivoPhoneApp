@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/ui/qr_view.dart';
 import 'package:revo/utils/share.dart';
@@ -63,28 +64,11 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                   children: [
                     _buildActionIcon(
                         context: context,
-                        icon: widget.contact.isStarred
-                            ? Icons.star
-                            : Icons.star_border,
-                        label: 'Favourite',
-                        onClick: () {
-                          setState(() {
-                            widget.contact.isStarred =
-                                !widget.contact.isStarred;
-                          });
-                          FlutterContacts.updateContact(widget.contact);
-                        }),
-                    _buildActionIcon(
-                        context: context,
                         icon: Icons.qr_code,
                         label: 'QR Code',
                         onClick: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => QRCodePopup(
-                                  data: generateVCardString(widget.contact)),
-                            ),
-                          );
+                          Navigator.of(context).pushNamed(qrShareRoute,
+                              arguments: generateVCardString(widget.contact));
                         }),
                     _buildActionIcon(
                       context: context,
@@ -100,6 +84,19 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                         ]);
                       },
                     ),
+                    _buildActionIcon(
+                        context: context,
+                        icon: widget.contact.isStarred
+                            ? Icons.star
+                            : Icons.star_border,
+                        label: 'Favourite',
+                        onClick: () {
+                          setState(() {
+                            widget.contact.isStarred =
+                                !widget.contact.isStarred;
+                          });
+                          FlutterContacts.updateContact(widget.contact);
+                        }),
                     _buildActionIcon(
                         context: context,
                         icon: Icons.edit,
@@ -120,7 +117,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                 const SizedBox(height: 16),
                 _buildAdditionalDetailsSection(context),
                 const SizedBox(height: 24),
-                _buildFlatOption(context, Icons.history, 'Call History'),
+                _buildFlatOption(context, Icons.history, 'Call History', () {
+                  Navigator.of(context).pushNamed(callHistoryRoute,
+                      arguments: widget.contact.phones);
+                }),
                 const SizedBox(height: 50),
               ],
             ),
@@ -217,7 +217,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           width: 45,
           height: 45,
           decoration: BoxDecoration(
-            color: context.colorScheme.primary.withOpacity(0.1),
+            color: context.colorScheme.primary.withAlpha(25),
             shape: BoxShape.circle,
           ),
           child: IconButton(
@@ -238,7 +238,12 @@ class _ContactInfoViewState extends State<ContactInfoView> {
     );
   }
 
-  Widget _buildFlatOption(BuildContext context, IconData icon, String label) {
+  Widget _buildFlatOption(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Function()? onClick,
+  ) {
     return ListTile(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -260,7 +265,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           color: context.colorScheme.onSurface,
         ),
       ),
-      onTap: () {},
+      onTap: onClick,
     );
   }
 

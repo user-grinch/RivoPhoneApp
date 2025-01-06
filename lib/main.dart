@@ -1,10 +1,15 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/ui/dialpad_view.dart';
+import 'package:revo/ui/history_view.dart';
 import 'package:revo/ui/home_view.dart';
+import 'package:revo/ui/qr_scanner_view.dart';
+import 'package:revo/ui/qr_view.dart';
 import 'package:revo/ui/search_view.dart';
 import 'package:revo/ui/settings_view.dart';
 
@@ -43,6 +48,11 @@ void main() {
         settingsRoute: (context) => SettingsView(),
         searchRoute: (context) => SearchView(),
         dialpadRoute: (context) => DialPadView(),
+        qrShareRoute: (context) => QRCodePopup(
+            data: ModalRoute.of(context)!.settings.arguments as String),
+        qrScanRoute: (context) => QRScannerView(),
+        callHistoryRoute: (context) => HistoryView(
+            numbers: ModalRoute.of(context)!.settings.arguments as List<Phone>),
       },
     );
   }));

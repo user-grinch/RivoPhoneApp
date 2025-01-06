@@ -21,6 +21,10 @@ class ContactService {
     return _instance;
   }
 
+  String normalizePhoneNumber(String phoneNumber) {
+    return phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+  }
+
   Future<void> initialize() async {
     if (_contacts.isEmpty) {
       if (await Permission.contacts.request().isGranted) {
@@ -38,11 +42,6 @@ class ContactService {
       List<CallLogEntry> logs = (await CallLog.get() ?? []).toList();
       _callLog = logs.map((e) {
         Uint8List? photo;
-
-        String normalizePhoneNumber(String phoneNumber) {
-          return phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-        }
-
         try {
           var contact = _contacts.firstWhere(
             (element) => element.phones.any((phone) =>
@@ -61,9 +60,16 @@ class ContactService {
     }
   }
 
-  List<Contact> getContactsFiltered(String filter) {
-    return _contacts
-        .where((element) => element.displayName.contains(filter))
+  List<Contact> getContactsFiltered(Contact filter) {
+    return _contacts.where((element) => element == filter).toList();
+  }
+
+  List<CallLogData> getCallLogFiltered(List<Phone> phones) {
+    return _callLog
+        .where((element) => phones.any((e) {
+              return normalizePhoneNumber(e.normalizedNumber) ==
+                  normalizePhoneNumber(element.number);
+            }))
         .toList();
   }
 }

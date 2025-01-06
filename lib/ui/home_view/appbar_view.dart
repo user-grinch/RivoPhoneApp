@@ -22,14 +22,16 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, qrScanRoute);
+              },
               icon: Icon(
-                Icons.qr_code_scanner,
+                Icons.qr_code_scanner_rounded,
               ),
             ),
             TextButton(
               style: ButtonStyle(
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
               ),
               isSemanticButton: true,
               onPressed: () {

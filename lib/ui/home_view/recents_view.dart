@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/modal/call_log_data.dart';
-import 'package:revo/modal/call_log_type.dart';
 import 'package:revo/services/contact_service.dart';
 import 'package:revo/ui/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
-import 'package:revo/utils/date.dart';
+import 'package:revo/utils/calltypes.dart';
 
 class RecentsView extends StatefulWidget {
   const RecentsView({super.key});
@@ -56,34 +56,6 @@ class _RecentsViewState extends State<RecentsView> {
         });
   }
 
-  IconData getCallIcon(CallLogType type) {
-    if (type == CallLogType.incoming) {
-      return Icons.call_received;
-    } else if (type == CallLogType.outgoing) {
-      return Icons.call_made;
-    } else if (type == CallLogType.rejected) {
-      return Icons.call_end;
-    } else if (type == CallLogType.blocked) {
-      return Icons.block;
-    }
-    return Icons.call_missed;
-  }
-
-  Color getCallColor(CallLogType type) {
-    if (type == CallLogType.incoming) {
-      return Colors.blue.withAlpha(200);
-    } else if (type == CallLogType.outgoing) {
-      return Colors.green.withAlpha(200);
-    } else if (type == CallLogType.rejected) {
-      return context.colorScheme.onSurface.withAlpha(200);
-    } else if (type == CallLogType.missed) {
-      return Colors.red.withAlpha(200);
-    } else if (type == CallLogType.blocked) {
-      return Colors.grey;
-    }
-    return context.colorScheme.primary;
-  }
-
   Widget drawLog(BuildContext context, List<CallLogData> callLogs, int index) {
     bool showDateHeader = index == 0 ||
         callLogs[index].date.weekday != callLogs[index - 1].date.weekday;
@@ -96,7 +68,7 @@ class _RecentsViewState extends State<RecentsView> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
             child: Text(
-              getContextAwareDate(log.date),
+              log.date.getContextAwareDate(),
               style: GoogleFonts.cabin(
                 fontSize: 20,
                 color: context.colorScheme.primary,
@@ -147,15 +119,15 @@ class _RecentsViewState extends State<RecentsView> {
                 children: [
                   Icon(
                     getCallIcon(log.type),
-                    color: getCallColor(log.type),
+                    color: getCallColor(log.type, context),
                     size: 16,
                   ),
                   SizedBox(width: 5),
                   Text(
-                    getContextAwareDateTime(log.date),
+                    log.date.getContextAwareDateTime(),
                     style: GoogleFonts.cabin(
                       fontSize: 12,
-                      color: getCallColor(log.type),
+                      color: getCallColor(log.type, context),
                     ),
                   ),
                 ],

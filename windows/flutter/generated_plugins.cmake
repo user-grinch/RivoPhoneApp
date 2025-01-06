@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   dynamic_color
   permission_handler_windows
-  qr_bar_code
   share_plus
   url_launcher_windows
 )
