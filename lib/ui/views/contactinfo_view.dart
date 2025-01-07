@@ -1,15 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:revo/ui/qr_view.dart';
+import 'package:revo/model/contact.dart';
 import 'package:revo/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter/services.dart';
 
 class ContactInfoView extends StatefulWidget {
   final Contact contact;
@@ -47,7 +45,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                 _buildProfilePicture(context),
                 const SizedBox(height: 16),
                 Text(
-                  '${widget.contact.name.first} ${widget.contact.name.last}',
+                  widget.contact.fullName,
                   style: context.textTheme.headlineSmall?.copyWith(
                     color: context.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -95,15 +93,17 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                             widget.contact.isStarred =
                                 !widget.contact.isStarred;
                           });
-                          FlutterContacts.updateContact(widget.contact);
+                          fc.FlutterContacts.updateContact(
+                            widget.contact.toInternal(),
+                          );
                         }),
                     _buildActionIcon(
                         context: context,
                         icon: Icons.edit,
                         label: 'Edit',
                         onClick: () async {
-                          if (await FlutterContacts.requestPermission()) {
-                            await FlutterContacts.openExternalEdit(
+                          if (await fc.FlutterContacts.requestPermission()) {
+                            await fc.FlutterContacts.openExternalEdit(
                                 widget.contact.id);
                           } else {
                             print("Permission denied to access contacts");
@@ -119,7 +119,11 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                 const SizedBox(height: 24),
                 _buildFlatOption(context, Icons.history, 'Call History', () {
                   Navigator.of(context).pushNamed(callHistoryRoute,
-                      arguments: widget.contact.phones);
+                      arguments: widget.contact.phones.map(
+                        (e) {
+                          return e;
+                        },
+                      ).toList());
                 }),
                 const SizedBox(height: 50),
               ],
@@ -151,7 +155,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           // Phone number text
           Expanded(
             child: Text(
-              phone.number,
+              phone,
               style: GoogleFonts.cabin(
                 textStyle: context.textTheme.bodyLarge,
                 color: context.colorScheme.onSurface,
@@ -191,10 +195,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
       top: 150,
       child: CircleAvatar(
         radius: 120,
-        backgroundImage: widget.contact.photoOrThumbnail != null
-            ? MemoryImage(widget.contact.photoOrThumbnail!)
+        backgroundImage: widget.contact.photo != null
+            ? MemoryImage(widget.contact.photo!)
             : null,
-        child: widget.contact.photoOrThumbnail == null
+        child: widget.contact.photo == null
             ? Icon(
                 Icons.person,
                 size: 100,
@@ -253,7 +257,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: context.colorScheme.primary.withOpacity(0.1),
+          color: context.colorScheme.primary.withAlpha(25),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: context.colorScheme.primary, size: 20),
@@ -270,18 +274,19 @@ class _ContactInfoViewState extends State<ContactInfoView> {
   }
 
   Widget _buildAdditionalDetailsSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.contact.notes.isNotEmpty)
-          _buildDetail(context, 'Notes', widget.contact.notes.first.note),
-        if (widget.contact.groups.isNotEmpty)
-          _buildDetail(context, 'Groups', widget.contact.groups.first.name),
-        if (widget.contact.events.isNotEmpty)
-          _buildDetail(
-              context, 'Birthday', widget.contact.events.first.customLabel),
-      ],
-    );
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     if (widget.contact.notes.isNotEmpty)
+    //       _buildDetail(context, 'Notes', widget.contact.notes.first.note),
+    //     if (widget.contact.groups.isNotEmpty)
+    //       _buildDetail(context, 'Groups', widget.contact.groups.first.name),
+    //     if (widget.contact.events.isNotEmpty)
+    //       _buildDetail(
+    //           context, 'Birthday', widget.contact.events.first),
+    //   ],
+    // );
+    return Container();
   }
 
   Widget _buildDetail(BuildContext context, String label, String value) {

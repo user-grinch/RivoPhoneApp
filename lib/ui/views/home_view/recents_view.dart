@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:revo/modal/call_log_data.dart';
-import 'package:revo/services/contact_service.dart';
-import 'package:revo/ui/contactinfo_view.dart';
+import 'package:revo/model/call_log.dart';
+import 'package:revo/model/call_type.dart';
+import 'package:revo/services/cubit/call_log_service.dart';
+import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
-import 'package:revo/utils/calltypes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecentsView extends StatefulWidget {
   const RecentsView({super.key});
@@ -17,7 +19,6 @@ class RecentsView extends StatefulWidget {
 
 class _RecentsViewState extends State<RecentsView> {
   late final ScrollController _controller;
-  int _prevDate = -1;
 
   @override
   void initState() {
@@ -33,33 +34,41 @@ class _RecentsViewState extends State<RecentsView> {
 
   @override
   Widget build(BuildContext context) {
-    var callLogs = ContactService().callLogs;
-    return FutureBuilder(
-        future: ContactService().initialize(),
-        builder: (context, snapshot) {
-          return Scrollbar(
-            trackVisibility: true,
-            thickness: 2.5,
-            interactive: true,
-            radius: Radius.circular(30),
+    return Scrollbar(
+      trackVisibility: true,
+      thickness: 2.5,
+      interactive: true,
+      radius: Radius.circular(30),
+      controller: _controller,
+      child: BlocBuilder<CallLogService, List<CallLog>>(
+        builder: (BuildContext context, List<CallLog> state) {
+          if (state.isEmpty) {
+            return const Center(
+              child: Text('No call logs found.'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: state.length,
             controller: _controller,
-            child: ListView.builder(
-              itemCount: callLogs.length,
-              controller: _controller,
-              itemBuilder: (context, i) {
-                Widget w = drawLog(context, callLogs, i);
-                _prevDate = callLogs[i].date.weekday;
-                return w;
-              },
-            ),
+            itemBuilder: (context, i) {
+              return _buildLog(
+                context,
+                state[i],
+                _shouldShowHeader(state, i),
+              );
+            },
           );
-        });
+        },
+      ),
+    );
   }
 
-  Widget drawLog(BuildContext context, List<CallLogData> callLogs, int index) {
-    bool showDateHeader = index == 0 ||
-        callLogs[index].date.weekday != callLogs[index - 1].date.weekday;
-    CallLogData log = callLogs[index];
+  bool _shouldShowHeader(List<CallLog> logs, int i) {
+    return i == 0 || logs[i].date.weekday != logs[i - 1].date.weekday;
+  }
+
+  Widget _buildLog(BuildContext context, CallLog log, bool showDateHeader) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,12 +89,12 @@ class _RecentsViewState extends State<RecentsView> {
             borderRadius: BorderRadius.circular(20),
           ),
           leading: CircleProfile(
-            name: log.name ?? '',
+            name: log.name,
             profile: log.profile,
             size: 30,
           ),
           title: Text(
-            getDisplayName(log),
+            log.displayName,
             style: GoogleFonts.cabin(
               fontSize: 16,
               color: context.colorScheme.onSurface.withAlpha(200),
@@ -101,10 +110,8 @@ class _RecentsViewState extends State<RecentsView> {
             child: IconButton(
               onPressed: () async {
                 await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ContactInfoView(ContactService()
-                      .contacts
-                      .where((c) => c.displayName == log.name)
-                      .first),
+                  builder: (_) => ContactInfoView(
+                      context.read<ContactService>().findByNumber(log.number)),
                 ));
               },
               icon: Icon(Icons.arrow_forward_ios,
@@ -118,8 +125,8 @@ class _RecentsViewState extends State<RecentsView> {
               Row(
                 children: [
                   Icon(
-                    getCallIcon(log.type),
-                    color: getCallColor(log.type, context),
+                    log.type.getIcon(),
+                    color: log.type.getColor(),
                     size: 16,
                   ),
                   SizedBox(width: 5),
@@ -127,7 +134,7 @@ class _RecentsViewState extends State<RecentsView> {
                     log.date.getContextAwareDateTime(),
                     style: GoogleFonts.cabin(
                       fontSize: 12,
-                      color: getCallColor(log.type, context),
+                      color: log.type.getColor(),
                     ),
                   ),
                 ],
@@ -138,7 +145,6 @@ class _RecentsViewState extends State<RecentsView> {
               ),
             ],
           ),
-          onTap: () async {},
         ),
       ],
     );

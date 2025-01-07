@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:revo/services/contact_service.dart';
-import 'package:revo/ui/contactinfo_view.dart';
+import 'package:revo/model/contact.dart';
+import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/circle_profile.dart';
 
@@ -31,44 +32,46 @@ class _ContactsViewState extends State<ContactsView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: ContactService().initialize(),
-        builder: (context, snapshot) {
-          var contacts = ContactService().contacts;
-          if (contacts.isEmpty) {
-            return CenterText(text: 'No contacts');
-          } else {
-            return Scrollbar(
-                trackVisibility: true,
-                thickness: 2.5,
-                interactive: true,
-                radius: Radius.circular(30),
-                controller: _controller,
-                child: ListView.builder(
-                  itemCount: contacts.length,
-                  controller: _controller,
-                  itemBuilder: (context, i) =>
-                      displayContact(context, contacts, i),
-                ));
-          }
-        });
+    return BlocBuilder<ContactService, List<Contact>>(
+      builder: (context, state) {
+        if (state.isEmpty) {
+          return CenterText(text: 'No contacts found');
+        }
+        return Scrollbar(
+          trackVisibility: true,
+          thickness: 2.5,
+          interactive: true,
+          radius: Radius.circular(30),
+          controller: _controller,
+          child: ListView.builder(
+            itemCount: state.length,
+            controller: _controller,
+            itemBuilder: (context, i) => _displayContact(context, state, i),
+          ),
+        );
+      },
+    );
   }
 
-  Widget displayContact(
+  bool _shouldShowHeader(List<Contact> contacts, int i) {
+    return i == 0 ||
+        contacts[i].fullName.isNotEmpty &&
+            contacts[i].fullName[0] != contacts[i - 1].fullName[0];
+  }
+
+  Widget _displayContact(
     BuildContext context,
     List<Contact> contacts,
     int i,
   ) {
-    bool showDateHeader =
-        i == 0 || contacts[i].name.first[0] != contacts[i - 1].name.first[0];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (showDateHeader)
+        if (_shouldShowHeader(contacts, i))
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 50, 0, 0),
             child: Text(
-              contacts[i].name.first[0],
+              contacts[i].fullName[0],
               style: GoogleFonts.cabin(
                 fontSize: 20,
                 color: context.colorScheme.primary,
@@ -88,7 +91,7 @@ class _ContactsViewState extends State<ContactsView> {
                   size: 30,
                 ),
                 const SizedBox(width: 10),
-                Text(ContactService().contacts[i].displayName,
+                Text(contacts[i].displayName,
                     style: GoogleFonts.cabin(
                       fontSize: 16,
                       color: context.colorScheme.onSurface,
@@ -97,8 +100,7 @@ class _ContactsViewState extends State<ContactsView> {
             ),
             onTap: () async {
               await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) =>
-                      ContactInfoView(ContactService().contacts[i])));
+                  builder: (_) => ContactInfoView(contacts[i])));
             }),
       ],
     );

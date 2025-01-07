@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/ui/home_view/appbar_view.dart';
-import 'package:revo/ui/home_view/contacts_view.dart';
-import 'package:revo/ui/home_view/fav_view.dart';
-import 'package:revo/ui/home_view/navigation_view.dart';
-import 'package:revo/ui/home_view/recents_view.dart';
+import 'package:revo/ui/views/home_view/appbar_view.dart';
+import 'package:revo/ui/views/home_view/contacts_view.dart';
+import 'package:revo/ui/views/home_view/fav_view.dart';
+import 'package:revo/ui/views/home_view/navigation_view.dart';
+import 'package:revo/ui/views/home_view/recents_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

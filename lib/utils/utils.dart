@@ -1,10 +1,12 @@
+String normalizePhoneNumber(String phoneNumber) {
+  return phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+}
+
 String convertSecondsToHMS(int totalSeconds) {
-  // Calculate hours, minutes, and seconds
   int hours = totalSeconds ~/ 3600;
   int minutes = (totalSeconds % 3600) ~/ 60;
   int seconds = totalSeconds % 60;
 
-  // Build the result string
   String result = '';
   if (hours > 0) {
     result += '$hours hour${hours > 1 ? 's' : ''} ';

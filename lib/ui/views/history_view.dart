@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:revo/modal/call_log_data.dart';
-import 'package:revo/services/contact_service.dart';
-import 'package:revo/utils/calltypes.dart';
-import 'package:revo/utils/math.dart';
+import 'package:revo/model/call_log.dart';
+import 'package:revo/model/call_type.dart';
+import 'package:revo/services/cubit/call_log_service.dart';
+import 'package:revo/utils/center_text.dart';
+import 'package:revo/utils/utils.dart';
 
 class HistoryView extends StatefulWidget {
-  List<Phone> numbers;
+  List<String> numbers;
   HistoryView({super.key, required this.numbers});
 
   @override
@@ -34,29 +34,31 @@ class _HistoryViewState extends State<HistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    List<CallLogData> history =
-        ContactService().getCallLogFiltered(widget.numbers);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Call History'),
       ),
-      body: history.isEmpty
-          ? const Center(
-              child: Text(
-                'No call history available.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            )
-          : ListView.builder(
-              itemCount: history.length,
-              itemBuilder: (context, i) => displayHistory(context, history[i]),
-            ),
+      body: BlocBuilder<CallLogService, List<CallLog>>(
+        builder: (BuildContext context, List<CallLog> state) {
+          var logs =
+              context.read<CallLogService>().filterByNumber(widget.numbers);
+          if (logs.isEmpty) {
+            return CenterText(
+              text: 'No call logs found.',
+            );
+          }
+          return ListView.builder(
+            itemCount: logs.length,
+            itemBuilder: (context, i) => _displayHistory(context, logs[i]),
+          );
+        },
+      ),
     );
   }
 
-  Widget displayHistory(BuildContext context, CallLogData history) {
+  Widget _displayHistory(BuildContext context, CallLog history) {
     String underlineText =
-        '${getCallText(history.type)}  ${convertSecondsToHMS(int.parse(history.duration))}';
+        '${history.type.getText()}  ${convertSecondsToHMS(int.parse(history.duration))}';
 
     return ListTile(
       leading: Container(
@@ -66,8 +68,8 @@ class _HistoryViewState extends State<HistoryView> {
           color: context.colorScheme.primary.withAlpha(25),
           shape: BoxShape.circle,
         ),
-        child: Icon(getCallIcon(history.type),
-            color: getCallColor(history.type, context), size: 28),
+        child: Icon(history.type.getIcon(),
+            color: history.type.getColor(), size: 28),
       ),
       title: Text(
         history.date.getContextAwareDateTime(),
@@ -82,6 +84,10 @@ class _HistoryViewState extends State<HistoryView> {
           ),
           Text(
             underlineText,
+            style: const TextStyle(color: Colors.grey),
+          ),
+          Text(
+            history.number,
             style: const TextStyle(color: Colors.grey),
           ),
         ],
