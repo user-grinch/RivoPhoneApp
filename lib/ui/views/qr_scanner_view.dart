@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_contacts/properties/phone.dart' as fc_phone;
 import 'package:flutter_contacts/properties/email.dart' as fc_mail;
+import 'package:revo/services/cubit/contact_service.dart';
 
 class QRScannerView extends StatelessWidget {
   const QRScannerView({super.key});
@@ -28,7 +30,7 @@ class QRScannerView extends StatelessWidget {
               if (barcode != null && barcode.rawValue != null) {
                 String data = barcode.rawValue!;
                 if (_isValidVCard(data)) {
-                  await _addContact(data);
+                  context.read<ContactService>().insertContactFromVCard(data);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Contact added successfully!')),
@@ -81,46 +83,5 @@ class QRScannerView extends StatelessWidget {
 
   bool _isValidVCard(String data) {
     return data.startsWith("BEGIN:VCARD") && data.endsWith("END:VCARD");
-  }
-
-  Future<void> _addContact(String vCardData) async {
-    if (await FlutterContacts.requestPermission()) {
-      final Map<String, String> contactDetails = _parseVCard(vCardData);
-
-      final Contact newContact = Contact(
-        name: Name(first: contactDetails['FN'] ?? '', last: ''),
-        phones: contactDetails['TEL'] != null
-            ? [fc_phone.Phone(contactDetails['TEL']!)]
-            : [],
-        emails: contactDetails['EMAIL'] != null
-            ? [fc_mail.Email(contactDetails['EMAIL']!)]
-            : [],
-      );
-
-      try {
-        await FlutterContacts.insertContact(newContact);
-        print('Contact added successfully!');
-      } catch (e) {
-        print('Error adding contact: $e');
-      }
-    } else {
-      print('Permission to access contacts denied!');
-    }
-  }
-
-  Map<String, String> _parseVCard(String vCardData) {
-    final Map<String, String> contactDetails = {};
-
-    for (String line in vCardData.split('\n')) {
-      if (line.startsWith('FN:')) {
-        contactDetails['FN'] = line.replaceFirst('FN:', '').trim();
-      } else if (line.startsWith('TEL:')) {
-        contactDetails['TEL'] = line.replaceFirst('TEL:', '').trim();
-      } else if (line.startsWith('EMAIL:')) {
-        contactDetails['EMAIL'] = line.replaceFirst('EMAIL:', '').trim();
-      }
-    }
-
-    return contactDetails;
   }
 }

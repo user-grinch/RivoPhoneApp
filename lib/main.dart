@@ -34,8 +34,14 @@ void main() {
             seedColor: Colors.blue, brightness: Brightness.dark);
     return MultiProvider(
       providers: [
-        BlocProvider(create: (context) => ContactService()),
-        BlocProvider(create: (context) => CallLogService()),
+        BlocProvider(
+          create: (context) => CallLogService(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ContactService(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

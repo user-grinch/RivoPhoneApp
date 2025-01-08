@@ -11,6 +11,7 @@ class CallLog {
   final DateTime date;
   final String duration;
   final CallType type;
+  final String accountId;
 
   CallLog(
     this.profile, {
@@ -20,6 +21,7 @@ class CallLog {
     required this.date,
     required this.duration,
     required this.type,
+    required this.accountId,
   });
 
   factory CallLog.fromEntry({
@@ -34,6 +36,7 @@ class CallLog {
       date: DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0),
       duration: entry.duration.toString(),
       type: _convertFromInternalType(entry.callType ?? lib.CallType.unknown),
+      accountId: entry.phoneAccountId ?? '',
     );
   }
 

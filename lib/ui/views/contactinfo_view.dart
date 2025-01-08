@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart' as fc;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
+import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -93,21 +94,18 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                             widget.contact.isStarred =
                                 !widget.contact.isStarred;
                           });
-                          fc.FlutterContacts.updateContact(
-                            widget.contact.toInternal(),
-                          );
+                          context
+                              .read<ContactService>()
+                              .updateContact(contact: widget.contact);
                         }),
                     _buildActionIcon(
                         context: context,
                         icon: Icons.edit,
                         label: 'Edit',
                         onClick: () async {
-                          if (await fc.FlutterContacts.requestPermission()) {
-                            await fc.FlutterContacts.openExternalEdit(
-                                widget.contact.id);
-                          } else {
-                            print("Permission denied to access contacts");
-                          }
+                          await context
+                              .read<ContactService>()
+                              .editContact(widget.contact);
                         }),
                   ],
                 ),

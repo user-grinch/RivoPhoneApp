@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
-import 'package:revo/utils/utils.dart';
 
 class Contact {
   String id;
@@ -49,9 +48,7 @@ class Contact {
       isStarred: contact.isStarred,
       fullName:
           '${contact.name.first} ${contact.name.middle} ${contact.name.last}',
-      phones: contact.phones
-          .map((phone) => normalizePhoneNumber(phone.normalizedNumber))
-          .toList(),
+      phones: contact.phones.map((phone) => phone.normalizedNumber).toList(),
       emails: contact.emails,
       addresses: contact.addresses,
       organizations: contact.organizations,
