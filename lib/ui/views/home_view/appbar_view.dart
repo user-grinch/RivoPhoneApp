@@ -13,47 +13,45 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Container(
-        decoration: BoxDecoration(
-          color: context.colorScheme.surfaceTint.withAlpha(30),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, qrScanRoute);
-              },
-              icon: Icon(
-                Icons.qr_code_scanner_rounded,
+      title: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, searchRoute);
+        },
+        borderRadius: BorderRadius.circular(50),
+        splashColor: context.colorScheme.surfaceTint.withAlpha(50),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surfaceTint.withAlpha(30),
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, qrScanRoute);
+                },
+                icon: Icon(
+                  Icons.qr_code_scanner_rounded,
+                ),
               ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-              ),
-              isSemanticButton: true,
-              onPressed: () {
-                Navigator.pushNamed(context, searchRoute);
-              },
-              child: Text(
+              Text(
                 'Search in Rivo',
                 style: GoogleFonts.cabin(
                   fontSize: 18,
                   color: context.colorScheme.onSurface,
                 ),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, settingsRoute);
-              },
-              icon: Icon(
-                Icons.settings_rounded,
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, settingsRoute);
+                },
+                icon: Icon(
+                  Icons.settings_rounded,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       centerTitle: true,

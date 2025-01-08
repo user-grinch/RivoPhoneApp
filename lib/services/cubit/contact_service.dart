@@ -53,6 +53,25 @@ class ContactService extends Cubit<List<Contact>> {
     }
   }
 
+  List<Contact> findAllByNameOrNumber(String name, String number) {
+    String target = normalizePhoneNumber(number);
+    try {
+      return state.where((f) {
+        return f.phones.any((g) {
+              String contactNumber = normalizePhoneNumber(g);
+              return target.endsWith(contactNumber) || target == contactNumber;
+            }) ||
+            f.fullName.toLowerCase().contains(name.toLowerCase());
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> createNewContact() async {
+    await fc.FlutterContacts.openExternalInsert();
+  }
+
   Future<void> insertContact(Contact contact) async {
     await fc.FlutterContacts.insertContact(contact.toInternal());
   }

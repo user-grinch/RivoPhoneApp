@@ -36,7 +36,6 @@ class FavView extends StatelessWidget {
             },
           ),
         );
-        ;
       },
     );
   }

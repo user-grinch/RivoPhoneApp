@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
@@ -74,7 +73,7 @@ class _ContactsViewState extends State<ContactsView> {
             children: [
               TextButton.icon(
                 onPressed: () async {
-                  await fc.FlutterContacts.openExternalInsert();
+                  context.read<ContactService>().createNewContact();
                 },
                 icon: Icon(
                   Icons.person_add,
