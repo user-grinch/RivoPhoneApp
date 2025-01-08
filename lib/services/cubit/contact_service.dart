@@ -1,10 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/utils/utils.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
 

@@ -85,6 +85,12 @@ class _RecentsViewState extends State<RecentsView> {
             ),
           ),
         ListTile(
+          onTap: () async {
+            await Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => ContactInfoView(
+                  context.read<ContactService>().findByNumber(log.number)),
+            ));
+          },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -101,21 +107,16 @@ class _RecentsViewState extends State<RecentsView> {
             ),
           ),
           trailing: Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: context.colorScheme.primary.withAlpha(25),
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () async {
-                await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ContactInfoView(
-                      context.read<ContactService>().findByNumber(log.number)),
-                ));
-              },
-              icon: Icon(Icons.arrow_forward_ios,
-                  color: context.colorScheme.primary, size: 20),
+              onPressed: () async {},
+              icon: Icon(Icons.call,
+                  color: context.colorScheme.primary, size: 25),
             ),
           ),
           subtitle: Column(

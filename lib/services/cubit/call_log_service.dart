@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:bloc/bloc.dart';
 import 'package:call_e_log/call_log.dart' as lib;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
@@ -67,9 +68,32 @@ class _ContactsViewState extends State<ContactsView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (i == 0)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton.icon(
+                onPressed: () async {
+                  await fc.FlutterContacts.openExternalInsert();
+                },
+                icon: Icon(
+                  Icons.person_add,
+                  color: context.colorScheme.primary,
+                  size: 25,
+                ),
+                label: Text(
+                  "Create a new contact",
+                  style: GoogleFonts.cabin(
+                    fontSize: 18,
+                    color: context.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
         if (_shouldShowHeader(contacts, i))
           Padding(
-            padding: const EdgeInsets.fromLTRB(30, 50, 0, 0),
+            padding: EdgeInsets.fromLTRB(30, i == 0 ? 10 : 50, 0, 0),
             child: Text(
               contacts[i].fullName[0],
               style: GoogleFonts.cabin(
