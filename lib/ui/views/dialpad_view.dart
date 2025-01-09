@@ -1,14 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/model/contact.dart';
+import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/ui/views/common/matched_view.dart';
+import 'package:revo/ui/views/contactinfo_view.dart';
+import 'package:revo/ui/views/dialpad_view/action_btn.dart';
+import 'package:revo/ui/views/dialpad_view/dial_btn.dart';
+import 'package:revo/utils/circle_profile.dart';
 
 class DialPadView extends StatefulWidget {
+  const DialPadView({super.key});
+
   @override
   State<DialPadView> createState() => _DialPadViewState();
 }
 
 class _DialPadViewState extends State<DialPadView> {
   String _number = '';
+
+  late final ScrollController _scrollController;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _focusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   final List<String> keys = [
     '1',
@@ -37,14 +67,6 @@ class _DialPadViewState extends State<DialPadView> {
     '0': '+',
   };
 
-  final List<String> matchedContacts = ['John Doe', 'Jane Smith', 'Alex Brown'];
-
-  void updateDialedNumber(String str) {
-    setState(() {
-      _number += str;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,32 +74,35 @@ class _DialPadViewState extends State<DialPadView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: matchedContacts.map((contact) {
-                  return Text(
-                    contact,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  );
-                }).toList(),
-              ),
-            ),
             Expanded(
-              child: SizedBox(),
+              child: MatchedView(
+                scrollController: _scrollController,
+                number: _number,
+              ),
             ),
             Container(
               color: context.colorScheme.surfaceTint.withAlpha(30),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _number.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 30.0, vertical: 15),
+                            horizontal: 20,
+                            vertical: 15,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<ContactService>()
+                                      .createNewContact(number: _number);
+                                },
+                                icon: const Icon(Icons.person_add),
+                                color: context.colorScheme.primary,
+                              ),
                               Spacer(),
                               Text(
                                 _number,
@@ -92,7 +117,9 @@ class _DialPadViewState extends State<DialPadView> {
                                   setState(() {
                                     if (_number.isNotEmpty) {
                                       _number = _number.substring(
-                                          0, _number.length - 1);
+                                        0,
+                                        _number.length - 1,
+                                      );
                                     }
                                   });
                                 },
@@ -105,6 +132,7 @@ class _DialPadViewState extends State<DialPadView> {
                       : SizedBox(height: 30),
                   GridView.builder(
                     shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     itemCount: keys.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -119,7 +147,11 @@ class _DialPadViewState extends State<DialPadView> {
                       return DialPadButton(
                         mainText: key,
                         subText: subKeys[key],
-                        onUpdate: updateDialedNumber,
+                        onUpdate: (String str) {
+                          setState(() {
+                            _number += str;
+                          });
+                        },
                       );
                     },
                   ),
@@ -137,84 +169,6 @@ class _DialPadViewState extends State<DialPadView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DialPadButton extends StatelessWidget {
-  final String mainText;
-  final String? subText;
-  final Function(String) onUpdate;
-
-  const DialPadButton({
-    required this.mainText,
-    this.subText,
-    super.key,
-    required this.onUpdate,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(50)),
-        ),
-        backgroundColor: context.colorScheme.surface.withAlpha(180),
-      ),
-      onPressed: () {
-        onUpdate(mainText);
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            mainText,
-            style: const TextStyle(fontSize: 24),
-          ),
-          if (subText != null)
-            Text(
-              subText!,
-              style: const TextStyle(fontSize: 10),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class DialActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const DialActionButton({required this.icon, required this.label, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
-        backgroundColor: context.colorScheme.primaryContainer,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      ),
-      onPressed: () {},
-      child: Row(
-        children: [
-          Icon(Icons.sim_card),
-          SizedBox(
-            width: 2,
-          ),
-          Text(
-            label,
-            style:
-                TextStyle(fontSize: 18, color: context.colorScheme.onSurface),
-          ),
-        ],
       ),
     );
   }
