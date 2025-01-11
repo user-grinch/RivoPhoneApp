@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/services/cubit/mobile_service.dart';
 import 'package:revo/ui/views/dialpad_view.dart';
 import 'package:revo/ui/views/history_view.dart';
 import 'package:revo/ui/views/home_view.dart';
@@ -42,6 +43,10 @@ void main() {
           create: (context) => ContactService(),
           lazy: false,
         ),
+        BlocProvider(
+          create: (context) => MobileService(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -49,11 +54,21 @@ void main() {
           colorScheme: lightColorScheme,
           useMaterial3: true,
           textTheme: GoogleFonts.cabinTextTheme(),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+            },
+          ),
         ),
         darkTheme: ThemeData(
           colorScheme: darkColorScheme,
           useMaterial3: true,
           textTheme: GoogleFonts.cabinTextTheme(),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+            },
+          ),
         ),
         themeMode: ThemeMode.system,
         initialRoute: homeRoute,

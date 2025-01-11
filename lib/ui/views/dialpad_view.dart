@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/ui/views/common/matched_view.dart';
 import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/ui/views/dialpad_view/action_btn.dart';
@@ -159,8 +160,17 @@ class _DialPadViewState extends State<DialPadView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      DialActionButton(icon: Icons.sim_card, label: 'Sim 1'),
-                      DialActionButton(icon: Icons.sim_card, label: 'Sim 2'),
+                      DialActionButton(
+                        icon: Icons.sim_card,
+                        label: 'Call',
+                        func: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) =>
+                                simChooserDialog(context, _number),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   SizedBox(height: 30),

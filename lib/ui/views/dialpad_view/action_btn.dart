@@ -4,8 +4,10 @@ import 'package:revo/extentions/theme.dart';
 class DialActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Function()? func;
 
-  const DialActionButton({required this.icon, required this.label, super.key});
+  const DialActionButton(
+      {required this.icon, required this.label, this.func, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +18,9 @@ class DialActionButton extends StatelessWidget {
         ),
         backgroundColor: context.colorScheme.primaryContainer,
         elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       ),
-      onPressed: () {},
+      onPressed: func,
       child: Row(
         children: [
           Icon(Icons.sim_card),

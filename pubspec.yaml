@@ -45,6 +45,10 @@ dependencies:
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
   provider: ^6.1.2
+  flutter_sim_data: ^1.0.5
+  url_launcher: ^6.3.1
+  direct_caller_sim_choice: ^1.0.5
+  flutter_callkit_incoming: ^2.5.0
 
 dev_dependencies:
   flutter_test:
