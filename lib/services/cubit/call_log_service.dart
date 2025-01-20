@@ -2,7 +2,9 @@ import 'dart:typed_data';
 import 'package:call_e_log/call_log.dart' as lib;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/model/call_log.dart';
+import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/utils/utils.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
@@ -13,7 +15,8 @@ class CallLogService extends Cubit<List<CallLog>> {
   }
 
   Future<void> _initialize() async {
-    if (state.isEmpty) {
+    await ActivityService().requestPermissions();
+    if (state.isEmpty && await Permission.phone.status.isGranted) {
       var fContact = (await fc.FlutterContacts.getContacts(
         withProperties: true,
         withAccounts: true,
@@ -54,9 +57,8 @@ class CallLogService extends Cubit<List<CallLog>> {
   }
 
   Future<void> fetchData(BuildContext context) async {
-    if (state.isNotEmpty) {
+    if (state.isNotEmpty && await Permission.phone.status.isGranted) {
       var list = state.map((e) {
-        Uint8List? photo;
         var contactList = context.read<ContactService>();
         var contact = contactList.findByNumber(e.number);
         e = CallLog(

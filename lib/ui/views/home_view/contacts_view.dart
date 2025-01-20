@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/services/cubit/contact_service.dart';
-import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/circle_profile.dart';
 
@@ -122,8 +122,10 @@ class _ContactsViewState extends State<ContactsView> {
               ],
             ),
             onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ContactInfoView(contacts[i])));
+              await Navigator.of(context).pushNamed(
+                contactInfoRoute,
+                arguments: contacts[i],
+              );
             }),
       ],
     );

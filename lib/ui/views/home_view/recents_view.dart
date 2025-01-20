@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/call_log.dart';
@@ -88,10 +89,9 @@ class _RecentsViewState extends State<RecentsView> {
           ),
         ListTile(
           onTap: () async {
-            await Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => ContactInfoView(
-                  context.read<ContactService>().findByNumber(log.number)),
-            ));
+            await Navigator.of(context).pushNamed(contactInfoRoute,
+                arguments:
+                    context.read<ContactService>().findByNumber(log.number));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

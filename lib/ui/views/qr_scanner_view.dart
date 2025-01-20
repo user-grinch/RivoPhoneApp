@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:flutter_contacts/properties/phone.dart' as fc_phone;
-import 'package:flutter_contacts/properties/email.dart' as fc_mail;
 import 'package:revo/services/cubit/contact_service.dart';
 
 class QRScannerView extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/services/activity_service.dart';
@@ -19,9 +20,10 @@ class ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () async {
-        await Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => ContactInfoView(contact),
-        ));
+        await Navigator.of(context).pushNamed(
+          contactInfoRoute,
+          arguments: contact,
+        );
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

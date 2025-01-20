@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/model/contact.dart';
+import 'package:revo/services/activity_service.dart';
 import 'package:revo/utils/utils.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
 
@@ -12,18 +13,17 @@ class ContactService extends Cubit<List<Contact>> {
   }
 
   Future<void> _initialize() async {
-    if (state.isEmpty) {
-      if (await Permission.contacts.request().isGranted) {
-        var fContact = (await fc.FlutterContacts.getContacts(
-          withProperties: true,
-          withAccounts: true,
-          withGroups: true,
-          withPhoto: true,
-          withThumbnail: true,
-        ))
-            .toList();
-        emit(fContact.map((e) => Contact.fromInternal(e)).toList());
-      }
+    await ActivityService().requestPermissions();
+    if (state.isEmpty && await Permission.contacts.status.isGranted) {
+      var contact = (await fc.FlutterContacts.getContacts(
+        withProperties: true,
+        withAccounts: true,
+        withGroups: true,
+        withPhoto: true,
+        withThumbnail: true,
+      ))
+          .toList();
+      emit(contact.map((e) => Contact.fromInternal(e)).toList());
     }
   }
 
@@ -32,6 +32,7 @@ class ContactService extends Cubit<List<Contact>> {
   }
 
   ContactService getAll() {
+    _initialize();
     return this;
   }
 
@@ -69,20 +70,24 @@ class ContactService extends Cubit<List<Contact>> {
   }
 
   Future<void> createNewContact({String? number}) async {
-    if (number == null) {
-      await fc.FlutterContacts.openExternalInsert();
-    } else {
-      await fc.FlutterContacts.openExternalInsert(
-          fc.Contact(phones: [fc.Phone(number)]));
+    if (await Permission.contacts.status.isGranted) {
+      if (number == null) {
+        await fc.FlutterContacts.openExternalInsert();
+      } else {
+        await fc.FlutterContacts.openExternalInsert(
+            fc.Contact(phones: [fc.Phone(number)]));
+      }
     }
   }
 
   Future<void> insertContact(Contact contact) async {
-    await fc.FlutterContacts.insertContact(contact.toInternal());
+    if (await Permission.contacts.status.isGranted) {
+      await fc.FlutterContacts.insertContact(contact.toInternal());
+    }
   }
 
   Future<void> insertContactFromVCard(String data) async {
-    if (await fc.FlutterContacts.requestPermission()) {
+    if (await Permission.contacts.status.isGranted) {
       try {
         await fc.FlutterContacts.insertContact(lib.Contact.fromVCard(data));
         print('Contact added successfully!');
@@ -95,17 +100,24 @@ class ContactService extends Cubit<List<Contact>> {
   }
 
   Future<void> editContact(Contact contact) async {
-    if (await fc.FlutterContacts.requestPermission()) {
+    if (await Permission.contacts.status.isGranted) {
       await fc.FlutterContacts.openExternalEdit(contact.id);
     } else {
       print("Permission denied to access contacts");
     }
   }
 
-  void updateContact({required Contact contact, bool withGroups = false}) {
-    fc.FlutterContacts.updateContact(
-      contact.toInternal(),
-      withGroups: withGroups,
-    );
+  void updateContact({
+    required Contact contact,
+    bool withGroups = false,
+  }) async {
+    if (await Permission.contacts.status.isGranted) {
+      fc.FlutterContacts.updateContact(
+        contact.toInternal(),
+        withGroups: withGroups,
+      );
+    } else {
+      print("Permission denied to access contacts");
+    }
   }
 }

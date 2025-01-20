@@ -49,6 +49,19 @@ dependencies:
   url_launcher: ^6.3.1
   direct_caller_sim_choice: ^1.0.5
   phone_state: ^2.1.1
+  flutter_native_splash: ^2.4.4
+
+flutter_native_splash:
+  image: 'assets/splash.png'
+  color: "#FFFFFF"  
+  image_dark: 'assets/splash.png'
+  color_dark: "#000000"  
+
+  android_12:
+    image: 'assets/splash.png'
+    color: "#FFFFFF"  
+    image_dark: 'assets/splash.png'
+    color_dark: "#000000" 
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +87,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
     - assets/static-bg.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
