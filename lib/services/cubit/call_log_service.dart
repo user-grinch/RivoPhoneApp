@@ -14,7 +14,7 @@ class CallLogService extends Cubit<List<CallLog>> {
 
   Future<void> _initialize() async {
     if (state.isEmpty) {
-      var f_contact = (await fc.FlutterContacts.getContacts(
+      var fContact = (await fc.FlutterContacts.getContacts(
         withProperties: true,
         withAccounts: true,
         withThumbnail: true,
@@ -28,7 +28,7 @@ class CallLogService extends Cubit<List<CallLog>> {
 
         try {
           String logNumber = normalizePhoneNumber(e.number!);
-          fc.Contact contact = f_contact.firstWhere((f) {
+          fc.Contact contact = fContact.firstWhere((f) {
             return f.phones.any((g) {
               String contactNumber = normalizePhoneNumber(g.normalizedNumber);
               return logNumber.endsWith(contactNumber) ||

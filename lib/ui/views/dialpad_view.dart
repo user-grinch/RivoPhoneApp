@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:revo/model/contact.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/ui/views/common/matched_view.dart';
-import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/ui/views/dialpad_view/action_btn.dart';
 import 'package:revo/ui/views/dialpad_view/dial_btn.dart';
-import 'package:revo/utils/circle_profile.dart';
 
 class DialPadView extends StatefulWidget {
   const DialPadView({super.key});

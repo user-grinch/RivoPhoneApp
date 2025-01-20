@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:direct_caller_sim_choice/direct_caller_sim_choice.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActivityService {
@@ -13,12 +16,24 @@ class ActivityService {
     directCaller.makePhoneCall(phoneNumber, simSlot: simSlot + 1);
   }
 
-  // Future<void> makePhoneCall(String phoneNumber) async {
-  //   final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-  //   if (await canLaunchUrl(phoneUri)) {
-  //     await launchUrl(phoneUri);
-  //   } else {
-  //     throw 'Could not launch $phoneUri';
-  //   }
-  // }
+  Future<void> sendSMS(String phoneNumber) async {
+    if (Platform.isAndroid) {
+      await Permission.sms.request();
+    }
+    final Uri smsUri = Uri(scheme: 'sms', path: phoneNumber);
+    if (await canLaunchUrl(smsUri)) {
+      await launchUrl(smsUri);
+    } else {
+      throw 'Could not send SMS.';
+    }
+  }
+
+  Future<void> makeVideoCall(String phoneNumber) async {
+    final Uri videoCallUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(videoCallUri)) {
+      await launchUrl(videoCallUri);
+    } else {
+      throw 'Could not start the video call.';
+    }
+  }
 }

@@ -47,9 +47,9 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
     ),
     color: context.colorScheme.primaryContainer,
     child: InkWell(
-      onTap: () {
+      onTap: () async {
         ActivityService().makePhoneCall(number, sim.simSlotIndex);
-        Navigator.of(context).pop(sim);
+        Navigator.of(context).pop();
       },
       borderRadius: BorderRadius.circular(16),
       child: Padding(

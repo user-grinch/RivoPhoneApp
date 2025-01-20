@@ -6,7 +6,7 @@ import 'package:revo/extentions/theme.dart';
 class QRCodePopup extends StatelessWidget {
   final String data;
 
-  QRCodePopup({required this.data});
+  const QRCodePopup({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {

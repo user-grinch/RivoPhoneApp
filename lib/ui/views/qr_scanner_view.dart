@@ -26,7 +26,7 @@ class QRScannerView extends StatelessWidget {
             ),
             onDetect: (capture) async {
               final List<Barcode> barcodes = capture.barcodes;
-              final Barcode? barcode = barcodes.first;
+              final Barcode barcode = barcodes.first;
               if (barcode != null && barcode.rawValue != null) {
                 String data = barcode.rawValue!;
                 if (_isValidVCard(data)) {

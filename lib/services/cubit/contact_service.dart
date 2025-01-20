@@ -14,7 +14,7 @@ class ContactService extends Cubit<List<Contact>> {
   Future<void> _initialize() async {
     if (state.isEmpty) {
       if (await Permission.contacts.request().isGranted) {
-        var f_contact = (await fc.FlutterContacts.getContacts(
+        var fContact = (await fc.FlutterContacts.getContacts(
           withProperties: true,
           withAccounts: true,
           withGroups: true,
@@ -22,7 +22,7 @@ class ContactService extends Cubit<List<Contact>> {
           withThumbnail: true,
         ))
             .toList();
-        emit(f_contact.map((e) => Contact.fromInternal(e)).toList());
+        emit(fContact.map((e) => Contact.fromInternal(e)).toList());
       }
     }
   }

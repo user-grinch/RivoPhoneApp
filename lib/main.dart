@@ -2,13 +2,13 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/services/cubit/mobile_service.dart';
+import 'package:revo/ui/views/call_screen.dart';
 import 'package:revo/ui/views/dialpad_view.dart';
 import 'package:revo/ui/views/history_view.dart';
 import 'package:revo/ui/views/home_view.dart';
@@ -79,6 +79,7 @@ void main() {
           dialpadRoute: (context) => DialPadView(),
           qrShareRoute: (context) => QRCodePopup(
               data: ModalRoute.of(context)!.settings.arguments as String),
+          callScreenRoute: (context) => CallScreenView(),
           qrScanRoute: (context) => QRScannerView(),
           callHistoryRoute: (context) => HistoryView(
               numbers:

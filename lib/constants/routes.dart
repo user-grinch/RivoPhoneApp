@@ -6,3 +6,4 @@ const String contactInfoRoute = '/contact-info';
 const String qrShareRoute = '/qr-share';
 const String qrScanRoute = '/qr-scan';
 const String callHistoryRoute = '/call-history';
+const String callScreenRoute = '/call-screen';

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
+import 'package:revo/services/activity_service.dart';
+import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
 
@@ -53,7 +55,13 @@ class ContactTile extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: IconButton(
-          onPressed: () async {},
+          onPressed: () async {
+            showDialog(
+              context: context,
+              builder: (context) =>
+                  simChooserDialog(context, contact.phones[0]),
+            );
+          },
           icon: Icon(Icons.call, color: context.colorScheme.primary, size: 25),
         ),
       ),

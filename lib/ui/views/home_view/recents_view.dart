@@ -4,8 +4,10 @@ import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
+import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,7 +116,12 @@ class _RecentsViewState extends State<RecentsView> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () async {},
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => simChooserDialog(context, log.number),
+                );
+              },
               icon: Icon(Icons.call,
                   color: context.colorScheme.primary, size: 25),
             ),
