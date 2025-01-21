@@ -49,13 +49,13 @@ extension CallTypeHelper on CallType {
       case CallType.outgoing:
         return Colors.green.withAlpha(200);
       case CallType.rejected:
-        return Colors.red.withAlpha(140);
+        return Colors.red.withAlpha(200);
       case CallType.missed:
         return Colors.red.withAlpha(200);
       case CallType.blocked:
-        return Colors.grey;
+        return Colors.grey.withAlpha(200);
       default:
-        return Colors.white;
+        return Colors.white.withAlpha(200);
     }
   }
 }

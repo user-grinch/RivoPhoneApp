@@ -58,11 +58,16 @@ class ContactService extends Cubit<List<Contact>> {
     String target = normalizePhoneNumber(number);
     try {
       return state.where((f) {
-        return f.phones.any((g) {
+        bool nameMatches = name.isNotEmpty &&
+            f.fullName.toLowerCase().contains(name.toLowerCase());
+
+        bool isNumber = number.isNotEmpty && num.tryParse(number) != null;
+        bool numberMatches = isNumber &&
+            f.phones.any((g) {
               String contactNumber = normalizePhoneNumber(g);
               return contactNumber.contains(target) || target == contactNumber;
-            }) ||
-            f.fullName.toLowerCase().contains(name.toLowerCase());
+            });
+        return nameMatches || numberMatches;
       }).toList();
     } catch (_) {
       return [];

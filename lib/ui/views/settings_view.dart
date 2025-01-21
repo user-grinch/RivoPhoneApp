@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   Future<void> _launchURL(String url) async {
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url);
-    } else {
-      throw 'Could not launch $url';
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Cannot launch URL: $url');
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      debugPrint('Error occurred: $e');
     }
   }
 

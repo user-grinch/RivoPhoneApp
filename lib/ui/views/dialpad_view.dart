@@ -144,7 +144,7 @@ class _DialPadViewState extends State<DialPadView> {
                       String key = keys[index];
                       return DialPadButton(
                         mainText: key,
-                        subText: subKeys[key],
+                        // subText: subKeys[key],
                         onUpdate: (String str) {
                           setState(() {
                             _number += str;

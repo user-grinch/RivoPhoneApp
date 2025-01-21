@@ -3,9 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/services/activity_service.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
-import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
 
 class ContactTile extends StatelessWidget {
@@ -46,7 +44,7 @@ class ContactTile extends StatelessWidget {
             .substring(1, contact.phones.toString().length - 1),
         style: GoogleFonts.cabin(
           fontSize: 12,
-          color: context.colorScheme.primary.withAlpha(200),
+          color: context.colorScheme.onSurface.withAlpha(200),
         ),
       ),
       trailing: Container(

@@ -5,13 +5,12 @@ import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
-import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
-import 'package:revo/ui/views/contactinfo_view.dart';
 import 'package:revo/utils/circle_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:revo/utils/utils.dart';
 
 class RecentsView extends StatefulWidget {
   const RecentsView({super.key});
@@ -83,7 +82,7 @@ class _RecentsViewState extends State<RecentsView> {
               log.date.getContextAwareDate(),
               style: GoogleFonts.cabin(
                 fontSize: 20,
-                color: context.colorScheme.primary,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),
@@ -105,7 +104,7 @@ class _RecentsViewState extends State<RecentsView> {
             log.displayName,
             style: GoogleFonts.cabin(
               fontSize: 16,
-              color: context.colorScheme.onSurface.withAlpha(200),
+              color: context.colorScheme.onSurface,
             ),
           ),
           trailing: Container(
@@ -148,8 +147,11 @@ class _RecentsViewState extends State<RecentsView> {
                 ],
               ),
               Text(
-                log.simDisplayName,
-                style: GoogleFonts.cabin(fontSize: 12, color: Colors.blueGrey),
+                convertSecondsToHMS(int.parse(log.duration)),
+                style: GoogleFonts.cabin(
+                  fontSize: 12,
+                  color: context.colorScheme.onSurface.withAlpha(200),
+                ),
               ),
             ],
           ),

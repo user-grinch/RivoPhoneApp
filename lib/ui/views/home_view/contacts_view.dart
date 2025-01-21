@@ -76,7 +76,7 @@ class _ContactsViewState extends State<ContactsView> {
                   context.read<ContactService>().createNewContact();
                 },
                 icon: Icon(
-                  Icons.person_add,
+                  Icons.person_add_alt,
                   color: context.colorScheme.primary,
                   size: 25,
                 ),
@@ -97,7 +97,7 @@ class _ContactsViewState extends State<ContactsView> {
               contacts[i].fullName[0],
               style: GoogleFonts.cabin(
                 fontSize: 20,
-                color: context.colorScheme.primary,
+                color: context.colorScheme.onSurface.withAlpha(200),
               ),
             ),
           ),
