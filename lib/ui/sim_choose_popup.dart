@@ -12,8 +12,9 @@ Widget simChooserDialog(BuildContext context, String number) {
     builder: (context, state) {
       return Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(24),
         ),
+        alignment: Alignment.bottomCenter,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -24,7 +25,7 @@ Widget simChooserDialog(BuildContext context, String number) {
                 text: "Choose SIM for call",
                 size: 24,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Column(
                 children: context.read<MobileService>().getSimInfo.map((sim) {
                   return _buildSimCard(context, sim, number);
@@ -41,9 +42,9 @@ Widget simChooserDialog(BuildContext context, String number) {
 Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
   return Card(
     elevation: 0,
-    margin: const EdgeInsets.symmetric(vertical: 8),
+    margin: const EdgeInsets.symmetric(vertical: 4),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
     ),
     color: context.colorScheme.primaryContainer,
     child: InkWell(
@@ -51,15 +52,15 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
         ActivityService().makePhoneCall(number, sim.simSlotIndex);
         Navigator.of(context).pop();
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
             CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
-                "${sim.cardId + 1}",
+                "${sim.simSlotIndex + 1}",
                 style: GoogleFonts.cabin(
                   color: context.colorScheme.onPrimary,
                   fontSize: 22,
@@ -74,7 +75,7 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
                   text: "${sim.carrierName} (${sim.countryCode.toUpperCase()})",
                   size: 18,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 CenterText(
                   text: sim.phoneNumber,
                   size: 12,

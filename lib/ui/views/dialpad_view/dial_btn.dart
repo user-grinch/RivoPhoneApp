@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
 
 class DialPadButton extends StatelessWidget {
@@ -21,7 +22,8 @@ class DialPadButton extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
-        backgroundColor: context.colorScheme.surface.withAlpha(180),
+        backgroundColor: context.colorScheme.surface.withAlpha(150),
+        overlayColor: context.colorScheme.onSurface,
       ),
       onPressed: () {
         onUpdate(mainText);
@@ -31,12 +33,19 @@ class DialPadButton extends StatelessWidget {
         children: [
           Text(
             mainText,
-            style: const TextStyle(fontSize: 24),
+            style: GoogleFonts.cabin(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: context.colorScheme.onSurface,
+            ),
           ),
           if (subText != null)
             Text(
               subText!,
-              style: const TextStyle(fontSize: 10),
+              style: GoogleFonts.cabin(
+                fontSize: 12,
+                color: context.colorScheme.onSurface,
+              ),
             ),
         ],
       ),
