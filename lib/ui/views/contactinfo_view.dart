@@ -8,6 +8,7 @@ import 'package:revo/model/contact.dart';
 import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
+import 'package:revo/utils/rounded_icon_btn.dart';
 import 'package:revo/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -47,19 +48,24 @@ class _ContactInfoViewState extends State<ContactInfoView> {
               spacing: 16,
               runSpacing: 16,
               children: [
-                _buildActionIcon(
-                    context: context,
-                    icon: Icons.qr_code,
-                    label: 'QR Code',
-                    onClick: () {
-                      Navigator.of(context).pushNamed(qrShareRoute,
-                          arguments: generateVCardString(widget.contact));
-                    }),
-                _buildActionIcon(
-                  context: context,
+                RoundedIconButton(
+                  context,
+                  size: 40,
+                  icon: Icons.qr_code,
+                  text: 'QR Code',
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      qrShareRoute,
+                      arguments: generateVCardString(widget.contact),
+                    );
+                  },
+                ),
+                RoundedIconButton(
+                  context,
                   icon: Icons.share,
-                  label: 'Share',
-                  onClick: () {
+                  size: 40,
+                  text: 'Share',
+                  onTap: () {
                     Share.shareXFiles([
                       XFile.fromData(
                           utf8.encode(generateVCardString(widget.contact)),
@@ -69,29 +75,34 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                     ]);
                   },
                 ),
-                _buildActionIcon(
-                    context: context,
-                    icon: widget.contact.isStarred
-                        ? Icons.star
-                        : Icons.star_border,
-                    label: 'Favourite',
-                    onClick: () {
-                      setState(() {
+                RoundedIconButton(
+                  context,
+                  icon:
+                      widget.contact.isStarred ? Icons.star : Icons.star_border,
+                  size: 40,
+                  text: 'Favourite',
+                  onTap: () {
+                    setState(
+                      () {
                         widget.contact.isStarred = !widget.contact.isStarred;
-                      });
-                      context
-                          .read<ContactService>()
-                          .updateContact(contact: widget.contact);
-                    }),
-                _buildActionIcon(
-                    context: context,
-                    icon: Icons.edit,
-                    label: 'Edit',
-                    onClick: () async {
-                      await context
-                          .read<ContactService>()
-                          .editContact(widget.contact);
-                    }),
+                      },
+                    );
+                    context
+                        .read<ContactService>()
+                        .updateContact(contact: widget.contact);
+                  },
+                ),
+                RoundedIconButton(
+                  context,
+                  icon: Icons.edit,
+                  size: 40,
+                  text: 'Edit',
+                  onTap: () async {
+                    await context
+                        .read<ContactService>()
+                        .editContact(widget.contact);
+                  },
+                ),
               ],
             ),
 
@@ -119,7 +130,6 @@ class _ContactInfoViewState extends State<ContactInfoView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Display all phone numbers
         if (widget.contact.phones.isNotEmpty)
           ...widget.contact.phones
               .map((phone) => _buildPhoneWithActionIcons(context, phone)),
@@ -129,11 +139,9 @@ class _ContactInfoViewState extends State<ContactInfoView> {
 
   Widget _buildPhoneWithActionIcons(BuildContext context, var phone) {
     return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 16), // Padding between phone numbers
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          // Phone number text
           Expanded(
             child: Text(
               phone,
@@ -146,18 +154,33 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           Wrap(
             spacing: 8,
             children: [
-              _buildLargeActionIcon(context, Icons.phone, 'Call', () {
-                showDialog(
-                  context: context,
-                  builder: (context) => simChooserDialog(context, phone),
-                );
-              }),
-              _buildLargeActionIcon(context, Icons.message, 'Message', () {
-                ActivityService().sendSMS(phone);
-              }),
-              _buildLargeActionIcon(context, Icons.video_call, 'Video', () {
-                ActivityService().makeVideoCall(phone);
-              }),
+              RoundedIconButton(
+                context,
+                icon: Icons.phone,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => simChooserDialog(context, phone),
+                  );
+                },
+                size: 35,
+              ),
+              RoundedIconButton(
+                context,
+                icon: Icons.sms_outlined,
+                onTap: () {
+                  ActivityService().sendSMS(phone);
+                },
+                size: 35,
+              ),
+              RoundedIconButton(
+                context,
+                icon: Icons.video_call,
+                onTap: () {
+                  ActivityService().makeVideoCall(phone);
+                },
+                size: 35,
+              ),
             ],
           ),
         ],
@@ -165,29 +188,11 @@ class _ContactInfoViewState extends State<ContactInfoView> {
     );
   }
 
-  Widget _buildLargeActionIcon(
-    BuildContext context,
-    IconData icon,
-    String label,
-    void Function()? pressed,
-  ) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: context.colorScheme.primary.withAlpha(25),
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-          onPressed: pressed,
-          icon: Icon(icon, color: context.colorScheme.primary, size: 24)),
-    );
-  }
-
   Widget _buildProfilePicture(BuildContext context) {
     return Positioned(
       top: 150,
       child: CircleAvatar(
+        backgroundColor: context.colorScheme.primaryContainer,
         radius: 120,
         backgroundImage: widget.contact.photo != null
             ? MemoryImage(widget.contact.photo!)
@@ -196,43 +201,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
             ? Icon(
                 Icons.person,
                 size: 100,
-                color: context.colorScheme.onPrimaryContainer,
+                color: context.colorScheme.onSurface,
               )
             : null,
       ),
-    );
-  }
-
-  Widget _buildActionIcon({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-    Function()? onClick,
-  }) {
-    return Column(
-      children: [
-        Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            color: context.colorScheme.primary.withAlpha(25),
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-              onPressed: onClick,
-              icon: Icon(icon, color: context.colorScheme.primary, size: 25)),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: GoogleFonts.cabin(
-            textStyle: context.textTheme.bodyLarge,
-            color: context.colorScheme.onSurface,
-            fontSize: 12,
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
     );
   }
 
@@ -251,10 +223,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: context.colorScheme.primary.withAlpha(25),
+          color: context.colorScheme.primaryContainer.withAlpha(25),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: context.colorScheme.primary, size: 20),
+        child: Icon(icon, color: context.colorScheme.onSurface, size: 20),
       ),
       title: Text(
         label,

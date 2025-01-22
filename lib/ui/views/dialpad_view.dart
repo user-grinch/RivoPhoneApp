@@ -7,6 +7,8 @@ import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/ui/views/common/matched_view.dart';
 import 'package:revo/ui/views/dialpad_view/action_btn.dart';
 import 'package:revo/ui/views/dialpad_view/dial_btn.dart';
+import 'package:revo/utils/center_text.dart';
+import 'package:revo/utils/rounded_icon_btn.dart';
 
 class DialPadView extends StatefulWidget {
   const DialPadView({super.key});
@@ -73,10 +75,12 @@ class _DialPadViewState extends State<DialPadView> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: MatchedView(
-                scrollController: _scrollController,
-                number: _number,
-              ),
+              child: _number.isEmpty
+                  ? CenterText(text: 'Your results will appear here')
+                  : MatchedView(
+                      scrollController: _scrollController,
+                      number: _number,
+                    ),
             ),
             Container(
               color: context.colorScheme.surfaceTint.withAlpha(30),
@@ -89,42 +93,12 @@ class _DialPadViewState extends State<DialPadView> {
                             horizontal: 20,
                             vertical: 15,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  context
-                                      .read<ContactService>()
-                                      .createNewContact(number: _number);
-                                },
-                                icon: const Icon(Icons.person_add),
-                                color: context.colorScheme.primary,
-                              ),
-                              Spacer(),
-                              Text(
-                                _number,
-                                style: GoogleFonts.cabin(
-                                  fontSize: 30,
-                                  color: context.colorScheme.onSurface,
-                                ),
-                              ),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_number.isNotEmpty) {
-                                      _number = _number.substring(
-                                        0,
-                                        _number.length - 1,
-                                      );
-                                    }
-                                  });
-                                },
-                                icon: const Icon(Icons.backspace),
-                                color: context.colorScheme.primary,
-                              ),
-                            ],
+                          child: Text(
+                            _number,
+                            style: GoogleFonts.cabin(
+                              fontSize: 30,
+                              color: context.colorScheme.onSurface,
+                            ),
                           ),
                         )
                       : SizedBox(height: 30),
@@ -154,21 +128,60 @@ class _DialPadViewState extends State<DialPadView> {
                     },
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      DialActionButton(
-                        icon: Icons.sim_card,
-                        label: 'Call',
-                        func: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) =>
-                                simChooserDialog(context, _number),
-                          );
-                        },
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (_number.isNotEmpty)
+                          RoundedIconButton(
+                            context,
+                            icon: Icons.person_add,
+                            size: 37,
+                            onTap: () {
+                              context
+                                  .read<ContactService>()
+                                  .createNewContact(number: _number);
+                            },
+                          ),
+                        Spacer(),
+                        DialActionButton(
+                          icon: Icons.sim_card,
+                          label: 'Call',
+                          func: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  simChooserDialog(context, _number),
+                            );
+                          },
+                        ),
+                        Spacer(),
+                        if (_number.isNotEmpty)
+                          RoundedIconButton(
+                            context,
+                            icon: Icons.backspace,
+                            size: 37,
+                            onTap: () {
+                              setState(() {
+                                if (_number.isNotEmpty) {
+                                  _number = _number.substring(
+                                    0,
+                                    _number.length - 1,
+                                  );
+                                }
+                              });
+                            },
+                            onLongPress: () {
+                              setState(() {
+                                if (_number.isNotEmpty) {
+                                  _number = '';
+                                }
+                              });
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 30),
                 ],

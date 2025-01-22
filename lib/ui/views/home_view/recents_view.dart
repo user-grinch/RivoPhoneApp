@@ -10,6 +10,7 @@ import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/utils/circle_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:revo/utils/rounded_icon_btn.dart';
 import 'package:revo/utils/utils.dart';
 
 class RecentsView extends StatefulWidget {
@@ -88,9 +89,10 @@ class _RecentsViewState extends State<RecentsView> {
           ),
         ListTile(
           onTap: () async {
-            await Navigator.of(context).pushNamed(contactInfoRoute,
-                arguments:
-                    context.read<ContactService>().findByNumber(log.number));
+            showDialog(
+              context: context,
+              builder: (context) => simChooserDialog(context, log.number),
+            );
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -107,23 +109,15 @@ class _RecentsViewState extends State<RecentsView> {
               color: context.colorScheme.onSurface,
             ),
           ),
-          trailing: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: context.colorScheme.primary.withAlpha(25),
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  builder: (context) => simChooserDialog(context, log.number),
-                );
-              },
-              icon: Icon(Icons.call,
-                  color: context.colorScheme.primary, size: 25),
-            ),
+          trailing: RoundedIconButton(
+            context,
+            icon: Icons.arrow_forward_ios_rounded,
+            size: 30,
+            onTap: () async {
+              await Navigator.of(context).pushNamed(contactInfoRoute,
+                  arguments:
+                      context.read<ContactService>().findByNumber(log.number));
+            },
           ),
           subtitle: Column(
             mainAxisAlignment: MainAxisAlignment.start,

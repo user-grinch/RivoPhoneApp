@@ -5,6 +5,7 @@ import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/ui/sim_choose_popup.dart';
 import 'package:revo/utils/circle_profile.dart';
+import 'package:revo/utils/rounded_icon_btn.dart';
 
 class ContactTile extends StatelessWidget {
   final Contact contact;
@@ -18,9 +19,9 @@ class ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () async {
-        await Navigator.of(context).pushNamed(
-          contactInfoRoute,
-          arguments: contact,
+        showDialog(
+          context: context,
+          builder: (context) => simChooserDialog(context, contact.phones[0]),
         );
       },
       shape: RoundedRectangleBorder(
@@ -47,23 +48,16 @@ class ContactTile extends StatelessWidget {
           color: context.colorScheme.onSurface.withAlpha(200),
         ),
       ),
-      trailing: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: context.colorScheme.primary.withAlpha(25),
-          shape: BoxShape.circle,
-        ),
-        child: IconButton(
-          onPressed: () async {
-            showDialog(
-              context: context,
-              builder: (context) =>
-                  simChooserDialog(context, contact.phones[0]),
-            );
-          },
-          icon: Icon(Icons.call, color: context.colorScheme.primary, size: 25),
-        ),
+      trailing: RoundedIconButton(
+        context,
+        icon: Icons.arrow_forward_ios_rounded,
+        size: 30,
+        onTap: () async {
+          await Navigator.of(context).pushNamed(
+            contactInfoRoute,
+            arguments: contact,
+          );
+        },
       ),
     );
   }

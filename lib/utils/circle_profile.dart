@@ -14,6 +14,7 @@ class CircleProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: size,
+      backgroundColor: context.colorScheme.primaryContainer,
       backgroundImage: profile != null ? MemoryImage(profile!) : null,
       child: profile == null
           ? name.isNotEmpty
@@ -25,7 +26,7 @@ class CircleProfile extends StatelessWidget {
               : Icon(
                   Icons.person_rounded,
                   size: size,
-                  color: context.colorScheme.onPrimaryContainer,
+                  color: context.colorScheme.onSurface,
                 )
           : null,
     );

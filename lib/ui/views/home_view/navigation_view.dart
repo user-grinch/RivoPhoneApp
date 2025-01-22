@@ -27,7 +27,8 @@ class _NavigationViewState extends State<NavigationView> {
   Widget build(BuildContext context) {
     return NavigationBar(
       backgroundColor: context.colorScheme.surface,
-      elevation: 1,
+      elevation: 3,
+      indicatorColor: context.colorScheme.primaryContainer,
       surfaceTintColor: context.colorScheme.surfaceTint,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
