@@ -62,4 +62,22 @@ class ActivityService {
       }
     }
   }
+
+  void openWhatsApp(String phoneNumber) async {
+    final url = 'https://wa.me/$phoneNumber';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void openTelegram(String phoneNumber) async {
+    final url = 'https://t.me/$phoneNumber';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

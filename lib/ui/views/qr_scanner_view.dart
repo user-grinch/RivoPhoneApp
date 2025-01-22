@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 
@@ -10,6 +11,10 @@ class QRScannerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text('Scan QR Code to add contact'),
       ),
       body: Stack(

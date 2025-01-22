@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
@@ -7,7 +8,7 @@ import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
-import 'package:revo/ui/sim_choose_popup.dart';
+import 'package:revo/ui/popups/sim_choose_popup.dart';
 import 'package:revo/utils/circle_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:revo/utils/rounded_icon_btn.dart';
@@ -111,7 +112,7 @@ class _RecentsViewState extends State<RecentsView> {
           ),
           trailing: RoundedIconButton(
             context,
-            icon: Icons.arrow_forward_ios_rounded,
+            icon: HugeIcons.strokeRoundedArrowRight01,
             size: 30,
             onTap: () async {
               await Navigator.of(context).pushNamed(contactInfoRoute,

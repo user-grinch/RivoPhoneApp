@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
-import 'package:revo/ui/sim_choose_popup.dart';
+import 'package:revo/ui/popups/sim_choose_popup.dart';
 import 'package:revo/ui/views/common/matched_view.dart';
 import 'package:revo/ui/views/dialpad_view/action_btn.dart';
 import 'package:revo/ui/views/dialpad_view/dial_btn.dart';
@@ -95,7 +96,7 @@ class _DialPadViewState extends State<DialPadView> {
                           ),
                           child: Text(
                             _number,
-                            style: GoogleFonts.cabin(
+                            style: GoogleFonts.raleway(
                               fontSize: 30,
                               color: context.colorScheme.onSurface,
                             ),
@@ -136,8 +137,8 @@ class _DialPadViewState extends State<DialPadView> {
                         if (_number.isNotEmpty)
                           RoundedIconButton(
                             context,
-                            icon: Icons.person_add,
-                            size: 37,
+                            icon: HugeIcons.strokeRoundedUserAdd01,
+                            size: 40,
                             onTap: () {
                               context
                                   .read<ContactService>()
@@ -146,7 +147,7 @@ class _DialPadViewState extends State<DialPadView> {
                           ),
                         Spacer(),
                         DialActionButton(
-                          icon: Icons.sim_card,
+                          icon: HugeIcons.strokeRoundedSimcard01,
                           label: 'Call',
                           func: () {
                             showDialog(
@@ -160,8 +161,8 @@ class _DialPadViewState extends State<DialPadView> {
                         if (_number.isNotEmpty)
                           RoundedIconButton(
                             context,
-                            icon: Icons.backspace,
-                            size: 37,
+                            icon: HugeIcons.strokeRoundedArrowLeft01,
+                            size: 40,
                             onTap: () {
                               setState(() {
                                 if (_number.isNotEmpty) {

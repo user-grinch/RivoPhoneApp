@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
-import 'package:revo/ui/sim_choose_popup.dart';
+import 'package:revo/ui/popups/number_choose_popup.dart';
+import 'package:revo/ui/popups/qr_popup.dart';
+import 'package:revo/ui/popups/sim_choose_popup.dart';
 import 'package:revo/utils/rounded_icon_btn.dart';
 import 'package:revo/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
@@ -24,9 +27,29 @@ class _ContactInfoViewState extends State<ContactInfoView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        elevation: 0,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 1,
+        onPressed: () async {
+          await context.read<ContactService>().editContact(widget.contact);
+        },
+        backgroundColor: context.colorScheme.primaryContainer,
+        label: Text(
+          "Edit",
+          style: TextStyle(color: context.colorScheme.onPrimaryContainer),
+        ),
+        icon: Icon(HugeIcons.strokeRoundedEdit02,
+            color: context.colorScheme.onPrimaryContainer),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 100, left: 16, right: 16),
+            top: MediaQuery.of(context).padding.top, left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -41,99 +64,193 @@ class _ContactInfoViewState extends State<ContactInfoView> {
               textAlign: TextAlign.center,
             ),
 
-            // Action buttons
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 16,
-              runSpacing: 16,
-              children: [
-                RoundedIconButton(
-                  context,
-                  size: 40,
-                  icon: Icons.qr_code,
-                  text: 'QR Code',
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      qrShareRoute,
-                      arguments: generateVCardString(widget.contact),
-                    );
-                  },
-                ),
-                RoundedIconButton(
-                  context,
-                  icon: Icons.share,
-                  size: 40,
-                  text: 'Share',
-                  onTap: () {
-                    Share.shareXFiles([
-                      XFile.fromData(
-                          utf8.encode(generateVCardString(widget.contact)),
-                          mimeType: 'text/plain')
-                    ], fileNameOverrides: [
-                      'contact.vcf'
-                    ]);
-                  },
-                ),
-                RoundedIconButton(
-                  context,
-                  icon:
-                      widget.contact.isStarred ? Icons.star : Icons.star_border,
-                  size: 40,
-                  text: 'Favourite',
-                  onTap: () {
-                    setState(
-                      () {
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 20,
+                children: [
+                  RoundedIconButton(
+                    context,
+                    size: 45,
+                    icon: HugeIcons.strokeRoundedQrCode,
+                    text: 'QR Code',
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => qrCodePopup(
+                          context,
+                          generateVCardString(widget.contact),
+                        ),
+                      );
+                    },
+                  ),
+                  RoundedIconButton(
+                    context,
+                    icon: HugeIcons.strokeRoundedShare08,
+                    size: 45,
+                    text: 'Share',
+                    onTap: () {
+                      Share.shareXFiles([
+                        XFile.fromData(
+                            utf8.encode(generateVCardString(widget.contact)),
+                            mimeType: 'text/plain')
+                      ], fileNameOverrides: [
+                        'contact.vcf'
+                      ]);
+                    },
+                  ),
+                  RoundedIconButton(
+                    context,
+                    icon: HugeIcons.strokeRoundedClock04,
+                    size: 45,
+                    text: 'Call History',
+                    onTap: () {
+                      Navigator.of(context).pushNamed(callHistoryRoute,
+                          arguments:
+                              widget.contact.phones.map((e) => e).toList());
+                    },
+                  ),
+                  RoundedIconButton(
+                    context,
+                    icon: widget.contact.isStarred
+                        ? HugeIcons.strokeRoundedHeartCheck
+                        : HugeIcons.strokeRoundedHeartAdd,
+                    size: 45,
+                    text: 'Favourite',
+                    onTap: () {
+                      setState(() {
                         widget.contact.isStarred = !widget.contact.isStarred;
-                      },
-                    );
-                    context
-                        .read<ContactService>()
-                        .updateContact(contact: widget.contact);
-                  },
-                ),
-                RoundedIconButton(
-                  context,
-                  icon: Icons.edit,
-                  size: 40,
-                  text: 'Edit',
-                  onTap: () async {
-                    await context
-                        .read<ContactService>()
-                        .editContact(widget.contact);
-                  },
-                ),
-              ],
+                      });
+                      context
+                          .read<ContactService>()
+                          .updateContact(contact: widget.contact);
+                    },
+                  ),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 16),
             _buildContactInfoSection(context),
             const SizedBox(height: 16),
-            _buildAdditionalDetailsSection(context),
-            const SizedBox(height: 24),
-            _buildFlatOption(context, Icons.history, 'Call History', () {
-              Navigator.of(context).pushNamed(callHistoryRoute,
-                  arguments: widget.contact.phones.map(
-                    (e) {
-                      return e;
-                    },
-                  ).toList());
-            }),
-            const SizedBox(height: 50),
+
+            // External Apps Section
+            Card(
+              elevation: 0,
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              color: context.colorScheme.secondaryContainer.withAlpha(100),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "External Apps",
+                      style: GoogleFonts.cabin(
+                        fontSize: 20,
+                        color: context.colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      children: [
+                        _buildListTile(context, HugeIcons.strokeRoundedTelegram,
+                            'Telegram', () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => numberChooserDialog(
+                                context, widget.contact.phones,
+                                (String num) async {
+                              ActivityService().openTelegram(num);
+                            }),
+                          );
+                        }),
+                        _buildListTile(context, HugeIcons.strokeRoundedVideo01,
+                            'Video Call', () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => numberChooserDialog(
+                                context, widget.contact.phones,
+                                (String num) async {
+                              ActivityService().makeVideoCall(num);
+                            }),
+                          );
+                        }),
+                        _buildListTile(context, HugeIcons.strokeRoundedWhatsapp,
+                            'WhatsApp', () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => numberChooserDialog(
+                                context, widget.contact.phones,
+                                (String num) async {
+                              ActivityService().openWhatsApp(num);
+                            }),
+                          );
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildListTile(
+      BuildContext context, IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      leading: Container(
+        width: 35,
+        height: 35,
+        decoration: BoxDecoration(
+          color: context.colorScheme.primaryContainer,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: context.colorScheme.onPrimaryContainer),
+      ),
+      title: Text(
+        label,
+        style: context.textTheme.bodyLarge?.copyWith(
+          color: context.colorScheme.onSurface,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+
   Widget _buildContactInfoSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.contact.phones.isNotEmpty)
-          ...widget.contact.phones
-              .map((phone) => _buildPhoneWithActionIcons(context, phone)),
-      ],
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      color: context.colorScheme.secondaryContainer.withAlpha(100),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Phone Numbers",
+              style: GoogleFonts.cabin(
+                fontSize: 20,
+                color: context.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (widget.contact.phones.isNotEmpty)
+              ...widget.contact.phones
+                  .map((phone) => _buildPhoneWithActionIcons(context, phone)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -152,34 +269,26 @@ class _ContactInfoViewState extends State<ContactInfoView> {
             ),
           ),
           Wrap(
-            spacing: 8,
+            spacing: 12,
             children: [
               RoundedIconButton(
                 context,
-                icon: Icons.phone,
+                icon: HugeIcons.strokeRoundedCall02,
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (context) => simChooserDialog(context, phone),
                   );
                 },
-                size: 35,
+                size: 36,
               ),
               RoundedIconButton(
                 context,
-                icon: Icons.sms_outlined,
+                icon: HugeIcons.strokeRoundedMessage01,
                 onTap: () {
                   ActivityService().sendSMS(phone);
                 },
-                size: 35,
-              ),
-              RoundedIconButton(
-                context,
-                icon: Icons.video_call,
-                onTap: () {
-                  ActivityService().makeVideoCall(phone);
-                },
-                size: 35,
+                size: 36,
               ),
             ],
           ),
@@ -189,93 +298,19 @@ class _ContactInfoViewState extends State<ContactInfoView> {
   }
 
   Widget _buildProfilePicture(BuildContext context) {
-    return Positioned(
-      top: 150,
-      child: CircleAvatar(
-        backgroundColor: context.colorScheme.primaryContainer,
-        radius: 120,
-        backgroundImage: widget.contact.photo != null
-            ? MemoryImage(widget.contact.photo!)
-            : null,
-        child: widget.contact.photo == null
-            ? Icon(
-                Icons.person,
-                size: 100,
-                color: context.colorScheme.onSurface,
-              )
-            : null,
-      ),
-    );
-  }
-
-  Widget _buildFlatOption(
-    BuildContext context,
-    IconData icon,
-    String label,
-    Function()? onClick,
-  ) {
-    return ListTile(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer.withAlpha(25),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: context.colorScheme.onSurface, size: 20),
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.cabin(
-          textStyle: context.textTheme.bodyLarge,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-      onTap: onClick,
-    );
-  }
-
-  Widget _buildAdditionalDetailsSection(BuildContext context) {
-    // return Column(
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: [
-    //     if (widget.contact.notes.isNotEmpty)
-    //       _buildDetail(context, 'Notes', widget.contact.notes.first.note),
-    //     if (widget.contact.groups.isNotEmpty)
-    //       _buildDetail(context, 'Groups', widget.contact.groups.first.name),
-    //     if (widget.contact.events.isNotEmpty)
-    //       _buildDetail(
-    //           context, 'Birthday', widget.contact.events.first),
-    //   ],
-    // );
-    return Container();
-  }
-
-  Widget _buildDetail(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Text(
-            '$label:',
-            style: context.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.colorScheme.onSurface),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            value,
-            style: GoogleFonts.cabin(
-              textStyle: context.textTheme.bodyLarge,
-              color: context.colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
+    return CircleAvatar(
+      backgroundColor: context.colorScheme.primaryContainer,
+      radius: 70,
+      backgroundImage: widget.contact.photo != null
+          ? MemoryImage(widget.contact.photo!)
+          : null,
+      child: widget.contact.photo == null
+          ? Icon(
+              HugeIcons.strokeRoundedUser,
+              size: 100,
+              color: context.colorScheme.onPrimaryContainer,
+            )
+          : null,
     );
   }
 }

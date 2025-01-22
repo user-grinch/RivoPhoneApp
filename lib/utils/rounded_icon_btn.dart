@@ -35,7 +35,7 @@ class RoundedIconButton extends StatelessWidget {
             height: size,
             child: Icon(
               icon,
-              color: context.colorScheme.onSurface,
+              color: context.colorScheme.onPrimaryContainer,
               size: size / 1.75,
             ),
           ),

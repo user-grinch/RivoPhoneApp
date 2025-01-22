@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
+import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/views/home_view/appbar_view.dart';
 import 'package:revo/ui/views/home_view/contacts_view.dart';
 import 'package:revo/ui/views/home_view/fav_view.dart';
@@ -15,10 +18,19 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final PageController _pageController;
+  int _currentPage = 0;
 
   @override
   void initState() {
     _pageController = PageController();
+    _pageController.addListener(() {
+      final pageIndex = _pageController.page?.round() ?? 0;
+      if (pageIndex != _currentPage) {
+        setState(() {
+          _currentPage = pageIndex;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -46,10 +58,16 @@ class _HomeViewState extends State<HomeView> {
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(dialpadRoute);
+          if (_pageController.page == 1.0) {
+            context.read<ContactService>().createNewContact();
+          } else {
+            Navigator.of(context).pushNamed(dialpadRoute);
+          }
         },
         elevation: 1,
-        child: const Icon(Icons.dialpad),
+        child: Icon(_currentPage == 1.0
+            ? HugeIcons.strokeRoundedUserAdd01
+            : HugeIcons.strokeRoundedDialpadCircle02),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
 
 class CircleProfile extends StatelessWidget {
@@ -20,11 +22,14 @@ class CircleProfile extends StatelessWidget {
           ? name.isNotEmpty
               ? Text(
                   name[0].toUpperCase(),
-                  style: TextStyle(
-                      color: context.colorScheme.onSurface, fontSize: size),
+                  style: GoogleFonts.raleway(
+                    fontSize: size,
+                    fontWeight: FontWeight.w300,
+                    color: context.colorScheme.onSurface,
+                  ),
                 )
               : Icon(
-                  Icons.person_rounded,
+                  HugeIcons.strokeRoundedUser,
                   size: size,
                   color: context.colorScheme.onSurface,
                 )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
 
 class NavigationView extends StatefulWidget {
@@ -33,19 +34,19 @@ class _NavigationViewState extends State<NavigationView> {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
-          icon: Icon(Icons.access_time),
+          icon: Icon(HugeIcons.strokeRoundedClock01),
           label: 'Recents',
-          selectedIcon: Icon(Icons.access_time_filled),
+          selectedIcon: Icon(HugeIcons.strokeRoundedClock01),
         ),
         NavigationDestination(
-          icon: Icon(Icons.person_outlined),
+          icon: Icon(HugeIcons.strokeRoundedUser),
           label: 'Contacts',
-          selectedIcon: Icon(Icons.person),
+          selectedIcon: Icon(HugeIcons.strokeRoundedUser),
         ),
         NavigationDestination(
-          icon: Icon(Icons.star_outline),
+          icon: Icon(HugeIcons.strokeRoundedFavourite),
           label: 'Favorites',
-          selectedIcon: Icon(Icons.star),
+          selectedIcon: Icon(HugeIcons.strokeRoundedFavourite),
         ),
       ],
       onDestinationSelected: (index) {

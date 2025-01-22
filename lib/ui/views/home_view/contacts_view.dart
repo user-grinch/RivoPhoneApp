@@ -67,29 +67,6 @@ class _ContactsViewState extends State<ContactsView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (i == 0)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton.icon(
-                onPressed: () async {
-                  context.read<ContactService>().createNewContact();
-                },
-                icon: Icon(
-                  Icons.person_add_alt,
-                  color: context.colorScheme.primary,
-                  size: 25,
-                ),
-                label: Text(
-                  "Create a new contact",
-                  style: GoogleFonts.cabin(
-                    fontSize: 18,
-                    color: context.colorScheme.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
         if (_shouldShowHeader(contacts, i))
           Padding(
             padding: EdgeInsets.fromLTRB(30, i == 0 ? 10 : 50, 0, 0),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 
@@ -32,7 +33,7 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.pushNamed(context, qrScanRoute);
                 },
                 icon: Icon(
-                  Icons.qr_code_scanner_rounded,
+                  HugeIcons.strokeRoundedQrCode,
                 ),
               ),
               Text(
@@ -47,7 +48,7 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.pushNamed(context, settingsRoute);
                 },
                 icon: Icon(
-                  Icons.settings_rounded,
+                  HugeIcons.strokeRoundedSettings03,
                 ),
               ),
             ],

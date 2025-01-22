@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 enum CallType {
   incoming,
@@ -13,15 +14,15 @@ extension CallTypeHelper on CallType {
   IconData getIcon() {
     switch (this) {
       case CallType.incoming:
-        return Icons.call_received;
+        return HugeIcons.strokeRoundedCallReceived;
       case CallType.outgoing:
-        return Icons.call_made;
+        return HugeIcons.strokeRoundedCallOutgoing01;
       case CallType.rejected:
-        return Icons.call_end;
+        return HugeIcons.strokeRoundedCallDisabled02;
       case CallType.blocked:
-        return Icons.block;
+        return HugeIcons.strokeRoundedCallBlocked;
       default:
-        return Icons.call_missed;
+        return HugeIcons.strokeRoundedCallMissed01;
     }
   }
 

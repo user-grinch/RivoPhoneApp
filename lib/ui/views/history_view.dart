@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/call_log.dart';
@@ -36,6 +37,10 @@ class _HistoryViewState extends State<HistoryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text('Call History'),
       ),
       body: BlocBuilder<CallLogService, List<CallLog>>(
@@ -60,37 +65,47 @@ class _HistoryViewState extends State<HistoryView> {
     String underlineText =
         '${history.type.getText()}  ${convertSecondsToHMS(int.parse(history.duration))}';
 
-    return ListTile(
-      leading: Container(
-        width: 50,
-        height: 50,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      child: Container(
         decoration: BoxDecoration(
-          color: context.colorScheme.primary.withAlpha(25),
-          shape: BoxShape.circle,
+          color: context.colorScheme.secondaryContainer.withAlpha(100),
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(25),
         ),
-        child: Icon(history.type.getIcon(),
-            color: history.type.getColor(), size: 28),
-      ),
-      title: Text(
-        history.date.getContextAwareDateTime(),
-        style: GoogleFonts.cabin(fontSize: 16),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            history.simDisplayName,
-            style: const TextStyle(color: Colors.grey),
+        child: ListTile(
+          leading: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: context.colorScheme.primary.withAlpha(25),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(history.type.getIcon(),
+                color: history.type.getColor(), size: 28),
           ),
-          Text(
-            underlineText,
-            style: const TextStyle(color: Colors.grey),
+          title: Text(
+            history.date.getContextAwareDateTime(),
+            style: GoogleFonts.cabin(fontSize: 16),
           ),
-          Text(
-            history.number,
-            style: const TextStyle(color: Colors.grey),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                history.simDisplayName,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              Text(
+                underlineText,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              Text(
+                history.number,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

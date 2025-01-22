@@ -33,9 +33,9 @@ class DialPadButton extends StatelessWidget {
         children: [
           Text(
             mainText,
-            style: GoogleFonts.cabin(
+            style: GoogleFonts.raleway(
               fontSize: 28,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               color: context.colorScheme.onSurface,
             ),
           ),

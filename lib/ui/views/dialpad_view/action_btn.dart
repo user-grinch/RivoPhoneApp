@@ -23,7 +23,7 @@ class DialActionButton extends StatelessWidget {
       onPressed: func,
       child: Row(
         children: [
-          Icon(Icons.sim_card),
+          Icon(icon),
           SizedBox(
             width: 2,
           ),

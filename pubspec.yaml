@@ -50,6 +50,7 @@ dependencies:
   direct_caller_sim_choice: ^1.0.5
   phone_state: ^2.1.1
   flutter_native_splash: ^2.4.4
+  hugeicons: ^0.0.7
 
 flutter_native_splash:
   image: 'assets/splash.png'
