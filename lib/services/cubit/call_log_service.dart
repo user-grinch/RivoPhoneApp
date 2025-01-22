@@ -16,7 +16,7 @@ class CallLogService extends Cubit<List<CallLog>> {
 
   Future<void> _initialize() async {
     await ActivityService().requestPermissions();
-    if (state.isEmpty && await Permission.phone.status.isGranted) {
+    if (await Permission.phone.status.isGranted) {
       var fContact = (await fc.FlutterContacts.getContacts(
         withProperties: true,
         withAccounts: true,
@@ -90,7 +90,7 @@ class CallLogService extends Cubit<List<CallLog>> {
     return filteredLogs;
   }
 
-  CallLogService getAll() {
+  CallLogService refresh() {
     _initialize();
     return this;
   }

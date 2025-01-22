@@ -1,5 +1,5 @@
 String normalizePhoneNumber(String phoneNumber) {
-  return phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+  return phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
 }
 
 String convertSecondsToHMS(int totalSeconds) {

@@ -14,7 +14,7 @@ class ContactService extends Cubit<List<Contact>> {
 
   Future<void> _initialize() async {
     await ActivityService().requestPermissions();
-    if (state.isEmpty && await Permission.contacts.status.isGranted) {
+    if (await Permission.contacts.status.isGranted) {
       var contact = (await fc.FlutterContacts.getContacts(
         withProperties: true,
         withAccounts: true,
@@ -31,7 +31,7 @@ class ContactService extends Cubit<List<Contact>> {
     return state.where((e) => e.isStarred).toList();
   }
 
-  ContactService getAll() {
+  ContactService refresh() {
     _initialize();
     return this;
   }
@@ -42,7 +42,9 @@ class ContactService extends Cubit<List<Contact>> {
       return state.firstWhere((f) {
         return f.phones.any((g) {
           String contactNumber = normalizePhoneNumber(g);
-          return target.endsWith(contactNumber) || target == contactNumber;
+          return contactNumber.endsWith(target) ||
+              // target.endsWith(contactNumber) ||
+              target == contactNumber;
         });
       });
     } catch (_) {
@@ -51,6 +53,18 @@ class ContactService extends Cubit<List<Contact>> {
           displayName: "Unknown",
           fullName: "Unknown",
           phones: [number]);
+    }
+  }
+
+  Contact findByName(String name) {
+    try {
+      return state.firstWhere((f) {
+        return name.isNotEmpty &&
+            f.phones.isNotEmpty &&
+            f.fullName.toLowerCase().contains(name.toLowerCase());
+      });
+    } catch (_) {
+      return Contact(id: '"Unknown"', displayName: "Unknown", fullName: name);
     }
   }
 

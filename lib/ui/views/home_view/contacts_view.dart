@@ -30,23 +30,40 @@ class _ContactsViewState extends State<ContactsView> {
     super.dispose();
   }
 
+  Future<void> _refreshContacts(BuildContext context) async {
+    context.read<ContactService>().refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ContactService, List<Contact>>(
       builder: (context, state) {
         if (state.isEmpty) {
-          return CenterText(text: 'No contacts found');
+          return RefreshIndicator(
+            onRefresh: () => _refreshContacts(context),
+            child: ListView(
+              physics: AlwaysScrollableScrollPhysics(),
+              children: [
+                CenterText(text: 'No contacts found'),
+              ],
+            ),
+          );
         }
-        return Scrollbar(
-          trackVisibility: true,
-          thickness: 2.5,
-          interactive: true,
-          radius: Radius.circular(30),
-          controller: _controller,
-          child: ListView.builder(
-            itemCount: state.length,
+
+        return RefreshIndicator(
+          onRefresh: () => _refreshContacts(context),
+          child: Scrollbar(
+            trackVisibility: true,
+            thickness: 2.5,
+            interactive: true,
+            radius: Radius.circular(30),
             controller: _controller,
-            itemBuilder: (context, i) => _displayContact(context, state, i),
+            child: ListView.builder(
+              itemCount: state.length,
+              controller: _controller,
+              physics: AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context, i) => _displayContact(context, state, i),
+            ),
           ),
         );
       },
@@ -79,31 +96,34 @@ class _ContactsViewState extends State<ContactsView> {
             ),
           ),
         ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Row(
-              children: [
-                const SizedBox(width: 10),
-                CircleProfile(
-                  name: contacts[i].displayName,
-                  profile: contacts[i].photo,
-                  size: 30,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              const SizedBox(width: 10),
+              CircleProfile(
+                name: contacts[i].displayName,
+                profile: contacts[i].photo,
+                size: 30,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                contacts[i].displayName,
+                style: GoogleFonts.raleway(
+                  fontSize: 16,
+                  color: context.colorScheme.onSurface,
                 ),
-                const SizedBox(width: 10),
-                Text(contacts[i].displayName,
-                    style: GoogleFonts.raleway(
-                      fontSize: 16,
-                      color: context.colorScheme.onSurface,
-                    )),
-              ],
-            ),
-            onTap: () async {
-              await Navigator.of(context).pushNamed(
-                contactInfoRoute,
-                arguments: contacts[i],
-              );
-            }),
+              ),
+            ],
+          ),
+          onTap: () async {
+            await Navigator.of(context).pushNamed(
+              contactInfoRoute,
+              arguments: contacts[i],
+            );
+          },
+        ),
       ],
     );
   }

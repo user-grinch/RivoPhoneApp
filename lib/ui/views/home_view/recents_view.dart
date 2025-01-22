@@ -36,6 +36,11 @@ class _RecentsViewState extends State<RecentsView> {
     super.dispose();
   }
 
+  Future<void> _refreshLogs(BuildContext context) async {
+    // Call a method in your CallLogService to refresh the call logs.
+    await context.read<CallLogService>().refresh(); // Example method
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
@@ -44,26 +49,38 @@ class _RecentsViewState extends State<RecentsView> {
       interactive: true,
       radius: Radius.circular(30),
       controller: _controller,
-      child: BlocBuilder<CallLogService, List<CallLog>>(
-        builder: (BuildContext context, List<CallLog> state) {
-          if (state.isEmpty) {
-            return const Center(
-              child: Text('No call logs found.'),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: state.length,
-            controller: _controller,
-            itemBuilder: (context, i) {
-              return _buildLog(
-                context,
-                state[i],
-                _shouldShowHeader(state, i),
+      child: RefreshIndicator(
+        onRefresh: () => _refreshLogs(context),
+        child: BlocBuilder<CallLogService, List<CallLog>>(
+          builder: (BuildContext context, List<CallLog> state) {
+            if (state.isEmpty) {
+              return ListView(
+                physics: AlwaysScrollableScrollPhysics(),
+                children: const [
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text('No call logs found.'),
+                    ),
+                  ),
+                ],
               );
-            },
-          );
-        },
+            }
+
+            return ListView.builder(
+              itemCount: state.length,
+              controller: _controller,
+              physics: AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context, i) {
+                return _buildLog(
+                  context,
+                  state[i],
+                  _shouldShowHeader(state, i),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -117,7 +134,7 @@ class _RecentsViewState extends State<RecentsView> {
             onTap: () async {
               await Navigator.of(context).pushNamed(contactInfoRoute,
                   arguments:
-                      context.read<ContactService>().findByNumber(log.number));
+                      context.read<ContactService>().findByName(log.name));
             },
           ),
           subtitle: Column(
