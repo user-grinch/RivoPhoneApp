@@ -58,7 +58,7 @@ class FavView extends StatelessWidget {
             child: Text(
               contact.displayName,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 color: context.colorScheme.onSurface,
                 fontSize: 14,
               ),

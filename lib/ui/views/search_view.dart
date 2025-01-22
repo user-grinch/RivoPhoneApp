@@ -72,12 +72,12 @@ class _SearchViewState extends State<SearchView> {
       child: TextField(
         focusNode: _focusNode,
         controller: _controller,
-        style: GoogleFonts.cabin(
+        style: GoogleFonts.raleway(
           color: context.colorScheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: 'Search name/ number...',
-          hintStyle: GoogleFonts.cabin(
+          hintStyle: GoogleFonts.raleway(
             color: Colors.grey,
           ),
           border: InputBorder.none,

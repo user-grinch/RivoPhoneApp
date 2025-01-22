@@ -35,7 +35,7 @@ class ContactTile extends StatelessWidget {
       ),
       title: Text(
         contact.displayName,
-        style: GoogleFonts.cabin(
+        style: GoogleFonts.raleway(
           fontSize: 16,
           color: context.colorScheme.onSurface.withAlpha(200),
         ),
@@ -44,7 +44,7 @@ class ContactTile extends StatelessWidget {
         contact.phones
             .toString()
             .substring(1, contact.phones.toString().length - 1),
-        style: GoogleFonts.cabin(
+        style: GoogleFonts.raleway(
           fontSize: 12,
           color: context.colorScheme.onSurface.withAlpha(200),
         ),

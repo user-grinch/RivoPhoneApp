@@ -86,7 +86,7 @@ class _HistoryViewState extends State<HistoryView> {
           ),
           title: Text(
             history.date.getContextAwareDateTime(),
-            style: GoogleFonts.cabin(fontSize: 16),
+            style: GoogleFonts.raleway(fontSize: 16),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -38,8 +38,8 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
               ),
               Text(
                 'Search in Rivo',
-                style: GoogleFonts.cabin(
-                  fontSize: 18,
+                style: GoogleFonts.raleway(
+                  fontSize: 20,
                   color: context.colorScheme.onSurface,
                 ),
               ),

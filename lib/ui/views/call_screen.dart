@@ -31,7 +31,7 @@ class CallScreenView extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       "John Doe",
-                      style: GoogleFonts.cabin(
+                      style: GoogleFonts.raleway(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: context.colorScheme.onSurface,
@@ -39,7 +39,7 @@ class CallScreenView extends StatelessWidget {
                     ),
                     Text(
                       "+1 (123) 456-7890",
-                      style: GoogleFonts.cabin(
+                      style: GoogleFonts.raleway(
                         fontSize: 15,
                         color: context.colorScheme.onSurface.withAlpha(150),
                       ),
@@ -47,7 +47,7 @@ class CallScreenView extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       "01:25",
-                      style: GoogleFonts.cabin(
+                      style: GoogleFonts.raleway(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: context.colorScheme.primary.withAlpha(150),

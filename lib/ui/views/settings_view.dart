@@ -29,80 +29,87 @@ class SettingsView extends StatelessWidget {
           icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text('Settings'),
+        title: Text(
+          'Settings',
+          style: GoogleFonts.raleway(
+            fontSize: 20,
+            fontWeight: FontWeight.normal,
+            color: context.colorScheme.onSurface,
+          ),
+        ),
       ),
       body: ListView(
         children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'General Settings',
-              style: GoogleFonts.cabin(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
-          ),
-          SwitchListTile(
-            title: const Text('Material You theming'),
-            value: false,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Use system-based dark mode'),
-            value: true,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Load profile picture'),
-            value: true,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Letters in avatars when available'),
-            value: false,
-            onChanged: (value) {},
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(16.0),
+          //   child: Text(
+          //     'General Settings',
+          //     style: GoogleFonts.raleway(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.normal,
+          //       color: context.colorScheme.onSurface,
+          //     ),
+          //   ),
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Material You theming'),
+          //   value: false,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Use system-based dark mode'),
+          //   value: true,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Load profile picture'),
+          //   value: true,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Letters in avatars when available'),
+          //   value: false,
+          //   onChanged: (value) {},
+          // ),
 
-          // Dialer Settings
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Dialer Settings',
-              style: GoogleFonts.cabin(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
-          ),
-          SwitchListTile(
-            title: const Text('Disable dial pad tones'),
-            value: true,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Vibrate on key press'),
-            value: false,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Show recent calls in suggestions'),
-            value: true,
-            onChanged: (value) {},
-          ),
-          SwitchListTile(
-            title: const Text('Automatically format phone numbers'),
-            value: true,
-            onChanged: (value) {},
-          ),
+          // // Dialer Settings
+          // Padding(
+          //   padding: EdgeInsets.all(16.0),
+          //   child: Text(
+          //     'Dialer Settings',
+          //     style: GoogleFonts.raleway(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.normal,
+          //       color: context.colorScheme.onSurface,
+          //     ),
+          //   ),
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Disable dial pad tones'),
+          //   value: true,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Vibrate on key press'),
+          //   value: false,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Show recent calls in suggestions'),
+          //   value: true,
+          //   onChanged: (value) {},
+          // ),
+          // SwitchListTile(
+          //   title: const Text('Automatically format phone numbers'),
+          //   value: true,
+          //   onChanged: (value) {},
+          // ),
 
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
               'Information',
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 fontSize: 20,
                 fontWeight: FontWeight.normal,
                 color: context.colorScheme.onSurface,

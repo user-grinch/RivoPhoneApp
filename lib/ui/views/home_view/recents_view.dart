@@ -82,7 +82,7 @@ class _RecentsViewState extends State<RecentsView> {
             padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
             child: Text(
               log.date.getContextAwareDate(),
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 fontSize: 20,
                 color: context.colorScheme.onSurface,
               ),
@@ -105,7 +105,7 @@ class _RecentsViewState extends State<RecentsView> {
           ),
           title: Text(
             log.displayName,
-            style: GoogleFonts.cabin(
+            style: GoogleFonts.raleway(
               fontSize: 16,
               color: context.colorScheme.onSurface,
             ),
@@ -134,7 +134,7 @@ class _RecentsViewState extends State<RecentsView> {
                   SizedBox(width: 5),
                   Text(
                     log.date.getContextAwareDateTime(),
-                    style: GoogleFonts.cabin(
+                    style: GoogleFonts.raleway(
                       fontSize: 12,
                       color: log.type.getColor(),
                     ),
@@ -143,7 +143,7 @@ class _RecentsViewState extends State<RecentsView> {
               ),
               Text(
                 convertSecondsToHMS(int.parse(log.duration)),
-                style: GoogleFonts.cabin(
+                style: GoogleFonts.raleway(
                   fontSize: 12,
                   color: context.colorScheme.onSurface.withAlpha(200),
                 ),

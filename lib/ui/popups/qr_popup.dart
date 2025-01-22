@@ -15,7 +15,7 @@ Widget qrCodePopup(
         children: [
           Text(
             'Scan to add contact',
-            style: GoogleFonts.cabin(
+            style: GoogleFonts.raleway(
               color: context.colorScheme.primary,
               fontSize: 20,
             ),

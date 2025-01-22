@@ -57,9 +57,9 @@ class _ContactInfoViewState extends State<ContactInfoView> {
             const SizedBox(height: 16),
             Text(
               widget.contact.fullName,
-              style: context.textTheme.headlineSmall?.copyWith(
+              style: GoogleFonts.raleway(
+                fontSize: 28,
                 color: context.colorScheme.onSurface,
-                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
@@ -149,7 +149,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                   children: [
                     Text(
                       "External Apps",
-                      style: GoogleFonts.cabin(
+                      style: GoogleFonts.raleway(
                         fontSize: 20,
                         color: context.colorScheme.onSurface,
                       ),
@@ -239,7 +239,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           children: [
             Text(
               "Phone Numbers",
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 fontSize: 20,
                 color: context.colorScheme.onSurface,
               ),
@@ -262,7 +262,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           Expanded(
             child: Text(
               phone,
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 textStyle: context.textTheme.bodyLarge,
                 color: context.colorScheme.onSurface,
               ),

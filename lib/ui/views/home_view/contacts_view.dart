@@ -72,7 +72,7 @@ class _ContactsViewState extends State<ContactsView> {
             padding: EdgeInsets.fromLTRB(30, i == 0 ? 10 : 50, 0, 0),
             child: Text(
               contacts[i].fullName[0],
-              style: GoogleFonts.cabin(
+              style: GoogleFonts.raleway(
                 fontSize: 20,
                 color: context.colorScheme.onSurface.withAlpha(200),
               ),
@@ -92,7 +92,7 @@ class _ContactsViewState extends State<ContactsView> {
                 ),
                 const SizedBox(width: 10),
                 Text(contacts[i].displayName,
-                    style: GoogleFonts.cabin(
+                    style: GoogleFonts.raleway(
                       fontSize: 16,
                       color: context.colorScheme.onSurface,
                     )),

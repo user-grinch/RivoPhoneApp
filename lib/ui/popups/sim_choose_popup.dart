@@ -61,7 +61,7 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
                 "${sim.simSlotIndex + 1}",
-                style: GoogleFonts.cabin(
+                style: GoogleFonts.raleway(
                   color: context.colorScheme.onPrimary,
                   fontSize: 22,
                 ),
