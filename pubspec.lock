@@ -428,10 +428,10 @@ packages:
     dependency: "direct main"
     description:
       name: mobile_scanner
-      sha256: "728828a798d1a2ee506beb652ca23d974c542c96ed03dcbd5eaf97bef96cdaad"
+      sha256: "1779bf862cfcf7a142117e707e2230624d42f153ddf51f4cc9f5ba455a2dd01e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.2"
+    version: "7.0.0-beta.4"
   nested:
     dependency: transitive
     description:
