@@ -428,10 +428,10 @@ packages:
     dependency: "direct main"
     description:
       name: mobile_scanner
-      sha256: "1779bf862cfcf7a142117e707e2230624d42f153ddf51f4cc9f5ba455a2dd01e"
+      sha256: "16a892a9eeeff880125a3a2370e786db73ade73b5bbcf87b4fb5c5018e7ec1f8"
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.0-beta.4"
+    version: "7.0.0-beta.6"
   nested:
     dependency: transitive
     description:
@@ -847,4 +847,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.6.0 <4.0.0"
-  flutter: ">=3.24.0"
+  flutter: ">=3.27.0"
