@@ -41,7 +41,7 @@ dependencies:
   intl: ^0.20.1
   share_plus: ^10.1.3
   qr_flutter: ^4.1.0
-  mobile_scanner: ^7.0.0-beta.4
+  mobile_scanner: ^6.0.2
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
   provider: ^6.1.2
@@ -51,8 +51,9 @@ dependencies:
   phone_state: ^2.1.1
   flutter_native_splash: ^2.4.4
   hugeicons: ^0.0.7
-  audioplayers: ^6.1.0
-  just_audio: ^0.9.43
+  shared_preferences: ^2.5.1
+  font_awesome_flutter: ^10.8.0
+  phosphor_flutter: ^2.1.0
 
 flutter_native_splash:
   image: 'assets/splash.png'

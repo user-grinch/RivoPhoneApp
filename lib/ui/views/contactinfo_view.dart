@@ -39,13 +39,13 @@ class _ContactInfoViewState extends State<ContactInfoView> {
         onPressed: () async {
           await context.read<ContactService>().editContact(widget.contact);
         },
-        backgroundColor: context.colorScheme.primaryContainer,
+        backgroundColor: context.colorScheme.secondaryContainer,
         label: Text(
           "Edit",
-          style: TextStyle(color: context.colorScheme.onPrimaryContainer),
+          style: TextStyle(color: context.colorScheme.onSecondaryContainer),
         ),
         icon: Icon(HugeIcons.strokeRoundedEdit02,
-            color: context.colorScheme.onPrimaryContainer),
+            color: context.colorScheme.onSecondaryContainer),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
@@ -209,10 +209,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
         width: 35,
         height: 35,
         decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
+          color: context.colorScheme.secondaryContainer,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: context.colorScheme.onPrimaryContainer),
+        child: Icon(icon, color: context.colorScheme.onSecondaryContainer),
       ),
       title: Text(
         label,
@@ -299,7 +299,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
 
   Widget _buildProfilePicture(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: context.colorScheme.primaryContainer,
+      backgroundColor: context.colorScheme.secondaryContainer,
       radius: 70,
       backgroundImage: widget.contact.photo != null
           ? MemoryImage(widget.contact.photo!)
@@ -308,7 +308,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
           ? Icon(
               HugeIcons.strokeRoundedUser,
               size: 100,
-              color: context.colorScheme.onPrimaryContainer,
+              color: context.colorScheme.onSecondaryContainer,
             )
           : null,
     );

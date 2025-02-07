@@ -16,7 +16,7 @@ Widget simChooserDialog(BuildContext context, String number) {
         ),
         alignment: Alignment.bottomCenter,
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +46,7 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
     ),
-    color: context.colorScheme.primaryContainer,
+    color: context.colorScheme.secondaryContainer,
     child: InkWell(
       onTap: () async {
         ActivityService().makePhoneCall(number, sim.simSlotIndex);

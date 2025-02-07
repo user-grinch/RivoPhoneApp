@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/ui/views/settings_view/user_interface.dart';
+import 'package:revo/utils/menu_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends StatelessWidget {
@@ -33,116 +35,71 @@ class SettingsView extends StatelessWidget {
           'Settings',
           style: GoogleFonts.raleway(
             fontSize: 20,
-            fontWeight: FontWeight.normal,
+            fontWeight: FontWeight.w600,
             color: context.colorScheme.onSurface,
           ),
         ),
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
-          // Padding(
-          //   padding: EdgeInsets.all(16.0),
-          //   child: Text(
-          //     'General Settings',
-          //     style: GoogleFonts.raleway(
-          //       fontSize: 20,
-          //       fontWeight: FontWeight.normal,
-          //       color: context.colorScheme.onSurface,
-          //     ),
-          //   ),
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Material You theming'),
-          //   value: false,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Use system-based dark mode'),
-          //   value: true,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Load profile picture'),
-          //   value: true,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Letters in avatars when available'),
-          //   value: false,
-          //   onChanged: (value) {},
-          // ),
-
-          // // Dialer Settings
-          // Padding(
-          //   padding: EdgeInsets.all(16.0),
-          //   child: Text(
-          //     'Dialer Settings',
-          //     style: GoogleFonts.raleway(
-          //       fontSize: 20,
-          //       fontWeight: FontWeight.normal,
-          //       color: context.colorScheme.onSurface,
-          //     ),
-          //   ),
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Disable dial pad tones'),
-          //   value: true,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Vibrate on key press'),
-          //   value: false,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Show recent calls in suggestions'),
-          //   value: true,
-          //   onChanged: (value) {},
-          // ),
-          // SwitchListTile(
-          //   title: const Text('Automatically format phone numbers'),
-          //   value: true,
-          //   onChanged: (value) {},
-          // ),
-
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Information',
-              style: GoogleFonts.raleway(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
+          MenuTile(
+            title: 'User Interface',
+            subtitle: 'Customize looks & behaviors',
+            icon: HugeIcons.strokeRoundedImage02,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => UserInterfaceView()),
+              );
+            },
+            isFirst: true,
           ),
-          ListTile(
-            title: const Text('Source Code'),
-            subtitle: const Text('View the source code on GitHub'),
-            leading: Icon(HugeIcons.strokeRoundedSourceCodeCircle,
-                color: Theme.of(context).colorScheme.primary),
+          MenuTile(
+            title: 'Sound',
+            subtitle: 'Manage ringtones & volume',
+            icon: HugeIcons.strokeRoundedVolumeHigh,
+            onTap: () {},
+            isLast: true,
+          ),
+          const SizedBox(height: 10.0),
+          MenuTile(
+            title: 'Blocklist',
+            subtitle: 'Block calls from people',
+            icon: HugeIcons.strokeRoundedCallBlocked02,
+            onTap: () {},
+            isFirst: true,
+          ),
+          MenuTile(
+            title: 'Call Settings',
+            subtitle: 'Incoming call settings',
+            icon: HugeIcons.strokeRoundedCallIncoming03,
+            onTap: () {},
+            isLast: true,
+          ),
+          const SizedBox(height: 10.0),
+          MenuTile(
+            title: 'Source Code',
+            subtitle: 'View the source code on GitHub',
+            icon: HugeIcons.strokeRoundedSourceCodeCircle,
             onTap: () async =>
                 await _launchURL('https://github.com/user-grinch/Rivo'),
+            isFirst: true,
           ),
-          ListTile(
-            title: const Text('Support Us on Patreon'),
-            subtitle: const Text('Contribute to our development'),
-            leading: Icon(HugeIcons.strokeRoundedFavourite,
-                color: Theme.of(context).colorScheme.primary),
+          MenuTile(
+            title: 'Support Us on Patreon',
+            subtitle: 'Contribute to our development',
+            icon: HugeIcons.strokeRoundedFavourite,
             onTap: () async =>
                 await _launchURL('https://www.patreon.com/grinch_'),
+            isLast: true,
           ),
-
-          // Footer
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Center(
-              child: Text(
-                '© Copyright Grinch_ 2025',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+          const SizedBox(height: 12.0),
+          Center(
+            child: Text(
+              '© Copyright Grinch_ 2025',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
             ),
           ),

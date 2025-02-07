@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
+import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/views/home_view/appbar_view.dart';
 import 'package:revo/ui/views/home_view/contacts_view.dart';
@@ -57,6 +58,7 @@ class _HomeViewState extends State<HomeView> {
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: context.colorScheme.secondaryContainer,
         onPressed: () {
           if (_pageController.page == 1.0) {
             context.read<ContactService>().createNewContact();

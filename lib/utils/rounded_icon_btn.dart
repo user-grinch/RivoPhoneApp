@@ -28,14 +28,14 @@ class RoundedIconButton extends StatelessWidget {
           onLongPress: onLongPress,
           child: Container(
             decoration: BoxDecoration(
-              color: context.colorScheme.primaryContainer,
+              color: context.colorScheme.secondaryContainer,
               shape: BoxShape.circle,
             ),
             width: size,
             height: size,
             child: Icon(
               icon,
-              color: context.colorScheme.onPrimaryContainer,
+              color: context.colorScheme.onSecondaryContainer,
               size: size / 1.75,
             ),
           ),

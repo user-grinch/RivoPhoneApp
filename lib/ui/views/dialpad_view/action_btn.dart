@@ -16,7 +16,7 @@ class DialActionButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),
-        backgroundColor: context.colorScheme.primaryContainer,
+        backgroundColor: context.colorScheme.secondaryContainer,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       ),

@@ -29,7 +29,7 @@ class _NavigationViewState extends State<NavigationView> {
     return NavigationBar(
       backgroundColor: context.colorScheme.surface,
       elevation: 3,
-      indicatorColor: context.colorScheme.primaryContainer,
+      indicatorColor: context.colorScheme.secondaryContainer,
       surfaceTintColor: context.colorScheme.surfaceTint,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [

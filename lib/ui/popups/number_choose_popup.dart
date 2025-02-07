@@ -46,7 +46,7 @@ Widget _buildNumberOption(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
     ),
-    color: context.colorScheme.primaryContainer,
+    color: context.colorScheme.secondaryContainer,
     child: InkWell(
       onTap: () {
         if (onTap != null) {

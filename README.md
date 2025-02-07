@@ -1,6 +1,6 @@
-# Revo
+# Rivo
 
-**Revo** is a modern, feature-rich dialer app built using Flutter. Designed for seamless communication, Revo provides a sleek and user-friendly interface for managing calls and contacts.
+**Rivo** is a modern, feature-rich dialer app built using Flutter. Designed for seamless communication, Rivo provides a sleek and user-friendly interface for managing calls and contacts.
 
 ## Features
 - **Fast Dialing:** Quickly dial numbers with an intuitive interface.
@@ -47,7 +47,7 @@
      ```
 
 ## Contribution Guidelines
-We welcome contributions to improve Revo! Follow these steps to contribute:
+We welcome contributions to improve Rivo! Follow these steps to contribute:
 1. Fork the repository.
 2. Create a new branch for your feature or bug fix:
    ```bash

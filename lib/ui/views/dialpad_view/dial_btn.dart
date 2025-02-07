@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/extentions/theme.dart';
-import 'package:just_audio/just_audio.dart';
 
 class DialPadButton extends StatefulWidget {
   final String mainText;
@@ -20,47 +19,10 @@ class DialPadButton extends StatefulWidget {
 }
 
 class _DialPadButtonState extends State<DialPadButton> {
-  // late final AudioPlayer _audioPlayer;
-  // late final String soundPath;
-
   @override
   void initState() {
     super.initState();
-    // String text = widget.mainText;
-    // if (widget.mainText == '#') {
-    //   text = 'hash';
-    // } else if (widget.mainText == '*') {
-    //   text = 'star';
-    // }
-    // soundPath =
-    //     'assets/dialpad/${text}.mp3'; // Ensure your sound files are stored in assets
-    // _audioPlayer = AudioPlayer();
-    // _preloadSound();
   }
-
-  // Future<void> _preloadSound() async {
-  //   try {
-  //     await _audioPlayer.setAsset(soundPath);
-  //   } catch (e) {
-  //     debugPrint("Error preloading sound from $soundPath: $e");
-  //   }
-  // }
-
-  // Future<void> _playSound() async {
-  //   try {
-  //     await _audioPlayer.stop();
-  //     await _audioPlayer.seek(Duration.zero);
-  //     await _audioPlayer.play();
-  //   } catch (e) {
-  //     debugPrint("Error playing sound from $soundPath: $e");
-  //   }
-  // }
-
-  // @override
-  // void dispose() {
-  //   _audioPlayer.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +37,6 @@ class _DialPadButtonState extends State<DialPadButton> {
       ),
       onPressed: () async {
         widget.onUpdate(widget.mainText);
-        // await _playSound();
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
