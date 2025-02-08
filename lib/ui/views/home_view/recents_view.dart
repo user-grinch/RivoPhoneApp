@@ -6,6 +6,7 @@ import 'package:revo/extentions/datetime.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
+import 'package:revo/model/contact.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/popups/sim_choose_popup.dart';
@@ -132,9 +133,14 @@ class _RecentsViewState extends State<RecentsView> {
             icon: HugeIcons.strokeRoundedArrowRight01,
             size: 30,
             onTap: () async {
-              await Navigator.of(context).pushNamed(contactInfoRoute,
-                  arguments:
-                      context.read<ContactService>().findByName(log.name));
+              Contact contact =
+                  context.read<ContactService>().findByName(log.name);
+              if (contact.phones.isEmpty) {
+                contact =
+                    context.read<ContactService>().findByNumber(log.number);
+              }
+              await Navigator.of(context)
+                  .pushNamed(contactInfoRoute, arguments: contact);
             },
           ),
           subtitle: Column(

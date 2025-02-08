@@ -50,9 +50,20 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
               },
               isFirst: true),
           SwitchTileWidget(
-              title: "Dimmed Colors",
+            title: "Dimmed Colors",
+            subtitle:
+                "Uses a less colorful version of Material You. Restart is required.",
+            value: enableCustomCallScreen,
+            onChanged: (value) {
+              setState(() {
+                enableCustomCallScreen = value;
+              });
+            },
+          ),
+          SwitchTileWidget(
+              title: "Amoled dark mode",
               subtitle:
-                  "Uses a less colorful version of Material You. Restart is required.",
+                  "Uses pitch black for UI elements. This may save some battery life on OLED screens.",
               value: enableCustomCallScreen,
               onChanged: (value) {
                 setState(() {

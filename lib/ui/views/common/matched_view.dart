@@ -18,10 +18,14 @@ class MatchedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ContactService, List<Contact>>(
       builder: (context, state) {
-        var contacts = context
-            .read<ContactService>()
-            .findAllByNameOrNumber(number, number);
-
+        List<Contact> contacts;
+        if (number.isEmpty) {
+          contacts = context.read<ContactService>().state;
+        } else {
+          contacts = context
+              .read<ContactService>()
+              .findAllByNameOrNumber(number, number);
+        }
         return Scrollbar(
           controller: scrollController,
           child: ListView.builder(

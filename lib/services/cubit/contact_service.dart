@@ -23,6 +23,8 @@ class ContactService extends Cubit<List<Contact>> {
         withThumbnail: true,
       ))
           .toList();
+
+      contact = contact.where((e) => e.phones.isNotEmpty).toList();
       emit(contact.map((e) => Contact.fromInternal(e)).toList());
     }
   }

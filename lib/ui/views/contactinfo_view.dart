@@ -106,9 +106,10 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                     size: 45,
                     text: 'Call History',
                     onTap: () {
-                      Navigator.of(context).pushNamed(callHistoryRoute,
-                          arguments:
-                              widget.contact.phones.map((e) => e).toList());
+                      Navigator.of(context).pushNamed(
+                        callHistoryRoute,
+                        arguments: widget.contact.phones,
+                      );
                     },
                   ),
                   RoundedIconButton(

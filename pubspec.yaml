@@ -54,6 +54,7 @@ dependencies:
   shared_preferences: ^2.5.1
   font_awesome_flutter: ^10.8.0
   phosphor_flutter: ^2.1.0
+  flutter_callkit_incoming: ^2.5.0
 
 flutter_native_splash:
   image: 'assets/splash.png'

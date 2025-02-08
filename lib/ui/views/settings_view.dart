@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/ui/views/settings_view/call.dart';
+import 'package:revo/ui/views/settings_view/sound.dart';
 import 'package:revo/ui/views/settings_view/user_interface.dart';
+import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/menu_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,6 +46,10 @@ class SettingsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
+          CenterText(text: "This page is still work in progress."),
+          const SizedBox(
+            height: 10,
+          ),
           MenuTile(
             title: 'User Interface',
             subtitle: 'Customize looks & behaviors',
@@ -55,10 +62,14 @@ class SettingsView extends StatelessWidget {
             isFirst: true,
           ),
           MenuTile(
-            title: 'Sound',
+            title: 'Sound & Vibration',
             subtitle: 'Manage ringtones & volume',
             icon: HugeIcons.strokeRoundedVolumeHigh,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => SoundView()),
+              );
+            },
             isLast: true,
           ),
           const SizedBox(height: 10.0),
@@ -73,7 +84,11 @@ class SettingsView extends StatelessWidget {
             title: 'Call Settings',
             subtitle: 'Incoming call settings',
             icon: HugeIcons.strokeRoundedCallIncoming03,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CallView()),
+              );
+            },
             isLast: true,
           ),
           const SizedBox(height: 10.0),

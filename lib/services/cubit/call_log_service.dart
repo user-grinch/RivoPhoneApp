@@ -81,8 +81,9 @@ class CallLogService extends Cubit<List<CallLog>> {
         .where(
           (element) => numbers.any(
             (e) {
-              return normalizePhoneNumber(e) ==
-                  normalizePhoneNumber(element.number);
+              String p1 = normalizePhoneNumber(e);
+              String p2 = normalizePhoneNumber(element.number);
+              return p1 == p2 || p1.endsWith(p2) || p2.endsWith(p1);
             },
           ),
         )

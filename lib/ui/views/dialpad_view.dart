@@ -76,12 +76,13 @@ class _DialPadViewState extends State<DialPadView> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: _number.isEmpty
-                  ? CenterText(text: 'Your results will appear here')
-                  : MatchedView(
-                      scrollController: _scrollController,
-                      number: _number,
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MatchedView(
+                  scrollController: _scrollController,
+                  number: _number,
+                ),
+              ),
             ),
             Container(
               color: context.colorScheme.surfaceTint.withAlpha(30),
