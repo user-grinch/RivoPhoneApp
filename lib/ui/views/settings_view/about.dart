@@ -91,16 +91,14 @@ class AboutView extends StatelessWidget {
               title: 'Author',
               subtitle: 'Grinch_',
               icon: HugeIcons.strokeRoundedUser,
-              onTap: () async =>
-                  await launchURL('https://github.com/user-grinch/Rivo'),
+              onTap: () {},
               isFirst: true,
             ),
             MenuTile(
               title: 'Version',
               subtitle: version,
               icon: HugeIcons.strokeRoundedInformationCircle,
-              onTap: () async =>
-                  await launchURL('https://github.com/user-grinch/Rivo'),
+              onTap: () {},
               isLast: true,
             ),
             const SizedBox(height: 10),

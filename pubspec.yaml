@@ -41,7 +41,6 @@ dependencies:
   intl: ^0.20.1
   share_plus: ^10.1.3
   qr_flutter: ^4.1.0
-  mobile_scanner: ^6.0.2
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
   provider: ^6.1.2
@@ -55,6 +54,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   phosphor_flutter: ^2.1.0
   flutter_callkit_incoming: ^2.5.0
+  simple_barcode_scanner: ^0.3.0
 
 flutter_native_splash:
   image: 'assets/splash.png'

@@ -81,7 +81,7 @@ void main() {
           callScreenRoute: (context) => CallScreenView(),
           contactInfoRoute: (context) => ContactInfoView(
               ModalRoute.of(context)!.settings.arguments as Contact),
-          qrScanRoute: (context) => QRScannerView(),
+          // qrScanRoute: (context) => QRScannerView(),
           callHistoryRoute: (context) => HistoryView(
               numbers:
                   ModalRoute.of(context)!.settings.arguments as List<String>),
