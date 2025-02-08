@@ -61,12 +61,14 @@ flutter_native_splash:
   color: "#FFFFFF"  
   image_dark: 'assets/splash.png'
   color_dark: "#000000"  
+  branding: 'assets/branding.png'
 
   android_12:
     image: 'assets/splash.png'
     color: "#FFFFFF"  
     image_dark: 'assets/splash.png'
     color_dark: "#000000" 
+    branding: 'assets/branding.png'
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +97,7 @@ flutter:
     - assets/
     - assets/dialpad/
     - assets/icon.png
+    - assets/branding.png
     - assets/static-bg.jpg
     - assets/dialpad/1.mp3
     - assets/dialpad/2.mp3

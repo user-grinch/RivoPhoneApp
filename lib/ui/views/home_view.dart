@@ -40,13 +40,13 @@ class _HomeViewState extends State<HomeView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(milliseconds: 100), () async {
         await SharedPrefService().init();
-        bool flag = SharedPrefService().getBool("WelcomeShown $version");
+        bool flag = SharedPrefService().getBool("WelcomeShown$version");
         if (!flag) {
           showDialog(
             context: context,
             builder: (context) => welcomePopup(context, version, changelog),
           );
-          SharedPrefService().saveBool("WelcomeShown", true);
+          SharedPrefService().saveBool("WelcomeShown$version", true);
         }
       });
     });

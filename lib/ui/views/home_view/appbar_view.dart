@@ -16,8 +16,6 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isProcessingScan = false;
-
     return AppBar(
       title: InkWell(
         onTap: () {
