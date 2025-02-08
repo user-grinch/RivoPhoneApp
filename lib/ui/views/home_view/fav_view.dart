@@ -42,6 +42,7 @@ class FavView extends StatelessWidget {
 
   Widget _buildFavs(BuildContext context, Contact contact) {
     return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(15)),
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => ContactInfoView(contact)));
