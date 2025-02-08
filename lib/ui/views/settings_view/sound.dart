@@ -61,7 +61,7 @@ class _SoundViewState extends State<SoundView> {
             isLast: true,
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           MenuTile(
             title: 'Ringtone Settings',

@@ -94,6 +94,7 @@ flutter:
   assets:
     - assets/
     - assets/dialpad/
+    - assets/icon.png
     - assets/static-bg.jpg
     - assets/dialpad/1.mp3
     - assets/dialpad/2.mp3

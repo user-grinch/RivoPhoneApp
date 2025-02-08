@@ -57,7 +57,7 @@ class _CallViewState extends State<CallView> {
             isLast: true,
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           SwitchTileWidget(
               title: "T9 Dialing",

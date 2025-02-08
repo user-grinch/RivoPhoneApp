@@ -4,6 +4,9 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/services/prefservice.dart';
+import 'package:revo/ui/popups/welcome_changelog.dart';
+import 'package:revo/ui/views/common/constants.dart';
 import 'package:revo/ui/views/home_view/appbar_view.dart';
 import 'package:revo/ui/views/home_view/contacts_view.dart';
 import 'package:revo/ui/views/home_view/fav_view.dart';
@@ -33,6 +36,20 @@ class _HomeViewState extends State<HomeView> {
       }
     });
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(milliseconds: 100), () async {
+        await SharedPrefService().init();
+        bool flag = SharedPrefService().getBool("WelcomeShown $version");
+        if (!flag) {
+          showDialog(
+            context: context,
+            builder: (context) => welcomePopup(context, version, changelog),
+          );
+          SharedPrefService().saveBool("WelcomeShown", true);
+        }
+      });
+    });
   }
 
   @override

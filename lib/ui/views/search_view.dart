@@ -53,12 +53,10 @@ class _SearchViewState extends State<SearchView> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 16),
-          child: _searchQuery.isEmpty
-              ? CenterText(text: 'Your results will appear here')
-              : MatchedView(
-                  scrollController: _scrollController,
-                  number: _searchQuery,
-                ),
+          child: MatchedView(
+            scrollController: _scrollController,
+            number: _searchQuery,
+          ),
         ),
       ),
     );

@@ -2,29 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/ui/views/settings_view/about.dart';
 import 'package:revo/ui/views/settings_view/call.dart';
 import 'package:revo/ui/views/settings_view/sound.dart';
 import 'package:revo/ui/views/settings_view/user_interface.dart';
 import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/menu_tile.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:revo/utils/utils.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
-
-  Future<void> _launchURL(String url) async {
-    try {
-      final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        debugPrint('Cannot launch URL: $url');
-        throw Exception('Could not launch $url');
-      }
-    } catch (e) {
-      debugPrint('Error occurred: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +33,36 @@ class SettingsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
-          CenterText(text: "This page is still work in progress."),
-          const SizedBox(
-            height: 10,
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+            child: ListTile(
+              onTap: () async {
+                await launchURL('https://www.patreon.com/grinch_');
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+              leading: Icon(
+                HugeIcons.strokeRoundedFavourite,
+                size: 40,
+              ),
+              title: Column(
+                children: [
+                  CenterText(
+                    text: "Help keep Rivo free for everyone.",
+                  ),
+                  CenterText(text: "Consider Donating!"),
+                ],
+              ),
+            ),
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          CenterText(text: "This section is work in progress"),
           MenuTile(
             title: 'User Interface',
             subtitle: 'Customize looks & behaviors',
@@ -93,19 +106,15 @@ class SettingsView extends StatelessWidget {
           ),
           const SizedBox(height: 10.0),
           MenuTile(
-            title: 'Source Code',
-            subtitle: 'View the source code on GitHub',
-            icon: HugeIcons.strokeRoundedSourceCodeCircle,
-            onTap: () async =>
-                await _launchURL('https://github.com/user-grinch/Rivo'),
+            title: 'About',
+            subtitle: 'Information about the dialer app',
+            icon: HugeIcons.strokeRoundedInformationCircle,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AboutView()),
+              );
+            },
             isFirst: true,
-          ),
-          MenuTile(
-            title: 'Support Us on Patreon',
-            subtitle: 'Contribute to our development',
-            icon: HugeIcons.strokeRoundedFavourite,
-            onTap: () async =>
-                await _launchURL('https://www.patreon.com/grinch_'),
             isLast: true,
           ),
           const SizedBox(height: 12.0),

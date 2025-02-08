@@ -72,7 +72,7 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
               },
               isLast: true),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           SwitchTileWidget(
               title: "Show first letter in avartar",
@@ -96,7 +96,7 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
               },
               isLast: true),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           SwitchTileWidget(
             title: "Full screen dialer",

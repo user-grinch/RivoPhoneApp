@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 String normalizePhoneNumber(String phoneNumber) {
   return phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
 }
@@ -19,4 +22,18 @@ String convertSecondsToHMS(int totalSeconds) {
   }
 
   return result.trim();
+}
+
+Future<void> launchURL(String url) async {
+  try {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('Cannot launch URL: $url');
+      throw Exception('Could not launch $url');
+    }
+  } catch (e) {
+    debugPrint('Error occurred: $e');
+  }
 }

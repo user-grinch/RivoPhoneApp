@@ -28,7 +28,7 @@ class SharedPrefService {
   }
 
   bool getBool(String key) {
-    return _prefs.getBool(key) ?? true;
+    return _prefs.getBool(key) ?? false;
   }
 
   Future<void> saveInt(String key, int value) async {
