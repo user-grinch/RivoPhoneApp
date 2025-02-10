@@ -8,6 +8,7 @@ Widget qrCodePopup(
   String data,
 ) {
   return Dialog(
+    backgroundColor: context.colorScheme.surfaceContainer,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

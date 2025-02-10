@@ -40,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(milliseconds: 100), () async {
+        await context.read<ThemeProvider>().initTheme();
         await SharedPrefService().init();
         bool flag = SharedPrefService().getBool("WelcomeShown$version");
         if (!flag) {
@@ -61,7 +62,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ThemeProvider>().initTheme();
     return Scaffold(
       appBar: AppBarView(),
       body: Padding(

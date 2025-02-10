@@ -11,6 +11,7 @@ Widget simChooserDialog(BuildContext context, String number) {
   return BlocBuilder<MobileService, List<SimCard>>(
     builder: (context, state) {
       return Dialog(
+        backgroundColor: context.colorScheme.surfaceContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
@@ -46,7 +47,7 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
     ),
-    color: context.colorScheme.secondaryContainer,
+    color: context.colorScheme.primaryContainer,
     child: InkWell(
       onTap: () async {
         ActivityService().makePhoneCall(number, sim.simSlotIndex);
@@ -62,7 +63,7 @@ Widget _buildSimCard(BuildContext context, SimCard sim, String number) {
               child: Text(
                 "${sim.simSlotIndex + 1}",
                 style: GoogleFonts.raleway(
-                  color: context.colorScheme.onPrimary,
+                  color: context.colorScheme.onSecondary,
                   fontSize: 22,
                 ),
               ),

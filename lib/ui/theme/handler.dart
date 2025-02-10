@@ -9,7 +9,7 @@ ThemeData getTheme(
   bool isDark,
 ) {
   ColorScheme defScheme = ColorScheme.fromSeed(
-    seedColor: Colors.blue,
+    seedColor: Colors.blueAccent.shade100,
     brightness: isDark ? Brightness.dark : Brightness.light,
   );
   if (provider.isAmoled) {
@@ -35,15 +35,17 @@ ThemeData _getAmoledTheme() {
       foregroundColor: Colors.white,
     ),
     colorScheme: ColorScheme.dark(
-      primary: Colors.grey.shade800,
-      onPrimary: Colors.white,
-      primaryContainer: Colors.blueGrey.shade900,
-      secondary: Colors.grey.shade800,
-      onSecondary: Colors.white,
-      secondaryContainer: Colors.blueGrey.shade900,
-      onSecondaryContainer: Colors.white,
-      background: Colors.black,
-      surface: Colors.blueGrey.withAlpha(30),
+      primary: Color(0xFF000000),
+      onPrimary: Color(0xFFFFFFFF),
+      primaryContainer: Color(0xFF121212),
+      secondary: Color(0xFF1C1C1C),
+      onSecondary: Color(0xFFD3D3D3),
+      secondaryContainer: Color(0xFF2B2B2B),
+      onSecondaryContainer: Color(0xFFFFFFFF),
+      background: Color(0xFF000000),
+      surface: Color(0xFF121212),
+      onSurface: Color(0xFFE0E0E0),
+      surfaceContainer: Color(0xFF1A1A1A),
     ),
     textTheme: GoogleFonts.cabinTextTheme(),
   );
@@ -56,8 +58,8 @@ class ThemeProvider extends ChangeNotifier {
   bool get isAmoled => _isAmoled;
   bool get isDynamic => _isDynamic;
 
-  void initTheme() {
-    SharedPrefService().init();
+  Future<void> initTheme() async {
+    await SharedPrefService().init();
     _isAmoled = SharedPrefService().getBool(PREF_AMOLED_DARK_MODE, def: false);
     _isDynamic = SharedPrefService().getBool(PREF_MATERIAL_THEMING, def: false);
     notifyListeners();

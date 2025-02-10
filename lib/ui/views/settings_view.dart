@@ -98,9 +98,9 @@ class SettingsView extends StatelessWidget {
             subtitle: 'Incoming call settings',
             icon: HugeIcons.strokeRoundedCallIncoming03,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CallView()),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) => CallView()),
+              // );
             },
             isLast: true,
           ),

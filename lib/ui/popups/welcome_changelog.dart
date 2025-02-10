@@ -8,8 +8,8 @@ Widget welcomePopup(
   String changelog,
 ) {
   return Dialog(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     backgroundColor: context.colorScheme.surfaceContainer,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
       child: Padding(

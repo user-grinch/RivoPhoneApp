@@ -38,7 +38,7 @@ class _DialPadButtonState extends State<DialPadButton> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
-        backgroundColor: context.colorScheme.surface.withAlpha(150),
+        backgroundColor: context.colorScheme.secondaryContainer.withAlpha(150),
         overlayColor: context.colorScheme.onSurface,
       ),
       onPressed: () async {

@@ -16,14 +16,17 @@ class DialActionButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),
-        backgroundColor: context.colorScheme.secondaryContainer,
+        backgroundColor: context.colorScheme.secondaryContainer.withAlpha(150),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       ),
       onPressed: func,
       child: Row(
         children: [
-          Icon(icon),
+          Icon(
+            icon,
+            color: context.colorScheme.onSurface,
+          ),
           SizedBox(
             width: 2,
           ),

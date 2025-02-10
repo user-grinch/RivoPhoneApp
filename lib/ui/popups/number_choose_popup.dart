@@ -9,6 +9,7 @@ Widget numberChooserDialog(
   void Function(String)? onTap,
 ) {
   return Dialog(
+    backgroundColor: context.colorScheme.surfaceContainer,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
     ),

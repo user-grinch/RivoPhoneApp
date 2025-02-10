@@ -93,7 +93,7 @@ class _DialPadViewState extends State<DialPadView> {
               ),
             ),
             Container(
-              color: context.colorScheme.surfaceTint.withAlpha(30),
+              color: context.colorScheme.secondaryContainer.withAlpha(50),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
