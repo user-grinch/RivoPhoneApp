@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   android_intent_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: android_intent_plus
       sha256: e1c62bb41c90e15083b7fb84dc327fe90396cc9c1445b55ff1082144fabfb4d9
@@ -190,6 +190,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.9+2"
+  flutter_dtmf:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "26779739c7c263d09a8cd452cdec67c6cbd2879b"
+      url: "https://github.com/eopeter/flutter_dtmf.git"
+    source: git
+    version: "3.1.0"
   flutter_lints:
     dependency: "direct dev"
     description:

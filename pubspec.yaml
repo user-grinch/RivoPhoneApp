@@ -55,20 +55,25 @@ dependencies:
   phosphor_flutter: ^2.1.0
   flutter_callkit_incoming: ^2.5.0
   simple_barcode_scanner: ^0.3.0
+  flutter_dtmf:
+    git:
+      url: https://github.com/eopeter/flutter_dtmf.git
+      ref: master 
+  android_intent_plus: ^4.0.3
 
 flutter_native_splash:
   image: 'assets/splash.png'
   color: "#FFFFFF"  
   image_dark: 'assets/splash.png'
   color_dark: "#000000"  
-  branding: 'assets/branding.png'
+  # branding: 'assets/branding.png'
 
   android_12:
     image: 'assets/splash.png'
     color: "#FFFFFF"  
     image_dark: 'assets/splash.png'
     color_dark: "#000000" 
-    branding: 'assets/branding.png'
+    # branding: 'assets/branding.png'
 
 dev_dependencies:
   flutter_test:

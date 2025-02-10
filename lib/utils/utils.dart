@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:revo/constants/pref.dart';
+import 'package:revo/services/prefservice.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String normalizePhoneNumber(String phoneNumber) {
@@ -35,5 +38,11 @@ Future<void> launchURL(String url) async {
     }
   } catch (e) {
     debugPrint('Error occurred: $e');
+  }
+}
+
+void hapticVibration() {
+  if (SharedPrefService().getBool(PREF_DIALPAD_VIBRATION, def: true)) {
+    HapticFeedback.lightImpact();
   }
 }

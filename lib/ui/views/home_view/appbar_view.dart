@@ -22,10 +22,10 @@ class AppBarView extends StatelessWidget implements PreferredSizeWidget {
           Navigator.pushNamed(context, searchRoute);
         },
         borderRadius: BorderRadius.circular(50),
-        splashColor: context.colorScheme.surfaceTint.withAlpha(50),
+        splashColor: context.colorScheme.secondaryContainer,
         child: Container(
           decoration: BoxDecoration(
-            color: context.colorScheme.surfaceTint.withAlpha(30),
+            color: context.colorScheme.secondaryContainer.withAlpha(200),
             borderRadius: BorderRadius.circular(50),
           ),
           child: Row(

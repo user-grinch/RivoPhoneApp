@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/services/prefservice.dart';
+import 'package:revo/ui/theme/handler.dart';
 import 'package:revo/utils/switch_tile.dart';
 
 class UserInterfaceView extends StatefulWidget {
@@ -12,12 +16,6 @@ class UserInterfaceView extends StatefulWidget {
 }
 
 class _UserInterfaceViewState extends State<UserInterfaceView> {
-  bool disableMaterialYou = false;
-  bool hideAvatarInitials = false;
-  bool showAvatarPictures = true;
-  bool iconOnlyBottomNav = false;
-  bool enableCustomCallScreen = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,33 +40,22 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
               title: "Material You theming",
               subtitle:
                   "Wallpaper based app color theming. Restart is required.",
-              value: disableMaterialYou,
+              value: context.read<ThemeProvider>().isDynamic,
               onChanged: (value) {
                 setState(() {
-                  disableMaterialYou = value;
+                  context.read<ThemeProvider>().toggleDynamicColors();
+                  setState(() {});
                 });
               },
               isFirst: true),
           SwitchTileWidget(
-            title: "Dimmed Colors",
-            subtitle:
-                "Uses a less colorful version of Material You. Restart is required.",
-            value: enableCustomCallScreen,
-            onChanged: (value) {
-              setState(() {
-                enableCustomCallScreen = value;
-              });
-            },
-          ),
-          SwitchTileWidget(
               title: "Amoled dark mode",
               subtitle:
                   "Uses pitch black for UI elements. This may save some battery life on OLED screens.",
-              value: enableCustomCallScreen,
+              value: context.read<ThemeProvider>().isAmoled,
               onChanged: (value) {
-                setState(() {
-                  enableCustomCallScreen = value;
-                });
+                context.read<ThemeProvider>().toggleAmoledColors();
+                setState(() {});
               },
               isLast: true),
           const SizedBox(
@@ -78,48 +65,60 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
               title: "Show first letter in avartar",
               subtitle:
                   "Displays the first letter of the contact name when a profile picture isn't available",
-              value: hideAvatarInitials,
+              value: SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER),
               onChanged: (value) {
-                setState(() {
-                  hideAvatarInitials = value;
-                });
+                SharedPrefService().saveBool(PREF_SHOW_FIRST_LETTER, value);
+                setState(() {});
               },
               isFirst: true),
           SwitchTileWidget(
               title: "Show picture in avatar",
               subtitle: "Shows the contact picture if available",
-              value: showAvatarPictures,
+              value: SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVARTAR),
               onChanged: (value) {
-                setState(() {
-                  showAvatarPictures = value;
-                });
+                SharedPrefService()
+                    .saveBool(PREF_SHOW_PICTURE_IN_AVARTAR, value);
+                setState(() {});
               },
               isLast: true),
           const SizedBox(
             height: 10,
           ),
           SwitchTileWidget(
-            title: "Full screen dialer",
+            title: "Icon-only bottom sheet",
             subtitle:
-                "Removes the suggestions & makes the dialer use the entire screen",
-            value: iconOnlyBottomNav,
+                "Only shows navigation icons in the bottom navigation bar",
+            value: SharedPrefService().getBool(PREF_ICON_ONLY_BOTTOMSHEET),
             onChanged: (value) {
-              setState(() {
-                iconOnlyBottomNav = value;
-              });
+              SharedPrefService().saveBool(PREF_ICON_ONLY_BOTTOMSHEET, value);
+              setState(() {});
             },
             isFirst: true,
           ),
           SwitchTileWidget(
-            title: "Icon-only bottom sheet",
-            subtitle:
-                "Only shows navigation icons in the bottom navigation bar",
-            value: iconOnlyBottomNav,
+            title: "Selected icon in bottom sheet",
+            subtitle: "Always shows the icon for the selected tab",
+            value: SharedPrefService()
+                .getBool(PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET),
             onChanged: (value) {
-              setState(() {
-                iconOnlyBottomNav = value;
-              });
+              SharedPrefService()
+                  .saveBool(PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET, value);
+              setState(() {});
             },
+            isLast: true,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SwitchTileWidget(
+            title: "Dialpad letters",
+            subtitle: "Show letters on the dialpad buttons",
+            value: SharedPrefService().getBool(PREF_DIALPAD_LETTERS),
+            onChanged: (value) {
+              SharedPrefService().saveBool(PREF_DIALPAD_LETTERS, value);
+              setState(() {});
+            },
+            isFirst: true,
             isLast: true,
           ),
         ],

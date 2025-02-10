@@ -6,6 +6,7 @@ import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/services/prefservice.dart';
 import 'package:revo/ui/popups/welcome_changelog.dart';
+import 'package:revo/ui/theme/handler.dart';
 import 'package:revo/ui/views/common/constants.dart';
 import 'package:revo/ui/views/home_view/appbar_view.dart';
 import 'package:revo/ui/views/home_view/contacts_view.dart';
@@ -60,6 +61,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ThemeProvider>().initTheme();
     return Scaffold(
       appBar: AppBarView(),
       body: Padding(

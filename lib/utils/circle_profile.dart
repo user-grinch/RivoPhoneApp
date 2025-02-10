@@ -3,9 +3,11 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/services/prefservice.dart';
 
-class CircleProfile extends StatelessWidget {
+class CircleProfile extends StatefulWidget {
   final Uint8List? profile;
   final String name;
   final double size;
@@ -13,24 +15,45 @@ class CircleProfile extends StatelessWidget {
       {super.key, required this.name, this.profile, required this.size});
 
   @override
+  State<CircleProfile> createState() => _CircleProfileState();
+}
+
+class _CircleProfileState extends State<CircleProfile> {
+  @override
+  void initState() {
+    SharedPrefService().onPreferenceChanged.listen((key) {
+      if (key == PREF_SHOW_FIRST_LETTER ||
+          key == PREF_SHOW_PICTURE_IN_AVARTAR) {
+        setState(() {});
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    bool showPic = widget.profile != null &&
+        SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVARTAR, def: true);
+
+    bool showFirstLetter = widget.name.isNotEmpty &&
+        SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER, def: true);
     return CircleAvatar(
-      radius: size,
+      radius: widget.size,
       backgroundColor: context.colorScheme.secondaryContainer,
-      backgroundImage: profile != null ? MemoryImage(profile!) : null,
-      child: profile == null
-          ? name.isNotEmpty
+      backgroundImage: showPic ? MemoryImage(widget.profile!) : null,
+      child: !showPic
+          ? showFirstLetter
               ? Text(
-                  name[0].toUpperCase(),
+                  widget.name[0].toUpperCase(),
                   style: GoogleFonts.raleway(
-                    fontSize: size,
+                    fontSize: widget.size,
                     fontWeight: FontWeight.w300,
                     color: context.colorScheme.onSurface,
                   ),
                 )
               : Icon(
                   HugeIcons.strokeRoundedUser,
-                  size: size,
+                  size: widget.size,
                   color: context.colorScheme.onSurface,
                 )
           : null,

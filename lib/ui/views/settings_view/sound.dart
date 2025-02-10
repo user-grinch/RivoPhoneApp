@@ -1,7 +1,11 @@
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/services/prefservice.dart';
 import 'package:revo/utils/menu_tile.dart';
 import 'package:revo/utils/switch_tile.dart';
 
@@ -13,12 +17,6 @@ class SoundView extends StatefulWidget {
 }
 
 class _SoundViewState extends State<SoundView> {
-  bool disableMaterialYou = false;
-  bool hideAvatarInitials = false;
-  bool showAvatarPictures = true;
-  bool iconOnlyBottomNav = false;
-  bool enableCustomCallScreen = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,23 +38,22 @@ class _SoundViewState extends State<SoundView> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
           SwitchTileWidget(
-              title: "Dialpad tone",
-              subtitle: "Sound that plays on dialpad press",
-              value: disableMaterialYou,
+              title: "DTMF tone",
+              subtitle: "Dialpad tone that plays during keypress",
+              value: SharedPrefService().getBool(PREF_DTMF_TONE, def: true),
               onChanged: (value) {
-                setState(() {
-                  disableMaterialYou = value;
-                });
+                SharedPrefService().saveBool(PREF_DTMF_TONE, value);
+                setState(() {});
               },
               isFirst: true),
           SwitchTileWidget(
             title: "Dialpad vibration",
-            subtitle: "Vibration on dialpad press",
-            value: enableCustomCallScreen,
+            subtitle: "Dialpad vibration that plays during keypress",
+            value:
+                SharedPrefService().getBool(PREF_DIALPAD_VIBRATION, def: true),
             onChanged: (value) {
-              setState(() {
-                enableCustomCallScreen = value;
-              });
+              SharedPrefService().saveBool(PREF_DIALPAD_VIBRATION, value);
+              setState(() {});
             },
             isLast: true,
           ),
@@ -67,7 +64,13 @@ class _SoundViewState extends State<SoundView> {
             title: 'Ringtone Settings',
             subtitle: '',
             icon: HugeIcons.strokeRoundedMusicNote02,
-            onTap: () {},
+            onTap: () {
+              final intent = AndroidIntent(
+                action: 'android.settings.SOUND_SETTINGS',
+                flags: [Flag.FLAG_ACTIVITY_NEW_TASK],
+              );
+              intent.launch();
+            },
             isFirst: true,
             isLast: true,
           ),

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:flutter_dtmf/dtmf.dart';
+import 'package:flutter/services.dart';
+import 'package:revo/services/prefservice.dart';
+import 'package:revo/utils/utils.dart';
 
 class DialPadButton extends StatefulWidget {
   final String mainText;
@@ -20,12 +25,13 @@ class DialPadButton extends StatefulWidget {
 
 class _DialPadButtonState extends State<DialPadButton> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    bool letters = SharedPrefService().getBool(PREF_DIALPAD_LETTERS, def: true);
+    double textSz = widget.mainText == "*" ? 45 : 20;
+
+    if (!letters) {
+      textSz += 10;
+    }
     return TextButton(
       style: TextButton.styleFrom(
         elevation: 0,
@@ -36,6 +42,10 @@ class _DialPadButtonState extends State<DialPadButton> {
         overlayColor: context.colorScheme.onSurface,
       ),
       onPressed: () async {
+        if (SharedPrefService().getBool(PREF_DTMF_TONE, def: true)) {
+          await Dtmf.playTone(digits: widget.mainText, volume: 3);
+        }
+        hapticVibration();
         widget.onUpdate(widget.mainText);
       },
       child: Column(
@@ -44,7 +54,7 @@ class _DialPadButtonState extends State<DialPadButton> {
           Text(
             widget.mainText,
             style: GoogleFonts.raleway(
-              fontSize: 28,
+              fontSize: textSz,
               fontWeight: FontWeight.normal,
               color: context.colorScheme.onSurface,
             ),

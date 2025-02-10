@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
+import 'package:revo/services/prefservice.dart';
 
 class NavigationView extends StatefulWidget {
   final PageController pageController;
@@ -13,6 +15,7 @@ class NavigationView extends StatefulWidget {
 
 class _NavigationViewState extends State<NavigationView> {
   int _selectedIndex = 0;
+  bool _prevFlag = false;
 
   @override
   void initState() {
@@ -21,17 +24,30 @@ class _NavigationViewState extends State<NavigationView> {
         _selectedIndex = widget.pageController.page?.round() ?? 0;
       });
     });
+    SharedPrefService().onPreferenceChanged.listen((key) {
+      if (key == PREF_ICON_ONLY_BOTTOMSHEET ||
+          key == PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET) {
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    bool onlyIcons = SharedPrefService().getBool(PREF_ICON_ONLY_BOTTOMSHEET);
+    bool alwaysSelectedIcon =
+        SharedPrefService().getBool(PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET);
     return NavigationBar(
       backgroundColor: context.colorScheme.surface,
       elevation: 3,
       indicatorColor: context.colorScheme.secondaryContainer,
       surfaceTintColor: context.colorScheme.surfaceTint,
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      labelBehavior: onlyIcons
+          ? alwaysSelectedIcon
+              ? NavigationDestinationLabelBehavior.onlyShowSelected
+              : NavigationDestinationLabelBehavior.alwaysHide
+          : NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
           icon: Icon(HugeIcons.strokeRoundedClock01),

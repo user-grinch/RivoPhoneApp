@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/extentions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
+import 'package:revo/services/prefservice.dart';
 import 'package:revo/ui/popups/sim_choose_popup.dart';
 import 'package:revo/ui/views/common/matched_view.dart';
 import 'package:revo/ui/views/dialpad_view/action_btn.dart';
 import 'package:revo/ui/views/dialpad_view/dial_btn.dart';
-import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/rounded_icon_btn.dart';
+import 'package:revo/utils/utils.dart';
 
 class DialPadView extends StatefulWidget {
   const DialPadView({super.key});
@@ -30,6 +33,11 @@ class _DialPadViewState extends State<DialPadView> {
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
+    });
+    SharedPrefService().onPreferenceChanged.listen((key) {
+      if (key == PREF_DIALPAD_LETTERS) {
+        setState(() {});
+      }
     });
     super.initState();
   }
@@ -120,7 +128,10 @@ class _DialPadViewState extends State<DialPadView> {
                       String key = keys[index];
                       return DialPadButton(
                         mainText: key,
-                        // subText: subKeys[key],
+                        subText: SharedPrefService()
+                                .getBool(PREF_DIALPAD_LETTERS, def: true)
+                            ? subKeys[key]
+                            : null,
                         onUpdate: (String str) {
                           setState(() {
                             _number += str;
@@ -141,6 +152,7 @@ class _DialPadViewState extends State<DialPadView> {
                             icon: HugeIcons.strokeRoundedUserAdd01,
                             size: 40,
                             onTap: () {
+                              hapticVibration();
                               context
                                   .read<ContactService>()
                                   .createNewContact(number: _number);
@@ -151,6 +163,7 @@ class _DialPadViewState extends State<DialPadView> {
                           icon: HugeIcons.strokeRoundedSimcard01,
                           label: 'Call',
                           func: () {
+                            hapticVibration();
                             showDialog(
                               context: context,
                               builder: (context) =>
@@ -165,6 +178,7 @@ class _DialPadViewState extends State<DialPadView> {
                             icon: HugeIcons.strokeRoundedArrowLeft01,
                             size: 40,
                             onTap: () {
+                              hapticVibration();
                               setState(() {
                                 if (_number.isNotEmpty) {
                                   _number = _number.substring(
@@ -175,6 +189,7 @@ class _DialPadViewState extends State<DialPadView> {
                               });
                             },
                             onLongPress: () {
+                              HapticFeedback.vibrate();
                               setState(() {
                                 if (_number.isNotEmpty) {
                                   _number = '';
