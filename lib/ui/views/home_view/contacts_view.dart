@@ -108,11 +108,14 @@ class _ContactsViewState extends State<ContactsView> {
                 size: 30,
               ),
               const SizedBox(width: 10),
-              Text(
-                contacts[i].displayName,
-                style: GoogleFonts.raleway(
-                  fontSize: 16,
-                  color: context.colorScheme.onSurface,
+              Flexible(
+                child: Text(
+                  contacts[i].displayName,
+                  style: GoogleFonts.raleway(
+                    fontSize: 16,
+                    color: context.colorScheme.onSurface,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

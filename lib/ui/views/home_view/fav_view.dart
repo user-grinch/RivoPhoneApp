@@ -56,12 +56,16 @@ class FavView extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Center(
-            child: Text(
-              contact.displayName,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.raleway(
-                color: context.colorScheme.onSurface,
-                fontSize: 14,
+            child: Flexible(
+              child: Text(
+                contact.displayName,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.raleway(
+                  color: context.colorScheme.onSurface,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
           ),

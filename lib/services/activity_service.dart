@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:direct_caller_sim_choice/direct_caller_sim_choice.dart';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -36,8 +36,14 @@ class ActivityService {
 
   Future<void> makePhoneCall(String phoneNumber, int simSlot) async {
     if (await Permission.phone.status.isGranted) {
-      final DirectCaller directCaller = DirectCaller();
-      directCaller.makePhoneCall(phoneNumber, simSlot: simSlot + 1);
+      final caller = AndroidIntent(
+          action: 'android.intent.action.CALL',
+          data: 'tel:$phoneNumber',
+          arguments: {
+            'com.android.phone.force.slot': true,
+            'com.android.phone.extra.slot': simSlot,
+          });
+      caller.launch();
     }
   }
 
