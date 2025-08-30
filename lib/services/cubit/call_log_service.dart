@@ -58,7 +58,7 @@ class CallLogService extends Cubit<List<CallLog>> {
 
   Future<void> fetchData(BuildContext context) async {
     if (state.isNotEmpty && await Permission.phone.status.isGranted) {
-      var list = state.map((e) {
+      List<CallLog?> list = state.map((e) {
         var contactList = context.read<ContactService>();
         var contact = contactList.findByNumber(e.number);
         e = CallLog(

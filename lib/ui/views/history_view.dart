@@ -11,8 +11,9 @@ import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/utils.dart';
 
 class HistoryView extends StatefulWidget {
-  List<String> numbers;
-  HistoryView({super.key, required this.numbers});
+  final List<String> numbers;
+
+  const HistoryView({super.key, required this.numbers});
 
   @override
   State<HistoryView> createState() => _HistoryViewState();

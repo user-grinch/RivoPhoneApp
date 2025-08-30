@@ -46,7 +46,7 @@ class AboutView extends StatelessWidget {
               style: GoogleFonts.raleway(
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: context.colorScheme.onBackground,
+                color: context.colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 20),

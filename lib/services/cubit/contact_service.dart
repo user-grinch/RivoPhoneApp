@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
@@ -111,12 +112,12 @@ class ContactService extends Cubit<List<Contact>> {
     if (await Permission.contacts.status.isGranted) {
       try {
         await fc.FlutterContacts.insertContact(lib.Contact.fromVCard(data));
-        print('Contact added successfully!');
+        debugPrint('Contact added successfully!');
       } catch (e) {
-        print('Error adding contact: $e');
+        debugPrint('Error adding contact: $e');
       }
     } else {
-      print('Permission to access contacts denied!');
+      debugPrint('Permission to access contacts denied!');
     }
   }
 
@@ -124,7 +125,7 @@ class ContactService extends Cubit<List<Contact>> {
     if (await Permission.contacts.status.isGranted) {
       await fc.FlutterContacts.openExternalEdit(contact.id);
     } else {
-      print("Permission denied to access contacts");
+      debugPrint("Permission denied to access contacts");
     }
   }
 
@@ -138,7 +139,7 @@ class ContactService extends Cubit<List<Contact>> {
         withGroups: withGroups,
       );
     } else {
-      print("Permission denied to access contacts");
+      debugPrint("Permission denied to access contacts");
     }
   }
 }

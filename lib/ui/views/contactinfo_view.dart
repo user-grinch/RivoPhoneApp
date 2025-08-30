@@ -91,13 +91,13 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                     size: 45,
                     text: 'Share',
                     onTap: () {
-                      Share.shareXFiles([
+                      SharePlus.instance.share(ShareParams(files: [
                         XFile.fromData(
                             utf8.encode(generateVCardString(widget.contact)),
                             mimeType: 'text/plain')
                       ], fileNameOverrides: [
                         'contact.vcf'
-                      ]);
+                      ]));
                     },
                   ),
                   RoundedIconButton(
@@ -118,7 +118,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                         ? HugeIcons.strokeRoundedHeartCheck
                         : HugeIcons.strokeRoundedHeartAdd,
                     size: 45,
-                    text: 'Favourite',
+                    text: 'Favorite',
                     onTap: () {
                       setState(() {
                         widget.contact.isStarred = !widget.contact.isStarred;

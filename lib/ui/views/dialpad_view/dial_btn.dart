@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/extensions/theme.dart';
 import 'package:flutter_dtmf/dtmf.dart';
-import 'package:flutter/services.dart';
 import 'package:revo/services/prefservice.dart';
 import 'package:revo/utils/utils.dart';
 
@@ -20,7 +19,7 @@ class DialPadButton extends StatefulWidget {
   });
 
   @override
-  _DialPadButtonState createState() => _DialPadButtonState();
+  State<DialPadButton> createState() => _DialPadButtonState();
 }
 
 class _DialPadButtonState extends State<DialPadButton> {

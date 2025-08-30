@@ -22,8 +22,7 @@ class _CircleProfileState extends State<CircleProfile> {
   @override
   void initState() {
     SharedPrefService().onPreferenceChanged.listen((key) {
-      if (key == PREF_SHOW_FIRST_LETTER ||
-          key == PREF_SHOW_PICTURE_IN_AVARTAR) {
+      if (key == PREF_SHOW_FIRST_LETTER || key == PREF_SHOW_PICTURE_IN_AVATAR) {
         setState(() {});
       }
     });
@@ -33,7 +32,7 @@ class _CircleProfileState extends State<CircleProfile> {
   @override
   Widget build(BuildContext context) {
     bool showPic = widget.profile != null &&
-        SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVARTAR, def: true);
+        SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVATAR, def: true);
 
     bool showFirstLetter = widget.name.isNotEmpty &&
         SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER, def: true);

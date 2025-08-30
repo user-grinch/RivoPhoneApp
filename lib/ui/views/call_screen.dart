@@ -167,7 +167,6 @@ class _CallActionButton extends StatelessWidget {
     required this.textColor,
     this.size = 60,
     this.onPressed,
-    super.key,
     this.showLabel = true,
   });
 

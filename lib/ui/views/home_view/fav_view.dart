@@ -55,8 +55,8 @@ class FavView extends StatelessWidget {
             size: 45,
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Flexible(
+          Flexible(
+            child: Center(
               child: Text(
                 contact.displayName,
                 textAlign: TextAlign.center,

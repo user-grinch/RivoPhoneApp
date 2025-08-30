@@ -4,19 +4,19 @@ class MenuTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool isFirst;
   final bool isLast;
 
   const MenuTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.onTap,
     this.isFirst = false,
     this.isLast = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,9 @@ class MenuTile extends StatelessWidget {
       padding: const EdgeInsets.all(2.0),
       child: Container(
         decoration: BoxDecoration(
-          color:
-              Theme.of(context).colorScheme.secondaryContainer.withAlpha(110),
+          color: onTap == null
+              ? Theme.of(context).disabledColor
+              : Theme.of(context).colorScheme.secondaryContainer.withAlpha(110),
           borderRadius: BorderRadius.vertical(
             top: isFirst ? const Radius.circular(15) : Radius.zero,
             bottom: isLast ? const Radius.circular(15) : Radius.zero,
@@ -43,21 +44,28 @@ class MenuTile extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
           leading: Icon(
             icon,
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
+            color: onTap == null
+                ? Theme.of(context).disabledColor
+                : Theme.of(context).colorScheme.onSecondaryContainer,
             size: 30,
           ),
           title: Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: onTap == null ? Theme.of(context).disabledColor : null),
           ),
           subtitle: Text(
             subtitle,
             style: TextStyle(
               fontSize: 12,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withAlpha(128),
+              color: onTap == null
+                  ? Theme.of(context).disabledColor
+                  : Theme.of(context)
+                      .colorScheme
+                      .onSecondaryContainer
+                      .withAlpha(128),
             ),
           ),
           onTap: onTap,

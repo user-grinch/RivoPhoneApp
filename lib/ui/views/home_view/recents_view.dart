@@ -39,7 +39,7 @@ class _RecentsViewState extends State<RecentsView> {
 
   Future<void> _refreshLogs(BuildContext context) async {
     // Call a method in your CallLogService to refresh the call logs.
-    await context.read<CallLogService>().refresh(); // Example method
+    context.read<CallLogService>().refresh(); // Example method
   }
 
   @override
