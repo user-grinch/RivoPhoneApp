@@ -223,6 +223,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  flutter_sticky_header:
+    dependency: transitive
+    description:
+      name: flutter_sticky_header
+      sha256: "7f76d24d119424ca0c95c146b8627a457e8de8169b0d584f766c2c545db8f8be"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -662,6 +670,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+  sticky_az_list:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "118f056"
+      resolved-ref: "118f056a701ee914a600659c9fdec1b2f2805c6a"
+      url: "https://github.com/TetrixGauss/sticky_az_list_plus"
+    source: git
+    version: "0.0.7"
   stream_channel:
     dependency: transitive
     description:
@@ -782,6 +799,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.1"
+  value_layout_builder:
+    dependency: transitive
+    description:
+      name: value_layout_builder
+      sha256: c02511ea91ca5c643b514a33a38fa52536f74aa939ec367d02938b5ede6807fa
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
   vector_math:
     dependency: transitive
     description:

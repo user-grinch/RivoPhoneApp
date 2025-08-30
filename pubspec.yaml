@@ -36,8 +36,12 @@ dependencies:
   flutter_dtmf:
     git:
       url: https://github.com/eopeter/flutter_dtmf.git
-      ref: master 
+      ref: master
   android_intent_plus: ^5.3.1
+  sticky_az_list:
+    git:
+      url: https://github.com/TetrixGauss/sticky_az_list_plus
+      ref: '118f056'
 
 flutter_native_splash:
   image: 'assets/splash.png'
