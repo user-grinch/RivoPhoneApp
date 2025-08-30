@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/ui/views/common/constants.dart';
 import 'package:revo/utils/menu_tile.dart';
 import 'package:revo/utils/utils.dart';

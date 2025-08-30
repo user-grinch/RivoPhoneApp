@@ -6,22 +6,22 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=3.6.0 <4.0.0'
-  flutter: '>=3.24.0'
+  flutter: '>=3.27.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  dynamic_color: ^1.7.0
+  dynamic_color: 1.7.0
   google_fonts: ^6.2.1
   flutter_contacts: ^1.1.9+2
   permission_handler: ^11.3.1
   call_e_log: ^0.0.4
   intl: ^0.20.1
-  share_plus: ^10.1.3
+  share_plus: ^11.1.0
   qr_flutter: ^4.1.0
-  bloc: ^8.1.4
-  flutter_bloc: ^8.1.6
+  bloc: ^9.0.0
+  flutter_bloc: ^9.1.1
   provider: ^6.1.2
   flutter_sim_data: ^1.0.5
   url_launcher: ^6.3.1
@@ -37,7 +37,7 @@ dependencies:
     git:
       url: https://github.com/eopeter/flutter_dtmf.git
       ref: master 
-  android_intent_plus: ^4.0.3
+  android_intent_plus: ^5.3.1
 
 flutter_native_splash:
   image: 'assets/splash.png'

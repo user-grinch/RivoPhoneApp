@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 
 Widget qrCodePopup(
   BuildContext context,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/ui/popups/sim_choose_popup.dart';
 import 'package:revo/utils/circle_profile.dart';

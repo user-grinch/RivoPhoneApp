@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/services/prefservice.dart';
 import 'package:revo/ui/popups/welcome_changelog.dart';

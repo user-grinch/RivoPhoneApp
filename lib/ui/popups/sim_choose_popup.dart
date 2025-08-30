@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/sim_card.dart';
 import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/mobile_service.dart';

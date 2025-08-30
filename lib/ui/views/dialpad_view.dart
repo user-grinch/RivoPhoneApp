@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/services/prefservice.dart';
 import 'package:revo/ui/popups/sim_choose_popup.dart';
