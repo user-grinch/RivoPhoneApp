@@ -51,12 +51,14 @@ class _DialPadButtonState extends State<DialPadButton> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            widget.mainText,
-            style: GoogleFonts.raleway(
-              fontSize: textSz,
-              fontWeight: FontWeight.normal,
-              color: context.colorScheme.onSurface,
+          Expanded(
+            child: Text(
+              widget.mainText,
+              style: GoogleFonts.raleway(
+                fontSize: textSz,
+                fontWeight: FontWeight.normal,
+                color: context.colorScheme.onSurface,
+              ),
             ),
           ),
           if (widget.subText != null)
