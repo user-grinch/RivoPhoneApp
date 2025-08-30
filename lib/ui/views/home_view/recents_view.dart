@@ -108,10 +108,7 @@ class _RecentsViewState extends State<RecentsView> {
           ),
         ListTile(
           onTap: () async {
-            showDialog(
-              context: context,
-              builder: (context) => simChooserDialog(context, log.number),
-            );
+            simChooserDialog(context, log.number);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

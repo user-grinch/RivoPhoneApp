@@ -276,10 +276,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                 context,
                 icon: HugeIcons.strokeRoundedCall02,
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => simChooserDialog(context, phone),
-                  );
+                  simChooserDialog(context, phone);
                 },
                 size: 36,
               ),

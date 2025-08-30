@@ -21,10 +21,7 @@ class ContactTile extends StatelessWidget {
     return ListTile(
       onTap: () async {
         if (contact.phones.isNotEmpty) {
-          showDialog(
-            context: context,
-            builder: (context) => simChooserDialog(context, contact.phones[0]),
-          );
+          simChooserDialog(context, contact.phones[0]);
         }
       },
       shape: RoundedRectangleBorder(

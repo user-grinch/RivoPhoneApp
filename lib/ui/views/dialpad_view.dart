@@ -164,11 +164,7 @@ class _DialPadViewState extends State<DialPadView> {
                           label: 'Call',
                           func: () {
                             hapticVibration();
-                            showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  simChooserDialog(context, _number),
-                            );
+                            simChooserDialog(context, _number);
                           },
                         ),
                         Spacer(),
