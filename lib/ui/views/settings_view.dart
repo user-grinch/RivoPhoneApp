@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/ui/views/settings_view/about.dart';
 import 'package:revo/ui/views/settings_view/call.dart';
 import 'package:revo/ui/views/settings_view/sound.dart';
@@ -90,18 +90,20 @@ class SettingsView extends StatelessWidget {
             title: 'Blocklist',
             subtitle: 'Block calls from people',
             icon: HugeIcons.strokeRoundedCallBlocked02,
-            onTap: () {},
+            onTap: null,
+            // () {}
             isFirst: true,
           ),
           MenuTile(
             title: 'Call Settings',
             subtitle: 'Incoming call settings',
             icon: HugeIcons.strokeRoundedCallIncoming03,
-            onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(builder: (context) => CallView()),
-              // );
-            },
+            onTap: null,
+            // () {
+            //   // Navigator.of(context).push(
+            //   //   MaterialPageRoute(builder: (context) => CallView()),
+            //   // );
+            // },
             isLast: true,
           ),
           const SizedBox(height: 10.0),

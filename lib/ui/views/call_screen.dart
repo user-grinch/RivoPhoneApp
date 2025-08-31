@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 
 class CallScreenView extends StatelessWidget {
   const CallScreenView({super.key});
@@ -167,7 +167,6 @@ class _CallActionButton extends StatelessWidget {
     required this.textColor,
     this.size = 60,
     this.onPressed,
-    super.key,
     this.showLabel = true,
   });
 

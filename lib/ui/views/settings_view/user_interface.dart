@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/services/prefservice.dart';
 import 'package:revo/ui/theme/handler.dart';
 import 'package:revo/utils/switch_tile.dart';
@@ -62,7 +62,7 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
             height: 10,
           ),
           SwitchTileWidget(
-              title: "Show first letter in avartar",
+              title: "Show first letter in avatar",
               subtitle:
                   "Displays the first letter of the contact name when a profile picture isn't available",
               value: SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER),
@@ -74,10 +74,10 @@ class _UserInterfaceViewState extends State<UserInterfaceView> {
           SwitchTileWidget(
               title: "Show picture in avatar",
               subtitle: "Shows the contact picture if available",
-              value: SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVARTAR),
+              value: SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVATAR),
               onChanged: (value) {
                 SharedPrefService()
-                    .saveBool(PREF_SHOW_PICTURE_IN_AVARTAR, value);
+                    .saveBool(PREF_SHOW_PICTURE_IN_AVATAR, value);
                 setState(() {});
               },
               isLast: true),

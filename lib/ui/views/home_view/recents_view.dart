@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/extentions/datetime.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/datetime.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/contact.dart';
@@ -39,7 +39,7 @@ class _RecentsViewState extends State<RecentsView> {
 
   Future<void> _refreshLogs(BuildContext context) async {
     // Call a method in your CallLogService to refresh the call logs.
-    await context.read<CallLogService>().refresh(); // Example method
+    context.read<CallLogService>().refresh(); // Example method
   }
 
   @override
@@ -108,10 +108,7 @@ class _RecentsViewState extends State<RecentsView> {
           ),
         ListTile(
           onTap: () async {
-            showDialog(
-              context: context,
-              builder: (context) => simChooserDialog(context, log.number),
-            );
+            simChooserDialog(context, log.number);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

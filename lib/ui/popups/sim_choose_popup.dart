@@ -1,43 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/sim_card.dart';
 import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/mobile_service.dart';
 import 'package:revo/utils/center_text.dart';
 
-Widget simChooserDialog(BuildContext context, String number) {
-  return BlocBuilder<MobileService, List<SimCard>>(
-    builder: (context, state) {
-      return Dialog(
-        backgroundColor: context.colorScheme.surfaceContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CenterText(
-                text: "Choose SIM for call",
-                size: 24,
-              ),
-              const SizedBox(height: 8),
-              Column(
-                children: context.read<MobileService>().getSimInfo.map((sim) {
-                  return _buildSimCard(context, sim, number);
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
+Future<void> simChooserDialog(BuildContext context, String number) {
+  // If only one sim card, skip dialog
+  if (context.read<MobileService>().getSimInfo.length == 1) {
+    return ActivityService().makePhoneCall(number, 1);
+  }
+  return showDialog(
+      context: context,
+      builder: (context) => BlocBuilder<MobileService, List<SimCard>>(
+            builder: (context, state) {
+              return Dialog(
+                backgroundColor: context.colorScheme.surfaceContainer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CenterText(
+                        text: "Choose SIM for call",
+                        size: 24,
+                      ),
+                      const SizedBox(height: 8),
+                      Column(
+                        children:
+                            context.read<MobileService>().getSimInfo.map((sim) {
+                          return _buildSimCard(context, sim, number);
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ));
 }
 
 Widget _buildSimCard(BuildContext context, SimCard sim, String number) {

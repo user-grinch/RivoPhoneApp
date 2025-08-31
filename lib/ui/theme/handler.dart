@@ -42,7 +42,6 @@ ThemeData _getAmoledTheme() {
       onSecondary: Color(0xFFD3D3D3),
       secondaryContainer: Color(0xFF2B2B2B),
       onSecondaryContainer: Color(0xFFFFFFFF),
-      background: Color(0xFF000000),
       surface: Color(0xFF121212),
       onSurface: Color(0xFFE0E0E0),
       surfaceContainer: Color(0xFF1A1A1A),

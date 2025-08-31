@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/services/activity_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
@@ -91,13 +91,13 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                     size: 45,
                     text: 'Share',
                     onTap: () {
-                      Share.shareXFiles([
+                      SharePlus.instance.share(ShareParams(files: [
                         XFile.fromData(
                             utf8.encode(generateVCardString(widget.contact)),
                             mimeType: 'text/plain')
                       ], fileNameOverrides: [
                         'contact.vcf'
-                      ]);
+                      ]));
                     },
                   ),
                   RoundedIconButton(
@@ -118,7 +118,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                         ? HugeIcons.strokeRoundedHeartCheck
                         : HugeIcons.strokeRoundedHeartAdd,
                     size: 45,
-                    text: 'Favourite',
+                    text: 'Favorite',
                     onTap: () {
                       setState(() {
                         widget.contact.isStarred = !widget.contact.isStarred;
@@ -276,10 +276,7 @@ class _ContactInfoViewState extends State<ContactInfoView> {
                 context,
                 icon: HugeIcons.strokeRoundedCall02,
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => simChooserDialog(context, phone),
-                  );
+                  simChooserDialog(context, phone);
                 },
                 size: 36,
               ),

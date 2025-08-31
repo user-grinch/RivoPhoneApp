@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:revo/extentions/datetime.dart';
-import 'package:revo/extentions/theme.dart';
+import 'package:revo/extensions/datetime.dart';
+import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
@@ -11,8 +11,9 @@ import 'package:revo/utils/center_text.dart';
 import 'package:revo/utils/utils.dart';
 
 class HistoryView extends StatefulWidget {
-  List<String> numbers;
-  HistoryView({super.key, required this.numbers});
+  final List<String> numbers;
+
+  const HistoryView({super.key, required this.numbers});
 
   @override
   State<HistoryView> createState() => _HistoryViewState();
