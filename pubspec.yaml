@@ -18,7 +18,7 @@ dependencies:
   permission_handler: ^11.3.1
   call_e_log: ^0.0.4
   intl: ^0.20.1
-  share_plus: ^11.1.0
+  share_plus: ^12.0.1
   qr_flutter: ^4.1.0
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
@@ -27,17 +27,17 @@ dependencies:
   url_launcher: ^6.3.1
   phone_state: ^2.1.1
   flutter_native_splash: ^2.4.4
-  hugeicons: ^0.0.7
+  hugeicons: ^0.0.10
   shared_preferences: ^2.5.1
   font_awesome_flutter: ^10.8.0
   phosphor_flutter: ^2.1.0
-  flutter_callkit_incoming: ^2.5.0
+  flutter_callkit_incoming: ^3.0.0
   simple_barcode_scanner: ^0.3.0
   flutter_dtmf:
     git:
       url: https://github.com/eopeter/flutter_dtmf.git
       ref: master
-  android_intent_plus: ^5.3.1
+  android_intent_plus: ^6.0.0
   sticky_az_list:
     git:
       url: https://github.com/TetrixGauss/sticky_az_list_plus
