@@ -7,6 +7,7 @@ import 'package:revo/extensions/theme.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/contact.dart';
+import 'package:revo/model/group_call_log.dart';
 import 'package:revo/services/cubit/call_log_service.dart';
 import 'package:revo/services/cubit/contact_service.dart';
 import 'package:revo/ui/popups/sim_choose_popup.dart';
@@ -67,16 +68,17 @@ class _RecentsViewState extends State<RecentsView> {
                 ],
               );
             }
+            final groupedLogs = groupCallLogs(state);
 
             return ListView.builder(
-              itemCount: state.length,
+              itemCount: groupedLogs.length,
               controller: _controller,
               physics: AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, i) {
                 return _buildLog(
                   context,
-                  state[i],
-                  _shouldShowHeader(state, i),
+                  groupedLogs[i],
+                  _shouldShowHeader(groupedLogs, i),
                 );
               },
             );
@@ -86,11 +88,21 @@ class _RecentsViewState extends State<RecentsView> {
     );
   }
 
-  bool _shouldShowHeader(List<CallLog> logs, int i) {
-    return i == 0 || logs[i].date.weekday != logs[i - 1].date.weekday;
+  bool _shouldShowHeader(List<GroupedCallLog> logs, int i) {
+    if (i == 0) return true;
+
+    final currentDate = logs[i].latest.date;
+    final previousDate = logs[i - 1].latest.date;
+
+    return currentDate.day != previousDate.day ||
+        currentDate.month != previousDate.month ||
+        currentDate.year != previousDate.year;
   }
 
-  Widget _buildLog(BuildContext context, CallLog log, bool showDateHeader) {
+  Widget _buildLog(
+      BuildContext context, GroupedCallLog groupedLog, bool showDateHeader) {
+    final log = groupedLog.latest;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,28 +158,41 @@ class _RecentsViewState extends State<RecentsView> {
             children: [
               Row(
                 children: [
-                  Icon(
-                    log.type.getIcon(),
-                    color: log.type.getColor(),
-                    size: 16,
-                  ),
+                  ...groupedLog.logs
+                      .map(
+                        (e) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Icon(
+                            e.type.getIcon(),
+                            color: e.type.getColor(),
+                            size: 16,
+                          ),
+                        ),
+                      )
+                      .toList(),
                   SizedBox(width: 5),
-                  Text(
-                    log.date.getContextAwareDateTime(),
-                    style: GoogleFonts.raleway(
-                      fontSize: 12,
-                      color: log.type.getColor(),
-                    ),
-                  ),
+                  groupedLog.count > 1
+                      ? Text(
+                          log.date.getContextAwareDate(),
+                          style: GoogleFonts.raleway(fontSize: 12),
+                        )
+                      : Text(
+                          log.date.getContextAwareDateTime(),
+                          style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            color: log.type.getColor(),
+                          ),
+                        ),
                 ],
               ),
-              Text(
-                convertSecondsToHMS(int.parse(log.duration)),
-                style: GoogleFonts.raleway(
-                  fontSize: 12,
-                  color: context.colorScheme.onSurface.withAlpha(200),
+              if (groupedLog.count == 1)
+                Text(
+                  convertSecondsToHMS(int.parse(log.duration)),
+                  style: GoogleFonts.raleway(
+                    fontSize: 12,
+                    color: context.colorScheme.onSurface.withAlpha(200),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
