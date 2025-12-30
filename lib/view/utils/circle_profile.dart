@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -51,7 +51,7 @@ class _CircleProfileState extends State<CircleProfile> {
                   ),
                 )
               : Icon(
-                  HugeIcons.strokeRoundedUser,
+                  FluentIcons.person_24_regular,
                   size: widget.size,
                   color: context.colorScheme.onSurface,
                 )

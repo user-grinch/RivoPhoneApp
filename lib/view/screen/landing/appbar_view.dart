@@ -1,7 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
@@ -41,7 +41,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
                           centerTitle: false,
                           enableBackButton: true,
                           backButtonIcon:
-                              Icon(HugeIcons.strokeRoundedArrowLeft01),
+                              Icon(FluentIcons.arrow_left_24_regular),
                         ),
                         scanType: ScanType.qr,
                         isShowFlashIcon: true,
@@ -65,7 +65,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
                   }
                 },
                 icon: Icon(
-                  HugeIcons.strokeRoundedQrCode,
+                  FluentIcons.qr_code_24_regular,
                 ),
               ),
               Text(
@@ -80,7 +80,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
                   Navigator.pushNamed(context, settingsRoute);
                 },
                 icon: Icon(
-                  HugeIcons.strokeRoundedSettings03,
+                  FluentIcons.settings_24_regular,
                 ),
               ),
             ],

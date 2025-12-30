@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/screen/settings/about.dart';
 import 'package:revo/view/screen/settings/sound.dart';
@@ -17,7 +17,7 @@ class SettingsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -45,7 +45,7 @@ class SettingsView extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               leading: Icon(
-                HugeIcons.strokeRoundedFavourite,
+                FluentIcons.heart_24_regular,
                 size: 40,
               ),
               title: Column(
@@ -65,7 +65,7 @@ class SettingsView extends StatelessWidget {
           MenuTile(
             title: 'User Interface',
             subtitle: 'Customize looks & behaviors',
-            icon: HugeIcons.strokeRoundedImage02,
+            icon: FluentIcons.image_24_regular,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => UserInterfaceView()),
@@ -76,7 +76,7 @@ class SettingsView extends StatelessWidget {
           MenuTile(
             title: 'Sound & Vibration',
             subtitle: 'Manage ringtones & volume',
-            icon: HugeIcons.strokeRoundedVolumeHigh,
+            icon: FluentIcons.speaker_2_24_regular,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => SoundView()),
@@ -88,7 +88,7 @@ class SettingsView extends StatelessWidget {
           MenuTile(
             title: 'Blocklist',
             subtitle: 'Block calls from people',
-            icon: HugeIcons.strokeRoundedCallBlocked02,
+            icon: FluentIcons.call_prohibited_24_regular,
             onTap: null,
             // () {}
             isFirst: true,
@@ -96,7 +96,7 @@ class SettingsView extends StatelessWidget {
           MenuTile(
             title: 'Call Settings',
             subtitle: 'Incoming call settings',
-            icon: HugeIcons.strokeRoundedCallIncoming03,
+            icon: FluentIcons.call_24_regular,
             onTap: null,
             // () {
             //   // Navigator.of(context).push(
@@ -109,7 +109,7 @@ class SettingsView extends StatelessWidget {
           MenuTile(
             title: 'About',
             subtitle: 'Information about the dialer app',
-            icon: HugeIcons.strokeRoundedInformationCircle,
+            icon: FluentIcons.info_24_regular,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => AboutView()),

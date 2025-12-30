@@ -1,8 +1,8 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
@@ -152,7 +152,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         if (_number.isNotEmpty)
                           RoundedIconButton(
                             context,
-                            icon: HugeIcons.strokeRoundedUserAdd01,
+                            icon: FluentIcons.person_add_24_regular,
                             size: 40,
                             onTap: () {
                               hapticVibration();
@@ -163,7 +163,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                           ),
                         Spacer(),
                         DialActionButton(
-                          icon: HugeIcons.strokeRoundedSimcard01,
+                          icon: FluentIcons.sim_24_regular,
                           label: 'Call',
                           func: () {
                             hapticVibration();
@@ -178,7 +178,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         if (_number.isNotEmpty)
                           RoundedIconButton(
                             context,
-                            icon: HugeIcons.strokeRoundedArrowLeft01,
+                            icon: FluentIcons.arrow_left_24_regular,
                             size: 40,
                             onTap: () {
                               hapticVibration();

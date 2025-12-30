@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
@@ -30,7 +31,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         elevation: 0,
@@ -45,7 +46,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           "Edit",
           style: TextStyle(color: context.colorScheme.onSecondaryContainer),
         ),
-        icon: Icon(HugeIcons.strokeRoundedEdit02,
+        icon: Icon(FluentIcons.edit_24_regular,
             color: context.colorScheme.onSecondaryContainer),
       ),
       body: SingleChildScrollView(
@@ -74,7 +75,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   RoundedIconButton(
                     context,
                     size: 45,
-                    icon: HugeIcons.strokeRoundedQrCode,
+                    icon: FluentIcons.qr_code_24_regular,
                     text: 'QR Code',
                     onTap: () {
                       QrCodePopup(
@@ -84,7 +85,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   ),
                   RoundedIconButton(
                     context,
-                    icon: HugeIcons.strokeRoundedShare08,
+                    icon: FluentIcons.share_24_regular,
                     size: 45,
                     text: 'Share',
                     onTap: () {
@@ -99,7 +100,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   ),
                   RoundedIconButton(
                     context,
-                    icon: HugeIcons.strokeRoundedClock04,
+                    icon: FluentIcons.history_24_regular,
                     size: 45,
                     text: 'Call History',
                     onTap: () {
@@ -112,8 +113,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   RoundedIconButton(
                     context,
                     icon: widget.contact.isStarred
-                        ? HugeIcons.strokeRoundedHeartCheck
-                        : HugeIcons.strokeRoundedHeartAdd,
+                        ? FluentIcons.heart_24_filled
+                        : FluentIcons.heart_24_regular,
                     size: 45,
                     text: 'Favorite',
                     onTap: () {
@@ -155,7 +156,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                     const SizedBox(height: 16),
                     Column(
                       children: [
-                        _buildListTile(context, HugeIcons.strokeRoundedTelegram,
+                        _buildListTile(context, FontAwesomeIcons.telegram,
                             'Telegram', () {
                           NumberPicker(
                             context: context,
@@ -165,7 +166,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                             },
                           ).show();
                         }),
-                        _buildListTile(context, HugeIcons.strokeRoundedVideo01,
+                        _buildListTile(context, FluentIcons.video_24_regular,
                             'Video Call', () {
                           NumberPicker(
                             context: context,
@@ -175,7 +176,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                             },
                           );
                         }),
-                        _buildListTile(context, HugeIcons.strokeRoundedWhatsapp,
+                        _buildListTile(context, FontAwesomeIcons.whatsapp,
                             'WhatsApp', () {
                           NumberPicker(
                             context: context,
@@ -270,7 +271,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             children: [
               RoundedIconButton(
                 context,
-                icon: HugeIcons.strokeRoundedCall02,
+                icon: FluentIcons.call_24_regular,
                 onTap: () {
                   simCards.whenData((value) => SimPicker(
                           context: context, simCards: value, number: phone)
@@ -280,7 +281,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
               ),
               RoundedIconButton(
                 context,
-                icon: HugeIcons.strokeRoundedMessage01,
+                icon: FluentIcons.chat_24_regular,
                 onTap: () {
                   ActivityService().sendSMS(phone);
                 },
@@ -302,7 +303,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           : null,
       child: widget.contact.photo == null
           ? Icon(
-              HugeIcons.strokeRoundedUser,
+              FluentIcons.person_24_regular,
               size: 100,
               color: context.colorScheme.onSecondaryContainer,
             )

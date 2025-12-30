@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
@@ -88,8 +88,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
         },
         elevation: 1,
         child: Icon(_currentPage == 1.0
-            ? HugeIcons.strokeRoundedUserAdd01
-            : HugeIcons.strokeRoundedDialpadCircle02),
+            ? FluentIcons.person_add_24_regular
+            : FluentIcons.dialpad_24_regular),
       ),
     );
   }

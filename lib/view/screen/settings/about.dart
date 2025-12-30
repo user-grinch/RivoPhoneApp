@@ -1,6 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/utils/menu_tile.dart';
@@ -17,7 +18,7 @@ class AboutView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -90,14 +91,14 @@ class AboutView extends StatelessWidget {
             MenuTile(
               title: 'Author',
               subtitle: 'Grinch_',
-              icon: HugeIcons.strokeRoundedUser,
+              icon: FluentIcons.person_24_regular,
               onTap: () {},
               isFirst: true,
             ),
             MenuTile(
               title: 'Version',
               subtitle: version,
-              icon: HugeIcons.strokeRoundedInformationCircle,
+              icon: FluentIcons.info_24_regular,
               onTap: () {},
               isLast: true,
             ),
@@ -105,7 +106,7 @@ class AboutView extends StatelessWidget {
             MenuTile(
               title: 'Source Code',
               subtitle: 'View the source code on GitHub',
-              icon: HugeIcons.strokeRoundedGithub01,
+              icon: FontAwesomeIcons.github,
               onTap: () async =>
                   await launchURL('https://github.com/user-grinch/Rivo'),
               isFirst: true,
@@ -113,7 +114,7 @@ class AboutView extends StatelessWidget {
             MenuTile(
               title: 'Support Us on Patreon',
               subtitle: 'Contribute to our development',
-              icon: HugeIcons.strokeRoundedFavourite,
+              icon: FluentIcons.heart_24_regular,
               onTap: () async =>
                   await launchURL('https://www.patreon.com/grinch_'),
               isLast: true,

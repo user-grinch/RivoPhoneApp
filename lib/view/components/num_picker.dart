@@ -1,5 +1,5 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/utils/center_text.dart';
 
@@ -72,7 +72,7 @@ class NumberPicker {
                 radius: 18,
                 backgroundColor: context.colorScheme.primary,
                 child: Icon(
-                  HugeIcons.strokeRoundedSmartPhone01,
+                  FluentIcons.phone_24_regular,
                   color: context.colorScheme.onPrimary,
                   size: 18,
                 ),

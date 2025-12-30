@@ -1,7 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
@@ -146,7 +146,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           ),
           trailing: RoundedIconButton(
             context,
-            icon: HugeIcons.strokeRoundedArrowRight01,
+            icon: FluentIcons.arrow_right_24_regular,
             size: 30,
             onTap: () async {
               final contactService = ref.read(contactServiceProvider.notifier);

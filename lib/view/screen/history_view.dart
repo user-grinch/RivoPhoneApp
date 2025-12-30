@@ -1,7 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/model/call_log.dart';
@@ -43,7 +43,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+            icon: Icon(FluentIcons.arrow_left_24_regular),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text('Call History'),

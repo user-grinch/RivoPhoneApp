@@ -1,5 +1,5 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -49,19 +49,19 @@ class _NavigationViewState extends State<NavigationView> {
           : NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
-          icon: Icon(HugeIcons.strokeRoundedClock01),
+          icon: Icon(FluentIcons.history_24_regular),
           label: 'Recents',
-          selectedIcon: Icon(HugeIcons.strokeRoundedClock01),
+          selectedIcon: Icon(FluentIcons.history_24_filled),
         ),
         NavigationDestination(
-          icon: Icon(HugeIcons.strokeRoundedUser),
+          icon: Icon(FluentIcons.person_24_regular),
           label: 'Contacts',
-          selectedIcon: Icon(HugeIcons.strokeRoundedUser),
+          selectedIcon: Icon(FluentIcons.person_24_filled),
         ),
         NavigationDestination(
-          icon: Icon(HugeIcons.strokeRoundedFavourite),
+          icon: Icon(FluentIcons.star_24_regular),
           label: 'Favorites',
-          selectedIcon: Icon(HugeIcons.strokeRoundedFavourite),
+          selectedIcon: Icon(FluentIcons.star_24_filled),
         ),
       ],
       onDestinationSelected: (index) {

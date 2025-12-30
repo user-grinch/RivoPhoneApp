@@ -1,6 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/utils/menu_tile.dart';
 import 'package:revo/view/utils/switch_tile.dart';
@@ -24,7 +24,7 @@ class _CallViewState extends State<CallView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -52,7 +52,7 @@ class _CallViewState extends State<CallView> {
           MenuTile(
             title: 'Speed dial Settings',
             subtitle: '',
-            icon: HugeIcons.strokeRoundedDialpadSquare02,
+            icon: FluentIcons.dialpad_24_regular,
             onTap: () {},
             isLast: true,
           ),

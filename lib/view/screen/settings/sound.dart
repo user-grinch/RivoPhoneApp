@@ -1,8 +1,8 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -22,7 +22,7 @@ class _SoundViewState extends State<SoundView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -63,7 +63,7 @@ class _SoundViewState extends State<SoundView> {
           MenuTile(
             title: 'Ringtone Settings',
             subtitle: '',
-            icon: HugeIcons.strokeRoundedMusicNote02,
+            icon: FluentIcons.music_note_2_24_regular,
             onTap: () {
               final intent = AndroidIntent(
                 action: 'android.settings.SOUND_SETTINGS',

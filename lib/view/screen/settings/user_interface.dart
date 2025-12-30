@@ -1,7 +1,7 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -18,7 +18,7 @@ class UserInterfaceView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(HugeIcons.strokeRoundedArrowLeft01),
+          icon: const Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

@@ -1,5 +1,5 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 enum CallType {
   incoming,
@@ -14,15 +14,15 @@ extension CallTypeHelper on CallType {
   IconData getIcon() {
     switch (this) {
       case CallType.incoming:
-        return HugeIcons.strokeRoundedCallReceived;
+        return FluentIcons.call_inbound_24_regular;
       case CallType.outgoing:
-        return HugeIcons.strokeRoundedCallOutgoing01;
+        return FluentIcons.call_outbound_24_regular;
       case CallType.rejected:
-        return HugeIcons.strokeRoundedCallDisabled02;
+        return FluentIcons.call_end_24_regular;
       case CallType.blocked:
-        return HugeIcons.strokeRoundedCallBlocked;
+        return FluentIcons.call_prohibited_24_regular;
       default:
-        return HugeIcons.strokeRoundedCallMissed01;
+        return FluentIcons.call_missed_24_regular;
     }
   }
 
