@@ -80,7 +80,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
                   Navigator.pushNamed(context, settingsRoute);
                 },
                 icon: Icon(
-                  FluentIcons.settings_24_regular,
+                  FluentIcons.options_24_regular,
                 ),
               ),
             ],

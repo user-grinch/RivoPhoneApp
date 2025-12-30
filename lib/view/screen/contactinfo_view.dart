@@ -34,20 +34,17 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(FluentIcons.edit_24_regular),
+            onPressed: () {
+              ref
+                  .read(contactServiceProvider.notifier)
+                  .editContact(widget.contact);
+            },
+          )
+        ],
         elevation: 0,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        elevation: 1,
-        onPressed: () async {
-          ref.read(contactServiceProvider.notifier).editContact(widget.contact);
-        },
-        backgroundColor: context.colorScheme.secondaryContainer,
-        label: Text(
-          "Edit",
-          style: TextStyle(color: context.colorScheme.onSecondaryContainer),
-        ),
-        icon: Icon(FluentIcons.edit_24_regular,
-            color: context.colorScheme.onSecondaryContainer),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
@@ -156,8 +153,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                     const SizedBox(height: 16),
                     Column(
                       children: [
-                        _buildListTile(context, FontAwesomeIcons.telegram,
-                            'Telegram', () {
+                        _buildListTile(
+                            context, FontAwesomeIcons.telegram, 'Telegram', () {
                           NumberPicker(
                             context: context,
                             numbers: widget.contact.phones,
@@ -166,8 +163,9 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                             },
                           ).show();
                         }),
-                        _buildListTile(context, FluentIcons.video_24_regular,
-                            'Video Call', () {
+                        _buildListTile(
+                            context, FluentIcons.video_24_regular, 'Video Call',
+                            () {
                           NumberPicker(
                             context: context,
                             numbers: widget.contact.phones,
@@ -176,8 +174,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                             },
                           );
                         }),
-                        _buildListTile(context, FontAwesomeIcons.whatsapp,
-                            'WhatsApp', () {
+                        _buildListTile(
+                            context, FontAwesomeIcons.whatsapp, 'WhatsApp', () {
                           NumberPicker(
                             context: context,
                             numbers: widget.contact.phones,
