@@ -91,7 +91,7 @@ class AboutView extends StatelessWidget {
             MenuTile(
               title: 'Author',
               subtitle: 'Grinch_',
-              icon: FluentIcons.person_24_regular,
+              icon: FluentIcons.person_24_filled,
               onTap: () {},
               isFirst: true,
             ),

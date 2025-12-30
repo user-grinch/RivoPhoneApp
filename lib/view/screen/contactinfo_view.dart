@@ -301,7 +301,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           : null,
       child: widget.contact.photo == null
           ? Icon(
-              FluentIcons.person_24_regular,
+              FluentIcons.person_24_filled,
               size: 100,
               color: context.colorScheme.onSecondaryContainer,
             )

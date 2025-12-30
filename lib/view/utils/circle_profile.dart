@@ -51,7 +51,7 @@ class _CircleProfileState extends State<CircleProfile> {
                   ),
                 )
               : Icon(
-                  FluentIcons.person_24_regular,
+                  FluentIcons.person_24_filled,
                   size: widget.size,
                   color: context.colorScheme.onSurface,
                 )
