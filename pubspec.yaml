@@ -1,47 +1,40 @@
 name: revo
 description: "An android dialer application made with Flutter following MDY MD3 guidelines."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
   sdk: '>=3.6.0 <4.0.0'
-  flutter: '>=3.27.0'
+  flutter: '>=3.38.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  dynamic_color: 1.7.0
-  google_fonts: ^6.2.1
+  dynamic_color: ^1.8.1
+  google_fonts: ^6.3.3
+  permission_handler: ^12.0.1
+  simple_barcode_scanner: ^0.4.0
+  shared_preferences: ^2.5.4
+  url_launcher: ^6.3.2
   flutter_contacts: ^1.1.9+2
-  permission_handler: ^11.3.1
-  call_e_log: ^0.0.4
-  intl: ^0.20.1
+  intl: ^0.20.2
   share_plus: ^12.0.1
   qr_flutter: ^4.1.0
+  flutter_sim_data: ^1.0.5
+  android_intent_plus: ^6.0.0
+
+  # Replace these with better packages
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
   provider: ^6.1.2
-  flutter_sim_data: ^1.0.5
-  url_launcher: ^6.3.1
-  phone_state: ^2.1.1
-  flutter_native_splash: ^2.4.4
   hugeicons: ^0.0.10
-  shared_preferences: ^2.5.1
-  font_awesome_flutter: ^10.8.0
-  phosphor_flutter: ^2.1.0
-  flutter_callkit_incoming: ^3.0.0
-  simple_barcode_scanner: ^0.3.0
-  flutter_dtmf:
-    git:
-      url: https://github.com/eopeter/flutter_dtmf.git
-      ref: master
-  android_intent_plus: ^6.0.0
+  call_e_log: ^0.0.4
   sticky_az_list:
     git:
-      url: https://github.com/TetrixGauss/sticky_az_list_plus
-      ref: '118f056'
+      url: https://github.com/user-grinch/sticky_az_list_plus
+      ref: '241d5c9'
 
 flutter_native_splash:
   image: 'assets/splash.png'
@@ -58,10 +51,8 @@ flutter_native_splash:
     # branding: 'assets/branding.png'
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -77,22 +68,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-    - assets/dialpad/
     - assets/icon.png
     - assets/branding.png
-    - assets/static-bg.jpg
-    - assets/dialpad/1.mp3
-    - assets/dialpad/2.mp3
-    - assets/dialpad/3.mp3
-    - assets/dialpad/4.mp3
-    - assets/dialpad/5.mp3
-    - assets/dialpad/6.mp3
-    - assets/dialpad/7.mp3
-    - assets/dialpad/8.mp3
-    - assets/dialpad/9.mp3
-    - assets/dialpad/0.mp3
-    - assets/dialpad/star.mp3
-    - assets/dialpad/hash.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
