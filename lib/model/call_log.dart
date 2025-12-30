@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:call_e_log/call_log.dart' as lib;
+import 'package:call_log/call_log.dart' as lib;
 import 'package:revo/model/call_type.dart';
 
 class CallLog {

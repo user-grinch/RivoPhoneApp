@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
 import 'package:sticky_az_list/sticky_az_list.dart';
-import 'package:revo/utils/utils.dart';
 
 class Contact extends TaggedItem {
   String id;

@@ -1,5 +1,5 @@
 import 'package:revo/model/call_log.dart';
-import 'package:revo/utils/utils.dart';
+import 'package:revo/view/utils/utils.dart';
 
 class GroupedCallLog {
   final List<CallLog> logs;
