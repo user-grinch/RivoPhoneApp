@@ -78,6 +78,31 @@ class ContactService extends _$ContactService {
     }
   }
 
+  List<Contact> findAllByNameOrNumber(String name, String number) {
+    String target = normalizePhoneNumber(number);
+    final currentList = state.value ?? [];
+
+    if (name == "" && number == "") {
+      return currentList;
+    }
+    try {
+      return currentList.where((f) {
+        bool nameMatches = name.isNotEmpty &&
+            f.fullName.toLowerCase().contains(name.toLowerCase());
+
+        bool isNumber = number.isNotEmpty && num.tryParse(number) != null;
+        bool numberMatches = isNumber &&
+            f.phones.any((g) {
+              String contactNumber = normalizePhoneNumber(g);
+              return contactNumber.contains(target) || target == contactNumber;
+            });
+        return nameMatches || numberMatches;
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   Future<void> createNewContact({String? number}) async {
     if (await Permission.contacts.status.isGranted) {
       if (number == null) {

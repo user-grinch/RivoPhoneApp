@@ -83,7 +83,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
           ),
           title: Text(
             history.date.getContextAwareDateTime(),
-            style: GoogleFonts.raleway(fontSize: 16),
+            style: GoogleFonts.outfit(fontSize: 16),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

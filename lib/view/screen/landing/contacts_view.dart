@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
@@ -32,6 +33,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
   }
 
   Future<void> _refreshContacts(BuildContext context) async {
+    await Future.delayed(const Duration(seconds: 2));
     ref.read(contactServiceProvider.notifier).refresh();
   }
 
@@ -42,7 +44,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
     return contacts.when(
       data: (v) {
         if (v.isEmpty) {
-          return RefreshIndicator(
+          return ExpressiveRefreshIndicator(
             onRefresh: () => _refreshContacts(context),
             child: ListView(
               physics: AlwaysScrollableScrollPhysics(),
@@ -53,7 +55,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
           );
         }
 
-        return RefreshIndicator(
+        return ExpressiveRefreshIndicator(
           onRefresh: () => _refreshContacts(context),
           child: StickyAzList(
             controller: _controller,
@@ -74,7 +76,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                         color: Theme.of(context).colorScheme.surface),
                     child: Text(
                       symbol,
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.roboto(
                         fontSize: 20,
                         color: context.colorScheme.onSurface.withAlpha(200),
                       ),
@@ -85,7 +87,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
         );
       },
       loading: () => Center(
-        child: CircularProgressIndicator(),
+        child: const ExpressiveLoadingIndicator(),
       ),
       error: (e, s) => Center(
         child: const Text("Error occured"),
@@ -109,7 +111,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             Flexible(
               child: Text(
                 contact.displayName,
-                style: GoogleFonts.raleway(
+                style: GoogleFonts.roboto(
                   fontSize: 16,
                   color: context.colorScheme.onSurface,
                 ),

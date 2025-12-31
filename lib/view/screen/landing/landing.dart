@@ -45,7 +45,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           bool flag = SharedPrefService().getBool("WelcomeShown$version");
           if (!flag && mounted) {
             WelcomePopup(
-                    context: context, changelog: changelog, version: version)
+                    context: context,
+                    changelog: changelog,
+                    version: version,
+                    buildNumber: buildNumber)
                 .show();
             SharedPrefService().saveBool("WelcomeShown$version", true);
           }

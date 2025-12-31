@@ -23,11 +23,10 @@ class ContactTile extends ConsumerWidget {
     final simCards = ref.watch(getSimInfoProvider);
     return ListTile(
       onTap: () async {
-        if (contact.phones.isNotEmpty) {
-          simCards.whenData((value) => SimPicker(
-                  context: context, simCards: value, number: contact.phones[0])
-              .show());
-        }
+        await Navigator.of(context).pushNamed(
+          contactInfoRoute,
+          arguments: contact,
+        );
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -39,29 +38,24 @@ class ContactTile extends ConsumerWidget {
       ),
       title: Text(
         contact.displayName,
-        style: GoogleFonts.raleway(
+        style: GoogleFonts.outfit(
           fontSize: 16,
           color: context.colorScheme.onSurface.withAlpha(200),
         ),
       ),
-      subtitle: Text(
-        contact.phones
-            .toString()
-            .substring(1, contact.phones.toString().length - 1),
-        style: GoogleFonts.raleway(
-          fontSize: 12,
-          color: context.colorScheme.onSurface.withAlpha(200),
-        ),
-      ),
+      subtitle: Text(""),
       trailing: RoundedIconButton(
         context,
-        icon: FluentIcons.arrow_right_24_regular,
-        size: 30,
+        icon: FluentIcons.call_24_regular,
+        size: 35,
         onTap: () async {
-          await Navigator.of(context).pushNamed(
-            contactInfoRoute,
-            arguments: contact,
-          );
+          if (contact.phones.isNotEmpty) {
+            simCards.whenData((value) => SimPicker(
+                    context: context,
+                    simCards: value,
+                    number: contact.phones[0])
+                .show());
+          }
         },
       ),
     );

@@ -29,7 +29,7 @@ class QrCodePopup {
           children: [
             Text(
               'Scan to add contact',
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 color: context.colorScheme.onSurface,
                 fontSize: 20,
               ),

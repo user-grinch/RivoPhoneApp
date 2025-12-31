@@ -44,7 +44,7 @@ class RoundedIconButton extends StatelessWidget {
         if (text.isNotEmpty)
           Text(
             text,
-            style: GoogleFonts.raleway(
+            style: GoogleFonts.outfit(
               textStyle: context.textTheme.bodyLarge,
               color: context.colorScheme.onSurface,
               fontSize: 12,

@@ -22,7 +22,7 @@ class SettingsView extends StatelessWidget {
         ),
         title: Text(
           'Settings',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: context.colorScheme.onSurface,
@@ -121,7 +121,7 @@ class SettingsView extends StatelessWidget {
           const SizedBox(height: 12.0),
           Center(
             child: Text(
-              '© Copyright Grinch_ 2025',
+              '© Copyright 2025-2026',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey,

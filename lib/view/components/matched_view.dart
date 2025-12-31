@@ -5,39 +5,35 @@ import 'package:revo/view/components/contact_tile.dart';
 
 class MatchedView extends ConsumerWidget {
   final ScrollController scrollController;
-  final String number;
+  final String searchText;
 
   const MatchedView({
     super.key,
     required this.scrollController,
-    required this.number,
+    required this.searchText,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final contacts = ref.watch(contactServiceProvider);
+    final contacts = ref
+        .watch(contactServiceProvider.notifier)
+        .findAllByNameOrNumber(searchText, searchText);
 
-    return contacts.when(
-      data: (value) {
-        return Scrollbar(
+    if (contacts.isNotEmpty) {
+      return Scrollbar(
+        controller: scrollController,
+        child: ListView.builder(
+          padding: const EdgeInsets.only(top: 20.0),
+          shrinkWrap: true,
+          itemCount: contacts.length,
           controller: scrollController,
-          child: ListView.builder(
-            padding: const EdgeInsets.only(top: 20.0),
-            shrinkWrap: true,
-            itemCount: value.length,
-            controller: scrollController,
-            itemBuilder: (context, i) {
-              return ContactTile(contact: value[i]);
-            },
-          ),
-        );
-      },
-      loading: () => Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (e, s) => Center(
-        child: const Text("Error occured"),
-      ),
-    );
+          itemBuilder: (context, i) {
+            return ContactTile(contact: contacts[i]);
+          },
+        ),
+      );
+    } else {
+      return Center(child: const Text("No contacts found"));
+    }
   }
 }

@@ -91,7 +91,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                 padding: const EdgeInsets.all(8.0),
                 child: MatchedView(
                   scrollController: _scrollController,
-                  number: _number,
+                  searchText: _number,
                 ),
               ),
             ),
@@ -108,7 +108,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                           ),
                           child: Text(
                             _number,
-                            style: GoogleFonts.raleway(
+                            style: GoogleFonts.outfit(
                               fontSize: 30,
                               color: context.colorScheme.onSurface,
                             ),

@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
@@ -74,8 +75,10 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           trackVisibility: true,
           thickness: 2.5,
           radius: const Radius.circular(30),
-          child: RefreshIndicator(
+          child: ExpressiveRefreshIndicator(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             onRefresh: () async {
+              await Future.delayed(const Duration(seconds: 2));
               await ref.read(callLogServiceProvider.notifier).refresh();
             },
             child: ListView.builder(
@@ -93,7 +96,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: const LoadingIndicatorM3E()),
       error: (e, s) => Center(child: Text('Error loading call logs: $e')),
     );
   }
@@ -111,23 +114,23 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
             padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
             child: Text(
               log.date.getContextAwareDate(),
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 fontSize: 20,
                 color: context.colorScheme.onSurface,
               ),
             ),
           ),
         ListTile(
-          onTap: () {
-            simCardsAsync.whenData(
-              (simCards) {
-                SimPicker(
-                        context: context,
-                        simCards: simCards,
-                        number: log.number)
-                    .show();
-              },
-            );
+          onTap: () async {
+            final contactService = ref.read(contactServiceProvider.notifier);
+            var contact = contactService.findByName(log.name);
+            if (contact.phones.isEmpty) {
+              contact = contactService.findByNumber(log.number);
+              contact.displayName = log.displayName;
+              contact.fullName = log.name;
+            }
+            await Navigator.of(context)
+                .pushNamed(contactInfoRoute, arguments: contact);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -139,25 +142,25 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           ),
           title: Text(
             log.displayName,
-            style: GoogleFonts.raleway(
+            style: GoogleFonts.outfit(
               fontSize: 16,
               color: context.colorScheme.onSurface,
             ),
           ),
           trailing: RoundedIconButton(
             context,
-            icon: FluentIcons.arrow_right_24_regular,
-            size: 30,
+            icon: FluentIcons.call_24_regular,
+            size: 35,
             onTap: () async {
-              final contactService = ref.read(contactServiceProvider.notifier);
-              var contact = contactService.findByName(log.name);
-              if (contact.phones.isEmpty) {
-                contact = contactService.findByNumber(log.number);
-                contact.displayName = log.displayName;
-                contact.fullName = log.name;
-              }
-              await Navigator.of(context)
-                  .pushNamed(contactInfoRoute, arguments: contact);
+              simCardsAsync.whenData(
+                (simCards) {
+                  SimPicker(
+                          context: context,
+                          simCards: simCards,
+                          number: log.number)
+                      .show();
+                },
+              );
             },
           ),
           subtitle: Column(
@@ -179,11 +182,11 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                   groupedLog.count > 1
                       ? Text(
                           log.date.getContextAwareDate(),
-                          style: GoogleFonts.raleway(fontSize: 12),
+                          style: GoogleFonts.outfit(fontSize: 12),
                         )
                       : Text(
                           log.date.getContextAwareDateTime(),
-                          style: GoogleFonts.raleway(
+                          style: GoogleFonts.outfit(
                             fontSize: 12,
                             color: log.type.getColor(),
                           ),
@@ -193,7 +196,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
               if (groupedLog.count == 1)
                 Text(
                   convertSecondsToHMS(int.parse(log.duration)),
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.outfit(
                     fontSize: 12,
                     color: context.colorScheme.onSurface.withAlpha(200),
                   ),

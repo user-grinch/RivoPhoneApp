@@ -12,7 +12,7 @@ class CenterText extends StatelessWidget {
     return Center(
       child: Text(
         text,
-        style: GoogleFonts.raleway(
+        style: GoogleFonts.outfit(
           fontSize: size,
           color: context.colorScheme.onSurface,
         ),

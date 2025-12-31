@@ -30,14 +30,18 @@ dependencies:
   call_log : ^6.0.1
   share_plus: ^12.0.1
   android_intent_plus: ^6.0.0
-
-  # Replace these with better packages
   fluentui_system_icons: ^1.1.273
   font_awesome_flutter: ^10.12.0
+  flutter_dtmf: 
+    git:
+      url: https://github.com/user-grinch/flutter_dtmf
+      ref: '7d64714'
   sticky_az_list:
     git:
       url: https://github.com/user-grinch/sticky_az_list_plus
       ref: '241d5c9'
+  skeletonizer: ^2.1.2
+  m3e_collection: ^0.3.7
 
 flutter_launcher_icons:
   android: "launcher_icon"

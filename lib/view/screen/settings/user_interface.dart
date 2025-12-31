@@ -23,7 +23,7 @@ class UserInterfaceView extends ConsumerWidget {
         ),
         title: Text(
           'User Interface',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: context.colorScheme.onSurface,

@@ -54,7 +54,7 @@ class _SearchViewState extends State<SearchView> {
           padding: EdgeInsets.only(left: 16),
           child: MatchedView(
             scrollController: _scrollController,
-            number: _searchQuery,
+            searchText: _searchQuery,
           ),
         ),
       ),
@@ -69,12 +69,12 @@ class _SearchViewState extends State<SearchView> {
       child: TextField(
         focusNode: _focusNode,
         controller: _controller,
-        style: GoogleFonts.raleway(
+        style: GoogleFonts.outfit(
           color: context.colorScheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: 'Search name/ number...',
-          hintStyle: GoogleFonts.raleway(
+          hintStyle: GoogleFonts.outfit(
             color: Colors.grey,
           ),
           border: InputBorder.none,

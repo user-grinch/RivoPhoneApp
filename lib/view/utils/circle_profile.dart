@@ -44,7 +44,7 @@ class _CircleProfileState extends State<CircleProfile> {
           ? showFirstLetter
               ? Text(
                   widget.name[0].toUpperCase(),
-                  style: GoogleFonts.raleway(
+                  style: GoogleFonts.outfit(
                     fontSize: widget.size,
                     fontWeight: FontWeight.w300,
                     color: context.colorScheme.onSurface,

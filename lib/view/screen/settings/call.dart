@@ -29,7 +29,7 @@ class _CallViewState extends State<CallView> {
         ),
         title: Text(
           'Call Settings',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: context.colorScheme.onSurface,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dtmf/dtmf.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
@@ -25,23 +26,25 @@ class _DialPadButtonState extends State<DialPadButton> {
   @override
   Widget build(BuildContext context) {
     bool letters = SharedPrefService().getBool(PREF_DIALPAD_LETTERS, def: true);
-    double textSz = widget.mainText == "*" ? 45 : 20;
+    double textSz = widget.mainText == "*" ? 45 : 32;
 
     if (!letters) {
-      textSz += 10;
+      textSz += 8;
     }
+
     return TextButton(
       style: TextButton.styleFrom(
         elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(50)),
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
         ),
-        backgroundColor: context.colorScheme.secondaryContainer.withAlpha(150),
-        overlayColor: context.colorScheme.onSurface,
+        backgroundColor: context.colorScheme.secondaryContainer,
+        overlayColor: context.colorScheme.onSecondaryContainer,
       ),
       onPressed: () async {
         if (SharedPrefService().getBool(PREF_DTMF_TONE, def: true)) {
-          // await Dtmf.playTone(digits: widget.mainText, volume: 3);
+          await Dtmf.playTone(digits: widget.mainText, volume: 1);
         }
         hapticVibration();
         widget.onUpdate(widget.mainText);
@@ -49,22 +52,23 @@ class _DialPadButtonState extends State<DialPadButton> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Text(
-              widget.mainText,
-              style: GoogleFonts.raleway(
-                fontSize: textSz,
-                fontWeight: FontWeight.normal,
-                color: context.colorScheme.onSurface,
-              ),
+          Text(
+            widget.mainText,
+            style: GoogleFonts.outfit(
+              fontSize: textSz,
+              fontWeight: FontWeight.w400,
+              color: context.colorScheme.onSecondaryContainer,
+              height: 1.1,
             ),
           ),
-          if (widget.subText != null)
+          if (widget.subText != null && letters)
             Text(
               widget.subText!,
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 fontSize: 12,
-                color: context.colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+                color:
+                    context.colorScheme.onSecondaryContainer.withOpacity(0.4),
               ),
             ),
         ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
@@ -29,11 +30,14 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBarM3E(
         leading: IconButton(
           icon: Icon(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        centerTitle: false,
+        shapeFamily: AppBarM3EShapeFamily.round,
+        density: AppBarM3EDensity.regular,
         actions: [
           IconButton(
             icon: Icon(FluentIcons.edit_24_regular),
@@ -56,7 +60,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             const SizedBox(height: 16),
             Text(
               widget.contact.fullName,
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 fontSize: 28,
                 color: context.colorScheme.onSurface,
               ),
@@ -110,8 +114,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   RoundedIconButton(
                     context,
                     icon: widget.contact.isStarred
-                        ? FluentIcons.heart_24_filled
-                        : FluentIcons.heart_24_regular,
+                        ? FluentIcons.star_24_filled
+                        : FluentIcons.star_24_regular,
                     size: 45,
                     text: 'Favorite',
                     onTap: () {
@@ -145,7 +149,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                   children: [
                     Text(
                       "External Apps",
-                      style: GoogleFonts.raleway(
+                      style: GoogleFonts.outfit(
                         fontSize: 20,
                         color: context.colorScheme.onSurface,
                       ),
@@ -154,7 +158,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                     Column(
                       children: [
                         _buildListTile(
-                            context, FontAwesomeIcons.telegram, 'Telegram', () {
+                            context, FontAwesomeIcons.telegramPlane, 'Telegram',
+                            () {
                           NumberPicker(
                             context: context,
                             numbers: widget.contact.phones,
@@ -233,7 +238,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           children: [
             Text(
               "Phone Numbers",
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 fontSize: 20,
                 color: context.colorScheme.onSurface,
               ),
@@ -258,7 +263,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           Expanded(
             child: Text(
               phone,
-              style: GoogleFonts.raleway(
+              style: GoogleFonts.outfit(
                 textStyle: context.textTheme.bodyLarge,
                 color: context.colorScheme.onSurface,
               ),

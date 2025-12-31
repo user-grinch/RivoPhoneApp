@@ -27,7 +27,7 @@ class _SoundViewState extends State<SoundView> {
         ),
         title: Text(
           'Sound & Vibration',
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: context.colorScheme.onSurface,

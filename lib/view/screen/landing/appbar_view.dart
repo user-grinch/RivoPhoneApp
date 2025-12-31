@@ -70,7 +70,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
               ),
               Text(
                 'Search in Rivo',
-                style: GoogleFonts.raleway(
+                style: GoogleFonts.outfit(
                   fontSize: 20,
                   color: context.colorScheme.onSurface,
                 ),

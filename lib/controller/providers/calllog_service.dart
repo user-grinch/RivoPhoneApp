@@ -61,7 +61,6 @@ class CallLogService extends _$CallLogService {
   }
 
   Future<void> refresh() async {
-    state = const AsyncValue.loading();
     try {
       final newLogs = await _fetchLogs();
       state = AsyncValue.data(newLogs);

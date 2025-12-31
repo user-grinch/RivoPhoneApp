@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/model/contact.dart';
@@ -42,7 +43,7 @@ class FavView extends ConsumerWidget {
         );
       },
       loading: () => Center(
-        child: CircularProgressIndicator(),
+        child: const ExpressiveLoadingIndicator(),
       ),
       error: (e, s) => Center(
         child: const Text("Error occured"),
@@ -70,7 +71,7 @@ class FavView extends ConsumerWidget {
               child: Text(
                 contact.displayName,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.raleway(
+                style: GoogleFonts.outfit(
                   color: context.colorScheme.onSurface,
                   fontSize: 14,
                 ),

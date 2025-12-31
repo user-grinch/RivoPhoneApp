@@ -14,15 +14,15 @@ extension CallTypeHelper on CallType {
   IconData getIcon() {
     switch (this) {
       case CallType.incoming:
-        return FluentIcons.call_inbound_24_regular;
+        return FluentIcons.call_inbound_24_filled;
       case CallType.outgoing:
-        return FluentIcons.call_outbound_24_regular;
+        return FluentIcons.call_outbound_24_filled;
       case CallType.rejected:
-        return FluentIcons.call_end_24_regular;
+        return FluentIcons.call_end_24_filled;
       case CallType.blocked:
-        return FluentIcons.call_prohibited_24_regular;
+        return FluentIcons.call_prohibited_24_filled;
       default:
-        return FluentIcons.call_missed_24_regular;
+        return FluentIcons.call_missed_24_filled;
     }
   }
 
