@@ -2,14 +2,13 @@ import 'dart:typed_data';
 import 'package:call_log/call_log.dart' as lib;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/view/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'call_log_service.g.dart';
+part 'calllog_service.g.dart';
 
 typedef CallLogList = List<CallLog>; // for generator
 
@@ -23,35 +22,27 @@ class CallLogService extends _$CallLogService {
   Future<CallLogList> _fetchLogs() async {
     await ActivityService().requestPermissions();
     if (!await Permission.phone.status.isGranted) return [];
-
-    final fContacts = (await fc.FlutterContacts.getContacts(
-      withProperties: true,
-      withAccounts: true,
-      withThumbnail: true,
-    ))
-        .toList();
+    final contacts = ref.watch(contactServiceProvider.notifier);
 
     final logs = (await lib.CallLog.get()).toList();
+    final fContacts = await contacts.build();
 
     return logs.map((entry) {
       Uint8List? photo;
-
       try {
         final logNumber = normalizePhoneNumber(entry.number!);
         final contact = fContacts.firstWhere((c) {
           return c.phones.any((p) {
-            final contactNumber = normalizePhoneNumber(p.normalizedNumber);
-            return logNumber.endsWith(contactNumber) ||
-                logNumber == contactNumber;
+            return logNumber.endsWith(p) ||
+                logNumber == p ||
+                logNumber.startsWith(p);
           });
         });
 
         if ((entry.name ?? '').isEmpty) {
-          entry.name =
-              '${contact.name.first} ${contact.name.middle} ${contact.name.last}'
-                  .trim();
+          entry.name = contact.fullName;
         }
-        photo = contact.thumbnail;
+        photo = contact.photo;
       } catch (_) {
         photo = null;
       }

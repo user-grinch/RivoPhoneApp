@@ -5,7 +5,6 @@ import 'package:sticky_az_list/sticky_az_list.dart';
 class Contact extends TaggedItem {
   String id;
   String displayName;
-  Uint8List? thumbnail;
   Uint8List? photo;
   bool isStarred;
   String fullName;
@@ -23,7 +22,6 @@ class Contact extends TaggedItem {
   Contact({
     required this.id,
     required this.displayName,
-    this.thumbnail,
     this.photo,
     this.isStarred = false,
     required this.fullName,
@@ -44,8 +42,7 @@ class Contact extends TaggedItem {
     return Contact(
       id: contact.id,
       displayName: contact.displayName,
-      thumbnail: contact.thumbnail,
-      photo: contact.photo,
+      photo: contact.photo ?? contact.thumbnail,
       isStarred: contact.isStarred,
       fullName:
           '${contact.name.first} ${contact.name.middle} ${contact.name.last}',
@@ -66,7 +63,7 @@ class Contact extends TaggedItem {
     return lib.Contact(
       id: id,
       displayName: displayName,
-      thumbnail: thumbnail,
+      thumbnail: photo,
       photo: photo,
       name: lib.Name(
         first: fullName.split(' ')[0],

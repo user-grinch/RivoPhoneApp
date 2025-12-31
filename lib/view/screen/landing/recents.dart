@@ -136,12 +136,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                 onTap: () async {
                   final contactService =
                       ref.read(contactServiceProvider.notifier);
-                  var contact = contactService.findByName(log.name);
-                  if (contact.phones.isEmpty) {
-                    contact = contactService.findByNumber(log.number);
-                    contact.displayName = log.displayName;
-                    contact.fullName = log.name;
-                  }
+                  var contact = contactService.findByNumber(log.number);
                   await Navigator.of(context)
                       .pushNamed(contactInfoRoute, arguments: contact);
                 },

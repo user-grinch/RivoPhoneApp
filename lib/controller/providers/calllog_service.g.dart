@@ -20,7 +20,7 @@ final class CallLogServiceProvider
           argument: null,
           retry: null,
           name: r'callLogServiceProvider',
-          isAutoDispose: true,
+          isAutoDispose: false,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
@@ -33,7 +33,7 @@ final class CallLogServiceProvider
   CallLogService create() => CallLogService();
 }
 
-String _$callLogServiceHash() => r'ff945e02b5c4c3a5556dbfbef7c9c0e72faf4e0e';
+String _$callLogServiceHash() => r'e8b7517784c34570db4e11c7f67bce62a6247aad';
 
 abstract class _$CallLogService extends $AsyncNotifier<CallLogList> {
   FutureOr<CallLogList> build();

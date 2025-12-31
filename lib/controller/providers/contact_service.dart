@@ -28,6 +28,7 @@ class ContactService extends _$ContactService {
         withGroups: true,
         withPhoto: true,
         withThumbnail: true,
+        deduplicateProperties: false,
       ))
           .toList();
 
@@ -65,19 +66,7 @@ class ContactService extends _$ContactService {
     }
   }
 
-  Contact findByName(String name) {
-    final currentList = state.value ?? [];
-    try {
-      return currentList.firstWhere((f) {
-        return name.isNotEmpty &&
-            f.phones.isNotEmpty &&
-            f.fullName.toLowerCase().contains(name.toLowerCase());
-      });
-    } catch (_) {
-      return Contact(id: '"Unknown"', displayName: "Unknown", fullName: name);
-    }
-  }
-
+  // DO NOT MATCH BY NAME
   List<Contact> findAllByNameOrNumber(String name, String number) {
     String target = normalizePhoneNumber(number);
     final currentList = state.value ?? [];
