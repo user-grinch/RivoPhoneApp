@@ -23,8 +23,6 @@ class SwitchTileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
-
-    // Consistent Expressive radius
     const double radius = 28.0;
 
     final borderRadius = BorderRadius.vertical(
@@ -32,38 +30,53 @@ class SwitchTileWidget extends StatelessWidget {
       bottom: isLast ? const Radius.circular(radius) : Radius.zero,
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.secondaryContainer.withOpacity(0.35),
-          borderRadius: borderRadius,
-        ),
-        child: SwitchListTile(
-          value: value,
-          onChanged: onChanged,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-          title: Text(
-            title,
-            style: GoogleFonts.outfit(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.secondaryContainer.withOpacity(0.35),
+            borderRadius: borderRadius,
           ),
-          subtitle: Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 13,
-              color: colorScheme.onSurfaceVariant.withOpacity(0.8),
-            ),
+          child: Column(
+            children: [
+              SwitchListTile(
+                value: value,
+                onChanged: onChanged,
+                shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                title: Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.8),
+                  ),
+                ),
+                activeColor: colorScheme.primary,
+                activeTrackColor: colorScheme.primaryContainer,
+              ),
+              if (!isLast)
+                Padding(
+                  padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: colorScheme.outlineVariant.withOpacity(0.2),
+                  ),
+                ),
+            ],
           ),
-          activeColor: colorScheme.primary,
-          activeTrackColor: colorScheme.primaryContainer,
         ),
-      ),
+      ],
     );
   }
 }

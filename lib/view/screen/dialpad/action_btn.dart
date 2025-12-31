@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 
 class DialActionButton extends StatelessWidget {
@@ -6,34 +7,44 @@ class DialActionButton extends StatelessWidget {
   final String label;
   final Function()? func;
 
-  const DialActionButton(
-      {required this.icon, required this.label, this.func, super.key});
+  const DialActionButton({
+    required this.icon,
+    required this.label,
+    this.func,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     return TextButton(
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(28),
         ),
-        backgroundColor: context.colorScheme.secondaryContainer.withAlpha(150),
+        // Primary colors for the main call action to make it "Expressive"
+        backgroundColor: colorScheme.primary,
         elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       ),
       onPressed: func,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             icon,
-            color: context.colorScheme.onSurface,
+            size: 24,
+            color: colorScheme.onPrimary,
           ),
-          SizedBox(
-            width: 2,
-          ),
+          const SizedBox(width: 8),
           Text(
             label,
-            style:
-                TextStyle(fontSize: 18, color: context.colorScheme.onSurface),
+            style: GoogleFonts.outfit(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onPrimary,
+            ),
           ),
         ],
       ),

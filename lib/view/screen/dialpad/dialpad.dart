@@ -37,7 +37,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
     });
     SharedPrefService().onPreferenceChanged.listen((key) {
       if (key == PREF_DIALPAD_LETTERS) {
-        setState(() {});
+        if (mounted) setState(() {});
       }
     });
     super.initState();
@@ -62,7 +62,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
     '9',
     '*',
     '0',
-    '#',
+    '#'
   ];
 
   final Map<String, String> subKeys = {
@@ -80,15 +80,16 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
   @override
   Widget build(BuildContext context) {
     final simCards = ref.watch(getSimInfoProvider);
+    final colorScheme = context.colorScheme;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MatchedView(
                   scrollController: _scrollController,
                   searchText: _number,
@@ -96,37 +97,46 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
               ),
             ),
             Container(
-              color: context.colorScheme.secondaryContainer.withAlpha(50),
+              decoration: BoxDecoration(
+                color: colorScheme.secondaryContainer.withOpacity(0.2),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(32)),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _number.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 15,
-                          ),
-                          child: Text(
-                            _number,
-                            style: GoogleFonts.outfit(
-                              fontSize: 30,
-                              color: context.colorScheme.onSurface,
-                            ),
-                          ),
-                        )
-                      : SizedBox(height: 30),
+                  const SizedBox(height: 10),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: _number.isNotEmpty ? 70 : 30,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      reverse: true,
+                      child: Text(
+                        _number,
+                        style: GoogleFonts.outfit(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
                   GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: keys.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      childAspectRatio: 1.75,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.6,
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     itemBuilder: (context, index) {
                       String key = keys[index];
                       return DialPadButton(
@@ -136,33 +146,35 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                             ? subKeys[key]
                             : null,
                         onUpdate: (String str) {
-                          setState(() {
-                            _number += str;
-                          });
+                          hapticVibration();
+                          setState(() => _number += str);
                         },
                       );
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 12),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    padding: const EdgeInsets.fromLTRB(28, 0, 28, 24),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (_number.isNotEmpty)
-                          RoundedIconButton(
-                            FluentIcons.person_add_24_regular,
-                            size: 40,
-                            onTap: () {
-                              hapticVibration();
-                              ref
-                                  .read(contactServiceProvider.notifier)
-                                  .createNewContact(number: _number);
-                            },
-                          ),
-                        Spacer(),
+                        SizedBox(
+                          width: 56,
+                          child: _number.isNotEmpty
+                              ? RoundedIconButton(
+                                  FluentIcons.person_add_24_regular,
+                                  size: 48,
+                                  onTap: () {
+                                    hapticVibration();
+                                    ref
+                                        .read(contactServiceProvider.notifier)
+                                        .createNewContact(number: _number);
+                                  },
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                         DialActionButton(
-                          icon: FluentIcons.sim_24_regular,
+                          icon: FluentIcons.call_24_filled,
                           label: 'Call',
                           func: () {
                             hapticVibration();
@@ -173,35 +185,31 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                                 .show());
                           },
                         ),
-                        Spacer(),
-                        if (_number.isNotEmpty)
-                          RoundedIconButton(
-                            FluentIcons.arrow_left_24_regular,
-                            size: 40,
-                            onTap: () {
-                              hapticVibration();
-                              setState(() {
-                                if (_number.isNotEmpty) {
-                                  _number = _number.substring(
-                                    0,
-                                    _number.length - 1,
-                                  );
-                                }
-                              });
-                            },
-                            onLongPress: () {
-                              HapticFeedback.vibrate();
-                              setState(() {
-                                if (_number.isNotEmpty) {
-                                  _number = '';
-                                }
-                              });
-                            },
-                          ),
+                        SizedBox(
+                          width: 56,
+                          child: _number.isNotEmpty
+                              ? RoundedIconButton(
+                                  FluentIcons.arrow_left_24_regular,
+                                  size: 48,
+                                  onTap: () {
+                                    hapticVibration();
+                                    setState(() {
+                                      if (_number.isNotEmpty) {
+                                        _number = _number.substring(
+                                            0, _number.length - 1);
+                                      }
+                                    });
+                                  },
+                                  onLongPress: () {
+                                    HapticFeedback.heavyImpact();
+                                    setState(() => _number = '');
+                                  },
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
                 ],
               ),
             ),

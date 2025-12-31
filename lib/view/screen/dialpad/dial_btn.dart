@@ -25,11 +25,12 @@ class DialPadButton extends StatefulWidget {
 class _DialPadButtonState extends State<DialPadButton> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     bool letters = SharedPrefService().getBool(PREF_DIALPAD_LETTERS, def: true);
-    double textSz = widget.mainText == "*" ? 45 : 32;
 
+    double textSz = widget.mainText == "*" ? 40 : 32;
     if (!letters) {
-      textSz += 8;
+      textSz += 4;
     }
 
     return TextButton(
@@ -37,10 +38,10 @@ class _DialPadButtonState extends State<DialPadButton> {
         elevation: 0,
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
         ),
-        backgroundColor: context.colorScheme.secondaryContainer,
-        overlayColor: context.colorScheme.onSecondaryContainer,
+        backgroundColor: colorScheme.secondaryContainer.withOpacity(0.5),
+        overlayColor: colorScheme.primary,
       ),
       onPressed: () async {
         if (SharedPrefService().getBool(PREF_DTMF_TONE, def: true)) {
@@ -56,19 +57,22 @@ class _DialPadButtonState extends State<DialPadButton> {
             widget.mainText,
             style: GoogleFonts.outfit(
               fontSize: textSz,
-              fontWeight: FontWeight.w400,
-              color: context.colorScheme.onSecondaryContainer,
-              height: 1.1,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSecondaryContainer,
+              height: 1.0,
             ),
           ),
           if (widget.subText != null && letters)
-            Text(
-              widget.subText!,
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color:
-                    context.colorScheme.onSecondaryContainer.withOpacity(0.4),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                widget.subText!,
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.5,
+                  color: colorScheme.onSecondaryContainer.withOpacity(0.5),
+                ),
               ),
             ),
         ],

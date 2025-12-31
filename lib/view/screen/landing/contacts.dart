@@ -5,6 +5,7 @@ import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
+import 'package:revo/model/contact.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:sticky_az_list/sticky_az_list.dart';
@@ -33,10 +34,10 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
 
   @override
   Widget build(BuildContext context) {
-    final contacts = ref.watch(contactServiceProvider);
+    final contactsAsync = ref.watch(contactServiceProvider);
     final colorScheme = context.colorScheme;
 
-    return contacts.when(
+    return contactsAsync.when(
       loading: () => const Center(child: ExpressiveLoadingIndicator()),
       error: (e, s) => const Center(child: Text("Error occurred")),
       data: (v) {
@@ -61,49 +62,93 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             controller: _controller,
             items: v,
             builder: (context, index, item) {
+              final contact = item as Contact;
+              final String currentSymbol = contact.displayName[0].toUpperCase();
+
+              bool isFirstInSection = index == 0 ||
+                  v[index - 1].displayName[0].toUpperCase() != currentSymbol;
+              bool isLastInSection = index == v.length - 1 ||
+                  v[index + 1].displayName[0].toUpperCase() != currentSymbol;
+
               return Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 0, 4),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.secondaryContainer.withOpacity(0.35),
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: ListTile(
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(contactInfoRoute, arguments: item),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28)),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    leading: CircleProfile(
-                      name: item.displayName,
-                      profile: item.photo,
-                      size: 28,
-                    ),
-                    title: Text(
-                      item.displayName,
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
+                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondaryContainer.withOpacity(0.35),
+                        borderRadius: BorderRadius.vertical(
+                          top: isFirstInSection
+                              ? const Radius.circular(28)
+                              : Radius.zero,
+                          bottom: isLastInSection
+                              ? const Radius.circular(28)
+                              : Radius.zero,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            onTap: () => Navigator.of(context).pushNamed(
+                                contactInfoRoute,
+                                arguments: contact),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: isFirstInSection
+                                    ? const Radius.circular(28)
+                                    : Radius.zero,
+                                bottom: isLastInSection
+                                    ? const Radius.circular(28)
+                                    : Radius.zero,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            leading: CircleProfile(
+                              name: contact.displayName,
+                              profile: contact.photo,
+                              size: 28,
+                            ),
+                            title: Text(
+                              contact.displayName,
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (!isLastInSection)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 72, right: 16),
+                              child: Divider(
+                                height: 1,
+                                thickness: 1,
+                                color:
+                                    colorScheme.outlineVariant.withOpacity(0.2),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
+                    if (isLastInSection) const SizedBox(height: 12),
+                  ],
                 ),
               );
             },
             options: StickyAzOptions(
               scrollBarOptions: ScrollBarOptions(
                 margin: const EdgeInsets.only(top: 30, bottom: 20, left: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
                 scrollable: true,
                 symbolBuilder: (context, val, state) {
                   final isActive = state == ScrollbarItemState.active;
                   return Container(
                     alignment: Alignment.center,
-                    width: 24,
-                    height: 24,
+                    width: 20,
+                    height: 20,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color:
@@ -112,7 +157,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                     child: Text(
                       val,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight:
                             isActive ? FontWeight.bold : FontWeight.normal,
                         color: isActive
@@ -124,14 +169,18 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                 },
               ),
               listOptions: ListOptions(
+                stickySectionHeader: false,
                 backgroundColor: Colors.transparent,
                 headerColor: Colors.transparent,
-                listHeaderBuilder: (context, symbol) => Text(
-                  symbol,
-                  style: GoogleFonts.outfit(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
+                listHeaderBuilder: (context, symbol) => Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 0, 8),
+                  child: Text(
+                    symbol,
+                    style: GoogleFonts.outfit(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
               ),

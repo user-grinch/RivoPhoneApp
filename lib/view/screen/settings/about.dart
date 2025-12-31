@@ -14,6 +14,8 @@ class AboutView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -25,7 +27,7 @@ class AboutView extends StatelessWidget {
           style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: context.colorScheme.onSurface,
+            color: colorScheme.onSurface,
           ),
         ),
       ),
@@ -34,6 +36,7 @@ class AboutView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 20),
             Image.asset(
               'assets/icon.png',
               width: 100,
@@ -46,22 +49,18 @@ class AboutView extends StatelessWidget {
               style: GoogleFonts.outfit(
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: context.colorScheme.onSurface,
+                color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 20),
-
-            // App Description
+            const SizedBox(height: 32),
             Container(
+              width: double.infinity,
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .secondaryContainer
-                    .withAlpha(110),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                color: colorScheme.secondaryContainer.withOpacity(0.35),
+                borderRadius: BorderRadius.circular(28),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -70,7 +69,7 @@ class AboutView extends StatelessWidget {
                       style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: context.colorScheme.onSurface,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -79,7 +78,7 @@ class AboutView extends StatelessWidget {
                       'Designed with Material You, it adapts seamlessly to your theme.',
                       style: GoogleFonts.outfit(
                         fontSize: 15,
-                        color: context.colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -87,7 +86,6 @@ class AboutView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
             MenuTile(
               title: 'Version',
               subtitle: version,
@@ -103,7 +101,6 @@ class AboutView extends StatelessWidget {
               isLast: true,
             ),
             const SizedBox(height: 20),
-
             MenuTile(
               title: 'Contributors',
               subtitle: 'Meet the team behind the project',
@@ -125,8 +122,6 @@ class AboutView extends StatelessWidget {
               isLast: true,
             ),
             const SizedBox(height: 20),
-
-            // Source Code
             MenuTile(
               title: 'Source Code',
               subtitle: 'View the source code on GitHub',

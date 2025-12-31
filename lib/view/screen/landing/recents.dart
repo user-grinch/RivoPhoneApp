@@ -45,6 +45,15 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
         current.year != previous.year;
   }
 
+  bool _isLastInSection(List<GroupedCallLog> logs, int i) {
+    if (i == logs.length - 1) return true;
+    final current = logs[i].latest.date;
+    final next = logs[i + 1].latest.date;
+    return current.day != next.day ||
+        current.month != next.month ||
+        current.year != next.year;
+  }
+
   @override
   Widget build(BuildContext context) {
     final callLogsAsync = ref.watch(callLogServiceProvider);
@@ -54,9 +63,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
         if (logs.isEmpty) {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              _buildEmptyState(context),
-            ],
+            children: [_buildEmptyState(context)],
           );
         }
 
@@ -64,7 +71,6 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
 
         return Scrollbar(
           controller: _controller,
-          trackVisibility: false,
           child: ExpressiveRefreshIndicator(
             backgroundColor: context.colorScheme.primary,
             onRefresh: () async {
@@ -76,10 +82,14 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: groupedLogs.length,
               itemBuilder: (context, i) {
+                final showHeader = _shouldShowHeader(groupedLogs, i);
+                final isLast = _isLastInSection(groupedLogs, i);
+
                 return _buildLog(
                   context,
                   groupedLogs[i],
-                  _shouldShowHeader(groupedLogs, i),
+                  showHeader,
+                  isLast,
                 );
               },
             ),
@@ -87,12 +97,12 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
         );
       },
       loading: () => const Center(child: LoadingIndicatorM3E()),
-      error: (e, s) => Center(child: Text('Error loading call logs: $e')),
+      error: (e, s) => Center(child: Text('Error: $e')),
     );
   }
 
-  Widget _buildLog(
-      BuildContext context, GroupedCallLog groupedLog, bool showHeader) {
+  Widget _buildLog(BuildContext context, GroupedCallLog groupedLog,
+      bool showHeader, bool isLastInSection) {
     final log = groupedLog.latest;
     final simCardsAsync = ref.watch(getSimInfoProvider);
     final colorScheme = context.colorScheme;
@@ -102,88 +112,103 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
       children: [
         if (showHeader)
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 16, 0, 4),
+            padding: const EdgeInsets.fromLTRB(12, 24, 0, 8),
             child: Text(
               log.date.getContextAwareDate(),
               style: GoogleFonts.outfit(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
               ),
             ),
           ),
         Container(
-          margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             color: colorScheme.secondaryContainer.withOpacity(0.35),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.vertical(
+              top: showHeader ? const Radius.circular(28) : Radius.zero,
+              bottom: isLastInSection ? const Radius.circular(28) : Radius.zero,
+            ),
           ),
-          child: ListTile(
-            onTap: () async {
-              final contactService = ref.read(contactServiceProvider.notifier);
-              var contact = contactService.findByName(log.name);
-              if (contact.phones.isEmpty) {
-                contact = contactService.findByNumber(log.number);
-                contact.displayName = log.displayName;
-                contact.fullName = log.name;
-              }
-              await Navigator.of(context)
-                  .pushNamed(contactInfoRoute, arguments: contact);
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            leading: CircleProfile(
-              name: log.name,
-              profile: log.profile,
-              size: 28,
-            ),
-            title: Text(
-              log.displayName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.outfit(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 4),
-                Row(
+          child: Column(
+            children: [
+              ListTile(
+                onTap: () async {
+                  final contactService =
+                      ref.read(contactServiceProvider.notifier);
+                  var contact = contactService.findByName(log.name);
+                  if (contact.phones.isEmpty) {
+                    contact = contactService.findByNumber(log.number);
+                    contact.displayName = log.displayName;
+                    contact.fullName = log.name;
+                  }
+                  await Navigator.of(context)
+                      .pushNamed(contactInfoRoute, arguments: contact);
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: showHeader ? const Radius.circular(28) : Radius.zero,
+                    bottom: isLastInSection
+                        ? const Radius.circular(28)
+                        : Radius.zero,
+                  ),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                leading: CircleProfile(
+                  name: log.name,
+                  profile: log.profile,
+                  size: 28,
+                ),
+                title: Text(
+                  log.displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Call type icons
-                    ...groupedLog.logs.take(3).map((e) => Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(e.type.getIcon(),
-                              color: e.type.getColor(), size: 14),
-                        )),
-                    if (groupedLog.count > 3)
-                      Text(' +${groupedLog.count - 3}',
-                          style: const TextStyle(fontSize: 10)),
-                    const SizedBox(width: 4),
-                    Text(
-                      "${groupedLog.count} calls",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-                      ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        ...groupedLog.logs.take(3).map((e) => Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Icon(e.type.getIcon(),
+                                  color: e.type.getColor(), size: 14),
+                            )),
+                        if (groupedLog.count > 3)
+                          Text(' +${groupedLog.count - 3}',
+                              style: const TextStyle(fontSize: 10)),
+                        const SizedBox(width: 4),
+                        Text(
+                          "${groupedLog.count} calls • ${log.date.getContextAwareDateTime()}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                colorScheme.onSurfaceVariant.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Text(
-                  log.date.getContextAwareDateTime(),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+                trailing: _buildCallAction(context, simCardsAsync, log.number),
+              ),
+              if (!isLastInSection)
+                Padding(
+                  padding: const EdgeInsets.only(left: 72, right: 16),
+                  child: Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: colorScheme.outlineVariant.withOpacity(0.2),
                   ),
                 ),
-              ],
-            ),
-            trailing: _buildCallAction(context, simCardsAsync, log.number),
+            ],
           ),
         ),
       ],
@@ -194,7 +219,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
       BuildContext context, AsyncValue simCardsAsync, String number) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
+        color: context.colorScheme.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(14),
       ),
       child: IconButton(
