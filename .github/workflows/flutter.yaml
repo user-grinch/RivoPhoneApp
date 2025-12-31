@@ -1,0 +1,56 @@
+name: "Build"
+
+on:
+  pull_request:
+    branches: [main, riverpod]
+  push:
+    branches: [main, riverpod]
+
+jobs:  
+  build:      
+    name: Build & Release 
+    runs-on: ubuntu-latest # Switched to Linux (faster/cheaper for Android builds)
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # Highly recommended for Flutter
+          java-version: '17'
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.0'
+          channel: 'stable'
+          cache: true # Speeds up subsequent runs
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Build Runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+        # Added this because your pubspec has riverpod_generator
+
+      - name: Build APK
+        run: flutter build apk --debug # Building debug APK since no signing keys exist
+
+      - name: Build App Bundle
+        run: flutter build appbundle --debug
+
+      - name: Extract version from pubspec.yaml
+        id: extract_version
+        run: |
+          VERSION=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/app-debug.apk,build/app/outputs/bundle/debug/app-release.aab"
+          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }} # Uses default GitHub token
+          allowUpdates: true
