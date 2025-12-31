@@ -10,10 +10,9 @@ class RoundedIconButton extends StatelessWidget {
   final String text;
 
   const RoundedIconButton(
-    BuildContext context, {
+    this.icon, {
     super.key,
-    required this.icon,
-    required this.size,
+    this.size = 30,
     this.text = '',
     this.onTap,
     this.onLongPress,
@@ -40,7 +39,7 @@ class RoundedIconButton extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        if (text.isNotEmpty) const SizedBox(height: 8),
         if (text.isNotEmpty)
           Text(
             text,

@@ -6,6 +6,7 @@ import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/controller/providers/theme_service.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/switch_tile.dart';
 
 class UserInterfaceView extends ConsumerWidget {
@@ -18,7 +19,7 @@ class UserInterfaceView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(FluentIcons.arrow_left_24_regular),
+          icon: const RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

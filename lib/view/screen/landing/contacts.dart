@@ -65,12 +65,29 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             }),
             options: StickyAzOptions(
                 scrollBarOptions: ScrollBarOptions(
-                    // TODO: Fix look on AMOLED dark mode
-                    ),
+                  margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
+                  padding: EdgeInsets.fromLTRB(5, 20, 0, 20),
+                  scrollable: true,
+                  showDeactivated: false,
+                  symbolBuilder: (context, val, state) {
+                    return Text(
+                      val,
+                      style: TextStyle(
+                          color: state == ScrollbarItemState.active
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withAlpha(100)),
+                    );
+                  },
+                ),
                 listOptions: ListOptions(
+                  backgroundColor: Colors.transparent,
+                  headerColor: Colors.transparent,
                   listHeaderBuilder: (context, symbol) => Container(
-                    margin: EdgeInsets.only(top: 30, bottom: 10),
-                    padding: EdgeInsets.fromLTRB(30, 10, 0, 10),
+                    margin: EdgeInsets.only(top: 0, bottom: 10),
+                    padding: EdgeInsets.fromLTRB(30, 0, 0, 10),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         color: Theme.of(context).colorScheme.surface),
@@ -78,7 +95,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                       symbol,
                       style: GoogleFonts.roboto(
                         fontSize: 20,
-                        color: context.colorScheme.onSurface.withAlpha(200),
+                        color: context.colorScheme.primary,
                       ),
                     ),
                   ),

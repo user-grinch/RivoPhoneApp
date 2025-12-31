@@ -7,7 +7,7 @@ import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/utils/circle_profile.dart';
-import 'package:revo/view/utils/rounded_icon_btn.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ContactTile extends ConsumerWidget {
@@ -45,8 +45,7 @@ class ContactTile extends ConsumerWidget {
       ),
       subtitle: Text(""),
       trailing: RoundedIconButton(
-        context,
-        icon: FluentIcons.call_24_regular,
+        FluentIcons.call_24_regular,
         size: 35,
         onTap: () async {
           if (contact.phones.isNotEmpty) {

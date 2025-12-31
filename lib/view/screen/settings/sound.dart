@@ -7,6 +7,7 @@ import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/switch_tile.dart';
 
 class SoundView extends StatefulWidget {
@@ -22,7 +23,7 @@ class _SoundViewState extends State<SoundView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

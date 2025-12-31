@@ -6,6 +6,7 @@ import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/screen/settings/contributors.dart';
 import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class AboutView extends StatelessWidget {
@@ -16,7 +17,7 @@ class AboutView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(FluentIcons.arrow_left_24_regular),
+          icon: const RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

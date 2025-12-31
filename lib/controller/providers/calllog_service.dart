@@ -13,7 +13,7 @@ part 'call_log_service.g.dart';
 
 typedef CallLogList = List<CallLog>; // for generator
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CallLogService extends _$CallLogService {
   @override
   Future<CallLogList> build() async {

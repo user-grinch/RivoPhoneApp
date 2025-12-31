@@ -12,7 +12,7 @@ import 'package:revo/view/components/matched_view.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/dialpad/action_btn.dart';
 import 'package:revo/view/screen/dialpad/dial_btn.dart';
-import 'package:revo/view/utils/rounded_icon_btn.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class DialPadView extends ConsumerStatefulWidget {
@@ -151,8 +151,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                       children: [
                         if (_number.isNotEmpty)
                           RoundedIconButton(
-                            context,
-                            icon: FluentIcons.person_add_24_regular,
+                            FluentIcons.person_add_24_regular,
                             size: 40,
                             onTap: () {
                               hapticVibration();
@@ -177,8 +176,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         Spacer(),
                         if (_number.isNotEmpty)
                           RoundedIconButton(
-                            context,
-                            icon: FluentIcons.arrow_left_24_regular,
+                            FluentIcons.arrow_left_24_regular,
                             size: 40,
                             onTap: () {
                               hapticVibration();

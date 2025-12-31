@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/switch_tile.dart';
 
 class CallView extends StatefulWidget {
@@ -24,7 +25,7 @@ class _CallViewState extends State<CallView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

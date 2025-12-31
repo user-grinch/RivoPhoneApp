@@ -14,7 +14,7 @@ import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
-import 'package:revo/view/utils/rounded_icon_btn.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -32,21 +32,23 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     return Scaffold(
       appBar: AppBarM3E(
         leading: IconButton(
-          icon: Icon(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(
+            FluentIcons.arrow_left_24_regular,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
         shapeFamily: AppBarM3EShapeFamily.round,
         density: AppBarM3EDensity.regular,
         actions: [
-          IconButton(
-            icon: Icon(FluentIcons.edit_24_regular),
-            onPressed: () {
+          RoundedIconButton(
+            FluentIcons.edit_24_regular,
+            onTap: () {
               ref
                   .read(contactServiceProvider.notifier)
                   .editContact(widget.contact);
             },
-          )
+          ),
         ],
         elevation: 0,
       ),
@@ -74,19 +76,18 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                 spacing: 20,
                 children: [
                   RoundedIconButton(
-                    context,
+                    FluentIcons.qr_code_24_regular,
                     size: 45,
-                    icon: FluentIcons.qr_code_24_regular,
                     text: 'QR Code',
                     onTap: () {
                       QrCodePopup(
-                          context: context,
-                          data: generateVCardString(widget.contact));
+                              context: context,
+                              data: generateVCardString(widget.contact))
+                          .show();
                     },
                   ),
                   RoundedIconButton(
-                    context,
-                    icon: FluentIcons.share_24_regular,
+                    FluentIcons.share_24_regular,
                     size: 45,
                     text: 'Share',
                     onTap: () {
@@ -100,8 +101,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                     },
                   ),
                   RoundedIconButton(
-                    context,
-                    icon: FluentIcons.history_24_regular,
+                    FluentIcons.history_24_regular,
                     size: 45,
                     text: 'Call History',
                     onTap: () {
@@ -112,8 +112,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                     },
                   ),
                   RoundedIconButton(
-                    context,
-                    icon: widget.contact.isStarred
+                    widget.contact.isStarred
                         ? FluentIcons.star_24_filled
                         : FluentIcons.star_24_regular,
                     size: 45,
@@ -273,8 +272,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             spacing: 12,
             children: [
               RoundedIconButton(
-                context,
-                icon: FluentIcons.call_24_regular,
+                FluentIcons.call_24_regular,
                 onTap: () {
                   simCards.whenData((value) => SimPicker(
                           context: context, simCards: value, number: phone)
@@ -283,8 +281,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                 size: 36,
               ),
               RoundedIconButton(
-                context,
-                icon: FluentIcons.chat_24_regular,
+                FluentIcons.chat_24_regular,
                 onTap: () {
                   ActivityService().sendSMS(phone);
                 },

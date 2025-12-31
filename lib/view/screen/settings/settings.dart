@@ -7,6 +7,7 @@ import 'package:revo/view/screen/settings/sound.dart';
 import 'package:revo/view/screen/settings/user_interface.dart';
 import 'package:revo/view/utils/center_text.dart';
 import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class SettingsView extends StatelessWidget {
@@ -17,7 +18,7 @@ class SettingsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

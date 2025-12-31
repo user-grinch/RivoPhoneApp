@@ -8,6 +8,7 @@ import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/controller/providers/calllog_service.dart';
 import 'package:revo/view/utils/center_text.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class HistoryView extends ConsumerStatefulWidget {
@@ -43,7 +44,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(FluentIcons.arrow_left_24_regular),
+            icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text('Call History'),

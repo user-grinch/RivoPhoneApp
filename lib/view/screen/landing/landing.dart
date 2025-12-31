@@ -8,11 +8,11 @@ import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/controller/providers/theme_service.dart';
 import 'package:revo/view/components/welcome_popup.dart';
-import 'package:revo/view/screen/landing/appbar_view.dart';
-import 'package:revo/view/screen/landing/contacts_view.dart';
-import 'package:revo/view/screen/landing/fav_view.dart';
-import 'package:revo/view/screen/landing/navigation_view.dart';
-import 'package:revo/view/screen/landing/recents_view.dart';
+import 'package:revo/view/screen/landing/appbar.dart';
+import 'package:revo/view/screen/landing/contacts.dart';
+import 'package:revo/view/screen/landing/fav.dart';
+import 'package:revo/view/screen/landing/navigation.dart';
+import 'package:revo/view/screen/landing/recents.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
@@ -90,9 +90,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
           }
         },
         elevation: 1,
-        child: Icon(_currentPage == 1.0
-            ? FluentIcons.person_add_24_regular
-            : FluentIcons.dialpad_24_regular),
+        child: Icon(
+          _currentPage == 1.0
+              ? FluentIcons.person_add_24_regular
+              : FluentIcons.dialpad_24_regular,
+          size: 35,
+        ),
       ),
     );
   }

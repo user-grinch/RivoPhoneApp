@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/matched_view.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -42,7 +43,7 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: _buildSearchBox(),

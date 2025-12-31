@@ -1,3 +1,4 @@
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
   @override
@@ -33,36 +33,37 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               IconButton(
                 onPressed: () async {
-                  // Navigator.pushNamed(context, qrScanRoute);
-                  String? res = await SimpleBarcodeScanner.scanBarcode(
-                        context,
-                        barcodeAppBar: const BarcodeAppBar(
-                          appBarTitle: 'Scan QR to add contact',
-                          centerTitle: false,
-                          enableBackButton: true,
-                          backButtonIcon:
-                              Icon(FluentIcons.arrow_left_24_regular),
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AiBarcodeScanner(
+                        cameraSwitchIcon: FluentIcons.camera_switch_24_regular,
+                        flashOnIcon: FluentIcons.flash_24_regular,
+                        flashOffIcon: FluentIcons.flash_off_24_regular,
+                        galleryIcon: FluentIcons.image_24_regular,
+                        galleryButtonText: "Gallery",
+                        galleryButtonType: GalleryButtonType.filled,
+                        controller: MobileScannerController(
+                          detectionSpeed: DetectionSpeed.normal,
                         ),
-                        scanType: ScanType.qr,
-                        isShowFlashIcon: true,
-                        delayMillis: 1000,
-                      ) ??
-                      "";
-
-                  if (res.startsWith("BEGIN:VCARD") &&
-                      res.endsWith("END:VCARD")) {
-                    await ref
-                        .read(contactServiceProvider.notifier)
-                        .insertContactFromVCard(res);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Contact added successfully!')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Invalid vCard format!')),
-                    );
-                  }
+                        validator: (capture) {
+                          String? res = capture.barcodes.first.rawValue;
+                          return (res != null &&
+                              res.startsWith("BEGIN:VCARD") &&
+                              res.endsWith("END:VCARD"));
+                        },
+                        onDetect: (BarcodeCapture capture) async {
+                          String? res = capture.barcodes.first.rawValue;
+                          await ref
+                              .read(contactServiceProvider.notifier)
+                              .insertContactFromVCard(res!);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Contact added successfully!')),
+                          );
+                        },
+                      ),
+                    ),
+                  );
                 },
                 icon: Icon(
                   FluentIcons.qr_code_24_regular,

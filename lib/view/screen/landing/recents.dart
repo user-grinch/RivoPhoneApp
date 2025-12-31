@@ -13,7 +13,7 @@ import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/utils/circle_profile.dart';
-import 'package:revo/view/utils/rounded_icon_btn.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class RecentsView extends ConsumerStatefulWidget {
@@ -148,8 +148,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
             ),
           ),
           trailing: RoundedIconButton(
-            context,
-            icon: FluentIcons.call_24_regular,
+            FluentIcons.call_24_regular,
             size: 35,
             onTap: () async {
               simCardsAsync.whenData(

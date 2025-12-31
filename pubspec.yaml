@@ -42,6 +42,8 @@ dependencies:
       ref: '241d5c9'
   skeletonizer: ^2.1.2
   m3e_collection: ^0.3.7
+  ai_barcode_scanner: ^7.1.0
+  barcode_scanner: ^7.1.2
 
 flutter_launcher_icons:
   android: "launcher_icon"
