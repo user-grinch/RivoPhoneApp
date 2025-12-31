@@ -5,9 +5,8 @@ import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
-import 'package:revo/model/contact.dart';
-import 'package:revo/view/utils/center_text.dart';
-import 'package:revo/view/utils/circle_profile.dart';
+import 'package:revo/view/components/center_text.dart';
+import 'package:revo/view/components/circle_profile.dart';
 import 'package:sticky_az_list/sticky_az_list.dart';
 
 class ContactsView extends ConsumerStatefulWidget {
@@ -32,23 +31,23 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
     super.dispose();
   }
 
-  Future<void> _refreshContacts(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2));
-    ref.read(contactServiceProvider.notifier).refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
     final contacts = ref.watch(contactServiceProvider);
+    final colorScheme = context.colorScheme;
 
     return contacts.when(
+      loading: () => const Center(child: ExpressiveLoadingIndicator()),
+      error: (e, s) => const Center(child: Text("Error occurred")),
       data: (v) {
         if (v.isEmpty) {
           return ExpressiveRefreshIndicator(
-            onRefresh: () => _refreshContacts(context),
+            onRefresh: () async =>
+                ref.read(contactServiceProvider.notifier).refresh(),
             child: ListView(
-              physics: AlwaysScrollableScrollPhysics(),
-              children: [
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: const [
+                SizedBox(height: 100),
                 CenterText(text: 'No contacts found'),
               ],
             ),
@@ -56,92 +55,90 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
         }
 
         return ExpressiveRefreshIndicator(
-          onRefresh: () => _refreshContacts(context),
+          onRefresh: () async =>
+              ref.read(contactServiceProvider.notifier).refresh(),
           child: StickyAzList(
             controller: _controller,
             items: v,
-            builder: (context, index, item) => Builder(builder: (context) {
-              return _displayContact(context, item);
-            }),
-            options: StickyAzOptions(
-                scrollBarOptions: ScrollBarOptions(
-                  margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
-                  padding: EdgeInsets.fromLTRB(5, 20, 0, 20),
-                  scrollable: true,
-                  showDeactivated: false,
-                  symbolBuilder: (context, val, state) {
-                    return Text(
-                      val,
-                      style: TextStyle(
-                          color: state == ScrollbarItemState.active
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withAlpha(100)),
-                    );
-                  },
-                ),
-                listOptions: ListOptions(
-                  backgroundColor: Colors.transparent,
-                  headerColor: Colors.transparent,
-                  listHeaderBuilder: (context, symbol) => Container(
-                    margin: EdgeInsets.only(top: 0, bottom: 10),
-                    padding: EdgeInsets.fromLTRB(30, 0, 0, 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Theme.of(context).colorScheme.surface),
-                    child: Text(
-                      symbol,
-                      style: GoogleFonts.roboto(
-                        fontSize: 20,
-                        color: context.colorScheme.primary,
+            builder: (context, index, item) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 0, 4),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondaryContainer.withOpacity(0.35),
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: ListTile(
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(contactInfoRoute, arguments: item),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    leading: CircleProfile(
+                      name: item.displayName,
+                      profile: item.photo,
+                      size: 28,
+                    ),
+                    title: Text(
+                      item.displayName,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                )),
+                ),
+              );
+            },
+            options: StickyAzOptions(
+              scrollBarOptions: ScrollBarOptions(
+                margin: const EdgeInsets.only(top: 30, bottom: 20, left: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                scrollable: true,
+                symbolBuilder: (context, val, state) {
+                  final isActive = state == ScrollbarItemState.active;
+                  return Container(
+                    alignment: Alignment.center,
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          isActive ? colorScheme.primary : Colors.transparent,
+                    ),
+                    child: Text(
+                      val,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight:
+                            isActive ? FontWeight.bold : FontWeight.normal,
+                        color: isActive
+                            ? colorScheme.onPrimary
+                            : colorScheme.onSurfaceVariant.withOpacity(0.5),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              listOptions: ListOptions(
+                backgroundColor: Colors.transparent,
+                headerColor: Colors.transparent,
+                listHeaderBuilder: (context, symbol) => Text(
+                  symbol,
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       },
-      loading: () => Center(
-        child: const ExpressiveLoadingIndicator(),
-      ),
-      error: (e, s) => Center(
-        child: const Text("Error occured"),
-      ),
     );
   }
-
-  Widget _displayContact(BuildContext context, Contact contact) => ListTile(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Row(
-          children: [
-            const SizedBox(width: 10),
-            CircleProfile(
-              name: contact.displayName,
-              profile: contact.photo,
-              size: 30,
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Text(
-                contact.displayName,
-                style: GoogleFonts.roboto(
-                  fontSize: 16,
-                  color: context.colorScheme.onSurface,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        onTap: () async {
-          await Navigator.of(context).pushNamed(
-            contactInfoRoute,
-            arguments: contact,
-          );
-        },
-      );
 }

@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/view/utils/center_text.dart';
+import 'package:revo/view/components/center_text.dart';
 
 class NumberPicker {
   final BuildContext context;

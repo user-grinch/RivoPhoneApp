@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -19,14 +20,16 @@ class _NavigationViewState extends State<NavigationView> {
   @override
   void initState() {
     widget.pageController.addListener(() {
-      setState(() {
-        _selectedIndex = widget.pageController.page?.round() ?? 0;
-      });
+      final currentPage = widget.pageController.page?.round() ?? 0;
+      if (_selectedIndex != currentPage) {
+        setState(() => _selectedIndex = currentPage);
+      }
     });
+
     SharedPrefService().onPreferenceChanged.listen((key) {
       if (key == PREF_ICON_ONLY_BOTTOMSHEET ||
           key == PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET) {
-        setState(() {});
+        if (mounted) setState(() {});
       }
     });
     super.initState();
@@ -34,47 +37,77 @@ class _NavigationViewState extends State<NavigationView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     bool onlyIcons = SharedPrefService().getBool(PREF_ICON_ONLY_BOTTOMSHEET);
     bool alwaysSelectedIcon =
         SharedPrefService().getBool(PREF_ALWAYS_SHOW_SELECTED_IN_BOTTOMSHEET);
-    return NavigationBar(
-      backgroundColor: context.colorScheme.surface,
-      elevation: 3,
-      indicatorColor: context.colorScheme.secondaryContainer,
-      surfaceTintColor: context.colorScheme.surfaceTint,
-      labelBehavior: onlyIcons
-          ? alwaysSelectedIcon
-              ? NavigationDestinationLabelBehavior.onlyShowSelected
-              : NavigationDestinationLabelBehavior.alwaysHide
-          : NavigationDestinationLabelBehavior.alwaysShow,
-      destinations: [
-        NavigationDestination(
-          icon: Icon(FluentIcons.history_24_regular),
-          label: 'Recents',
-          selectedIcon: Icon(FluentIcons.history_24_filled),
+
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        height: 84,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
         ),
-        NavigationDestination(
-          icon: Icon(FluentIcons.person_24_regular),
-          label: 'Contacts',
-          selectedIcon: Icon(FluentIcons.person_24_filled),
+        indicatorColor: colorScheme.primary.withOpacity(0.12),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          return GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w700
+                : FontWeight.w500,
+            color: states.contains(WidgetState.selected)
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant.withOpacity(0.8),
+          );
+        }),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer.withOpacity(0.4),
+          border: Border(
+            top: BorderSide(
+              color: colorScheme.outlineVariant.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
         ),
-        NavigationDestination(
-          icon: Icon(FluentIcons.star_24_regular),
-          label: 'Favorites',
-          selectedIcon: Icon(FluentIcons.star_24_filled),
+        child: NavigationBar(
+          backgroundColor: Colors.transparent, // Let the container handle BG
+          elevation: 0,
+          selectedIndex: _selectedIndex,
+          labelBehavior: onlyIcons
+              ? alwaysSelectedIcon
+                  ? NavigationDestinationLabelBehavior.onlyShowSelected
+                  : NavigationDestinationLabelBehavior.alwaysHide
+              : NavigationDestinationLabelBehavior.alwaysShow,
+          onDestinationSelected: (index) {
+            widget.pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves
+                  .easeInOutCubicEmphasized, // The smoothest Material 3 curve
+            );
+          },
+          destinations: [
+            _buildDestination(FluentIcons.history_24_regular,
+                FluentIcons.history_24_filled, 'Recents'),
+            _buildDestination(FluentIcons.person_24_regular,
+                FluentIcons.person_24_filled, 'Contacts'),
+            _buildDestination(FluentIcons.star_24_regular,
+                FluentIcons.star_24_filled, 'Favorites'),
+          ],
         ),
-      ],
-      onDestinationSelected: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-        widget.pageController.animateToPage(
-          index,
-          duration: Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-        );
-      },
-      selectedIndex: _selectedIndex,
+      ),
+    );
+  }
+
+  NavigationDestination _buildDestination(
+      IconData icon, IconData active, String label) {
+    return NavigationDestination(
+      icon: Icon(icon, size: 24),
+      selectedIcon: Icon(active, size: 24, color: context.colorScheme.primary),
+      label: label,
     );
   }
 }

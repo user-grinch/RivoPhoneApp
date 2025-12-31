@@ -67,16 +67,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarView(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: PageView(
-          controller: _pageController,
-          children: const [
-            RecentsView(),
-            ContactsView(),
-            FavView(),
-          ],
-        ),
+      body: PageView(
+        controller: _pageController,
+        children: const [
+          RecentsView(),
+          ContactsView(),
+          FavView(),
+        ],
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(

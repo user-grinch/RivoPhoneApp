@@ -6,8 +6,8 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/view/screen/contactinfo_view.dart';
-import 'package:revo/view/utils/center_text.dart';
-import 'package:revo/view/utils/circle_profile.dart';
+import 'package:revo/view/components/center_text.dart';
+import 'package:revo/view/components/circle_profile.dart';
 
 class FavView extends ConsumerWidget {
   const FavView({super.key});
@@ -53,7 +53,7 @@ class FavView extends ConsumerWidget {
 
   Widget _buildFavs(BuildContext context, Contact contact) {
     return InkWell(
-      borderRadius: BorderRadius.all(Radius.circular(15)),
+      borderRadius: BorderRadius.all(Radius.circular(50)),
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => ContactInfoView(contact)));

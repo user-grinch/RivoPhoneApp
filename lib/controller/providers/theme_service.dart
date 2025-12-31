@@ -65,28 +65,43 @@ ThemeData getTheme(ColorScheme? dynamicCol, ThemeState state, bool isDark) {
 }
 
 ThemeData _getAmoledTheme() {
+  final amoledScheme = const ColorScheme.dark(
+    brightness: Brightness.dark,
+    surface: Colors.black,
+    onSurface: Color(0xFFE3E2E6),
+    primary: Color(0xFFD0BCFF),
+    onPrimary: Color(0xFF381E72),
+    primaryContainer: Color(0xFF4F378B),
+    onPrimaryContainer: Color(0xFFEADDFF),
+    secondaryContainer: Color(0xFF2B2B2B),
+    onSecondaryContainer: Color(0xFFFFFFFF),
+    surfaceContainer: Color(0xFF121212),
+    outlineVariant: Color(0xFF44474F),
+  );
+
   return ThemeData(
+    useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Colors.black,
-    primaryColor: Colors.black,
-    cardColor: Colors.black,
-    dialogBackgroundColor: Colors.black,
+    colorScheme: amoledScheme,
+    textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
     appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFFE3E2E6),
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
+      indicatorColor: amoledScheme.primaryContainer.withOpacity(0.5),
+      labelTextStyle: WidgetStateProperty.all(
+        GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
     ),
-    colorScheme: const ColorScheme.dark(
-      primary: Color(0xFF000000),
-      onPrimary: Color(0xFFFFFFFF),
-      primaryContainer: Color(0xFF121212),
-      secondary: Color(0xFF1C1C1C),
-      onSecondary: Color(0xFFD3D3D3),
-      secondaryContainer: Color(0xFF2B2B2B),
-      onSecondaryContainer: Color(0xFFFFFFFF),
-      surface: Color(0xFF121212),
-      onSurface: Color(0xFFE0E0E0),
-      surfaceContainer: Color(0xFF1A1A1A),
-    ),
-    textTheme: GoogleFonts.cabinTextTheme(),
   );
 }

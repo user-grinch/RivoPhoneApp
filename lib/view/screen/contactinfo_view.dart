@@ -15,7 +15,7 @@ import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/share.dart';
+import 'package:revo/view/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ContactInfoView extends ConsumerStatefulWidget {
@@ -32,9 +32,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     return Scaffold(
       appBar: AppBarM3E(
         leading: IconButton(
-          icon: RoundedIconButton(
-            FluentIcons.arrow_left_24_regular,
-          ),
+          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
@@ -43,271 +41,269 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         actions: [
           RoundedIconButton(
             FluentIcons.edit_24_regular,
-            onTap: () {
-              ref
-                  .read(contactServiceProvider.notifier)
-                  .editContact(widget.contact);
-            },
+            onTap: () => ref
+                .read(contactServiceProvider.notifier)
+                .editContact(widget.contact),
           ),
+          const SizedBox(width: 8),
         ],
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top, left: 16, right: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 20),
             _buildProfilePicture(context),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
               widget.contact.fullName,
               style: GoogleFonts.outfit(
-                fontSize: 28,
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
                 color: context.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
-
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 20,
-                children: [
-                  RoundedIconButton(
-                    FluentIcons.qr_code_24_regular,
-                    size: 45,
-                    text: 'QR Code',
-                    onTap: () {
-                      QrCodePopup(
-                              context: context,
-                              data: generateVCardString(widget.contact))
-                          .show();
-                    },
-                  ),
-                  RoundedIconButton(
-                    FluentIcons.share_24_regular,
-                    size: 45,
-                    text: 'Share',
-                    onTap: () {
-                      SharePlus.instance.share(ShareParams(files: [
-                        XFile.fromData(
-                            utf8.encode(generateVCardString(widget.contact)),
-                            mimeType: 'text/plain')
-                      ], fileNameOverrides: [
-                        'contact.vcf'
-                      ]));
-                    },
-                  ),
-                  RoundedIconButton(
-                    FluentIcons.history_24_regular,
-                    size: 45,
-                    text: 'Call History',
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        callHistoryRoute,
-                        arguments: widget.contact.phones,
-                      );
-                    },
-                  ),
-                  RoundedIconButton(
-                    widget.contact.isStarred
-                        ? FluentIcons.star_24_filled
-                        : FluentIcons.star_24_regular,
-                    size: 45,
-                    text: 'Favorite',
-                    onTap: () {
-                      setState(() {
-                        widget.contact.isStarred = !widget.contact.isStarred;
-                      });
-                      ref
-                          .read(contactServiceProvider.notifier)
-                          .updateContact(contact: widget.contact);
-                    },
-                  ),
-                ],
-              ),
-            ),
-
+            const SizedBox(height: 24),
+            _buildQuickActions(),
+            const SizedBox(height: 32),
             _buildContactInfoSection(context),
-            const SizedBox(height: 16),
-
-            // External Apps Section
-            Card(
-              elevation: 0,
-              margin: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              color: context.colorScheme.secondaryContainer.withAlpha(100),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "External Apps",
-                      style: GoogleFonts.outfit(
-                        fontSize: 20,
-                        color: context.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Column(
-                      children: [
-                        _buildListTile(
-                            context, FontAwesomeIcons.telegramPlane, 'Telegram',
-                            () {
-                          NumberPicker(
-                            context: context,
-                            numbers: widget.contact.phones,
-                            onTap: (String num) async {
-                              ActivityService().openTelegram(num);
-                            },
-                          ).show();
-                        }),
-                        _buildListTile(
-                            context, FluentIcons.video_24_regular, 'Video Call',
-                            () {
-                          NumberPicker(
-                            context: context,
-                            numbers: widget.contact.phones,
-                            onTap: (String num) async {
-                              ActivityService().makeVideoCall(num);
-                            },
-                          );
-                        }),
-                        _buildListTile(
-                            context, FontAwesomeIcons.whatsapp, 'WhatsApp', () {
-                          NumberPicker(
-                            context: context,
-                            numbers: widget.contact.phones,
-                            onTap: (String num) async {
-                              ActivityService().openWhatsApp(num);
-                            },
-                          ).show();
-                        }),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(height: 24),
+            _buildExternalAppsSection(context),
+            const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildListTile(
-      BuildContext context, IconData icon, String label, VoidCallback onTap) {
-    return ListTile(
-      leading: Container(
-        width: 35,
-        height: 35,
-        decoration: BoxDecoration(
-          color: context.colorScheme.secondaryContainer,
-          shape: BoxShape.circle,
+  Widget _buildQuickActions() {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        _buildCircularAction(FluentIcons.qr_code_24_regular, 'QR Code', () {
+          QrCodePopup(
+                  context: context, data: generateVCardString(widget.contact))
+              .show();
+        }),
+        _buildCircularAction(FluentIcons.share_24_regular, 'Share', () {
+          SharePlus.instance.share(ShareParams(
+            files: [
+              XFile.fromData(utf8.encode(generateVCardString(widget.contact)),
+                  mimeType: 'text/plain')
+            ],
+            fileNameOverrides: ['contact.vcf'],
+          ));
+        }),
+        _buildCircularAction(FluentIcons.history_24_regular, 'History', () {
+          Navigator.of(context)
+              .pushNamed(callHistoryRoute, arguments: widget.contact.phones);
+        }),
+        _buildCircularAction(
+          widget.contact.isStarred
+              ? FluentIcons.star_24_filled
+              : FluentIcons.star_24_regular,
+          'Favorite',
+          () {
+            setState(
+                () => widget.contact.isStarred = !widget.contact.isStarred);
+            ref
+                .read(contactServiceProvider.notifier)
+                .updateContact(contact: widget.contact);
+          },
+          isActive: widget.contact.isStarred,
         ),
-        child: Icon(icon, color: context.colorScheme.onSecondaryContainer),
-      ),
-      title: Text(
-        label,
-        style: context.textTheme.bodyLarge?.copyWith(
-          color: context.colorScheme.onSurface,
+      ],
+    );
+  }
+
+  Widget _buildCircularAction(IconData icon, String label, VoidCallback onTap,
+      {bool isActive = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? context.colorScheme.primaryContainer
+                  : context.colorScheme.secondaryContainer.withAlpha(150),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon,
+                color: isActive
+                    ? context.colorScheme.onPrimaryContainer
+                    : context.colorScheme.onSurfaceVariant),
+          ),
         ),
+        const SizedBox(height: 8),
+        Text(label,
+            style:
+                GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500)),
+      ],
+    );
+  }
+
+  Widget _buildProfilePicture(BuildContext context) {
+    return Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        color: context.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(28),
+        image: widget.contact.photo != null
+            ? DecorationImage(
+                image: MemoryImage(widget.contact.photo!), fit: BoxFit.cover)
+            : null,
       ),
-      onTap: onTap,
+      child: widget.contact.photo == null
+          ? Icon(FluentIcons.person_24_filled,
+              size: 80, color: context.colorScheme.onSecondaryContainer)
+          : null,
     );
   }
 
   Widget _buildContactInfoSection(BuildContext context) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      color: context.colorScheme.secondaryContainer.withAlpha(100),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Phone Numbers",
-              style: GoogleFonts.outfit(
-                fontSize: 20,
-                color: context.colorScheme.onSurface,
-              ),
+    final phones = widget.contact.phones;
+    return _buildExpressiveCard(
+      title: "Phone Numbers",
+      child: phones.isEmpty
+          ? const Padding(
+              padding: EdgeInsets.all(24), child: Text("No phone numbers"))
+          : Column(
+              children: List.generate(phones.length, (index) {
+                return Column(
+                  children: [
+                    _buildPhoneItem(context, phones[index]),
+                    if (index < phones.length - 1) _buildDivider(),
+                  ],
+                );
+              }),
             ),
-            const SizedBox(height: 16),
-            if (widget.contact.phones.isNotEmpty)
-              ...widget.contact.phones
-                  .map((phone) => _buildPhoneWithActionIcons(context, phone)),
-          ],
-        ),
-      ),
     );
   }
 
-  Widget _buildPhoneWithActionIcons(BuildContext context, var phone) {
-    final simCards = ref.watch(getSimInfoProvider);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
+  Widget _buildExternalAppsSection(BuildContext context) {
+    return _buildExpressiveCard(
+      title: "External Apps",
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              phone,
-              style: GoogleFonts.outfit(
-                textStyle: context.textTheme.bodyLarge,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
-          ),
-          Wrap(
-            spacing: 12,
-            children: [
-              RoundedIconButton(
-                FluentIcons.call_24_regular,
-                onTap: () {
-                  simCards.whenData((value) => SimPicker(
-                          context: context, simCards: value, number: phone)
-                      .show());
-                },
-                size: 36,
-              ),
-              RoundedIconButton(
-                FluentIcons.chat_24_regular,
-                onTap: () {
-                  ActivityService().sendSMS(phone);
-                },
-                size: 36,
-              ),
-            ],
-          ),
+          _buildAppTile(context, FontAwesomeIcons.telegramPlane, 'Telegram',
+              () {
+            NumberPicker(
+                context: context,
+                numbers: widget.contact.phones,
+                onTap: (num) => ActivityService().openTelegram(num)).show();
+          }),
+          _buildDivider(),
+          _buildAppTile(context, FluentIcons.video_24_regular, 'Video Call',
+              () {
+            NumberPicker(
+                context: context,
+                numbers: widget.contact.phones,
+                onTap: (num) => ActivityService().makeVideoCall(num)).show();
+          }),
+          _buildDivider(),
+          _buildAppTile(context, FontAwesomeIcons.whatsapp, 'WhatsApp', () {
+            NumberPicker(
+                context: context,
+                numbers: widget.contact.phones,
+                onTap: (num) => ActivityService().openWhatsApp(num)).show();
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildProfilePicture(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: context.colorScheme.secondaryContainer,
-      radius: 70,
-      backgroundImage: widget.contact.photo != null
-          ? MemoryImage(widget.contact.photo!)
-          : null,
-      child: widget.contact.photo == null
-          ? Icon(
-              FluentIcons.person_24_filled,
-              size: 100,
-              color: context.colorScheme.onSecondaryContainer,
-            )
-          : null,
+  Widget _buildExpressiveCard({required String title, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 12),
+          child: Text(title,
+              style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: context.colorScheme.primary)),
+        ),
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: context.colorScheme.secondaryContainer.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Divider(
+          height: 1,
+          thickness: 1,
+          color: context.colorScheme.onSecondaryContainer.withOpacity(0.05)),
+    );
+  }
+
+  Widget _buildPhoneItem(BuildContext context, String phone) {
+    final simCards = ref.watch(getSimInfoProvider);
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      title: Text(phone,
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 17)),
+      subtitle: const Text("Mobile"),
+      trailing: Wrap(
+        spacing: 12,
+        children: [
+          _buildActionIcon(FluentIcons.call_24_filled, () {
+            simCards.whenData((value) =>
+                SimPicker(context: context, simCards: value, number: phone)
+                    .show());
+          }),
+          _buildActionIcon(FluentIcons.chat_24_filled,
+              () => ActivityService().sendSMS(phone)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppTile(
+      BuildContext context, IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12)),
+        child: Icon(icon, size: 20, color: context.colorScheme.primary),
+      ),
+      title:
+          Text(label, style: GoogleFonts.outfit(fontWeight: FontWeight.w500)),
+      trailing: const Icon(FluentIcons.chevron_right_24_regular, size: 16),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(14)),
+        child: Icon(icon, size: 20, color: context.colorScheme.primary),
+      ),
     );
   }
 }

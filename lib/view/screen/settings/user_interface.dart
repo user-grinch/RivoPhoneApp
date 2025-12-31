@@ -7,7 +7,7 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/controller/providers/theme_service.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/switch_tile.dart';
+import 'package:revo/view/components/switch_tile.dart';
 
 class UserInterfaceView extends ConsumerWidget {
   const UserInterfaceView({super.key});

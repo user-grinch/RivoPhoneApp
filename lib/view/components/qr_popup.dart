@@ -43,15 +43,8 @@ class QrCodePopup {
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.08),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  )
-                ],
               ),
               padding: const EdgeInsets.all(16),
               child: SizedBox(

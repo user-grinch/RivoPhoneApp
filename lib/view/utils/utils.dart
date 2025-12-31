@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/model/contact.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String normalizePhoneNumber(String phoneNumber) {
@@ -45,4 +46,17 @@ void hapticVibration() {
   if (SharedPrefService().getBool(PREF_DIALPAD_VIBRATION, def: true)) {
     HapticFeedback.lightImpact();
   }
+}
+
+String generateVCardString(Contact contact) {
+  String str = '''
+BEGIN:VCARD
+VERSION:3.0
+FN:${contact.fullName}''';
+
+  for (var phone in contact.phones) {
+    str += 'TEL:$phone\n';
+  }
+  str += 'END:VCARD';
+  return str;
 }

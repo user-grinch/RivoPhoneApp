@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/screen/settings/contributors.dart';
-import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/menu_tile.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
@@ -58,7 +58,7 @@ class AboutView extends StatelessWidget {
                     .colorScheme
                     .secondaryContainer
                     .withAlpha(110),
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

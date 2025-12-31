@@ -34,7 +34,7 @@ class WelcomePopup {
         height: 64,
         decoration: BoxDecoration(
           color: colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
         ),
         child: Padding(
           padding: const EdgeInsets.all(12.0),

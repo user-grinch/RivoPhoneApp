@@ -69,7 +69,7 @@ class SimPicker {
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: context.colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () async {
@@ -122,11 +122,6 @@ class SimPicker {
                       ),
                     ],
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color:
-                      context.colorScheme.onSecondaryContainer.withOpacity(0.4),
                 ),
               ],
             ),

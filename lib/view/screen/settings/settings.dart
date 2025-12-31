@@ -5,8 +5,8 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/screen/settings/about.dart';
 import 'package:revo/view/screen/settings/sound.dart';
 import 'package:revo/view/screen/settings/user_interface.dart';
-import 'package:revo/view/utils/center_text.dart';
-import 'package:revo/view/utils/menu_tile.dart';
+import 'package:revo/view/components/center_text.dart';
+import 'package:revo/view/components/menu_tile.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
@@ -36,14 +36,14 @@ class SettingsView extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
             child: ListTile(
               onTap: () async {
                 await launchURL('https://www.patreon.com/grinch_');
               },
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               leading: Icon(
                 FluentIcons.heart_24_regular,
