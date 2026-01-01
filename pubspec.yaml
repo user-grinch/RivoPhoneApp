@@ -14,27 +14,39 @@ dependencies:
 
   dynamic_color: ^1.8.1
   google_fonts: ^6.3.3
-  permission_handler: ^12.0.1
-  simple_barcode_scanner: ^0.4.0
   shared_preferences: ^2.5.4
-  url_launcher: ^6.3.2
-  flutter_contacts: ^1.1.9+2
   intl: ^0.20.2
-  share_plus: ^12.0.1
+  flutter_riverpod: ^3.1.0
+  riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
+  flutter_hooks: ^0.21.3+1
+  hooks_riverpod: ^3.1.0
+  permission_handler: ^12.0.1
+  phone_numbers_parser: ^9.0.17
+  url_launcher: ^6.3.2
   qr_flutter: ^4.1.0
+  flutter_contacts: ^1.1.9+2
   flutter_sim_data: ^1.0.5
+  call_log : ^6.0.1
+  share_plus: ^12.0.1
   android_intent_plus: ^6.0.0
-
-  # Replace these with better packages
-  bloc: ^9.0.0
-  flutter_bloc: ^9.1.1
-  provider: ^6.1.2
-  hugeicons: ^0.0.10
-  call_e_log: ^0.0.4
+  fluentui_system_icons: ^1.1.273
+  font_awesome_flutter: ^10.12.0
+  flutter_dtmf: 
+    git:
+      url: https://github.com/user-grinch/flutter_dtmf
+      ref: '7d64714'
   sticky_az_list:
     git:
       url: https://github.com/user-grinch/sticky_az_list_plus
       ref: '241d5c9'
+  m3e_collection: ^0.3.7
+  ai_barcode_scanner: ^7.1.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/icon.png"
+  min_sdk_android: 21 
 
 flutter_native_splash:
   image: 'assets/splash.png'
@@ -51,8 +63,11 @@ flutter_native_splash:
     # branding: 'assets/branding.png'
 
 dev_dependencies:
+  build_runner: ^2.10.4
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.4
+  riverpod_generator: ^4.0.0+1
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -69,7 +84,6 @@ flutter:
   assets:
     - assets/
     - assets/icon.png
-    - assets/branding.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

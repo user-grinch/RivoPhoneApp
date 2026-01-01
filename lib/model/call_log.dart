@@ -1,12 +1,12 @@
 import 'dart:typed_data';
-import 'package:call_e_log/call_log.dart' as lib;
+import 'package:call_log/call_log.dart' as lib;
 import 'package:revo/model/call_type.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
 
 class CallLog {
   final Uint8List? profile;
-  final String name;
-  final String number;
-  final String simDisplayName;
+  final String name, simDisplayName;
+  final pnp.PhoneNumber number;
   final DateTime date;
   final String duration;
   final CallType type;
@@ -23,15 +23,25 @@ class CallLog {
     required this.accountId,
   });
 
-  factory CallLog.fromEntry({
+  factory CallLog.fromInternal({
     required lib.CallLogEntry entry,
     Uint8List? profile,
+    String? countryCode,
   }) {
+    pnp.PhoneNumber phoneNumber;
+    try {
+      phoneNumber = pnp.PhoneNumber.parse(entry.number ?? '0',
+          callerCountry: countryCode != null
+              ? pnp.IsoCode.values.byName(countryCode.toUpperCase())
+              : null);
+    } catch (e) {
+      phoneNumber = pnp.PhoneNumber.parse('0');
+    }
     return CallLog(
       profile,
       name: entry.name ?? '',
-      number: entry.number ?? '',
-      simDisplayName: entry.simDisplayName ?? 'Unknown',
+      number: phoneNumber,
+      simDisplayName: entry.simDisplayName ?? '',
       date: DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0),
       duration: entry.duration.toString(),
       type: _convertFromInternalType(entry.callType ?? lib.CallType.unknown),
@@ -51,15 +61,5 @@ class CallLog {
                     : type == lib.CallType.missed
                         ? CallType.missed
                         : CallType.unknown;
-  }
-
-  String get displayName {
-    if (name.isNotEmpty) {
-      return name;
-    } else if (number.isNotEmpty) {
-      return number;
-    } else {
-      return 'Unknown';
-    }
   }
 }
