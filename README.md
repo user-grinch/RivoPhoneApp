@@ -22,7 +22,6 @@
   <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/3.png" alt="Preview 3" width="300">
   <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/4.png" alt="Preview 4" width="300">
   <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/5.png" alt="Preview 5" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/6.png" alt="Preview 5" width="300">
 </details>
 
 ## Getting Started
@@ -66,7 +65,3 @@ We welcome contributions to improve Rivo! Follow these steps to contribute:
 
 ## License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
-
----
-
-Made with ❤️ using Flutter.
