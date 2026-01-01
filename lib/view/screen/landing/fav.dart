@@ -7,9 +7,9 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/view/components/circle_profile.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/contactinfo_view.dart';
-import 'package:revo/view/utils/utils.dart';
 
 class FavView extends ConsumerWidget {
   const FavView({super.key});
@@ -26,7 +26,7 @@ class FavView extends ConsumerWidget {
         final simCards = ref.watch(getSimInfoProvider);
 
         if (starred.isEmpty) {
-          return const Center(child: Text('No favorites pinned'));
+          return _buildEmtyState(context);
         }
 
         return GridView.builder(
@@ -57,7 +57,7 @@ class FavView extends ConsumerWidget {
                     child: Column(
                       children: [
                         CircleProfile(
-                          name: contact.displayName,
+                          name: contact.name,
                           profile: contact.photo,
                           size: 40,
                         ),
@@ -65,7 +65,7 @@ class FavView extends ConsumerWidget {
                         Wrap(
                           children: [
                             Text(
-                              contact.displayName,
+                              contact.name,
                               style: GoogleFonts.outfit(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -78,9 +78,10 @@ class FavView extends ConsumerWidget {
                           ],
                         ),
                         const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            hapticVibration();
+                        RoundedIconButton(
+                          FluentIcons.call_20_filled,
+                          size: 40,
+                          onPressed: () {
                             simCards.whenData((value) => SimPicker(
                                   context: context,
                                   simCards: value,
@@ -89,38 +90,6 @@ class FavView extends ConsumerWidget {
                                       : '',
                                 ).show());
                           },
-                          child: Container(
-                            height: 42,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color:
-                                  colorScheme.primaryContainer.withAlpha(150),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  FluentIcons.call_20_filled,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Call',
-                                  style: GoogleFonts.outfit(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -133,6 +102,69 @@ class FavView extends ConsumerWidget {
       },
       loading: () => const Center(child: ExpressiveLoadingIndicator()),
       error: (e, s) => const Center(child: Text("Error occurred")),
+    );
+  }
+
+  Widget _buildEmtyState(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHigh,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(56),
+                  topRight: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(56),
+                ),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    FluentIcons.star_24_filled,
+                    size: 100,
+                    color: colorScheme.primary.withOpacity(0.1),
+                  ),
+                  Icon(
+                    FluentIcons.star_24_regular,
+                    size: 60,
+                    color: colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              "Lonely Circle",
+              style: GoogleFonts.outfit(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Pin your favorite contacts here for\nlightning-fast access.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                height: 1.4,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

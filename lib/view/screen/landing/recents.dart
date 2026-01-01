@@ -11,6 +11,7 @@ import 'package:revo/controller/providers/calllog_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/circle_profile.dart';
 
@@ -192,7 +193,19 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                     ),
                   ],
                 ),
-                trailing: _buildCallAction(context, simCardsAsync, log.number),
+                trailing: RoundedIconButton(
+                  FluentIcons.call_20_filled,
+                  size: 40,
+                  onPressed: () {
+                    simCardsAsync.whenData((simCards) {
+                      SimPicker(
+                              context: context,
+                              simCards: simCards,
+                              number: log.number)
+                          .show();
+                    });
+                  },
+                ),
               ),
               if (!isLastInSection)
                 Padding(
@@ -207,26 +220,6 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildCallAction(
-      BuildContext context, AsyncValue simCardsAsync, String number) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: IconButton(
-        icon: Icon(FluentIcons.call_24_filled,
-            color: context.colorScheme.primary, size: 20),
-        onPressed: () {
-          simCardsAsync.whenData((simCards) {
-            SimPicker(context: context, simCards: simCards, number: number)
-                .show();
-          });
-        },
-      ),
     );
   }
 

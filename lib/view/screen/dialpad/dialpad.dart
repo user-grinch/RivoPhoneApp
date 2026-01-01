@@ -164,7 +164,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                               ? RoundedIconButton(
                                   FluentIcons.person_add_24_regular,
                                   size: 48,
-                                  onTap: () {
+                                  onPressed: () {
                                     hapticVibration();
                                     ref
                                         .read(contactServiceProvider.notifier)
@@ -191,7 +191,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                               ? RoundedIconButton(
                                   FluentIcons.arrow_left_24_regular,
                                   size: 48,
-                                  onTap: () {
+                                  onPressed: () {
                                     hapticVibration();
                                     setState(() {
                                       if (_number.isNotEmpty) {

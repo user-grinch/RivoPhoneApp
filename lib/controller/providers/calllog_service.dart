@@ -40,14 +40,14 @@ class CallLogService extends _$CallLogService {
         });
 
         if ((entry.name ?? '').isEmpty) {
-          entry.name = contact.fullName;
+          entry.name = contact.name;
         }
         photo = contact.photo;
       } catch (_) {
         photo = null;
       }
 
-      return CallLog.fromEntry(entry: entry, profile: photo);
+      return CallLog.fromInternal(entry: entry, profile: photo);
     }).toList();
   }
 

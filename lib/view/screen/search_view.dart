@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/matched_view.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -50,14 +51,15 @@ class _SearchViewState extends State<SearchView> {
                 height: 50,
                 decoration: BoxDecoration(
                   color: colorScheme.secondaryContainer.withOpacity(0.35),
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    _buildSquircleAction(
-                      icon: FluentIcons.arrow_left_24_regular,
-                      onTap: () => Navigator.pop(context),
+                    RoundedIconButton(
+                      FluentIcons.arrow_left_24_regular,
+                      size: 40,
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                     Expanded(
                       child: TextField(
@@ -84,9 +86,10 @@ class _SearchViewState extends State<SearchView> {
                       ),
                     ),
                     if (_searchQuery.isNotEmpty)
-                      _buildSquircleAction(
-                        icon: FluentIcons.dismiss_24_regular,
-                        onTap: () {
+                      RoundedIconButton(
+                        FluentIcons.dismiss_24_regular,
+                        size: 40,
+                        onPressed: () {
                           _controller.clear();
                           setState(() => _searchQuery = '');
                         },

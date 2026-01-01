@@ -35,15 +35,24 @@ class ActivityService {
   }
 
   Future<void> makePhoneCall(String phoneNumber, int simSlot) async {
-    if (await Permission.phone.status.isGranted) {
+    if (await Permission.phone.isGranted) {
       final caller = AndroidIntent(
-          action: 'android.intent.action.CALL',
-          data: 'tel:$phoneNumber',
-          arguments: {
-            'com.android.phone.force.slot': true,
-            'com.android.phone.extra.slot': simSlot,
-          });
-      caller.launch();
+        action: 'android.intent.action.CALL',
+        data: 'tel:$phoneNumber',
+        arguments: {
+          // Standard Android / Pixel
+          'subscription': simSlot,
+          // Samsung / Others
+          'simSlot': simSlot,
+          'com.android.phone.extra.slot': simSlot,
+          'com.android.phone.force.slot': true,
+          // Huawei / Honor
+          'phone': simSlot,
+          // Dual SIM older MTK
+          'slot_id': simSlot,
+        },
+      );
+      await caller.launch();
     }
   }
 

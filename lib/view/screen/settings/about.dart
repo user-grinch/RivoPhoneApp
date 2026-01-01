@@ -19,7 +19,10 @@ class AboutView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const RoundedIconButton(FluentIcons.arrow_left_24_regular),
+          icon: const RoundedIconButton(
+            FluentIcons.arrow_left_24_regular,
+            size: 40,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

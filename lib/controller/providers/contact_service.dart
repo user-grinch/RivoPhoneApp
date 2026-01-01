@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
-import 'package:flutter_contacts/flutter_contacts.dart' as lib;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/model/contact.dart';
@@ -58,11 +57,7 @@ class ContactService extends _$ContactService {
         });
       });
     } catch (_) {
-      return Contact(
-          id: '"Unknown"',
-          displayName: "Unknown",
-          fullName: "Unknown",
-          phones: [number]);
+      return Contact(id: '"Unknown"', name: "Unknown", phones: [number]);
     }
   }
 
@@ -77,7 +72,7 @@ class ContactService extends _$ContactService {
     try {
       return currentList.where((f) {
         bool nameMatches = name.isNotEmpty &&
-            f.fullName.toLowerCase().contains(name.toLowerCase());
+            f.name.toLowerCase().contains(name.toLowerCase());
 
         bool isNumber = number.isNotEmpty && num.tryParse(number) != null;
         bool numberMatches = isNumber &&
@@ -114,7 +109,7 @@ class ContactService extends _$ContactService {
   Future<void> insertContactFromVCard(String data) async {
     if (await Permission.contacts.status.isGranted) {
       try {
-        await fc.FlutterContacts.insertContact(lib.Contact.fromVCard(data));
+        await fc.FlutterContacts.insertContact(fc.Contact.fromVCard(data));
         debugPrint('Contact added successfully!');
         ref.invalidateSelf();
       } catch (e) {
@@ -139,8 +134,10 @@ class ContactService extends _$ContactService {
     bool withGroups = false,
   }) async {
     if (await Permission.contacts.status.isGranted) {
+      fc.Contact fcContact = contact.toInternal();
+      fcContact.groups = [];
       await fc.FlutterContacts.updateContact(
-        contact.toInternal(),
+        fcContact,
         withGroups: withGroups,
       );
       ref.invalidateSelf();

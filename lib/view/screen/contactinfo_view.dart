@@ -34,7 +34,10 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     return Scaffold(
       appBar: AppBarM3E(
         leading: IconButton(
-          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
+          icon: RoundedIconButton(
+            FluentIcons.arrow_left_24_regular,
+            size: 40,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
@@ -43,7 +46,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         actions: [
           RoundedIconButton(
             FluentIcons.edit_24_regular,
-            onTap: () =>
+            size: 40,
+            onPressed: () =>
                 ref.read(contactServiceProvider.notifier).editContact(c),
           ),
           const SizedBox(width: 8),
@@ -58,7 +62,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             _buildProfilePicture(context),
             const SizedBox(height: 20),
             Text(
-              c.fullName,
+              c.name,
               style: GoogleFonts.outfit(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -69,8 +73,6 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             const SizedBox(height: 24),
             _buildQuickActions(),
             const SizedBox(height: 32),
-
-            // --- Contact Details Sections ---
             _buildPhoneSection(context),
             if (c.emails.isNotEmpty) ...[
               const SizedBox(height: 24),
@@ -96,7 +98,6 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
               const SizedBox(height: 24),
               _buildNotesSection(context)
             ],
-
             const SizedBox(height: 24),
             _buildExternalAppsSection(context),
             const SizedBox(height: 40),
@@ -106,11 +107,9 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     );
   }
 
-  // --- UI Components ---
-
   Widget _buildPhoneSection(BuildContext context) {
     final phones = widget.contact.phones;
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Phone Numbers",
       child: phones.isEmpty
           ? const Padding(
@@ -129,7 +128,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildEmailSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Email Addresses",
       child: Column(
         children: widget.contact.emails.asMap().entries.map((e) {
@@ -151,7 +150,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildAddressSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Addresses",
       child: Column(
         children: widget.contact.addresses.asMap().entries.map((e) {
@@ -173,7 +172,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildOrgSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Organization",
       child: Column(
         children: widget.contact.organizations.asMap().entries.map((e) {
@@ -196,7 +195,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildEventsSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Important Dates",
       child: Column(
         children: widget.contact.events.asMap().entries.map((e) {
@@ -220,10 +219,9 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildLinksSection(BuildContext context) {
-    final hasSocial = widget.contact.socialMedias.isNotEmpty;
     final hasWeb = widget.contact.websites.isNotEmpty;
 
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Web & Social",
       child: Column(
         children: [
@@ -259,7 +257,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildNotesSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "Notes",
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -271,8 +269,6 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
       ),
     );
   }
-
-  // --- Helper Widgets ---
 
   Widget _buildInfoTile(BuildContext context,
       {required IconData icon,
@@ -291,39 +287,44 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     );
   }
 
-  // (Include existing methods here: _buildQuickActions, _buildProfilePicture, _buildExternalAppsSection, etc.)
-  // Note: I have kept the logic for the existing methods you provided below for reference.
-
   Widget _buildQuickActions() {
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 16,
       runSpacing: 16,
       children: [
-        _buildCircularAction(FluentIcons.qr_code_24_regular, 'QR Code', () {
-          QrCodePopup(
-                  context: context, data: generateVCardString(widget.contact))
-              .show();
-        }),
-        _buildCircularAction(FluentIcons.share_24_regular, 'Share', () {
-          SharePlus.instance.share(ShareParams(
-            files: [
-              XFile.fromData(utf8.encode(generateVCardString(widget.contact)),
-                  mimeType: 'text/plain')
-            ],
-            fileNameOverrides: ['contact.vcf'],
-          ));
-        }),
-        _buildCircularAction(FluentIcons.history_24_regular, 'History', () {
-          Navigator.of(context)
-              .pushNamed(callHistoryRoute, arguments: widget.contact.phones);
-        }),
-        _buildCircularAction(
+        RoundedIconButton(
+          FluentIcons.qr_code_24_regular,
+          onPressed: () {
+            QrCodePopup(
+                    context: context, data: generateVCardString(widget.contact))
+                .show();
+          },
+        ),
+        RoundedIconButton(
+          FluentIcons.share_24_regular,
+          onPressed: () {
+            SharePlus.instance.share(ShareParams(
+              files: [
+                XFile.fromData(utf8.encode(generateVCardString(widget.contact)),
+                    mimeType: 'text/plain')
+              ],
+              fileNameOverrides: ['contact.vcf'],
+            ));
+          },
+        ),
+        RoundedIconButton(
+          FluentIcons.history_24_regular,
+          onPressed: () {
+            Navigator.of(context)
+                .pushNamed(callHistoryRoute, arguments: widget.contact.phones);
+          },
+        ),
+        RoundedIconButton(
           widget.contact.isStarred
               ? FluentIcons.star_24_filled
               : FluentIcons.star_24_regular,
-          'Favorite',
-          () {
+          onPressed: () {
             setState(
                 () => widget.contact.isStarred = !widget.contact.isStarred);
             ref
@@ -332,36 +333,6 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
           },
           isActive: widget.contact.isStarred,
         ),
-      ],
-    );
-  }
-
-  Widget _buildCircularAction(IconData icon, String label, VoidCallback onTap,
-      {bool isActive = false}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colorScheme.primaryContainer
-                  : context.colorScheme.secondaryContainer.withAlpha(150),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon,
-                color: isActive
-                    ? context.colorScheme.onPrimaryContainer
-                    : context.colorScheme.onSurfaceVariant),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(label,
-            style:
-                GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -386,7 +357,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildExternalAppsSection(BuildContext context) {
-    return _buildExpressiveCard(
+    return _buildCard(
       title: "External Apps",
       child: Column(
         children: [
@@ -417,7 +388,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     );
   }
 
-  Widget _buildExpressiveCard({required String title, required Widget child}) {
+  Widget _buildCard({required String title, required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -431,6 +402,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         ),
         Container(
           clipBehavior: Clip.antiAlias,
+          width: double.infinity,
           decoration: BoxDecoration(
             color: context.colorScheme.secondaryContainer.withOpacity(0.3),
             borderRadius: BorderRadius.circular(28),
@@ -461,13 +433,20 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
       trailing: Wrap(
         spacing: 12,
         children: [
-          _buildActionIcon(FluentIcons.call_24_filled, () {
-            simCards.whenData((value) =>
-                SimPicker(context: context, simCards: value, number: phone)
-                    .show());
-          }),
-          _buildActionIcon(FluentIcons.chat_24_filled,
-              () => ActivityService().sendSMS(phone)),
+          RoundedIconButton(
+            FluentIcons.call_24_filled,
+            size: 40,
+            onPressed: () {
+              simCards.whenData((value) =>
+                  SimPicker(context: context, simCards: value, number: phone)
+                      .show());
+            },
+          ),
+          RoundedIconButton(
+            FluentIcons.chat_24_filled,
+            size: 40,
+            onPressed: () => ActivityService().sendSMS(phone),
+          ),
         ],
       ),
     );
@@ -476,30 +455,11 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   Widget _buildAppTile(
       BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12)),
-        child: Icon(icon, size: 20, color: context.colorScheme.primary),
-      ),
+      leading: Icon(icon, size: 22, color: context.colorScheme.primary),
       title:
           Text(label, style: GoogleFonts.outfit(fontWeight: FontWeight.w500)),
       trailing: const Icon(FluentIcons.chevron_right_24_regular, size: 16),
       onTap: onTap,
-    );
-  }
-
-  Widget _buildActionIcon(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(14)),
-        child: Icon(icon, size: 20, color: context.colorScheme.primary),
-      ),
     );
   }
 }

@@ -4,10 +4,9 @@ import 'package:sticky_az_list/sticky_az_list.dart';
 
 class Contact extends TaggedItem {
   String id;
-  String displayName;
+  String name;
   Uint8List? photo;
   bool isStarred;
-  String fullName;
   List<String> phones;
   List<lib.Email> emails;
   List<lib.Address> addresses;
@@ -21,10 +20,9 @@ class Contact extends TaggedItem {
 
   Contact({
     required this.id,
-    required this.displayName,
+    required this.name,
     this.photo,
     this.isStarred = false,
-    required this.fullName,
     this.phones = const [],
     this.emails = const [],
     this.addresses = const [],
@@ -39,13 +37,22 @@ class Contact extends TaggedItem {
 
   // TODO: Needs more work
   factory Contact.fromInternal(lib.Contact contact) {
+    String displayName =
+        '${contact.name.first} ${contact.name.middle} ${contact.name.last}';
+
+    if (displayName.isEmpty) {
+      displayName = contact.displayName;
+    }
+
+    if (displayName.isEmpty) {
+      displayName = "Unknown";
+    }
+
     return Contact(
       id: contact.id,
-      displayName: contact.displayName,
+      name: displayName,
       photo: contact.photo ?? contact.thumbnail,
       isStarred: contact.isStarred,
-      fullName:
-          '${contact.name.first} ${contact.name.middle} ${contact.name.last}',
       phones: contact.phones.map((phone) => (phone.number)).toList(),
       emails: contact.emails,
       addresses: contact.addresses,
@@ -62,13 +69,13 @@ class Contact extends TaggedItem {
   lib.Contact toInternal() {
     return lib.Contact(
       id: id,
-      displayName: displayName,
+      displayName: name,
       thumbnail: photo,
       photo: photo,
       name: lib.Name(
-        first: fullName.split(' ')[0],
-        middle: fullName.split(' ').length > 2 ? fullName.split(' ')[1] : '',
-        last: fullName.split(' ').last,
+        first: name.split(' ')[0],
+        middle: name.split(' ').length > 2 ? name.split(' ')[1] : '',
+        last: name.split(' ').last,
       ),
       phones: phones.map((p) => lib.Phone(p)).toList(),
       emails: emails,
@@ -85,5 +92,5 @@ class Contact extends TaggedItem {
   }
 
   @override
-  String sortName() => fullName;
+  String sortName() => name;
 }

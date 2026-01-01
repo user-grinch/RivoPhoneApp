@@ -1,55 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 
 class RoundedIconButton extends StatelessWidget {
-  final VoidCallback? onTap;
+  final VoidCallback? onPressed;
   final VoidCallback? onLongPress;
   final IconData icon;
+  final bool isActive;
   final double size;
-  final String text;
 
   const RoundedIconButton(
     this.icon, {
     super.key,
-    this.size = 30,
-    this.text = '',
-    this.onTap,
+    this.isActive = false,
+    this.size = 60,
+    this.onPressed,
     this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          onLongPress: onLongPress,
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.secondaryContainer,
-              shape: BoxShape.circle,
-            ),
-            width: size,
-            height: size,
-            child: Icon(
-              icon,
-              color: context.colorScheme.onSecondaryContainer,
-              size: size / 1.75,
-            ),
-          ),
+    return GestureDetector(
+      onTap: onPressed,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+            color: isActive
+                ? context.colorScheme.primaryContainer
+                : context.colorScheme.secondaryContainer.withAlpha(150),
+            borderRadius: BorderRadius.circular(size * 0.3)),
+        child: Icon(
+          icon,
+          color: context.colorScheme.primary,
+          size: size * 0.45,
         ),
-        if (text.isNotEmpty) const SizedBox(height: 8),
-        if (text.isNotEmpty)
-          Text(
-            text,
-            style: GoogleFonts.outfit(
-              textStyle: context.textTheme.bodyLarge,
-              color: context.colorScheme.onSurface,
-              fontSize: 12,
-            ),
-          ),
-      ],
+      ),
     );
   }
 }

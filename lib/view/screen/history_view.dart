@@ -43,8 +43,9 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
       appBar: AppBar(
         leadingWidth: 70,
         leading: Center(
-          child: IconButton(
-            icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
+          child: RoundedIconButton(
+            FluentIcons.arrow_left_24_regular,
+            size: 40,
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -109,7 +110,6 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Icon Square
             Container(
               width: 52,
               height: 52,
@@ -166,7 +166,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    "${history.simDisplayName} • ${history.number}",
+                    "${history.name} • ${history.number}",
                     style: TextStyle(
                       color: colorScheme.onSurfaceVariant.withOpacity(0.6),
                       fontSize: 11,

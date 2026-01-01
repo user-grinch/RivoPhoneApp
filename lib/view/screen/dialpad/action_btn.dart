@@ -23,7 +23,6 @@ class DialActionButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28),
         ),
-        // Primary colors for the main call action to make it "Expressive"
         backgroundColor: colorScheme.primary,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),

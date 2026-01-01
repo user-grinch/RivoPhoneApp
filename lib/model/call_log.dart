@@ -4,9 +4,8 @@ import 'package:revo/model/call_type.dart';
 
 class CallLog {
   final Uint8List? profile;
-  final String name;
+  final String name, simDisplayName;
   final String number;
-  final String simDisplayName;
   final DateTime date;
   final String duration;
   final CallType type;
@@ -23,7 +22,7 @@ class CallLog {
     required this.accountId,
   });
 
-  factory CallLog.fromEntry({
+  factory CallLog.fromInternal({
     required lib.CallLogEntry entry,
     Uint8List? profile,
   }) {
@@ -31,7 +30,7 @@ class CallLog {
       profile,
       name: entry.name ?? '',
       number: entry.number ?? '',
-      simDisplayName: entry.simDisplayName ?? 'Unknown',
+      simDisplayName: entry.simDisplayName ?? '',
       date: DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0),
       duration: entry.duration.toString(),
       type: _convertFromInternalType(entry.callType ?? lib.CallType.unknown),

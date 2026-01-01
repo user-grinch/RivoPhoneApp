@@ -9,6 +9,7 @@ import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/view/components/menu_tile.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/components/switch_tile.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class SoundView extends StatefulWidget {
   const SoundView({super.key});
@@ -21,20 +22,7 @@ class _SoundViewState extends State<SoundView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Sound & Vibration',
-          style: GoogleFonts.outfit(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: context.colorScheme.onSurface,
-          ),
-        ),
-      ),
+      appBar: AppBarComponent("Sound & Vibration"),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/utils/utils.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class Contributor {
   final String name;
@@ -43,18 +44,7 @@ class ContributorsView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Contributors',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
-      ),
+      appBar: AppBarComponent("Contributors"),
       body: ListView.builder(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
         itemCount: appContributors.length,

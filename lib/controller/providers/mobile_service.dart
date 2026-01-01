@@ -1,5 +1,7 @@
 import 'package:flutter_sim_data/sim_data.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:revo/constants/pref.dart';
+import 'package:revo/controller/providers/pref_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:revo/model/sim_card.dart';
 import 'package:revo/controller/providers/activity_service.dart';
@@ -19,5 +21,16 @@ Future<List<SimCard>> getSimInfo(Ref ref) async {
     return data.map(SimCard.fromInternal).toList();
   } catch (_) {
     return [];
+  }
+}
+
+@riverpod
+class DefaultSim extends _$DefaultSim {
+  @override
+  int build() => SharedPrefService().getInt(PREF_DEFAULT_SIM) ?? 0;
+
+  void update(int value) {
+    state = value;
+    SharedPrefService().saveInt(PREF_DEFAULT_SIM, value);
   }
 }

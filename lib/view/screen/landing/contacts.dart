@@ -63,12 +63,12 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             items: v,
             builder: (context, index, item) {
               final contact = item as Contact;
-              final String currentSymbol = contact.displayName[0].toUpperCase();
+              final String currentSymbol = contact.name[0].toUpperCase();
 
               bool isFirstInSection = index == 0 ||
-                  v[index - 1].displayName[0].toUpperCase() != currentSymbol;
+                  v[index - 1].name[0].toUpperCase() != currentSymbol;
               bool isLastInSection = index == v.length - 1 ||
-                  v[index + 1].displayName[0].toUpperCase() != currentSymbol;
+                  v[index + 1].name[0].toUpperCase() != currentSymbol;
 
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -103,14 +103,14 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                               ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                                horizontal: 12, vertical: 12),
                             leading: CircleProfile(
-                              name: contact.displayName,
+                              name: contact.name,
                               profile: contact.photo,
                               size: 28,
                             ),
                             title: Text(
-                              contact.displayName,
+                              contact.name,
                               style: GoogleFonts.outfit(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -140,7 +140,8 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             },
             options: StickyAzOptions(
               scrollBarOptions: ScrollBarOptions(
-                margin: const EdgeInsets.only(top: 30, bottom: 20, left: 16),
+                showDeactivated: false,
+                margin: const EdgeInsets.only(top: 30, bottom: 20, left: 5),
                 padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
                 scrollable: true,
                 symbolBuilder: (context, val, state) {

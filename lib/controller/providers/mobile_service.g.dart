@@ -42,3 +42,48 @@ final class GetSimInfoProvider extends $FunctionalProvider<
 }
 
 String _$getSimInfoHash() => r'16e9cdc41efe6b9a23a11a552dca03ec688b4f3d';
+
+@ProviderFor(DefaultSim)
+final defaultSimProvider = DefaultSimProvider._();
+
+final class DefaultSimProvider extends $NotifierProvider<DefaultSim, int> {
+  DefaultSimProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'defaultSimProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$defaultSimHash();
+
+  @$internal
+  @override
+  DefaultSim create() => DefaultSim();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$defaultSimHash() => r'fd7869a34bc274d33b245e5cff282253a022cbf9';
+
+abstract class _$DefaultSim extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element = ref.element
+        as $ClassProviderElement<AnyNotifier<int, int>, int, Object?, Object?>;
+    element.handleCreate(ref, build);
+  }
+}

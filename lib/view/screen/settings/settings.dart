@@ -1,13 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/screen/settings/about.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
+import 'package:revo/view/screen/settings/call.dart';
 import 'package:revo/view/screen/settings/sound.dart';
 import 'package:revo/view/screen/settings/user_interface.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/menu_tile.dart';
-import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/utils/utils.dart';
 
 class SettingsView extends StatelessWidget {
@@ -16,20 +15,7 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: RoundedIconButton(FluentIcons.arrow_left_24_regular),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Settings',
-          style: GoogleFonts.outfit(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: context.colorScheme.onSurface,
-          ),
-        ),
-      ),
+      appBar: AppBarComponent("Settings"),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
@@ -98,12 +84,11 @@ class SettingsView extends StatelessWidget {
             title: 'Call Settings',
             subtitle: 'Incoming call settings',
             icon: FluentIcons.call_24_regular,
-            onTap: null,
-            // () {
-            //   // Navigator.of(context).push(
-            //   //   MaterialPageRoute(builder: (context) => CallView()),
-            //   // );
-            // },
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CallView()),
+              );
+            },
             isLast: true,
           ),
           const SizedBox(height: 10.0),

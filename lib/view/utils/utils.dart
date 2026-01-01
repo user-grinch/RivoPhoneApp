@@ -52,7 +52,7 @@ String generateVCardString(Contact contact) {
   String str = '''
 BEGIN:VCARD
 VERSION:3.0
-FN:${contact.fullName}''';
+FN:${contact.name}''';
 
   for (var phone in contact.phones) {
     str += 'TEL:$phone\n';

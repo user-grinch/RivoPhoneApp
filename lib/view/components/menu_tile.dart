@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
+import 'package:revo/view/components/rounded_icon_btn.dart';
 
 class MenuTile extends StatelessWidget {
   final String title;
@@ -50,20 +51,9 @@ class MenuTile extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: borderRadius),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 24.0, vertical: 4.0),
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color:
-                          isEnabled ? colorScheme.surface : Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: isEnabled
-                          ? colorScheme.primary
-                          : colorScheme.onSurface.withOpacity(0.38),
-                      size: 26,
-                    ),
+                  leading: RoundedIconButton(
+                    icon,
+                    size: 50,
                   ),
                   title: Text(
                     title,

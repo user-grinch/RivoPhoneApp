@@ -73,7 +73,7 @@ class _NavigationViewState extends State<NavigationView> {
           ),
         ),
         child: NavigationBar(
-          backgroundColor: Colors.transparent, // Let the container handle BG
+          backgroundColor: Colors.transparent,
           elevation: 0,
           selectedIndex: _selectedIndex,
           labelBehavior: onlyIcons
@@ -85,8 +85,7 @@ class _NavigationViewState extends State<NavigationView> {
             widget.pageController.animateToPage(
               index,
               duration: const Duration(milliseconds: 500),
-              curve: Curves
-                  .easeInOutCubicEmphasized, // The smoothest Material 3 curve
+              curve: Curves.easeInOutCubicEmphasized,
             );
           },
           destinations: [

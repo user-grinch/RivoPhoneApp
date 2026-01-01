@@ -29,7 +29,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
           height: 50,
           decoration: BoxDecoration(
             color: colorScheme.secondaryContainer.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
             children: [

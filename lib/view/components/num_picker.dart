@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/view/components/center_text.dart';
 
 class NumberPicker {
   final BuildContext context;
@@ -19,70 +19,102 @@ class NumberPicker {
 
     await showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (_) => _buildDialog(),
     );
   }
 
   Widget _buildDialog() {
     return Dialog(
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      alignment: Alignment.bottomCenter,
+      backgroundColor: context.colorScheme.surfaceContainerHigh,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CenterText(
-              text: "Choose a number",
-              size: 24,
+            Icon(
+              FluentIcons.phone_24_regular,
+              color: context.colorScheme.primary,
+              size: 32,
             ),
-            const SizedBox(height: 8),
-            ...numbers.map((number) => _buildNumberOption(number)),
+            const SizedBox(height: 16),
+            Text(
+              "Select Number",
+              style: GoogleFonts.outfit(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: context.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Map the list of strings to the modern picker items
+            ...numbers.map((number) => _buildNumberItem(number)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNumberOption(String number) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      color: context.colorScheme.secondaryContainer,
-      child: InkWell(
-        onTap: () {
-          if (onTap != null) {
-            onTap!(number);
-          }
-          Navigator.of(context).pop();
-        },
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: context.colorScheme.primary,
-                child: Icon(
-                  FluentIcons.phone_24_regular,
-                  color: context.colorScheme.onPrimary,
-                  size: 18,
+  Widget _buildNumberItem(String number) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: context.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(28),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {
+            if (onTap != null) onTap!(number);
+            Navigator.of(context).pop();
+          },
+          splashFactory: InkSparkle.splashFactory,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      FluentIcons.call_24_regular,
+                      color: context.colorScheme.onPrimary,
+                      size: 20,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              CenterText(
-                text: number,
-                size: 18,
-              ),
-            ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        number,
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: context.colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      Text(
+                        "Phone Number",
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: context.colorScheme.onSecondaryContainer
+                              .withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
