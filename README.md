@@ -17,11 +17,11 @@
 ### Screenshots
 <details>
   <summary>Show Images</summary>
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/1.png" alt="Preview 1" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/2.png" alt="Preview 2" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/3.png" alt="Preview 3" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/4.png" alt="Preview 4" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/Rivo/main/images/5.png" alt="Preview 5" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.png" alt="Preview 1" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.png" alt="Preview 2" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.png" alt="Preview 3" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" alt="Preview 4" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" alt="Preview 5" width="300">
 </details>
 
 ## Getting Started
