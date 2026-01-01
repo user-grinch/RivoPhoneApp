@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
-import 'package:revo/view/utils/utils.dart';
+import 'package:revo/controller/utils/utils.dart';
 
 class DialPadButton extends StatefulWidget {
   final String mainText;

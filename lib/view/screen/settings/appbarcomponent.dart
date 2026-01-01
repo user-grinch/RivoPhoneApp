@@ -23,7 +23,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       leadingWidth: 72,
       leading: Center(
-        child: RoundedIconButton(
+        child: ActionIconButton(
           FluentIcons.arrow_left_24_regular,
           size: 40,
           onPressed: () => Navigator.of(context).pop(),

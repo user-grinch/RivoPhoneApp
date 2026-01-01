@@ -56,7 +56,7 @@ class _SearchViewState extends State<SearchView> {
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    RoundedIconButton(
+                    ActionIconButton(
                       FluentIcons.arrow_left_24_regular,
                       size: 40,
                       onPressed: () => Navigator.of(context).pop(),
@@ -86,7 +86,7 @@ class _SearchViewState extends State<SearchView> {
                       ),
                     ),
                     if (_searchQuery.isNotEmpty)
-                      RoundedIconButton(
+                      ActionIconButton(
                         FluentIcons.dismiss_24_regular,
                         size: 40,
                         onPressed: () {

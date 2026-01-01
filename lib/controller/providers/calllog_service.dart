@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 import 'package:call_log/call_log.dart' as lib;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/controller/providers/contact_service.dart';
+import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/call_log.dart';
-import 'package:revo/view/utils/utils.dart';
+import 'package:revo/model/contact.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'calllog_service.g.dart';
@@ -24,30 +25,48 @@ class CallLogService extends _$CallLogService {
     if (!await Permission.phone.status.isGranted) return [];
     final contacts = ref.watch(contactServiceProvider.notifier);
 
+    final simInfo = await ref.read(getSimInfoProvider.future);
+    final defaultSim = ref.read(defaultSimProvider);
+    final countryCode = simInfo.isNotEmpty
+        ? (simInfo.length > 1
+            ? simInfo[defaultSim].countryCode
+            : simInfo[0].countryCode)
+        : null;
+
     final logs = (await lib.CallLog.get()).toList();
     final fContacts = await contacts.build();
 
     return logs.map((entry) {
       Uint8List? photo;
       try {
-        final logNumber = normalizePhoneNumber(entry.number!);
-        final contact = fContacts.firstWhere((c) {
-          return c.phones.any((p) {
-            return logNumber.endsWith(p) ||
-                logNumber == p ||
-                logNumber.startsWith(p);
-          });
-        });
+        final logNumber =
+            normalizePhoneNumber(entry.number!, countryCode: countryCode);
+        Contact? contact;
 
-        if ((entry.name ?? '').isEmpty) {
-          entry.name = contact.name;
+        for (var c in fContacts) {
+          bool isMatch = false;
+
+          for (var p in c.numbers) {
+            if (isSameNumber(p.international, logNumber)) {
+              isMatch = true;
+              break;
+            }
+          }
+
+          if (isMatch) {
+            contact = c;
+            break;
+          }
         }
-        photo = contact.photo;
+
+        entry.name = contact?.name;
+        photo = contact?.photo;
       } catch (_) {
         photo = null;
       }
 
-      return CallLog.fromInternal(entry: entry, profile: photo);
+      return CallLog.fromInternal(
+          entry: entry, profile: photo, countryCode: countryCode);
     }).toList();
   }
 
@@ -62,33 +81,20 @@ class CallLogService extends _$CallLogService {
 
   List<CallLog> filterByNumber(List<String> numbers) {
     final current = state.value ?? [];
+    final simInfo = ref.read(getSimInfoProvider).value;
+    final defaultSim = ref.read(defaultSimProvider);
+    final countryCode = simInfo?.isNotEmpty ?? false
+        ? (simInfo!.length > 1
+            ? simInfo[defaultSim].countryCode
+            : simInfo[0].countryCode)
+        : null;
+
     return current.where((element) {
       return numbers.any((e) {
-        final p1 = normalizePhoneNumber(e);
-        final p2 = normalizePhoneNumber(element.number);
-        return p1 == p2 || p1.endsWith(p2) || p2.endsWith(p1);
+        final p1 = normalizePhoneNumber(e, countryCode: countryCode);
+        final p2 = element.number.international;
+        return isSameNumber(p1, p2);
       });
     }).toList();
-  }
-
-  Future<void> enrichWithContacts(WidgetRef ref) async {
-    final currentLogs = state.value ?? [];
-    final contactService = ref.read(contactServiceProvider.notifier);
-
-    final updatedLogs = currentLogs.map((log) {
-      final contact = contactService.findByNumber(log.number);
-      return CallLog(
-        contact.photo,
-        name: log.name,
-        number: log.number,
-        simDisplayName: log.simDisplayName,
-        date: log.date,
-        duration: log.duration,
-        type: log.type,
-        accountId: log.accountId,
-      );
-    }).toList();
-
-    state = AsyncValue.data(updatedLogs);
   }
 }

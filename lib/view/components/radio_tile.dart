@@ -63,7 +63,7 @@ class _RadioSelectionPageState<T> extends State<RadioSelectionPage<T>> {
                   shape: RoundedRectangleBorder(borderRadius: borderRadius),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                  leading: RoundedIconButton(item.icon, size: 50),
+                  leading: ActionIconButton(item.icon, size: 50),
                   title: Text(item.title,
                       style: GoogleFonts.outfit(
                           fontSize: 17, fontWeight: FontWeight.w600)),

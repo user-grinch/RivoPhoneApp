@@ -66,24 +66,24 @@ class ContactTile extends ConsumerWidget {
               color: colorScheme.onSurface,
             ),
           ),
-          subtitle: contact.phones.isNotEmpty
+          subtitle: contact.numbers.isNotEmpty
               ? Text(
-                  contact.phones[0],
+                  contact.numbers[0].international,
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     color: colorScheme.onSurfaceVariant.withOpacity(0.7),
                   ),
                 )
               : null,
-          trailing: RoundedIconButton(
+          trailing: ActionIconButton(
             FluentIcons.call_20_filled,
             size: 40,
             onPressed: () async {
-              if (contact.phones.isNotEmpty) {
+              if (contact.numbers.isNotEmpty) {
                 simCards.whenData((value) => SimPicker(
                       context: context,
                       simCards: value,
-                      number: contact.phones[0],
+                      number: contact.numbers[0].international,
                     ).show());
               }
             },

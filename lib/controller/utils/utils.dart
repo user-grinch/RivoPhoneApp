@@ -2,10 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/model/contact.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
-String normalizePhoneNumber(String phoneNumber) {
-  return phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
+String normalizePhoneNumber(String phoneNumber, {String? countryCode}) {
+  try {
+    IsoCode? isoCode;
+    if (countryCode != null) {
+      isoCode = IsoCode.values.byName(countryCode.toUpperCase());
+    }
+    final parsed = PhoneNumber.parse(phoneNumber, callerCountry: isoCode);
+    return parsed.international;
+  } catch (e) {
+    return phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
+  }
+}
+
+bool isSameNumber(String n1, String n2) {
+  // equality check should be enough now but just in case
+  return n1 == n2 || n1.endsWith(n2) || n2.endsWith(n1);
 }
 
 String convertSecondsToHMS(int totalSeconds) {
@@ -45,4 +61,17 @@ void hapticVibration() {
   if (SharedPrefService().getBool(PREF_DIALPAD_VIBRATION, def: true)) {
     HapticFeedback.lightImpact();
   }
+}
+
+String generateVCardString(Contact contact) {
+  String str = '''
+BEGIN:VCARD
+VERSION:3.0
+FN:${contact.name}''';
+
+  for (var phone in contact.numbers) {
+    str += 'TEL:$phone\n';
+  }
+  str += 'END:VCARD';
+  return str;
 }

@@ -4,10 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/view/screen/settings/contributors.dart';
 import 'package:revo/view/components/menu_tile.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/utils.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
@@ -19,7 +19,7 @@ class AboutView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const RoundedIconButton(
+          icon: const ActionIconButton(
             FluentIcons.arrow_left_24_regular,
             size: 40,
           ),

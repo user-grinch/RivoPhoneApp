@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
+import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
 import 'package:sticky_az_list/sticky_az_list.dart';
 
 class Contact extends TaggedItem {
@@ -7,7 +8,7 @@ class Contact extends TaggedItem {
   String name;
   Uint8List? photo;
   bool isStarred;
-  List<String> phones;
+  List<pnp.PhoneNumber> numbers;
   List<lib.Email> emails;
   List<lib.Address> addresses;
   List<lib.Organization> organizations;
@@ -23,7 +24,7 @@ class Contact extends TaggedItem {
     required this.name,
     this.photo,
     this.isStarred = false,
-    this.phones = const [],
+    this.numbers = const [],
     this.emails = const [],
     this.addresses = const [],
     this.organizations = const [],
@@ -36,7 +37,7 @@ class Contact extends TaggedItem {
   });
 
   // TODO: Needs more work
-  factory Contact.fromInternal(lib.Contact contact) {
+  factory Contact.fromInternal(lib.Contact contact, {String? countryCode}) {
     String displayName =
         '${contact.name.first} ${contact.name.middle} ${contact.name.last}';
 
@@ -53,7 +54,17 @@ class Contact extends TaggedItem {
       name: displayName,
       photo: contact.photo ?? contact.thumbnail,
       isStarred: contact.isStarred,
-      phones: contact.phones.map((phone) => (phone.number)).toList(),
+      numbers: contact.phones.map((phone) {
+        try {
+          return pnp.PhoneNumber.parse(phone.number,
+              callerCountry: countryCode != null
+                  ? pnp.IsoCode.values.byName(countryCode.toUpperCase())
+                  : null);
+        } catch (e) {
+          // return a dummy phone number
+          return pnp.PhoneNumber.parse('0');
+        }
+      }).toList(),
       emails: contact.emails,
       addresses: contact.addresses,
       organizations: contact.organizations,
@@ -77,7 +88,7 @@ class Contact extends TaggedItem {
         middle: name.split(' ').length > 2 ? name.split(' ')[1] : '',
         last: name.split(' ').last,
       ),
-      phones: phones.map((p) => lib.Phone(p)).toList(),
+      phones: numbers.map((p) => lib.Phone(p.international)).toList(),
       emails: emails,
       addresses: addresses,
       organizations: organizations,

@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/utils.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ContactInfoView extends ConsumerStatefulWidget {
@@ -32,28 +32,15 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
     final c = widget.contact;
 
     return Scaffold(
-      appBar: AppBarM3E(
-        leading: IconButton(
-          icon: RoundedIconButton(
-            FluentIcons.arrow_left_24_regular,
-            size: 40,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
+      appBar: AppBarComponent("Contacts", actions: [
+        ActionIconButton(
+          FluentIcons.edit_24_regular,
+          size: 40,
+          onPressed: () =>
+              ref.read(contactServiceProvider.notifier).editContact(c),
         ),
-        centerTitle: false,
-        shapeFamily: AppBarM3EShapeFamily.round,
-        density: AppBarM3EDensity.regular,
-        actions: [
-          RoundedIconButton(
-            FluentIcons.edit_24_regular,
-            size: 40,
-            onPressed: () =>
-                ref.read(contactServiceProvider.notifier).editContact(c),
-          ),
-          const SizedBox(width: 8),
-        ],
-        elevation: 0,
-      ),
+        const SizedBox(width: 8),
+      ]),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -108,7 +95,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildPhoneSection(BuildContext context) {
-    final phones = widget.contact.phones;
+    final phones = widget.contact.numbers;
     return _buildCard(
       title: "Phone Numbers",
       child: phones.isEmpty
@@ -118,7 +105,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
               children: List.generate(phones.length, (index) {
                 return Column(
                   children: [
-                    _buildPhoneItem(context, phones[index]),
+                    _buildPhoneItem(context, phones[index].international),
                     if (index < phones.length - 1) _buildDivider(),
                   ],
                 );
@@ -293,7 +280,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
       spacing: 16,
       runSpacing: 16,
       children: [
-        RoundedIconButton(
+        ActionIconButton(
           FluentIcons.qr_code_24_regular,
           onPressed: () {
             QrCodePopup(
@@ -301,7 +288,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                 .show();
           },
         ),
-        RoundedIconButton(
+        ActionIconButton(
           FluentIcons.share_24_regular,
           onPressed: () {
             SharePlus.instance.share(ShareParams(
@@ -313,14 +300,14 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
             ));
           },
         ),
-        RoundedIconButton(
+        ActionIconButton(
           FluentIcons.history_24_regular,
           onPressed: () {
             Navigator.of(context)
-                .pushNamed(callHistoryRoute, arguments: widget.contact.phones);
+                .pushNamed(callHistoryRoute, arguments: widget.contact.numbers);
           },
         ),
-        RoundedIconButton(
+        ActionIconButton(
           widget.contact.isStarred
               ? FluentIcons.star_24_filled
               : FluentIcons.star_24_regular,
@@ -365,7 +352,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
               () {
             NumberPicker(
                 context: context,
-                numbers: widget.contact.phones,
+                numbers: widget.contact.numbers,
                 onTap: (num) => ActivityService().openTelegram(num)).show();
           }),
           _buildDivider(),
@@ -373,14 +360,14 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
               () {
             NumberPicker(
                 context: context,
-                numbers: widget.contact.phones,
+                numbers: widget.contact.numbers,
                 onTap: (num) => ActivityService().makeVideoCall(num)).show();
           }),
           _buildDivider(),
           _buildAppTile(context, FontAwesomeIcons.whatsapp, 'WhatsApp', () {
             NumberPicker(
                 context: context,
-                numbers: widget.contact.phones,
+                numbers: widget.contact.numbers,
                 onTap: (num) => ActivityService().openWhatsApp(num)).show();
           }),
         ],
@@ -433,7 +420,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
       trailing: Wrap(
         spacing: 12,
         children: [
-          RoundedIconButton(
+          ActionIconButton(
             FluentIcons.call_24_filled,
             size: 40,
             onPressed: () {
@@ -442,7 +429,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
                       .show());
             },
           ),
-          RoundedIconButton(
+          ActionIconButton(
             FluentIcons.chat_24_filled,
             size: 40,
             onPressed: () => ActivityService().sendSMS(phone),

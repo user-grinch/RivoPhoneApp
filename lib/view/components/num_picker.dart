@@ -1,11 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
 import 'package:revo/controller/extensions/theme.dart';
 
 class NumberPicker {
   final BuildContext context;
-  final List<String> numbers;
+  final List<pnp.PhoneNumber> numbers;
   final void Function(String)? onTap;
 
   NumberPicker({
@@ -50,7 +51,7 @@ class NumberPicker {
             ),
             const SizedBox(height: 24),
             // Map the list of strings to the modern picker items
-            ...numbers.map((number) => _buildNumberItem(number)),
+            ...numbers.map((number) => _buildNumberItem(number.international)),
           ],
         ),
       ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/controller/providers/activity_service.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/view/utils/utils.dart';
+import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'contact_service.g.dart';
@@ -21,6 +22,14 @@ class ContactService extends _$ContactService {
     await ActivityService().requestPermissions();
 
     if (await Permission.contacts.status.isGranted) {
+      final simInfo = await ref.read(getSimInfoProvider.future);
+      final defaultSim = ref.read(defaultSimProvider);
+      final countryCode = simInfo.isNotEmpty
+          ? (simInfo.length > 1
+              ? simInfo[defaultSim].countryCode
+              : simInfo[0].countryCode)
+          : null;
+
       var contacts = (await fc.FlutterContacts.getContacts(
         withProperties: true,
         withAccounts: true,
@@ -32,7 +41,9 @@ class ContactService extends _$ContactService {
           .toList();
 
       contacts = contacts.where((e) => e.phones.isNotEmpty).toList();
-      return contacts.map((e) => Contact.fromInternal(e)).toList();
+      return contacts
+          .map((e) => Contact.fromInternal(e, countryCode: countryCode))
+          .toList();
     }
     return [];
   }
@@ -46,24 +57,38 @@ class ContactService extends _$ContactService {
     return currentList.where((e) => e.isStarred).toList();
   }
 
-  Contact findByNumber(String number) {
+  Contact? findByNumber(String number) {
     final currentList = state.value ?? [];
-    String target = normalizePhoneNumber(number);
+    final simInfo = ref.read(getSimInfoProvider).value;
+    final defaultSim = ref.read(defaultSimProvider);
+    final countryCode = simInfo?.isNotEmpty ?? false
+        ? (simInfo!.length > 1
+            ? simInfo[defaultSim].countryCode
+            : simInfo[0].countryCode)
+        : null;
+    String target = normalizePhoneNumber(number, countryCode: countryCode);
     try {
       return currentList.firstWhere((f) {
-        return f.phones.any((g) {
-          String contactNumber = normalizePhoneNumber(g);
+        return f.numbers.any((g) {
+          String contactNumber = g.international;
           return contactNumber.endsWith(target) || target == contactNumber;
         });
       });
     } catch (_) {
-      return Contact(id: '"Unknown"', name: "Unknown", phones: [number]);
+      return null;
     }
   }
 
   // DO NOT MATCH BY NAME
   List<Contact> findAllByNameOrNumber(String name, String number) {
-    String target = normalizePhoneNumber(number);
+    final simInfo = ref.read(getSimInfoProvider).value;
+    final defaultSim = ref.read(defaultSimProvider);
+    final countryCode = simInfo?.isNotEmpty ?? false
+        ? (simInfo!.length > 1
+            ? simInfo[defaultSim].countryCode
+            : simInfo[0].countryCode)
+        : null;
+    String target = normalizePhoneNumber(number, countryCode: countryCode);
     final currentList = state.value ?? [];
 
     if (name == "" && number == "") {
@@ -76,8 +101,8 @@ class ContactService extends _$ContactService {
 
         bool isNumber = number.isNotEmpty && num.tryParse(number) != null;
         bool numberMatches = isNumber &&
-            f.phones.any((g) {
-              String contactNumber = normalizePhoneNumber(g);
+            f.numbers.any((g) {
+              String contactNumber = g.international;
               return contactNumber.contains(target) || target == contactNumber;
             });
         return nameMatches || numberMatches;

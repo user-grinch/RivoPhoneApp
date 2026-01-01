@@ -51,7 +51,7 @@ class MenuTile extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: borderRadius),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 24.0, vertical: 4.0),
-                  leading: RoundedIconButton(
+                  leading: ActionIconButton(
                     icon,
                     size: 50,
                   ),

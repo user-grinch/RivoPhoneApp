@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:revo/controller/extensions/theme.dart';
 
-class RoundedIconButton extends StatelessWidget {
+class ActionIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final VoidCallback? onLongPress;
   final IconData icon;
   final bool isActive;
   final double size;
 
-  const RoundedIconButton(
+  const ActionIconButton(
     this.icon, {
     super.key,
     this.isActive = false,

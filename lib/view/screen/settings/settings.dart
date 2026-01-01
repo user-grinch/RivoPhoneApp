@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/view/screen/settings/about.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:revo/view/screen/settings/call.dart';
@@ -7,7 +8,6 @@ import 'package:revo/view/screen/settings/sound.dart';
 import 'package:revo/view/screen/settings/user_interface.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/menu_tile.dart';
-import 'package:revo/view/utils/utils.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});

@@ -8,12 +8,12 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/view/components/matched_view.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/dialpad/action_btn.dart';
 import 'package:revo/view/screen/dialpad/dial_btn.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/utils.dart';
 
 class DialPadView extends ConsumerStatefulWidget {
   const DialPadView({super.key});
@@ -161,7 +161,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         SizedBox(
                           width: 56,
                           child: _number.isNotEmpty
-                              ? RoundedIconButton(
+                              ? ActionIconButton(
                                   FluentIcons.person_add_24_regular,
                                   size: 48,
                                   onPressed: () {
@@ -188,7 +188,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         SizedBox(
                           width: 56,
                           child: _number.isNotEmpty
-                              ? RoundedIconButton(
+                              ? ActionIconButton(
                                   FluentIcons.arrow_left_24_regular,
                                   size: 48,
                                   onPressed: () {

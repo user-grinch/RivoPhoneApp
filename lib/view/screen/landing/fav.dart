@@ -33,8 +33,8 @@ class FavView extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 16.0,
-            mainAxisSpacing: 16.0,
+            crossAxisSpacing: 12.0,
+            mainAxisSpacing: 12.0,
             childAspectRatio: 0.8,
           ),
           itemCount: starred.length,
@@ -61,7 +61,7 @@ class FavView extends ConsumerWidget {
                           profile: contact.photo,
                           size: 40,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 6),
                         Wrap(
                           children: [
                             Text(
@@ -78,15 +78,15 @@ class FavView extends ConsumerWidget {
                           ],
                         ),
                         const Spacer(),
-                        RoundedIconButton(
+                        ActionIconButton(
                           FluentIcons.call_20_filled,
-                          size: 40,
+                          size: 50,
                           onPressed: () {
                             simCards.whenData((value) => SimPicker(
                                   context: context,
                                   simCards: value,
-                                  number: contact.phones.isNotEmpty
-                                      ? contact.phones.first
+                                  number: contact.numbers.isNotEmpty
+                                      ? contact.numbers.first.international
                                       : '',
                                 ).show());
                           },

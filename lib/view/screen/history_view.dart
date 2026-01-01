@@ -5,11 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/controller/providers/calllog_service.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
-import 'package:revo/view/utils/utils.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class HistoryView extends ConsumerStatefulWidget {
   final List<String> numbers;
@@ -40,24 +41,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     final asyncLogs = ref.watch(callLogServiceProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 70,
-        leading: Center(
-          child: RoundedIconButton(
-            FluentIcons.arrow_left_24_regular,
-            size: 40,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        title: Text(
-          'Call History',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            color: context.colorScheme.onSurface,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: AppBarComponent("Call History"),
       body: asyncLogs.when(
         loading: () => Center(
           child: ExpressiveLoadingIndicator(
@@ -110,19 +94,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(
-                history.type.getIcon(),
-                color: history.type.getColor(),
-                size: 24,
-              ),
-            ),
+            ActionIconButton(history.type.getIcon()),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -139,13 +111,10 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(
-                        history.type.getText(),
-                        style: TextStyle(
-                          color: history.type.getColor(),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
+                      Icon(
+                        history.type.getIcon(),
+                        color: history.type.getColor(),
+                        size: 20,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -166,7 +135,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    "${history.name} • ${history.number}",
+                    "${history.name} • ${history.number.international}",
                     style: TextStyle(
                       color: colorScheme.onSurfaceVariant.withOpacity(0.6),
                       fontSize: 11,

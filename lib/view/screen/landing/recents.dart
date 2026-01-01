@@ -137,7 +137,8 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                 onTap: () async {
                   final contactService =
                       ref.read(contactServiceProvider.notifier);
-                  var contact = contactService.findByNumber(log.number);
+                  var contact =
+                      contactService.findByNumber(log.number.international);
                   await Navigator.of(context)
                       .pushNamed(contactInfoRoute, arguments: contact);
                 },
@@ -157,7 +158,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                   size: 28,
                 ),
                 title: Text(
-                  log.displayName,
+                  log.name.isEmpty ? log.number.international : log.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
@@ -193,7 +194,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                     ),
                   ],
                 ),
-                trailing: RoundedIconButton(
+                trailing: ActionIconButton(
                   FluentIcons.call_20_filled,
                   size: 40,
                   onPressed: () {
@@ -201,7 +202,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                       SimPicker(
                               context: context,
                               simCards: simCards,
-                              number: log.number)
+                              number: log.number.international)
                           .show();
                     });
                   },
