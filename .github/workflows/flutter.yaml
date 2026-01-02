@@ -1,41 +1,65 @@
 on:
-  pull_request:
-    branches:
-      - main
-      - riverpod
   push:
     branches:
       - main
-      - riverpod
 
-name: "Build & Release"
+name: Build & Release
+
 jobs:
   build:
-    name: Build & Release
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: zulu
           java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
           architecture: x64
 
-      - run: flutter build apk --release --split-per-abi
-      - name: Push to Releases
+      - name: Build APKs
+        run: flutter build apk --release --split-per-abi
+
+      - name: Delete existing release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/*"
           tag: preview
+          allowUpdates: true
+          removeArtifacts: true
+          replacesArtifacts: true
+          skipIfReleaseExists: false
           token: ${{ secrets.TOKEN }}
 
+      - name: Delete existing tag
+        run: |
+          git tag -d preview || true
+          git push origin :refs/tags/preview || true
 
+      - name: Create tag
+        run: |
+          git tag preview
+          git push origin preview
 
+      - name: Generate SHA256 checksums
+        run: |
+          cd build/app/outputs/apk/release
+          sha256sum *.apk > SHA256SUMS.txt
+          for f in *.apk; do
+            sha256sum "$f" > "$f.sha256"
+          done
 
-
-
-# push to master, main, develop
-# pull request on main master
+      - name: Publish Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: preview
+          name: Preview Build
+          artifacts: |
+            build/app/outputs/apk/release/*.apk
+            build/app/outputs/apk/release/*.sha256
+            build/app/outputs/apk/release/SHA256SUMS.txt
+          token: ${{ secrets.TOKEN }}
