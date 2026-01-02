@@ -22,14 +22,7 @@ class WelcomePopup {
       barrierDismissible: true,
       barrierLabel: '',
       barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, anim1, anim2) => _buildDialog(),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return ScaleTransition(
-          scale: CurvedAnimation(parent: anim1, curve: Curves.easeOutBack),
-          child: FadeTransition(opacity: anim1, child: child),
-        );
-      },
     );
   }
 

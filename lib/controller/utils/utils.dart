@@ -8,6 +8,13 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
 String normalizePhoneNumber(String phoneNumber, {String? countryCode}) {
   try {
+    phoneNumber = phoneNumber.replaceAll(RegExp(r'\s+|-'), '');
+
+    if (phoneNumber.startsWith('+')) {
+      final parsed = PhoneNumber.parse(phoneNumber); // no callerCountry
+      return parsed.international;
+    }
+
     IsoCode? isoCode;
     if (countryCode != null) {
       isoCode = IsoCode.values.byName(countryCode.toUpperCase());

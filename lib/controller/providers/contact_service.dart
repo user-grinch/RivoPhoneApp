@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
@@ -57,7 +58,7 @@ class ContactService extends _$ContactService {
     return currentList.where((e) => e.isStarred).toList();
   }
 
-  Contact? findByNumber(String number) {
+  Contact findByNumber(String number) {
     final currentList = state.value ?? [];
     final simInfo = ref.read(getSimInfoProvider).value;
     final defaultSim = ref.read(defaultSimProvider);
@@ -75,7 +76,11 @@ class ContactService extends _$ContactService {
         });
       });
     } catch (_) {
-      return null;
+      return Contact(id: number, name: "Unknown", numbers: [
+        PhoneNumber(
+            isoCode: IsoCode.values.byName((countryCode ?? "BD").toUpperCase()),
+            nsn: target)
+      ]);
     }
   }
 
