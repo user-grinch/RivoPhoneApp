@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/matched_view.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -16,11 +17,13 @@ class _SearchViewState extends State<SearchView> {
   late final TextEditingController _controller;
   String _searchQuery = '';
   late final FocusNode _focusNode;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     _controller = TextEditingController();
     _focusNode = FocusNode();
+    _scrollController = ScrollController();
 
     // Focus the search on page open
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -33,6 +36,7 @@ class _SearchViewState extends State<SearchView> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -104,9 +108,16 @@ class _SearchViewState extends State<SearchView> {
                   ? _buildInitialState(context)
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: MatchedView(
-                        searchText: _searchQuery,
-                        scrollController: ScrollController(),
+                      child: Stack(
+                        children: [
+                          MatchedView(
+                            searchText: _searchQuery,
+                            scrollController: _scrollController,
+                          ),
+                          ScrollToTopButton(
+                            controller: _scrollController,
+                          ),
+                        ],
                       ),
                     ),
             ),

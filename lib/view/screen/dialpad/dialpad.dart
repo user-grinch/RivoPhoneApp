@@ -10,6 +10,7 @@ import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/view/components/matched_view.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/dialpad/action_btn.dart';
 import 'package:revo/view/screen/dialpad/dial_btn.dart';
@@ -26,12 +27,12 @@ class DialPadView extends ConsumerStatefulWidget {
 class _DialPadViewState extends ConsumerState<DialPadView> {
   String _number = '';
 
-  late final ScrollController _scrollController;
+  late final ScrollController _controller;
   late final FocusNode _focusNode;
 
   @override
   void initState() {
-    _scrollController = ScrollController();
+    _controller = ScrollController();
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
@@ -46,7 +47,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _controller.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -92,9 +93,16 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: MatchedView(
-                  scrollController: _scrollController,
-                  searchText: _number,
+                child: Stack(
+                  children: [
+                    MatchedView(
+                      scrollController: _controller,
+                      searchText: _number,
+                    ),
+                    ScrollToTopButton(
+                      controller: _controller,
+                    ),
+                  ],
                 ),
               ),
             ),

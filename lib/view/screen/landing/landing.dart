@@ -77,6 +77,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         backgroundColor: context.colorScheme.secondaryContainer,
         foregroundColor: context.colorScheme.primary,
         onPressed: () {
@@ -87,7 +88,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             Navigator.of(context).pushNamed(dialpadRoute);
           }
         },
-        elevation: 1,
+        elevation: 0,
         child: Icon(
           _currentPage == 1.0
               ? FluentIcons.person_add_24_regular

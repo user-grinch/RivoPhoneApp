@@ -11,6 +11,7 @@ import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/controller/providers/calllog_service.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class HistoryView extends ConsumerStatefulWidget {
@@ -69,13 +70,21 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
             return _buildEmptyState(context);
           }
 
-          return ListView.separated(
-            controller: _controller,
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-            itemCount: filteredLogs.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, i) =>
-                _displayHistoryItem(context, filteredLogs[i]),
+          return Stack(
+            children: [
+              ListView.separated(
+                controller: _controller,
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+                itemCount: filteredLogs.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
+                itemBuilder: (context, i) =>
+                    _displayHistoryItem(context, filteredLogs[i]),
+              ),
+              ScrollToTopButton(
+                controller: _controller,
+              )
+            ],
           );
         },
       ),

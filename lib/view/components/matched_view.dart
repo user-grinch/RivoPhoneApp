@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/view/components/contact_tile.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 
 class MatchedView extends ConsumerWidget {
   final ScrollController scrollController;

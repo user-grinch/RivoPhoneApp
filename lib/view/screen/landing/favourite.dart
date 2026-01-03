@@ -8,14 +8,34 @@ import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/contactinfo_view.dart';
 
-class FavView extends ConsumerWidget {
+class FavView extends ConsumerStatefulWidget {
   const FavView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FavView> createState() => _FavViewState();
+}
+
+class _FavViewState extends ConsumerState<FavView> {
+  late ScrollController _controller;
+
+  @override
+  void initState() {
+    _controller = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final contacts = ref.watch(contactServiceProvider);
     final colorScheme = context.colorScheme;
 
@@ -29,76 +49,84 @@ class FavView extends ConsumerWidget {
           return _buildEmtyState(context);
         }
 
-        return GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12.0,
-            mainAxisSpacing: 12.0,
-            childAspectRatio: 0.8,
-          ),
-          itemCount: starred.length,
-          itemBuilder: (context, i) {
-            final contact = starred[i];
-            return Container(
-              decoration: BoxDecoration(
-                color: colorScheme.secondaryContainer.withOpacity(0.35),
-                borderRadius: BorderRadius.circular(28),
+        return Stack(
+          children: [
+            GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+                childAspectRatio: 0.8,
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ContactInfoView(contact)),
+              itemCount: starred.length,
+              itemBuilder: (context, i) {
+                final contact = starred[i];
+                return Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondaryContainer.withOpacity(0.35),
+                    borderRadius: BorderRadius.circular(28),
                   ),
-                  borderRadius: BorderRadius.circular(28),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        CircleProfile(
-                          name: contact.name,
-                          profile: contact.photo,
-                          col: contact.color,
-                          size: 40,
-                        ),
-                        const SizedBox(height: 6),
-                        Wrap(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => ContactInfoView(contact)),
+                      ),
+                      borderRadius: BorderRadius.circular(28),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
                           children: [
-                            Text(
-                              contact.name,
-                              style: GoogleFonts.outfit(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                            CircleProfile(
+                              name: contact.name,
+                              profile: contact.photo,
+                              col: contact.color,
+                              size: 40,
+                            ),
+                            const SizedBox(height: 6),
+                            Wrap(
+                              children: [
+                                Text(
+                                  contact.name,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            ActionIconButton(
+                              FluentIcons.call_20_filled,
+                              size: 50,
+                              onPressed: () {
+                                simCards.whenData((value) => SimPicker(
+                                      context: context,
+                                      simCards: value,
+                                      number: contact.numbers.isNotEmpty
+                                          ? contact.numbers.first.international
+                                          : '',
+                                    ).show());
+                              },
                             ),
                           ],
                         ),
-                        const Spacer(),
-                        ActionIconButton(
-                          FluentIcons.call_20_filled,
-                          size: 50,
-                          onPressed: () {
-                            simCards.whenData((value) => SimPicker(
-                                  context: context,
-                                  simCards: value,
-                                  number: contact.numbers.isNotEmpty
-                                      ? contact.numbers.first.international
-                                      : '',
-                                ).show());
-                          },
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+            ScrollToTopButton(
+              controller: _controller,
+            )
+          ],
         );
       },
       loading: () => const Center(child: ExpressiveLoadingIndicator()),

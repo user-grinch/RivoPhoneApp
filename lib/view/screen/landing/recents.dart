@@ -12,6 +12,7 @@ import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/circle_profile.dart';
 
@@ -88,22 +89,29 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                           .update(v);
                     }),
                 Expanded(
-                  child: ListView.builder(
-                    controller: _controller,
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: groupedLogs.length,
-                    itemBuilder: (context, i) {
-                      final showHeader = _shouldShowHeader(groupedLogs, i);
-                      final isLast = _isLastInSection(groupedLogs, i);
+                  child: Stack(
+                    children: [
+                      ListView.builder(
+                        controller: _controller,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: groupedLogs.length,
+                        itemBuilder: (context, i) {
+                          final showHeader = _shouldShowHeader(groupedLogs, i);
+                          final isLast = _isLastInSection(groupedLogs, i);
 
-                      return _buildLog(
-                        context,
-                        groupedLogs[i],
-                        showHeader,
-                        isLast,
-                      );
-                    },
+                          return _buildLog(
+                            context,
+                            groupedLogs[i],
+                            showHeader,
+                            isLast,
+                          );
+                        },
+                      ),
+                      ScrollToTopButton(
+                        controller: _controller,
+                      )
+                    ],
                   ),
                 ),
               ],
