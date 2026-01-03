@@ -59,6 +59,7 @@ class FavView extends ConsumerWidget {
                         CircleProfile(
                           name: contact.name,
                           profile: contact.photo,
+                          col: contact.color,
                           size: 40,
                         ),
                         const SizedBox(height: 6),

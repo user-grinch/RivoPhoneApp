@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:revo/constants/pref.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/controller/providers/activity_service.dart';
@@ -325,11 +327,16 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
   }
 
   Widget _buildProfilePicture(BuildContext context) {
+    bool colorful = SharedPrefService()
+        .getBool(PREF_SHOW_COLORFUL_PROFILE_PLACEHOLDER, def: true);
+
     return Container(
       width: 140,
       height: 140,
       decoration: BoxDecoration(
-        color: context.colorScheme.secondaryContainer,
+        color: colorful
+            ? widget.contact.color
+            : context.colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(28),
         image: widget.contact.photo != null
             ? DecorationImage(

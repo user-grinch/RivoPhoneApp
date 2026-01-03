@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:revo/constants/pref.dart';
@@ -84,4 +86,18 @@ FN:${contact.name}''';
   }
   str += 'END:VCARD';
   return str;
+}
+
+Color colorFromContact(String id) {
+  final colors = [
+    Colors.red.shade300,
+    Colors.blue.shade300,
+    Colors.green.shade300,
+    Colors.orange.shade300,
+    Colors.purple.shade300,
+    Colors.teal.shade300,
+    Colors.amber.shade300,
+  ];
+  int hash = id.hashCode;
+  return colors[hash % colors.length];
 }

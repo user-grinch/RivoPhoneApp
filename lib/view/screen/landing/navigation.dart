@@ -49,7 +49,7 @@ class _NavigationViewState extends State<NavigationView> {
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(28),
         ),
-        indicatorColor: colorScheme.primary.withOpacity(0.12),
+        indicatorColor: colorScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           return GoogleFonts.outfit(
             fontSize: 12,

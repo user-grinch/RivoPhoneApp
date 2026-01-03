@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_collection/m3e_collection.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/model/contact.dart';
@@ -49,8 +50,8 @@ class MyApp extends ConsumerWidget {
             contactInfoRoute: (context) => ContactInfoView(
                 ModalRoute.of(context)!.settings.arguments as Contact),
             callHistoryRoute: (context) => HistoryView(
-                numbers:
-                    ModalRoute.of(context)!.settings.arguments as List<String>),
+                numbers: ModalRoute.of(context)!.settings.arguments
+                    as List<PhoneNumber>),
           },
         );
       },

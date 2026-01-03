@@ -1,7 +1,10 @@
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as lib;
 import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
+import 'package:revo/controller/utils/utils.dart';
 import 'package:sticky_az_list/sticky_az_list.dart';
+import 'dart:math';
 
 class Contact extends TaggedItem {
   String id;
@@ -18,6 +21,7 @@ class Contact extends TaggedItem {
   List<lib.Note> notes;
   List<lib.Account> accounts;
   List<lib.Group> groups;
+  Color color;
 
   Contact({
     required this.id,
@@ -34,42 +38,43 @@ class Contact extends TaggedItem {
     this.notes = const [],
     this.accounts = const [],
     this.groups = const [],
+    this.color = Colors.blueGrey,
   });
 
   // TODO: Needs more work
   factory Contact.fromInternal(lib.Contact contact, {String? countryCode}) {
     String displayName = contact.displayName;
-
+    final Random random = Random();
     if (displayName.isEmpty) {
       displayName = "Unknown";
     }
 
     return Contact(
-      id: contact.id,
-      name: displayName,
-      photo: contact.photo ?? contact.thumbnail,
-      isStarred: contact.isStarred,
-      numbers: contact.phones.map((phone) {
-        try {
-          return pnp.PhoneNumber.parse(phone.number,
-              callerCountry: countryCode != null
-                  ? pnp.IsoCode.values.byName(countryCode.toUpperCase())
-                  : null);
-        } catch (e) {
-          // return a dummy phone number
-          return pnp.PhoneNumber.parse('0');
-        }
-      }).toList(),
-      emails: contact.emails,
-      addresses: contact.addresses,
-      organizations: contact.organizations,
-      websites: contact.websites,
-      socialMedias: contact.socialMedias,
-      events: contact.events,
-      notes: contact.notes,
-      accounts: contact.accounts,
-      groups: contact.groups,
-    );
+        id: contact.id,
+        name: displayName,
+        photo: contact.photo ?? contact.thumbnail,
+        isStarred: contact.isStarred,
+        numbers: contact.phones.map((phone) {
+          try {
+            return pnp.PhoneNumber.parse(phone.number,
+                callerCountry: countryCode != null
+                    ? pnp.IsoCode.values.byName(countryCode.toUpperCase())
+                    : null);
+          } catch (e) {
+            // return a dummy phone number
+            return pnp.PhoneNumber.parse('0');
+          }
+        }).toList(),
+        emails: contact.emails,
+        addresses: contact.addresses,
+        organizations: contact.organizations,
+        websites: contact.websites,
+        socialMedias: contact.socialMedias,
+        events: contact.events,
+        notes: contact.notes,
+        accounts: contact.accounts,
+        groups: contact.groups,
+        color: colorFromContact(displayName));
   }
 
   lib.Contact toInternal() {

@@ -10,12 +10,14 @@ class CircleProfile extends StatefulWidget {
   final Uint8List? profile;
   final String name;
   final double size;
+  final Color col;
 
   const CircleProfile({
     super.key,
     required this.name,
     this.profile,
     required this.size,
+    required this.col,
   });
 
   @override
@@ -40,6 +42,9 @@ class _CircleProfileState extends State<CircleProfile> {
     bool showPic = widget.profile != null &&
         SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVATAR, def: true);
 
+    bool colorful = SharedPrefService()
+        .getBool(PREF_SHOW_COLORFUL_PROFILE_PLACEHOLDER, def: true);
+
     bool showFirstLetter = widget.name.isNotEmpty &&
         SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER, def: true);
 
@@ -50,7 +55,7 @@ class _CircleProfileState extends State<CircleProfile> {
       width: diameter,
       height: diameter,
       decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
+        color: colorful ? widget.col : colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(borderRadius),
         image: showPic
             ? DecorationImage(

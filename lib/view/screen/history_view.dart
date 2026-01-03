@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/utils/utils.dart';
@@ -13,7 +14,7 @@ import 'package:revo/view/components/rounded_icon_btn.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class HistoryView extends ConsumerStatefulWidget {
-  final List<String> numbers;
+  final List<PhoneNumber> numbers;
 
   const HistoryView({super.key, required this.numbers});
 

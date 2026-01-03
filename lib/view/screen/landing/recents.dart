@@ -221,6 +221,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                 leading: CircleProfile(
                   name: log.name,
                   profile: log.profile,
+                  col: log.color,
                   size: 28,
                 ),
                 title: Text(

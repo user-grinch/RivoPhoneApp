@@ -10,7 +10,7 @@ import 'package:revo/controller/providers/theme_service.dart';
 import 'package:revo/view/components/welcome_popup.dart';
 import 'package:revo/view/screen/landing/appbar.dart';
 import 'package:revo/view/screen/landing/contacts.dart';
-import 'package:revo/view/screen/landing/fav.dart';
+import 'package:revo/view/screen/landing/favourite.dart';
 import 'package:revo/view/screen/landing/navigation.dart';
 import 'package:revo/view/screen/landing/recents.dart';
 
@@ -43,15 +43,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
         if (mounted) {
           await ref.watch(themeServiceProvider.notifier).initTheme();
           bool flag = SharedPrefService().getBool("WelcomeShown$buildNumber");
-          // if (!flag && mounted) {
-          WelcomePopup(
-                  context: context,
-                  changelog: changelog,
-                  version: version,
-                  buildNumber: buildNumber)
-              .show();
-          SharedPrefService().saveBool("WelcomeShown$buildNumber", true);
-          // }
+          if (!flag && mounted) {
+            WelcomePopup(
+                    context: context,
+                    changelog: changelog,
+                    version: version,
+                    buildNumber: buildNumber)
+                .show();
+            SharedPrefService().saveBool("WelcomeShown$buildNumber", true);
+          }
         }
       });
     });
@@ -78,6 +78,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       bottomNavigationBar: NavigationView(pageController: _pageController),
       floatingActionButton: FloatingActionButton(
         backgroundColor: context.colorScheme.secondaryContainer,
+        foregroundColor: context.colorScheme.primary,
         onPressed: () {
           if (_pageController.page == 1.0) {
             final service = ref.read(contactServiceProvider.notifier);

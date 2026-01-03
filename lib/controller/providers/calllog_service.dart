@@ -1,6 +1,9 @@
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:call_log/call_log.dart' as lib;
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
@@ -40,6 +43,7 @@ class CallLogService extends _$CallLogService {
 
     return logs.map((entry) {
       Uint8List? photo;
+      Color? col;
       try {
         final logNumber =
             normalizePhoneNumber(entry.number!, countryCode: countryCode);
@@ -63,12 +67,13 @@ class CallLogService extends _$CallLogService {
 
         entry.name = contact?.name;
         photo = contact?.photo;
+        col = contact?.color;
       } catch (_) {
         photo = null;
       }
 
       return CallLog.fromInternal(
-          entry: entry, profile: photo, countryCode: countryCode);
+          entry: entry, profile: photo, countryCode: countryCode, col: col);
     }).toList();
   }
 
@@ -81,7 +86,7 @@ class CallLogService extends _$CallLogService {
     }
   }
 
-  List<CallLog> filterByNumber(List<String> numbers) {
+  List<CallLog> filterByNumber(List<PhoneNumber> numbers) {
     final current = state.value ?? [];
     final simInfo = ref.read(getSimInfoProvider).value;
     final defaultSim = ref.read(defaultSimProvider);
@@ -93,7 +98,7 @@ class CallLogService extends _$CallLogService {
 
     return current.where((element) {
       return numbers.any((e) {
-        final p1 = normalizePhoneNumber(e, countryCode: countryCode);
+        final p1 = e.international;
         final p2 = element.number.international;
         return isSameNumber(p1, p2);
       });

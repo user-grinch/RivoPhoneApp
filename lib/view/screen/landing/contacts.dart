@@ -107,6 +107,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                             leading: CircleProfile(
                               name: contact.name,
                               profile: contact.photo,
+                              col: contact.color,
                               size: 28,
                             ),
                             title: Text(

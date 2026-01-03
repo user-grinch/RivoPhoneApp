@@ -54,6 +54,7 @@ class ContactTile extends ConsumerWidget {
               child: CircleProfile(
                 name: contact.name,
                 profile: contact.photo,
+                col: contact.color,
                 size: 30,
               ),
             ),

@@ -53,6 +53,18 @@ class _UserInterfaceView extends ConsumerState<UserInterfaceView> {
             isFirst: true,
           ),
           SwitchTileWidget(
+            title: "Use colorful avatars",
+            subtitle:
+                "Displays a colorful avatar when the contact photo is unavailable",
+            value: SharedPrefService()
+                .getBool(PREF_SHOW_COLORFUL_PROFILE_PLACEHOLDER),
+            onChanged: (value) {
+              SharedPrefService()
+                  .saveBool(PREF_SHOW_COLORFUL_PROFILE_PLACEHOLDER, value);
+              setState(() {});
+            },
+          ),
+          SwitchTileWidget(
             title: "Show picture in avatar",
             subtitle: "Shows the contact picture if available",
             value: SharedPrefService().getBool(PREF_SHOW_PICTURE_IN_AVATAR),

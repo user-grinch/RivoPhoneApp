@@ -1,5 +1,9 @@
+import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:call_log/call_log.dart' as lib;
+import 'package:flutter/material.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
 
@@ -11,6 +15,7 @@ class CallLog {
   final String duration;
   final CallType type;
   final String accountId;
+  final Color color;
 
   CallLog(
     this.profile, {
@@ -21,12 +26,14 @@ class CallLog {
     required this.duration,
     required this.type,
     required this.accountId,
+    this.color = Colors.blueGrey,
   });
 
   factory CallLog.fromInternal({
     required lib.CallLogEntry entry,
     Uint8List? profile,
     String? countryCode,
+    Color? col,
   }) {
     pnp.PhoneNumber phoneNumber;
     try {
@@ -46,6 +53,7 @@ class CallLog {
       duration: entry.duration.toString(),
       type: _convertFromInternalType(entry.callType ?? lib.CallType.unknown),
       accountId: entry.phoneAccountId ?? '',
+      color: col ?? colorFromContact(entry.name ?? phoneNumber.international),
     );
   }
 

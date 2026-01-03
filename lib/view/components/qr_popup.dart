@@ -25,7 +25,7 @@ class QrCodePopup {
     final colorScheme = Theme.of(dialogContext).colorScheme;
 
     return AlertDialog(
-      backgroundColor: colorScheme.surfaceContainerHighest,
+      backgroundColor: colorScheme.surface,
       surfaceTintColor: colorScheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       title: Text(
@@ -87,6 +87,7 @@ class QrCodePopup {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
+              backgroundColor: colorScheme.secondaryContainer,
             ),
             child: Text('Done',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
