@@ -1,13 +1,19 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:revo/view/components/colro_btn.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WelcomePopup {
   final BuildContext context;
   final String version;
   final String buildNumber;
   final String changelog;
+
+  final String patreonUrl = "https://www.patreon.com/grinch_";
+  final String discordUrl = "https://discord.com/invite/PJ2NhEP4BN";
 
   WelcomePopup({
     required this.context,
@@ -48,17 +54,23 @@ class WelcomePopup {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildPill('v$version', colorScheme.primary,
-                        colorScheme.primaryContainer),
+                    _buildPill(
+                      'v$version',
+                      colorScheme.primary,
+                      colorScheme.primaryContainer,
+                    ),
                     const SizedBox(width: 8),
-                    _buildPill('Build $buildNumber', colorScheme.secondary,
-                        colorScheme.secondaryContainer),
+                    _buildPill(
+                      'Build $buildNumber',
+                      colorScheme.secondary,
+                      colorScheme.secondaryContainer,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 28),
                 _buildChangelogArea(colorScheme),
                 const SizedBox(height: 32),
-                _buildActionButton(colorScheme),
+                _buildActions(colorScheme),
               ],
             ),
           ),
@@ -96,40 +108,43 @@ class WelcomePopup {
   }
 
   Widget _buildChangelogArea(ColorScheme colorScheme) {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 200),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.3)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(FluentIcons.sparkle_16_regular,
-                      size: 16, color: colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'HIGHLIGHTS',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(
+              FluentIcons.sparkle_16_regular,
+              size: 16,
+              color: colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'HIGHLIGHTS',
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+                color: colorScheme.primary,
               ),
-              const SizedBox(height: 12),
-              Text(
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          constraints: const BoxConstraints(maxHeight: 200),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(28),
+            border:
+                Border.all(color: colorScheme.outlineVariant.withOpacity(0.3)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              physics: const BouncingScrollPhysics(),
+              child: Text(
                 changelog,
                 style: GoogleFonts.outfit(
                   fontSize: 15,
@@ -137,30 +152,59 @@ class WelcomePopup {
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildActionButton(ColorScheme colorScheme) {
-    return SizedBox(
-      width: double.infinity,
-      height: 64,
-      child: FilledButton(
-        onPressed: () => Navigator.pop(context),
-        style: FilledButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          elevation: 0,
+  /// Main CTA + Social buttons
+  Widget _buildActions(ColorScheme colorScheme) {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 64,
+          child: FilledButton(
+            onPressed: () => Navigator.pop(context),
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+            child: Text(
+              'Let\'s Go',
+              style: GoogleFonts.outfit(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ),
-        child: Text(
-          'Let\'s Go',
-          style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LinkButton(
+              icon: FontAwesomeIcons.discord,
+              label: 'Discord',
+              color: const Color(0xFF5865F2),
+              onTap: () => launchUrl(Uri.parse(discordUrl)),
+              outlined: true,
+            ),
+            const SizedBox(width: 12),
+            LinkButton(
+              icon: FontAwesomeIcons.patreon,
+              label: 'Patreon',
+              color: const Color(0xFFFF424D),
+              onTap: () => launchUrl(Uri.parse(patreonUrl)),
+              outlined: true,
+            ),
+          ],
         ),
-      ),
+      ],
     );
   }
 

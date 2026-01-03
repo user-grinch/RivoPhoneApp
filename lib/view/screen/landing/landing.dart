@@ -42,16 +42,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
       Future.delayed(Duration(milliseconds: 100), () async {
         if (mounted) {
           await ref.watch(themeServiceProvider.notifier).initTheme();
-          bool flag = SharedPrefService().getBool("WelcomeShown$version");
-          if (!flag && mounted) {
-            WelcomePopup(
-                    context: context,
-                    changelog: changelog,
-                    version: version,
-                    buildNumber: buildNumber)
-                .show();
-            SharedPrefService().saveBool("WelcomeShown$version", true);
-          }
+          bool flag = SharedPrefService().getBool("WelcomeShown$buildNumber");
+          // if (!flag && mounted) {
+          WelcomePopup(
+                  context: context,
+                  changelog: changelog,
+                  version: version,
+                  buildNumber: buildNumber)
+              .show();
+          SharedPrefService().saveBool("WelcomeShown$buildNumber", true);
+          // }
         }
       });
     });

@@ -101,9 +101,7 @@ class AboutView extends StatelessWidget {
               subtitle: buildNumber,
               icon: FluentIcons.number_symbol_24_regular,
               onTap: () {},
-              isLast: true,
             ),
-            const SizedBox(height: 20),
             MenuTile(
               title: 'Contributors',
               subtitle: 'Meet the team behind the project',
@@ -115,13 +113,22 @@ class AboutView extends StatelessWidget {
                       builder: (context) => const ContributorsView()),
                 );
               },
-              isFirst: true,
+              isLast: true,
             ),
+            const SizedBox(height: 20),
             MenuTile(
               title: 'Support Us on Patreon',
               subtitle: 'Help keep the project alive',
               icon: FluentIcons.heart_24_regular,
               onTap: () async => await launchURL(patreonUrl),
+              isFirst: true,
+            ),
+            MenuTile(
+              title: 'Discord Server',
+              subtitle:
+                  'Join the discord server and be a part of the community',
+              icon: FontAwesomeIcons.discord,
+              onTap: () async => await launchURL(discordUrl),
               isLast: true,
             ),
             const SizedBox(height: 20),
