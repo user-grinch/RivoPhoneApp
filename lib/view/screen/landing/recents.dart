@@ -24,7 +24,6 @@ class RecentsView extends ConsumerStatefulWidget {
 
 class _RecentsViewState extends ConsumerState<RecentsView> {
   late final ScrollController _controller;
-
   @override
   void initState() {
     super.initState();
@@ -58,6 +57,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
   @override
   Widget build(BuildContext context) {
     final callLogsAsync = ref.watch(callLogServiceProvider);
+    final callTypeFilter = ref.watch(selectedCallTypeFilterProvider);
 
     return callLogsAsync.when(
       data: (logs) {
@@ -68,7 +68,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           );
         }
 
-        final groupedLogs = groupCallLogs(logs);
+        final groupedLogs = groupCallLogs(logs, callTypeFilter);
 
         return Scrollbar(
           controller: _controller,
@@ -77,28 +77,94 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
             onRefresh: () async {
               await ref.read(callLogServiceProvider.notifier).refresh();
             },
-            child: ListView.builder(
-              controller: _controller,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: groupedLogs.length,
-              itemBuilder: (context, i) {
-                final showHeader = _shouldShowHeader(groupedLogs, i);
-                final isLast = _isLastInSection(groupedLogs, i);
+            child: Column(
+              children: [
+                _buildCallTypeFilterChips(
+                    context: context,
+                    selected: callTypeFilter,
+                    onSelected: (v) {
+                      ref
+                          .read(selectedCallTypeFilterProvider.notifier)
+                          .update(v);
+                    }),
+                Expanded(
+                  child: ListView.builder(
+                    controller: _controller,
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: groupedLogs.length,
+                    itemBuilder: (context, i) {
+                      final showHeader = _shouldShowHeader(groupedLogs, i);
+                      final isLast = _isLastInSection(groupedLogs, i);
 
-                return _buildLog(
-                  context,
-                  groupedLogs[i],
-                  showHeader,
-                  isLast,
-                );
-              },
+                      return _buildLog(
+                        context,
+                        groupedLogs[i],
+                        showHeader,
+                        isLast,
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
       loading: () => const Center(child: LoadingIndicatorM3E()),
       error: (e, s) => Center(child: Text('Error: $e')),
+    );
+  }
+
+  Widget _buildCallTypeFilterChips({
+    required BuildContext context,
+    required CallType selected,
+    required ValueChanged<CallType> onSelected,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      height: 40,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemCount: CallType.values.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          itemBuilder: (context, index) {
+            final type = CallType.values[index];
+            final isSelected = type == selected;
+
+            return FilterChip(
+              selected: isSelected,
+              onSelected: (_) => onSelected(type),
+              showCheckmark: false,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              avatar: isSelected
+                  ? Icon(
+                      FluentIcons.checkmark_24_filled,
+                      size: 18,
+                      color: isSelected
+                          ? colorScheme.onSecondaryContainer
+                          : type.getColor(),
+                    )
+                  : null,
+              label: Text(
+                type.getText(),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: isSelected
+                          ? colorScheme.onSecondaryContainer
+                          : colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              backgroundColor: colorScheme.secondaryContainer,
+              selectedColor: colorScheme.primaryContainer,
+              side: BorderSide.none,
+            );
+          },
+        ),
+      ),
     );
   }
 

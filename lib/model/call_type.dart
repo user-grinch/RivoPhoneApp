@@ -39,7 +39,7 @@ extension CallTypeHelper on CallType {
       case CallType.blocked:
         return 'Blocked';
       default:
-        return '';
+        return 'None';
     }
   }
 

@@ -6,12 +6,14 @@ import 'package:revo/controller/providers/contact_service.dart';
 import 'package:revo/controller/providers/mobile_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/call_log.dart';
+import 'package:revo/model/call_type.dart' as ct;
 import 'package:revo/model/contact.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'calllog_service.g.dart';
 
 typedef CallLogList = List<CallLog>; // for generator
+typedef RevoCallType = ct.CallType; // for generator
 
 @Riverpod(keepAlive: true)
 class CallLogService extends _$CallLogService {
@@ -96,5 +98,15 @@ class CallLogService extends _$CallLogService {
         return isSameNumber(p1, p2);
       });
     }).toList();
+  }
+}
+
+@riverpod
+class SelectedCallTypeFilter extends _$SelectedCallTypeFilter {
+  @override
+  RevoCallType build() => RevoCallType.unknown;
+
+  void update(RevoCallType value) {
+    state = value;
   }
 }
