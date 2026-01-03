@@ -38,12 +38,7 @@ class Contact extends TaggedItem {
 
   // TODO: Needs more work
   factory Contact.fromInternal(lib.Contact contact, {String? countryCode}) {
-    String displayName =
-        '${contact.name.first} ${contact.name.middle} ${contact.name.last}';
-
-    if (displayName.isEmpty) {
-      displayName = contact.displayName;
-    }
+    String displayName = contact.displayName;
 
     if (displayName.isEmpty) {
       displayName = "Unknown";

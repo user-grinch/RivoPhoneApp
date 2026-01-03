@@ -14,6 +14,7 @@ import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/screen/dialpad/action_btn.dart';
 import 'package:revo/view/screen/dialpad/dial_btn.dart';
 import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class DialPadView extends ConsumerStatefulWidget {
   const DialPadView({super.key});
@@ -83,6 +84,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
     final colorScheme = context.colorScheme;
 
     return Scaffold(
+      appBar: AppBarComponent("Dialpad"),
       backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
