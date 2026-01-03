@@ -37,7 +37,7 @@ class ContactService extends _$ContactService {
         withGroups: true,
         withPhoto: true,
         withThumbnail: true,
-        deduplicateProperties: false,
+        deduplicateProperties: true,
       ))
           .toList();
 
@@ -84,37 +84,25 @@ class ContactService extends _$ContactService {
     }
   }
 
-  // DO NOT MATCH BY NAME
-  List<Contact> findAllByNameOrNumber(String name, String number) {
-    final simInfo = ref.read(getSimInfoProvider).value;
-    final defaultSim = ref.read(defaultSimProvider);
-    final countryCode = simInfo?.isNotEmpty ?? false
-        ? (simInfo!.length > 1
-            ? simInfo[defaultSim].countryCode
-            : simInfo[0].countryCode)
-        : null;
-    String target = normalizePhoneNumber(number, countryCode: countryCode);
+  List<Contact> fuzzyFindByNameOrNumber(String name, String number) {
     final currentList = state.value ?? [];
 
-    if (name == "" && number == "") {
-      return currentList;
-    }
-    try {
-      return currentList.where((f) {
-        bool nameMatches = name.isNotEmpty &&
-            f.name.toLowerCase().contains(name.toLowerCase());
+    final targetName = name.toLowerCase();
+    final targetNumber = number.replaceAll(RegExp(r'[\s-]'), '');
 
-        bool isNumber = number.isNotEmpty && num.tryParse(number) != null;
-        bool numberMatches = isNumber &&
-            f.numbers.any((g) {
-              String contactNumber = g.international;
-              return contactNumber.contains(target) || target == contactNumber;
-            });
-        return nameMatches || numberMatches;
-      }).toList();
-    } catch (_) {
-      return [];
-    }
+    if (targetName.isEmpty && targetNumber.isEmpty) return currentList;
+
+    return currentList.where((contact) {
+      final nameMatches = contact.name.toLowerCase().contains(targetName);
+
+      final numberMatches = contact.numbers.any((phone) {
+        final contactNumber =
+            phone.international.replaceAll(RegExp(r'[\s-]'), '');
+        return contactNumber.contains(targetNumber);
+      });
+
+      return nameMatches || numberMatches;
+    }).toList();
   }
 
   Future<void> createNewContact({String? number}) async {

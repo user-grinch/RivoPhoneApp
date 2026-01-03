@@ -10,16 +10,19 @@ String normalizePhoneNumber(String phoneNumber, {String? countryCode}) {
   try {
     phoneNumber = phoneNumber.replaceAll(RegExp(r'\s+|-'), '');
 
-    if (phoneNumber.startsWith('+')) {
-      final parsed = PhoneNumber.parse(phoneNumber); // no callerCountry
-      return parsed.international;
-    }
-
     IsoCode? isoCode;
     if (countryCode != null) {
       isoCode = IsoCode.values.byName(countryCode.toUpperCase());
     }
-    final parsed = PhoneNumber.parse(phoneNumber, callerCountry: isoCode);
+
+    if (!phoneNumber.startsWith('+') && phoneNumber.startsWith('0')) {
+      phoneNumber = phoneNumber.substring(1);
+    }
+
+    final parsed = phoneNumber.startsWith('+')
+        ? PhoneNumber.parse(phoneNumber) // international already
+        : PhoneNumber.parse(phoneNumber, callerCountry: isoCode);
+
     return parsed.international;
   } catch (e) {
     return phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
