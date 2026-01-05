@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
 class RadioSelectionPage<T> extends StatefulWidget {

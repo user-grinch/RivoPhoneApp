@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/matched_view.dart';
-import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 
 class SearchView extends StatefulWidget {

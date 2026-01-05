@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tele/flutter_tele.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/constants/routes.dart';
@@ -9,13 +10,15 @@ import 'package:revo/controller/providers/pref_service.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/controller/providers/theme_service.dart';
 import 'package:revo/view/screen/contactinfo_view.dart';
+import 'package:revo/view/screen/def_dialer.dart';
 import 'package:revo/view/screen/dialpad/dialpad.dart';
 import 'package:revo/view/screen/history_view.dart';
 import 'package:revo/view/screen/landing/landing.dart';
 import 'package:revo/view/screen/search_view.dart';
 import 'package:revo/view/screen/settings/settings.dart';
 
-void main() {
+bool isDefaultDialer = false;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPrefService().init();
 
@@ -23,6 +26,8 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: Colors.transparent));
+
+  isDefaultDialer = await TeleDialer.isDefaultDialer();
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -41,8 +46,9 @@ class MyApp extends ConsumerWidget {
           theme: withM3ETheme(getTheme(lightDynamic, themeState, false)),
           darkTheme: withM3ETheme(getTheme(darkDynamic, themeState, true)),
           themeMode: ThemeMode.system,
-          initialRoute: homeRoute,
+          initialRoute: isDefaultDialer ? homeRoute : setDefDialerRoute,
           routes: {
+            setDefDialerRoute: (context) => const DefaultDialerScreen(),
             homeRoute: (context) => const HomeView(),
             settingsRoute: (context) => const SettingsView(),
             searchRoute: (context) => const SearchView(),

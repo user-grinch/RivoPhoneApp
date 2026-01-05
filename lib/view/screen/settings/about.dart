@@ -7,7 +7,7 @@ import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/view/screen/settings/contributors.dart';
 import 'package:revo/view/components/menu_tile.dart';
-import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/action_icon_btn.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});

@@ -374,6 +374,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.9+2"
+  flutter_dialer:
+    dependency: "direct main"
+    description:
+      name: flutter_dialer
+      sha256: "7009e2d517fbdda770f7507d36d05ee22cf49f9c9dd830a5f91bbd1f0cd26bc8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+101"
   flutter_dtmf:
     dependency: "direct main"
     description:
@@ -447,6 +455,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  flutter_tele:
+    dependency: "direct main"
+    description:
+      name: flutter_tele
+      sha256: cdef1603a465bedad2c8f2d7e918498f513afd4f29c8160a51447852a016b68b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5+105"
   flutter_test:
     dependency: transitive
     description: flutter
@@ -929,6 +945,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.0.18"
+  phone_state:
+    dependency: "direct main"
+    description:
+      name: phone_state
+      sha256: "2aa408beedafaca1b8d09a2368c067489492cdc0c252387e905a310450f11701"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   platform:
     dependency: transitive
     description:

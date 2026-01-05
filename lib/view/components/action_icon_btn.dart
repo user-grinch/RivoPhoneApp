@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/theme.dart';
 
 class ActionIconButton extends StatelessWidget {
@@ -20,23 +21,16 @@ class ActionIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
       onLongPress: onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-            color: isActive
-                ? context.colorScheme.primaryContainer
-                : context.colorScheme.secondaryContainer.withAlpha(150),
-            borderRadius: BorderRadius.circular(size * 0.3)),
-        child: Icon(
+      child: ButtonM3E(
+        onPressed: onPressed,
+        label: Icon(
           icon,
           color: context.colorScheme.primary,
           size: size * 0.45,
         ),
+        style: ButtonM3EStyle.tonal,
+        size: size > 50 ? ButtonM3ESize.md : ButtonM3ESize.sm,
       ),
     );
   }

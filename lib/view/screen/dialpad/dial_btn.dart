@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dtmf/dtmf.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/providers/pref_service.dart';
@@ -32,17 +33,7 @@ class _DialPadButtonState extends State<DialPadButton> {
     if (!letters) {
       textSz += 4;
     }
-
-    return TextButton(
-      style: TextButton.styleFrom(
-        elevation: 0,
-        padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
-        backgroundColor: colorScheme.secondaryContainer.withOpacity(0.5),
-        overlayColor: colorScheme.primary,
-      ),
+    return ButtonM3E(
       onPressed: () async {
         if (SharedPrefService().getBool(PREF_DTMF_TONE, def: true)) {
           await Dtmf.playTone(digits: widget.mainText, volume: 1);
@@ -50,7 +41,7 @@ class _DialPadButtonState extends State<DialPadButton> {
         hapticVibration();
         widget.onUpdate(widget.mainText);
       },
-      child: Column(
+      label: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
@@ -77,6 +68,7 @@ class _DialPadButtonState extends State<DialPadButton> {
             ),
         ],
       ),
+      style: ButtonM3EStyle.tonal,
     );
   }
 }

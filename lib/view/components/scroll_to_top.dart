@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 
 class ScrollToTopButton extends StatefulWidget {
   final ScrollController controller;
@@ -50,11 +51,13 @@ class _ScrollToTopButtonState extends State<ScrollToTopButton> {
         alignment: Alignment.bottomCenter,
         child: Padding(
           padding: EdgeInsets.only(bottom: widget.bottomPadding),
-          child: FloatingActionButton(
+          child: FabM3E(
             heroTag: null,
-            mini: true,
             elevation: 0,
-            child: const Icon(FluentIcons.arrow_up_24_regular),
+            kind: FabM3EKind.secondary,
+            shapeFamily: FabM3EShapeFamily.square,
+            size: FabM3ESize.small,
+            icon: const Icon(FluentIcons.arrow_up_24_regular),
             onPressed: () {
               widget.controller.animateTo(
                 widget.controller.position.minScrollExtent,

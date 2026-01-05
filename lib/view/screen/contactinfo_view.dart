@@ -16,7 +16,7 @@ import 'package:revo/controller/providers/activity_service.dart';
 import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
-import 'package:revo/view/components/rounded_icon_btn.dart';
+import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:share_plus/share_plus.dart';
 

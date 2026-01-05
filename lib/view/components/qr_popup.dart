@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrCodePopup {
@@ -81,16 +82,12 @@ class QrCodePopup {
       actions: [
         SizedBox(
           width: double.infinity,
-          child: FilledButton.tonal(
+          child: ButtonM3E(
             onPressed: () => Navigator.pop(dialogContext),
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              backgroundColor: colorScheme.secondaryContainer,
-            ),
-            child: Text('Done',
+            label: Text('Done',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+            style: ButtonM3EStyle.tonal,
+            size: ButtonM3ESize.md,
           ),
         ),
       ],
