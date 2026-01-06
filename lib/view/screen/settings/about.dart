@@ -109,7 +109,7 @@ class AboutScreen extends StatelessWidget {
               subtitle: 'Meet the team behind the project',
               icon: FluentIcons.people_community_24_regular,
               onTap: () {
-                router.goNamed(AppRoutes.contributorsRoute);
+                gRouter.pushNamed(AppRoutes.contributorsRoute);
               },
               isLast: true,
             ),

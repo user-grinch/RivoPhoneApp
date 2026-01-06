@@ -87,7 +87,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             final service = ref.read(contactServiceProvider.notifier);
             service.createNewContact();
           } else {
-            router.goNamed(AppRoutes.dialpadRoute);
+            gRouter.pushNamed(AppRoutes.dialpadRoute);
           }
         },
         elevation: 0,

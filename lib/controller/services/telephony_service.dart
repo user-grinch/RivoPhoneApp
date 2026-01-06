@@ -1,21 +1,10 @@
 import 'dart:async';
 import 'package:flutter_tele/flutter_tele.dart';
 import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/router/router.dart';
-import 'package:revo/constants/app_routes.dart';
+import 'package:revo/model/call_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'telephony_service.g.dart';
-
-enum CallState {
-  incoming,
-  outgoing,
-  connected,
-  disconnected,
-  muted,
-  hold,
-  unknown,
-}
 
 @Riverpod(keepAlive: true)
 class TelephonyService extends _$TelephonyService {
@@ -46,19 +35,17 @@ class TelephonyService extends _$TelephonyService {
   void _registerCallEvents() {
     _endpoint.on('call_received').listen((event) {
       _call = TeleCall.fromMap(normalizeCallEvent(event));
-      state = CallState.incoming;
-      router.goNamed(AppRoutes.callScreenRoute);
+      state = CallStateParser.fromString(_call?.state ?? "INCOMING");
     });
 
     _endpoint.on('call_changed').listen((event) {
       _call = TeleCall.fromMap(normalizeCallEvent(event));
-      if (_call != null && _call!.state == 'ACTIVE') {}
+      state = CallStateParser.fromString(_call?.state ?? "CONNECTED");
     });
 
     _endpoint.on('call_terminated').listen((event) {
       _call = null;
-      state = CallState.disconnected;
-      router.goNamed(AppRoutes.homeRoute);
+      state = CallStateParser.fromString(_call?.state ?? "DISCONNECTED");
     });
   }
 
@@ -72,5 +59,10 @@ class TelephonyService extends _$TelephonyService {
 
   void declineCall() {
     if (_call != null) _endpoint.declineCall(_call!);
+  }
+
+  Future<void> makeCall(int sim, String dest) async {
+    if (_call != null) return;
+    _call = await _endpoint.makeCall(sim, dest, null, null);
   }
 }

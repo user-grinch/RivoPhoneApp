@@ -44,7 +44,7 @@ class _SetDefDialerState extends State<SetDefDialer>
 
     if (mounted) {
       if (def) {
-        router.goNamed(AppRoutes.homeRoute);
+        gRouter.pushNamed(AppRoutes.homeRoute);
       } else if (!navigateOnly) {
         const intent = AndroidIntent(
           action: 'android.settings.MANAGE_DEFAULT_APPS_SETTINGS',
@@ -105,7 +105,7 @@ class _SetDefDialerState extends State<SetDefDialer>
               ButtonM3E(
                 onPressed: () {
                   _checkDialerStatus(navigateOnly: false);
-                  router.goNamed(AppRoutes.homeRoute);
+                  gRouter.pushNamed(AppRoutes.homeRoute);
                 },
                 label: const Text(
                   'Set as Default',

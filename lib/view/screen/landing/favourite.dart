@@ -72,7 +72,7 @@ class _FavViewState extends ConsumerState<FavView> {
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => router.goNamed(AppRoutes.contactInfoRoute,
+                      onTap: () => gRouter.pushNamed(AppRoutes.contactInfoRoute,
                           extra: contact),
                       borderRadius: BorderRadius.circular(28),
                       child: Padding(

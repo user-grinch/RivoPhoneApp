@@ -34,7 +34,7 @@ class ContactTile extends ConsumerWidget {
         ),
         child: ListTile(
           onTap: () async {
-            router.goNamed(AppRoutes.contactInfoRoute, extra: contact);
+            gRouter.pushNamed(AppRoutes.contactInfoRoute, extra: contact);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),

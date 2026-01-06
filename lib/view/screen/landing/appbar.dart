@@ -24,7 +24,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
       centerTitle: true,
       toolbarHeight: 50,
       title: GestureDetector(
-        onTap: () => router.goNamed(AppRoutes.searchRoute),
+        onTap: () => gRouter.pushNamed(AppRoutes.searchRoute),
         child: Container(
           height: 50,
           decoration: BoxDecoration(
@@ -35,7 +35,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               _buildIconButton(
                 icon: FluentIcons.qr_code_24_regular,
-                onPressed: () => router.goNamed(AppRoutes.qrScanRoute),
+                onPressed: () => gRouter.pushNamed(AppRoutes.qrScanRoute),
                 color: colorScheme.primary,
               ),
               Expanded(
@@ -51,7 +51,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
               ),
               _buildIconButton(
                 icon: FluentIcons.options_24_regular,
-                onPressed: () => router.goNamed(AppRoutes.settingsRoute),
+                onPressed: () => gRouter.pushNamed(AppRoutes.settingsRoute),
                 color: colorScheme.primary,
               ),
             ],

@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
 import 'package:revo/main.dart';
+import 'package:revo/model/call_state.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/router/router.dart';
 import 'package:revo/view/components/action_btn.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:revo/constants/app_routes.dart';
 
-class CallScreen extends HookConsumerWidget {
+class CallScreen extends StatefulHookConsumerWidget {
   const CallScreen({super.key});
+
+  @override
+  ConsumerState<CallScreen> createState() => _CallScreenState();
+}
+
+class _CallScreenState extends ConsumerState<CallScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget buildBottomActions(BuildContext context, CallState state) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -31,7 +41,6 @@ class CallScreen extends HookConsumerWidget {
                   gProvider
                       .read(telephonyServiceProvider.notifier)
                       .declineCall();
-                  router.goNamed(AppRoutes.homeRoute);
                 }),
             const SizedBox(width: 24),
             CallActionButton(
@@ -41,10 +50,11 @@ class CallScreen extends HookConsumerWidget {
                 foregroundColor: const Color(0xFF073819),
                 onTap: () {
                   TelephonyService().acceptCall();
-                  // router.goNamed()
                 }),
           ],
         );
+      case CallState.initiating:
+      case CallState.ringing:
       case CallState.outgoing:
         return Center(
           child: CallActionButton(
@@ -54,7 +64,6 @@ class CallScreen extends HookConsumerWidget {
               foregroundColor: colorScheme.onErrorContainer,
               onTap: () {
                 TelephonyService().declineCall();
-                router.goNamed(AppRoutes.homeRoute);
               }),
         );
       case CallState.connected:
@@ -90,11 +99,16 @@ class CallScreen extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final telService = ref.watch(telephonyServiceProvider.notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    return Placeholder();
+
+    ref.listen(telephonyServiceProvider, (e, k) {
+      setState(() {});
+    });
 
     final call = telService.getCall();
 

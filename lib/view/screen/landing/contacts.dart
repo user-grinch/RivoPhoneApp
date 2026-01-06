@@ -95,7 +95,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                           child: Column(
                             children: [
                               ListTile(
-                                onTap: () => router.goNamed(
+                                onTap: () => gRouter.pushNamed(
                                     AppRoutes.contactInfoRoute,
                                     extra: contact),
                                 shape: RoundedRectangleBorder(

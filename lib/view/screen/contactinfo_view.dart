@@ -307,7 +307,7 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         ActionIconButton(
           FluentIcons.history_24_regular,
           onPressed: () {
-            router.goNamed(AppRoutes.callHistoryRoute,
+            gRouter.pushNamed(AppRoutes.callHistoryRoute,
                 extra: widget.contact.numbers);
           },
         ),

@@ -28,7 +28,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         child: ActionIconButton(
           FluentIcons.arrow_left_24_regular,
           size: 40,
-          onPressed: () => router.pop(),
+          onPressed: () => gRouter.pop(),
         ),
       ),
       title: Text(

@@ -41,9 +41,11 @@ class _DialPadButtonState extends State<DialPadButton> {
         hapticVibration();
         widget.onUpdate(widget.mainText);
       },
-      label: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      label: AspectRatio(
+        aspectRatio: 1.6,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           Text(
             widget.mainText,
             style: GoogleFonts.outfit(
@@ -66,9 +68,9 @@ class _DialPadButtonState extends State<DialPadButton> {
                 ),
               ),
             ),
-        ],
-      ),
-      style: ButtonM3EStyle.tonal,
+                  ],
+                ),
+              ),      style: ButtonM3EStyle.tonal,
     );
   }
 }

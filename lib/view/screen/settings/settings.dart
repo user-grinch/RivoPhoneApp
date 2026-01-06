@@ -53,7 +53,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Customize looks & behaviors',
             icon: FluentIcons.image_24_regular,
             onTap: () {
-              router.goNamed(AppRoutes.uiSettingsRoute);
+              gRouter.pushNamed(AppRoutes.uiSettingsRoute);
             },
             isFirst: true,
           ),
@@ -62,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Manage ringtones & volume',
             icon: FluentIcons.speaker_2_24_regular,
             onTap: () {
-              router.goNamed(AppRoutes.soundSettingsRoute);
+              gRouter.pushNamed(AppRoutes.soundSettingsRoute);
             },
             isLast: true,
           ),
@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Incoming call settings',
             icon: FluentIcons.call_24_regular,
             onTap: () {
-              router.goNamed(AppRoutes.callSettingsRoute);
+              gRouter.pushNamed(AppRoutes.callSettingsRoute);
             },
             isLast: true,
           ),
@@ -90,7 +90,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Information about the dialer app',
             icon: FluentIcons.info_24_regular,
             onTap: () {
-              router.goNamed(AppRoutes.aboutRoute);
+              gRouter.pushNamed(AppRoutes.aboutRoute);
             },
             isFirst: true,
             isLast: true,

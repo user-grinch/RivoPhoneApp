@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/constants/app_routes.dart';
-import 'package:revo/view/screen/call/incoming.dart';
+import 'package:revo/view/screen/call-screen.dart';
 import 'package:revo/view/screen/contactinfo_view.dart';
 import 'package:revo/view/screen/def_dialer.dart';
 import 'package:revo/view/screen/dialpad/dialpad.dart';
@@ -22,7 +22,7 @@ import 'package:revo/view/screen/settings/settings.dart';
 import 'package:revo/view/screen/settings/sound.dart';
 import 'package:revo/view/screen/settings/user_interface.dart';
 
-final GoRouter router = GoRouter(
+final GoRouter gRouter = GoRouter(
   routes: [
     GoRoute(
       name: AppRoutes.setDefDialerRoute,
@@ -100,34 +100,31 @@ final GoRouter router = GoRouter(
       name: AppRoutes.settingsRoute,
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),
-      routes: [
-        GoRoute(
-          name: AppRoutes.callSettingsRoute,
-          path: '/settings/call',
-          builder: (context, state) => const CallSettings(),
-        ),
-        GoRoute(
-          name: AppRoutes.soundSettingsRoute,
-          path: '/settings/sound',
-          builder: (context, state) => const SoundView(),
-        ),
-        GoRoute(
-          name: AppRoutes.uiSettingsRoute,
-          path: '/settings/ui',
-          builder: (context, state) => const UserInterfaceView(),
-        ),
-        GoRoute(
-            name: AppRoutes.aboutRoute,
-            path: '/settings/about',
-            builder: (context, state) => const AboutScreen(),
-            routes: [
-              GoRoute(
-                name: AppRoutes.contributorsRoute,
-                path: '/settings/about/contributors',
-                builder: (context, state) => const ContributorsView(),
-              ),
-            ]),
-      ],
+    ),
+    GoRoute(
+      name: AppRoutes.callSettingsRoute,
+      path: '/settings-call',
+      builder: (context, state) => const CallSettings(),
+    ),
+    GoRoute(
+      name: AppRoutes.soundSettingsRoute,
+      path: '/settings-sound',
+      builder: (context, state) => const SoundView(),
+    ),
+    GoRoute(
+      name: AppRoutes.uiSettingsRoute,
+      path: '/settings-ui',
+      builder: (context, state) => const UserInterfaceView(),
+    ),
+    GoRoute(
+      name: AppRoutes.aboutRoute,
+      path: '/settings-about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      name: AppRoutes.contributorsRoute,
+      path: '/settings-contributors',
+      builder: (context, state) => const ContributorsView(),
     ),
   ],
 );

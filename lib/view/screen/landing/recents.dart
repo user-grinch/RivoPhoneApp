@@ -215,7 +215,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                       ref.read(contactServiceProvider.notifier);
                   var contact =
                       contactService.findByNumber(log.number.international);
-                  router.goNamed(AppRoutes.contactInfoRoute, extra: contact);
+                  gRouter.pushNamed(AppRoutes.contactInfoRoute, extra: contact);
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(

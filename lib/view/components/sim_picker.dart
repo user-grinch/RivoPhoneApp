@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:m3e_collection/m3e_collection.dart';
+import 'package:revo/constants/app_routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/services/mobile_service.dart';
+import 'package:revo/controller/services/telephony_service.dart';
+import 'package:revo/main.dart';
 import 'package:revo/model/sim_card.dart';
-import 'package:revo/controller/services/activity_service.dart';
+import 'package:revo/router/router.dart';
 
 class SimPicker {
   final BuildContext context;
@@ -23,8 +25,9 @@ class SimPicker {
     if (simCards.isEmpty) return;
 
     if (simCards.length == 1) {
-      await ActivityService()
-          .makePhoneCall(number, simCards.first.simSlotIndex);
+      gProvider
+          .read(telephonyServiceProvider.notifier)
+          .makeCall(simCards.first.simSlotIndex, number);
       return;
     }
 
@@ -44,8 +47,9 @@ class SimPicker {
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
           final selectedSim = ref.watch(defaultSimProvider);
           if (selectedSim != 0) {
-            ActivityService().makePhoneCall(number, selectedSim - 1);
-            context.pop();
+            gProvider
+                .read(telephonyServiceProvider.notifier)
+                .makeCall(selectedSim - 1, number);
           }
 
           return Padding(
@@ -86,8 +90,9 @@ class SimPicker {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () async {
-            await ActivityService().makePhoneCall(number, sim.simSlotIndex);
-            if (context.mounted) context.pop();
+            await gProvider
+                .read(telephonyServiceProvider.notifier)
+                .makeCall(sim.simSlotIndex, number);
           },
           splashFactory: InkSparkle.splashFactory,
           child: Padding(
