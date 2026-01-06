@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'theme_service.g.dart';

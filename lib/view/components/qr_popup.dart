@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -83,7 +84,7 @@ class QrCodePopup {
         SizedBox(
           width: double.infinity,
           child: ButtonM3E(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () => context.pop(),
             label: Text('Done',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
             style: ButtonM3EStyle.tonal,

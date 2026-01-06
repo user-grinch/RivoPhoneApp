@@ -2,20 +2,22 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter_tele/flutter_tele.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m3e_collection/m3e_collection.dart';
-import 'package:revo/constants/routes.dart';
+import 'package:revo/controller/services/telephony_service.dart';
+import 'package:revo/main.dart';
+import 'package:revo/router/router.dart';
+import 'package:revo/constants/app_routes.dart';
 
-class DefaultDialerScreen extends StatefulWidget {
-  const DefaultDialerScreen({super.key});
+class SetDefDialer extends StatefulWidget {
+  const SetDefDialer({super.key});
 
   @override
-  State<DefaultDialerScreen> createState() => _DefaultDialerScreenState();
+  State<SetDefDialer> createState() => _SetDefDialerState();
 }
 
-class _DefaultDialerScreenState extends State<DefaultDialerScreen>
+class _SetDefDialerState extends State<SetDefDialer>
     with WidgetsBindingObserver {
-  bool isDefault = false;
-
   @override
   void initState() {
     super.initState();
@@ -37,15 +39,12 @@ class _DefaultDialerScreenState extends State<DefaultDialerScreen>
   }
 
   Future<void> _checkDialerStatus({bool navigateOnly = false}) async {
-    isDefault = await TeleDialer.isDefaultDialer();
+    final def =
+        gProvider.read(telephonyServiceProvider.notifier).isDefaultDialer();
 
     if (mounted) {
-      if (isDefault) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          homeRoute,
-          (route) => false,
-        );
+      if (def) {
+        router.goNamed(AppRoutes.homeRoute);
       } else if (!navigateOnly) {
         const intent = AndroidIntent(
           action: 'android.settings.MANAGE_DEFAULT_APPS_SETTINGS',
@@ -104,7 +103,10 @@ class _DefaultDialerScreenState extends State<DefaultDialerScreen>
               ),
               const Spacer(flex: 3),
               ButtonM3E(
-                onPressed: () => _checkDialerStatus(navigateOnly: false),
+                onPressed: () {
+                  _checkDialerStatus(navigateOnly: false);
+                  router.goNamed(AppRoutes.homeRoute);
+                },
                 label: const Text(
                   'Set as Default',
                   style: TextStyle(fontSize: 18),

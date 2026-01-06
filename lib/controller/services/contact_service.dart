@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
-import 'package:revo/controller/providers/activity_service.dart';
+import 'package:revo/controller/services/activity_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'contact_service.g.dart';

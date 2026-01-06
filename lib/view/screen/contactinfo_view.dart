@@ -5,24 +5,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/contact_service.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
-import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/controller/providers/activity_service.dart';
+import 'package:revo/controller/services/activity_service.dart';
+import 'package:revo/router/router.dart';
 import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
+import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:go_router/go_router.dart';
 
 class ContactInfoView extends ConsumerStatefulWidget {
   final Contact contact;
-  const ContactInfoView(this.contact, {super.key});
+  const ContactInfoView({required this.contact, super.key});
 
   @override
   ConsumerState<ContactInfoView> createState() => _ContactInfoViewState();
@@ -305,8 +307,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         ActionIconButton(
           FluentIcons.history_24_regular,
           onPressed: () {
-            Navigator.of(context)
-                .pushNamed(callHistoryRoute, arguments: widget.contact.numbers);
+            router.goNamed(AppRoutes.callHistoryRoute,
+                extra: widget.contact.numbers);
           },
         ),
         ActionIconButton(

@@ -1,22 +1,19 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/view/components/menu_tile.dart';
-import 'package:revo/view/components/radio_tile.dart';
 import 'package:revo/view/components/switch_tile.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
-class CallView extends ConsumerStatefulWidget {
-  const CallView({super.key});
+class CallSettings extends ConsumerStatefulWidget {
+  const CallSettings({super.key});
 
   @override
-  ConsumerState<CallView> createState() => _CallViewState();
+  ConsumerState<CallSettings> createState() => _CallSettingsState();
 }
 
-String selectedSim = "SIM 1";
-
-class _CallViewState extends ConsumerState<CallView> {
+class _CallSettingsState extends ConsumerState<CallSettings> {
   bool disableMaterialYou = false;
   bool hideAvatarInitials = false;
   bool showAvatarPictures = true;
@@ -48,32 +45,42 @@ class _CallViewState extends ConsumerState<CallView> {
             subtitle: 'Select SIM card for voice calls',
             icon: FluentIcons.sim_24_filled,
             onTap: () {
-              simInfo.whenData(
-                (e) => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RadioSelectionPage<int>(
-                      title: "Default SIM",
-                      initialValue: defSim,
-                      options: [
-                        (
-                          title: "Default",
-                          subtitle: "Ask every time",
-                          icon: Icons.question_mark,
-                          value: 0
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Default SIM"),
+                  content: simInfo.when(
+                    data: (data) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RadioListTile<int>(
+                          title: const Text("Ask every time"),
+                          value: 0,
+                          groupValue: defSim,
+                          onChanged: (val) {
+                            ref
+                                .read(defaultSimProvider.notifier)
+                                .update(val ?? 0);
+                            Navigator.pop(context);
+                          },
                         ),
-                        ...e.asMap().entries.map((f) {
-                          return (
-                            title: "SIM ${(f.key + 1).toString()}",
-                            subtitle: f.value.carrierName,
-                            icon: Icons.sim_card,
-                            value: f.key + 1
-                          );
-                        }),
+                        ...data.asMap().entries.map((e) => RadioListTile<int>(
+                              title: Text("SIM ${e.key + 1}"),
+                              subtitle: Text(e.value.carrierName),
+                              value: e.key + 1,
+                              groupValue: defSim,
+                              onChanged: (val) {
+                                ref
+                                    .read(defaultSimProvider.notifier)
+                                    .update(val ?? 0);
+                                Navigator.pop(context);
+                              },
+                            ))
                       ],
-                      onSelected: (val) =>
-                          ref.read(defaultSimProvider.notifier).update(val),
                     ),
+                    loading: () => const CircularProgressIndicator(),
+                    error: (error, stackTrace) =>
+                        const Text("Error loading SIM info"),
                   ),
                 ),
               );

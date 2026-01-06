@@ -1,16 +1,18 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/contact_service.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
+import 'package:revo/router/router.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
-import 'package:revo/view/screen/contactinfo_view.dart';
+import 'package:revo/constants/app_routes.dart';
 
 class FavView extends ConsumerStatefulWidget {
   const FavView({super.key});
@@ -70,10 +72,8 @@ class _FavViewState extends ConsumerState<FavView> {
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (_) => ContactInfoView(contact)),
-                      ),
+                      onTap: () => router.goNamed(AppRoutes.contactInfoRoute,
+                          extra: contact),
                       borderRadius: BorderRadius.circular(28),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),

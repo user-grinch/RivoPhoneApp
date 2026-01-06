@@ -1,20 +1,22 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
-import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/datetime.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/contact_service.dart';
-import 'package:revo/controller/providers/calllog_service.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/calllog_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
+import 'package:revo/router/router.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/circle_profile.dart';
+import 'package:revo/constants/app_routes.dart';
 
 class RecentsView extends ConsumerStatefulWidget {
   const RecentsView({super.key});
@@ -213,8 +215,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                       ref.read(contactServiceProvider.notifier);
                   var contact =
                       contactService.findByNumber(log.number.international);
-                  await Navigator.of(context)
-                      .pushNamed(contactInfoRoute, arguments: contact);
+                  router.goNamed(AppRoutes.contactInfoRoute, extra: contact);
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(

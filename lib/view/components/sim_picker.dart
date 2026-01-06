@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/mobile_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/model/sim_card.dart';
-import 'package:revo/controller/providers/activity_service.dart';
+import 'package:revo/controller/services/activity_service.dart';
 
 class SimPicker {
   final BuildContext context;
@@ -43,7 +45,7 @@ class SimPicker {
           final selectedSim = ref.watch(defaultSimProvider);
           if (selectedSim != 0) {
             ActivityService().makePhoneCall(number, selectedSim - 1);
-            Navigator.of(context).pop();
+            context.pop();
           }
 
           return Padding(
@@ -85,7 +87,7 @@ class SimPicker {
         child: InkWell(
           onTap: () async {
             await ActivityService().makePhoneCall(number, sim.simSlotIndex);
-            if (context.mounted) Navigator.of(context).pop();
+            if (context.mounted) context.pop();
           },
           splashFactory: InkSparkle.splashFactory,
           child: Padding(

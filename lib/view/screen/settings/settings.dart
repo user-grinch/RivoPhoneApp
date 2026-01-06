@@ -1,16 +1,15 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/view/screen/settings/about.dart';
+import 'package:revo/router/router.dart';
+import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
-import 'package:revo/view/screen/settings/call.dart';
-import 'package:revo/view/screen/settings/sound.dart';
-import 'package:revo/view/screen/settings/user_interface.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/menu_tile.dart';
 
-class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +53,7 @@ class SettingsView extends StatelessWidget {
             subtitle: 'Customize looks & behaviors',
             icon: FluentIcons.image_24_regular,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => UserInterfaceView()),
-              );
+              router.goNamed(AppRoutes.uiSettingsRoute);
             },
             isFirst: true,
           ),
@@ -65,9 +62,7 @@ class SettingsView extends StatelessWidget {
             subtitle: 'Manage ringtones & volume',
             icon: FluentIcons.speaker_2_24_regular,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => SoundView()),
-              );
+              router.goNamed(AppRoutes.soundSettingsRoute);
             },
             isLast: true,
           ),
@@ -85,9 +80,7 @@ class SettingsView extends StatelessWidget {
             subtitle: 'Incoming call settings',
             icon: FluentIcons.call_24_regular,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CallView()),
-              );
+              router.goNamed(AppRoutes.callSettingsRoute);
             },
             isLast: true,
           ),
@@ -97,9 +90,7 @@ class SettingsView extends StatelessWidget {
             subtitle: 'Information about the dialer app',
             icon: FluentIcons.info_24_regular,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AboutView()),
-              );
+              router.goNamed(AppRoutes.aboutRoute);
             },
             isFirst: true,
             isLast: true,

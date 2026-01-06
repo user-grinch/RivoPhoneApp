@@ -1,10 +1,11 @@
 import 'package:flutter_sim_data/sim_data.dart';
+import 'package:flutter_tele/flutter_tele.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:revo/model/sim_card.dart';
-import 'package:revo/controller/providers/activity_service.dart';
+import 'package:revo/controller/services/activity_service.dart';
 
 part 'mobile_service.g.dart';
 

@@ -33,7 +33,7 @@ final class CallLogServiceProvider
   CallLogService create() => CallLogService();
 }
 
-String _$callLogServiceHash() => r'412d5484fcabb987e598c35d0ae6a790e855eb19';
+String _$callLogServiceHash() => r'9211a7dce3939626e7d050ac37d1a89844dea7b0';
 
 abstract class _$CallLogService extends $AsyncNotifier<CallLogList> {
   FutureOr<CallLogList> build();

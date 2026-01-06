@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/pref_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
 
 class NavigationView extends StatefulWidget {
   final PageController pageController;

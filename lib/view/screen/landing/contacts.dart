@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
-import 'package:revo/constants/routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/contact_service.dart';
+import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/model/contact.dart';
+import 'package:revo/router/router.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
+import 'package:revo/constants/app_routes.dart';
 import 'package:sticky_az_list/sticky_az_list.dart';
 
 class ContactsView extends ConsumerStatefulWidget {
@@ -93,9 +95,9 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                           child: Column(
                             children: [
                               ListTile(
-                                onTap: () => Navigator.of(context).pushNamed(
-                                    contactInfoRoute,
-                                    arguments: contact),
+                                onTap: () => router.goNamed(
+                                    AppRoutes.contactInfoRoute,
+                                    extra: contact),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
                                     top: isFirstInSection

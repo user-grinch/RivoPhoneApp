@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:revo/constants/pref.dart';
-import 'package:revo/controller/providers/pref_service.dart';
-import 'package:revo/controller/providers/theme_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
+import 'package:revo/controller/services/theme_service.dart';
 import 'package:revo/view/components/switch_tile.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 

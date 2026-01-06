@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart' as pnp;
 import 'package:revo/controller/extensions/theme.dart';
@@ -68,7 +69,7 @@ class NumberPicker {
         child: InkWell(
           onTap: () {
             if (onTap != null) onTap!(number);
-            Navigator.of(context).pop();
+            context.pop();
           },
           splashFactory: InkSparkle.splashFactory,
           child: Padding(

@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/matched_view.dart';
@@ -63,7 +64,7 @@ class _SearchViewState extends State<SearchView> {
                     ActionIconButton(
                       FluentIcons.arrow_left_24_regular,
                       size: 40,
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => context.pop(),
                     ),
                     Expanded(
                       child: TextField(

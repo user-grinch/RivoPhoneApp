@@ -375,7 +375,7 @@ packages:
     source: hosted
     version: "1.1.9+2"
   flutter_dialer:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_dialer
       sha256: "7009e2d517fbdda770f7507d36d05ee22cf49f9c9dd830a5f91bbd1f0cd26bc8"
@@ -505,6 +505,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: eff94d2a6fc79fa8b811dde79c7549808c2346037ee107a1121b4a644c745f2a
+      url: "https://pub.dev"
+    source: hosted
+    version: "17.0.1"
   google_fonts:
     dependency: "direct main"
     description:
@@ -945,14 +953,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.0.18"
-  phone_state:
-    dependency: "direct main"
-    description:
-      name: phone_state
-      sha256: "2aa408beedafaca1b8d09a2368c067489492cdc0c252387e905a310450f11701"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.1"
   platform:
     dependency: transitive
     description:

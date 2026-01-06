@@ -1,27 +1,29 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:revo/constants/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/controller/providers/contact_service.dart';
-import 'package:revo/controller/providers/pref_service.dart';
-import 'package:revo/controller/providers/theme_service.dart';
+import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/pref_service.dart';
+import 'package:revo/controller/services/theme_service.dart';
+import 'package:revo/router/router.dart';
 import 'package:revo/view/components/welcome_popup.dart';
+import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/landing/appbar.dart';
 import 'package:revo/view/screen/landing/contacts.dart';
 import 'package:revo/view/screen/landing/favourite.dart';
 import 'package:revo/view/screen/landing/navigation.dart';
 import 'package:revo/view/screen/landing/recents.dart';
 
-class HomeView extends ConsumerStatefulWidget {
-  const HomeView({super.key});
+class LandingScreen extends ConsumerStatefulWidget {
+  const LandingScreen({super.key});
 
   @override
-  ConsumerState<HomeView> createState() => _HomeViewState();
+  ConsumerState<LandingScreen> createState() => _LandingScreenState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView> {
+class _LandingScreenState extends ConsumerState<LandingScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
 
@@ -85,7 +87,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             final service = ref.read(contactServiceProvider.notifier);
             service.createNewContact();
           } else {
-            Navigator.of(context).pushNamed(dialpadRoute);
+            router.goNamed(AppRoutes.dialpadRoute);
           }
         },
         elevation: 0,
