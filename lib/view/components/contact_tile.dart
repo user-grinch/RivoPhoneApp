@@ -1,11 +1,11 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/circle_profile.dart';
@@ -34,7 +34,8 @@ class ContactTile extends ConsumerWidget {
         ),
         child: ListTile(
           onTap: () async {
-            gRouter.pushNamed(AppRoutes.contactInfoRoute, extra: contact);
+            Navigator.of(context)
+                .pushNamed(AppRoutes.contactInfoRoute, arguments: contact);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),

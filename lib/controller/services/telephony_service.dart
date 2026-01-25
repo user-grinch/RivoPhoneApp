@@ -27,7 +27,7 @@ class TelephonyService extends _$TelephonyService {
 
     if (!_isDefaultDialer) return;
 
-    await _endpoint.start({'ReplaceDialer': true, 'Permissions': true});
+    await _endpoint.start({'ReplaceDialer': false, 'Permissions': false});
     _registerCallEvents();
     _initialized = true;
   }
@@ -35,23 +35,34 @@ class TelephonyService extends _$TelephonyService {
   void _registerCallEvents() {
     _endpoint.on('call_received').listen((event) {
       _call = TeleCall.fromMap(normalizeCallEvent(event));
-      state = CallStateParser.fromString(_call?.state ?? "INCOMING");
+      if (_call != null) {
+        state = CallStateParser.fromString(_call?.state ?? "INCOMING");
+      }
     });
 
     _endpoint.on('call_changed').listen((event) {
       _call = TeleCall.fromMap(normalizeCallEvent(event));
-      state = CallStateParser.fromString(_call?.state ?? "CONNECTED");
+
+      if (_call != null) {
+        state = CallStateParser.fromString(_call?.state ?? "CONNECTED");
+      }
     });
 
     _endpoint.on('call_terminated').listen((event) {
       _call = null;
-      state = CallStateParser.fromString(_call?.state ?? "DISCONNECTED");
+      state = CallState.disconnected;
     });
   }
 
   bool isDefaultDialer() => _isDefaultDialer;
   TeleCall? getCall() => _call;
   CallState getCallState() => state;
+
+  String getDuration() {
+    return convertSecondsToHMS((DateTime.now().difference(
+            DateTime.fromMillisecondsSinceEpoch(_call?.connectTimeMillis ?? 0)))
+        .inMilliseconds);
+  }
 
   void acceptCall() {
     if (_call != null) _endpoint.answerCall(_call!);
@@ -63,6 +74,6 @@ class TelephonyService extends _$TelephonyService {
 
   Future<void> makeCall(int sim, String dest) async {
     if (_call != null) return;
-    _call = await _endpoint.makeCall(sim, dest, null, null);
+    _call = await _endpoint.makeCall(sim + 1, dest, null, null);
   }
 }

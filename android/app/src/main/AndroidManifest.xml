@@ -62,6 +62,19 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="org.telon.tele.flutter_tele.TeleService"
+            android:permission="android.permission.BIND_INCALL_SERVICE"
+            android:foregroundServiceType="phoneCall"
+            android:exported="true">
+            <meta-data
+                android:name="android.telecom.IN_CALL_SERVICE_UI"
+                android:value="true" />
+            <intent-filter>
+                <action android:name="android.telecom.InCallService" />
+            </intent-filter>
+        </service>
+
         <!-- Flutter Metadata -->
         <meta-data
             android:name="flutterEmbedding"

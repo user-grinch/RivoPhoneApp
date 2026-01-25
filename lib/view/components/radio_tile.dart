@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
@@ -58,8 +58,8 @@ class _RadioSelectionPageState<T> extends State<RadioSelectionPage<T>> {
                   onTap: () {
                     setState(() => _selectedValue = item.value);
                     widget.onSelected(item.value);
-                    Future.delayed(
-                        const Duration(milliseconds: 200), () => context.pop());
+                    Future.delayed(const Duration(milliseconds: 200),
+                        () => Navigator.of(context).pop());
                   },
                   shape: RoundedRectangleBorder(borderRadius: borderRadius),
                   contentPadding:
@@ -80,7 +80,7 @@ class _RadioSelectionPageState<T> extends State<RadioSelectionPage<T>> {
                       setState(() => _selectedValue = val as T);
                       widget.onSelected(item.value);
                       Future.delayed(const Duration(milliseconds: 200),
-                          () => context.pop());
+                          () => Navigator.of(context).pop());
                     },
                   ),
                 ),

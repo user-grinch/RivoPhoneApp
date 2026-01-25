@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:revo/view/components/center_text.dart';
@@ -53,7 +53,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Customize looks & behaviors',
             icon: FluentIcons.image_24_regular,
             onTap: () {
-              gRouter.pushNamed(AppRoutes.uiSettingsRoute);
+              Navigator.of(context).pushNamed(AppRoutes.uiSettingsRoute);
             },
             isFirst: true,
           ),
@@ -62,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Manage ringtones & volume',
             icon: FluentIcons.speaker_2_24_regular,
             onTap: () {
-              gRouter.pushNamed(AppRoutes.soundSettingsRoute);
+              Navigator.of(context).pushNamed(AppRoutes.soundSettingsRoute);
             },
             isLast: true,
           ),
@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Incoming call settings',
             icon: FluentIcons.call_24_regular,
             onTap: () {
-              gRouter.pushNamed(AppRoutes.callSettingsRoute);
+              Navigator.of(context).pushNamed(AppRoutes.callSettingsRoute);
             },
             isLast: true,
           ),
@@ -90,7 +90,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: 'Information about the dialer app',
             icon: FluentIcons.info_24_regular,
             onTap: () {
-              gRouter.pushNamed(AppRoutes.aboutRoute);
+              Navigator.of(context).pushNamed(AppRoutes.aboutRoute);
             },
             isFirst: true,
             isLast: true,

@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/view/components/colro_btn.dart';
@@ -168,7 +168,7 @@ class WelcomePopup {
           width: double.infinity,
           height: 64,
           child: FilledButton(
-            onPressed: () => context.pop(),
+            onPressed: () => Navigator.of(context).pop(),
             style: FilledButton.styleFrom(
               backgroundColor: colorScheme.primary,
               shape: RoundedRectangleBorder(

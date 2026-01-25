@@ -1,13 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/controller/services/theme_service.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/welcome_popup.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/landing/appbar.dart';
@@ -87,7 +87,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             final service = ref.read(contactServiceProvider.notifier);
             service.createNewContact();
           } else {
-            gRouter.pushNamed(AppRoutes.dialpadRoute);
+            Navigator.of(context).pushNamed(AppRoutes.dialpadRoute);
           }
         },
         elevation: 0,

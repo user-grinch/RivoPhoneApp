@@ -12,7 +12,7 @@ import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/controller/services/activity_service.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/num_picker.dart';
 import 'package:revo/view/components/qr_popup.dart';
 import 'package:revo/view/components/sim_picker.dart';
@@ -20,7 +20,6 @@ import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:go_router/go_router.dart';
 
 class ContactInfoView extends ConsumerStatefulWidget {
   final Contact contact;
@@ -307,8 +306,8 @@ class _ContactInfoViewState extends ConsumerState<ContactInfoView> {
         ActionIconButton(
           FluentIcons.history_24_regular,
           onPressed: () {
-            gRouter.pushNamed(AppRoutes.callHistoryRoute,
-                extra: widget.contact.numbers);
+            Navigator.of(context).pushNamed(AppRoutes.callHistoryRoute,
+                arguments: widget.contact.numbers);
           },
         ),
         ActionIconButton(

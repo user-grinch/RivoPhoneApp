@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/datetime.dart';
@@ -11,7 +11,7 @@ import 'package:revo/controller/services/calllog_service.dart';
 import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
@@ -215,7 +215,8 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                       ref.read(contactServiceProvider.notifier);
                   var contact =
                       contactService.findByNumber(log.number.international);
-                  gRouter.pushNamed(AppRoutes.contactInfoRoute, extra: contact);
+                  Navigator.of(context).pushNamed(AppRoutes.contactInfoRoute,
+                      arguments: contact);
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(

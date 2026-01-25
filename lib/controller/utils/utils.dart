@@ -131,5 +131,9 @@ Map<String, dynamic> normalizeCallEvent(dynamic event) {
   map.putIfAbsent('details', () => <String, dynamic>{});
   map.putIfAbsent('extras', () => <String, dynamic>{});
 
+  if (map['remoteNumber'] == '') {
+    map['remoteNumber'] = map['destination'];
+  }
+
   return map;
 }

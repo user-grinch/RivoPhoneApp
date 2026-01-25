@@ -2,11 +2,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter_tele/flutter_tele.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/services/telephony_service.dart';
 import 'package:revo/main.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/constants/app_routes.dart';
 
 class SetDefDialer extends StatefulWidget {
@@ -44,7 +44,7 @@ class _SetDefDialerState extends State<SetDefDialer>
 
     if (mounted) {
       if (def) {
-        gRouter.pushNamed(AppRoutes.homeRoute);
+        Navigator.of(context).pushNamed(AppRoutes.homeRoute);
       } else if (!navigateOnly) {
         const intent = AndroidIntent(
           action: 'android.settings.MANAGE_DEFAULT_APPS_SETTINGS',
@@ -105,7 +105,7 @@ class _SetDefDialerState extends State<SetDefDialer>
               ButtonM3E(
                 onPressed: () {
                   _checkDialerStatus(navigateOnly: false);
-                  gRouter.pushNamed(AppRoutes.homeRoute);
+                  Navigator.of(context).pushNamed(AppRoutes.homeRoute);
                 },
                 label: const Text(
                   'Set as Default',

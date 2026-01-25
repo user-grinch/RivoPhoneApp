@@ -42,8 +42,8 @@ dependencies:
       ref: '241d5c9'
   m3e_collection: ^0.3.7
   ai_barcode_scanner: ^7.1.0
-  flutter_tele: ^2.0.5+105
-  go_router: ^17.0.1
+  flutter_tele:
+    path: ../flutter_tele
 
 flutter_launcher_icons:
   android: "launcher_icon"

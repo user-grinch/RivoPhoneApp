@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/controller/extensions/theme.dart';
@@ -8,7 +8,6 @@ import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
 import 'package:revo/main.dart';
 import 'package:revo/model/sim_card.dart';
-import 'package:revo/router/router.dart';
 
 class SimPicker {
   final BuildContext context;
@@ -25,6 +24,7 @@ class SimPicker {
     if (simCards.isEmpty) return;
 
     if (simCards.length == 1) {
+      Navigator.of(context).pop();
       gProvider
           .read(telephonyServiceProvider.notifier)
           .makeCall(simCards.first.simSlotIndex, number);
@@ -47,6 +47,7 @@ class SimPicker {
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
           final selectedSim = ref.watch(defaultSimProvider);
           if (selectedSim != 0) {
+            Navigator.of(context).pop();
             gProvider
                 .read(telephonyServiceProvider.notifier)
                 .makeCall(selectedSim - 1, number);
@@ -90,6 +91,7 @@ class SimPicker {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () async {
+            Navigator.of(context).pop();
             await gProvider
                 .read(telephonyServiceProvider.notifier)
                 .makeCall(sim.simSlotIndex, number);

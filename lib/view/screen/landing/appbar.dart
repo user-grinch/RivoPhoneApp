@@ -1,10 +1,10 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/constants/app_routes.dart';
 
 class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
@@ -24,7 +24,7 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
       centerTitle: true,
       toolbarHeight: 50,
       title: GestureDetector(
-        onTap: () => gRouter.pushNamed(AppRoutes.searchRoute),
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.searchRoute),
         child: Container(
           height: 50,
           decoration: BoxDecoration(
@@ -35,7 +35,8 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               _buildIconButton(
                 icon: FluentIcons.qr_code_24_regular,
-                onPressed: () => gRouter.pushNamed(AppRoutes.qrScanRoute),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.qrScanRoute),
                 color: colorScheme.primary,
               ),
               Expanded(
@@ -51,7 +52,8 @@ class AppBarView extends ConsumerWidget implements PreferredSizeWidget {
               ),
               _buildIconButton(
                 icon: FluentIcons.options_24_regular,
-                onPressed: () => gRouter.pushNamed(AppRoutes.settingsRoute),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.settingsRoute),
                 color: colorScheme.primary,
               ),
             ],

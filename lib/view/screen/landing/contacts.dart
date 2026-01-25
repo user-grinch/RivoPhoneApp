@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/circle_profile.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
@@ -95,9 +95,9 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                           child: Column(
                             children: [
                               ListTile(
-                                onTap: () => gRouter.pushNamed(
+                                onTap: () => Navigator.of(context).pushNamed(
                                     AppRoutes.contactInfoRoute,
-                                    extra: contact),
+                                    arguments: contact),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
                                     top: isFirstInSection

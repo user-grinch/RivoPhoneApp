@@ -1,12 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/constants/ui.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/components/menu_tile.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
@@ -25,7 +25,7 @@ class AboutScreen extends StatelessWidget {
             FluentIcons.arrow_left_24_regular,
             size: 40,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'About',
@@ -109,7 +109,7 @@ class AboutScreen extends StatelessWidget {
               subtitle: 'Meet the team behind the project',
               icon: FluentIcons.people_community_24_regular,
               onTap: () {
-                gRouter.pushNamed(AppRoutes.contributorsRoute);
+                Navigator.of(context).pushNamed(AppRoutes.contributorsRoute);
               },
               isLast: true,
             ),

@@ -1,16 +1,21 @@
+import 'dart:async';
+
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:m3e_collection/m3e_collection.dart';
+import 'package:revo/controller/extensions/string.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
+import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/main.dart';
 import 'package:revo/model/call_state.dart';
 import 'package:revo/model/contact.dart';
-import 'package:revo/router/router.dart';
+
 import 'package:revo/view/components/action_btn.dart';
+import 'package:revo/view/components/call_status_badge.dart';
 import 'package:revo/view/components/circle_profile.dart';
-import 'package:revo/constants/app_routes.dart';
 
 class CallScreen extends StatefulHookConsumerWidget {
   const CallScreen({super.key});
@@ -49,7 +54,9 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                 backgroundColor: const Color(0xFFC3EED0),
                 foregroundColor: const Color(0xFF073819),
                 onTap: () {
-                  TelephonyService().acceptCall();
+                  gProvider
+                      .read(telephonyServiceProvider.notifier)
+                      .acceptCall();
                 }),
           ],
         );
@@ -63,12 +70,13 @@ class _CallScreenState extends ConsumerState<CallScreen> {
               backgroundColor: colorScheme.errorContainer,
               foregroundColor: colorScheme.onErrorContainer,
               onTap: () {
-                TelephonyService().declineCall();
+                gProvider.read(telephonyServiceProvider.notifier).declineCall();
               }),
         );
       case CallState.connected:
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          spacing: 10,
           children: [
             CallActionButton(
               label: "Mute",
@@ -104,7 +112,8 @@ class _CallScreenState extends ConsumerState<CallScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    return Placeholder();
+    final callState = telService.getCallState();
+    final ticker = useState(0);
 
     ref.listen(telephonyServiceProvider, (e, k) {
       setState(() {});
@@ -131,6 +140,18 @@ class _CallScreenState extends ConsumerState<CallScreen> {
       duration: const Duration(seconds: 2),
     )..repeat();
 
+    useEffect(() {
+      Timer? timer;
+
+      if (callState == CallState.connected) {
+        timer = Timer.periodic(const Duration(seconds: 1), (t) {
+          ticker.value++;
+        });
+      }
+
+      return () => timer?.cancel();
+    }, [callState]);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -138,31 +159,10 @@ class _CallScreenState extends ConsumerState<CallScreen> {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isVideo ? Icons.videocam : Icons.call,
-                      size: 16,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Sim ${call?.simSlot ?? 0} - ${telService.getCallState().name.capitalize()} ${isVideo ? 'Video ' : ''}Call",
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
+              CallStatusBadge(
+                icon: isVideo ? Icons.videocam : Icons.call,
+                label:
+                    "Sim ${call?.simSlot ?? 0} - ${callState.name.capitalize()} ${isVideo ? 'Video ' : ''}Call",
               ),
               const Spacer(flex: 2),
               SizedBox(
@@ -223,11 +223,17 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+              const SizedBox(height: 24),
+              if (callState == CallState.connected)
+                CallStatusBadge(
+                  icon: FluentIcons.clock_24_filled,
+                  label: "Duration: ${telService.getDuration()}",
+                ),
               const Spacer(flex: 3),
               ButtonM3E(
                 onPressed: () {},
                 style: ButtonM3EStyle.tonal,
-                size: ButtonM3ESize.sm,
+                size: ButtonM3ESize.md,
                 label: const Text("Message"),
               ),
               const SizedBox(height: 32),
@@ -239,9 +245,4 @@ class _CallScreenState extends ConsumerState<CallScreen> {
       ),
     );
   }
-}
-
-extension StringCapitalize on String {
-  String capitalize() =>
-      length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : '';
 }
