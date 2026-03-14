@@ -58,6 +58,23 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
           );
         }
 
+        final items = v.toList()
+          ..sort((a, b) {
+            // 1. Sort by the tag first (\u0000 comes before 'A', '~' comes after 'Z')
+            int tagComparison = a.tag.compareTo(b.tag);
+
+            // If the tags are different, use this grouping order
+            if (tagComparison != 0) {
+              return tagComparison;
+            }
+
+            // 2. If the tags are the same, sort alphabetically by name
+            return a
+                .sortName()
+                .toLowerCase()
+                .compareTo(b.sortName().toLowerCase());
+          });
+
         return ExpressiveRefreshIndicator(
           onRefresh: () async =>
               ref.read(contactServiceProvider.notifier).refresh(),
@@ -65,15 +82,16 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
             children: [
               StickyAzList(
                 controller: _controller,
-                items: v,
+                items: items,
                 builder: (context, index, item) {
                   final contact = item as Contact;
-                  final String currentSymbol = contact.name[0].toUpperCase();
+                  final String currentSymbol = contact.tag;
 
                   bool isFirstInSection = index == 0 ||
-                      v[index - 1].name[0].toUpperCase() != currentSymbol;
-                  bool isLastInSection = index == v.length - 1 ||
-                      v[index + 1].name[0].toUpperCase() != currentSymbol;
+                      (items[index - 1] as Contact).tag != currentSymbol;
+
+                  bool isLastInSection = index == items.length - 1 ||
+                      (items[index + 1] as Contact).tag != currentSymbol;
 
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -165,7 +183,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                               : Colors.transparent,
                         ),
                         child: Text(
-                          val,
+                          val == '\u0000' ? '★' : (val == '~' ? '#' : val),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight:
@@ -185,7 +203,9 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                     listHeaderBuilder: (context, symbol) => Padding(
                       padding: const EdgeInsets.fromLTRB(14, 12, 0, 8),
                       child: Text(
-                        symbol,
+                        symbol == '\u0000'
+                            ? '★'
+                            : (symbol == '~' ? '#' : symbol),
                         style: GoogleFonts.outfit(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

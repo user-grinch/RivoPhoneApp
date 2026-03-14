@@ -89,12 +89,10 @@ class _NavigationViewState extends State<NavigationView> {
             );
           },
           destinations: [
-            _buildDestination(FluentIcons.history_24_regular,
-                FluentIcons.history_24_filled, 'Recents'),
+            _buildDestination(FluentIcons.call_24_regular,
+                FluentIcons.call_24_filled, 'Phone'),
             _buildDestination(FluentIcons.person_24_regular,
                 FluentIcons.person_24_filled, 'Contacts'),
-            _buildDestination(FluentIcons.star_24_regular,
-                FluentIcons.star_24_filled, 'Favorites'),
           ],
         ),
       ),

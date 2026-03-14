@@ -42,35 +42,36 @@ class _DialPadButtonState extends State<DialPadButton> {
         widget.onUpdate(widget.mainText);
       },
       label: AspectRatio(
-        aspectRatio: 1.6,
+        aspectRatio: 1.5,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          Text(
-            widget.mainText,
-            style: GoogleFonts.outfit(
-              fontSize: textSz,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSecondaryContainer,
-              height: 1.0,
-            ),
-          ),
-          if (widget.subText != null && letters)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                widget.subText!,
-                style: GoogleFonts.outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.5,
-                  color: colorScheme.onSecondaryContainer.withOpacity(0.5),
-                ),
+            Text(
+              widget.mainText,
+              style: GoogleFonts.outfit(
+                fontSize: textSz,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSecondaryContainer,
+                height: 1.0,
               ),
             ),
-                  ],
+            if (widget.subText != null && letters)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  widget.subText!,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                    color: colorScheme.onSecondaryContainer.withOpacity(0.5),
+                  ),
                 ),
-              ),      style: ButtonM3EStyle.tonal,
+              ),
+          ],
+        ),
+      ),
+      style: ButtonM3EStyle.tonal,
     );
   }
 }

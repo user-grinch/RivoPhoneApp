@@ -12,7 +12,6 @@ import 'package:revo/view/components/welcome_popup.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/view/screen/landing/appbar.dart';
 import 'package:revo/view/screen/landing/contacts.dart';
-import 'package:revo/view/screen/landing/favourite.dart';
 import 'package:revo/view/screen/landing/navigation.dart';
 import 'package:revo/view/screen/landing/recents.dart';
 
@@ -74,7 +73,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
         children: const [
           RecentsView(),
           ContactsView(),
-          FavView(),
         ],
       ),
       bottomNavigationBar: NavigationView(pageController: _pageController),

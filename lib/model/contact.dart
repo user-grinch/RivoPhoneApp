@@ -103,5 +103,17 @@ class Contact extends TaggedItem {
   }
 
   @override
-  String sortName() => name;
+  String get tag {
+    if (isStarred) return '\u0000';
+    if (name.isEmpty) return '~';
+    final char = name[0].toUpperCase();
+    if (RegExp(r'[A-Z]').hasMatch(char)) return char;
+    return '~';
+  }
+
+  @override
+  String sortName() {
+    if (isStarred) return '\u0000$name';
+    return name;
+  }
 }

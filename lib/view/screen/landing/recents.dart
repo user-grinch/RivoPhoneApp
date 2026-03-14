@@ -151,26 +151,12 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
               onSelected: (_) => onSelected(type),
               showCheckmark: false,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              avatar: isSelected
-                  ? Icon(
-                      FluentIcons.checkmark_24_filled,
-                      size: 18,
-                      color: isSelected
-                          ? colorScheme.onSecondaryContainer
-                          : type.getColor(),
-                    )
-                  : null,
               label: Text(
                 type.getText(),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: isSelected
-                          ? colorScheme.onSecondaryContainer
-                          : colorScheme.onSurfaceVariant,
-                    ),
               ),
-              backgroundColor: colorScheme.secondaryContainer,
-              selectedColor: colorScheme.primaryContainer,
-              side: BorderSide.none,
+              backgroundColor:
+                  isSelected ? colorScheme.secondaryContainer : null,
+              selectedColor: colorScheme.secondaryContainer,
             );
           },
         ),
@@ -247,9 +233,24 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      "${groupedLog.count} calls • ${log.date.getContextAwareDateTime()}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
+                        Text(
+                          '${log.simDisplayName}  • ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                colorScheme.onSurfaceVariant.withOpacity(0.7),
+                          ),
+                        ),
                         ...groupedLog.logs.take(3).map((e) => Padding(
                               padding: const EdgeInsets.only(right: 4),
                               child: Icon(e.type.getIcon(),
@@ -258,15 +259,6 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                         if (groupedLog.count > 3)
                           Text(' +${groupedLog.count - 3}',
                               style: const TextStyle(fontSize: 10)),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${groupedLog.count} calls • ${log.date.getContextAwareDateTime()}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                colorScheme.onSurfaceVariant.withOpacity(0.7),
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -307,7 +299,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
         padding: const EdgeInsets.only(top: 100),
         child: Column(
           children: [
-            Icon(FluentIcons.history_24_regular,
+            Icon(FluentIcons.phone_24_regular,
                 size: 64, color: context.colorScheme.primary.withOpacity(0.2)),
             const SizedBox(height: 16),
             Text('No call logs found.',
