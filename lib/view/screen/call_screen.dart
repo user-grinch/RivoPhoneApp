@@ -2,15 +2,13 @@ import 'dart:async';
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tele/flutter_tele.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:m3e_collection/m3e_collection.dart';
 import 'package:revo/controller/extensions/string.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
-import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/main.dart';
-import 'package:revo/model/call_state.dart';
 import 'package:revo/model/contact.dart';
 
 import 'package:revo/view/components/action_btn.dart';
@@ -32,8 +30,16 @@ class _CallScreenState extends ConsumerState<CallScreen> {
 
   Widget buildBottomActions(BuildContext context, CallState state) {
     final colorScheme = Theme.of(context).colorScheme;
+    final telService = ref.watch(telephonyServiceProvider.notifier);
+    final call = telService.getCall();
+
+    ref.listen(telephonyServiceProvider, (e, k) {
+      setState(() {});
+    });
+
     switch (state) {
       case CallState.incoming:
+      case CallState.ringing:
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -42,26 +48,18 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                 icon: Icons.call_end_rounded,
                 backgroundColor: colorScheme.errorContainer,
                 foregroundColor: colorScheme.onErrorContainer,
-                onTap: () {
-                  gProvider
-                      .read(telephonyServiceProvider.notifier)
-                      .declineCall();
-                }),
+                onTap: () => telService.declineCall()),
             const SizedBox(width: 24),
             CallActionButton(
                 label: "Answer",
                 icon: Icons.call_rounded,
                 backgroundColor: const Color(0xFFC3EED0),
                 foregroundColor: const Color(0xFF073819),
-                onTap: () {
-                  gProvider
-                      .read(telephonyServiceProvider.notifier)
-                      .acceptCall();
-                }),
+                onTap: () => telService.acceptCall()),
           ],
         );
+
       case CallState.initiating:
-      case CallState.ringing:
       case CallState.outgoing:
         return Center(
           child: CallActionButton(
@@ -69,35 +67,47 @@ class _CallScreenState extends ConsumerState<CallScreen> {
               icon: Icons.call_end_rounded,
               backgroundColor: colorScheme.errorContainer,
               foregroundColor: colorScheme.onErrorContainer,
-              onTap: () {
-                gProvider.read(telephonyServiceProvider.notifier).declineCall();
-              }),
+              onTap: () => telService.declineCall()),
         );
+
       case CallState.connected:
+        final isMuted = call?.muted ?? false;
+        final isSpeaker = call?.speaker ?? false;
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          spacing: 10,
           children: [
             CallActionButton(
-              label: "Mute",
-              icon: Icons.mic_off,
-              backgroundColor: colorScheme.secondaryContainer,
-              foregroundColor: colorScheme.onSecondaryContainer,
-              onTap: () {},
+              label: isMuted ? "Unmute" : "Mute",
+              icon: isMuted ? Icons.mic_off : Icons.mic,
+              backgroundColor: isMuted
+                  ? colorScheme.primaryContainer
+                  : colorScheme.secondaryContainer,
+              foregroundColor: isMuted
+                  ? colorScheme.onPrimaryContainer
+                  : colorScheme.onSecondaryContainer,
+              onTap: () => isMuted ? telService.unmute() : telService.mute(),
             ),
             CallActionButton(
               label: "End",
               icon: Icons.call_end,
+              isLarge: true,
               backgroundColor: colorScheme.errorContainer,
               foregroundColor: colorScheme.onErrorContainer,
-              onTap: () => TelephonyService().declineCall(),
+              onTap: () => telService.declineCall(),
             ),
             CallActionButton(
               label: "Speaker",
-              icon: Icons.volume_up,
-              backgroundColor: colorScheme.secondaryContainer,
-              foregroundColor: colorScheme.onSecondaryContainer,
-              onTap: () {},
+              icon: isSpeaker ? Icons.volume_up : Icons.volume_down,
+              backgroundColor: isSpeaker
+                  ? colorScheme.primaryContainer
+                  : colorScheme.secondaryContainer,
+              foregroundColor: isSpeaker
+                  ? colorScheme.onPrimaryContainer
+                  : colorScheme.onSecondaryContainer,
+              onTap: () => isSpeaker
+                  ? telService.useEarpiece()
+                  : telService.useSpeaker(),
             ),
           ],
         );
@@ -115,10 +125,6 @@ class _CallScreenState extends ConsumerState<CallScreen> {
     final callState = telService.getCallState();
     final ticker = useState(0);
 
-    ref.listen(telephonyServiceProvider, (e, k) {
-      setState(() {});
-    });
-
     final call = telService.getCall();
 
     final contacts = ref.watch(contactServiceProvider.notifier);
@@ -126,7 +132,6 @@ class _CallScreenState extends ConsumerState<CallScreen> {
 
     final String displayName = contact.name;
     final String displayNumber = call?.remoteNumber ?? "Unknown Number";
-    final bool isVideo = (call?.remoteVideoCount ?? 0) > 0;
 
     final pulseController = useAnimationController(
       duration: const Duration(seconds: 2),
@@ -160,9 +165,9 @@ class _CallScreenState extends ConsumerState<CallScreen> {
             children: [
               const SizedBox(height: 24),
               CallStatusBadge(
-                icon: isVideo ? Icons.videocam : Icons.call,
+                icon: Icons.call,
                 label:
-                    "Sim ${call?.simSlot ?? 0} - ${callState.name.capitalize()} ${isVideo ? 'Video ' : ''}Call",
+                    "Sim ${(call?.simSlot ?? 0) + 1} - ${callState.name.capitalize()} Call",
               ),
               const Spacer(flex: 2),
               SizedBox(

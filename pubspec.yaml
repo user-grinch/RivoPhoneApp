@@ -42,7 +42,11 @@ dependencies:
       ref: '241d5c9'
   m3e_collection: ^0.3.7
   ai_barcode_scanner: ^7.1.0
-  flutter_tele: ^2.0.5+105
+  flutter_tele: 
+    git:
+      url: https://github.com/user-grinch/flutter_tele
+      ref: 'c24d5e2'
+    # path: "../flutter_tele"
 
 flutter_launcher_icons:
   android: "launcher_icon"

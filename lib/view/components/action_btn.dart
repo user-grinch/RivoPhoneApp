@@ -6,40 +6,50 @@ class CallActionButton extends StatelessWidget {
   final Color backgroundColor;
   final Color foregroundColor;
   final VoidCallback onTap;
+  final bool isLarge;
 
   const CallActionButton({
+    super.key,
     required this.label,
     required this.icon,
     required this.backgroundColor,
     required this.foregroundColor,
     required this.onTap,
+    this.isLarge = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.fastOutSlowIn,
       child: Material(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(32),
+        shape: isLarge
+            ? const StadiumBorder()
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(32),
           child: Container(
-            height: 80,
-            alignment: Alignment.center,
+            height: 72,
+            padding: EdgeInsets.symmetric(horizontal: isLarge ? 32 : 24),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, color: foregroundColor, size: 28),
-                const SizedBox(width: 12),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                if (isLarge) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: foregroundColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

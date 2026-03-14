@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_tele/flutter_tele.dart';
 import 'package:revo/controller/utils/utils.dart';
-import 'package:revo/model/call_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'telephony_service.g.dart';
@@ -34,17 +33,17 @@ class TelephonyService extends _$TelephonyService {
 
   void _registerCallEvents() {
     _endpoint.on('call_received').listen((event) {
-      _call = TeleCall.fromMap(normalizeCallEvent(event));
+      _call = TeleCall.fromMap(event);
       if (_call != null) {
-        state = CallStateParser.fromString(_call?.state ?? "INCOMING");
+        state = _call!.state;
       }
     });
 
     _endpoint.on('call_changed').listen((event) {
-      _call = TeleCall.fromMap(normalizeCallEvent(event));
+      _call = TeleCall.fromMap(event);
 
       if (_call != null) {
-        state = CallStateParser.fromString(_call?.state ?? "CONNECTED");
+        state = _call!.state;
       }
     });
 
@@ -59,21 +58,55 @@ class TelephonyService extends _$TelephonyService {
   CallState getCallState() => state;
 
   String getDuration() {
-    return convertSecondsToHMS((DateTime.now().difference(
-            DateTime.fromMillisecondsSinceEpoch(_call?.connectTimeMillis ?? 0)))
-        .inMilliseconds);
+    final connectTime = _call?.connectTimeMillis;
+
+    if (connectTime == null || connectTime <= 0) {
+      return "00:00";
+    }
+
+    final startTime = DateTime.fromMillisecondsSinceEpoch(connectTime);
+    final duration = DateTime.now().difference(startTime);
+
+    return convertSecondsToHMS(duration.inSeconds);
   }
 
   void acceptCall() {
-    if (_call != null) _endpoint.answerCall(_call!);
+    if (_call != null) _endpoint.answer(_call!);
+  }
+
+  void useSpeaker() {
+    if (_call != null) _endpoint.speaker(_call!);
+  }
+
+  void useEarpiece() {
+    if (_call != null) _endpoint.earpiece(_call!);
+  }
+
+  void hold() {
+    if (_call != null) _endpoint.hold(_call!);
+  }
+
+  void unhold() {
+    if (_call != null) _endpoint.unhold(_call!);
+  }
+
+  void mute() {
+    if (_call != null) _endpoint.mute(_call!);
+  }
+
+  void unmute() {
+    if (_call != null) _endpoint.unmute(_call!);
   }
 
   void declineCall() {
-    if (_call != null) _endpoint.declineCall(_call!);
+    if (_call != null) {
+      _endpoint.hangup(_call!);
+      _endpoint.decline(_call!);
+    }
   }
 
   Future<void> makeCall(int sim, String dest) async {
     if (_call != null) return;
-    _call = await _endpoint.makeCall(sim + 1, dest, null, null);
+    _call = await _endpoint.makeCall(sim, dest, null, null);
   }
 }

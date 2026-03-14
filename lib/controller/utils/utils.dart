@@ -101,39 +101,3 @@ Color colorFromContact(String id) {
   int hash = id.hashCode;
   return colors[hash % colors.length];
 }
-
-// This is a band aid solution. Ideally I would fix the package
-Map<String, dynamic> normalizeCallEvent(dynamic event) {
-  final map = Map<String, dynamic>.from(event as Map);
-
-  // REQUIRED field – ensure it exists
-  map.putIfAbsent('id', () => 0);
-
-  // These are missing in your event but expected by fromMap
-  map.putIfAbsent('remoteUri', () => '');
-  map.putIfAbsent('remoteContact', () => null);
-  map.putIfAbsent('localUri', () => null);
-  map.putIfAbsent('localContact', () => null);
-
-  // State-related padding
-  map.putIfAbsent('stateText', () => map['state']);
-  map.putIfAbsent('connectDuration', () => 0);
-  map.putIfAbsent('totalDuration', () => 0);
-
-  // Map plugin field → expected field
-  if (map.containsKey('sim') && !map.containsKey('simSlot')) {
-    map['simSlot'] = map['sim'];
-  }
-
-  // Ensure maps exist
-  map.putIfAbsent('media', () => <String, dynamic>{});
-  map.putIfAbsent('provisionalMedia', () => <String, dynamic>{});
-  map.putIfAbsent('details', () => <String, dynamic>{});
-  map.putIfAbsent('extras', () => <String, dynamic>{});
-
-  if (map['remoteNumber'] == '') {
-    map['remoteNumber'] = map['destination'];
-  }
-
-  return map;
-}
