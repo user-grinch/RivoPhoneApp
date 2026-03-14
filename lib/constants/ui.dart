@@ -9,4 +9,4 @@ const String changelog =
     "• Fixed numerous bugs";
 final String githubUrl = "https://github.com/user-grinch/Rivo";
 final String patreonUrl = "https://www.patreon.com/grinch_";
-final String discordUrl = "https://discord.com/invite/PJ2NhEP4BN";
+final String discordUrl = "https://discord.gg/NtEvU3726e";

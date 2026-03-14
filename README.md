@@ -3,7 +3,7 @@
 **Rivo** is a modern, feature-rich dialer app built using Flutter. Designed for seamless communication, Rivo provides a sleek and user-friendly interface for managing calls and contacts.
 
 💬 Join the Discord to report bugs, suggest features, and help shape Rivo’s development.     
-  <a href="https://discord.gg/PJ2NhEP4BN">
+  <a href="https://discord.gg/NtEvU3726e">
     <img src="https://img.shields.io/badge/Discord-Join%20the%20Dev%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
   </a>
 
