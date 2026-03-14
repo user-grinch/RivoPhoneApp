@@ -46,6 +46,7 @@ class _CallScreenState extends ConsumerState<CallScreen> {
             CallActionButton(
                 label: "Decline",
                 icon: Icons.call_end_rounded,
+                isLarge: true,
                 backgroundColor: colorScheme.errorContainer,
                 foregroundColor: colorScheme.onErrorContainer,
                 onTap: () => telService.declineCall()),
@@ -53,6 +54,7 @@ class _CallScreenState extends ConsumerState<CallScreen> {
             CallActionButton(
                 label: "Answer",
                 icon: Icons.call_rounded,
+                isLarge: true,
                 backgroundColor: const Color(0xFFC3EED0),
                 foregroundColor: const Color(0xFF073819),
                 onTap: () => telService.acceptCall()),
@@ -63,8 +65,9 @@ class _CallScreenState extends ConsumerState<CallScreen> {
       case CallState.outgoing:
         return Center(
           child: CallActionButton(
-              label: "Cancel",
+              label: "End",
               icon: Icons.call_end_rounded,
+              isLarge: true,
               backgroundColor: colorScheme.errorContainer,
               foregroundColor: colorScheme.onErrorContainer,
               onTap: () => telService.declineCall()),
