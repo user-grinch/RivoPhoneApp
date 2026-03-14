@@ -67,7 +67,7 @@ class _CallScreenState extends ConsumerState<CallScreen> {
           child: CallActionButton(
               label: "End",
               icon: Icons.call_end_rounded,
-              isLarge: true,
+              isSuperLarge: true,
               backgroundColor: colorScheme.errorContainer,
               foregroundColor: colorScheme.onErrorContainer,
               onTap: () => telService.declineCall()),

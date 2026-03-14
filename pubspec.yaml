@@ -42,6 +42,7 @@ dependencies:
       ref: '241d5c9'
   m3e_collection: ^0.3.7
   ai_barcode_scanner: ^7.1.0
+  awesome_notifications: ^0.10.0
   flutter_tele: 
     git:
       url: https://github.com/user-grinch/flutter_tele

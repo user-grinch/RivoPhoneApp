@@ -1,4 +1,5 @@
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tele/flutter_tele.dart';
 import 'package:m3e_collection/m3e_collection.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/notification_service.dart';
 import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
 import 'package:revo/controller/services/theme_service.dart';
@@ -33,6 +36,7 @@ final GlobalKey<NavigatorState> gNavigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefService().init();
+  NotificationService().init();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -71,10 +75,25 @@ class _MyAppState extends ConsumerState<MyApp> {
         return true;
       });
 
-      if (next != CallState.disconnected &&
-          currentRoute != AppRoutes.callScreenRoute) {
+      final telService = ref.watch(telephonyServiceProvider.notifier);
+      final call = telService.getCall();
+      final contact = ref
+          .read(contactServiceProvider.notifier)
+          .findByNumber(call!.remoteNumber ?? "");
+
+      if (next == CallState.ringing) {
+        NotificationService.showIncomingCallNotification(
+            contact.name, call!.remoteNumber ?? "Unknown");
+      } else if (next == CallState.connected) {
+        NotificationService.showOngoingCallNotification(
+            contact.name, call!.remoteNumber ?? "Unknown");
+      } else if (next == CallState.initiating || next == CallState.outgoing) {
         gNavigatorKey.currentState?.pushNamed(AppRoutes.callScreenRoute);
-      } else if (next == CallState.disconnected &&
+      } else {
+        NotificationService.cancelAllCallNotifications();
+      }
+
+      if (next == CallState.disconnected &&
           currentRoute == AppRoutes.callScreenRoute) {
         gNavigatorKey.currentState?.pop();
       }

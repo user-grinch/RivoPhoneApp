@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      sha256: "0d5fa4457f2ba4e536adc3ef6af709cdcecf4a05a1f3035981e9afa2f899b2a8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -374,14 +382,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.9+2"
-  flutter_dialer:
-    dependency: transitive
-    description:
-      name: flutter_dialer
-      sha256: "7009e2d517fbdda770f7507d36d05ee22cf49f9c9dd830a5f91bbd1f0cd26bc8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0+101"
   flutter_dtmf:
     dependency: "direct main"
     description:
@@ -459,11 +459,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: c24d5e2
-      resolved-ref: c24d5e286e341c42e50fdb43eae7035b706ffee8
+      ref: d2471b0
+      resolved-ref: d2471b0d832f61c8b07f7e475ffd34e9f6dc7ce6
       url: "https://github.com/user-grinch/flutter_tele"
     source: git
-    version: "2.0.5+105"
+    version: "2.0.5+106"
   flutter_test:
     dependency: transitive
     description: flutter
