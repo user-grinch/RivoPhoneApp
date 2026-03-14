@@ -65,7 +65,7 @@ flutter_native_splash:
   # branding: 'assets/branding.png'
 
   android_12:
-    image: 'assets/splash.png'
+    image: 'assets/icon.png'
     color: "#FFFFFF"  
     image_dark: 'assets/splash.png'
     color_dark: "#000000" 

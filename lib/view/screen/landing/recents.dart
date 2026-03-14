@@ -232,7 +232,7 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
                   name: log.name,
                   profile: log.profile,
                   col: log.color,
-                  size: 28,
+                  size: 22,
                 ),
                 title: Text(
                   log.name.isEmpty ? log.number.international : log.name,

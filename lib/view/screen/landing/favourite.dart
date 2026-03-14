@@ -84,7 +84,7 @@ class _FavViewState extends ConsumerState<FavView> {
                               name: contact.name,
                               profile: contact.photo,
                               col: contact.color,
-                              size: 40,
+                              size: 25,
                             ),
                             const SizedBox(height: 6),
                             Wrap(

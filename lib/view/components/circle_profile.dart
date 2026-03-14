@@ -48,7 +48,6 @@ class _CircleProfileState extends State<CircleProfile> {
     bool showFirstLetter = widget.name.isNotEmpty &&
         SharedPrefService().getBool(PREF_SHOW_FIRST_LETTER, def: true);
 
-    final double borderRadius = widget.size * 0.5;
     final double diameter = widget.size * 2;
 
     return Container(
@@ -56,7 +55,7 @@ class _CircleProfileState extends State<CircleProfile> {
       height: diameter,
       decoration: BoxDecoration(
         color: colorful ? widget.col : colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(50),
         image: showPic
             ? DecorationImage(
                 image: MemoryImage(widget.profile!),

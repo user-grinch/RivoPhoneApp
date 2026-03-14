@@ -114,7 +114,7 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
                                   name: contact.name,
                                   profile: contact.photo,
                                   col: contact.color,
-                                  size: 28,
+                                  size: 22,
                                 ),
                                 title: Text(
                                   contact.name,

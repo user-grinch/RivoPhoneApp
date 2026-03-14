@@ -1,4 +1,4 @@
-package com.grinch.rivo
+package com.grinch.rivophone
 
 import android.os.Build
 import android.os.Bundle

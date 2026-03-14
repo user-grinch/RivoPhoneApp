@@ -55,7 +55,7 @@ class ContactTile extends ConsumerWidget {
                 name: contact.name,
                 profile: contact.photo,
                 col: contact.color,
-                size: 30,
+                size: 20,
               ),
             ),
           ),

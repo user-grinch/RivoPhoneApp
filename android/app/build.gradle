@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.grinch.rivo"
+    namespace = "com.grinch.rivophone"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.14206865"//flutter.ndkVersion
 
@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.grinch.rivo"
+        applicationId = "com.grinch.rivophone"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 24
