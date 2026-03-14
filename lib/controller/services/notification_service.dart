@@ -25,7 +25,7 @@ class NotificationService {
             channelKey: 'call_channel',
             channelName: 'Incoming Calls',
             channelDescription: 'Notification channel for ringing calls',
-            defaultColor: const Color(0xFF1A73E8), // Google Dialer Blue
+            defaultColor: const Color(0xFF1A73E8),
             ledColor: Colors.white,
             importance: NotificationImportance.Max,
             channelShowBadge: true,
@@ -59,6 +59,7 @@ class NotificationService {
 
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationService.onActionReceivedMethod,
+      onDismissActionReceivedMethod: NotificationService.onActionReceivedMethod,
     );
   }
 
@@ -109,7 +110,7 @@ class NotificationService {
           label: 'Decline',
           color: const Color(0xFFD93025),
           autoDismissible: false,
-          actionType: ActionType.SilentAction,
+          actionType: ActionType.Default,
         ),
         NotificationActionButton(
           key: 'ACCEPT',
@@ -145,10 +146,10 @@ class NotificationService {
       actionButtons: [
         NotificationActionButton(
           key: 'HANGUP',
-          label: 'Hang up',
+          label: 'Hang Up',
           color: const Color(0xFFD93025),
           autoDismissible: false,
-          actionType: ActionType.SilentAction,
+          actionType: ActionType.Default,
         ),
       ],
     );
