@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:revo/constants/app_routes.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
 import 'package:revo/main.dart';
 
@@ -48,6 +51,19 @@ class NotificationService {
             playSound: false,
             enableVibration: false,
             channelShowBadge: false,
+          ),
+          NotificationChannel(
+            channelGroupKey: 'call_channel_group',
+            channelKey: 'missed_call_channel',
+            channelName: 'Missed Calls',
+            channelDescription: 'Notification channel for missed calls',
+            defaultColor: const Color(0xFFD93025),
+            importance: NotificationImportance.High,
+            channelShowBadge: true,
+            criticalAlerts: false,
+            playSound: true,
+            enableVibration: true,
+            defaultPrivacy: NotificationPrivacy.Public,
           )
         ],
         channelGroups: [
@@ -82,6 +98,17 @@ class NotificationService {
         telephonyNotifier.declineCall();
       } else {
         gNavigatorKey.currentState?.pushNamed(AppRoutes.callScreenRoute);
+      }
+    } else if (receivedAction.channelKey == 'missed_call_channel') {
+      if (receivedAction.buttonKeyPressed == 'CALL_BACK') {
+        // Handle call back
+        final number = receivedAction.payload?['number'];
+        final sim = gProvider.read(defaultSimProvider);
+        if (number != null) {
+          telephonyNotifier.makeCall(sim, number);
+        }
+      } else {
+        gNavigatorKey.currentState?.pushNamed(AppRoutes.callHistoryRoute);
       }
     }
   }
@@ -155,6 +182,29 @@ class NotificationService {
     );
   }
 
+  static Future<void> showMissedCallNotification(
+      String name, String number) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+        channelKey: 'missed_call_channel',
+        title: 'Missed Call',
+        body: '<b>$name</b>\n$number',
+        category: NotificationCategory.MissedCall,
+        notificationLayout: NotificationLayout.Default,
+        payload: {'number': number},
+      ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'CALL_BACK',
+          label: 'Call Back',
+          color: const Color(0xFF1A73E8),
+          actionType: ActionType.Default,
+        ),
+      ],
+    );
+  }
+
   static Future<void> cancelNotification(int id) async {
     await AwesomeNotifications().cancel(id);
   }
@@ -164,3 +214,5 @@ class NotificationService {
     await AwesomeNotifications().cancel(ongoingCallId);
   }
 }
+
+final highVibrationPattern = Int64List.fromList([0, 1000, 500, 1000]);

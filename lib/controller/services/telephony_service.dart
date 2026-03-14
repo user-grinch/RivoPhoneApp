@@ -14,6 +14,7 @@ part 'telephony_service.g.dart';
 class TelephonyService extends _$TelephonyService {
   final TeleEndpoint _endpoint = TeleEndpoint();
   TeleCall? _call = null;
+  TeleCall? _lastCall = null;
 
   bool _initialized = false;
   bool _isDefaultDialer = false;
@@ -41,6 +42,7 @@ class TelephonyService extends _$TelephonyService {
   void _registerCallEvents() {
     _endpoint.on('call_received').listen((event) {
       _call = TeleCall.fromMap(event);
+      _lastCall = _call;
       if (_call != null) {
         state = _call!.state;
       }
@@ -48,6 +50,7 @@ class TelephonyService extends _$TelephonyService {
 
     _endpoint.on('call_changed').listen((event) {
       _call = TeleCall.fromMap(event);
+      _lastCall = _call;
 
       if (_call != null) {
         state = _call!.state;
@@ -62,6 +65,7 @@ class TelephonyService extends _$TelephonyService {
 
   bool isDefaultDialer() => _isDefaultDialer;
   TeleCall? getCall() => _call;
+  TeleCall? getLastCall() => _lastCall;
   CallState getCallState() => state;
 
   String getDuration() {

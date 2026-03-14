@@ -77,18 +77,35 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       final telService = ref.watch(telephonyServiceProvider.notifier);
       final call = telService.getCall();
-      final contact = ref
-          .read(contactServiceProvider.notifier)
-          .findByNumber(call!.remoteNumber ?? "");
 
-      if (next == CallState.ringing) {
+      if (call == null && next != CallState.disconnected) return;
+
+      final contact = call != null
+          ? ref
+              .read(contactServiceProvider.notifier)
+              .findByNumber(call.remoteNumber ?? "")
+          : null;
+
+      if (next == CallState.ringing || next == CallState.incoming) {
         NotificationService.showIncomingCallNotification(
-            contact.name, call!.remoteNumber ?? "Unknown");
+            contact?.name ?? "Unknown", call?.remoteNumber ?? "Unknown");
       } else if (next == CallState.connected) {
         NotificationService.showOngoingCallNotification(
-            contact.name, call!.remoteNumber ?? "Unknown");
+            contact?.name ?? "Unknown", call?.remoteNumber ?? "Unknown");
       } else if (next == CallState.initiating || next == CallState.outgoing) {
         gNavigatorKey.currentState?.pushNamed(AppRoutes.callScreenRoute);
+      } else if (next == CallState.disconnected) {
+        if (previous == CallState.ringing || previous == CallState.incoming) {
+          final lastCall = telService.getLastCall();
+          if (lastCall != null) {
+            final lastContact = ref
+                .read(contactServiceProvider.notifier)
+                .findByNumber(lastCall.remoteNumber ?? "");
+            NotificationService.showMissedCallNotification(
+                lastContact.name, lastCall.remoteNumber ?? "Unknown");
+          }
+        }
+        NotificationService.cancelAllCallNotifications();
       } else {
         NotificationService.cancelAllCallNotifications();
       }
