@@ -13,15 +13,13 @@ class NotificationService {
 
   NotificationService._internal();
 
-  // Define static IDs so we don't accidentally stack notifications
   static const int incomingCallId = 10;
   static const int ongoingCallId = 11;
 
   void init() {
     AwesomeNotifications().initialize(
-        null, // Use default app icon. You can pass 'resource://drawable/res_app_icon' if you have a custom one.
+        null,
         [
-          // 1. Channel for INCOMING calls (Rings, vibrates, wakes screen)
           NotificationChannel(
             channelGroupKey: 'call_channel_group',
             channelKey: 'call_channel',
@@ -39,17 +37,15 @@ class NotificationService {
             vibrationPattern: highVibrationPattern,
             defaultPrivacy: NotificationPrivacy.Public,
           ),
-          // 2. Channel for ONGOING calls (Silent, locked, no vibration)
           NotificationChannel(
             channelGroupKey: 'call_channel_group',
             channelKey: 'ongoing_call_channel',
             channelName: 'Ongoing Calls',
             channelDescription: 'Notification channel for active calls',
             defaultColor: const Color(0xFF1A73E8),
-            importance: NotificationImportance
-                .High, // High to stay at the top, but not Max
+            importance: NotificationImportance.High,
             locked: true,
-            playSound: false, // Critical: Ongoing calls shouldn't ring!
+            playSound: false,
             enableVibration: false,
             channelShowBadge: false,
           )
@@ -71,7 +67,6 @@ class NotificationService {
       ReceivedAction receivedAction) async {
     final telephonyNotifier = gProvider.read(telephonyServiceProvider.notifier);
 
-    // Handle Incoming Call Actions
     if (receivedAction.channelKey == 'call_channel') {
       if (receivedAction.buttonKeyPressed == 'ACCEPT') {
         telephonyNotifier.acceptCall();
@@ -79,22 +74,17 @@ class NotificationService {
       } else if (receivedAction.buttonKeyPressed == 'DECLINE') {
         telephonyNotifier.declineCall();
       } else {
-        // Tap on notification body
         gNavigatorKey.currentState?.pushNamed(AppRoutes.callScreenRoute);
       }
-    }
-    // Handle Ongoing Call Actions
-    else if (receivedAction.channelKey == 'ongoing_call_channel') {
+    } else if (receivedAction.channelKey == 'ongoing_call_channel') {
       if (receivedAction.buttonKeyPressed == 'HANGUP') {
         telephonyNotifier.declineCall();
       } else {
-        // Tap on notification body brings user back to the call screen
         gNavigatorKey.currentState?.pushNamed(AppRoutes.callScreenRoute);
       }
     }
   }
 
-  // --- INCOMING CALL NOTIFICATION ---
   static Future<void> showIncomingCallNotification(
       String name, String number) async {
     await AwesomeNotifications().createNotification(
@@ -117,26 +107,23 @@ class NotificationService {
         NotificationActionButton(
           key: 'DECLINE',
           label: 'Decline',
-          color: const Color(0xFFD93025), // Google Material Red
-          autoDismissible: true,
-          actionType:
-              ActionType.SilentAction, // Declining shouldn't open the app UI
+          color: const Color(0xFFD93025),
+          autoDismissible: false,
+          actionType: ActionType.SilentAction,
         ),
         NotificationActionButton(
           key: 'ACCEPT',
           label: 'Accept',
-          color: const Color(0xFF188038), // Google Material Green
-          autoDismissible: true,
-          actionType: ActionType.Default, // Accepting opens the app
+          color: const Color(0xFF188038),
+          autoDismissible: false,
+          actionType: ActionType.Default,
         ),
       ],
     );
   }
 
-  // --- ONGOING CALL NOTIFICATION ---
   static Future<void> showOngoingCallNotification(String name, String number,
       {String? duration}) async {
-    // Cancel the ringing notification first so they don't overlap
     await cancelNotification(incomingCallId);
 
     final durationText = duration != null ? ' • $duration' : '';
@@ -159,16 +146,14 @@ class NotificationService {
         NotificationActionButton(
           key: 'HANGUP',
           label: 'Hang up',
-          color: const Color(0xFFD93025), // Google Material Red
-          autoDismissible: true,
-          actionType: ActionType
-              .SilentAction, // Hanging up shouldn't force-open the app
+          color: const Color(0xFFD93025),
+          autoDismissible: false,
+          actionType: ActionType.SilentAction,
         ),
       ],
     );
   }
 
-  // --- CLEANUP ---
   static Future<void> cancelNotification(int id) async {
     await AwesomeNotifications().cancel(id);
   }

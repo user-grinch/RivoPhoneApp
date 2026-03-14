@@ -95,7 +95,10 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       if (next == CallState.disconnected &&
           currentRoute == AppRoutes.callScreenRoute) {
-        gNavigatorKey.currentState?.pop();
+        gNavigatorKey.currentState?.pushNamedAndRemoveUntil(
+          AppRoutes.homeRoute,
+          (route) => false,
+        );
       }
     });
 
