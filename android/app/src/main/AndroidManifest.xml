@@ -20,6 +20,8 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
@@ -33,6 +35,8 @@
             android:exported="true"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity -->
@@ -44,6 +48,11 @@
                 android:value="true" />
 
             <!-- Intent Filters -->
+            <intent-filter>
+            <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -77,6 +86,11 @@
             <intent-filter>
                 <action android:name="android.telecom.InCallService" />
             </intent-filter>
+        </service>
+        <service
+            android:name=".org.telon.tele.flutter_tele.TeleService"
+            android:foregroundServiceType="phoneCall"
+            android:exported="false">
         </service>
 
         <!-- Flutter Metadata -->

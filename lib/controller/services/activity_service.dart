@@ -22,6 +22,8 @@ class ActivityService {
           Permission.phone,
           Permission.contacts,
           Permission.camera,
+          Permission.notification,
+          Permission.systemAlertWindow
         ].request();
         _permissionsCompleter!.complete();
       } catch (e) {

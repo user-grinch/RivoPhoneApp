@@ -45,7 +45,7 @@ dependencies:
   flutter_tele: 
     git:
       url: https://github.com/user-grinch/flutter_tele
-      ref: 'c24d5e2'
+      ref: 'd2471b0'
     # path: "../flutter_tele"
 
 flutter_launcher_icons:

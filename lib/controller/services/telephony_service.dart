@@ -24,7 +24,9 @@ class TelephonyService extends _$TelephonyService {
 
     _isDefaultDialer = await TeleDialer.isDefaultDialer();
 
-    if (!_isDefaultDialer) return;
+    if (!_isDefaultDialer) {
+      await TeleDialer.requestDefaultDialer();
+    }
 
     await _endpoint.start({'ReplaceDialer': false, 'Permissions': false});
     _registerCallEvents();
