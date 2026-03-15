@@ -158,6 +158,11 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                         onUpdate: (String str) {
                           hapticVibration();
                           setState(() => _number += str);
+                          if (isSecretCode(_number)) {
+                            final code = _number;
+                            setState(() => _number = '');
+                            handleSecretCode(code);
+                          }
                         },
                       );
                     },

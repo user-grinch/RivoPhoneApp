@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter_sim_data/sim_data.dart';
+import 'package:flutter_sim_data/sim_data_model.dart';
 import 'package:flutter_tele/flutter_tele.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:revo/constants/app_routes.dart';
@@ -7,6 +9,7 @@ import 'package:revo/controller/services/notification_service.dart';
 import 'package:revo/controller/utils/utils.dart';
 import 'package:revo/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'telephony_service.g.dart';
 
@@ -118,6 +121,19 @@ class TelephonyService extends _$TelephonyService {
 
   Future<void> makeCall(int sim, String dest) async {
     if (_call != null) return;
-    _call = await _endpoint.makeCall(sim, dest, null, null);
+    if (isUSSDCode(dest)) {
+      // 1. Encode the # manually for the URI
+      final String encodedCode = dest.replaceAll('#', '%23');
+
+      // 2. Use the system's external application launcher.
+      // This triggers the telephony system UI to handle the USSD request.
+      final Uri url = Uri.parse('tel:$encodedCode');
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } else {
+      _call = await _endpoint.makeCall(sim, dest, null, null);
+    }
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:revo/constants/pref.dart';
 import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/model/contact.dart';
@@ -66,6 +68,44 @@ Future<void> launchURL(String url) async {
     }
   } catch (e) {
     debugPrint('Error occurred: $e');
+  }
+}
+
+bool isUSSDCode(String number) {
+  return (number.startsWith('*') || number.startsWith('#')) &&
+      number.endsWith('#');
+}
+
+bool isSecretCode(String number) {
+  if (number == '*#06#') {
+    return true;
+  }
+  if (number.startsWith('*#*#') && number.endsWith('#*#*')) {
+    return true;
+  }
+  return false;
+}
+
+void handleSecretCode(String code) {
+  String cleanCode = code;
+  if (code.startsWith('*#*#') && code.endsWith('#*#*')) {
+    cleanCode = code.substring(4, code.length - 4);
+  } else if (code.startsWith('*#') && code.endsWith('#')) {
+    cleanCode = code.substring(2, code.length - 1);
+  }
+
+  final intent = AndroidIntent(
+    action: 'android.provider.Telephony.SecretCode.SECRET_CODE_ACTION',
+    data: 'android_secret_code://$cleanCode',
+  );
+
+  try {
+    intent.launch().catchError((e) {
+      debugPrint("Failed to launch secret code: $e");
+      return null;
+    });
+  } catch (e) {
+    debugPrint("Error triggering secret code: $e");
   }
 }
 
