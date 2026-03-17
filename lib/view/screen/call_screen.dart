@@ -14,6 +14,7 @@ import 'package:revo/model/contact.dart';
 import 'package:revo/view/components/action_btn.dart';
 import 'package:revo/view/components/call_status_badge.dart';
 import 'package:revo/view/components/circle_profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CallScreen extends StatefulHookConsumerWidget {
   const CallScreen({super.key});
@@ -239,7 +240,15 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                 ),
               const Spacer(flex: 3),
               ButtonM3E(
-                onPressed: () {},
+                onPressed: () async {
+                  final Uri smsLaunchUri = Uri(
+                    scheme: 'sms',
+                    path: displayNumber,
+                  );
+                  if (await canLaunchUrl(smsLaunchUri)) {
+                    await launchUrl(smsLaunchUri);
+                  }
+                },
                 style: ButtonM3EStyle.tonal,
                 size: ButtonM3ESize.md,
                 label: const Text("Message"),
