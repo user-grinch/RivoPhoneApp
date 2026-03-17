@@ -25,8 +25,6 @@ class DialPadView extends ConsumerStatefulWidget {
 }
 
 class _DialPadViewState extends ConsumerState<DialPadView> {
-  String _number = '';
-
   late final ScrollController _controller;
   late final FocusNode _focusNode;
 
@@ -83,6 +81,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
   Widget build(BuildContext context) {
     final simCards = ref.watch(getSimInfoProvider);
     final colorScheme = context.colorScheme;
+    String number = ref.watch(dialpadNumberProvider);
 
     return Scaffold(
       appBar: AppBarComponent("Dialpad"),
@@ -97,7 +96,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                   children: [
                     MatchedView(
                       scrollController: _controller,
-                      searchText: _number,
+                      searchText: number,
                     ),
                     ScrollToTopButton(
                       controller: _controller,
@@ -118,14 +117,14 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                   const SizedBox(height: 10),
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    height: _number.isNotEmpty ? 70 : 30,
+                    height: number.isNotEmpty ? 70 : 30,
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       reverse: true,
                       child: Text(
-                        _number,
+                        number,
                         style: GoogleFonts.outfit(
                           fontSize: 40,
                           fontWeight: FontWeight.w500,
@@ -157,10 +156,13 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                             : null,
                         onUpdate: (String str) {
                           hapticVibration();
-                          setState(() => _number += str);
-                          if (isSecretCode(_number)) {
-                            final code = _number;
-                            setState(() => _number = '');
+                          number += str;
+                          ref
+                              .read(dialpadNumberProvider.notifier)
+                              .update(number);
+                          if (isSecretCode(number)) {
+                            final code = number;
+                            ref.read(dialpadNumberProvider.notifier).update('');
                             handleSecretCode(code);
                           }
                         },
@@ -175,7 +177,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                       children: [
                         SizedBox(
                           width: 56,
-                          child: _number.isNotEmpty
+                          child: number.isNotEmpty
                               ? ActionIconButton(
                                   FluentIcons.person_add_24_regular,
                                   size: 48,
@@ -183,7 +185,7 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                                     hapticVibration();
                                     ref
                                         .read(contactServiceProvider.notifier)
-                                        .createNewContact(number: _number);
+                                        .createNewContact(number: number);
                                   },
                                 )
                               : const SizedBox.shrink(),
@@ -196,28 +198,28 @@ class _DialPadViewState extends ConsumerState<DialPadView> {
                             simCards.whenData((value) => SimPicker(
                                     context: context,
                                     simCards: value,
-                                    number: _number)
+                                    number: number)
                                 .show());
                           },
                         ),
                         SizedBox(
                           width: 56,
-                          child: _number.isNotEmpty
+                          child: number.isNotEmpty
                               ? ActionIconButton(
                                   FluentIcons.arrow_left_24_regular,
                                   size: 48,
                                   onPressed: () {
                                     hapticVibration();
-                                    setState(() {
-                                      if (_number.isNotEmpty) {
-                                        _number = _number.substring(
-                                            0, _number.length - 1);
-                                      }
-                                    });
+                                    ref
+                                        .read(dialpadNumberProvider.notifier)
+                                        .update(number.substring(
+                                            0, number.length - 1));
                                   },
                                   onLongPress: () {
                                     HapticFeedback.heavyImpact();
-                                    setState(() => _number = '');
+                                    ref
+                                        .read(dialpadNumberProvider.notifier)
+                                        .update('');
                                   },
                                 )
                               : const SizedBox.shrink(),

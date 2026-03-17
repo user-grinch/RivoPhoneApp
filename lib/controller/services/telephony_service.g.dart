@@ -41,7 +41,7 @@ final class TelephonyServiceProvider
   }
 }
 
-String _$telephonyServiceHash() => r'012eba0e38f2f9de72ea6e997de80c141e9f805d';
+String _$telephonyServiceHash() => r'19fab763a67e1e340f77bb137230602f14db3b63';
 
 abstract class _$TelephonyService extends $Notifier<CallState> {
   CallState build();

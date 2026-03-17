@@ -1,4 +1,5 @@
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
+import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -11,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:revo/controller/services/contact_service.dart';
+import 'package:revo/controller/services/mobile_service.dart';
 import 'package:revo/controller/services/notification_service.dart';
 import 'package:revo/controller/services/pref_service.dart';
 import 'package:revo/controller/services/telephony_service.dart';
@@ -58,9 +60,42 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
+  final _appLinks = AppLinks();
+
   @override
   void initState() {
     super.initState();
+    initDeepLinks();
+  }
+
+  void initDeepLinks() async {
+    final initialLink = await _appLinks.getInitialLink();
+    if (initialLink != null) {
+      _handlePhoneUri(initialLink);
+    }
+
+    _appLinks.uriLinkStream.listen((uri) {
+      _handlePhoneUri(uri);
+    });
+  }
+
+  void _handlePhoneUri(Uri uri) {
+    if (uri.scheme == 'tel') {
+      String phoneNumber = uri.path;
+      ref.read(dialpadNumberProvider.notifier).update(phoneNumber);
+
+      bool isCurrent = false;
+      gNavigatorKey.currentState?.popUntil((route) {
+        if (route.settings.name == AppRoutes.dialpadRoute) {
+          isCurrent = true;
+        }
+        return true;
+      });
+
+      if (!isCurrent) {
+        gNavigatorKey.currentState?.pushNamed(AppRoutes.dialpadRoute);
+      }
+    }
   }
 
   Widget build(BuildContext context) {

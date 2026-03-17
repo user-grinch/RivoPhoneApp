@@ -35,3 +35,13 @@ class DefaultSim extends _$DefaultSim {
     SharedPrefService().saveInt(PREF_DEFAULT_SIM, value);
   }
 }
+
+@riverpod
+class DialpadNumber extends _$DialpadNumber {
+  @override
+  String build() => '';
+
+  void update(String value) {
+    state = value;
+  }
+}

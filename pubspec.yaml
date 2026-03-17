@@ -47,6 +47,7 @@ dependencies:
     git:
       url: https://github.com/user-grinch/flutter_tele
       ref: 'd2471b0'
+  app_links: ^7.0.0
   # ussd_advanced_flutter: ^1.0.0
     # path: "../flutter_tele"
 

@@ -87,3 +87,49 @@ abstract class _$DefaultSim extends $Notifier<int> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(DialpadNumber)
+final dialpadNumberProvider = DialpadNumberProvider._();
+
+final class DialpadNumberProvider
+    extends $NotifierProvider<DialpadNumber, String> {
+  DialpadNumberProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'dialpadNumberProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$dialpadNumberHash();
+
+  @$internal
+  @override
+  DialpadNumber create() => DialpadNumber();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$dialpadNumberHash() => r'e20e0d96cdf1494ee4128251b3d1c4467e5793c8';
+
+abstract class _$DialpadNumber extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<String, String>, String, Object?, Object?>;
+    element.handleCreate(ref, build);
+  }
+}

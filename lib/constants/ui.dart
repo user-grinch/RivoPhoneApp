@@ -1,11 +1,7 @@
-const String version = "1.2";
-const String buildNumber = "20260103";
-const String changelog =
-    "• Revamped the user interface for a smoother experience\n"
-    "• Upgraded engine to Flutter v3.38\n"
-    "• Migrated state management entirely to Riverpod\n"
-    "• Added call log grouping for better organization"
-    "• Added call log filters"
+const String version = "1.3";
+const String buildNumber = "20260317";
+const String changelog = "• Revamped the U & UX experience\n"
+    "• Implented an actual call screen\n"
     "• Fixed numerous bugs";
 final String githubUrl = "https://github.com/user-grinch/Rivo";
 final String patreonUrl = "https://www.patreon.com/grinch_";
