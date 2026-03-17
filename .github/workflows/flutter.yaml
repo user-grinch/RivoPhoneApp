@@ -28,26 +28,6 @@ jobs:
       - name: Build APKs
         run: flutter build apk --release --split-per-abi
 
-      - name: Delete existing release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: preview
-          allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
-          skipIfReleaseExists: false
-          token: ${{ secrets.TOKEN }}
-
-      - name: Delete existing tag
-        run: |
-          git tag -d preview || true
-          git push origin :refs/tags/preview || true
-
-      - name: Create tag
-        run: |
-          git tag preview
-          git push origin preview
-
       - name: Generate SHA256 checksums
         run: |
           cd build/app/outputs/apk/release
@@ -56,11 +36,17 @@ jobs:
             sha256sum "$f" > "$f.sha256"
           done
 
+      - name: Delete old release and tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run: gh release delete preview --cleanup-tag -y || true
+
       - name: Publish Release
         uses: ncipollo/release-action@v1
         with:
           tag: preview
           name: Preview Build
+          commit: ${{ github.sha }} 
           artifacts: |
             build/app/outputs/apk/release/*.apk
             build/app/outputs/apk/release/*.sha256
