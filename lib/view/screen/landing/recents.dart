@@ -65,13 +65,13 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
 
     return callLogsAsync.when(
       data: (logs) {
-        // if (logs.isEmpty) {
-        return EmptyView(
-          icon: FluentIcons.phone_24_regular,
-          title: 'No call logs found',
-          subtitle: 'Your recent calls will appear here.',
-        );
-        // }
+        if (logs.isEmpty) {
+          return EmptyView(
+            icon: FluentIcons.phone_24_regular,
+            title: 'No call logs found',
+            subtitle: 'Your recent calls will appear here.',
+          );
+        }
 
         final groupedLogs = groupCallLogs(logs, callTypeFilter);
 
