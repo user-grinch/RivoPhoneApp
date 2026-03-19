@@ -491,8 +491,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: d2471b0
-      resolved-ref: d2471b0d832f61c8b07f7e475ffd34e9f6dc7ce6
+      ref: aba2285
+      resolved-ref: aba228579793fb6c9a5f32fdb2a6f531ff886477
       url: "https://github.com/user-grinch/flutter_tele"
     source: git
     version: "2.0.5+106"

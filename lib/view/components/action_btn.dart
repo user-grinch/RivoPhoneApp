@@ -60,54 +60,47 @@ class _CallActionButtonState extends State<CallActionButton> {
           isPressed ? BorderRadius.circular(24) : BorderRadius.circular(36);
     }
 
-    return GestureDetector(
-      onTapDown: (_) {
-        if (!widget.toggleable) {
-          setState(() => isPressed = true);
-        }
-      },
-      onTapUp: (_) {
-        if (!widget.toggleable) {
-          setState(() => isPressed = false);
-        }
-      },
-      onTapCancel: () {
-        if (!widget.toggleable) {
-          setState(() => isPressed = false);
-        }
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.fastOutSlowIn,
-        height: 72,
-        width: widget.isSuperLarge ? double.infinity : null,
-        padding: EdgeInsets.symmetric(horizontal: showText ? 32 : 24),
-        decoration: BoxDecoration(
-          color: widget.backgroundColor,
-          borderRadius: currentRadius,
-        ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.fastOutSlowIn,
+      height: 72,
+      width: widget.isSuperLarge ? double.infinity : null,
+      decoration: BoxDecoration(
+        color: widget.backgroundColor,
+        borderRadius: currentRadius,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
         child: InkWell(
-          borderRadius: currentRadius,
           onTap: _handleTap,
-          child: Row(
-            mainAxisSize:
-                widget.isSuperLarge ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(widget.icon, color: widget.foregroundColor, size: 28),
-              if (showText) ...[
-                const SizedBox(width: 12),
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    color: widget.foregroundColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+          onHighlightChanged: (isHighlighted) {
+            if (!widget.toggleable) {
+              setState(() => isPressed = isHighlighted);
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: showText ? 32 : 24),
+            child: Row(
+              mainAxisSize:
+                  widget.isSuperLarge ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(widget.icon, color: widget.foregroundColor, size: 28),
+                if (showText) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: widget.foregroundColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

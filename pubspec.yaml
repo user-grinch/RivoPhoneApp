@@ -46,10 +46,10 @@ dependencies:
   flutter_tele: 
     git:
       url: https://github.com/user-grinch/flutter_tele
-      ref: 'd2471b0'
-  app_links: ^7.0.0
-  # ussd_advanced_flutter: ^1.0.0
+      ref: 'aba2285'
     # path: "../flutter_tele"
+
+  app_links: ^7.0.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
