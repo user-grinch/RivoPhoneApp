@@ -13,6 +13,7 @@ import 'package:revo/model/call_type.dart';
 import 'package:revo/model/group_call_log.dart';
 
 import 'package:revo/view/components/action_icon_btn.dart';
+import 'package:revo/view/components/empty_view.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/components/sim_picker.dart';
 import 'package:revo/view/components/circle_profile.dart';
@@ -64,12 +65,13 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
 
     return callLogsAsync.when(
       data: (logs) {
-        if (logs.isEmpty) {
-          return ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: [_buildEmptyState(context)],
-          );
-        }
+        // if (logs.isEmpty) {
+        return EmptyView(
+          icon: FluentIcons.phone_24_regular,
+          title: 'No call logs found',
+          subtitle: 'Your recent calls will appear here.',
+        );
+        // }
 
         final groupedLogs = groupCallLogs(logs, callTypeFilter);
 
@@ -290,24 +292,6 @@ class _RecentsViewState extends ConsumerState<RecentsView> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 100),
-        child: Column(
-          children: [
-            Icon(FluentIcons.phone_24_regular,
-                size: 64, color: context.colorScheme.primary.withOpacity(0.2)),
-            const SizedBox(height: 16),
-            Text('No call logs found.',
-                style: GoogleFonts.outfit(
-                    fontSize: 18, color: context.colorScheme.onSurfaceVariant)),
-          ],
-        ),
-      ),
     );
   }
 }

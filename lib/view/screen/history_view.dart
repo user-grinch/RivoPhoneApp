@@ -11,6 +11,7 @@ import 'package:revo/model/call_log.dart';
 import 'package:revo/model/call_type.dart';
 import 'package:revo/controller/services/calllog_service.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
+import 'package:revo/view/components/empty_view.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/view/screen/settings/appbarcomponent.dart';
 
@@ -67,7 +68,13 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
               .filterByNumber(widget.numbers);
 
           if (filteredLogs.isEmpty) {
-            return _buildEmptyState(context);
+            return EmptyView(
+              icon: FluentIcons.history_24_regular,
+              title: 'No History Found',
+              subtitle:
+                  'Call logs for these numbers will appear here once they are available.',
+              iconTint: context.colorScheme.primary.withOpacity(0.6),
+            );
           }
 
           return Stack(
@@ -157,51 +164,6 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    final colorScheme = context.colorScheme;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer.withOpacity(0.3),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              FluentIcons.history_24_regular,
-              size: 64,
-              color: colorScheme.primary.withOpacity(0.4),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'No History Found',
-            style: GoogleFonts.outfit(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
-              'Call logs for these numbers will appear here once they are available.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.4,
-                color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

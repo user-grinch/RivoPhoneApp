@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:revo/controller/extensions/theme.dart';
+import 'package:revo/view/components/empty_view.dart';
 import 'package:revo/view/components/matched_view.dart';
 import 'package:revo/view/components/action_icon_btn.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
@@ -106,7 +107,12 @@ class _SearchViewState extends State<SearchView> {
             ),
             Expanded(
               child: _searchQuery.isEmpty
-                  ? _buildInitialState(context)
+                  ? EmptyView(
+                      icon: FluentIcons.search_24_regular,
+                      title: 'Search Contacts',
+                      subtitle: 'Start typing to find someone...',
+                      iconTint: colorScheme.primary.withOpacity(0.3),
+                    )
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Stack(
@@ -141,44 +147,6 @@ class _SearchViewState extends State<SearchView> {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(icon, size: 22, color: context.colorScheme.primary),
-      ),
-    );
-  }
-
-  Widget _buildInitialState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: context.colorScheme.secondaryContainer.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              FluentIcons.search_24_regular,
-              size: 64,
-              color: context.colorScheme.primary.withOpacity(0.3),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Search Contacts',
-            style: GoogleFonts.outfit(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onSurfaceVariant.withOpacity(0.8),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Start typing to find someone...',
-            style: GoogleFonts.outfit(
-              color: context.colorScheme.onSurfaceVariant.withOpacity(0.5),
-            ),
-          ),
-        ],
       ),
     );
   }

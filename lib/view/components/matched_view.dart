@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:revo/controller/extensions/theme.dart';
 import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/view/components/contact_tile.dart';
+import 'package:revo/view/components/empty_view.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 
 class MatchedView extends ConsumerWidget {
@@ -16,46 +17,10 @@ class MatchedView extends ConsumerWidget {
   });
 
   Widget _buildEmpty(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceVariant.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(24),
-              child: Icon(
-                Icons.phone_outlined,
-                size: 48,
-                color: colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "No contacts found",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Use the keypad to dial a number",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-                  ),
-            ),
-          ],
-        ),
-      ),
+    return EmptyView(
+      icon: Icons.phone_outlined,
+      title: 'No contacts found',
+      subtitle: 'Use the keypad to dial a number',
     );
   }
 

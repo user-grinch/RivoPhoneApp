@@ -7,6 +7,7 @@ import 'package:revo/controller/services/contact_service.dart';
 import 'package:revo/model/contact.dart';
 import 'package:revo/view/components/center_text.dart';
 import 'package:revo/view/components/circle_profile.dart';
+import 'package:revo/view/components/empty_view.dart';
 import 'package:revo/view/components/scroll_to_top.dart';
 import 'package:revo/constants/app_routes.dart';
 import 'package:sticky_az_list/sticky_az_list.dart';
@@ -74,16 +75,13 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
   }
 
   Widget _buildEmptyState() {
-    return ExpressiveRefreshIndicator(
-      onRefresh: () async =>
-          ref.read(contactServiceProvider.notifier).refresh(),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: const [
-          SizedBox(height: 100),
-          CenterText(text: 'No contacts found'),
-        ],
-      ),
+    return EmptyView(
+      icon: Icons.contacts_rounded,
+      title: 'No contacts yet',
+      subtitle: 'Pull down to refresh',
+      onRefresh: () async {
+        ref.read(contactServiceProvider.notifier).refresh();
+      },
     );
   }
 
@@ -96,7 +94,6 @@ class _ContactsViewState extends ConsumerState<ContactsView> {
   }) {
     final String currentTag = contact.tag;
 
-    // To determine borders, we check the sorted order StickyAzList uses
     final bool isFirstInSection =
         index == 0 || (items[index - 1] as Contact).tag != currentTag;
     final bool isLastInSection = index == items.length - 1 ||
