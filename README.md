@@ -49,9 +49,9 @@ It focuses on speed, simplicity, and a clean native Android experience for handl
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.jpeg" width="300">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.jpeg" width="300">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.jpeg" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.jpg" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.jpg" width="300">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.jpg" width="300">
 
 </details>
 
