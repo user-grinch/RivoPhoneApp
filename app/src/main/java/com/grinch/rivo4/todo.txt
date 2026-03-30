@@ -1,4 +1,0 @@
-1. Create and Edit contacts pages still don't look aligned with rest of the app
-2. Also those pages should have ability to choose profile picture and also remove it when selected
-3. Material you primary colors isn't really chaning anything lol. It should support material you from wallpaper or when not selected change to the color selected
-4. There should be a QR Code option in the contact details page

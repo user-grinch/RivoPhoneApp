@@ -1,7 +1,7 @@
 package com.grinch.rivo4
 
-val APP_VERSION = "1.0"
-val BUILD_NUMBER = "20260130"
+val APP_VERSION = "1.4"
+val BUILD_NUMBER = "20260401"
 val PATREON_URL = "https://www.patreon.com/c/GrinchDev"
 val DISCORD_URL = "https://discord.gg/NtEvU3726e"
 
