@@ -1,4 +1,3 @@
-````markdown
 # Rivo
 
 **Rivo** is a modern, feature-rich dialer app built with **Jetpack Compose**.  
