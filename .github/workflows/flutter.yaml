@@ -1,0 +1,59 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Release APK & AAB (unsigned)
+        run: |
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
+
+      - name: Collect outputs
+        run: |
+          mkdir outputs
+          find . -type f \( -name "*.apk" -o -name "*.aab" \) -path "*/release/*" -exec cp {} outputs/ \;
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd outputs
+          sha256sum * > SHA256SUMS.txt
+          for f in *; do
+            sha256sum "$f" > "$f.sha256"
+          done
+
+      - name: Delete old release and tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run: gh release delete preview --cleanup-tag -y || true
+
+      - name: Publish Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: preview
+          name: Preview Build
+          commit: ${{ github.sha }}
+          artifacts: outputs/*
+          token: ${{ secrets.TOKEN }}
