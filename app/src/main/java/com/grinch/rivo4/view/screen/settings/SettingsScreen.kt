@@ -73,7 +73,7 @@ fun SettingsScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Donation Section
+            
             item {
                 RivoExpressiveCard(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -125,7 +125,7 @@ fun SettingsScreen(
                 }
             }
 
-            // General Settings
+            
             item {
                 RivoExpressiveCard {
                     RivoListItem(
@@ -144,7 +144,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Advanced Settings
+            
             item {
                 RivoExpressiveCard {
                     RivoListItem(
@@ -163,7 +163,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Information Section
+            
             item {
                 RivoExpressiveCard {
                     RivoListItem(

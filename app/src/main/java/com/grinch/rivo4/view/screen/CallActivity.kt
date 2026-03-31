@@ -189,7 +189,7 @@ fun ExpressiveCallScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Dynamic Blurred Background
+        
         Box(modifier = Modifier.fillMaxSize()) {
             if (!photoUri.isNullOrEmpty()) {
                 AsyncImage(
@@ -225,7 +225,7 @@ fun ExpressiveCallScreen(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Caller Card
+            
             RivoExpressiveCard(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f),
                 shape = RoundedCornerShape(48.dp)
@@ -271,7 +271,7 @@ fun ExpressiveCallScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Main Action Card
+            
             AnimatedVisibility(
                 visible = callState == Call.STATE_RINGING,
                 enter = fadeIn() + expandVertically(),
@@ -359,7 +359,7 @@ fun ExpressiveCallScreen(
                         
                         Spacer(modifier = Modifier.height(32.dp))
                         
-                        // Large End Call Button - Full Pill
+                        
                         Surface(
                             onClick = { 
                                 try {
@@ -409,7 +409,7 @@ fun HorizontalSwipeToAnswer(
             .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         contentAlignment = Alignment.Center
     ) {
-        // Cues
+        
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -426,7 +426,7 @@ fun HorizontalSwipeToAnswer(
             }
         }
 
-        // Draggable Button - Pill shape
+        
         Box(
             modifier = Modifier
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }

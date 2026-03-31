@@ -17,10 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * A reusable expressive card following MD3 Expressive guidelines.
- * Flat design: No shadows, using surface containers for depth.
- */
+
 @Composable
 fun RivoExpressiveCard(
     modifier: Modifier = Modifier,

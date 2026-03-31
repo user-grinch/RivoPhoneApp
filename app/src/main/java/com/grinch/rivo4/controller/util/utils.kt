@@ -64,7 +64,7 @@ fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
         telecomManager.placeCall(uri, extras)
     } else {
-        // Fallback to dial intent if permission is missing
+        
         val intent = Intent(Intent.ACTION_DIAL, uri)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)

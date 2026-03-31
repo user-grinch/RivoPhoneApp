@@ -36,7 +36,7 @@ class CallLogRepository(
             val dateIdx = cursor.getColumnIndex(CallLog.Calls.DATE)
             val durationIdx = cursor.getColumnIndex(CallLog.Calls.DURATION)
 
-            // Cache: number -> (name, photoUri, contactId)
+            
             val contactInfoCache =
                 mutableMapOf<String, Triple<String?, String?, Long?>>()
 
@@ -57,7 +57,7 @@ class CallLogRepository(
 
                 val lastEntry = callLogs.lastOrNull()
                 if (lastEntry != null && lastEntry.number == number) {
-                    // Group consecutive calls from the same number
+                    
                     val updatedEntry = lastEntry.copy(
                         types = lastEntry.types + type
                     )

@@ -160,7 +160,7 @@ class ContactsRepository(private val contentResolver: ContentResolver) : IContac
         val ops = ArrayList<ContentProviderOperation>()
         
         if (contact.id.isEmpty() || contact.id == "0") {
-            // New Contact
+            
             val rawContactIndex = ops.size
             ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                 .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
@@ -182,7 +182,7 @@ class ContactsRepository(private val contentResolver: ContentResolver) : IContac
                     .build())
             }
         } else {
-            // Update Existing - Simplified: only updates name and first number for now
+            
             ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
                 .withSelection("${ContactsContract.Data.CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?", 
                     arrayOf(contact.id, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE))

@@ -181,7 +181,7 @@ fun ContactEditScreen(
                 }
             }
 
-            // Name Card
+            
             item {
                 RivoSectionHeader(title = "Identity")
                 RivoExpressiveCard {
@@ -200,7 +200,7 @@ fun ContactEditScreen(
                 }
             }
 
-            // Phone Numbers Card
+            
             item {
                 RivoSectionHeader(title = "Phone Numbers")
                 RivoExpressiveCard {
@@ -226,7 +226,7 @@ fun ContactEditScreen(
                 }
             }
 
-            // Emails Card
+            
             item {
                 RivoSectionHeader(title = "Emails")
                 RivoExpressiveCard {
@@ -252,7 +252,7 @@ fun ContactEditScreen(
                 }
             }
 
-            // Addresses Card
+            
             item {
                 RivoSectionHeader(title = "Address")
                 RivoExpressiveCard {

@@ -62,7 +62,7 @@ fun AZListScroll(
         var currentIndex = 0
         grouped.forEach { (char, _) ->
             map[char] = currentIndex
-            currentIndex += 2 // header + content
+            currentIndex += 2 
         }
         map
     }

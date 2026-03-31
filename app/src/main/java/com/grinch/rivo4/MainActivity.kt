@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Note: handleIntent is called by LaunchedEffect in setContent
+        
     }
 
     private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController) {

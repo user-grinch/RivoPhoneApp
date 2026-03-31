@@ -55,7 +55,7 @@
                 <data android:scheme="tel" />
             </intent-filter>
 
-            <!-- View Contact -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -64,7 +64,7 @@
                 <data android:mimeType="vnd.android.cursor.item/person" />
             </intent-filter>
 
-            <!-- Add/Insert Contact -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -73,7 +73,7 @@
                 <data android:mimeType="vnd.android.cursor.dir/raw_contact" />
             </intent-filter>
 
-            <!-- Edit Contact -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />

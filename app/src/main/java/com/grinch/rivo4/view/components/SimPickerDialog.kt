@@ -50,7 +50,7 @@ fun SimPickerDialog(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .wrapContentHeight()
-                    .padding(top = 100.dp), // Push it towards the bottom a bit
+                    .padding(top = 100.dp), 
                 shape = RoundedCornerShape(32.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerLow
             ) {
