@@ -6,15 +6,18 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.telecom.Call
 import android.telecom.CallAudioState
 import android.telecom.InCallService
 import android.telecom.VideoProfile
 import androidx.core.app.NotificationCompat
+import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.CallActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.android.ext.android.inject
 
 data class CallSession(
     val call: Call,
@@ -23,6 +26,8 @@ data class CallSession(
 )
 
 class CallService : InCallService() {
+
+    private val contactsRepository: IContactsRepository by inject()
 
     companion object {
         private const val CHANNEL_ID = "call_channel"
@@ -127,7 +132,20 @@ class CallService : InCallService() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        val number = call.details?.handle?.schemeSpecificPart ?: "Unknown"
+        val handle = call.details.handle
+        val number = handle?.schemeSpecificPart ?: ""
+        
+        val contact = if (number.isNotEmpty()) {
+            try {
+                contactsRepository.getContactByNumber(number)
+            } catch (e: Exception) { null }
+        } else null
+        
+        val contactName = when {
+            contact != null -> contact.name
+            number.isNotEmpty() -> number
+            else -> "Unknown Number"
+        }
         
         val fullScreenIntent = Intent(this, CallActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -140,23 +158,33 @@ class CallService : InCallService() {
         val declineIntent = Intent(this, CallService::class.java).apply { action = "DECLINE_CALL" }
         val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val person = androidx.core.app.Person.Builder()
+            .setName(contactName)
+            .setImportant(true)
+            .build()
+
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.sym_action_call)
-            .setContentTitle(if (call.state == Call.STATE_RINGING) "Incoming call" else "Active call")
-            .setContentText(number)
+            .setContentTitle(contactName)
+            .setContentText(if (call.state == Call.STATE_RINGING) "Incoming call" else "Active call")
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setFullScreenIntent(fullScreenPendingIntent, true)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
-        if (call.state == Call.STATE_RINGING) {
-            builder.addAction(android.R.drawable.ic_menu_call, "Answer", answerPendingIntent)
-            builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Decline", declinePendingIntent)
-        } else {
-            builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Hang up", declinePendingIntent)
-        }
+            .setAutoCancel(false)
+            .setSilent(call.state != Call.STATE_RINGING)
+            .setDefaults(if (call.state == Call.STATE_RINGING) NotificationCompat.DEFAULT_ALL else 0)
+            .setStyle(
+                if (call.state == Call.STATE_RINGING) {
+                    NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent)
+                } else {
+                    NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
+                }
+            )
+            .setColor(Color.parseColor("#6750A4"))
+            .setColorized(true)
 
         val notification = builder.build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

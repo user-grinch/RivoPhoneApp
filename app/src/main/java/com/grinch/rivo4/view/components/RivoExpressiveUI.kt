@@ -26,12 +26,13 @@ fun RivoExpressiveCard(
     modifier: Modifier = Modifier,
     title: String? = null,
     icon: ImageVector? = null,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(28.dp),
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = shape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor
         ),
@@ -71,9 +72,6 @@ fun RivoExpressiveCard(
     }
 }
 
-/**
- * A standard section header for lists.
- */
 @Composable
 fun RivoSectionHeader(
     title: String,
@@ -90,9 +88,6 @@ fun RivoSectionHeader(
     )
 }
 
-/**
- * An expressive button that changes shape when pressed.
- */
 @Composable
 fun RivoExpressiveButton(
     onClick: () -> Unit,
@@ -134,9 +129,6 @@ fun RivoExpressiveButton(
     }
 }
 
-/**
- * A reusable list item for expressive designs.
- */
 @Composable
 fun RivoListItem(
     headline: String,

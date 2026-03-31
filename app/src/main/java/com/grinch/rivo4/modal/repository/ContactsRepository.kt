@@ -201,4 +201,31 @@ class ContactsRepository(private val contentResolver: ContentResolver) : IContac
         val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, contactId)
         contentResolver.delete(uri, null, null)
     }
+
+    override fun getContactByNumber(number: String): Contact? {
+        val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
+        val projection = arrayOf(
+            ContactsContract.PhoneLookup._ID,
+            ContactsContract.PhoneLookup.DISPLAY_NAME,
+            ContactsContract.PhoneLookup.PHOTO_URI,
+            ContactsContract.PhoneLookup.STARRED
+        )
+
+        contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val id = cursor.getString(0)
+                val name = cursor.getString(1)
+                val photoUri = cursor.getString(2)
+                val starred = cursor.getInt(3) == 1
+                return Contact(
+                    id = id,
+                    name = name,
+                    photoUri = photoUri,
+                    isFavorite = starred,
+                    phoneNumbers = listOf(number)
+                )
+            }
+        }
+        return null
+    }
 }
