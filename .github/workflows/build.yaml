@@ -23,13 +23,20 @@ jobs:
           java-version: '17'
           cache: gradle
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Release APK & AAB (unsigned)
+      - name: Build Signed Release APK & AAB
         run: |
-          ./gradlew assembleRelease
-          ./gradlew bundleRelease
+          ./gradlew assembleRelease bundleRelease \
+            -Pandroid.injected.signing.store.file=keystore.jks \
+            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Collect outputs
         run: |
@@ -47,7 +54,8 @@ jobs:
       - name: Delete old release and tag
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        run: gh release delete preview --cleanup-tag -y || true
+        run: |
+          gh release delete preview --cleanup-tag -y || true
 
       - name: Publish Release
         uses: ncipollo/release-action@v1
