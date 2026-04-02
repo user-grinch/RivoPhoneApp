@@ -62,10 +62,12 @@ class CallActivity : ComponentActivity() {
 
     private val contactsViewModel: ContactsViewModel by viewModel()
     private val contactsRepo: IContactsRepository by inject()
+    private var proximityWakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showWhenLockedAndTurnScreenOn()
+        setupProximitySensor()
         enableEdgeToEdge()
 
         setContent {
@@ -74,9 +76,19 @@ class CallActivity : ComponentActivity() {
                 val audioState by CallService.audioState.collectAsState()
 
                 val call = session?.call
+                val callState = session?.state
 
-                LaunchedEffect(session) {
-                    if (session == null || session?.state == Call.STATE_DISCONNECTED) {
+                LaunchedEffect(callState) {
+                    when (callState) {
+                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
+                            acquireProximityLock()
+                        }
+                        else -> {
+                            releaseProximityLock()
+                        }
+                    }
+
+                    if (session == null || callState == Call.STATE_DISCONNECTED) {
                         delay(800)
                         finish()
                     }
@@ -120,6 +132,17 @@ class CallActivity : ComponentActivity() {
         }
     }
 
+    private fun setupProximitySensor() {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        if (powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
+            proximityWakeLock = powerManager.newWakeLock(
+                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                "RivoPhoneApp::ProximityWakeLock"
+            )
+        }
+    }
+
     private fun showWhenLockedAndTurnScreenOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -135,6 +158,27 @@ class CallActivity : ComponentActivity() {
                         or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                         or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
             )
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseProximityLock()
+    }
+
+    private fun acquireProximityLock() {
+        proximityWakeLock?.let {
+            if (!it.isHeld) {
+                it.acquire()
+            }
+        }
+    }
+
+    private fun releaseProximityLock() {
+        proximityWakeLock?.let {
+            if (it.isHeld) {
+                it.release()
+            }
         }
     }
 }
