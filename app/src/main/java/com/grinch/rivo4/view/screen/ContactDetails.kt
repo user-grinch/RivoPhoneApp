@@ -1,8 +1,10 @@
 package com.grinch.rivo4.view.screen
 
+import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.QrCodeUtils
@@ -72,6 +75,7 @@ fun ContactDetailsScreen(
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
     
     var showSimPicker by remember { mutableStateOf(false) }
+    var showNumberPicker by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf<String?>(null) }
     var showQrDialog by remember { mutableStateOf(false) }
 
@@ -89,6 +93,32 @@ fun ContactDetailsScreen(
         derivedStateOf {
             listState.firstVisibleItemIndex > 2
         }
+    }
+
+    val initiateCall = { number: String ->
+        val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+            if (accounts.size > 1) {
+                pendingNumber = number
+                showSimPicker = true
+            } else {
+                makeCall(context, number)
+            }
+        } else {
+            makeCall(context, number)
+        }
+    }
+
+    if (showNumberPicker && contact != null) {
+        NumberPickerDialog(
+            numbers = contact.phoneNumbers,
+            onDismissRequest = { showNumberPicker = false },
+            onNumberSelected = { selectedNumber ->
+                showNumberPicker = false
+                initiateCall(selectedNumber)
+            }
+        )
     }
 
     if (showSimPicker && pendingNumber != null) {
@@ -194,14 +224,10 @@ fun ContactDetailsScreen(
                             label = "Call",
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             onClick = {
-                                if (displayPhone != "Unknown") {
-                                    val accounts = telecomManager.callCapablePhoneAccounts
-                                    if (accounts.size > 1) {
-                                        pendingNumber = displayPhone
-                                        showSimPicker = true
-                                    } else {
-                                        makeCall(context, displayPhone)
-                                    }
+                                if (contact != null && contact.phoneNumbers.size > 1) {
+                                    showNumberPicker = true
+                                } else if (displayPhone != "Unknown") {
+                                    initiateCall(displayPhone)
                                 }
                             }
                         )
@@ -233,15 +259,7 @@ fun ContactDetailsScreen(
                                     headline = number,
                                     supporting = "Mobile",
                                     leadingIcon = Icons.Default.Phone,
-                                    onClick = {
-                                        val accounts = telecomManager.callCapablePhoneAccounts
-                                        if (accounts.size > 1) {
-                                            pendingNumber = number
-                                            showSimPicker = true
-                                        } else {
-                                            makeCall(context, number)
-                                        }
-                                    }
+                                    onClick = { initiateCall(number) }
                                 )
                                 if (index < contact.phoneNumbers.size - 1 || contact.emails.isNotEmpty()) {
                                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
@@ -266,15 +284,7 @@ fun ContactDetailsScreen(
                                 headline = phoneNumber,
                                 supporting = "Unknown Number",
                                 leadingIcon = Icons.Default.Phone,
-                                onClick = @androidx.annotation.RequiresPermission(android.Manifest.permission.READ_PHONE_STATE) {
-                                    val accounts = telecomManager.callCapablePhoneAccounts
-                                    if (accounts.size > 1) {
-                                        pendingNumber = phoneNumber
-                                        showSimPicker = true
-                                    } else {
-                                        makeCall(context, phoneNumber)
-                                    }
-                                }
+                                onClick = { initiateCall(phoneNumber) }
                             )
                         }
                     }

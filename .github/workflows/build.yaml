@@ -53,7 +53,7 @@ jobs:
 
       - name: Delete old release and tag
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete preview --cleanup-tag -y || true
 
@@ -64,4 +64,4 @@ jobs:
           name: Preview Build
           commit: ${{ github.sha }}
           artifacts: outputs/*
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
