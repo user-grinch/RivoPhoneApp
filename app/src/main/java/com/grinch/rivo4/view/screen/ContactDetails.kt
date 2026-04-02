@@ -4,7 +4,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.CallLog
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import androidx.compose.animation.animateContentSize
@@ -35,7 +34,6 @@ import androidx.compose.ui.window.Dialog
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.QrCodeUtils
-import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -89,7 +87,7 @@ fun ContactDetailsScreen(
     val scope = rememberCoroutineScope()
     val showButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 5
+            listState.firstVisibleItemIndex > 2
         }
     }
 
@@ -320,7 +318,7 @@ fun ContactDetailsScreen(
                         RivoExpressiveCard(title = "Recent Activity", icon = Icons.Default.History) {
                             Column(modifier = Modifier.animateContentSize()) {
                                 contactLogs.take(3).forEachIndexed { index, log ->
-                                    CallLogRowExpressive(log)
+                                    CallLogTileSimple(log)
                                     if (index < 2 && index < contactLogs.size - 1) {
                                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }
@@ -419,26 +417,4 @@ fun QrCodeDialog(
             }
         }
     }
-}
-
-@Composable
-fun CallLogRowExpressive(log: com.grinch.rivo4.modal.data.CallLogEntry) {
-    val icon = when (log.type) {
-        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-        else -> Icons.Default.Call
-    }
-
-    RivoListItem(
-        headline = when (log.type) {
-            CallLog.Calls.INCOMING_TYPE -> "Incoming"
-            CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
-            CallLog.Calls.MISSED_TYPE -> "Missed"
-            else -> "Call"
-        },
-        supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
-        leadingIcon = icon,
-        onClick = { }
-    )
 }

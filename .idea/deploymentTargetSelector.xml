@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-04-02T19:45:42.883669431Z">
+        <DropdownSelection timestamp="2026-04-02T19:54:27.372708419Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/grinch/.android/avd/Small_Phone.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=GA894X9TMVNNI75P" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -46,7 +46,7 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
     val scope = rememberCoroutineScope()
     val showButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 5
+            listState.firstVisibleItemIndex > 2
         }
     }
 

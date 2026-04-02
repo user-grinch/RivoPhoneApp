@@ -1,8 +1,6 @@
 package com.grinch.rivo4.view.screen
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.provider.CallLog
 import android.telecom.TelecomManager
 import androidx.compose.foundation.layout.*
@@ -13,10 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.CallMade
-import androidx.compose.material.icons.automirrored.filled.CallMissed
-import androidx.compose.material.icons.automirrored.filled.CallReceived
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,16 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.grinch.rivo4.controller.CallLogViewModel
-import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -55,7 +46,7 @@ fun CallLogFullScreen(
     val scope = rememberCoroutineScope()
     val showButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 5
+            listState.firstVisibleItemIndex > 2
         }
     }
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
@@ -158,57 +149,7 @@ fun CallLogFullScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 RivoExpressiveCard {
                                     logsInGroup.forEachIndexed { index, lg ->
-                                        val isMissed = lg.type == CallLog.Calls.MISSED_TYPE
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                RivoListItem(
-                                                    headline = (lg.name ?: lg.number) + if (lg.count > 1) " (${lg.count})" else "",
-                                                    supporting = "${if (lg.name != lg.number) lg.number + " • " else ""}${formatDate(lg.date)}",
-                                                    avatarName = lg.name ?: lg.number,
-                                                    photoUri = lg.photoUri,
-                                                    trailingIcon = when(lg.type) {
-                                                        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-                                                        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-                                                        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-                                                        else -> Icons.Default.Call
-                                                    },
-                                                    onClick = {
-                                                        if (contactId == null && phoneNumber == null) {
-                                                            navigator.navigate(
-                                                                ContactDetailsScreenDestination(
-                                                                    contactId = lg.contactId ?: "null",
-                                                                    phoneNumber = lg.number
-                                                                )
-                                                            )
-                                                        }
-                                                    }
-                                                )
-                                            }
-
-                                            IconButton(
-                                                onClick = {
-                                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                                                        val accounts = telecomManager.callCapablePhoneAccounts
-                                                        if (accounts.size > 1) {
-                                                            pendingNumber = lg.number
-                                                            showSimPicker = true
-                                                        } else {
-                                                            makeCall(context, lg.number)
-                                                        }
-                                                    } else {
-                                                        makeCall(context, lg.number)
-                                                    }
-                                                },
-                                                modifier = Modifier.padding(end = 12.dp)
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.Call,
-                                                    null,
-                                                    tint = if (isMissed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                            }
-                                        }
+                                        CallLogTileSimple(lg)
                                         
                                         if (index < logsInGroup.size - 1) {
                                             HorizontalDivider(

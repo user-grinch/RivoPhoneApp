@@ -302,12 +302,21 @@ fun ExpressiveCallScreen(
                             Call.STATE_HOLDING -> "On hold"
                             else -> "In call"
                         }
-                        
+
+                        if (phoneNumber.isNotEmpty() && !isUnknown) {
+                            Text(
+                                text = phoneNumber,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
                         Text(
-                            text = if (phoneNumber.isNotEmpty() && !isUnknown) "$statusText • $phoneNumber" else statusText,
+                            text = statusText,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary 
-                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

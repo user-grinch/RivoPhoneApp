@@ -42,7 +42,7 @@ fun SearchScreen(
     val scope = rememberCoroutineScope()
     val showButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 5
+            listState.firstVisibleItemIndex > 2
         }
     }
 

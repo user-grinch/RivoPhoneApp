@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -177,56 +176,36 @@ fun CallLogFullContent(
                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                 RivoExpressiveCard {
                                     logsInGroup.forEachIndexed { index, lg ->
-                                        val isMissed = lg.type == CallLog.Calls.MISSED_TYPE
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                RivoListItem(
-                                                    headline = (lg.name ?: lg.number) + if (lg.count > 1) " (${lg.count})" else "",
-                                                    supporting = "${if (lg.name != null && lg.name != lg.number) lg.number + " • " else ""}${formatDate(lg.date)}",
-                                                    avatarName = lg.name ?: lg.number,
-                                                    photoUri = lg.photoUri,
-                                                    trailingIcon = when(lg.type) {
-                                                        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-                                                        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-                                                        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-                                                        else -> Icons.Default.Call
-                                                    },
-                                                    onClick = {
-                                                        navigator.navigate(
-                                                            ContactDetailsScreenDestination(
-                                                                contactId = lg.contactId ?: "null",
-                                                                phoneNumber = lg.number
-                                                            )
-                                                        )
-                                                    }
+                                        CallLogTile(
+                                            log = lg,
+                                            onTileClick = { log ->
+                                                navigator.navigate(
+                                                    ContactDetailsScreenDestination(
+                                                        contactId = log.contactId ?: "null",
+                                                        phoneNumber = log.number
+                                                    )
                                                 )
-                                            }
-                                            
-                                            IconButton(
-                                                onClick = {
-                                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                                                        val accounts = telecomManager.callCapablePhoneAccounts
-                                                        if (accounts.size > 1) {
-                                                            pendingNumber = lg.number
-                                                            showSimPicker = true
-                                                        } else {
-                                                            makeCall(context, lg.number)
-                                                        }
+                                            },
+                                            onButtonClick = { log ->
+                                                val hasPermission =
+                                                    ContextCompat.checkSelfPermission(
+                                                        context,
+                                                        Manifest.permission.READ_PHONE_STATE
+                                                    ) == PackageManager.PERMISSION_GRANTED
+
+                                                if (hasPermission) {
+                                                    val accounts = telecomManager.callCapablePhoneAccounts
+                                                    if (accounts.size > 1) {
+                                                        pendingNumber = log.number
+                                                        showSimPicker = true
                                                     } else {
-                                                        makeCall(context, lg.number)
+                                                        makeCall(context, log.number)
                                                     }
-                                                },
-                                                modifier = Modifier.padding(end = 12.dp)
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.Call, 
-                                                    null, 
-                                                    tint = if (isMissed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
+                                                } else {
+                                                    makeCall(context, log.number)
+                                                }
                                             }
-                                        }
-                                        
+                                        )
                                         if (index < logsInGroup.size - 1) {
                                             HorizontalDivider(
                                                 modifier = Modifier.padding(horizontal = 16.dp),

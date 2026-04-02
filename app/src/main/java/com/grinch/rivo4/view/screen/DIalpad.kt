@@ -21,6 +21,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.PersonAdd
@@ -43,6 +44,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.SimPickerDialog
+import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.components.tiles.SingleTile
 import com.grinch.rivo4.view.components.tiles.TileGroup
 import com.ramcosta.composedestinations.annotation.Destination
@@ -88,8 +90,8 @@ fun DialPadScreen(
                         t9Name.contains(number)
                     } else false
                     matchesNumber || matchesName
-                }.take(3)
-            }
+                }
+            }.take(3)
         }
     }
 
@@ -122,7 +124,17 @@ fun DialPadScreen(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            TopAppBar(
+                title = { Text("Dialpad", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -139,7 +151,7 @@ fun DialPadScreen(
             ) {
                 if (searchResults.isNotEmpty()) {
                     TileGroup(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         searchResults.forEach { contact ->
                             SingleTile(
@@ -159,7 +171,7 @@ fun DialPadScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateContentSize()
-                    .padding(vertical = 24.dp),
+                    .padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -174,7 +186,7 @@ fun DialPadScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                    .padding(bottom = 4.dp, start = 4.dp, end = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {

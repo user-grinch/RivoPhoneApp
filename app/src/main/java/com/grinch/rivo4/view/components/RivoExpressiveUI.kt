@@ -121,7 +121,7 @@ fun RivoExpressiveButton(
         }
         if (label != null) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium)
+            Text(text = label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
         }
     }
 }
