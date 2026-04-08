@@ -1,7 +1,5 @@
 package com.grinch.rivo4.view.screen
 
-
-
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.*
@@ -18,65 +16,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.grinch.rivo4.controller.CallService
-import com.grinch.rivo4.controller.ContactsViewModel
-import com.grinch.rivo4.modal.`interface`.IContactsRepository
-import com.grinch.rivo4.view.components.RivoAvatar
-import com.grinch.rivo4.view.components.RivoExpressiveButton
-import com.grinch.rivo4.view.components.RivoExpressiveCard
-import com.grinch.rivo4.view.theme.Rivo4Theme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.animation.core.Spring.DampingRatioMediumConforms
-import androidx.compose.ui.graphics.vector.ImageVector
-// Ensure these are also present for the other errors:
-import androidx.compose.animation.core.spring
-
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateColorAsState
-
-import android.telecom.Call
-import android.telecom.CallAudioState
-import android.telecom.VideoProfile
-import android.view.HapticFeedbackConstants
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.animation.animateColorAsState // Explicitly added
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -105,16 +44,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.grinch.rivo4.controller.CallService
+import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import com.grinch.rivo4.view.theme.Rivo4Theme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.roundToInt
-
 
 class CallActivity : ComponentActivity() {
 
-    private val contactsViewModel: ContactsViewModel by viewModel()
     private val contactsRepo: IContactsRepository by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
 
@@ -134,12 +74,8 @@ class CallActivity : ComponentActivity() {
 
                 LaunchedEffect(callState) {
                     when (callState) {
-                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
-                            acquireProximityLock()
-                        }
-                        else -> {
-                            releaseProximityLock()
-                        }
+                        Call.STATE_ACTIVE, Call.STATE_DIALING -> acquireProximityLock()
+                        else -> releaseProximityLock()
                     }
 
                     if (session == null || callState == Call.STATE_DISCONNECTED) {
@@ -188,7 +124,6 @@ class CallActivity : ComponentActivity() {
 
     private fun setupProximitySensor() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-
         if (powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
             proximityWakeLock = powerManager.newWakeLock(
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
@@ -221,19 +156,11 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun acquireProximityLock() {
-        proximityWakeLock?.let {
-            if (!it.isHeld) {
-                it.acquire()
-            }
-        }
+        proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
     }
 
     private fun releaseProximityLock() {
-        proximityWakeLock?.let {
-            if (it.isHeld) {
-                it.release()
-            }
-        }
+        proximityWakeLock?.let { if (it.isHeld) it.release() }
     }
 }
 
@@ -249,14 +176,11 @@ fun ExpressiveCallScreen(
 ) {
     val isMuted = audioState?.isMuted ?: false
     val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
-    val isHolding = callState == Call.STATE_HOLDING
     
-    // Timer and Interaction States
     var callDuration by remember { mutableLongStateOf(0L) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    // Start timer when call is active
     LaunchedEffect(callState) {
         if (callState == Call.STATE_ACTIVE) {
             val startTime = System.currentTimeMillis()
@@ -273,176 +197,85 @@ fun ExpressiveCallScreen(
         String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 
-    // Dynamic Corner Radius for the "End Call" button (Liquid Morphing)
     val endCallCornerRadius by animateDpAsState(
         targetValue = if (isPressed) 24.dp else 44.dp,
         animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium),
         label = "ButtonShapeAnimation"
     )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // 1. DYNAMIC BLUR BACKGROUND
+
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (!photoUri.isNullOrEmpty()) {
                 AsyncImage(
                     model = photoUri,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(80.dp)
-                        .alpha(0.35f),
+                    modifier = Modifier.fillMaxSize().blur(80.dp).alpha(0.35f),
                     contentScale = ContentScale.Crop
                 )
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f), Color.Transparent)
-                            )
-                        )
-                )
+                Box(modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f), Color.Transparent))
+                ))
             }
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // 2. CONTACT INFO CARD
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
-                )
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f))
             ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                    ) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(72.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer)) {
                         if (!photoUri.isNullOrEmpty()) {
-                            AsyncImage(
-                                model = photoUri,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
+                            AsyncImage(model = photoUri, contentDescription = null, contentScale = ContentScale.Crop)
                         } else {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                modifier = Modifier.align(Alignment.Center).size(40.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                            Icon(Icons.Default.Person, null, modifier = Modifier.align(Alignment.Center).size(40.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
                         }
                     }
-                    
                     Spacer(modifier = Modifier.width(16.dp))
-                    
                     Column {
-                        Text(
-                            text = contactName,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Text(contactName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
                         val statusLabel = when (callState) {
                             Call.STATE_RINGING -> "Incoming"
                             Call.STATE_ACTIVE -> durationText
                             Call.STATE_DIALING -> "Calling..."
                             else -> "Mobile"
                         }
-                        Text(
-                            text = statusLabel,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary 
-                                    else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Text(statusLabel, style = MaterialTheme.typography.bodyMedium, color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // 3. CALL CONTROLS / ANSWER SWIPE
-            AnimatedContent(
-                targetState = callState,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) togetherWith fadeOut(animationSpec = tween(400))
-                },
-                label = "call_state_transition"
-            ) { state ->
+            AnimatedContent(targetState = callState, label = "call_state_transition") { state ->
                 if (state == Call.STATE_RINGING) {
-                    // Incoming State: Swipe to Answer
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "Swipe to Respond",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        )
+                        Text("Swipe to Respond", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(bottom = 20.dp))
                         HorizontalSwipeToAnswer(
                             onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
                             onDecline = { try { call.disconnect() } catch (e: Exception) {} }
                         )
                     }
                 } else {
-                    // Active/Dialing State: Control Buttons + Morphing End Call
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        // Quick Action Row
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            // Example of a small expressive button
-                            IconButton(
-                                onClick = { /* Mute logic */ },
-                                modifier = Modifier.size(64.dp).background(
-                                    if(isMuted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                                    CircleShape
-                                )
-                            ) {
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                            IconButton(onClick = { /* Mute logic */ }, modifier = Modifier.size(64.dp).background(if(isMuted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant, CircleShape)) {
                                 Icon(if(isMuted) Icons.Default.MicOff else Icons.Default.Mic, null)
                             }
-                            
-                            IconButton(
-                                onClick = { /* Speaker logic */ },
-                                modifier = Modifier.size(64.dp).background(
-                                    if(isSpeakerOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                                    CircleShape
-                                )
-                            ) {
+                            IconButton(onClick = { /* Speaker logic */ }, modifier = Modifier.size(64.dp).background(if(isSpeakerOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant, CircleShape)) {
                                 Icon(Icons.AutoMirrored.Filled.VolumeUp, null)
                             }
                         }
-
-                        // The Morphing End Call Button
                         Surface(
                             onClick = { try { call.disconnect() } catch (e: Exception) {} },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(84.dp)
-                                .scale(if (isPressed) 0.96f else 1f),
+                            modifier = Modifier.fillMaxWidth().height(84.dp).scale(if (isPressed) 0.96f else 1f),
                             shape = RoundedCornerShape(endCallCornerRadius),
                             color = Color(0xFFD32F2F),
                             contentColor = Color.White,
@@ -465,72 +298,42 @@ fun ExpressiveCallScreen(
 }
 
 @Composable
-fun HorizontalSwipeToAnswer(
-    onAnswer: () -> Unit,
-    onDecline: () -> Unit
-) {
+fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
 
-    // Ringing Pulse Animation
     val infiniteTransition = rememberInfiniteTransition(label = "ringing_pulse")
     val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.15f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = "pulse"
+        initialValue = 1f, targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(animation = tween(1000, easing = FastOutSlowInEasing), repeatMode = RepeatMode.Reverse), label = "pulse"
     )
 
-    // Dynamic Swipe Constants
     val maxDrag = with(density) { 120.dp.toPx() }
     val triggerThreshold = maxDrag * 0.6f
 
-    // Dynamic Color Interpolation based on swipe direction
     val containerColor by animateColorAsState(
         targetValue = when {
-            offsetX.value > 50f -> Color(0xFF2E7D32) // Deep Green
-            offsetX.value < -50f -> Color(0xFFC62828) // Deep Red
+            offsetX.value > 50f -> Color(0xFF2E7D32)
+            offsetX.value < -50f -> Color(0xFFC62828)
             else -> MaterialTheme.colorScheme.surfaceContainerHighest
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow), label = "color_morph"
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(horizontal = 24.dp)
-            .clip(CircleShape)
-            .background(containerColor)
-            .border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape),
+        modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 24.dp).clip(CircleShape).background(containerColor).border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        // Background Labels (Decline / Answer)
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             SwipeLabel(text = "Decline", icon = Icons.Default.CallEnd, isVisible = offsetX.value < -10f)
             SwipeLabel(text = "Answer", icon = Icons.Default.Call, isVisible = offsetX.value > 10f)
         }
 
-        // The Sliding Handle
         Box(
-            modifier = Modifier
-                .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .graphicsLayer { 
-                    scaleX = pulseScale
-                    scaleY = pulseScale
-                }
-                .size(76.dp)
-                .clip(CircleShape)
-                .background(Color.White)
-                .pointerInput(Unit) {
+            modifier = Modifier.offset { IntOffset(offsetX.value.roundToInt(), 0) }.graphicsLayer { scaleX = pulseScale; scaleY = pulseScale }
+                .size(76.dp).clip(CircleShape).background(Color.White).pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
@@ -543,29 +346,19 @@ fun HorizontalSwipeToAnswer(
                                         view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         onDecline()
                                     }
-                                    else ->offsetX.animateTo(
-                                        targetValue = 0f, 
-                                        animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium)
-                                    ))
+                                    else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
                                 }
                             }
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
-                            coroutineScope.launch {
-                                offsetX.snapTo((offsetX.value + dragAmount).coerceIn(-maxDrag, maxDrag))
-                            }
+                            coroutineScope.launch { offsetX.snapTo((offsetX.value + dragAmount).coerceIn(-maxDrag, maxDrag)) }
                         }
                     )
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Call,
-                contentDescription = null,
-                tint = containerColor, // Icon color matches the background color morph
-                modifier = Modifier.size(32.dp)
-            )
+            Icon(imageVector = Icons.Default.Call, contentDescription = null, tint = containerColor, modifier = Modifier.size(32.dp))
         }
     }
 }
