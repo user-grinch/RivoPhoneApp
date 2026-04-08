@@ -57,6 +57,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.Spring.DampingRatioMediumConforms
+import androidx.compose.ui.graphics.vector.ImageVector
+// Ensure these are also present for the other errors:
+import androidx.compose.animation.core.spring
+
 
 class CallActivity : ComponentActivity() {
 
