@@ -63,6 +63,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 // Ensure these are also present for the other errors:
 import androidx.compose.animation.core.spring
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateColorAsState
+
 
 class CallActivity : ComponentActivity() {
 
@@ -526,7 +530,7 @@ fun HorizontalSwipeToAnswer(
                                         view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         onDecline()
                                     }
-                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumConforms, stiffness = Spring.StiffnessMedium))
+                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumLow, stiffness = Spring.StiffnessMedium))
                                 }
                             }
                         },
