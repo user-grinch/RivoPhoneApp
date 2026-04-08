@@ -448,63 +448,79 @@ fun HorizontalSwipeToAnswer(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
-    val view = LocalView.current
     val density = LocalDensity.current
-    
-    val maxDrag = with(density) { 140.dp.toPx() }
-    val triggerThreshold = maxDrag * 0.7f
+    val view = LocalView.current
+
+    // Ringing Pulse Animation
+    val infiniteTransition = rememberInfiniteTransition(label = "ringing_pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "pulse"
+    )
+
+    // Dynamic Swipe Constants
+    val maxDrag = with(density) { 120.dp.toPx() }
+    val triggerThreshold = maxDrag * 0.6f
+
+    // Dynamic Color Interpolation based on swipe direction
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            offsetX.value > 50f -> Color(0xFF2E7D32) // Deep Green
+            offsetX.value < -50f -> Color(0xFFC62828) // Deep Red
+            else -> MaterialTheme.colorScheme.surfaceContainerHighest
+        },
+        animationSpec = spring(stiffness = Spring.StiffnessLow), label = "color_morph"
+    )
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .height(100.dp)
+            .padding(horizontal = 24.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+            .background(containerColor)
+            .border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        
+        // Background Labels (Decline / Answer)
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(0.6f)) {
-                Icon(Icons.Default.Close, null, tint = Color(0xFFD32F2F), modifier = Modifier.size(28.dp))
-                Text("Decline", style = MaterialTheme.typography.labelSmall, color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
-            }
-            
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(0.6f)) {
-                Icon(Icons.Default.Check, null, tint = Color(0xFF388E3C), modifier = Modifier.size(28.dp))
-                Text("Answer", style = MaterialTheme.typography.labelSmall, color = Color(0xFF388E3C), fontWeight = FontWeight.Bold)
-            }
+            SwipeLabel(text = "Decline", icon = Icons.Default.CallEnd, isVisible = offsetX.value < -10f)
+            SwipeLabel(text = "Answer", icon = Icons.Default.Call, isVisible = offsetX.value > 10f)
         }
 
-        
+        // The Sliding Handle
         Box(
             modifier = Modifier
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .size(width = 90.dp, height = 86.dp)
-                .clip(RoundedCornerShape(40.dp))
-                .background(
-                    when {
-                        offsetX.value > 20f -> Color(0xFF388E3C)
-                        offsetX.value < -20f -> Color(0xFFD32F2F)
-                        else -> MaterialTheme.colorScheme.primary
-                    }
-                )
-                .border(2.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(40.dp))
+                .graphicsLayer { 
+                    scaleX = pulseScale
+                    scaleY = pulseScale
+                }
+                .size(76.dp)
+                .clip(CircleShape)
+                .background(Color.White)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
-                                if (offsetX.value > triggerThreshold) {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onAnswer()
-                                } else if (offsetX.value < -triggerThreshold) {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onDecline()
-                                } else {
-                                    offsetX.animateTo(0f, spring(stiffness = Spring.StiffnessLow))
+                                when {
+                                    offsetX.value > triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        onAnswer()
+                                    }
+                                    offsetX.value < -triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                        onDecline()
+                                    }
+                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumConforms, stiffness = Spring.StiffnessMedium))
                                 }
                             }
                         },
@@ -519,15 +535,20 @@ fun HorizontalSwipeToAnswer(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = when {
-                    offsetX.value > 20f -> Icons.Default.Call
-                    offsetX.value < -20f -> Icons.Default.CallEnd
-                    else -> Icons.Default.DragHandle
-                },
+                imageVector = Icons.Default.Call,
                 contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(36.dp)
+                tint = containerColor, // Icon color matches the background color morph
+                modifier = Modifier.size(32.dp)
             )
         }
+    }
+}
+
+@Composable
+fun SwipeLabel(text: String, icon: ImageVector, isVisible: Boolean) {
+    val alpha by animateFloatAsState(if (isVisible) 1f else 0.3f, label = "label_alpha")
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(alpha)) {
+        Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color.White)
+        Text(text, style = MaterialTheme.typography.labelSmall, color = Color.White)
     }
 }
