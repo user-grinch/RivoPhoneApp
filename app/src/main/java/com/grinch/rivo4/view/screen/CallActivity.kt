@@ -67,6 +67,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.animation.animateColorAsState
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.animation.animateColorAsState // Add this explicitly
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+
 class CallActivity : ComponentActivity() {
 
     private val contactsViewModel: ContactsViewModel by viewModel()
