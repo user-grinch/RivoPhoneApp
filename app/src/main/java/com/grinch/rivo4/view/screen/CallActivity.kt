@@ -53,6 +53,8 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.util.*
 import kotlin.math.roundToInt
+import com.grinch.rivo4.controller.ContactsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 class CallActivity : ComponentActivity() {
 
     private val contactsViewModel: ContactsViewModel by viewModel()
