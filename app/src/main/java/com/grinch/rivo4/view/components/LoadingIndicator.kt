@@ -1,15 +1,11 @@
-package com.grinch.rivo4.view.components
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.CircularProgressIndicator // Use stable component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RivoLoadingIndicatorView() {
     Column (
@@ -17,8 +13,7 @@ fun RivoLoadingIndicatorView() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // The Expressive LoadingIndicator requires an explicit OptIn 
-        // at the call site to resolve the 'internal' access restriction.
-        LoadingIndicator()
+        // Use the stable CircularProgressIndicator instead of the experimental LoadingIndicator
+        CircularProgressIndicator()
     }
 }

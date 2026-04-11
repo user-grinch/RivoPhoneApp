@@ -77,6 +77,8 @@ dependencies {
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.activity:activity-compose'
     
+    implementation("androidx.compose.material3:material3:1.5.0-alpha09")
+    
     // Explicit versions for foundation/graphics are okay, but BOM usually handles this.
     // Keeping your specific versions for performance control on Celeron hardware.
     implementation 'androidx.compose.foundation:foundation:1.10.6'
