@@ -3,7 +3,7 @@
 ## [v1.6.0] - 2026-04-12
 
 ### 🎨 UI & UX Enhancements
-* **Fixed Contact Image Corruption:** Corrected the `ContentScale` and clipping logic for contact photos. Images now render as perfect circles without stretching or artifacting.
+* **Fixed Contact Image Corruption:** Corrected the `ContentScale` and clipping logic for contact photos. Images now render as perfect circles without stretching
 * **Animated Blur Background:** Re-engineered the background motion using `graphicsLayer` translation. This provides a fluid, organic "drifting" effect while keeping CPU usage low on the *
 * **Material 3 Expressive Shapes:** Updated the End Call button with a reactive spring animation that shifts corner radius on press.
 
