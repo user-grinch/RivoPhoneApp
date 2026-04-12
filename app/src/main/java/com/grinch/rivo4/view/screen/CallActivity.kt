@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.*
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -78,12 +79,8 @@ class CallActivity : ComponentActivity() {
 
                 LaunchedEffect(callState) {
                     when (callState) {
-                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
-                            acquireProximityLock()
-                        }
-                        else -> {
-                            releaseProximityLock()
-                        }
+                        Call.STATE_ACTIVE, Call.STATE_DIALING -> acquireProximityLock()
+                        else -> releaseProximityLock()
                     }
 
                     if (session == null || callState == Call.STATE_DISCONNECTED) {
@@ -182,23 +179,25 @@ fun ExpressiveCallScreen(
     photoUri: String?,
     audioState: CallAudioState?
 ) {
+    val context = LocalView.current.context
     val isMuted = audioState?.isMuted ?: false
     val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
-    var isOnHold by remember { mutableStateOf(false) }
     
+    var isOnHold by remember { mutableStateOf(false) }
     var callDuration by remember { mutableLongStateOf(0L) }
+    
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    // Background Motion Animation
+    // Motion Background Animation
     val infiniteTransition = rememberInfiniteTransition(label = "bg_motion")
-    val moveX by infiniteTransition.animateFloat(
-        initialValue = -40f, targetValue = 40f,
-        animationSpec = infiniteRepeatable(tween(12000, easing = LinearEasing), RepeatMode.Reverse), label = "x"
+    val driftX by infiniteTransition.animateFloat(
+        initialValue = -35f, targetValue = 35f,
+        animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Reverse), label = "driftX"
     )
-    val moveY by infiniteTransition.animateFloat(
+    val driftY by infiniteTransition.animateFloat(
         initialValue = -25f, targetValue = 25f,
-        animationSpec = infiniteRepeatable(tween(15000, easing = LinearEasing), RepeatMode.Reverse), label = "y"
+        animationSpec = infiniteRepeatable(tween(22000, easing = LinearEasing), RepeatMode.Reverse), label = "driftY"
     )
 
     LaunchedEffect(callState) {
@@ -214,16 +213,21 @@ fun ExpressiveCallScreen(
     val endCallCornerRadius by animateDpAsState(
         targetValue = if (isPressed) 24.dp else 44.dp,
         animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium),
-        label = "Shape"
+        label = "Radius"
     )
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // MOVING BLUR BACKGROUND
+        
+        // --- ANIMATED BLUR BACKGROUND ---
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(x = moveX.dp, y = moveY.dp)
-                .scale(1.25f)
+                .graphicsLayer { 
+                    translationX = driftX
+                    translationY = driftY
+                    scaleX = 1.35f
+                    scaleY = 1.35f
+                }
         ) {
             if (!photoUri.isNullOrEmpty()) {
                 AsyncImage(
@@ -233,61 +237,53 @@ fun ExpressiveCallScreen(
                     contentScale = ContentScale.Crop
                 )
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(80.dp)
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                                    MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
-                                    Color.Transparent
-                                )
-                            )
-                        )
-                )
+                Box(modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primaryContainer.copy(0.4f), Color.Transparent))
+                ))
             }
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
+            // --- CONTACT CARD ---
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(32.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f)
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
                 )
             ) {
                 Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier.size(72.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer)) {
+                    // FIXED IMAGE CONTAINER
+                    Box(
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                    ) {
                         if (!photoUri.isNullOrEmpty()) {
-                            AsyncImage(model = photoUri, contentDescription = null, contentScale = ContentScale.Crop)
+                            AsyncImage(
+                                model = photoUri,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                contentScale = ContentScale.Crop // Prevents corruption/stretching
+                            )
                         } else {
                             Icon(Icons.Default.Person, null, modifier = Modifier.align(Alignment.Center).size(40.dp))
                         }
                     }
+                    
                     Spacer(modifier = Modifier.width(16.dp))
+                    
                     Column {
                         Text(text = contactName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
-                        val statusLabel = when {
-                            isOnHold -> "On Hold"
-                            callState == Call.STATE_ACTIVE -> formatDuration(callDuration)
-                            callState == Call.STATE_RINGING -> "Incoming"
-                            else -> "Calling..."
-                        }
                         Text(
-                            text = statusLabel,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (isOnHold) Color.Yellow else MaterialTheme.colorScheme.primary
+                            text = if (isOnHold) "On Hold" else if (callState == Call.STATE_ACTIVE) formatDuration(callDuration) else "Calling...",
+                            color = if (isOnHold) Color(0xFFFFB74D) else MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -295,40 +291,42 @@ fun ExpressiveCallScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // --- UI CONTROLS ---
             if (callState != Call.STATE_RINGING) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
+                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        CallActionButton(
-                            icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                            isActive = isMuted,
-                            onClick = { /* Add Mute Logic */ }
-                        )
+                        
+                        // Mute Button
+                        CallActionButton(icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic, isActive = isMuted) {
+                            // CallService.toggleMute()
+                        }
+
+                        // Hold Button (Functional)
                         CallActionButton(
                             icon = if (isOnHold) Icons.Default.PlayArrow else Icons.Default.Pause,
                             isActive = isOnHold,
-                            label = "Hold",
-                            onClick = { 
-                                isOnHold = !isOnHold
-                                if (isOnHold) call.hold() else call.unhold()
+                            label = "Hold"
+                        ) {
+                            isOnHold = !isOnHold
+                            if (isOnHold) call.hold() else call.unhold()
+                        }
+
+                        // Note Button (Functional)
+                        CallActionButton(icon = Icons.Default.EditNote, isActive = false, label = "Note") {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Notes for call with $contactName: ")
                             }
-                        )
-                        CallActionButton(
-                            icon = Icons.Default.EditNote,
-                            isActive = false,
-                            label = "Note",
-                            onClick = { /* Logic to launch notes */ }
-                        )
-                        CallActionButton(
-                            icon = Icons.AutoMirrored.Filled.VolumeUp,
-                            isActive = isSpeakerOn,
-                            onClick = { /* Add Speaker Logic */ }
-                        )
+                            context.startActivity(Intent.createChooser(intent, "Save Note"))
+                        }
+
+                        // Speaker Button
+                        CallActionButton(icon = Icons.AutoMirrored.Filled.VolumeUp, isActive = isSpeakerOn) {
+                            // CallService.toggleSpeaker()
+                        }
                     }
 
+                    // End Call Button
                     Surface(
                         onClick = { try { call.disconnect() } catch (e: Exception) {} },
                         modifier = Modifier.fillMaxWidth().height(84.dp).scale(if (isPressed) 0.96f else 1f),
@@ -368,7 +366,7 @@ fun CallActionButton(
         IconButton(
             onClick = onClick,
             modifier = Modifier.size(64.dp).background(
-                if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(0.6f),
                 CircleShape
             )
         ) {
@@ -395,8 +393,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f, targetValue = 1.12f,
-        animationSpec = infiniteRepeatable(tween(1200, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "s"
+        initialValue = 1f, targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(tween(1000, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "s"
     )
 
     val maxDrag = with(density) { 130.dp.toPx() }
@@ -404,8 +402,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val containerColor by animateColorAsState(
         targetValue = when {
-            offsetX.value > 60f -> Color(0xFF2E7D32)
-            offsetX.value < -60f -> Color(0xFFC62828)
+            offsetX.value > 50f -> Color(0xFF2E7D32)
+            offsetX.value < -50f -> Color(0xFFC62828)
             else -> MaterialTheme.colorScheme.surfaceContainerHighest
         }, label = "c"
     )
@@ -415,8 +413,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            SwipeLabel(text = "Decline", icon = Icons.Default.CallEnd, isVisible = offsetX.value < -20f)
-            SwipeLabel(text = "Answer", icon = Icons.Default.Call, isVisible = offsetX.value > 20f)
+            SwipeLabel(text = "Decline", icon = Icons.Default.CallEnd, isVisible = offsetX.value < -10f)
+            SwipeLabel(text = "Answer", icon = Icons.Default.Call, isVisible = offsetX.value > 10f)
         }
 
         Box(
