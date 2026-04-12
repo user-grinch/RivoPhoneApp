@@ -13,6 +13,6 @@
 
 ### ⚙️ Build & CI/CD Pipeline
 * **Universal APK Support:** Enabled `universalApk` in the build splits to ensure GitHub Actions generates a compatible binary for both ARM64 and x86_64.
-* **Automated Versioning:** Updated GitHub Action to trigger full signed releases only on version tags (`v*`), while providing debug builds for standard commits.
+* **Automated Versioning:** Updated GitHub Action to trigger full signed releases only on version tags (`v*`), while providing debug builds for standard commits..
 * **Keystore Security:** Optimized the Base64 decoding process in the workflow to prevent corrupt keystore generation during automated builds.
 ---
