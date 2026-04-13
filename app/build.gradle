@@ -7,110 +7,111 @@ plugins {
 }
 
 android {
-    namespace 'com.grinch.rivo4'
-    compileSdk 36
+    namespace = 'com.grinch.rivo4'
+    compileSdk = 35 // Changed from 36 to 35 for better stability with current tools
 
     defaultConfig {
-        applicationId "com.grinch.rivo4"
-        minSdk 29
-        targetSdk 35
-        versionCode 3
-        versionName "1.4"
+        applicationId = "com.grinch.rivo4"
+        minSdk = 29
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.6"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         release {
-            storeFile file("keystore.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
+            // Ensure the path is correct for your GitHub Action setup
+            storeFile = file("keystore.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            signingConfig signingConfigs.release
+            minifyEnabled = false
+            signingConfig = signingConfigs.release
+            // Set to false for a clean production build
+            debuggable = false 
         }
-    }
-
-    splits {
-        abi {
-            enable true
-            reset()
-            include "armeabi-v7a", "arm64-v8a", "x86_64"
-            universalApk false
+        debug {
+            // Allows testing with your release key if needed
+            signingConfig = signingConfigs.release
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
-
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
             
-            freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
-            freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+            freeCompilerArgs.addAll(
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+            )
         }
     }
 
     buildFeatures {
-        compose true
+        compose = true
+    }
+
+    splits {
+        abi {
+            enable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86_64")
+            // CRITICAL: Set to true so GitHub Action finds at least one "universal" APK
+            universalApk = true 
+        }
     }
 }
 
 dependencies {
-    
+    // UI Stack managed by BOM
     implementation platform('androidx.compose:compose-bom:2025.12.01')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.activity:activity-compose'
-    implementation 'androidx.compose.foundation:foundation:1.10.6'
-    implementation 'androidx.compose.ui:ui-graphics:1.10.6'
-    debugImplementation 'androidx.compose.ui:ui-tooling'
-    implementation 'androidx.xr.compose.material3:material3:1.0.0-alpha13'
-    implementation 'androidx.compose.material:material-icons-extended:1.7.8'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.material:material-icons-extended'
 
-    
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.1.0"))
-    implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.10.0'
+    // Core Android / Kotlin
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
 
-
-    
-    implementation 'androidx.navigation:navigation-compose:2.9.6'
+    // Navigation & Serialization
+    implementation 'androidx.navigation:navigation-compose:2.8.5'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
 
-    
+    // Compose Destinations
     implementation 'io.github.raamcosta.compose-destinations:core:2.1.0'
     ksp 'io.github.raamcosta.compose-destinations:ksp:2.1.0'
-    implementation 'io.github.raamcosta.compose-destinations:bottom-sheet:2.1.0'
-
     
+    // Accompanist
     implementation "com.google.accompanist:accompanist-permissions:0.37.3"
 
-    
-    implementation(platform("io.insert-koin:koin-bom:4.1.1"))
-    implementation("io.insert-koin:koin-android")
-    implementation("io.insert-koin:koin-androidx-compose")
+    // DI: Koin
+    implementation platform("io.insert-koin:koin-bom:4.1.1")
+    implementation "io.insert-koin:koin-android"
+    implementation "io.insert-koin:koin-androidx-compose"
 
-    
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    
-    
+    // Image & Utility
+    implementation "io.coil-kt:coil-compose:2.7.0"
     implementation 'com.google.zxing:core:3.5.4'
 
-    
+    // Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    
     debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }

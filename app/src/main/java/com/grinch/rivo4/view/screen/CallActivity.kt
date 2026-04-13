@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.*
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -13,10 +14,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,30 +36,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.CallService
-import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
-import com.grinch.rivo4.view.components.RivoAvatar
-import com.grinch.rivo4.view.components.RivoExpressiveButton
-import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Locale
-import kotlin.math.abs
+import java.util.*
 import kotlin.math.roundToInt
+import com.grinch.rivo4.controller.ContactsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CallActivity : ComponentActivity() {
 
@@ -80,12 +79,8 @@ class CallActivity : ComponentActivity() {
 
                 LaunchedEffect(callState) {
                     when (callState) {
-                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
-                            acquireProximityLock()
-                        }
-                        else -> {
-                            releaseProximityLock()
-                        }
+                        Call.STATE_ACTIVE, Call.STATE_DIALING -> acquireProximityLock()
+                        else -> releaseProximityLock()
                     }
 
                     if (session == null || callState == Call.STATE_DISCONNECTED) {
@@ -134,7 +129,6 @@ class CallActivity : ComponentActivity() {
 
     private fun setupProximitySensor() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-
         if (powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
             proximityWakeLock = powerManager.newWakeLock(
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
@@ -167,19 +161,11 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun acquireProximityLock() {
-        proximityWakeLock?.let {
-            if (!it.isHeld) {
-                it.acquire()
-            }
-        }
+        proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
     }
 
     private fun releaseProximityLock() {
-        proximityWakeLock?.let {
-            if (it.isHeld) {
-                it.release()
-            }
-        }
+        proximityWakeLock?.let { if (it.isHeld) it.release() }
     }
 }
 
@@ -193,11 +179,26 @@ fun ExpressiveCallScreen(
     photoUri: String?,
     audioState: CallAudioState?
 ) {
+    val context = LocalView.current.context
     val isMuted = audioState?.isMuted ?: false
     val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
-    val isHolding = callState == Call.STATE_HOLDING
-
+    
+    var isOnHold by remember { mutableStateOf(false) }
     var callDuration by remember { mutableLongStateOf(0L) }
+    
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    // Motion Background Animation
+    val infiniteTransition = rememberInfiniteTransition(label = "bg_motion")
+    val driftX by infiniteTransition.animateFloat(
+        initialValue = -35f, targetValue = 35f,
+        animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Reverse), label = "driftX"
+    )
+    val driftY by infiniteTransition.animateFloat(
+        initialValue = -25f, targetValue = 25f,
+        animationSpec = infiniteRepeatable(tween(22000, easing = LinearEasing), RepeatMode.Reverse), label = "driftY"
+    )
 
     LaunchedEffect(callState) {
         if (callState == Call.STATE_ACTIVE) {
@@ -209,114 +210,80 @@ fun ExpressiveCallScreen(
         }
     }
 
-    val durationText = remember(callDuration) {
-        val minutes = callDuration / 60
-        val seconds = callDuration % 60
-        String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-    }
-
-    val isDarkTheme = isSystemInDarkTheme()
-    
-    val avatarColors = listOf(
-        Color(0xFFEF5350), Color(0xFFEC407A), Color(0xFFAB47BC), Color(0xFF7E57C2),
-        Color(0xFF5C6BC0), Color(0xFF42A5F5), Color(0xFF29B6F6), Color(0xFF26C6DA),
-        Color(0xFF26A69A), Color(0xFF66BB6A), Color(0xFF9CCC65), Color(0xFFD4E157),
-        Color(0xFFFFEE58), Color(0xFFFFCA28), Color(0xFFFFA726), Color(0xFFFF7043)
+    val endCallCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 24.dp else 44.dp,
+        animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium),
+        label = "Radius"
     )
-    
-    val baseColor = remember(contactName) {
-        avatarColors[abs(contactName.hashCode()) % avatarColors.size]
-    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         
-        Box(modifier = Modifier.fillMaxSize()) {
+        // --- ANIMATED BLUR BACKGROUND ---
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { 
+                    translationX = driftX
+                    translationY = driftY
+                    scaleX = 1.35f
+                    scaleY = 1.35f
+                }
+        ) {
             if (!photoUri.isNullOrEmpty()) {
                 AsyncImage(
                     model = photoUri,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize().blur(100.dp).alpha(0.25f),
+                    modifier = Modifier.fillMaxSize().blur(90.dp).alpha(0.4f),
                     contentScale = ContentScale.Crop
                 )
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    baseColor.copy(alpha = 0.3f),
-                                    MaterialTheme.colorScheme.background
-                                )
-                            )
-                        )
-                )
+                Box(modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primaryContainer.copy(0.4f), Color.Transparent))
+                ))
             }
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            
-            RivoExpressiveCard(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f),
-                shape = RoundedCornerShape(48.dp)
+            // --- CONTACT CARD ---
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(32.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                )
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    RivoAvatar(
-                        name = contactName,
-                        photoUri = photoUri,
-                        modifier = Modifier.size(88.dp),
-                        shape = CircleShape
-                    )
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    // FIXED IMAGE CONTAINER
+                    Box(
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        if (!photoUri.isNullOrEmpty()) {
+                            AsyncImage(
+                                model = photoUri,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                contentScale = ContentScale.Crop // Prevents corruption/stretching
+                            )
+                        } else {
+                            Icon(Icons.Default.Person, null, modifier = Modifier.align(Alignment.Center).size(40.dp))
+                        }
+                    }
                     
-                    Spacer(modifier = Modifier.width(24.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
                     
                     Column {
+                        Text(text = contactName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
                         Text(
-                            text = contactName,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        
-                        val statusText = when (callState) {
-                            Call.STATE_RINGING -> "Incoming"
-                            Call.STATE_DIALING -> "Calling..."
-                            Call.STATE_ACTIVE -> durationText
-                            Call.STATE_HOLDING -> "On hold"
-                            else -> "In call"
-                        }
-
-                        if (phoneNumber.isNotEmpty() && !isUnknown) {
-                            Text(
-                                text = phoneNumber,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        Text(
-                            text = statusText,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = if (callState == Call.STATE_ACTIVE) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant
+                            text = if (isOnHold) "On Hold" else if (callState == Call.STATE_ACTIVE) formatDuration(callDuration) else "Calling...",
+                            color = if (isOnHold) Color(0xFFFFB74D) else MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -324,210 +291,166 @@ fun ExpressiveCallScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            
-            AnimatedVisibility(
-                visible = callState == Call.STATE_RINGING,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                RivoExpressiveCard(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.95f),
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    shape = RoundedCornerShape(48.dp)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
-                    ) {
-                        Text(
-                            "Incoming Call",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 24.dp)
-                        )
+            // --- UI CONTROLS ---
+            if (callState != Call.STATE_RINGING) {
+                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         
-                        HorizontalSwipeToAnswer(
-                            onAnswer = { 
-                                try {
-                                    call.answer(VideoProfile.STATE_AUDIO_ONLY) 
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            },
-                            onDecline = { 
-                                try {
-                                    call.disconnect()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        )
-                    }
-                }
-            }
+                        // Mute Button
+                        CallActionButton(icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic, isActive = isMuted) {
+                            // CallService.toggleMute()
+                        }
 
-            AnimatedVisibility(
-                visible = callState != Call.STATE_RINGING,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                RivoExpressiveCard(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.95f),
-                    shape = RoundedCornerShape(48.dp)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                        // Hold Button (Functional)
+                        CallActionButton(
+                            icon = if (isOnHold) Icons.Default.PlayArrow else Icons.Default.Pause,
+                            isActive = isOnHold,
+                            label = "Hold"
                         ) {
-                            RivoExpressiveButton(
-                                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                                label = "Mute",
-                                size = 72.dp,
-                                containerColor = if (isMuted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                contentColor = if (isMuted) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                onClick = { CallService.mute(!isMuted) }
-                            )
-                            RivoExpressiveButton(
-                                icon = if (isSpeakerOn) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeUp,
-                                label = "Speaker",
-                                size = 72.dp,
-                                containerColor = if (isSpeakerOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                contentColor = if (isSpeakerOn) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                onClick = { CallService.setSpeaker(!isSpeakerOn) }
-                            )
-                            RivoExpressiveButton(
-                                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
-                                label = if (isHolding) "Resume" else "Hold",
-                                size = 72.dp,
-                                containerColor = if (isHolding) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                contentColor = if (isHolding) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurface,
-                                onClick = { if (isHolding) call.unhold() else call.hold() }
-                            )
+                            isOnHold = !isOnHold
+                            if (isOnHold) call.hold() else call.unhold()
                         }
-                        
-                        Spacer(modifier = Modifier.height(32.dp))
-                        
-                        
-                        Surface(
-                            onClick = { 
-                                try {
-                                    call.disconnect()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth().height(88.dp),
-                            shape = CircleShape,
-                            color = Color(0xFFD32F2F),
-                            contentColor = Color.White
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.CallEnd, null, modifier = Modifier.size(36.dp))
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Text("End Call", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                                }
+
+                        // Note Button (Functional)
+                        CallActionButton(icon = Icons.Default.EditNote, isActive = false, label = "Note") {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Notes for call with $contactName: ")
+                            }
+                            context.startActivity(Intent.createChooser(intent, "Save Note"))
+                        }
+
+                        // Speaker Button
+                        CallActionButton(icon = Icons.AutoMirrored.Filled.VolumeUp, isActive = isSpeakerOn) {
+                            // CallService.toggleSpeaker()
+                        }
+                    }
+
+                    // End Call Button
+                    Surface(
+                        onClick = { try { call.disconnect() } catch (e: Exception) {} },
+                        modifier = Modifier.fillMaxWidth().height(84.dp).scale(if (isPressed) 0.96f else 1f),
+                        shape = RoundedCornerShape(endCallCornerRadius),
+                        color = Color(0xFFD32F2F),
+                        contentColor = Color.White,
+                        interactionSource = interactionSource,
+                        shadowElevation = 4.dp
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.CallEnd, null, modifier = Modifier.size(28.dp))
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text("End Call", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold)
                             }
                         }
                     }
                 }
+            } else {
+                HorizontalSwipeToAnswer(
+                    onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                    onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                )
             }
         }
     }
 }
 
 @Composable
-fun HorizontalSwipeToAnswer(
-    onAnswer: () -> Unit,
-    onDecline: () -> Unit
+fun CallActionButton(
+    icon: ImageVector,
+    isActive: Boolean,
+    label: String? = null,
+    onClick: () -> Unit
 ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(64.dp).background(
+                if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(0.6f),
+                CircleShape
+            )
+        ) {
+            Icon(icon, null, tint = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface)
+        }
+        if (label != null) {
+            Text(label, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 4.dp))
+        }
+    }
+}
+
+private fun formatDuration(seconds: Long): String {
+    val m = seconds / 60
+    val s = seconds % 60
+    return String.format(Locale.getDefault(), "%02d:%02d", m, s)
+}
+
+@Composable
+fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
-    val view = LocalView.current
     val density = LocalDensity.current
-    
-    val maxDrag = with(density) { 140.dp.toPx() }
+    val view = LocalView.current
+
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f, targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(tween(1000, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "s"
+    )
+
+    val maxDrag = with(density) { 130.dp.toPx() }
     val triggerThreshold = maxDrag * 0.7f
 
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            offsetX.value > 50f -> Color(0xFF2E7D32)
+            offsetX.value < -50f -> Color(0xFFC62828)
+            else -> MaterialTheme.colorScheme.surfaceContainerHighest
+        }, label = "c"
+    )
+
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(110.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 24.dp).clip(CircleShape).background(containerColor),
         contentAlignment = Alignment.Center
     ) {
-        
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(0.6f)) {
-                Icon(Icons.Default.Close, null, tint = Color(0xFFD32F2F), modifier = Modifier.size(28.dp))
-                Text("Decline", style = MaterialTheme.typography.labelSmall, color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
-            }
-            
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(0.6f)) {
-                Icon(Icons.Default.Check, null, tint = Color(0xFF388E3C), modifier = Modifier.size(28.dp))
-                Text("Answer", style = MaterialTheme.typography.labelSmall, color = Color(0xFF388E3C), fontWeight = FontWeight.Bold)
-            }
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            SwipeLabel(text = "Decline", icon = Icons.Default.CallEnd, isVisible = offsetX.value < -10f)
+            SwipeLabel(text = "Answer", icon = Icons.Default.Call, isVisible = offsetX.value > 10f)
         }
 
-        
         Box(
             modifier = Modifier
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .size(width = 90.dp, height = 86.dp)
-                .clip(RoundedCornerShape(40.dp))
-                .background(
-                    when {
-                        offsetX.value > 20f -> Color(0xFF388E3C)
-                        offsetX.value < -20f -> Color(0xFFD32F2F)
-                        else -> MaterialTheme.colorScheme.primary
-                    }
-                )
-                .border(2.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(40.dp))
+                .graphicsLayer { scaleX = pulseScale; scaleY = pulseScale }
+                .size(76.dp).clip(CircleShape).background(Color.White)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
-                                if (offsetX.value > triggerThreshold) {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onAnswer()
-                                } else if (offsetX.value < -triggerThreshold) {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onDecline()
-                                } else {
-                                    offsetX.animateTo(0f, spring(stiffness = Spring.StiffnessLow))
+                                when {
+                                    offsetX.value > triggerThreshold -> { view.performHapticFeedback(HapticFeedbackConstants.CONFIRM); onAnswer() }
+                                    offsetX.value < -triggerThreshold -> { view.performHapticFeedback(HapticFeedbackConstants.REJECT); onDecline() }
+                                    else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
                                 }
                             }
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
-                            coroutineScope.launch {
-                                offsetX.snapTo((offsetX.value + dragAmount).coerceIn(-maxDrag, maxDrag))
-                            }
+                            coroutineScope.launch { offsetX.snapTo((offsetX.value + dragAmount).coerceIn(-maxDrag, maxDrag)) }
                         }
                     )
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = when {
-                    offsetX.value > 20f -> Icons.Default.Call
-                    offsetX.value < -20f -> Icons.Default.CallEnd
-                    else -> Icons.Default.DragHandle
-                },
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(36.dp)
-            )
+            Icon(Icons.Default.Call, null, tint = containerColor, modifier = Modifier.size(32.dp))
         }
+    }
+}
+
+@Composable
+fun SwipeLabel(text: String, icon: ImageVector, isVisible: Boolean) {
+    val alpha by animateFloatAsState(if (isVisible) 1f else 0.3f, label = "a")
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha(alpha)) {
+        Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color.White)
+        Text(text, style = MaterialTheme.typography.labelSmall, color = Color.White)
     }
 }
