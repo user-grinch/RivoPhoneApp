@@ -24,7 +24,6 @@ import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
-
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -36,6 +36,9 @@ class CallService : InCallService() {
         private val _currentCallSession = MutableStateFlow<CallSession?>(null)
         val currentCallSession = _currentCallSession.asStateFlow()
 
+        private val _allCalls = MutableStateFlow<List<Call>>(emptyList())
+        val allCalls = _allCalls.asStateFlow()
+
         private val _audioState = MutableStateFlow<CallAudioState?>(null)
         val audioState = _audioState.asStateFlow()
 
@@ -50,6 +53,20 @@ class CallService : InCallService() {
             instance?.setAudioRoute(route)
         }
 
+        fun mergeCalls() {
+            val calls = instance?.getCalls() ?: return
+            if (calls.size >= 2) {
+                val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
+                val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+                if (activeCall != null && heldCall != null) {
+                    activeCall.conference(heldCall)
+                } else if (calls.size >= 2) {
+                    // Fallback: try conferencing the first two calls
+                    calls[0].conference(calls[1])
+                }
+            }
+        }
+
         fun answerCall() {
             _currentCallSession.value?.call?.answer(VideoProfile.STATE_AUDIO_ONLY)
         }
@@ -62,14 +79,30 @@ class CallService : InCallService() {
     private val callCallback = object : Call.Callback() {
         override fun onStateChanged(call: Call, state: Int) {
             super.onStateChanged(call, state)
-            _currentCallSession.value = CallSession(call, state)
+            updateCallState()
             
             if (state == Call.STATE_DISCONNECTED) {
-                removeForeground()
-                cancelNotification()
+                if ((instance?.getCalls()?.size ?: 0) == 0) {
+                    removeForeground()
+                    cancelNotification()
+                }
             } else {
                 updateNotification(call)
             }
+        }
+    }
+
+    private fun updateCallState() {
+        val calls = getCalls()
+        _allCalls.value = calls
+        
+        val activeCall = calls.find { it.state == Call.STATE_ACTIVE || it.state == Call.STATE_DIALING || it.state == Call.STATE_RINGING }
+            ?: calls.firstOrNull()
+            
+        if (activeCall != null) {
+            _currentCallSession.value = CallSession(activeCall, activeCall.state)
+        } else {
+            _currentCallSession.value = null
         }
     }
 
@@ -86,7 +119,8 @@ class CallService : InCallService() {
         super.onCallAdded(call)
         instance = this
         call.registerCallback(callCallback)
-        _currentCallSession.value = CallSession(call, call.state)
+        updateCallState()
+        
         updateNotification(call)
 
         if (call.state != Call.STATE_RINGING) {
@@ -100,11 +134,11 @@ class CallService : InCallService() {
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
         call.unregisterCallback(callCallback)
-        if (_currentCallSession.value?.call == call) {
-            _currentCallSession.value = null
+        updateCallState()
+        if ((getCalls()?.size ?: 0) == 0) {
+            removeForeground()
+            cancelNotification()
         }
-        removeForeground()
-        cancelNotification()
     }
 
     override fun onCallAudioStateChanged(audioState: CallAudioState?) {

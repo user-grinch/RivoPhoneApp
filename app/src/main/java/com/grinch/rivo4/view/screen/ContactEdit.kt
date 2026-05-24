@@ -99,6 +99,19 @@ fun ContactEditScreen(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            if (contactId != null) {
+                                contactsVM.deleteContact(contactId)
+                                navigator.navigateUp()
+                            }
+                        },
+                        enabled = name.isNotBlank() && phoneNumbers.any { it.isNotBlank() },
+                        modifier = Modifier.padding(end = 8.dp),
+                        shape = RoundedCornerShape(24.dp),
+                    ) {
+                        Icon(Icons.Default.Delete, null)
+                    }
                     Button(
                         onClick = {
                             val contactToSave = Contact(
