@@ -51,6 +51,8 @@ class PreferenceManager(context: Context) {
         const val KEY_COLORFUL_AVATARS = "colorful_avatars"
         const val KEY_SHOW_PICTURE = "show_picture"
         const val KEY_ICON_ONLY_NAV = "icon_only_nav"
+        const val KEY_FLIP_BOTTOM_NAV = "flip_bottom_nav"
+        const val KEY_DEFAULT_BOTTOM_NAV = "default_bottom_nav"
         const val KEY_DTMF_TONE = "dtmf_tone"
         const val KEY_DIALPAD_VIBRATION = "dialpad_vibration"
         const val KEY_SPEED_DIAL = "speed_dial"

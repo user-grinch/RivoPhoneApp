@@ -13,13 +13,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
 import org.koin.android.ext.koin.androidContext
+import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -43,10 +47,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             Rivo4Theme {
                 val navController = rememberNavController()
-                
+
+                val prefs = koinInject<PreferenceManager>()
+                val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
+
+                val initialRoute = if (defBar == 1) {
+                    RecentScreenDestination
+                } else {
+                    ContactScreenDestination
+                }
+
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
-                    navController = navController
+                    navController = navController,
+                    start = initialRoute
                 )
 
                 LaunchedEffect(intent) {

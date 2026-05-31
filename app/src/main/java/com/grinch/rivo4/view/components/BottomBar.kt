@@ -19,11 +19,26 @@ import com.ramcosta.composedestinations.generated.destinations.RecentScreenDesti
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
 
+data class NavigationTab(
+    val route: String,
+    val label: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val value: Int
+)
+
 @Composable
 fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
     val prefs = koinInject<PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
+
+    val flipBar = prefs.getBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, false)
     val iconOnly = prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)
+
+    val tabs = listOf(
+        NavigationTab(ContactScreenDestination.route, "Contacts", Icons.Default.Person, 0),
+        NavigationTab(RecentScreenDestination.route, "Recents", Icons.Default.History, 1)
+    )
+
+    val organizedTabs = if (flipBar) tabs.reversed() else tabs
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -32,36 +47,22 @@ fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = "Contacts") },
-            label = if (iconOnly) null else ({ Text("Contacts") }),
-            alwaysShowLabel = !iconOnly,
-            selected = currentDestination?.hierarchy?.any { it.route == ContactScreenDestination.route } == true,
-            onClick = {
-                navController.navigate(ContactScreenDestination.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+        organizedTabs.forEach { tab ->
+            NavigationBarItem(
+                icon = { Icon(tab.icon, contentDescription = tab.label) },
+                label = if (iconOnly) null else ({ Text(tab.label) }),
+                alwaysShowLabel = !iconOnly,
+                selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+                onClick = {
+                    navController.navigate(tab.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
-            }
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.History, contentDescription = "Recents") },
-            label = if (iconOnly) null else ({ Text("Recents") }),
-            alwaysShowLabel = !iconOnly,
-            selected = currentDestination?.hierarchy?.any { it.route == RecentScreenDestination.route } == true,
-            onClick = {
-                navController.navigate(RecentScreenDestination.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
+            )
+        }
     }
 }

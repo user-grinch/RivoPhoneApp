@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.ramcosta.composedestinations.annotation.Destination
@@ -54,6 +55,8 @@ fun InterfaceScreen(
     
     var dynamicColors by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)) }
     var amoledMode by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false)) }
+    var flipBottomBar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, defaultValue = false)) }
+    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, defaultValue = 0)) }
     var showFirstLetter by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)) }
     var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
     var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
@@ -161,6 +164,7 @@ fun InterfaceScreen(
                         RivoSwitchListItem(
                             headline = "Show first letter in avatar",
                             supporting = "Displays letter when picture is missing",
+                            leadingIcon = Icons.Outlined.Title,
                             checked = showFirstLetter,
                             onCheckedChange = {
                                 showFirstLetter = it
@@ -171,6 +175,7 @@ fun InterfaceScreen(
                         RivoSwitchListItem(
                             headline = "Use colorful avatars",
                             supporting = "Random colors based on contact name",
+                            leadingIcon = Icons.Outlined.Palette,
                             checked = colorfulAvatars,
                             onCheckedChange = {
                                 colorfulAvatars = it
@@ -181,6 +186,7 @@ fun InterfaceScreen(
                         RivoSwitchListItem(
                             headline = "Show picture in avatar",
                             supporting = "Shows the contact picture if available",
+                            leadingIcon = Icons.Outlined.AccountCircle,
                             checked = showPicture,
                             onCheckedChange = {
                                 showPicture = it
@@ -192,6 +198,30 @@ fun InterfaceScreen(
 
                 item {
                     RivoExpressiveCard {
+                        RivoSelectListItem(
+                            headline = "Default bottom bar",
+                            supporting = "Select which tab opens initially",
+                            leadingIcon = Icons.Outlined.SpaceDashboard,
+                            options = listOf(
+                                "Contacts" to 0,
+                                "Recents" to 1,
+                            ),
+                            selectedValue = defaultBottomBar,
+                            onValueChange = { selectedInt ->
+                                defaultBottomBar = selectedInt
+                                prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, selectedInt)
+                            }
+                        )
+                        RivoSwitchListItem(
+                            headline = "Flip bottom bar",
+                            supporting = "Flips the position of the contacts & recents tabs",
+                            leadingIcon = Icons.Outlined.SwapHoriz,
+                            checked = flipBottomBar,
+                            onCheckedChange = {
+                                flipBottomBar = it
+                                prefs.setBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, it)
+                            }
+                        )
                         RivoSwitchListItem(
                             headline = "Icon-only bottom bar",
                             supporting = "Removes text labels from navigation",
