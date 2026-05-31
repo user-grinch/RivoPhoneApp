@@ -23,6 +23,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
+import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
@@ -38,7 +40,8 @@ fun CallAccountsScreen(
         }
     }
     
-    var speedDial by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
     var t9Dialing by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var defaultSim by remember { mutableStateOf(prefs.getInt("default_sim", 0)) }
     
@@ -76,15 +79,11 @@ fun CallAccountsScreen(
         ) {
             item {
                 RivoExpressiveCard {
-                    RivoSwitchListItem(
+                    RivoListItem(
                         headline = "Speed dial",
-                        supporting = "Directly call someone by holding a dialpad key",
+                        supporting = if (speedDial) "Enabled" else "Disabled",
                         leadingIcon = Icons.Outlined.Speed,
-                        checked = speedDial,
-                        onCheckedChange = {
-                            speedDial = it
-                            prefs.setBoolean(PreferenceManager.KEY_SPEED_DIAL, it)
-                        }
+                        onClick = { navigator.navigate(SpeedDialScreenDestination) }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(

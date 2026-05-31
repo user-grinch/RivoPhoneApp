@@ -57,6 +57,7 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
             listState.firstVisibleItemIndex > 3
         }
     }
+    val selectedFilter by viewModel.selectedFilter.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -69,7 +70,23 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                 label = "TopBarTransition"
             ) { isSelecting ->
                 if (!isSelecting) {
-                    TopBar(navController, navigator)
+                    Column {
+                        TopBar(navController, navigator)
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(CallLogFilter.entries) { filter ->
+                                RivoFilterChip(filter.name, selectedFilter == filter, {
+                                        _ ->
+                                    viewModel.setFilter(filter)
+                                })
+                            }
+                        }
+                    }
                 } else {
                     BatchCallLogActionBar(
                         selectedCount = selectedEntries.size,
@@ -187,20 +204,6 @@ fun CallLogFullContent(
             EmptyCallLogsState()
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(CallLogFilter.entries) { filter ->
-                        RivoFilterChip(filter.name, selectedFilter == filter, {
-                                _ ->
-                            viewModel.setFilter(filter)
-                        })
-                    }
-                }
 
                 LazyColumn(
                     state = listState,

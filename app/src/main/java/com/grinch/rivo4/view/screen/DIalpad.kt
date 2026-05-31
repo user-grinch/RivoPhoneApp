@@ -220,7 +220,16 @@ fun DialPadScreen(
                                 letters = subKeys[key] ?: "",
                                 toneGenerator = toneGenerator,
                                 context = context,
-                                onClick = { digit -> number += digit }
+                                onClick = { digit -> number += digit },
+                                onLongClick = { digit ->
+                                    if (speedDialEnabled && number.isEmpty()) {
+                                        val mapping = prefs.getString("speed_dial_$digit", null)
+                                        val speedNumber = mapping?.split("|")?.getOrNull(1)
+                                        if (speedNumber != null) {
+                                            makeCall(context, speedNumber)
+                                        }
+                                    }
+                                }
                             )
                         }
                     }
@@ -338,13 +347,15 @@ fun DialerActionExpressive(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DialPadKey(
     number: String,
     letters: String,
     toneGenerator: ToneGenerator,
     context: Context,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    onLongClick: ((String) -> Unit)? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -359,19 +370,24 @@ fun DialPadKey(
     )
 
     Surface(
-        onClick = {
-            if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
-                playDtmf(number, toneGenerator)
-            }
-            if (prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            }
-            onClick(number)
-        },
-        modifier = Modifier.size(width = 100.dp, height = 72.dp),
+        modifier = Modifier
+            .size(width = 100.dp, height = 72.dp)
+            .combinedClickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = {
+                    if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
+                        playDtmf(number, toneGenerator)
+                    }
+                    if (prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    }
+                    onClick(number)
+                },
+                onLongClick = onLongClick?.let { { it(number) } }
+            ),
         shape = RoundedCornerShape(cornerRadius),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        interactionSource = interactionSource
+        color = MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
