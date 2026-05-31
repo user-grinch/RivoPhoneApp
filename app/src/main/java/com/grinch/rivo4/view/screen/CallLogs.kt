@@ -3,6 +3,7 @@ package com.grinch.rivo4.view.screen
 import android.content.Context
 import android.provider.CallLog
 import android.telecom.TelecomManager
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,7 +12,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
@@ -22,17 +24,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.CallLogViewModel
-import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.modal.data.CallLogFilter
+import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -49,6 +50,9 @@ fun CallLogFullScreen(
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    
+    var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
+    
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 2
@@ -83,24 +87,48 @@ fun CallLogFullScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { 
-                    Text(
-                        if (contactName != null) "History with $contactName" else "Call History", 
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
-                    ) 
+            AnimatedContent(
+                targetState = selectedEntries.isNotEmpty(),
+                transitionSpec = {
+                    (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
                 },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            )
+                label = "TopBarTransition"
+            ) { isSelecting ->
+                if (!isSelecting) {
+                    TopAppBar(
+                        title = { 
+                            Text(
+                                if (contactName != null) "History with $contactName" else "Call History", 
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                            ) 
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navigator.navigateUp() }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
+                } else {
+                    BatchCallLogActionBar(
+                        selectedCount = selectedEntries.size,
+                        onClearSelection = { selectedEntries = emptySet() },
+                        onDelete = {
+                            val allIdsToDelete = selectedEntries.flatMap { it.ids }
+                            viewModel.deleteCallLogsByIds(allIdsToDelete)
+                            selectedEntries = emptySet()
+                        },
+                        onClearAll = {
+                            viewModel.clearCallLogs()
+                            selectedEntries = emptySet()
+                        }
+                    )
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
@@ -166,7 +194,24 @@ fun CallLogFullScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
                                     RivoExpressiveCard {
                                         logsInGroup.forEachIndexed { index, lg ->
-                                            CallLogTileSimple(lg)
+                                            CallLogTileSimple(
+                                                log = lg,
+                                                onClick = {
+                                                    if (selectedEntries.isNotEmpty()) {
+                                                        selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
+                                                            selectedEntries.filter { it.id != lg.id }.toSet()
+                                                        } else {
+                                                            selectedEntries + lg
+                                                        }
+                                                    }
+                                                },
+                                                onLongClick = {
+                                                    if (selectedEntries.none { it.id == lg.id }) {
+                                                        selectedEntries = selectedEntries + lg
+                                                    }
+                                                },
+                                                selected = selectedEntries.any { it.id == lg.id }
+                                            )
                                             
                                             if (index < logsInGroup.size - 1) {
                                                 HorizontalDivider(
@@ -185,7 +230,7 @@ fun CallLogFullScreen(
             }
 
             ScrollToTopButton(
-                visible = showButton,
+                visible = showButton && selectedEntries.isEmpty(),
                 onClick = {
                     scope.launch {
                         listState.animateScrollToItem(0)

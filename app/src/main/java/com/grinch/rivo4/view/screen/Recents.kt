@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.CallLog
 import android.telecom.TelecomManager
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,7 +24,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.controller.CallLogViewModel
-import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
@@ -34,14 +34,10 @@ import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDest
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.automirrored.filled.CallMade
-import androidx.compose.material.icons.automirrored.filled.CallMissed
-import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.CallLogFilter
-import java.util.Locale
+import com.grinch.rivo4.modal.data.CallLogEntry
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -52,6 +48,10 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val viewModel: CallLogViewModel = koinActivityViewModel()
+    
+    var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
+    
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 3
@@ -61,21 +61,49 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar(navController, navigator)
+            AnimatedContent(
+                targetState = selectedEntries.isNotEmpty(),
+                transitionSpec = {
+                    (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
+                },
+                label = "TopBarTransition"
+            ) { isSelecting ->
+                if (!isSelecting) {
+                    TopBar(navController, navigator)
+                } else {
+                    BatchCallLogActionBar(
+                        selectedCount = selectedEntries.size,
+                        onClearSelection = { selectedEntries = emptySet() },
+                        onDelete = {
+                            val allIdsToDelete = selectedEntries.flatMap { it.ids }
+                            viewModel.deleteCallLogsByIds(allIdsToDelete)
+                            selectedEntries = emptySet()
+                        },
+                        onClearAll = {
+                            viewModel.clearCallLogs()
+                            selectedEntries = emptySet()
+                        }
+                    )
+                }
+            }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigator.navigate(DialPadScreenDestination()) },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                shape = RoundedCornerShape(20.dp),
-                elevation = FloatingActionButtonDefaults.elevation(0.dp)
-            ) {
-                Icon(Icons.Default.Dialpad, "Dialpad")
+            if (selectedEntries.isEmpty()) {
+                FloatingActionButton(
+                    onClick = { navigator.navigate(DialPadScreenDestination()) },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                ) {
+                    Icon(Icons.Default.Dialpad, "Dialpad")
+                }
             }
         },
         bottomBar = {
-            BottomBar(navController, navigator)
+            if (selectedEntries.isEmpty()) {
+                BottomBar(navController, navigator)
+            }
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
@@ -86,11 +114,19 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                 navigator = navigator,
                 isGranted = permState.status == PermissionStatus.Granted,
                 onRequestPermission = { permState.launchPermissionRequest() },
-                listState = listState
+                listState = listState,
+                selectedEntries = selectedEntries,
+                onToggleSelection = { entry ->
+                    selectedEntries = if (selectedEntries.any { it.id == entry.id }) {
+                        selectedEntries.filter { it.id != entry.id }.toSet()
+                    } else {
+                        selectedEntries + entry
+                    }
+                }
             )
             
             ScrollToTopButton(
-                visible = showButton,
+                visible = showButton && selectedEntries.isEmpty(),
                 onClick = {
                     scope.launch {
                         listState.animateScrollToItem(0)
@@ -106,7 +142,9 @@ fun CallLogFullContent(
     navigator: DestinationsNavigator,
     isGranted: Boolean,
     onRequestPermission: () -> Unit,
-    listState: androidx.compose.foundation.lazy.LazyListState
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    selectedEntries: Set<CallLogEntry>,
+    onToggleSelection: (CallLogEntry) -> Unit
 ) {
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
@@ -179,12 +217,16 @@ fun CallLogFullContent(
                                         CallLogTile(
                                             log = lg,
                                             onTileClick = { log ->
-                                                navigator.navigate(
-                                                    ContactDetailsScreenDestination(
-                                                        contactId = log.contactId ?: "null",
-                                                        phoneNumber = log.number
+                                                if (selectedEntries.isNotEmpty()) {
+                                                    onToggleSelection(log)
+                                                } else {
+                                                    navigator.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = log.contactId ?: "null",
+                                                            phoneNumber = log.number
+                                                        )
                                                     )
-                                                )
+                                                }
                                             },
                                             onButtonClick = { log ->
                                                 val hasPermission =
@@ -204,7 +246,11 @@ fun CallLogFullContent(
                                                 } else {
                                                     makeCall(context, log.number)
                                                 }
-                                            }
+                                            },
+                                            onLongClick = { log ->
+                                                onToggleSelection(log)
+                                            },
+                                            selected = selectedEntries.any { it.id == lg.id }
                                         )
                                         if (index < logsInGroup.size - 1) {
                                             HorizontalDivider(

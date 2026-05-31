@@ -28,16 +28,37 @@ class CallLogViewModel(
         fetchLogs()
     }
 
-    public fun setFilter(newFilter: CallLogFilter) {
-        _selectedFilter.value = newFilter;
+    fun setFilter(newFilter: CallLogFilter) {
+        _selectedFilter.value = newFilter
     }
 
-    private fun fetchLogs() {
+    fun fetchLogs() {
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             val result = callLogRepo.getCallLogs()
             _allCallLogs.value = result
             _isLoading.value = false
+        }
+    }
+
+    fun deleteCallLog(number: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            callLogRepo.deleteCallLog(number)
+            fetchLogs()
+        }
+    }
+
+    fun deleteCallLogsByIds(ids: List<Long>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            callLogRepo.deleteCallLogsByIds(ids)
+            fetchLogs()
+        }
+    }
+
+    fun clearCallLogs() {
+        viewModelScope.launch(Dispatchers.IO) {
+            callLogRepo.clearCallLogs()
+            fetchLogs()
         }
     }
 }

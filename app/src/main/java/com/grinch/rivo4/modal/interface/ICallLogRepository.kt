@@ -4,4 +4,7 @@ import com.grinch.rivo4.modal.data.CallLogEntry
 
 interface ICallLogRepository {
     fun getCallLogs(): List<CallLogEntry>
+    fun deleteCallLog(number: String)
+    fun deleteCallLogsByIds(ids: List<Long>)
+    fun clearCallLogs()
 }

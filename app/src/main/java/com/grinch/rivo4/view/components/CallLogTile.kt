@@ -1,34 +1,32 @@
 package com.grinch.rivo4.view.components
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.provider.CallLog
-import android.telecom.TelecomManager
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.modal.data.CallLogEntry
-import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.grinch.rivo4.controller.util.makeCall
-import android.Manifest
+import androidx.compose.foundation.shape.RoundedCornerShape
+
 @Composable
-fun CallLogTileSimple(log: CallLogEntry) {
+fun CallLogTileSimple(
+    log: CallLogEntry,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    selected: Boolean = false
+) {
     val icon = when (log.type) {
         CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
         CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
@@ -45,7 +43,9 @@ fun CallLogTileSimple(log: CallLogEntry) {
         },
         supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
         leadingIcon = icon,
-        onClick = { }
+        onClick = onClick,
+        onLongClick = onLongClick,
+        selected = selected
     )
 }
 
@@ -53,16 +53,14 @@ fun CallLogTileSimple(log: CallLogEntry) {
 fun CallLogTile(
     log: CallLogEntry,
     onTileClick: (CallLogEntry) -> Unit,
-    onButtonClick: (CallLogEntry) -> Unit
+    onButtonClick: (CallLogEntry) -> Unit,
+    onLongClick: (CallLogEntry) -> Unit = {},
+    selected: Boolean = false
 ) {
-    val isMissed = log.type == CallLog.Calls.MISSED_TYPE
-
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Box(modifier = Modifier.weight(1f)) {
             RivoListItem(
                 headline = buildString {
@@ -82,8 +80,96 @@ fun CallLogTile(
                     CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
                     else -> Icons.Default.Call
                 },
-                onClick = {onTileClick(log)}
+                onClick = { onTileClick(log) },
+                onLongClick = { onLongClick(log) },
+                selected = selected
             )
         }
+    }
+}
+
+@Composable
+fun BatchCallLogActionBar(
+    selectedCount: Int,
+    onClearSelection: () -> Unit,
+    onDelete: () -> Unit,
+    onClearAll: () -> Unit
+) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showClearAllConfirm by remember { mutableStateOf(false) }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClearSelection) {
+                Icon(Icons.Default.Close, "Clear selection")
+            }
+            Text(
+                text = "$selectedCount Selected",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            )
+            IconButton(onClick = { showClearAllConfirm = true }) {
+                Icon(Icons.Default.DeleteSweep, "Clear all logs")
+            }
+            IconButton(onClick = { showDeleteConfirm = true }) {
+                Icon(Icons.Default.Delete, "Delete selected")
+            }
+        }
+    }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text("Delete Call Logs") },
+            text = { Text("Are you sure you want to delete $selectedCount selected call logs?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete()
+                    showDeleteConfirm = false
+                }) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showClearAllConfirm) {
+        AlertDialog(
+            onDismissRequest = { showClearAllConfirm = false },
+            title = { Text("Clear All Logs") },
+            text = { Text("This will delete your entire call history. This action cannot be undone.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onClearAll()
+                    showClearAllConfirm = false
+                }) {
+                    Text("Clear All", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearAllConfirm = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
