@@ -1,5 +1,6 @@
 package com.grinch.rivo4.controller.util
-
+import android.os.Build
+import androidx.core.content.pm.PackageInfoCompat
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -82,4 +83,28 @@ fun openLink(context: Context, link: String) {
     val intent = Intent(Intent.ACTION_VIEW,
         link.toUri())
     context.startActivity(intent)
+}
+
+
+fun getAppVersion(context: Context): Pair<String, Long> {
+    return try {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(
+                context.packageName,
+                PackageManager.PackageInfoFlags.of(0)
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        }
+
+        val versionName = packageInfo.versionName ?: "Unknown"
+        // PackageInfoCompat handles retrieving long version codes safely across old/new API levels
+        val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
+
+        Pair(versionName, versionCode)
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+        Pair("Unknown", -1L)
+    }
 }

@@ -21,12 +21,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.grinch.rivo4.APP_VERSION
-import com.grinch.rivo4.BUILD_NUMBER
 import com.grinch.rivo4.DISCORD_URL
 import com.grinch.rivo4.GITHUB_URL
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
@@ -41,6 +40,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun AboutScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
+    val appInfo = getAppVersion(context)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,14 +109,14 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             RivoExpressiveCard {
                 RivoListItem(
                     headline = "Version",
-                    supporting = APP_VERSION,
+                    supporting = appInfo.first,
                     leadingIcon = Icons.Outlined.Info,
                     onClick = { }
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
                     headline = "Build number",
-                    supporting = BUILD_NUMBER,
+                    supporting = appInfo.second.toString(),
                     leadingIcon = Icons.Default.Numbers,
                     onClick = { }
                 )
@@ -158,7 +159,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
                     headline = "Check for Updates",
-                    supporting = "Current version: $APP_VERSION",
+                    supporting = "Current version: ${appInfo.first}",
                     leadingIcon = Icons.Outlined.SystemUpdate,
                     onClick = { openLink(context, "$GITHUB_URL/releases") }
                 )
