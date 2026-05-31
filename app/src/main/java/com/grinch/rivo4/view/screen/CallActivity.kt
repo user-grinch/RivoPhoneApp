@@ -19,7 +19,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -254,9 +253,7 @@ fun ExpressiveCallScreen(
                             style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            modifier = Modifier.basicMarquee()
+                            textAlign = TextAlign.Center
                         )
 
                         val statusText = when {

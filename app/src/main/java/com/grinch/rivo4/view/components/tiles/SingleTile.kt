@@ -1,6 +1,5 @@
 package com.grinch.rivo4.view.components.tiles
 
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -55,7 +54,7 @@ fun SingleTile(
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isMissedCall) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    modifier = Modifier.basicMarquee()
+                    overflow = TextOverflow.Ellipsis
                 )
                 if (supportingContent != null) {
                     supportingContent()
@@ -65,7 +64,7 @@ fun SingleTile(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        modifier = Modifier.basicMarquee()
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -218,7 +217,7 @@ fun RivoListItem(
                     fontWeight = FontWeight.SemiBold,
                     color = headlineColor,
                     maxLines = 1,
-                    modifier = Modifier.basicMarquee()
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
                     Text(
@@ -226,7 +225,7 @@ fun RivoListItem(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        modifier = Modifier.basicMarquee()
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }
@@ -357,7 +356,7 @@ fun RivoSelectListItem(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        modifier = Modifier.basicMarquee()
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }

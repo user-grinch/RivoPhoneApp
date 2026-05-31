@@ -281,7 +281,7 @@ fun ContactDetailsScreen(
                                         // Attempt to use common video calling schemes
                                         setDataAndType(uri, "vnd.android.cursor.item/video-chat-address")
                                     }
-                                    
+
                                     // Fallback to a chooser for common apps like Google Meet/Duo, WhatsApp, etc.
                                     val chooser = Intent.createChooser(intent, "Video Call with")
                                     context.startActivity(chooser)
@@ -378,10 +378,10 @@ fun ContactDetailsScreen(
                                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }
                                 }
-                                
+
                                 if (contactLogs.size > 3) {
                                     TextButton(
-                                        onClick = { 
+                                        onClick = {
                                             navigator.navigate(CallLogFullScreenDestination(
                                                 contactId = contactId,
                                                 phoneNumber = phoneNumber
