@@ -1,148 +1,67 @@
 # Rivo
 
-**Rivo** is a modern, feature-rich dialer app built with **Jetpack Compose**.  
-It focuses on speed, simplicity, and a clean native Android experience for handling calls and contacts.
+Rivo is an open-source Android dialer built with Jetpack Compose.
+
+The goal is simple: provide a clean, modern phone app without unnecessary clutter while keeping the core calling experience fast and reliable.
 
 <p align="center">
-  <a href="https://github.com/user-grinch/Rivo">
+  <a href="https://github.com/user-grinch/RivoPhoneApp">
     <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github" />
   </a>
   <a href="https://discord.gg/NtEvU3726e">
-    <img src="https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
+    <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
   </a>
   <a href="https://www.patreon.com/c/GrinchDev">
-    <img src="https://img.shields.io/badge/Patreon-Support%20Development-F96854?style=for-the-badge&logo=patreon&logoColor=white" />
+    <img src="https://img.shields.io/badge/Patreon-Support-F96854?style=for-the-badge&logo=patreon&logoColor=white" />
   </a>
 </p>
 
----
+## Install
 
-## ✨ Features
+<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
+    <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="100">
+</a>
 
-- **⚡ Fast Dialing** — Smooth and responsive dialing experience  
-- **📇 Contact Management** — Organize and access contacts easily  
-- **📞 Call History** — Clean and accessible call logs  
-- **🎨 Modern UI (Compose)** — Built fully with Jetpack Compose  
-- **📱 Call Screen** — Native in-app calling interface  
-- **🧩 Modular Architecture** — Scalable and maintainable codebase  
+<a href="https://github.com/user-grinch/RivoPhoneApp/releases">
+    <img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" alt="Download from GitHub Releases" height="100">
+</a>
 
----
+## Screenshots
 
-## 🛠 Tech Stack
+<p align="center">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.jpeg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.jpg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.jpg" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.jpg" width="260">
+</p>
 
-- **UI:** Jetpack Compose  
-- **Language:** Kotlin  
-- **Architecture:** MVVM (ViewModel + State)  
-- **Async:** Coroutines / Flow  
-- **Build System:** Gradle (KTS)  
+## Features
 
----
+* Modern Material 3 Expressive interface
+* Lightning-fast dialing and contact lookup
+* T9 search for quickly finding contacts
+* Clean and organized call history
+* Native in-call screen and controls
+* Automatic screen handling with proximity sensor support
+* Smooth performance powered by Jetpack Compose
+* Fully open source etc.
 
-## 📸 Preview
 
-<details>
-  <summary>Show Screenshots</summary>
+## Contributing
 
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.jpeg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.jpg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.jpg" width="300">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.jpg" width="300">
+Issues, feature requests, and pull requests are welcome.
 
-</details>
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Android Studio (latest recommended)
-- Android SDK (API 24+)
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/user-grinch/Rivo.git
-
-# Enter project directory
-cd Rivo
-````
-
-### Open in Android Studio
-
-* Open the project folder
-* Let Gradle sync automatically
-
-### Run the app
-
-* Select a device/emulator
-* Click **Run ▶**
-
-### Build APK
-
-```bash
-./gradlew assembleDebug
-# or
-./gradlew assembleRelease
-```
-
-APK will be located in:
-
-```
-app/build/outputs/apk/
-```
+If you'd like to discuss ideas or report bugs, join the Discord server.
 
 ---
 
-## 📂 Project Structure (Simplified)
+## License
 
-```
-app/
- ├── ui/              # Compose UI screens & components
- ├── viewmodel/       # ViewModels
- ├── data/            # Repositories & data sources
- ├── domain/          # Business logic (optional clean architecture)
- └── utils/           # Helpers & extensions
-```
+Licensed under the GNU GPL v3.0.
 
----
-
-## 🤝 Contributing
-
-Contributions are welcome!
-
-```bash
-# 1. Fork the repo
-
-# 2. Create a branch
-git checkout -b feature-name
-
-# 3. Commit your changes
-git commit -m "Add: short description"
-
-# 4. Push
-git push origin feature-name
-```
-
-Then open a Pull Request describing your changes.
-
----
-
-## 💬 Community
-
-* Discord: [https://discord.gg/NtEvU3726e](https://discord.gg/NtEvU3726e)
-* Patreon: [https://www.patreon.com/c/GrinchDev](https://www.patreon.com/c/GrinchDev)
-
-Join to report bugs, suggest features, or follow development.
-
----
-
-## 📄 License
-
-Licensed under **GNU GPL v3.0**.
-See the [LICENSE](LICENSE) file for details.
+See the LICENSE file for details.
