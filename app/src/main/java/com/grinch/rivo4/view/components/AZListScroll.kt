@@ -32,7 +32,9 @@ fun AZListScroll(
     contacts: List<Contact>,
     navigator: DestinationsNavigator,
     modifier: Modifier = Modifier,
-    listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState()
+    listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState(),
+    selectedIds: Set<String> = emptySet(),
+    onToggleSelection: (String) -> Unit = {}
 ) {
     val grouped = remember(contacts) {
         val favorites = contacts.filter { it.isFavorite }
@@ -116,8 +118,16 @@ fun AZListScroll(
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,
                                     onClick = {
-                                        navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                                    }
+                                        if (selectedIds.isNotEmpty()) {
+                                            onToggleSelection(contact.id)
+                                        } else {
+                                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                        }
+                                    },
+                                    onLongClick = {
+                                        onToggleSelection(contact.id)
+                                    },
+                                    selected = selectedIds.contains(contact.id)
                                 )
                                 if (index < contactsForChar.size - 1) {
                                     HorizontalDivider(

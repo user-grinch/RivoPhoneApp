@@ -1,10 +1,12 @@
 package com.grinch.rivo4.view.screen
 
+import android.accounts.Account
 import android.net.Uri
 import android.provider.ContactsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -16,10 +18,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -40,6 +45,7 @@ fun ContactEditScreen(
 ) {
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val allContacts by contactsVM.allContacts.collectAsState()
+    val availableAccounts by contactsVM.availableAccounts.collectAsState()
     
     val existingContact = remember(contactId, allContacts) {
         if (contactId != null && contactId != "0" && contactId != "null") {
@@ -49,6 +55,9 @@ fun ContactEditScreen(
 
     var name by remember(existingContact) { mutableStateOf(existingContact?.name ?: initialName ?: "") }
     var photoUri by remember(existingContact) { mutableStateOf<String?>(existingContact?.photoUri) }
+    var selectedAccount by remember(existingContact, availableAccounts) {
+        mutableStateOf(availableAccounts.find { it.name == existingContact?.accountName && it.type == existingContact?.accountType })
+    }
     
     val phoneNumbers = remember(existingContact) { 
         mutableStateListOf<String>().apply { 
@@ -99,18 +108,17 @@ fun ContactEditScreen(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            if (contactId != null) {
+                    if (contactId != null && contactId != "0") {
+                        IconButton(
+                            onClick = {
                                 contactsVM.deleteContact(contactId)
                                 navigator.navigateUp()
-                            }
-                        },
-                        enabled = name.isNotBlank() && phoneNumbers.any { it.isNotBlank() },
-                        modifier = Modifier.padding(end = 8.dp),
-                        shape = RoundedCornerShape(24.dp),
-                    ) {
-                        Icon(Icons.Default.Delete, null)
+                            },
+                            modifier = Modifier.padding(end = 8.dp),
+                            shape = RoundedCornerShape(24.dp),
+                        ) {
+                            Icon(Icons.Default.Delete, null)
+                        }
                     }
                     Button(
                         onClick = {
@@ -120,7 +128,9 @@ fun ContactEditScreen(
                                 phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
                                 emails = emails.filter { it.isNotBlank() },
                                 addresses = addresses.filter { it.isNotBlank() },
-                                photoUri = photoUri
+                                photoUri = photoUri,
+                                accountName = selectedAccount?.name,
+                                accountType = selectedAccount?.type
                             )
                             contactsVM.saveContact(contactToSave)
                             navigator.navigateUp()
@@ -194,7 +204,89 @@ fun ContactEditScreen(
                 }
             }
 
-            
+            item {
+                RivoSectionHeader(title = "Account")
+                RivoExpressiveCard {
+                    var showPicker by remember { mutableStateOf(false) }
+                    
+                    Surface(
+                        onClick = { showPicker = true },
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = selectedAccount?.let { ContactUtils.getAccountIcon(it) } ?: Icons.Default.CloudOff,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Save to Account",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = selectedAccount?.let { ContactUtils.getFriendlyAccountName(it) } ?: "Local (Device Only)",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Icon(Icons.Default.ArrowDropDown, null)
+                        }
+                    }
+
+                    if (showPicker) {
+                        Dialog(onDismissRequest = { showPicker = false }) {
+                            RivoExpressiveCard(
+                                title = "Select Account",
+                                icon = Icons.Default.AccountBalance
+                            ) {
+                                Surface(
+                                    onClick = {
+                                        selectedAccount = null
+                                        showPicker = false
+                                    },
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = if (selectedAccount == null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+                                ) {
+                                    ListItem(
+                                        headlineContent = { Text("Local (Device Only)") },
+                                        leadingContent = { Icon(Icons.Default.CloudOff, null) },
+                                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                    )
+                                }
+                                
+                                availableAccounts.forEach { account ->
+                                    val isSelected = selectedAccount == account
+                                    Surface(
+                                        onClick = {
+                                            selectedAccount = account
+                                            showPicker = false
+                                        },
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+                                    ) {
+                                        ListItem(
+                                            headlineContent = { Text(ContactUtils.getFriendlyAccountName(account)) },
+                                            supportingContent = { Text(account.name) },
+                                            leadingContent = { Icon(ContactUtils.getAccountIcon(account), null) },
+                                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             item {
                 RivoSectionHeader(title = "Identity")
                 RivoExpressiveCard {

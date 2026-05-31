@@ -1,38 +1,49 @@
 package com.grinch.rivo4.view.screen
 
 import android.Manifest
-import android.content.Intent
-import android.provider.ContactsContract
+import android.accounts.Account
+import androidx.compose.animation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.AZListScroll
 import com.grinch.rivo4.view.components.BottomBar
+import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
-
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Destination<RootGraph>(
@@ -41,9 +52,11 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
-    val context = LocalContext.current
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
+    
+    var selectedIds by remember { mutableStateOf(setOf<String>()) }
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 2
@@ -53,17 +66,42 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar(navController, navigator)
+            Column {
+                AnimatedContent(
+                    targetState = selectedIds.isNotEmpty(),
+                    transitionSpec = {
+                        (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
+                    },
+                    label = "TopBarTransition"
+                ) { isSelecting ->
+                    if (!isSelecting) {
+                        Column {
+                            TopBar(navController, navigator)
+                            AccountFilterBar(contactsVM)
+                        }
+                    } else {
+                        BatchActionBar(
+                            selectedCount = selectedIds.size,
+                            onClear = { selectedIds = emptySet() },
+                            onDelete = {
+                                contactsVM.deleteContacts(selectedIds.toList())
+                                selectedIds = emptySet()
+                            },
+                            onMove = { account ->
+                                contactsVM.moveContacts(selectedIds.toList(), account)
+                                selectedIds = emptySet()
+                            },
+                            availableAccounts = contactsVM.availableAccounts.collectAsState().value
+                        )
+                    }
+                }
+            }
         },
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            if (selectedIds.isEmpty()) {
                 FloatingActionButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
-                        context.startActivity(intent)
+                        navigator.navigate(ContactEditScreenDestination())
                     },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -75,7 +113,9 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
             }
         },
         bottomBar = {
-            BottomBar(navController, navigator)
+            if (selectedIds.isEmpty()) {
+                BottomBar(navController, navigator)
+            }
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
@@ -86,11 +126,19 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
                 navigator = navigator,
                 isGranted = permState.status == PermissionStatus.Granted,
                 onRequestPermission = { permState.launchPermissionRequest() },
-                listState = listState
+                listState = listState,
+                selectedIds = selectedIds,
+                onToggleSelection = { id ->
+                    selectedIds = if (selectedIds.contains(id)) {
+                        selectedIds - id
+                    } else {
+                        selectedIds + id
+                    }
+                }
             )
             
             ScrollToTopButton(
-                visible = showButton,
+                visible = showButton && selectedIds.isEmpty(),
                 onClick = {
                     scope.launch {
                         listState.animateScrollToItem(0)
@@ -102,61 +150,263 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
 }
 
 @Composable
+fun AccountFilterBar(viewModel: ContactsViewModel) {
+    val accounts by viewModel.availableAccounts.collectAsState()
+    val selectedAccount by viewModel.selectedAccount.collectAsState()
+
+    if (accounts.isNotEmpty()) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                RivoFilterChip("All", selectedAccount == null, {
+                        _ ->
+                    viewModel.selectAccount(null)
+                })
+            }
+            items(accounts) { account ->
+                RivoFilterChip(ContactUtils.getFriendlyAccountName(account), selectedAccount == account, {
+                        _ ->
+                    viewModel.selectAccount(account)
+                })
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BatchActionBar(
+    selectedCount: Int,
+    onClear: () -> Unit,
+    onDelete: () -> Unit,
+    onMove: (Account) -> Unit,
+    availableAccounts: List<Account>
+) {
+    var showMoveDialog by remember { mutableStateOf(false) }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClear) {
+                Icon(Icons.Default.Close, "Clear selection")
+            }
+            Text(
+                text = "$selectedCount Selected",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            )
+            IconButton(onClick = { showMoveDialog = true }) {
+                Icon(Icons.AutoMirrored.Filled.DriveFileMove, "Move")
+            }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Default.Delete, "Delete")
+            }
+        }
+    }
+
+    if (showMoveDialog) {
+        Dialog(
+            onDismissRequest = { showMoveDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { showMoveDialog = false },
+                contentAlignment = Alignment.Center
+            ) {
+                RivoExpressiveCard(
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .clickable(enabled = false) { },
+                    title = "Move to Account",
+                    icon = Icons.AutoMirrored.Filled.DriveFileMove
+                ) {
+                    availableAccounts.forEachIndexed { index, account ->
+                        Surface(
+                            onClick = {
+                                onMove(account)
+                                showMoveDialog = false
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color.Transparent
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(40.dp),
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(ContactUtils.getAccountIcon(account), null, modifier = Modifier.size(20.dp))
+                                    }
+                                }
+                                Spacer(Modifier.width(16.dp))
+                                Column {
+                                    Text(
+                                        ContactUtils.getFriendlyAccountName(account),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        account.name,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                        if (index < availableAccounts.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                    
+                    TextButton(
+                        onClick = { showMoveDialog = false },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun ContactContent(
     navigator: DestinationsNavigator,
     isGranted: Boolean,
     onRequestPermission: () -> Unit,
-    listState: androidx.compose.foundation.lazy.LazyListState
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    selectedIds: Set<String>,
+    onToggleSelection: (String) -> Unit
 ) {
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val isLoading by contactsVM.isLoading.collectAsState()
+    val contacts by contactsVM.filteredContacts.collectAsState()
+
     Column(modifier = Modifier.fillMaxSize()) {
         if (isGranted) {
-            val contactsVM: ContactsViewModel = koinActivityViewModel()
-            val contacts = contactsVM.allContacts.collectAsState().value
-
-            if (contacts.isEmpty()) {
+            if (isLoading && contacts.isEmpty()) {
                 RivoLoadingIndicatorView()
+            } else if (contacts.isEmpty()) {
+                EmptyContactsState()
             } else {
-                AZListScroll(contacts, navigator, listState = listState)
-            }
-
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(32.dp),
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    modifier = Modifier.size(120.dp),
-                    shadowElevation = 0.dp
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            modifier = Modifier.size(64.dp),
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 32.dp),
-                    textAlign = TextAlign.Center,
-                    text = "To show your contact list and identify incoming calls, Rivo needs permission to access your contacts.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
+                AZListScroll(
+                    contacts = contacts, 
+                    navigator = navigator, 
+                    listState = listState,
+                    selectedIds = selectedIds,
+                    onToggleSelection = onToggleSelection
                 )
-                Spacer(modifier = Modifier.height(32.dp))
-                Button(
-                    onClick = onRequestPermission,
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = ButtonDefaults.buttonElevation(0.dp)
-                ) {
-                    Text("Grant permission")
-                }
             }
+        } else {
+            PermissionRequiredState(onRequestPermission)
+        }
+    }
+}
+
+@Composable
+fun EmptyContactsState() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            shape = RoundedCornerShape(32.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.size(120.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.Default.PersonSearch,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "No contacts found",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Try clearing your filters or add a new contact.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun PermissionRequiredState(onRequestPermission: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            shape = RoundedCornerShape(32.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            modifier = Modifier.size(120.dp),
+            shadowElevation = 0.dp
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            modifier = Modifier.padding(horizontal = 32.dp),
+            textAlign = TextAlign.Center,
+            text = "To show your contact list and identify incoming calls, Rivo needs permission to access your contacts.",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(
+            onClick = onRequestPermission,
+            shape = RoundedCornerShape(24.dp),
+            elevation = ButtonDefaults.buttonElevation(0.dp)
+        ) {
+            Text("Grant permission")
         }
     }
 }

@@ -3,6 +3,8 @@ package com.grinch.rivo4.view.components
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import java.util.Locale
 
 
 @Composable
@@ -137,6 +141,7 @@ fun RivoExpressiveButton(
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun RivoListItem(
     headline: String,
@@ -146,12 +151,19 @@ fun RivoListItem(
     avatarName: String? = null,
     photoUri: String? = null,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
+    selected: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Surface(
-        onClick = onClick,
-        color = Color.Transparent,
-        modifier = modifier.fillMaxWidth(),
+        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        shape = RoundedCornerShape(24.dp),
         shadowElevation = 0.dp
     ) {
         Row(
@@ -160,7 +172,19 @@ fun RivoListItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (avatarName != null || photoUri != null) {
+            if (selected) {
+                Surface(
+                    modifier = Modifier.size(44.dp),
+                    shape = RoundedCornerShape(48.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    shadowElevation = 0.dp
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+            } else if (avatarName != null || photoUri != null) {
                 RivoAvatar(
                     name = avatarName ?: "",
                     photoUri = photoUri,
@@ -200,12 +224,14 @@ fun RivoListItem(
                 }
             }
 
-            Icon(
-                imageVector = trailingIcon ?: Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier.size(20.dp)
-            )
+            if (!selected) {
+                Icon(
+                    imageVector = trailingIcon ?: Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
@@ -412,4 +438,20 @@ fun RivoSelectListItem(
             }
         }
     }
+}
+
+@Composable
+fun RivoFilterChip(label: String, selected: Boolean, onClick: (String) -> Unit) {
+    return FilterChip(
+        shape = RoundedCornerShape(16.dp),
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        leadingIcon = {if (label == "All")  Icon(Icons.Default.FilterList, null, Modifier.size(18.dp)) else null},
+        border = null,
+        selected = selected,
+        onClick = { onClick(label) },
+        label = { Text(label.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }) },
+    )
 }

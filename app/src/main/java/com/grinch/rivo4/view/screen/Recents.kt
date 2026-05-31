@@ -37,6 +37,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.CallLogFilter
 import java.util.Locale
 import kotlinx.coroutines.launch
@@ -151,16 +152,10 @@ fun CallLogFullContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(CallLogFilter.entries) { filter ->
-                        FilterChip(
-                            selected = selectedFilter == filter,
-                            onClick = { viewModel.setFilter(filter) },
-                            label = { Text(filter.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }) },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
+                        RivoFilterChip(filter.name, selectedFilter == filter, {
+                                _ ->
+                            viewModel.setFilter(filter)
+                        })
                     }
                 }
 

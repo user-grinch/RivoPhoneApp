@@ -1,5 +1,6 @@
 package com.grinch.rivo4.modal.`interface`
 
+import android.accounts.Account
 import com.grinch.rivo4.modal.data.Contact
 
 interface IContactsRepository {
@@ -9,4 +10,7 @@ interface IContactsRepository {
     fun toggleFavorite(contactId: String, isFavorite: Boolean)
     fun saveContact(contact: Contact)
     fun deleteContact(contactId: String)
+    fun deleteContacts(contactIds: List<String>)
+    fun moveContacts(contactIds: List<String>, accountName: String?, accountType: String?)
+    fun getAvailableAccounts(): List<Account>
 }
