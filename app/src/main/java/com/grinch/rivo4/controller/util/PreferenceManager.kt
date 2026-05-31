@@ -57,5 +57,6 @@ class PreferenceManager(context: Context) {
         const val KEY_DIALPAD_VIBRATION = "dialpad_vibration"
         const val KEY_SPEED_DIAL = "speed_dial"
         const val KEY_T9_DIALING = "t9_dialing"
+        const val KEY_PROXIMITY_SENSOR = "proximity_sensor"
     }
 }

@@ -41,9 +41,10 @@ fun CallAccountsScreen(
     }
     
     val settingsState by prefs.settingsChanged.collectAsState()
-    val speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
-    var t9Dialing by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
-    var defaultSim by remember { mutableStateOf(prefs.getInt("default_sim", 0)) }
+    var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
+    var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
+    var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
+    var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     
     var showSimDialog by remember { mutableStateOf(false) }
 
@@ -110,6 +111,17 @@ fun CallAccountsScreen(
                         onCheckedChange = {
                             t9Dialing = it
                             prefs.setBoolean(PreferenceManager.KEY_T9_DIALING, it)
+                        }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSwitchListItem(
+                        headline = "Proximity Sensor",
+                        supporting = "Turn off screen during calls when near ear",
+                        leadingIcon = Icons.Outlined.Sensors,
+                        checked = proximitySensor,
+                        onCheckedChange = {
+                            proximitySensor = it
+                            prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
                         }
                     )
                 }

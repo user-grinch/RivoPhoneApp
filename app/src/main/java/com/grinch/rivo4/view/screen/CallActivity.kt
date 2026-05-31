@@ -70,6 +70,7 @@ class CallActivity : ComponentActivity() {
 
     private val contactsViewModel: ContactsViewModel by viewModel()
     private val contactsRepo: IContactsRepository by inject()
+    private val preferenceManager: PreferenceManager by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,13 +100,20 @@ class CallActivity : ComponentActivity() {
             Rivo4Theme {
                 val session by CallService.currentCallSession.collectAsState()
                 val audioState by CallService.audioState.collectAsState()
+                val settingsState by preferenceManager.settingsChanged.collectAsState()
 
                 val call = session?.call
                 val callState = session?.state
 
-                LaunchedEffect(callState) {
+                LaunchedEffect(callState, settingsState) {
                     when (callState) {
-                        Call.STATE_ACTIVE, Call.STATE_DIALING -> acquireProximityLock()
+                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
+                            if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
+                                acquireProximityLock()
+                            } else {
+                                releaseProximityLock()
+                            }
+                        }
                         else -> releaseProximityLock()
                     }
 
@@ -165,7 +173,9 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun acquireProximityLock() {
-        proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
+        if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
+            proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
+        }
     }
 
     private fun releaseProximityLock() {
