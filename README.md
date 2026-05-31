@@ -5,26 +5,24 @@ Rivo is an open-source Android dialer built with Jetpack Compose.
 The goal is simple: provide a clean, modern phone app without unnecessary clutter while keeping the core calling experience fast and reliable.
 
 <p align="center">
-  <a href="https://github.com/user-grinch/RivoPhoneApp">
-    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github" />
+  <a href="https://www.patreon.com/c/grinch_">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" alt="Support us on Patreon">
   </a>
   <a href="https://discord.gg/NtEvU3726e">
-    <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" />
-  </a>
-  <a href="https://www.patreon.com/c/GrinchDev">
-    <img src="https://img.shields.io/badge/Patreon-Support-F96854?style=for-the-badge&logo=patreon&logoColor=white" />
+      <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/discord.png" alt="Join us on Discord">
   </a>
 </p>
 
-## Install
+## Installation
 
-<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
-    <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="100">
-</a>
-
-<a href="https://github.com/user-grinch/RivoPhoneApp/releases">
-    <img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" alt="Download from GitHub Releases" height="100">
-</a>
+<p align="center">
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
+      <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="100">
+  </a>
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases">
+      <img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" alt="Download from GitHub Releases" height="100">
+  </a>
+</p>
 
 ## Screenshots
 
@@ -54,7 +52,7 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 ## Community
 
 * Discord: [https://discord.gg/NtEvU3726e](https://discord.gg/NtEvU3726e)
-* Patreon: [https://www.patreon.com/c/GrinchDev](https://www.patreon.com/c/grinch_)
+* Patreon: [https://www.patreon.com/c/grinch_](https://www.patreon.com/c/grinch_)
 
 Join to report bugs, suggest features, or follow development.
 
