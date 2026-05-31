@@ -6,10 +6,10 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 
 <p align="center">
   <a href="https://www.patreon.com/c/grinch_">
-    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" alt="Support us on Patreon">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" height="65" alt="Support us on Patreon">
   </a>
   <a href="https://discord.gg/NtEvU3726e">
-      <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/discord.png" alt="Join us on Discord">
+      <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/discord.png" height="65" alt="Join us on Discord">
   </a>
 </p>
 
