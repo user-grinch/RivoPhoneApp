@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
@@ -36,6 +37,9 @@ fun CallLogTileSimple(
         else -> Icons.Default.Call
     }
 
+    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -49,7 +53,10 @@ fun CallLogTileSimple(
                     else -> "Call"
                 },
                 supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
-                leadingIcon = icon,
+                avatarName = "", // Empty to show default person icon
+                badgeIcon = icon,
+                badgeColor = badgeColor,
+                headlineColor = headlineColor,
                 onClick = onClick,
                 onLongClick = onLongClick,
                 selected = selected
@@ -80,6 +87,16 @@ fun CallLogTile(
     onLongClick: (CallLogEntry) -> Unit = {},
     selected: Boolean = false
 ) {
+    val icon = when (log.type) {
+        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+        else -> Icons.Default.Call
+    }
+    
+    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -97,12 +114,9 @@ fun CallLogTile(
                 },
                 avatarName = log.name ?: log.number,
                 photoUri = log.photoUri,
-                trailingIcon = when (log.type) {
-                    CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-                    CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-                    CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-                    else -> Icons.Default.Call
-                },
+                badgeIcon = icon,
+                badgeColor = badgeColor,
+                headlineColor = headlineColor,
                 onClick = { onTileClick(log) },
                 onLongClick = { onLongClick(log) },
                 selected = selected

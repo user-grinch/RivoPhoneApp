@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -150,6 +151,9 @@ fun RivoListItem(
     trailingIcon: ImageVector? = null,
     avatarName: String? = null,
     photoUri: String? = null,
+    badgeIcon: ImageVector? = null,
+    badgeColor: Color? = null,
+    headlineColor: Color = Color.Unspecified,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
@@ -188,6 +192,8 @@ fun RivoListItem(
                 RivoAvatar(
                     name = avatarName ?: "",
                     photoUri = photoUri,
+                    badgeIcon = badgeIcon,
+                    badgeColor = badgeColor,
                     modifier = Modifier.size(44.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -210,8 +216,9 @@ fun RivoListItem(
                     text = headline,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
+                    color = headlineColor,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    modifier = Modifier.basicMarquee()
                 )
                 if (supporting != null) {
                     Text(
@@ -219,7 +226,7 @@ fun RivoListItem(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        modifier = Modifier.basicMarquee()
                     )
                 }
             }
@@ -350,7 +357,7 @@ fun RivoSelectListItem(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        modifier = Modifier.basicMarquee()
                     )
                 }
             }

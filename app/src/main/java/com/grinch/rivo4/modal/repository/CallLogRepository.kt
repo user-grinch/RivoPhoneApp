@@ -18,8 +18,6 @@ class CallLogRepository(
             CallLog.Calls._ID,
             CallLog.Calls.NUMBER,
             CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.CACHED_PHOTO_URI,
-            CallLog.Calls.CACHED_LOOKUP_URI,
             CallLog.Calls.TYPE,
             CallLog.Calls.DATE,
             CallLog.Calls.DURATION
@@ -36,11 +34,12 @@ class CallLogRepository(
             val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
             val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
             val cachedNameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
-            val cachedPhotoIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI)
-            val cachedLookupIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_LOOKUP_URI)
             val typeIdx = cursor.getColumnIndex(CallLog.Calls.TYPE)
             val dateIdx = cursor.getColumnIndex(CallLog.Calls.DATE)
             val durationIdx = cursor.getColumnIndex(CallLog.Calls.DURATION)
+
+            // Cache for contact data to avoid redundant queries during this session
+            val contactInfoCache = mutableMapOf<String, Triple<String?, String?, String?>>()
 
             while (cursor.moveToNext()) {
                 val callId = cursor.getLong(idIdx)
@@ -49,16 +48,13 @@ class CallLogRepository(
                 val date = cursor.getLong(dateIdx)
                 val duration = cursor.getLong(durationIdx)
 
-                val displayName = cursor.getString(cachedNameIdx)
-                val photoUri = cursor.getString(cachedPhotoIdx)
-                val lookupUri = cursor.getString(cachedLookupIdx)
-                
-                // Extract contact ID from lookup URI if possible
-                val contactId = lookupUri?.let {
-                    try {
-                        Uri.parse(it).lastPathSegment
-                    } catch (e: Exception) { null }
+                val (contactName, photoUri, contactId) = contactInfoCache.getOrPut(number) {
+                    getContactDataByNumber(number)
                 }
+
+                val displayName = contactName
+                    ?: cursor.getString(cachedNameIdx)
+                    ?: number
 
                 val lastEntry = callLogs.lastOrNull()
                 if (lastEntry != null && lastEntry.number == number) {
@@ -72,7 +68,7 @@ class CallLogRepository(
                         CallLogEntry(
                             id = callId,
                             number = number,
-                            name = displayName ?: number,
+                            name = displayName,
                             type = type,
                             date = date,
                             duration = duration,
@@ -87,6 +83,43 @@ class CallLogRepository(
         }
 
         return callLogs
+    }
+
+    private fun getContactDataByNumber(number: String): Triple<String?, String?, String?> {
+        if (number.isBlank() || number == "Unknown") {
+            return Triple(null, null, null)
+        }
+
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(number)
+        )
+
+        val projection = arrayOf(
+            ContactsContract.PhoneLookup._ID,
+            ContactsContract.PhoneLookup.DISPLAY_NAME,
+            ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI
+        )
+
+        return try {
+            contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
+                    val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
+                    val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)
+                    
+                    val id = if (idIdx != -1) cursor.getString(idIdx) else null
+                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else null
+                    val photo = if (photoIdx != -1) cursor.getString(photoIdx) else null
+
+                    Triple(name, photo, id)
+                } else {
+                    Triple(null, null, null)
+                }
+            } ?: Triple(null, null, null)
+        } catch (e: Exception) {
+            Triple(null, null, null)
+        }
     }
 
     override fun deleteCallLog(number: String) {

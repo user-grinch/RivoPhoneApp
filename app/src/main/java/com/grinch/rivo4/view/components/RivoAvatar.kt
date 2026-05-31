@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,7 +33,9 @@ fun RivoAvatar(
     photoUri: String? = null,
     icon: ImageVector? = null,
     modifier: Modifier = Modifier,
-    shape: Shape = CircleShape
+    shape: Shape = CircleShape,
+    badgeIcon: ImageVector? = null,
+    badgeColor: Color? = null
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -62,39 +65,62 @@ fun RivoAvatar(
         MaterialTheme.colorScheme.onSecondaryContainer
     }
 
-    Box(
-        modifier = modifier
-            .background(backgroundColor, shape)
-            .clip(shape),
-        contentAlignment = Alignment.Center
-    ) {
-        if (showPicture && !photoUri.isNullOrEmpty()) {
-            AsyncImage(
-                model = photoUri,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        } else if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(24.dp)
-            )
-        } else if (showFirstLetter && hasName) {
-            Text(
-                text = name.trim().take(1).uppercase(),
-                style = MaterialTheme.typography.titleLarge,
-                color = contentColor
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(24.dp)
-            )
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor, shape)
+                .clip(shape),
+            contentAlignment = Alignment.Center
+        ) {
+            if (showPicture && !photoUri.isNullOrEmpty()) {
+                AsyncImage(
+                    model = photoUri,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            } else if (showFirstLetter && hasName) {
+                Text(
+                    text = name.trim().take(1).uppercase(),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = contentColor
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        if (badgeIcon != null) {
+            Surface(
+                modifier = Modifier
+                    .size(18.dp)
+                    .align(Alignment.BottomEnd),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surface,
+                shadowElevation = 2.dp
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = badgeIcon,
+                        contentDescription = null,
+                        tint = badgeColor ?: MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+            }
         }
     }
 }
