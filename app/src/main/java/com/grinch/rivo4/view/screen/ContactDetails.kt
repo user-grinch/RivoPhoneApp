@@ -368,7 +368,12 @@ fun ContactDetailsScreen(
                         RivoExpressiveCard(title = "Recent Activity", icon = Icons.Default.History) {
                             Column(modifier = Modifier.animateContentSize()) {
                                 contactLogs.take(3).forEachIndexed { index, log ->
-                                    CallLogTileSimple(log)
+                                    CallLogTileSimple(
+                                        log = log,
+                                        onCallClick = {
+                                            initiateCall(log.number)
+                                        }
+                                    )
                                     if (index < 2 && index < contactLogs.size - 1) {
                                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }

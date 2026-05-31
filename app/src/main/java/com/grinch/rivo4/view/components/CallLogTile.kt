@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ fun CallLogTileSimple(
     log: CallLogEntry,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
+    onCallClick: () -> Unit = {},
     selected: Boolean = false
 ) {
     val icon = when (log.type) {
@@ -34,19 +36,40 @@ fun CallLogTileSimple(
         else -> Icons.Default.Call
     }
 
-    RivoListItem(
-        headline = when (log.type) {
-            CallLog.Calls.INCOMING_TYPE -> "Incoming"
-            CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
-            CallLog.Calls.MISSED_TYPE -> "Missed"
-            else -> "Call"
-        },
-        supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
-        leadingIcon = icon,
-        onClick = onClick,
-        onLongClick = onLongClick,
-        selected = selected
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier.weight(1f)) {
+            RivoListItem(
+                headline = when (log.type) {
+                    CallLog.Calls.INCOMING_TYPE -> "Incoming"
+                    CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
+                    CallLog.Calls.MISSED_TYPE -> "Missed"
+                    else -> "Call"
+                },
+                supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
+                leadingIcon = icon,
+                onClick = onClick,
+                onLongClick = onLongClick,
+                selected = selected
+            )
+        }
+        
+        if (!selected) {
+            IconButton(
+                onClick = onCallClick,
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Call,
+                    contentDescription = "Call",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -84,6 +107,19 @@ fun CallLogTile(
                 onLongClick = { onLongClick(log) },
                 selected = selected
             )
+        }
+        
+        if (!selected) {
+            IconButton(
+                onClick = { onButtonClick(log) },
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Call,
+                    contentDescription = "Call",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

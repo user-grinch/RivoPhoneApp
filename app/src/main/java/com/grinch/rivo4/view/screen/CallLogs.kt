@@ -210,6 +210,24 @@ fun CallLogFullScreen(
                                                         selectedEntries = selectedEntries + lg
                                                     }
                                                 },
+                                                onCallClick = {
+                                                    val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                                        context,
+                                                        android.Manifest.permission.READ_PHONE_STATE
+                                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                                    if (hasPermission) {
+                                                        val accounts = telecomManager.callCapablePhoneAccounts
+                                                        if (accounts.size > 1) {
+                                                            pendingNumber = lg.number
+                                                            showSimPicker = true
+                                                        } else {
+                                                            makeCall(context, lg.number)
+                                                        }
+                                                    } else {
+                                                        makeCall(context, lg.number)
+                                                    }
+                                                },
                                                 selected = selectedEntries.any { it.id == lg.id }
                                             )
                                             
