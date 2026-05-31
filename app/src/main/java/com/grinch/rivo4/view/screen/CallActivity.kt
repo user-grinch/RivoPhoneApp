@@ -2,9 +2,11 @@ package com.grinch.rivo4.view.screen
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
+import android.provider.ContactsContract
 import android.telecom.Call
 import android.telecom.CallAudioState
 import android.telecom.VideoProfile
@@ -180,12 +182,14 @@ fun ExpressiveCallScreen(
     audioState: CallAudioState?
 ) {
     val view = LocalView.current
+    val context = LocalContext.current
     val isMuted = audioState?.isMuted ?: false
     val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
 
     var isOnHold by remember { mutableStateOf(false) }
     var callDuration by remember { mutableLongStateOf(0L) }
     var showKeypad by remember { mutableStateOf(false) }
+    var typedDigits by remember { mutableStateOf("") }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -224,7 +228,7 @@ fun ExpressiveCallScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(if (showKeypad) 0.7f else 1f)
             ) {
                 Spacer(modifier = Modifier.height(48.dp))
                 
@@ -259,18 +263,24 @@ fun ExpressiveCallScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(64.dp))
+                if (!showKeypad) {
+                    Spacer(modifier = Modifier.height(64.dp))
 
-                if (callState == Call.STATE_RINGING) {
-                    PulsingAvatar(photoUri)
-                } else {
-                    HeroAvatar(photoUri)
+                    if (callState == Call.STATE_RINGING) {
+                        PulsingAvatar(photoUri)
+                    } else {
+                        HeroAvatar(photoUri)
+                    }
                 }
             }
 
             if (showKeypad) {
-                Box(modifier = Modifier.weight(1.2f), contentAlignment = Alignment.Center) {
-                    InCallKeypad(call)
+                Box(modifier = Modifier.weight(1.5f), contentAlignment = Alignment.Center) {
+                    InCallKeypad(
+                        call = call,
+                        typedDigits = typedDigits,
+                        onDigitClick = { digit -> typedDigits += digit }
+                    )
                 }
             }
 
@@ -279,12 +289,13 @@ fun ExpressiveCallScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // Actions row (only mute, hold, speaker)
+                    // Row 1 (2 centered)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         CallActionButton(
                             icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
@@ -293,6 +304,49 @@ fun ExpressiveCallScreen(
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             CallService.mute(!isMuted)
+                        }
+                        
+                        Spacer(modifier = Modifier.width(32.dp))
+
+                        CallActionButton(
+                            icon = Icons.Default.Dialpad,
+                            isActive = showKeypad,
+                            label = "Keypad"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            showKeypad = !showKeypad
+                        }
+                    }
+
+                    // Row 2 (3 centered)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CallActionButton(
+                            icon = Icons.AutoMirrored.Filled.VolumeUp,
+                            isActive = isSpeakerOn,
+                            label = "Speaker"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            CallService.setSpeaker(!isSpeakerOn)
+                        }
+
+                        CallActionButton(
+                            icon = Icons.Default.PersonAdd,
+                            isActive = false,
+                            label = "Add"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            val intent = Intent(Intent.ACTION_INSERT).apply {
+                                type = ContactsContract.RawContacts.CONTENT_TYPE
+                                val handle = call.details.handle
+                                if (handle != null) {
+                                    putExtra(ContactsContract.Intents.Insert.PHONE, handle.schemeSpecificPart)
+                                }
+                            }
+                            context.startActivity(intent)
                         }
 
                         CallActionButton(
@@ -304,18 +358,9 @@ fun ExpressiveCallScreen(
                             isOnHold = !isOnHold
                             if (isOnHold) call.hold() else call.unhold()
                         }
-
-                        CallActionButton(
-                            icon = Icons.AutoMirrored.Filled.VolumeUp,
-                            isActive = isSpeakerOn,
-                            label = "Speaker"
-                        ) {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            CallService.setSpeaker(!isSpeakerOn)
-                        }
                     }
 
-                    // End Call Button (Pill shape)
+                    // End Call Button
                     Button(
                         onClick = {
                             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
@@ -338,6 +383,7 @@ fun ExpressiveCallScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             } else {
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -364,7 +410,11 @@ fun ExpressiveCallScreen(
 }
 
 @Composable
-fun InCallKeypad(call: Call) {
+fun InCallKeypad(
+    call: Call,
+    typedDigits: String,
+    onDigitClick: (Char) -> Unit
+) {
     val prefs = koinInject<PreferenceManager>()
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
     
@@ -375,10 +425,23 @@ fun InCallKeypad(call: Call) {
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Display typed digits with expressive typography
+        Text(
+            text = typedDigits,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .animateContentSize()
+        )
+
         val keys = listOf(
             listOf('1', '2', '3'),
             listOf('4', '5', '6'),
@@ -386,39 +449,42 @@ fun InCallKeypad(call: Call) {
             listOf('*', '0', '#')
         )
 
-        keys.forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                row.forEach { key ->
-                    KeypadButton(
-                        key = key,
-                        onClick = {
-                            if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
-                                val toneType = when (key) {
-                                    '1' -> ToneGenerator.TONE_DTMF_1
-                                    '2' -> ToneGenerator.TONE_DTMF_2
-                                    '3' -> ToneGenerator.TONE_DTMF_3
-                                    '4' -> ToneGenerator.TONE_DTMF_4
-                                    '5' -> ToneGenerator.TONE_DTMF_5
-                                    '6' -> ToneGenerator.TONE_DTMF_6
-                                    '7' -> ToneGenerator.TONE_DTMF_7
-                                    '8' -> ToneGenerator.TONE_DTMF_8
-                                    '9' -> ToneGenerator.TONE_DTMF_9
-                                    '0' -> ToneGenerator.TONE_DTMF_0
-                                    '*' -> ToneGenerator.TONE_DTMF_S
-                                    '#' -> ToneGenerator.TONE_DTMF_P
-                                    else -> -1
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            keys.forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    row.forEach { key ->
+                        KeypadButton(
+                            key = key,
+                            onClick = {
+                                if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
+                                    val toneType = when (key) {
+                                        '1' -> ToneGenerator.TONE_DTMF_1
+                                        '2' -> ToneGenerator.TONE_DTMF_2
+                                        '3' -> ToneGenerator.TONE_DTMF_3
+                                        '4' -> ToneGenerator.TONE_DTMF_4
+                                        '5' -> ToneGenerator.TONE_DTMF_5
+                                        '6' -> ToneGenerator.TONE_DTMF_6
+                                        '7' -> ToneGenerator.TONE_DTMF_7
+                                        '8' -> ToneGenerator.TONE_DTMF_8
+                                        '9' -> ToneGenerator.TONE_DTMF_9
+                                        '0' -> ToneGenerator.TONE_DTMF_0
+                                        '*' -> ToneGenerator.TONE_DTMF_S
+                                        '#' -> ToneGenerator.TONE_DTMF_P
+                                        else -> -1
+                                    }
+                                    if (toneType != -1) {
+                                        toneGenerator.startTone(toneType, 120)
+                                    }
                                 }
-                                if (toneType != -1) {
-                                    toneGenerator.startTone(toneType, 120)
-                                }
+                                call.playDtmfTone(key)
+                                call.stopDtmfTone()
+                                onDigitClick(key)
                             }
-                            call.playDtmfTone(key)
-                            call.stopDtmfTone()
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -427,14 +493,29 @@ fun InCallKeypad(call: Call) {
 
 @Composable
 fun KeypadButton(key: Char, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 16.dp else 32.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "ButtonShape"
+    )
+
     Surface(
         onClick = onClick,
-        modifier = Modifier.size(72.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        modifier = Modifier.size(64.dp),
+        shape = RoundedCornerShape(cornerRadius),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        interactionSource = interactionSource
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(text = key.toString(), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = key.toString(),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
