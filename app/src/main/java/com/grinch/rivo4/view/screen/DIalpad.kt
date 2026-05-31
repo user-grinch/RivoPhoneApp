@@ -79,8 +79,12 @@ fun DialPadScreen(
         }
     }
     
-    val t9Enabled = prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)
-    val speedDialEnabled = prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)
+    val t9Enabled by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true))
+    }
+    val speedDialEnabled by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true))
+    }
 
     var showSimPicker by remember { mutableStateOf(false) }
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
@@ -91,13 +95,10 @@ fun DialPadScreen(
             else {
                 allContacts.filter { contact ->
                     val matchesNumber = contact.phoneNumbers.any { it.replace(" ", "").contains(number) }
-                    val matchesName = if (t9Enabled) {
-                        val t9Name = T9Matcher.convertNameToT9(contact.name)
-                        t9Name.contains(number)
-                    } else false
+                    val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, number)
                     matchesNumber || matchesName
                 }
-            }.take(3)
+            }.take(5)
         }
     }
 
@@ -395,8 +396,31 @@ fun DialPadKey(
 }
 
 object T9Matcher {
-    fun convertNameToT9(name: String): String {
-        return name.uppercase(Locale.getDefault()).map { char ->
+    fun isMatch(contactName: String, query: String): Boolean {
+        if (query.isEmpty()) return false
+        
+        val normalizedName = contactName.uppercase(Locale.getDefault())
+        val t9Name = convertNameToT9(normalizedName)
+        
+        // Find indices of start of words
+        val startOfWordIndices = mutableListOf(0)
+        for (i in 0 until normalizedName.length - 1) {
+            if (normalizedName[i] == ' ' || normalizedName[i] == '-' || normalizedName[i] == '.') {
+                startOfWordIndices.add(i + 1)
+            }
+        }
+        
+        for (index in startOfWordIndices) {
+            if (index >= t9Name.length) continue
+            val suffix = t9Name.substring(index).replace(Regex("[^0-9]"), "")
+            if (suffix.startsWith(query)) return true
+        }
+        
+        return false
+    }
+
+    private fun convertNameToT9(name: String): String {
+        return name.map { char ->
             when (char) {
                 'A', 'B', 'C' -> '2'
                 'D', 'E', 'F' -> '3'
@@ -406,7 +430,17 @@ object T9Matcher {
                 'P', 'Q', 'R', 'S' -> '7'
                 'T', 'U', 'V' -> '8'
                 'W', 'X', 'Y', 'Z' -> '9'
-                else -> '0'
+                '0', '+' -> '0'
+                '1' -> '1'
+                '2' -> '2'
+                '3' -> '3'
+                '4' -> '4'
+                '5' -> '5'
+                '6' -> '6'
+                '7' -> '7'
+                '8' -> '8'
+                '9' -> '9'
+                else -> ' '
             }
         }.joinToString("")
     }
