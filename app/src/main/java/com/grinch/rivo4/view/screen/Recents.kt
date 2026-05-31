@@ -111,6 +111,7 @@ fun CallLogFullContent(
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
         val logs by viewModel.allCallLogs.collectAsState()
+        val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
         val context = LocalContext.current
         val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
@@ -142,7 +143,9 @@ fun CallLogFullContent(
             )
         }
 
-        if (logs.isEmpty()) {
+        if (isLoading && logs.isEmpty()) {
+            RivoLoadingIndicatorView()
+        } else if (logs.isEmpty()) {
             EmptyCallLogsState()
         } else {
             Column(modifier = Modifier.fillMaxSize()) {

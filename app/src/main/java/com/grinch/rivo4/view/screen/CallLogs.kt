@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
@@ -43,6 +44,7 @@ fun CallLogFullScreen(
 ) {
     val viewModel: CallLogViewModel = koinActivityViewModel()
     val allLogs by viewModel.allCallLogs.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -119,9 +121,22 @@ fun CallLogFullScreen(
                     }
                 }
 
-                if (filteredLogsByContact.isEmpty()) {
+                if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No call history found", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        CircularProgressIndicator()
+                    }
+                } else if (filteredLogsByContact.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                Icons.Default.History, 
+                                contentDescription = null, 
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text("No call history found", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 } else {
                     val finalLogs = when (selectedFilter) {
@@ -132,33 +147,39 @@ fun CallLogFullScreen(
                         CallLogFilter.Contacts -> filteredLogsByContact.filter { it.name != null && it.name != it.number }
                     }
 
-                    val groupedLogs = finalLogs.groupBy { formatDateHeader(it.date) }
+                    if (finalLogs.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("No calls match this filter", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    } else {
+                        val groupedLogs = finalLogs.groupBy { formatDateHeader(it.date) }
 
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        groupedLogs.forEach { (header, logsInGroup) ->
-                            item {
-                                RivoSectionHeader(title = header)
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RivoExpressiveCard {
-                                    logsInGroup.forEachIndexed { index, lg ->
-                                        CallLogTileSimple(lg)
-                                        
-                                        if (index < logsInGroup.size - 1) {
-                                            HorizontalDivider(
-                                                modifier = Modifier.padding(horizontal = 16.dp),
-                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                            )
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            groupedLogs.forEach { (header, logsInGroup) ->
+                                item {
+                                    RivoSectionHeader(title = header)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    RivoExpressiveCard {
+                                        logsInGroup.forEachIndexed { index, lg ->
+                                            CallLogTileSimple(lg)
+                                            
+                                            if (index < logsInGroup.size - 1) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
+                            item { Spacer(modifier = Modifier.height(100.dp)) }
                         }
-                        item { Spacer(modifier = Modifier.height(100.dp)) }
                     }
                 }
             }

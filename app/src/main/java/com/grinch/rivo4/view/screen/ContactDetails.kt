@@ -76,6 +76,7 @@ fun ContactDetailsScreen(
     
     var showSimPicker by remember { mutableStateOf(false) }
     var showNumberPicker by remember { mutableStateOf(false) }
+    var isSmsAction by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf<String?>(null) }
     var showQrDialog by remember { mutableStateOf(false) }
 
@@ -101,6 +102,7 @@ fun ContactDetailsScreen(
             val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
             if (accounts.size > 1) {
                 pendingNumber = number
+                isSmsAction = false
                 showSimPicker = true
             } else {
                 makeCall(context, number)
@@ -110,13 +112,31 @@ fun ContactDetailsScreen(
         }
     }
 
+    val initiateSms = { number: String ->
+        val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+            if (accounts.size > 1) {
+                pendingNumber = number
+                isSmsAction = true
+                showSimPicker = true
+            } else {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
+                context.startActivity(intent)
+            }
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
+            context.startActivity(intent)
+        }
+    }
+
     if (showNumberPicker && contact != null) {
         NumberPickerDialog(
             numbers = contact.phoneNumbers,
             onDismissRequest = { showNumberPicker = false },
             onNumberSelected = { selectedNumber ->
                 showNumberPicker = false
-                initiateCall(selectedNumber)
+                if (isSmsAction) initiateSms(selectedNumber) else initiateCall(selectedNumber)
             }
         )
     }
@@ -125,7 +145,13 @@ fun ContactDetailsScreen(
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                makeCall(context, pendingNumber!!, handle)
+                if (isSmsAction) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${pendingNumber!!}"))
+                    intent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", handle)
+                    context.startActivity(intent)
+                } else {
+                    makeCall(context, pendingNumber!!, handle)
+                }
                 showSimPicker = false
             }
         )
@@ -236,9 +262,11 @@ fun ContactDetailsScreen(
                             label = "Text",
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             onClick = {
-                                if (displayPhone != "Unknown") {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$displayPhone"))
-                                    context.startActivity(intent)
+                                if (contact != null && contact.phoneNumbers.size > 1) {
+                                    isSmsAction = true
+                                    showNumberPicker = true
+                                } else if (displayPhone != "Unknown") {
+                                    initiateSms(displayPhone)
                                 }
                             }
                         )
@@ -246,7 +274,19 @@ fun ContactDetailsScreen(
                             icon = Icons.Default.VideoCall,
                             label = "Video",
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            onClick = { }
+                            onClick = {
+                                if (displayPhone != "Unknown") {
+                                    val uri = Uri.parse("tel:$displayPhone")
+                                    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                        // Attempt to use common video calling schemes
+                                        setDataAndType(uri, "vnd.android.cursor.item/video-chat-address")
+                                    }
+                                    
+                                    // Fallback to a chooser for common apps like Google Meet/Duo, WhatsApp, etc.
+                                    val chooser = Intent.createChooser(intent, "Video Call with")
+                                    context.startActivity(chooser)
+                                }
+                            }
                         )
                     }
                 }

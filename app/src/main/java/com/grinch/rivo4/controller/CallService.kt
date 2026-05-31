@@ -123,12 +123,10 @@ class CallService : InCallService() {
         
         updateNotification(call)
 
-        if (call.state != Call.STATE_RINGING) {
-            val intent = Intent(this, CallActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            }
-            startActivity(intent)
+        val intent = Intent(this, CallActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
+        startActivity(intent)
     }
 
     override fun onCallRemoved(call: Call) {

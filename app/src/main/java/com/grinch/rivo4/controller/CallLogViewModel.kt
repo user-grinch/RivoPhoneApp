@@ -18,6 +18,9 @@ class CallLogViewModel(
     private val _allCallLogs = MutableStateFlow<List<CallLogEntry>>(emptyList())
     val allCallLogs: StateFlow<List<CallLogEntry>> = _allCallLogs.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     private val _selectedFilter = MutableStateFlow(CallLogFilter.All)
     val selectedFilter = _selectedFilter.asStateFlow()
 
@@ -31,8 +34,10 @@ class CallLogViewModel(
 
     private fun fetchLogs() {
         viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.value = true
             val result = callLogRepo.getCallLogs()
             _allCallLogs.value = result
+            _isLoading.value = false
         }
     }
 }

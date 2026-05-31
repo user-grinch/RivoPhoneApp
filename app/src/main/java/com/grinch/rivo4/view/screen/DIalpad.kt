@@ -4,8 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
-import android.media.SoundPool
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,7 +71,13 @@ fun DialPadScreen(
 
     val allContacts by contactsVM.allContacts.collectAsState()
     var number by remember { mutableStateOf(initialNumber ?: "") }
-    val soundPool = remember { buildDtmfSoundPool(context) }
+    val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
+    
+    DisposableEffect(Unit) {
+        onDispose {
+            toneGenerator.release()
+        }
+    }
     
     val t9Enabled = prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)
     val speedDialEnabled = prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)
@@ -211,7 +217,7 @@ fun DialPadScreen(
                             DialPadKey(
                                 number = key,
                                 letters = subKeys[key] ?: "",
-                                soundPool = soundPool,
+                                toneGenerator = toneGenerator,
                                 context = context,
                                 onClick = { digit -> number += digit }
                             )
@@ -335,7 +341,7 @@ fun DialerActionExpressive(
 fun DialPadKey(
     number: String,
     letters: String,
-    soundPool: SoundPool,
+    toneGenerator: ToneGenerator,
     context: Context,
     onClick: (String) -> Unit
 ) {
@@ -354,7 +360,7 @@ fun DialPadKey(
     Surface(
         onClick = {
             if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
-                playDtmf(context, number, soundPool)
+                playDtmf(number, toneGenerator)
             }
             if (prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -406,23 +412,23 @@ object T9Matcher {
     }
 }
 
-private fun buildDtmfSoundPool(context: Context): SoundPool {
-    val attributes = AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        .build()
-    return SoundPool.Builder()
-        .setMaxStreams(1)
-        .setAudioAttributes(attributes)
-        .build()
-}
-
-private fun playDtmf(context: Context, key: String, soundPool: SoundPool) {
-    val resName = when (key) {
-        "*" -> "dtmf_star"
-        "#" -> "dtmf_pound"
-        else -> "dtmf_$key"
+private fun playDtmf(key: String, toneGenerator: ToneGenerator) {
+    val toneType = when (key) {
+        "1" -> ToneGenerator.TONE_DTMF_1
+        "2" -> ToneGenerator.TONE_DTMF_2
+        "3" -> ToneGenerator.TONE_DTMF_3
+        "4" -> ToneGenerator.TONE_DTMF_4
+        "5" -> ToneGenerator.TONE_DTMF_5
+        "6" -> ToneGenerator.TONE_DTMF_6
+        "7" -> ToneGenerator.TONE_DTMF_7
+        "8" -> ToneGenerator.TONE_DTMF_8
+        "9" -> ToneGenerator.TONE_DTMF_9
+        "0" -> ToneGenerator.TONE_DTMF_0
+        "*" -> ToneGenerator.TONE_DTMF_S
+        "#" -> ToneGenerator.TONE_DTMF_P
+        else -> -1
     }
-    val soundId = context.resources.getIdentifier(resName, "raw", context.packageName)
-    if (soundId != 0) soundPool.play(soundId, 1f, 1f, 0, 0, 1f)
+    if (toneType != -1) {
+        toneGenerator.startTone(toneType, 120)
+    }
 }
