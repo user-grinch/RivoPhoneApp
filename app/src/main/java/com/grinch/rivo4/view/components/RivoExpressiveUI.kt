@@ -441,17 +441,35 @@ fun RivoSelectListItem(
 }
 
 @Composable
-fun RivoFilterChip(label: String, selected: Boolean, onClick: (String) -> Unit) {
-    return FilterChip(
-        shape = RoundedCornerShape(16.dp),
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        leadingIcon = {if (label == "All")  Icon(Icons.Default.FilterList, null, Modifier.size(18.dp)) else null},
-        border = null,
+fun RivoFilterChip(
+    label: String,
+    selected: Boolean,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null
+) {
+    FilterChip(
+        modifier = modifier,
         selected = selected,
         onClick = { onClick(label) },
-        label = { Text(label.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }) },
+        label = {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+            )
+        },
+        shape = RoundedCornerShape(20.dp),
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        leadingIcon = leadingIcon ?: if (label == "All") {
+            { Icon(Icons.Default.FilterList, null, Modifier.size(18.dp), tint = if (selected)  MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface) }
+        } else null,
+        border = null,
+        elevation = FilterChipDefaults.filterChipElevation(elevation = 0.dp)
     )
 }

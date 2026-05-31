@@ -68,7 +68,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Surface(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(32.dp),
-                color = Color.White
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Image(
@@ -90,17 +90,18 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(32.dp))
 
             RivoExpressiveCard(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f)
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Text(
                     "About the App",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
                     "Rivo is a modern dialer app that brings simplicity and elegance to calling. Designed with Material You, it adapts seamlessly to your theme.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                 )
             }
 

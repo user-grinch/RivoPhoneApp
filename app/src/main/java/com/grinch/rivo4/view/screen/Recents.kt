@@ -37,6 +37,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.CallLogFilter
 import java.util.Locale
@@ -141,7 +143,7 @@ fun CallLogFullContent(
         }
 
         if (logs.isEmpty()) {
-            RivoLoadingIndicatorView()
+            EmptyCallLogsState()
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
                 LazyRow(
@@ -222,6 +224,44 @@ fun CallLogFullContent(
             title = "Call History",
             description = "Rivo needs access to your call logs to show your recent activity and missed calls.",
             onGrantClick = onRequestPermission
+        )
+    }
+}
+
+
+@Composable
+fun EmptyCallLogsState() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            shape = RoundedCornerShape(32.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.size(120.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.Default.PhoneMissed,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Your call log is empty",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Try clearing your filters or add a new contact.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
         )
     }
 }
