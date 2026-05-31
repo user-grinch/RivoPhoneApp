@@ -51,6 +51,12 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 * Smooth performance powered by Jetpack Compose
 * Fully open source etc.
 
+## Community
+
+* Discord: [https://discord.gg/NtEvU3726e](https://discord.gg/NtEvU3726e)
+* Patreon: [https://www.patreon.com/c/GrinchDev](https://www.patreon.com/c/grinch_)
+
+Join to report bugs, suggest features, or follow development.
 
 ## Contributing
 
