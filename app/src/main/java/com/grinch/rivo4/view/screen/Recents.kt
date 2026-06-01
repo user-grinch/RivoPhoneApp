@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -211,21 +212,18 @@ fun CallLogFullContent(
             )
         }
 
+        val pullToRefreshState = rememberPullToRefreshState()
+
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
             onRefresh = { viewModel.fetchLogs() },
             modifier = Modifier.fillMaxSize(),
+            state = pullToRefreshState,
             indicator = {
-                if (isLoading && logs.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        RivoLoadingIndicatorView(modifier = Modifier.padding(8.dp))
-                    }
-                }
+                RivoPullToRefreshIndicator(
+                    state = pullToRefreshState,
+                    isRefreshing = isLoading && logs.isNotEmpty()
+                )
             }
         ) {
             if (isLoading && logs.isEmpty()) {

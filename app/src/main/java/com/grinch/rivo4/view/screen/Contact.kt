@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
+import com.grinch.rivo4.view.components.RivoPullToRefreshIndicator
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
@@ -308,21 +310,18 @@ fun ContactContent(
         }
     }
 
+    val pullToRefreshState = rememberPullToRefreshState()
+
     PullToRefreshBox(
         isRefreshing = isLoading && contacts.isNotEmpty(),
         onRefresh = { contactsVM.fetchContacts() },
         modifier = Modifier.fillMaxSize(),
+        state = pullToRefreshState,
         indicator = {
-            if (isLoading && contacts.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    RivoLoadingIndicatorView()
-                }
-            }
+            RivoPullToRefreshIndicator(
+                state = pullToRefreshState,
+                isRefreshing = isLoading && contacts.isNotEmpty()
+            )
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

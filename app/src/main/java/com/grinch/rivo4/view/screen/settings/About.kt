@@ -65,18 +65,12 @@ fun AboutScreen(navigator: DestinationsNavigator) {
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            Surface(
-                modifier = Modifier.size(80.dp),
-                shape = RoundedCornerShape(32.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Image(
-                        painter = painterResource(R.drawable.rivo_logo),
-                        contentDescription = "Rivo Logo",
-                        modifier = Modifier.size(64.dp)
-                    )
-                }
+            Box(contentAlignment = Alignment.Center) {
+                Image(
+                    painter = painterResource(R.drawable.rivo_logo),
+                    contentDescription = "Rivo Logo",
+                    modifier = Modifier.size(64.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
