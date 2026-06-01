@@ -17,17 +17,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
     private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
 
     private fun formatName(rawName: String): String {
-        val displayFormat = preferenceManager.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, 0)
-        return if (displayFormat == 1) {
-            val parts = rawName.trim().split(Regex("\\s+"))
-            if (parts.size >= 2) {
-                "${parts.last()}, ${parts.dropLast(1).joinToString(" ")}"
-            } else {
-                rawName
-            }
-        } else {
-            rawName
-        }
+        return rawName
     }
 
     override fun getContacts(): List<Contact> {
@@ -87,12 +77,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
             e.printStackTrace()
         }
         val list = contactsMap.values.toList()
-        val sortOrder = preferenceManager.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACTS_SORT_ORDER, 0)
-        return if (sortOrder == 1) {
-            list.sortedByDescending { it.name.lowercase() }
-        } else {
-            list.sortedBy { it.name.lowercase() }
-        }
+        return list.sortedBy { it.name.lowercase() }
     }
 
     override fun getContactById(contactId: String): Contact? {

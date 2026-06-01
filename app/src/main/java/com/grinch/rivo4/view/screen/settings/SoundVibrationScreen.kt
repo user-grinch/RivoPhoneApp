@@ -39,8 +39,6 @@ fun SoundVibrationScreen(
     var vibrateOnHangup by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) }
     val settingsState by prefs.settingsChanged.collectAsState()
 
-    var dtmfToneVolume by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DTMF_TONE_VOLUME, 1)) }
-    var dialpadVibrationStrength by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_VIBRATION_STRENGTH, 1)) }
     var hapticListScroll by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)) }
 
     Scaffold(
@@ -74,24 +72,6 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_DTMF_TONE, it)
                         }
                     )
-                    if (dtmfTone) {
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "DTMF Tone Volume",
-                            supporting = "Volume level for dialpad keypress tones",
-                            leadingIcon = Icons.Outlined.VolumeUp,
-                            options = listOf(
-                                "Low" to 0,
-                                "Normal" to 1,
-                                "High" to 2
-                            ),
-                            selectedValue = dtmfToneVolume,
-                            onValueChange = {
-                                dtmfToneVolume = it
-                                prefs.setInt(PreferenceManager.KEY_DTMF_TONE_VOLUME, it)
-                            }
-                        )
-                    }
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSwitchListItem(
                         headline = "Dialpad vibration",
@@ -103,24 +83,6 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, it)
                         }
                     )
-                    if (dialpadVibration) {
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "Vibration Feedback Strength",
-                            supporting = "Haptic feedback strength for keypresses",
-                            leadingIcon = Icons.Outlined.Speed,
-                            options = listOf(
-                                "Light" to 0,
-                                "Medium" to 1,
-                                "Strong" to 2
-                            ),
-                            selectedValue = dialpadVibrationStrength,
-                            onValueChange = {
-                                dialpadVibrationStrength = it
-                                prefs.setInt(PreferenceManager.KEY_DIALPAD_VIBRATION_STRENGTH, it)
-                            }
-                        )
-                    }
                 }
             }
 

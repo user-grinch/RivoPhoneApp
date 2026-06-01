@@ -160,12 +160,8 @@ fun RivoListItem(
     selected: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
-    val density = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_UI_DENSITY, 0)
-    
-    val verticalPadding = if (density == 1) 2.dp else 6.dp
-    val avatarSize = if (density == 1) 36.dp else 44.dp
+    val verticalPadding = 6.dp
+    val avatarSize = 44.dp
 
     Surface(
         color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
@@ -192,7 +188,7 @@ fun RivoListItem(
                     shadowElevation = 0.dp
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(if (density == 1) 20.dp else 24.dp))
+                        Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -213,7 +209,7 @@ fun RivoListItem(
                     shadowElevation = 0.dp
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(leadingIcon, null, tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(if (density == 1) 18.dp else 20.dp))
+                        Icon(leadingIcon, null, tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(20.dp))
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -222,7 +218,7 @@ fun RivoListItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = headline,
-                    style = if (density == 1) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = headlineColor,
                     maxLines = 1,
@@ -231,7 +227,7 @@ fun RivoListItem(
                 if (supporting != null) {
                     Text(
                         text = supporting,
-                        style = if (density == 1) MaterialTheme.typography.labelSmall else MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
@@ -244,7 +240,7 @@ fun RivoListItem(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = if (density == 1) 0.dp else 2.dp)
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
             }

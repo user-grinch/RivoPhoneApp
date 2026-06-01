@@ -64,15 +64,9 @@ fun InterfaceScreen(
     var roundAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)) }
     var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
-    var uiDensity by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_UI_DENSITY, 0)) }
-    var callBackgroundStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CALL_BACKGROUND, 0)) }
-    var appIconStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_APP_ICON, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
-    var contactsSortOrder by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CONTACTS_SORT_ORDER, 0)) }
     var keepScreenOn by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) }
-    var callLogLimit by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CALL_LOG_LIMIT, 500)) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
-    var contactsDisplayOrder by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, 0)) }
     var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
     var showSimIconHistory by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)) }
 
@@ -255,68 +249,6 @@ fun InterfaceScreen(
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "UI Density",
-                            supporting = "Spacing and sizing of list items",
-                            leadingIcon = Icons.Outlined.ViewCompact,
-                            options = listOf(
-                                "Comfortable" to 0,
-                                "Compact" to 1
-                            ),
-                            selectedValue = uiDensity,
-                            onValueChange = {
-                                uiDensity = it
-                                prefs.setInt(PreferenceManager.KEY_UI_DENSITY, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "Call background",
-                            supporting = "Style of the in-call screen background",
-                            leadingIcon = Icons.Outlined.BurstMode,
-                            options = listOf(
-                                "Expressive Gradient" to 0,
-                                "Solid Color" to 1,
-                                "Full Contact Photo" to 2
-                            ),
-                            selectedValue = callBackgroundStyle,
-                            onValueChange = {
-                                callBackgroundStyle = it
-                                prefs.setInt(PreferenceManager.KEY_CALL_BACKGROUND, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "App Icon",
-                            supporting = "Choose your preferred launcher icon",
-                            leadingIcon = Icons.Outlined.GridView,
-                            options = listOf(
-                                "Default" to 0,
-                                "Dark" to 1,
-                                "Monochrome" to 2
-                            ),
-                            selectedValue = appIconStyle,
-                            onValueChange = {
-                                appIconStyle = it
-                                prefs.setInt(PreferenceManager.KEY_APP_ICON, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "Contacts Sort Order",
-                            supporting = "Choose how contacts are ordered in lists",
-                            leadingIcon = Icons.Outlined.SortByAlpha,
-                            options = listOf(
-                                "A-Z" to 0,
-                                "Z-A" to 1
-                            ),
-                            selectedValue = contactsSortOrder,
-                            onValueChange = {
-                                contactsSortOrder = it
-                                prefs.setInt(PreferenceManager.KEY_CONTACTS_SORT_ORDER, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSwitchListItem(
                             headline = "Keep Screen On during Call",
                             supporting = "Prevent screen timeout when inside the call UI",
@@ -325,38 +257,6 @@ fun InterfaceScreen(
                             onCheckedChange = {
                                 keepScreenOn = it
                                 prefs.setBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "Call Log Limit",
-                            supporting = "Choose maximum number of call logs to display",
-                            leadingIcon = Icons.Outlined.History,
-                            options = listOf(
-                                "50 entries" to 50,
-                                "100 entries" to 100,
-                                "250 entries" to 250,
-                                "500 entries" to 500
-                            ),
-                            selectedValue = callLogLimit,
-                            onValueChange = {
-                                callLogLimit = it
-                                prefs.setInt(PreferenceManager.KEY_CALL_LOG_LIMIT, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSelectListItem(
-                            headline = "Contacts Display Order",
-                            supporting = "Format for displaying contact names",
-                            leadingIcon = Icons.Outlined.Person,
-                            options = listOf(
-                                "First Name First" to 0,
-                                "Last Name First" to 1
-                            ),
-                            selectedValue = contactsDisplayOrder,
-                            onValueChange = {
-                                contactsDisplayOrder = it
-                                prefs.setInt(PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, it)
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))

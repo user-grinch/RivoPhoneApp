@@ -70,16 +70,11 @@ class PreferenceManager(context: Context) {
         const val KEY_ROUND_AVATARS = "round_avatars"
         const val KEY_SHOW_DIVIDERS = "show_dividers"
         const val KEY_TRANSITION_STYLE = "transition_animation_style" // 0: Standard, 1: Slide, 2: Fade, 3: None
-        const val KEY_APP_ICON = "app_icon_style" // 0: Default, 1: Dark, 2: Premium
-        const val KEY_UI_DENSITY = "ui_density" // 0: Comfort, 1: Compact
         const val KEY_DIALPAD_STYLE = "dialpad_style" // 0: Modern, 1: Classic, 2: Minimal
-        const val KEY_CALL_BACKGROUND = "call_background_style" // 0: Expressive, 1: Solid, 2: Contact Photo
         const val KEY_VOICEMAIL_NUMBER = "voicemail_number"
         const val KEY_VOICEMAIL_VIBRATION = "voicemail_vibration"
         const val KEY_VOICEMAIL_RINGTONE = "voicemail_ringtone"
-        const val KEY_CONTACTS_SORT_ORDER = "contacts_sort_order" // 0: A-Z, 1: Z-A
         const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
-        const val KEY_CALL_LOG_LIMIT = "call_log_limit" // 50, 100, 200, 500
         const val KEY_AUTO_ANSWER_DELAY = "auto_answer_delay" // 0: Off, 3s: 3000, 5s: 5000, 10s: 10000
         const val KEY_SHOW_CALL_SUMMARY_TOAST = "show_call_summary_toast"
         const val KEY_VIBRATE_OUTGOING_RINGING = "vibrate_outgoing_ringing"
@@ -95,7 +90,6 @@ class PreferenceManager(context: Context) {
         const val KEY_DTMF_TONE_VOLUME = "dtmf_tone_volume" // 0: Low, 1: Normal, 2: High
         const val KEY_HAPTIC_LIST_SCROLL = "haptic_list_scroll"
         const val KEY_SHOW_SIM_ICON_HISTORY = "show_sim_icon_history"
-        const val KEY_CONTACTS_DISPLAY_ORDER = "contacts_display_order" // 0: First Name First, 1: Last Name First
         const val KEY_SEARCH_MATCH_MODE = "search_match_mode" // 0: T9 & Contains, 1: Starts With, 2: Exact
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
     }

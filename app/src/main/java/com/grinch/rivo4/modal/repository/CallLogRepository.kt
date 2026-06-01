@@ -43,14 +43,13 @@ class CallLogRepository(
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_ID)
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
 
-        val limit = preferenceManager.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_LOG_LIMIT, 500)
         try {
             val cursor = contentResolver.query(
                 CallLog.Calls.CONTENT_URI,
                 baseProjection.toTypedArray(),
                 null,
                 null,
-                "${CallLog.Calls.DATE} DESC LIMIT $limit"
+                "${CallLog.Calls.DATE} DESC"
             )
 
             cursor?.use { parseCursor(it, callLogs) }
@@ -68,7 +67,7 @@ class CallLogRepository(
                     safeProjection,
                     null,
                     null,
-                    "${CallLog.Calls.DATE} DESC LIMIT $limit"
+                    "${CallLog.Calls.DATE} DESC"
                 )
                 cursor?.use { parseCursor(it, callLogs) }
             } catch (e2: Exception) {
