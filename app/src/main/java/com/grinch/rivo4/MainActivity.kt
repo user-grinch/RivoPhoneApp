@@ -53,21 +53,29 @@ class MainActivity : ComponentActivity() {
 
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
-                var initialRoute : Direction = DefaultDialerScreenDestination
-
-                if (isAlreadyDefaultDialer(LocalContext.current)) {
-                    initialRoute = if (defBar == 1) {
-                        RecentScreenDestination
-                    } else {
-                        ContactScreenDestination
-                    }
-                }
 
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
-                    navController = navController,
-                    start = initialRoute
+                    navController = navController
                 )
+
+                LaunchedEffect(Unit) {
+                    if (!isAlreadyDefaultDialer(this@MainActivity)) {
+                        navController.navigate(DefaultDialerScreenDestination.route) {
+                            popUpTo(ContactScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
+                    } else if (defBar == 1) {
+                        navController.navigate(RecentScreenDestination.route) {
+                            popUpTo(ContactScreenDestination.route) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
 
                 LaunchedEffect(intent) {
                     handleIntent(intent, navController)

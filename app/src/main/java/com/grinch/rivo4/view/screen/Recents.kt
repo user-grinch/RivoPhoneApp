@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.CallLog
 import android.telecom.TelecomManager
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +52,10 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
     val viewModel: CallLogViewModel = koinActivityViewModel()
     
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
+    
+    BackHandler(enabled = selectedEntries.isNotEmpty()) {
+        selectedEntries = emptySet()
+    }
     
     val showButton by remember {
         derivedStateOf {

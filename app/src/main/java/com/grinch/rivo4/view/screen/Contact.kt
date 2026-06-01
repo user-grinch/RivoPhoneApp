@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen
 
 import android.Manifest
 import android.accounts.Account
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -46,7 +47,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>()
+@Destination<RootGraph>(start = true)
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
@@ -55,6 +56,11 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     
     var selectedIds by remember { mutableStateOf(setOf<String>()) }
+    
+    BackHandler(enabled = selectedIds.isNotEmpty()) {
+        selectedIds = emptySet()
+    }
+
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 2

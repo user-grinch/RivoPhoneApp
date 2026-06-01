@@ -8,6 +8,7 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -71,6 +72,11 @@ fun DialPadScreen(
 
     val allContacts by contactsVM.allContacts.collectAsState()
     var number by remember { mutableStateOf(initialNumber ?: "") }
+
+    BackHandler(enabled = number.isNotEmpty()) {
+        number = ""
+    }
+
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
     
     DisposableEffect(Unit) {

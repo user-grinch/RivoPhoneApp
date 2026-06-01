@@ -1,6 +1,7 @@
 package com.grinch.rivo4.view.screen
 
 import android.Manifest
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -92,6 +93,11 @@ fun ContactSearchContent(
     val contacts by contactsVM.allContacts.collectAsState()
 
     var query by remember { mutableStateOf("") }
+    
+    BackHandler(enabled = query.isNotEmpty()) {
+        query = ""
+    }
+
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 

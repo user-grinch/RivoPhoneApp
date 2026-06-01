@@ -35,7 +35,7 @@ import com.ramcosta.composedestinations.generated.destinations.RecentScreenDesti
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
 
-@Destination<RootGraph>(start = true)
+@Destination<RootGraph>()
 @Composable
 fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNavigator) {
     val context = LocalContext.current
