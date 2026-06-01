@@ -17,12 +17,18 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
+import com.grinch.rivo4.view.screen.transitions.AppTransitions
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
@@ -60,11 +66,18 @@ class MainActivity : ComponentActivity() {
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
 
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    navController = navController,
-                    defaultTransitions = AppTransitions
-                )
+                // Needed for app transitions
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                ) {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        navController = navController,
+                        defaultTransitions = AppTransitions
+                    )
+                }
 
                 LaunchedEffect(Unit) {
                     if (!isAlreadyDefaultDialer(this@MainActivity)) {
@@ -126,38 +139,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-object AppTransitions : NavHostAnimatedDestinationStyle() {
-
-    private const val DURATION = 500
-
-    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        slideInHorizontally(
-            initialOffsetX = { it },
-            animationSpec = tween(DURATION)
-        ) + fadeIn(animationSpec = tween(DURATION))
-    }
-
-    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(DURATION)
-        ) + fadeOut(animationSpec = tween(DURATION))
-    }
-
-    override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        slideInHorizontally(
-            initialOffsetX = { -it },
-            animationSpec = tween(DURATION)
-        ) + fadeIn(animationSpec = tween(DURATION))
-    }
-
-    override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        slideOutHorizontally(
-            targetOffsetX = { it },
-            animationSpec = tween(DURATION)
-        ) + fadeOut(animationSpec = tween(DURATION))
     }
 }

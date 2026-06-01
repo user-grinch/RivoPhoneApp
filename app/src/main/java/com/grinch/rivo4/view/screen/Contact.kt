@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
@@ -40,15 +41,18 @@ import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.TopBar
+import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
+
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>(start = true)
+@Destination<RootGraph>(style = NoTransitions::class)
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
