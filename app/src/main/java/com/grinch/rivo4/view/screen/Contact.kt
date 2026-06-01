@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.TopBar
+import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
@@ -50,7 +52,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>(start = true)
+@Destination<RootGraph>(start = true, style = NoTransitions::class)
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
@@ -285,6 +287,7 @@ fun BatchActionBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactContent(
     navigator: DestinationsNavigator,
@@ -297,24 +300,50 @@ fun ContactContent(
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val isLoading by contactsVM.isLoading.collectAsState()
     val contacts by contactsVM.filteredContacts.collectAsState()
+    val groupedContacts by contactsVM.groupedContacts.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    LaunchedEffect(isGranted) {
         if (isGranted) {
-            if (isLoading && contacts.isEmpty()) {
-                RivoLoadingIndicatorView()
-            } else if (contacts.isEmpty()) {
-                EmptyContactsState()
-            } else {
-                AZListScroll(
-                    contacts = contacts, 
-                    navigator = navigator, 
-                    listState = listState,
-                    selectedIds = selectedIds,
-                    onToggleSelection = onToggleSelection
-                )
+            contactsVM.fetchContacts()
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = isLoading && contacts.isNotEmpty(),
+        onRefresh = { contactsVM.fetchContacts() },
+        modifier = Modifier.fillMaxSize(),
+        indicator = {
+            if (isLoading && contacts.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    RivoLoadingIndicatorView()
+                }
             }
-        } else {
-            PermissionRequiredState(onRequestPermission)
+        }
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (isGranted) {
+                if (isLoading && contacts.isEmpty()) {
+                    RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
+                } else if (contacts.isEmpty()) {
+                    EmptyContactsState()
+                } else {
+                    AZListScroll(
+                        contacts = contacts, 
+                        navigator = navigator, 
+                        listState = listState,
+                        selectedIds = selectedIds,
+                        onToggleSelection = onToggleSelection,
+                        grouped = groupedContacts
+                    )
+                }
+            } else {
+                PermissionRequiredState(onRequestPermission)
+            }
         }
     }
 }

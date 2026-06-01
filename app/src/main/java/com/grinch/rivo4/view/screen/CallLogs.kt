@@ -45,6 +45,11 @@ fun CallLogFullScreen(
     phoneNumber: String? = null
 ) {
     val viewModel: CallLogViewModel = koinActivityViewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchLogs()
+    }
+
     val allLogs by viewModel.allCallLogs.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()

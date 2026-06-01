@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.net.Uri
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import androidx.activity.compose.BackHandler
@@ -283,6 +284,19 @@ fun DialPadScreen(
                                     }
                                 } else {
                                     callPermissionLauncher.launch(arrayOf(Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE))
+                                }
+                            }
+                        },
+                        onLongClick = {
+                            if (number.isNotEmpty()) {
+                                val url = "https://api.whatsapp.com/send?phone=$number"
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = Uri.parse(url)
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    // WhatsApp not installed
                                 }
                             }
                         },

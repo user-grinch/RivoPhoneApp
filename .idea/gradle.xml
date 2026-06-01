@@ -9,8 +9,8 @@
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../../../../../flatpak/doc/a206b56e/RivoPhoneApp" />
-            <option value="$PROJECT_DIR$/../../../../../flatpak/doc/a206b56e/RivoPhoneApp/app" />
+            <option value="$PROJECT_DIR$/../../../../../flatpak/doc/909a344e/RivoPhoneApp" />
+            <option value="$PROJECT_DIR$/../../../../../flatpak/doc/909a344e/RivoPhoneApp/app" />
           </set>
         </option>
       </GradleProjectSettings>

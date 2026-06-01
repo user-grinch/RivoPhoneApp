@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,11 +40,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>()
+@Destination<RootGraph>(style = NoTransitions::class)
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
@@ -159,6 +161,7 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CallLogFullContent(
     navigator: DestinationsNavigator,
@@ -170,6 +173,11 @@ fun CallLogFullContent(
 ) {
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
+        
+        LaunchedEffect(Unit) {
+            viewModel.fetchLogs()
+        }
+
         val logs by viewModel.allCallLogs.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
@@ -203,73 +211,91 @@ fun CallLogFullContent(
             )
         }
 
-        if (isLoading && logs.isEmpty()) {
-            RivoLoadingIndicatorView()
-        } else if (logs.isEmpty()) {
-            EmptyCallLogsState()
-        } else {
-            Column(modifier = Modifier.fillMaxSize()) {
+        PullToRefreshBox(
+            isRefreshing = isLoading && logs.isNotEmpty(),
+            onRefresh = { viewModel.fetchLogs() },
+            modifier = Modifier.fillMaxSize(),
+            indicator = {
+                if (isLoading && logs.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        RivoLoadingIndicatorView(modifier = Modifier.padding(8.dp))
+                    }
+                }
+            }
+        ) {
+            if (isLoading && logs.isEmpty()) {
+                RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
+            } else if (logs.isEmpty()) {
+                EmptyCallLogsState()
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
 
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 100.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    groupedLogs.forEach { (header, logsInGroup) ->
-                        item {
-                            RivoSectionHeader(title = header)
-                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                RivoExpressiveCard {
-                                    logsInGroup.forEachIndexed { index, lg ->
-                                        CallLogTile(
-                                            log = lg,
-                                            onTileClick = { log ->
-                                                if (selectedEntries.isNotEmpty()) {
-                                                    onToggleSelection(log)
-                                                } else {
-                                                    navigator.navigate(
-                                                        ContactDetailsScreenDestination(
-                                                            contactId = log.contactId ?: "null",
-                                                            phoneNumber = log.number
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 100.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        groupedLogs.forEach { (header, logsInGroup) ->
+                            item {
+                                RivoSectionHeader(title = header)
+                                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                    RivoExpressiveCard {
+                                        logsInGroup.forEachIndexed { index, lg ->
+                                            CallLogTile(
+                                                log = lg,
+                                                onTileClick = { log ->
+                                                    if (selectedEntries.isNotEmpty()) {
+                                                        onToggleSelection(log)
+                                                    } else {
+                                                        navigator.navigate(
+                                                            ContactDetailsScreenDestination(
+                                                                contactId = log.contactId ?: "null",
+                                                                phoneNumber = log.number
+                                                            )
                                                         )
-                                                    )
-                                                }
-                                            },
-                                            onButtonClick = { log ->
-                                                val hasPermission =
-                                                    ContextCompat.checkSelfPermission(
-                                                        context,
-                                                        Manifest.permission.READ_PHONE_STATE
-                                                    ) == PackageManager.PERMISSION_GRANTED
+                                                    }
+                                                },
+                                                onButtonClick = { log ->
+                                                    val hasPermission =
+                                                        ContextCompat.checkSelfPermission(
+                                                            context,
+                                                            Manifest.permission.READ_PHONE_STATE
+                                                        ) == PackageManager.PERMISSION_GRANTED
 
-                                                if (hasPermission) {
-                                                    val accounts = telecomManager.callCapablePhoneAccounts
-                                                    if (accounts.size > 1) {
-                                                        pendingNumber = log.number
-                                                        showSimPicker = true
+                                                    if (hasPermission) {
+                                                        val accounts = telecomManager.callCapablePhoneAccounts
+                                                        if (accounts.size > 1) {
+                                                            pendingNumber = log.number
+                                                            showSimPicker = true
+                                                        } else {
+                                                            makeCall(context, log.number)
+                                                        }
                                                     } else {
                                                         makeCall(context, log.number)
                                                     }
-                                                } else {
-                                                    makeCall(context, log.number)
-                                                }
-                                            },
-                                            onLongClick = { log ->
-                                                onToggleSelection(log)
-                                            },
-                                            selected = selectedEntries.any { it.id == lg.id }
-                                        )
-                                        if (index < logsInGroup.size - 1) {
-                                            HorizontalDivider(
-                                                modifier = Modifier.padding(horizontal = 16.dp),
-                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                                },
+                                                onLongClick = { log ->
+                                                    onToggleSelection(log)
+                                                },
+                                                selected = selectedEntries.any { it.id == lg.id }
                                             )
+                                            if (index < logsInGroup.size - 1) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                                )
+                                            }
                                         }
                                     }
                                 }
+                                Spacer(modifier = Modifier.height(12.dp))
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
                 }

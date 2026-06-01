@@ -9,6 +9,7 @@ data class CallLogEntry(
     val duration: Long,
     val photoUri: String?,
     val contactId: String?,
+    val simLabel: String? = null,
     val types: List<Int> = emptyList(),
     val ids: List<Long> = emptyList()
 ) {

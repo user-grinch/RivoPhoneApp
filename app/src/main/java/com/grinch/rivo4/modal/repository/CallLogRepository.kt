@@ -1,125 +1,161 @@
 package com.grinch.rivo4.modal.repository
 
 import android.content.ContentResolver
+import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.provider.CallLog
-import android.provider.ContactsContract
+import android.telecom.PhoneAccountHandle
+import android.telecom.TelecomManager
+import android.content.Context
+import android.content.ComponentName
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
 
 class CallLogRepository(
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
+    context: Context
 ) : ICallLogRepository {
+
+    private val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
 
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
 
-        val projection = arrayOf(
+        val baseProjection = mutableListOf(
             CallLog.Calls._ID,
             CallLog.Calls.NUMBER,
             CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.CACHED_PHOTO_URI,
+            CallLog.Calls.CACHED_LOOKUP_URI,
             CallLog.Calls.TYPE,
             CallLog.Calls.DATE,
             CallLog.Calls.DURATION
         )
 
-        contentResolver.query(
-            CallLog.Calls.CONTENT_URI,
-            projection,
-            null,
-            null,
-            "${CallLog.Calls.DATE} DESC"
-        )?.use { cursor ->
+        // Try adding all possible SIM info columns
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            baseProjection.add("phone_account_label")
+        }
+        baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_ID)
+        baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
 
-            val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
-            val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
-            val cachedNameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
-            val typeIdx = cursor.getColumnIndex(CallLog.Calls.TYPE)
-            val dateIdx = cursor.getColumnIndex(CallLog.Calls.DATE)
-            val durationIdx = cursor.getColumnIndex(CallLog.Calls.DURATION)
+        try {
+            val cursor = contentResolver.query(
+                CallLog.Calls.CONTENT_URI,
+                baseProjection.toTypedArray(),
+                null,
+                null,
+                "${CallLog.Calls.DATE} DESC LIMIT 500"
+            )
 
-            // Cache for contact data to avoid redundant queries during this session
-            val contactInfoCache = mutableMapOf<String, Triple<String?, String?, String?>>()
-
-            while (cursor.moveToNext()) {
-                val callId = cursor.getLong(idIdx)
-                val number = cursor.getString(numberIdx) ?: "Unknown"
-                val type = cursor.getInt(typeIdx)
-                val date = cursor.getLong(dateIdx)
-                val duration = cursor.getLong(durationIdx)
-
-                val (contactName, photoUri, contactId) = contactInfoCache.getOrPut(number) {
-                    getContactDataByNumber(number)
-                }
-
-                val displayName = contactName
-                    ?: cursor.getString(cachedNameIdx)
-                    ?: number
-
-                val lastEntry = callLogs.lastOrNull()
-                if (lastEntry != null && lastEntry.number == number) {
-                    val updatedEntry = lastEntry.copy(
-                        types = lastEntry.types + type,
-                        ids = lastEntry.ids + callId
-                    )
-                    callLogs[callLogs.size - 1] = updatedEntry
-                } else {
-                    callLogs.add(
-                        CallLogEntry(
-                            id = callId,
-                            number = number,
-                            name = displayName,
-                            type = type,
-                            date = date,
-                            duration = duration,
-                            photoUri = photoUri,
-                            contactId = contactId,
-                            types = listOf(type),
-                            ids = listOf(callId)
-                        )
-                    )
-                }
+            cursor?.use { parseCursor(it, callLogs) }
+        } catch (e: Exception) {
+            // If the above fails due to "phone_account_label" or other columns, try a safer subset
+            try {
+                val safeProjection = arrayOf(
+                    CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
+                    CallLog.Calls.CACHED_PHOTO_URI, CallLog.Calls.CACHED_LOOKUP_URI,
+                    CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.DURATION,
+                    CallLog.Calls.PHONE_ACCOUNT_ID, CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME
+                )
+                val cursor = contentResolver.query(
+                    CallLog.Calls.CONTENT_URI,
+                    safeProjection,
+                    null,
+                    null,
+                    "${CallLog.Calls.DATE} DESC LIMIT 500"
+                )
+                cursor?.use { parseCursor(it, callLogs) }
+            } catch (e2: Exception) {
+                e2.printStackTrace()
             }
         }
 
         return callLogs
     }
 
-    private fun getContactDataByNumber(number: String): Triple<String?, String?, String?> {
-        if (number.isBlank() || number == "Unknown") {
-            return Triple(null, null, null)
-        }
+    private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>) {
+        val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
+        val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
+        val cachedNameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
+        val cachedPhotoIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI)
+        val cachedLookupIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_LOOKUP_URI)
+        val typeIdx = cursor.getColumnIndex(CallLog.Calls.TYPE)
+        val dateIdx = cursor.getColumnIndex(CallLog.Calls.DATE)
+        val durationIdx = cursor.getColumnIndex(CallLog.Calls.DURATION)
+        
+        val labelIdx = cursor.getColumnIndex("phone_account_label")
+        val accountIdIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID)
+        val componentNameIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
 
-        val uri = Uri.withAppendedPath(
-            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-            Uri.encode(number)
-        )
+        val tempLogs = mutableListOf<CallLogEntry>()
+        val simCache = mutableMapOf<String, String>()
 
-        val projection = arrayOf(
-            ContactsContract.PhoneLookup._ID,
-            ContactsContract.PhoneLookup.DISPLAY_NAME,
-            ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI
-        )
-
-        return try {
-            contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
-                    val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-                    val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI)
-                    
-                    val id = if (idIdx != -1) cursor.getString(idIdx) else null
-                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else null
-                    val photo = if (photoIdx != -1) cursor.getString(photoIdx) else null
-
-                    Triple(name, photo, id)
-                } else {
-                    Triple(null, null, null)
+        while (cursor.moveToNext()) {
+            val callId = cursor.getLong(idIdx)
+            val number = cursor.getString(numberIdx) ?: "Unknown"
+            val type = cursor.getInt(typeIdx)
+            val date = cursor.getLong(dateIdx)
+            val duration = cursor.getLong(durationIdx)
+            
+            var simLabel = if (labelIdx != -1) cursor.getString(labelIdx) else null
+            
+            // If label is missing, try to resolve it from account ID
+            if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
+                val accountId = cursor.getString(accountIdIdx)
+                val componentStr = cursor.getString(componentNameIdx)
+                
+                if (!accountId.isNullOrEmpty() && !componentStr.isNullOrEmpty()) {
+                    simLabel = simCache.getOrPut("$componentStr/$accountId") {
+                        try {
+                            val componentName = ComponentName.unflattenFromString(componentStr)
+                            if (componentName != null) {
+                                val handle = PhoneAccountHandle(componentName, accountId)
+                                telecomManager?.getPhoneAccount(handle)?.label?.toString() ?: ""
+                            } else ""
+                        } catch (e: Exception) { "" }
+                    }
                 }
-            } ?: Triple(null, null, null)
-        } catch (e: Exception) {
-            Triple(null, null, null)
+            }
+
+            if (simLabel?.isEmpty() == true) simLabel = null
+
+            val displayName = cursor.getString(cachedNameIdx)
+            val photoUri = cursor.getString(cachedPhotoIdx)
+            val lookupUri = cursor.getString(cachedLookupIdx)
+            
+            val contactId = lookupUri?.let {
+                try {
+                    Uri.parse(it).lastPathSegment
+                } catch (e: Exception) { null }
+            }
+
+            val lastEntry = tempLogs.lastOrNull()
+            if (lastEntry != null && lastEntry.number == number) {
+                tempLogs[tempLogs.size - 1] = lastEntry.copy(
+                    types = lastEntry.types + type,
+                    ids = lastEntry.ids + callId
+                )
+            } else {
+                tempLogs.add(
+                    CallLogEntry(
+                        id = callId,
+                        number = number,
+                        name = displayName ?: number,
+                        type = type,
+                        date = date,
+                        duration = duration,
+                        photoUri = photoUri,
+                        contactId = contactId,
+                        simLabel = simLabel,
+                        types = listOf(type),
+                        ids = listOf(callId)
+                    )
+                )
+            }
         }
+        callLogs.addAll(tempLogs)
     }
 
     override fun deleteCallLog(number: String) {

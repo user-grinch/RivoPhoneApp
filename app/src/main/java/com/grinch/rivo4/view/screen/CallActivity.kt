@@ -399,16 +399,32 @@ fun ExpressiveCallScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    OutlinedButton(
-                        onClick = { /* Could send message */ },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.CallEnd, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Message")
+                        CallActionButton(
+                            icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                            isActive = isMuted,
+                            label = "Mute"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            CallService.mute(!isMuted)
+                        }
+                        
+                        Spacer(modifier = Modifier.width(32.dp))
+
+                        CallActionButton(
+                            icon = Icons.AutoMirrored.Filled.VolumeUp,
+                            isActive = isSpeakerOn,
+                            label = "Speaker"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            CallService.setSpeaker(!isSpeakerOn)
+                        }
                     }
-                    
+
                     HorizontalSwipeToAnswer(
                         onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
                         onDecline = { try { call.disconnect() } catch (e: Exception) {} }
@@ -880,14 +896,16 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Text(
                 "Decline",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (offsetX.value < 0) 1f else 0.5f),
-                modifier = Modifier.alpha( (offsetX.value / -maxDrag).coerceIn(0.2f, 1f) )
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFF44336), // Solid red
+                modifier = Modifier.alpha( (offsetX.value / -maxDrag).coerceIn(0.4f, 1f) )
             )
             Text(
                 "Answer",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (offsetX.value > 0) 1f else 0.5f),
-                modifier = Modifier.alpha( (offsetX.value / maxDrag).coerceIn(0.2f, 1f) )
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4CAF50), // Solid green
+                modifier = Modifier.alpha( (offsetX.value / maxDrag).coerceIn(0.4f, 1f) )
             )
         }
 

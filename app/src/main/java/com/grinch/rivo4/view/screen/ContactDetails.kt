@@ -135,6 +135,14 @@ fun ContactDetailsScreen(
         }
     }
 
+    val shareContact = {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "Name: $displayName\nPhone: $displayPhone")
+        }
+        context.startActivity(Intent.createChooser(intent, "Share Contact"))
+    }
+
     if (showNumberPicker && fullContact != null) {
         RivoDialog(
             onDismissRequest = { showNumberPicker = false },
@@ -248,8 +256,17 @@ fun ContactDetailsScreen(
                     IconButton(onClick = { showQrDialog = true }) {
                         Icon(Icons.Outlined.QrCode2, contentDescription = "QR Code")
                     }
+                    IconButton(onClick = shareContact) {
+                        Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
                     if (fullContact != null) {
-                        IconButton(onClick = { contactsViewModel.toggleFavorite(fullContact!!) }) {
+                        IconButton(onClick = { 
+                            fullContact?.let { contact ->
+                                val newFavorite = !contact.isFavorite
+                                fullContact = contact.copy(isFavorite = newFavorite)
+                                contactsViewModel.toggleFavorite(contact)
+                            }
+                        }) {
                             Icon(
                                 if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Favorite",
@@ -281,7 +298,7 @@ fun ContactDetailsScreen(
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             if (isFullLoading) {
-                RivoLoadingIndicatorView()
+                RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
             } else {
                 LazyColumn(
                     state = listState,

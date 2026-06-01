@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RivoLoadingIndicatorView() {
+fun RivoLoadingIndicatorView(modifier: Modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -16,81 +16,62 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
     private val contentResolver: ContentResolver = context.contentResolver
 
     override fun getContacts(): List<Contact> {
-        val contactsMap = mutableMapOf<String, Contact>()
+        val contactsMap = LinkedHashMap<String, Contact>()
 
         val projection = arrayOf(
-            ContactsContract.Data.CONTACT_ID,
-            ContactsContract.Data.DISPLAY_NAME_PRIMARY,
-            ContactsContract.Data.PHOTO_URI,
-            ContactsContract.Data.MIMETYPE,
-            ContactsContract.Data.DATA1,
-            ContactsContract.Data.DATA2,
-            ContactsContract.Data.DATA3,
-            ContactsContract.Data.STARRED,
+            ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY,
+            ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
+            ContactsContract.CommonDataKinds.Phone.NUMBER,
+            ContactsContract.CommonDataKinds.Phone.STARRED,
             ContactsContract.RawContacts.ACCOUNT_NAME,
             ContactsContract.RawContacts.ACCOUNT_TYPE
         )
 
-        contentResolver.query(
-            ContactsContract.Data.CONTENT_URI,
-            projection,
-            null,
-            null,
-            "${ContactsContract.Data.DISPLAY_NAME_PRIMARY} ASC"
-        )?.use { cursor ->
-            val idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID)
-            val nameIdx = cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY)
-            val photoIdx = cursor.getColumnIndex(ContactsContract.Data.PHOTO_URI)
-            val mimeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE)
-            val data1Idx = cursor.getColumnIndex(ContactsContract.Data.DATA1)
-            val data2Idx = cursor.getColumnIndex(ContactsContract.Data.DATA2)
-            val data3Idx = cursor.getColumnIndex(ContactsContract.Data.DATA3)
-            val starredIdx = cursor.getColumnIndex(ContactsContract.Data.STARRED)
-            val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
-            val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+        // Query Phone table directly - it's much faster than querying Data table with all mimetypes
+        try {
+            contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                projection,
+                null,
+                null,
+                "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY} ASC"
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
+                val nameIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY)
+                val photoIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI)
+                val numberIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                val starredIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.STARRED)
+                val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
 
-            while (cursor.moveToNext()) {
-                val id = cursor.getString(idIdx) ?: continue
-                val mimeType = cursor.getString(mimeIdx)
-                val data1 = cursor.getString(data1Idx) ?: continue
-
-                val isStarred = cursor.getInt(starredIdx) == 1
-                val accountName = cursor.getString(accountNameIdx)
-                val accountType = cursor.getString(accountTypeIdx)
-
-                val contact = contactsMap.getOrPut(id) {
-                    Contact(
-                        id = id,
-                        name = cursor.getString(nameIdx) ?: "Unknown",
-                        photoUri = cursor.getString(photoIdx),
-                        isFavorite = isStarred,
-                        accountName = accountName,
-                        accountType = accountType
-                    )
-                }
-
-                when (mimeType) {
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
-                        contactsMap[id] = contact.copy(phoneNumbers = (contact.phoneNumbers + data1).distinct())
-                    }
-                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
-                        contactsMap[id] = contact.copy(emails = (contact.emails + data1).distinct())
-                    }
-                    ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
-                        contactsMap[id] = contact.copy(addresses = (contact.addresses + data1).distinct())
-                    }
-                    ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE -> {
-                        val type = cursor.getInt(data2Idx)
-                        val label = cursor.getString(data3Idx)
-                        val event = ContactEvent(type, label, data1)
-                        contactsMap[id] = contact.copy(events = (contact.events + event).distinct())
+                while (cursor.moveToNext()) {
+                    val id = cursor.getString(idIdx) ?: continue
+                    val number = cursor.getString(numberIdx) ?: continue
+                    
+                    val existingContact = contactsMap[id]
+                    if (existingContact != null) {
+                        val numbers = existingContact.phoneNumbers as MutableList<String>
+                        if (!numbers.contains(number) && numbers.size < 5) {
+                            numbers.add(number)
+                        }
+                    } else {
+                        contactsMap[id] = Contact(
+                            id = id,
+                            name = cursor.getString(nameIdx) ?: "Unknown",
+                            photoUri = cursor.getString(photoIdx),
+                            isFavorite = cursor.getInt(starredIdx) == 1,
+                            accountName = cursor.getString(accountNameIdx),
+                            accountType = cursor.getString(accountTypeIdx),
+                            phoneNumbers = mutableListOf(number)
+                        )
                     }
                 }
             }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
         }
         return contactsMap.values.toList()
-            .filter { it.phoneNumbers.isNotEmpty() }
-            .sortedBy { it.name }
     }
 
     override fun getContactById(contactId: String): Contact? {
@@ -434,10 +415,16 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
         contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
-                val id = cursor.getString(0)
-                val name = cursor.getString(1)
-                val photoUri = cursor.getString(2)
-                val starred = cursor.getInt(3) == 1
+                val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
+                val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
+                val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
+                val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
+                
+                val id = if (idIdx != -1) cursor.getString(idIdx) else "0"
+                val name = if (nameIdx != -1) cursor.getString(nameIdx) else "Unknown"
+                val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
+                val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
+
                 return Contact(
                     id = id,
                     name = name,

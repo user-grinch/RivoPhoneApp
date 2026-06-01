@@ -147,6 +147,7 @@ fun RivoExpressiveButton(
 fun RivoListItem(
     headline: String,
     supporting: String? = null,
+    supporting2: String? = null,
     leadingIcon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
     avatarName: String? = null,
@@ -229,6 +230,16 @@ fun RivoListItem(
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
+                if (supporting2 != null) {
+                    Text(
+                        text = supporting2,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
             }
         }
     }
@@ -290,7 +301,6 @@ fun RivoSwitchListItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RivoSelectListItem(
     headline: String,

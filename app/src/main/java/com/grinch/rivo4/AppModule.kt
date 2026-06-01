@@ -16,11 +16,11 @@ val appModule = module {
         ContactsRepository(androidContext())
     }
     single<ICallLogRepository> {
-        CallLogRepository(androidContext().contentResolver)
+        CallLogRepository(androidContext().contentResolver, androidContext())
     }
     single {
         PreferenceManager(androidContext())
     }
     viewModel { ContactsViewModel(get()) }
-    viewModel { CallLogViewModel(get()) }
+    viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
 }

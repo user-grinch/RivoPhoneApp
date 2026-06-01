@@ -34,9 +34,12 @@ fun AZListScroll(
     modifier: Modifier = Modifier,
     listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState(),
     selectedIds: Set<String> = emptySet(),
-    onToggleSelection: (String) -> Unit = {}
+    onToggleSelection: (String) -> Unit = {},
+    grouped: Map<Char, List<Contact>>? = null
 ) {
-    val grouped = remember(contacts) {
+    val finalGrouped = remember(contacts, grouped) {
+        if (grouped != null) return@remember grouped
+        
         val favorites = contacts.filter { it.isFavorite }
         val nonFavs = contacts.filter { !it.isFavorite }
 
@@ -59,10 +62,10 @@ fun AZListScroll(
         finalMap
     }
 
-    val alphabetIndices = remember(grouped) {
+    val alphabetIndices = remember(finalGrouped) {
         val map = mutableMapOf<Char, Int>()
         var currentIndex = 0
-        grouped.forEach { (char, _) ->
+        finalGrouped.forEach { (char, _) ->
             map[char] = currentIndex
             currentIndex += 2 
         }
@@ -88,7 +91,7 @@ fun AZListScroll(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
-            grouped.forEach { (initial, contactsForChar) ->
+            finalGrouped.forEach { (initial, contactsForChar) ->
                 stickyHeader {
                     Box(
                         modifier = Modifier

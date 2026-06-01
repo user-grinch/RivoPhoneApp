@@ -11,8 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+import android.content.ContentResolver
+import android.database.ContentObserver
+import android.os.Handler
+import android.os.Looper
+import android.provider.CallLog
+
 class CallLogViewModel(
-    private val callLogRepo: ICallLogRepository
+    private val callLogRepo: ICallLogRepository,
+    private val contentResolver: ContentResolver
 ) : ViewModel() {
 
     private val _allCallLogs = MutableStateFlow<List<CallLogEntry>>(emptyList())
@@ -24,8 +31,19 @@ class CallLogViewModel(
     private val _selectedFilter = MutableStateFlow(CallLogFilter.All)
     val selectedFilter = _selectedFilter.asStateFlow()
 
+    private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun onChange(selfChange: Boolean) {
+            fetchLogs()
+        }
+    }
+
     init {
-        fetchLogs()
+        contentResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, contentObserver)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        contentResolver.unregisterContentObserver(contentObserver)
     }
 
     fun setFilter(newFilter: CallLogFilter) {

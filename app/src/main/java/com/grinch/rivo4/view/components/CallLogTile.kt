@@ -1,27 +1,26 @@
 package com.grinch.rivo4.view.components
 
 import android.provider.CallLog
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.modal.data.CallLogEntry
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun CallLogTileSimple(
@@ -41,40 +40,51 @@ fun CallLogTileSimple(
     val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
     ) {
-        Box(modifier = Modifier.weight(1f)) {
-            RivoListItem(
-                headline = when (log.type) {
-                    CallLog.Calls.INCOMING_TYPE -> "Incoming"
-                    CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
-                    CallLog.Calls.MISSED_TYPE -> "Missed"
-                    else -> "Call"
-                },
-                supporting = "${formatDate(log.date)}${if (log.duration > 0) " • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else ""}",
-                avatarName = "", // Empty to show default person icon
-                badgeIcon = icon,
-                badgeColor = badgeColor,
-                headlineColor = headlineColor,
-                onClick = onClick,
-                onLongClick = onLongClick,
-                selected = selected
-            )
-        }
-        
-        if (!selected) {
-            IconButton(
-                onClick = onCallClick,
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Call,
-                    contentDescription = "Call",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                RivoListItem(
+                    headline = when (log.type) {
+                        CallLog.Calls.INCOMING_TYPE -> "Incoming"
+                        CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
+                        CallLog.Calls.MISSED_TYPE -> "Missed"
+                        else -> "Call"
+                    },
+                    supporting = buildString {
+                        append(formatDate(log.date))
+                        if (log.duration > 0) append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
+                    },
+                    supporting2 = log.simLabel,
+                    avatarName = "", 
+                    badgeIcon = icon,
+                    badgeColor = badgeColor,
+                    headlineColor = headlineColor,
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                    selected = selected
                 )
+            }
+            
+            if (!selected) {
+                IconButton(
+                    onClick = onCallClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Call,
+                        contentDescription = "Call",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
@@ -98,42 +108,56 @@ fun CallLogTile(
     val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
     ) {
-        Box(modifier = Modifier.weight(1f)) {
-            RivoListItem(
-                headline = buildString {
-                    append(log.name ?: log.number)
-                    if (log.count > 1) append(" (${log.count})")
-                },
-                supporting = buildString {
-                    if (log.name != null && log.name != log.number) {
-                        append(log.number)
-                    }
-                },
-                avatarName = log.name ?: log.number,
-                photoUri = log.photoUri,
-                badgeIcon = icon,
-                badgeColor = badgeColor,
-                headlineColor = headlineColor,
-                onClick = { onTileClick(log) },
-                onLongClick = { onLongClick(log) },
-                selected = selected
-            )
-        }
-        
-        if (!selected) {
-            IconButton(
-                onClick = { onButtonClick(log) },
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Call,
-                    contentDescription = "Call",
-                    tint = MaterialTheme.colorScheme.primary
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                RivoListItem(
+                    headline = buildString {
+                        append(log.name ?: log.number)
+                        if (log.count > 1) append(" (${log.count})")
+                    },
+                    supporting = buildString {
+                        if (log.name != null && log.name != log.number) {
+                            append(log.number)
+                            if (log.type == CallLog.Calls.MISSED_TYPE) {
+                                append(" • ")
+                                append(formatDate(log.date))
+                            }
+                        } else if (log.type == CallLog.Calls.MISSED_TYPE) {
+                            append(formatDate(log.date))
+                        }
+                    },
+                    supporting2 = log.simLabel,
+                    avatarName = log.name ?: log.number,
+                    photoUri = log.photoUri,
+                    badgeIcon = icon,
+                    badgeColor = badgeColor,
+                    headlineColor = headlineColor,
+                    onClick = { onTileClick(log) },
+                    onLongClick = { onLongClick(log) },
+                    selected = selected
                 )
+            }
+            
+            if (!selected) {
+                IconButton(
+                    onClick = { onButtonClick(log) },
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Call,
+                        contentDescription = "Call",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
