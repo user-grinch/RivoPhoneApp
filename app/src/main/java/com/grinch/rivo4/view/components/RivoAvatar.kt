@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
+import androidx.compose.ui.text.TextStyle
 import kotlin.math.abs
 
 @Composable
@@ -36,7 +37,8 @@ fun RivoAvatar(
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
     badgeIcon: ImageVector? = null,
-    badgeColor: Color? = null
+    badgeColor: Color? = null,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -97,7 +99,7 @@ fun RivoAvatar(
             } else if (showFirstLetter && hasName) {
                 Text(
                     text = name.trim().take(1).uppercase(),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = textStyle,
                     color = contentColor
                 )
             } else {
