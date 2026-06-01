@@ -11,9 +11,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
@@ -21,7 +23,10 @@ import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScr
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import com.ramcosta.composedestinations.spec.BaseRoute
+import com.ramcosta.composedestinations.spec.Direction
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
@@ -42,19 +47,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        requestDialerRole()
-
         setContent {
             Rivo4Theme {
                 val navController = rememberNavController()
 
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
+                var initialRoute : Direction = DefaultDialerScreenDestination
 
-                val initialRoute = if (defBar == 1) {
-                    RecentScreenDestination
-                } else {
-                    ContactScreenDestination
+                if (isAlreadyDefaultDialer(LocalContext.current)) {
+                    initialRoute = if (defBar == 1) {
+                        RecentScreenDestination
+                    } else {
+                        ContactScreenDestination
+                    }
                 }
 
                 DestinationsNavHost(
@@ -103,16 +109,6 @@ class MainActivity : ComponentActivity() {
                 if (id != null) {
                     navController.navigate(ContactEditScreenDestination(contactId = id).route)
                 }
-            }
-        }
-    }
-
-    private fun requestDialerRole() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
-            if (!roleManager.isRoleHeld(RoleManager.ROLE_DIALER)) {
-                val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER)
-                requestRoleLauncher.launch(intent)
             }
         }
     }
