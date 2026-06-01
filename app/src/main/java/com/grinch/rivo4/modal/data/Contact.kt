@@ -1,11 +1,15 @@
 package com.grinch.rivo4.modal.data
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ContactEvent(
     val type: Int,
     val label: String?,
     val date: String
 )
 
+@Serializable
 data class Contact(
     val id: String,
     val name: String,

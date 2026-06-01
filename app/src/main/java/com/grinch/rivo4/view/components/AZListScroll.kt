@@ -37,6 +37,10 @@ fun AZListScroll(
     onToggleSelection: (String) -> Unit = {},
     grouped: Map<Char, List<Contact>>? = null
 ) {
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
+
     val finalGrouped = remember(contacts, grouped) {
         if (grouped != null) return@remember grouped
         
@@ -132,7 +136,7 @@ fun AZListScroll(
                                     },
                                     selected = selectedIds.contains(contact.id)
                                 )
-                                if (index < contactsForChar.size - 1) {
+                                if (showDividers && index < contactsForChar.size - 1) {
                                     HorizontalDivider(
                                         modifier = Modifier.padding(horizontal = 16.dp),
                                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)

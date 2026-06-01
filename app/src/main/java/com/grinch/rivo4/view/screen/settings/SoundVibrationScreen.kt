@@ -34,6 +34,8 @@ fun SoundVibrationScreen(
     
     var dtmfTone by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) }
     var dialpadVibration by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) }
+    var vibrateOnAnswer by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, true)) }
+    var vibrateOnHangup by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) }
 
     Scaffold(
         topBar = {
@@ -75,6 +77,32 @@ fun SoundVibrationScreen(
                         onCheckedChange = {
                             dialpadVibration = it
                             prefs.setBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, it)
+                        }
+                    )
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = "Vibrate on Answer",
+                        supporting = "Vibrate when the other party answers",
+                        leadingIcon = Icons.Outlined.Vibration,
+                        checked = vibrateOnAnswer,
+                        onCheckedChange = {
+                            vibrateOnAnswer = it
+                            prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, it)
+                        }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSwitchListItem(
+                        headline = "Vibrate on Hang up",
+                        supporting = "Vibrate when the call ends",
+                        leadingIcon = Icons.Outlined.Vibration,
+                        checked = vibrateOnHangup,
+                        onCheckedChange = {
+                            vibrateOnHangup = it
+                            prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, it)
                         }
                     )
                 }

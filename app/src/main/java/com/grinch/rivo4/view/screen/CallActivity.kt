@@ -1,5 +1,6 @@
 package com.grinch.rivo4.view.screen
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
@@ -107,18 +108,36 @@ class CallActivity : ComponentActivity() {
 
                 LaunchedEffect(callState, settingsState) {
                     when (callState) {
-                        Call.STATE_ACTIVE, Call.STATE_DIALING -> {
+                        Call.STATE_ACTIVE -> {
+                            if (preferenceManager.getBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, true)) {
+                                this@CallActivity.window?.decorView?.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                            }
                             if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
                                 acquireProximityLock()
                             } else {
                                 releaseProximityLock()
                             }
                         }
+                        Call.STATE_DIALING -> {
+                            if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
+                                acquireProximityLock()
+                            } else {
+                                releaseProximityLock()
+                            }
+                        }
+                        Call.STATE_DISCONNECTED -> {
+                            if (preferenceManager.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) {
+                                this@CallActivity.window?.decorView?.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                            }
+                            releaseProximityLock()
+                            delay(1200) // Brief delay to show "Call Ended" state
+                            finish()
+                        }
                         else -> releaseProximityLock()
                     }
 
-                    if (session == null || callState == Call.STATE_DISCONNECTED) {
-                        delay(1200) // Brief delay to show "Call Ended" state
+                    if (session == null) {
+                        delay(1200)
                         finish()
                     }
                 }

@@ -1,5 +1,6 @@
 package com.grinch.rivo4
 
+import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
@@ -23,4 +24,5 @@ val appModule = module {
     }
     viewModel { ContactsViewModel(get()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
+    viewModel { BackupViewModel(get(), get()) }
 }

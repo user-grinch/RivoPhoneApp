@@ -47,6 +47,8 @@ fun CallAccountsScreen(
     var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
+    var incomingCallPopup by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)) }
+    var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     
     var showSimDialog by remember { mutableStateOf(false) }
@@ -127,9 +129,35 @@ fun CallAccountsScreen(
                             prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
                         }
                     )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSwitchListItem(
+                        headline = "Incoming Call Popup",
+                        supporting = "Show incoming calls as a popup when phone is in use",
+                        leadingIcon = Icons.Outlined.PictureInPicture,
+                        checked = incomingCallPopup,
+                        onCheckedChange = {
+                            incomingCallPopup = it
+                            prefs.setBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, it)
+                        }
+                    )
                 }
             }
-            
+
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = "Auto Redial",
+                        supporting = "Automatically redial if the line is busy",
+                        leadingIcon = Icons.Outlined.Replay,
+                        checked = autoRedial,
+                        onCheckedChange = {
+                            autoRedial = it
+                            prefs.setBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, it)
+                        }
+                    )
+                }
+            }
+
             item {
                 Spacer(modifier = Modifier.height(100.dp))
             }

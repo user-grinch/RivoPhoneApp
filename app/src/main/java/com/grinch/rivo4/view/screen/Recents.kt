@@ -174,6 +174,8 @@ fun CallLogFullContent(
 ) {
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
+        val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+        val settingsState by prefs.settingsChanged.collectAsState()
         
         LaunchedEffect(Unit) {
             viewModel.fetchLogs()
@@ -187,14 +189,17 @@ fun CallLogFullContent(
 
         var showSimPicker by remember { mutableStateOf(false) }
         var pendingNumber by remember { mutableStateOf<String?>(null) }
+        val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
 
-        val filteredLogs = remember(logs, selectedFilter) {
+        val filteredLogs = remember(logs, selectedFilter, blockLogVisibility) {
+            val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
+
             when (selectedFilter) {
-                CallLogFilter.All -> logs
-                CallLogFilter.Missed -> logs.filter { it.type == CallLog.Calls.MISSED_TYPE }
-                CallLogFilter.Incoming -> logs.filter { it.type == CallLog.Calls.INCOMING_TYPE }
-                CallLogFilter.Outgoing -> logs.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
-                CallLogFilter.Contacts -> logs.filter { it.name != null && it.name != it.number }
+                CallLogFilter.All -> baseLogs
+                CallLogFilter.Missed -> baseLogs.filter { it.type == CallLog.Calls.MISSED_TYPE }
+                CallLogFilter.Incoming -> baseLogs.filter { it.type == CallLog.Calls.INCOMING_TYPE }
+                CallLogFilter.Outgoing -> baseLogs.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
+                CallLogFilter.Contacts -> baseLogs.filter { it.name != null && it.name != it.number }
             }
         }
 
@@ -213,6 +218,8 @@ fun CallLogFullContent(
         }
 
         val pullToRefreshState = rememberPullToRefreshState()
+
+        val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
 
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
@@ -283,7 +290,7 @@ fun CallLogFullContent(
                                                 },
                                                 selected = selectedEntries.any { it.id == lg.id }
                                             )
-                                            if (index < logsInGroup.size - 1) {
+                                            if (showDividers && index < logsInGroup.size - 1) {
                                                 HorizontalDivider(
                                                     modifier = Modifier.padding(horizontal = 16.dp),
                                                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)

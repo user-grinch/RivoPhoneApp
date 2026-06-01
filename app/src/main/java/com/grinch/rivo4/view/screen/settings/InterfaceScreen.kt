@@ -61,6 +61,8 @@ fun InterfaceScreen(
     var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
     var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
     var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
+    var roundAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)) }
+    var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
 
     val presetColors = listOf(
@@ -193,11 +195,33 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_PICTURE, it)
                             }
                         )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Round avatars",
+                            supporting = "Use circles for contact avatars",
+                            leadingIcon = Icons.Outlined.Circle,
+                            checked = roundAvatars,
+                            onCheckedChange = {
+                                roundAvatars = it
+                                prefs.setBoolean(PreferenceManager.KEY_ROUND_AVATARS, it)
+                            }
+                        )
                     }
                 }
 
                 item {
                     RivoExpressiveCard {
+                        RivoSwitchListItem(
+                            headline = "Show dividers",
+                            supporting = "Display lines between list items",
+                            leadingIcon = Icons.Outlined.HorizontalRule,
+                            checked = showDividers,
+                            onCheckedChange = {
+                                showDividers = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSelectListItem(
                             headline = "Default bottom bar",
                             supporting = "Select which tab opens initially",

@@ -59,5 +59,15 @@ class PreferenceManager(context: Context) {
         const val KEY_T9_DIALING = "t9_dialing"
         const val KEY_PROXIMITY_SENSOR = "proximity_sensor"
         const val KEY_INCOMING_CALL_POPUP = "incoming_call_popup"
+        const val KEY_AUTO_REDIAL_BUSY = "auto_redial_busy"
+        const val KEY_REDIAL_ATTEMPTS = "redial_attempts"
+        const val KEY_REDIAL_DELAY = "redial_delay"
+        const val KEY_BLOCK_METHOD = "block_method" // 0: Decline, 1: Silent
+        const val KEY_BLOCK_LOG_VISIBILITY = "block_log_visibility" // 0: Hide, 1: Show
+        const val KEY_BLOCK_NOTIFICATION = "block_notification"
+        const val KEY_VIBRATE_ON_ANSWER = "vibrate_on_answer"
+        const val KEY_VIBRATE_ON_HANGUP = "vibrate_on_hangup"
+        const val KEY_ROUND_AVATARS = "round_avatars"
+        const val KEY_SHOW_DIVIDERS = "show_dividers"
     }
 }

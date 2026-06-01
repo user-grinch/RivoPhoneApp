@@ -7,21 +7,23 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
+import android.provider.BlockedNumberContract
 import android.telecom.Call
 import android.telecom.CallAudioState
+import android.telecom.DisconnectCause
 import android.telecom.InCallService
+import android.telecom.TelecomManager
 import android.telecom.VideoProfile
 import androidx.core.app.NotificationCompat
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.CallActivity
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.android.ext.android.inject
-
-import android.telecom.PhoneAccountHandle
-import android.telecom.TelecomManager
-import com.grinch.rivo4.controller.util.PreferenceManager
 
 data class CallSession(
     val call: Call,
@@ -33,6 +35,8 @@ class CallService : InCallService() {
 
     private val contactsRepository: IContactsRepository by inject()
     private val preferenceManager: PreferenceManager by inject()
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var redialCount = 0
 
     companion object {
         private const val CHANNEL_ID = "call_channel"
@@ -76,7 +80,6 @@ class CallService : InCallService() {
                 if (activeCall != null && heldCall != null) {
                     activeCall.conference(heldCall)
                 } else if (calls.size >= 2) {
-                    // Fallback: try conferencing the first two calls
                     calls[0].conference(calls[1])
                 }
             }
@@ -96,11 +99,13 @@ class CallService : InCallService() {
             super.onStateChanged(call, state)
             updateCallState()
             
+            if (state == Call.STATE_ACTIVE) {
+                redialCount = 0
+            }
+
             if (state == Call.STATE_DISCONNECTED) {
-                val disconnectCause = call.details.disconnectCause
-                if (call.state == Call.STATE_RINGING || (disconnectCause != null && disconnectCause.code == android.telecom.DisconnectCause.MISSED)) {
-                    showMissedCallNotification(call)
-                }
+                val cause = call.details.disconnectCause
+                handleDisconnect(call, cause)
 
                 if ((instance?.getCalls()?.size ?: 0) == 0) {
                     removeForeground()
@@ -110,6 +115,74 @@ class CallService : InCallService() {
                 updateNotification(call)
             }
         }
+    }
+
+    private fun handleDisconnect(call: Call, cause: DisconnectCause?) {
+        val number = call.details.handle?.schemeSpecificPart ?: ""
+        
+        // Auto Redial on Busy
+        if (cause?.code == DisconnectCause.BUSY && 
+            preferenceManager.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) {
+            
+            val maxAttempts = preferenceManager.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)
+            val delayMs = preferenceManager.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000).toLong()
+            
+            if (redialCount < maxAttempts) {
+                redialCount++
+                serviceScope.launch {
+                    delay(delayMs)
+                    val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number")).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
+                }
+            }
+        }
+
+        // Missed Call Notification
+        if (call.state == Call.STATE_RINGING || (cause != null && cause.code == DisconnectCause.MISSED)) {
+            if (!isNumberBlocked(number) || preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 1) {
+                showMissedCallNotification(call)
+            }
+        }
+    }
+
+    private fun isNumberBlocked(number: String): Boolean {
+        if (number.isEmpty()) return false
+        return try {
+            BlockedNumberContract.isBlocked(this, number)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun handleBlockedCall(call: Call, number: String) {
+        val method = preferenceManager.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0) // 0: Decline, 1: Silent
+        
+        if (method == 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                call.reject(Call.REJECT_REASON_DECLINED)
+            } else {
+                call.disconnect()
+            }
+        }
+        
+        if (preferenceManager.getBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, true)) {
+            showBlockedNotification(number)
+        }
+    }
+
+    private fun showBlockedNotification(number: String) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel)
+            .setContentTitle("Blocked Call")
+            .setContentText("Blocked call from $number")
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true)
+        
+        notificationManager.notify(number.hashCode(), builder.build())
     }
 
     private fun showMissedCallNotification(call: Call) {
@@ -130,7 +203,7 @@ class CallService : InCallService() {
             try { telecomManager.getPhoneAccount(it)?.label?.toString() } catch (e: SecurityException) { null }
         }
 
-        val intent = Intent(this, CallActivity::class.java) // Or Recents
+        val intent = Intent(this, CallActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val timeString = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
@@ -175,8 +248,14 @@ class CallService : InCallService() {
         super.onCallAdded(call)
         instance = this
         call.registerCallback(callCallback)
+
+        val number = call.details.handle?.schemeSpecificPart ?: ""
+        if (isNumberBlocked(number)) {
+            handleBlockedCall(call, number)
+            return
+        }
+
         updateCallState()
-        
         updateNotification(call)
 
         val usePopup = preferenceManager.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)
@@ -261,9 +340,6 @@ class CallService : InCallService() {
         val declineIntent = Intent(this, CallService::class.java).apply { action = "DECLINE_CALL" }
         val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val muteIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_MUTE" }
-        val mutePendingIntent = PendingIntent.getService(this, 3, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
         val speakerIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_SPEAKER" }
         val speakerPendingIntent = PendingIntent.getService(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -272,7 +348,6 @@ class CallService : InCallService() {
             .setImportant(true)
             .build()
 
-        val isMuted = _audioState.value?.isMuted ?: false
         val isSpeaker = _audioState.value?.route == CallAudioState.ROUTE_SPEAKER
 
         val contentText = buildString {
@@ -308,7 +383,7 @@ class CallService : InCallService() {
                     speakerPendingIntent
                 ).build()
             )
-            .setColor(Color.parseColor("#4CAF50")) // Changed to Green for better visibility
+            .setColor(Color.parseColor("#4CAF50"))
             .setColorized(true)
 
         val notification = builder.build()
@@ -322,5 +397,10 @@ class CallService : InCallService() {
     private fun cancelNotification() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
     }
 }

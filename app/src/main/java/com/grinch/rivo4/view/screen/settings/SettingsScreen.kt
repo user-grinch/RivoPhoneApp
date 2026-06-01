@@ -148,9 +148,16 @@ fun SettingsScreen(
                 RivoExpressiveCard {
                     RivoListItem(
                         headline = "Call Settings",
-                        supporting = "Manage SIMs, dialing, and speed dial",
+                        supporting = "Manage SIMs, dialing, and redial",
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = "Blocked Numbers",
+                        supporting = "Manage blocked calls and spam",
+                        leadingIcon = Icons.Outlined.Block,
+                        onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
@@ -158,6 +165,17 @@ fun SettingsScreen(
                         supporting = "Configure your mailbox",
                         leadingIcon = Icons.Outlined.Voicemail,
                         onClick = { }
+                    )
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoListItem(
+                        headline = "Backup & Restore",
+                        supporting = "Import and export contacts and logs",
+                        leadingIcon = Icons.Outlined.Backup,
+                        onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
                 }
             }

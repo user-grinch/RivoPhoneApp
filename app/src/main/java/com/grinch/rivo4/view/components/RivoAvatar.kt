@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -43,6 +44,9 @@ fun RivoAvatar(
     val showPicture = prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)
     val showFirstLetter = prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)
     val colorfulAvatars = prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)
+    val roundAvatars = prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)
+    
+    val avatarShape = if (roundAvatars) CircleShape else RoundedCornerShape(12.dp)
 
     val avatarColors = listOf(
         Color(0xFFEF5350), Color(0xFFEC407A), Color(0xFFAB47BC), Color(0xFF7E57C2),
@@ -69,8 +73,8 @@ fun RivoAvatar(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(backgroundColor, shape)
-                .clip(shape),
+                .background(backgroundColor, avatarShape)
+                .clip(avatarShape),
             contentAlignment = Alignment.Center
         ) {
             if (showPicture && !photoUri.isNullOrEmpty()) {

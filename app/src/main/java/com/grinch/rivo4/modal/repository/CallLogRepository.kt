@@ -9,6 +9,7 @@ import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.content.Context
 import android.content.ComponentName
+import android.content.ContentValues
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
 
@@ -75,6 +76,21 @@ class CallLogRepository(
         return callLogs
     }
 
+    override fun saveCallLog(entry: CallLogEntry) {
+        val values = ContentValues().apply {
+            put(CallLog.Calls.NUMBER, entry.number)
+            put(CallLog.Calls.TYPE, entry.type)
+            put(CallLog.Calls.DATE, entry.date)
+            put(CallLog.Calls.DURATION, entry.duration)
+            put(CallLog.Calls.NEW, 1)
+        }
+        try {
+            contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>) {
         val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
         val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
@@ -100,6 +116,12 @@ class CallLogRepository(
             val duration = cursor.getLong(durationIdx)
             
             var simLabel = if (labelIdx != -1) cursor.getString(labelIdx) else null
+            
+            val isBlocked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                type == CallLog.Calls.BLOCKED_TYPE || type == CallLog.Calls.REJECTED_TYPE
+            } else {
+                type == 6 // REJECTED_TYPE fallback
+            }
             
             // If label is missing, try to resolve it from account ID
             if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
@@ -149,6 +171,7 @@ class CallLogRepository(
                         photoUri = photoUri,
                         contactId = contactId,
                         simLabel = simLabel,
+                        isBlocked = isBlocked,
                         types = listOf(type),
                         ids = listOf(callId)
                     )
