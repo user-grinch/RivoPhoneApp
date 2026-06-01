@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
+import com.grinch.rivo4.view.screen.transitions.getAppTransition
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
@@ -65,6 +66,7 @@ class MainActivity : ComponentActivity() {
 
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
+                val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
 
                 // Needed for app transitions
                 Box(
@@ -75,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         navController = navController,
-                        defaultTransitions = AppTransitions
+                        defaultTransitions = getAppTransition(transitionStyle)
                     )
                 }
 

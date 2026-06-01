@@ -16,6 +16,7 @@ import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.ramcosta.composedestinations.annotation.Destination
@@ -27,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -48,6 +50,7 @@ fun CallAccountsScreen(
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var incomingCallPopup by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)) }
+    var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     
@@ -140,6 +143,22 @@ fun CallAccountsScreen(
                             prefs.setBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, it)
                         }
                     )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSelectListItem(
+                        headline = "Dialpad Style",
+                        supporting = "Visual appearance of the phone dialer",
+                        leadingIcon = Icons.Outlined.Dialpad,
+                        options = listOf(
+                            "Modern" to 0,
+                            "Classic" to 1,
+                            "Minimal" to 2
+                        ),
+                        selectedValue = dialpadStyle,
+                        onValueChange = {
+                            dialpadStyle = it
+                            prefs.setInt(PreferenceManager.KEY_DIALPAD_STYLE, it)
+                        }
+                    )
                 }
             }
 
@@ -154,6 +173,13 @@ fun CallAccountsScreen(
                             autoRedial = it
                             prefs.setBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, it)
                         }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = "Voicemail",
+                        supporting = "Configure your mailbox",
+                        leadingIcon = Icons.Outlined.Voicemail,
+                        onClick = { navigator.navigate(VoicemailScreenDestination) }
                     )
                 }
             }

@@ -657,6 +657,10 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
 @Composable
 fun ExpressiveBackground(photoUri: String?) {
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val bgStyle = prefs.getInt(PreferenceManager.KEY_CALL_BACKGROUND, 0)
+
     val infiniteTransition = rememberInfiniteTransition(label = "bg")
     val driftX by infiniteTransition.animateFloat(
         initialValue = -30f, targetValue = 30f,
@@ -668,32 +672,51 @@ fun ExpressiveBackground(photoUri: String?) {
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (!photoUri.isNullOrEmpty()) {
-            AsyncImage(
-                model = photoUri,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        translationX = driftX
-                        translationY = driftY
-                        scaleX = 1.4f
-                        scaleY = 1.4f
-                    }
-                    .blur(80.dp)
-                    .alpha(0.35f),
-                contentScale = ContentScale.Crop
-            )
-        } else {
-            val color1 = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-            val color2 = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
-            val color3 = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Brush.linearGradient(listOf(color1, color2, color3)))
-                    .blur(40.dp)
-            )
+        when (bgStyle) {
+            0 -> { // Expressive
+                if (!photoUri.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = photoUri,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                translationX = driftX
+                                translationY = driftY
+                                scaleX = 1.4f
+                                scaleY = 1.4f
+                            }
+                            .blur(80.dp)
+                            .alpha(0.35f),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    val color1 = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                    val color2 = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
+                    val color3 = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Brush.linearGradient(listOf(color1, color2, color3)))
+                            .blur(40.dp)
+                    )
+                }
+            }
+            1 -> { // Solid
+                Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest))
+            }
+            2 -> { // Contact Photo (Less blur)
+                if (!photoUri.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = photoUri,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize().alpha(0.5f),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primaryContainer))
+                }
+            }
         }
         
         // Dark overlay for better readability in both light and dark modes

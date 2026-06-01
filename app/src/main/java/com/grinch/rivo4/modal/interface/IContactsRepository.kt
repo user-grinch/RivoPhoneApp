@@ -13,4 +13,8 @@ interface IContactsRepository {
     fun deleteContacts(contactIds: List<String>)
     fun moveContacts(contactIds: List<String>, accountName: String?, accountType: String?)
     fun getAvailableAccounts(): List<Account>
+    fun findDuplicates(): List<List<Contact>>
+    fun mergeContacts(targetContactId: String, sourceContactIds: List<String>)
+    fun setCustomRingtone(contactId: String, ringtoneUri: String?)
+    fun formatAllPhoneNumbers()
 }

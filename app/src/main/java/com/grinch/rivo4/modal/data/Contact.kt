@@ -19,6 +19,7 @@ data class Contact(
     val events: List<ContactEvent> = emptyList(),
     val photoUri: String? = null,
     val isFavorite: Boolean = false,
+    val customRingtone: String? = null,
     val accountName: String? = null,
     val accountType: String? = null
 )

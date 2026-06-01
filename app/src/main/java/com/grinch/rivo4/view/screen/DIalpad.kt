@@ -47,8 +47,9 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.SimPickerDialog
 import com.grinch.rivo4.view.components.TopBar
-import com.grinch.rivo4.view.components.tiles.SingleTile
-import com.grinch.rivo4.view.components.tiles.TileGroup
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -73,6 +74,12 @@ fun DialPadScreen(
 
     val allContacts by contactsVM.allContacts.collectAsState()
     var number by remember { mutableStateOf(initialNumber ?: "") }
+
+    LaunchedEffect(Unit) {
+        if (allContacts.isEmpty()) {
+            contactsVM.fetchContacts()
+        }
+    }
 
     BackHandler(enabled = number.isNotEmpty()) {
         number = ""
@@ -105,7 +112,7 @@ fun DialPadScreen(
                     val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, number)
                     matchesNumber || matchesName
                 }
-            }.take(5)
+            }.take(20)
         }
     }
 
@@ -160,17 +167,21 @@ fun DialPadScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Bottom
+                    .fillMaxWidth()
             ) {
                 if (searchResults.isNotEmpty()) {
-                    TileGroup(
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
-                        searchResults.forEach { contact ->
-                            SingleTile(
-                                title = contact.name,
-                                subtitle = contact.phoneNumbers.firstOrNull(),
+                        items(searchResults) { contact ->
+                            RivoListItem(
+                                headline = contact.name,
+                                supporting = contact.phoneNumbers.firstOrNull(),
+                                avatarName = contact.name,
                                 photoUri = contact.photoUri,
                                 onClick = {
                                     navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
@@ -229,7 +240,12 @@ fun DialPadScreen(
                                 context = context,
                                 onClick = { digit -> number += digit },
                                 onLongClick = { digit ->
-                                    if (speedDialEnabled && number.isEmpty()) {
+                                    if (digit == "1" && number.isEmpty()) {
+                                        val voicemail = prefs.getString(PreferenceManager.KEY_VOICEMAIL_NUMBER, null)
+                                        if (!voicemail.isNullOrEmpty()) {
+                                            makeCall(context, voicemail)
+                                        }
+                                    } else if (speedDialEnabled && number.isEmpty()) {
                                         val mapping = prefs.getString("speed_dial_$digit", null)
                                         val speedNumber = mapping?.split("|")?.getOrNull(1)
                                         if (speedNumber != null) {
@@ -382,16 +398,28 @@ fun DialPadKey(
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
     val haptic = LocalHapticFeedback.current
+    
+    val dialpadStyle = prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)
 
     val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) 16.dp else 32.dp,
+        targetValue = when (dialpadStyle) {
+            0 -> if (isPressed) 16.dp else 32.dp
+            1 -> 50.dp // Always circular
+            else -> 12.dp
+        },
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "ButtonShapeAnimation"
     )
 
+    val containerColor = when (dialpadStyle) {
+        2 -> Color.Transparent
+        else -> MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+
     Surface(
         modifier = Modifier
-            .size(width = 100.dp, height = 72.dp)
+            .size(width = 100.dp, height = if (dialpadStyle == 1) 100.dp else 72.dp)
+            .padding(4.dp)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -407,7 +435,7 @@ fun DialPadKey(
                 onLongClick = onLongClick?.let { { it(number) } }
             ),
         shape = RoundedCornerShape(cornerRadius),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh
+        color = containerColor
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -416,7 +444,7 @@ fun DialPadKey(
         ) {
             Text(
                 text = number,
-                style = MaterialTheme.typography.displaySmall,
+                style = if (dialpadStyle == 2) MaterialTheme.typography.displayMedium else MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.SemiBold
             )
             if (letters.isNotBlank()) {

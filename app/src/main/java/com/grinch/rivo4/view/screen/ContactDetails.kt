@@ -6,8 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.media.RingtoneManager
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -98,6 +101,19 @@ fun ContactDetailsScreen(
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 2
+        }
+    }
+
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            if (fullContact != null) {
+                contactsViewModel.setCustomRingtone(fullContact!!.id, uri?.toString())
+                // Optimistically update UI
+                fullContact = fullContact!!.copy(customRingtone = uri?.toString())
+            }
         }
     }
 
@@ -407,6 +423,27 @@ fun ContactDetailsScreen(
                                     if (index < fullContact!!.emails.size - 1) {
                                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }
+                                }
+                                
+                                if (fullContact != null) {
+                                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                    val currentRingtone = fullContact!!.customRingtone?.let { 
+                                        RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
+                                    } ?: "Default"
+                                    
+                                    RivoListItem(
+                                        headline = "Custom Ringtone",
+                                        supporting = currentRingtone,
+                                        leadingIcon = Icons.Default.MusicNote,
+                                        onClick = {
+                                            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
+                                            }
+                                            ringtonePickerLauncher.launch(intent)
+                                        }
+                                    )
                                 }
                             } else if (phoneNumber != null && phoneNumber != "Unknown") {
                                 RivoListItem(

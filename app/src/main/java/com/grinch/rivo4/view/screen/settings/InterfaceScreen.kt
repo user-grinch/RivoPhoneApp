@@ -63,6 +63,10 @@ fun InterfaceScreen(
     var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
     var roundAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)) }
     var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
+    var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
+    var uiDensity by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_UI_DENSITY, 0)) }
+    var callBackgroundStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CALL_BACKGROUND, 0)) }
+    var appIconStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_APP_ICON, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
 
     val presetColors = listOf(
@@ -222,6 +226,74 @@ fun InterfaceScreen(
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Transition animation",
+                            supporting = "Style of animations between screens",
+                            leadingIcon = Icons.Outlined.Animation,
+                            options = listOf(
+                                "Standard" to 0,
+                                "Slide" to 1,
+                                "Fade" to 2,
+                                "None" to 3
+                            ),
+                            selectedValue = transitionStyle,
+                            onValueChange = {
+                                transitionStyle = it
+                                prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "UI Density",
+                            supporting = "Spacing and sizing of list items",
+                            leadingIcon = Icons.Outlined.ViewCompact,
+                            options = listOf(
+                                "Comfortable" to 0,
+                                "Compact" to 1
+                            ),
+                            selectedValue = uiDensity,
+                            onValueChange = {
+                                uiDensity = it
+                                prefs.setInt(PreferenceManager.KEY_UI_DENSITY, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Call background",
+                            supporting = "Style of the in-call screen background",
+                            leadingIcon = Icons.Outlined.BurstMode,
+                            options = listOf(
+                                "Expressive Gradient" to 0,
+                                "Solid Color" to 1,
+                                "Full Contact Photo" to 2
+                            ),
+                            selectedValue = callBackgroundStyle,
+                            onValueChange = {
+                                callBackgroundStyle = it
+                                prefs.setInt(PreferenceManager.KEY_CALL_BACKGROUND, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "App Icon",
+                            supporting = "Choose your preferred launcher icon",
+                            leadingIcon = Icons.Outlined.GridView,
+                            options = listOf(
+                                "Default" to 0,
+                                "Dark" to 1,
+                                "Monochrome" to 2
+                            ),
+                            selectedValue = appIconStyle,
+                            onValueChange = {
+                                appIconStyle = it
+                                prefs.setInt(PreferenceManager.KEY_APP_ICON, it)
+                            }
+                        )
+                    }
+                }
+
+                item {
+                    RivoExpressiveCard {
                         RivoSelectListItem(
                             headline = "Default bottom bar",
                             supporting = "Select which tab opens initially",

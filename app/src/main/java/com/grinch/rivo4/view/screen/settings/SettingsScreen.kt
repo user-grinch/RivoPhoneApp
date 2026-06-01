@@ -140,6 +140,13 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.VolumeUp,
                         onClick = { navigator.navigate(SoundVibrationScreenDestination) }
                     )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = "Manage Contacts",
+                        supporting = "Merge duplicates and clean up your list",
+                        leadingIcon = Icons.Outlined.ContactPage,
+                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
+                    )
                 }
             }
 
@@ -159,13 +166,6 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Block,
                         onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = "Voicemail",
-                        supporting = "Configure your mailbox",
-                        leadingIcon = Icons.Outlined.Voicemail,
-                        onClick = { }
-                    )
                 }
             }
 
@@ -176,6 +176,13 @@ fun SettingsScreen(
                         supporting = "Import and export contacts and logs",
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = "Manage Contacts",
+                        supporting = "Merge duplicates and clean up your list",
+                        leadingIcon = Icons.Outlined.ContactPage,
+                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
                     )
                 }
             }

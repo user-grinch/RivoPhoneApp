@@ -131,4 +131,33 @@ class ContactsViewModel(
             fetchContacts()
         }
     }
+
+    fun findDuplicates(onResult: (List<List<Contact>>) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val duplicates = contactsRepo.findDuplicates()
+            withContext(Dispatchers.Main) {
+                onResult(duplicates)
+            }
+        }
+    }
+
+    fun mergeContacts(targetId: String, sourceIds: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.mergeContacts(targetId, sourceIds)
+            fetchContacts()
+        }
+    }
+
+    fun setCustomRingtone(contactId: String, ringtoneUri: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.setCustomRingtone(contactId, ringtoneUri)
+        }
+    }
+
+    fun formatAllPhoneNumbers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.formatAllPhoneNumbers()
+            fetchContacts()
+        }
+    }
 }

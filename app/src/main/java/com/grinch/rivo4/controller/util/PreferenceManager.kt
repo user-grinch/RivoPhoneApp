@@ -69,5 +69,13 @@ class PreferenceManager(context: Context) {
         const val KEY_VIBRATE_ON_HANGUP = "vibrate_on_hangup"
         const val KEY_ROUND_AVATARS = "round_avatars"
         const val KEY_SHOW_DIVIDERS = "show_dividers"
+        const val KEY_TRANSITION_STYLE = "transition_animation_style" // 0: Standard, 1: Slide, 2: Fade, 3: None
+        const val KEY_APP_ICON = "app_icon_style" // 0: Default, 1: Dark, 2: Premium
+        const val KEY_UI_DENSITY = "ui_density" // 0: Comfort, 1: Compact
+        const val KEY_DIALPAD_STYLE = "dialpad_style" // 0: Modern, 1: Classic, 2: Minimal
+        const val KEY_CALL_BACKGROUND = "call_background_style" // 0: Expressive, 1: Solid, 2: Contact Photo
+        const val KEY_VOICEMAIL_NUMBER = "voicemail_number"
+        const val KEY_VOICEMAIL_VIBRATION = "voicemail_vibration"
+        const val KEY_VOICEMAIL_RINGTONE = "voicemail_ringtone"
     }
 }
