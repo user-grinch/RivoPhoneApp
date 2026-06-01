@@ -172,7 +172,7 @@ fun RivoListItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .padding(horizontal = 8.dp, vertical = 6.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -229,15 +229,6 @@ fun RivoListItem(
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
-            }
-
-            if (!selected) {
-                Icon(
-                    imageVector = trailingIcon ?: Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    modifier = Modifier.size(20.dp)
-                )
             }
         }
     }
@@ -372,73 +363,47 @@ fun RivoSelectListItem(
     }
 
     if (showSelectionScreen) {
-        Dialog(
+        RivoDialog(
             onDismissRequest = { showSelectionScreen = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = true
-            )
-        ) {
-            Scaffold(
-                containerColor = MaterialTheme.colorScheme.surface,
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = headline, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) },
-                        navigationIcon = {
-                            IconButton(onClick = { showSelectionScreen = false }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        )
-                    )
+            title = headline,
+            icon = leadingIcon,
+            dismissButton = {
+                TextButton(onClick = { showSelectionScreen = false }) {
+                    Text("Cancel")
                 }
-            ) { innerPadding ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentPadding = PaddingValues(16.dp) // Outer padding for the screen
-                ) {
-                    item {
-                        // Wrap the options in your Expressive Card
-                        RivoExpressiveCard {
-                            options.forEach { (label, value) ->
-                                val isSelected = value == selectedValue
+            }
+        ) {
+            options.forEach { (label, value) ->
+                val isSelected = value == selectedValue
 
-                                Surface(
-                                    onClick = {
-                                        onValueChange(value)
-                                        showSelectionScreen = false
-                                    },
-                                    shape = RoundedCornerShape(16.dp), // Inner corner rounding
-                                    color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = label,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.weight(1f),
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
-                                        )
-                                        if (isSelected) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = "Selected",
-                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                            )
-                                        }
-                                    }
-                                }
-                            }
+                Surface(
+                    onClick = {
+                        onValueChange(value)
+                        showSelectionScreen = false
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f),
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                        )
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Selected",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }

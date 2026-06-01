@@ -39,12 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
-import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>(start=true, style = NoTransitions::class)
+@Destination<RootGraph>()
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
