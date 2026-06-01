@@ -34,6 +34,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.AZListScroll
 import com.grinch.rivo4.view.components.BottomBar
+import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
@@ -227,75 +228,54 @@ fun BatchActionBar(
     }
 
     if (showMoveDialog) {
-        Dialog(
+        RivoDialog(
             onDismissRequest = { showMoveDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
+            title = "Move to Account",
+            icon = Icons.AutoMirrored.Filled.DriveFileMove,
+            dismissButton = {
+                TextButton(onClick = { showMoveDialog = false }) {
+                    Text("Cancel")
+                }
+            }
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { showMoveDialog = false },
-                contentAlignment = Alignment.Center
-            ) {
-                RivoExpressiveCard(
-                    modifier = Modifier
-                        .fillMaxWidth(0.85f)
-                        .clickable(enabled = false) { },
-                    title = "Move to Account",
-                    icon = Icons.AutoMirrored.Filled.DriveFileMove
+            availableAccounts.forEachIndexed { index, account ->
+                Surface(
+                    onClick = {
+                        onMove(account)
+                        showMoveDialog = false
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Transparent,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    availableAccounts.forEachIndexed { index, account ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Surface(
-                            onClick = {
-                                onMove(account)
-                                showMoveDialog = false
-                            },
-                            shape = RoundedCornerShape(16.dp),
-                            color = Color.Transparent
+                            modifier = Modifier.size(40.dp),
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.surfaceVariant
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 12.dp, horizontal = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Surface(
-                                    modifier = Modifier.size(40.dp),
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.surfaceVariant
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(ContactUtils.getAccountIcon(account), null, modifier = Modifier.size(20.dp))
-                                    }
-                                }
-                                Spacer(Modifier.width(16.dp))
-                                Column {
-                                    Text(
-                                        ContactUtils.getFriendlyAccountName(account),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                    Text(
-                                        account.name,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(ContactUtils.getAccountIcon(account), null, modifier = Modifier.size(20.dp))
                             }
                         }
-                        if (index < availableAccounts.size - 1) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                ContactUtils.getFriendlyAccountName(account),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                account.name,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                    
-                    TextButton(
-                        onClick = { showMoveDialog = false },
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text("Cancel")
                     }
                 }
             }

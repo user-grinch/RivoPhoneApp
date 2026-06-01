@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.modal.data.CallLogEntry
@@ -182,10 +183,10 @@ fun BatchCallLogActionBar(
     }
 
     if (showDeleteConfirm) {
-        AlertDialog(
+        RivoDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Call Logs") },
-            text = { Text("Are you sure you want to delete $selectedCount selected call logs?") },
+            title = "Delete Call Logs",
+            icon = Icons.Default.Delete,
             confirmButton = {
                 TextButton(onClick = {
                     onDelete()
@@ -199,14 +200,22 @@ fun BatchCallLogActionBar(
                     Text("Cancel")
                 }
             }
-        )
+        ) {
+            Text(
+                "Are you sure you want to delete $selectedCount selected call logs?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 
     if (showClearAllConfirm) {
-        AlertDialog(
+        RivoDialog(
             onDismissRequest = { showClearAllConfirm = false },
-            title = { Text("Clear All Logs") },
-            text = { Text("This will delete your entire call history. This action cannot be undone.") },
+            title = "Clear All Logs",
+            icon = Icons.Default.DeleteSweep,
             confirmButton = {
                 TextButton(onClick = {
                     onClearAll()
@@ -220,6 +229,14 @@ fun BatchCallLogActionBar(
                     Text("Cancel")
                 }
             }
-        )
+        ) {
+            Text(
+                "This will delete your entire call history. This action cannot be undone.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }

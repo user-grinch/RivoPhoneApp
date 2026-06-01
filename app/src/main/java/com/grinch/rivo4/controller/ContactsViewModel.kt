@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ContactsViewModel(
     private val contactsRepo: IContactsRepository
@@ -49,6 +50,18 @@ class ContactsViewModel(
             val result = contactsRepo.getContacts()
             _allContacts.value = result
             _isLoading.value = false
+        }
+    }
+
+    suspend fun getFullContactById(contactId: String): Contact? {
+        return withContext(Dispatchers.IO) {
+            contactsRepo.getContactById(contactId)
+        }
+    }
+    
+    suspend fun getFullContactByNumber(number: String): Contact? {
+        return withContext(Dispatchers.IO) {
+            contactsRepo.getContactByNumber(number)
         }
     }
 

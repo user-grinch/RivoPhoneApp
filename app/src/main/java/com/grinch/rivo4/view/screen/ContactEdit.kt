@@ -27,6 +27,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
+import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.ramcosta.composedestinations.annotation.Destination
@@ -243,43 +244,49 @@ fun ContactEditScreen(
                     }
 
                     if (showPicker) {
-                        Dialog(onDismissRequest = { showPicker = false }) {
-                            RivoExpressiveCard(
-                                title = "Select Account",
-                                icon = Icons.Default.AccountBalance
+                        RivoDialog(
+                            onDismissRequest = { showPicker = false },
+                            title = "Select Account",
+                            icon = Icons.Default.AccountBalance,
+                            dismissButton = {
+                                TextButton(onClick = { showPicker = false }) {
+                                    Text("Cancel")
+                                }
+                            }
+                        ) {
+                            Surface(
+                                onClick = {
+                                    selectedAccount = null
+                                    showPicker = false
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (selectedAccount == null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
+                                ListItem(
+                                    headlineContent = { Text("Local (Device Only)") },
+                                    leadingContent = { Icon(Icons.Default.CloudOff, null) },
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                )
+                            }
+                            
+                            availableAccounts.forEach { account ->
+                                val isSelected = selectedAccount == account
                                 Surface(
                                     onClick = {
-                                        selectedAccount = null
+                                        selectedAccount = account
                                         showPicker = false
                                     },
                                     shape = RoundedCornerShape(12.dp),
-                                    color = if (selectedAccount == null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+                                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     ListItem(
-                                        headlineContent = { Text("Local (Device Only)") },
-                                        leadingContent = { Icon(Icons.Default.CloudOff, null) },
+                                        headlineContent = { Text(ContactUtils.getFriendlyAccountName(account)) },
+                                        supportingContent = { Text(account.name) },
+                                        leadingContent = { Icon(ContactUtils.getAccountIcon(account), null) },
                                         colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                     )
-                                }
-                                
-                                availableAccounts.forEach { account ->
-                                    val isSelected = selectedAccount == account
-                                    Surface(
-                                        onClick = {
-                                            selectedAccount = account
-                                            showPicker = false
-                                        },
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
-                                    ) {
-                                        ListItem(
-                                            headlineContent = { Text(ContactUtils.getFriendlyAccountName(account)) },
-                                            supportingContent = { Text(account.name) },
-                                            leadingContent = { Icon(ContactUtils.getAccountIcon(account), null) },
-                                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                                        )
-                                    }
                                 }
                             }
                         }

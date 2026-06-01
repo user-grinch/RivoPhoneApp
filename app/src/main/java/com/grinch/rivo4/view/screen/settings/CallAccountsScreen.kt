@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
@@ -22,6 +23,8 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 
@@ -134,40 +137,50 @@ fun CallAccountsScreen(
     }
 
     if (showSimDialog) {
-        AlertDialog(
+        RivoDialog(
             onDismissRequest = { showSimDialog = false },
-            title = { Text("Default SIM") },
-            text = {
-                Column {
-                    listOf("Ask every time", "SIM 1", "SIM 2").forEachIndexed { index, label ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = defaultSim == index,
-                                onClick = {
-                                    defaultSim = index
-                                    prefs.setInt("default_sim", index)
-                                    showSimDialog = false
-                                }
-                            )
-                            Text(
-                                text = label,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
+            title = "Default SIM",
+            icon = Icons.Outlined.SimCard,
+            dismissButton = {
                 TextButton(onClick = { showSimDialog = false }) {
                     Text("Cancel")
                 }
             }
-        )
+        ) {
+            listOf("Ask every time", "SIM 1", "SIM 2").forEachIndexed { index, label ->
+                Surface(
+                    onClick = {
+                        defaultSim = index
+                        prefs.setInt("default_sim", index)
+                        showSimDialog = false
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    color = if (defaultSim == index) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = defaultSim == index,
+                            onClick = {
+                                defaultSim = index
+                                prefs.setInt("default_sim", index)
+                                showSimDialog = false
+                            }
+                        )
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp),
+                            fontWeight = if (defaultSim == index) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
+            }
+        }
     }
 }
