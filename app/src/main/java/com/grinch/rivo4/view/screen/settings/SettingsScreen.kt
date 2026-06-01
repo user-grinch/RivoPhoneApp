@@ -140,13 +140,6 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.VolumeUp,
                         onClick = { navigator.navigate(SoundVibrationScreenDestination) }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = "Manage Contacts",
-                        supporting = "Merge duplicates and clean up your list",
-                        leadingIcon = Icons.Outlined.ContactPage,
-                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
-                    )
                 }
             }
 

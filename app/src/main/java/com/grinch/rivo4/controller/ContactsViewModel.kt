@@ -25,6 +25,9 @@ class ContactsViewModel(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _standardizeProgress = MutableStateFlow<Float?>(null)
+    val standardizeProgress: StateFlow<Float?> = _standardizeProgress.asStateFlow()
+
     private val _availableAccounts = MutableStateFlow<List<Account>>(emptyList())
     val availableAccounts = _availableAccounts.asStateFlow()
 
@@ -156,8 +159,12 @@ class ContactsViewModel(
 
     fun formatAllPhoneNumbers() {
         viewModelScope.launch(Dispatchers.IO) {
-            contactsRepo.formatAllPhoneNumbers()
+            _standardizeProgress.value = 0f
+            contactsRepo.formatAllPhoneNumbers { current, total ->
+                _standardizeProgress.value = if (total > 0) current.toFloat() / total else 1f
+            }
             fetchContacts()
+            _standardizeProgress.value = null
         }
     }
 }

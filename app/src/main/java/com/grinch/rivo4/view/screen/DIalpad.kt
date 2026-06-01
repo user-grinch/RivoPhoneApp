@@ -48,7 +48,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.SimPickerDialog
 import com.grinch.rivo4.view.components.TopBar
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -177,16 +177,26 @@ fun DialPadScreen(
                         verticalArrangement = Arrangement.Bottom,
                         contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
-                        items(searchResults) { contact ->
-                            RivoListItem(
-                                headline = contact.name,
-                                supporting = contact.phoneNumbers.firstOrNull(),
-                                avatarName = contact.name,
-                                photoUri = contact.photoUri,
-                                onClick = {
-                                    navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                        item {
+                            RivoExpressiveCard {
+                                searchResults.forEachIndexed { index, contact ->
+                                    RivoListItem(
+                                        headline = contact.name,
+                                        supporting = contact.phoneNumbers.firstOrNull(),
+                                        avatarName = contact.name,
+                                        photoUri = contact.photoUri,
+                                        onClick = {
+                                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                        }
+                                    )
+                                    if (index < searchResults.size - 1) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.padding(horizontal = 16.dp),
+                                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                        )
+                                    }
                                 }
-                            )
+                            }
                         }
                     }
                 }

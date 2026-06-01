@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
@@ -31,6 +32,29 @@ fun ContactManagementScreen(
     val viewModel: ContactsViewModel = koinActivityViewModel()
     var duplicateGroups by remember { mutableStateOf<List<List<Contact>>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    val standardizeProgress by viewModel.standardizeProgress.collectAsState()
+
+    if (standardizeProgress != null) {
+        RivoDialog(
+            onDismissRequest = {},
+            title = "Standardizing numbers",
+            icon = Icons.Outlined.FormatListNumbered
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            val progress = standardizeProgress ?: 0f
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "${(progress * 100).toInt()}% completed",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.findDuplicates { groups ->

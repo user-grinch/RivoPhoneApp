@@ -525,11 +525,13 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
         contentResolver.update(updateUri, contentValue, null, null)
     }
 
-    override fun formatAllPhoneNumbers() {
+    override fun formatAllPhoneNumbers(onProgress: ((current: Int, total: Int) -> Unit)?) {
         val allContacts = getContacts()
         val ops = ArrayList<ContentProviderOperation>()
+        val total = allContacts.size
 
-        allContacts.forEach { contact ->
+        allContacts.forEachIndexed { index, contact ->
+            onProgress?.invoke(index + 1, total)
             contact.phoneNumbers.forEach { number ->
                 val normalized = number.replace(" ", "")
                 if (normalized != number) {

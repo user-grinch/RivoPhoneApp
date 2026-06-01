@@ -16,5 +16,5 @@ interface IContactsRepository {
     fun findDuplicates(): List<List<Contact>>
     fun mergeContacts(targetContactId: String, sourceContactIds: List<String>)
     fun setCustomRingtone(contactId: String, ringtoneUri: String?)
-    fun formatAllPhoneNumbers()
+    fun formatAllPhoneNumbers(onProgress: ((current: Int, total: Int) -> Unit)? = null)
 }
