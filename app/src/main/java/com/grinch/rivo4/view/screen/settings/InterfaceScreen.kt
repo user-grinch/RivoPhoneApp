@@ -68,6 +68,13 @@ fun InterfaceScreen(
     var callBackgroundStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CALL_BACKGROUND, 0)) }
     var appIconStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_APP_ICON, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
+    var contactsSortOrder by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CONTACTS_SORT_ORDER, 0)) }
+    var keepScreenOn by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) }
+    var callLogLimit by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CALL_LOG_LIMIT, 500)) }
+    var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
+    var contactsDisplayOrder by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, 0)) }
+    var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
+    var showSimIconHistory by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)) }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60), Color(0xFF436916),
@@ -200,14 +207,19 @@ fun InterfaceScreen(
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSwitchListItem(
-                            headline = "Round avatars",
-                            supporting = "Use circles for contact avatars",
-                            leadingIcon = Icons.Outlined.Circle,
-                            checked = roundAvatars,
-                            onCheckedChange = {
-                                roundAvatars = it
-                                prefs.setBoolean(PreferenceManager.KEY_ROUND_AVATARS, it)
+                        RivoSelectListItem(
+                            headline = "Avatar shape",
+                            supporting = "Choose the shape for contact avatars",
+                            leadingIcon = Icons.Outlined.AccountBox,
+                            options = listOf(
+                                "Squircle" to 0,
+                                "Circle" to 1,
+                                "Square" to 2
+                            ),
+                            selectedValue = avatarShape,
+                            onValueChange = {
+                                avatarShape = it
+                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
                             }
                         )
                     }
@@ -287,6 +299,91 @@ fun InterfaceScreen(
                             onValueChange = {
                                 appIconStyle = it
                                 prefs.setInt(PreferenceManager.KEY_APP_ICON, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Contacts Sort Order",
+                            supporting = "Choose how contacts are ordered in lists",
+                            leadingIcon = Icons.Outlined.SortByAlpha,
+                            options = listOf(
+                                "A-Z" to 0,
+                                "Z-A" to 1
+                            ),
+                            selectedValue = contactsSortOrder,
+                            onValueChange = {
+                                contactsSortOrder = it
+                                prefs.setInt(PreferenceManager.KEY_CONTACTS_SORT_ORDER, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Keep Screen On during Call",
+                            supporting = "Prevent screen timeout when inside the call UI",
+                            leadingIcon = Icons.Outlined.LightMode,
+                            checked = keepScreenOn,
+                            onCheckedChange = {
+                                keepScreenOn = it
+                                prefs.setBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Call Log Limit",
+                            supporting = "Choose maximum number of call logs to display",
+                            leadingIcon = Icons.Outlined.History,
+                            options = listOf(
+                                "50 entries" to 50,
+                                "100 entries" to 100,
+                                "250 entries" to 250,
+                                "500 entries" to 500
+                            ),
+                            selectedValue = callLogLimit,
+                            onValueChange = {
+                                callLogLimit = it
+                                prefs.setInt(PreferenceManager.KEY_CALL_LOG_LIMIT, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Contacts Display Order",
+                            supporting = "Format for displaying contact names",
+                            leadingIcon = Icons.Outlined.Person,
+                            options = listOf(
+                                "First Name First" to 0,
+                                "Last Name First" to 1
+                            ),
+                            selectedValue = contactsDisplayOrder,
+                            onValueChange = {
+                                contactsDisplayOrder = it
+                                prefs.setInt(PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Search Matching Mode",
+                            supporting = "Behavior of contacts filtering algorithm",
+                            leadingIcon = Icons.Outlined.Search,
+                            options = listOf(
+                                "T9 & Contains" to 0,
+                                "Starts With" to 1,
+                                "Exact Match" to 2
+                            ),
+                            selectedValue = searchMatchMode,
+                            onValueChange = {
+                                searchMatchMode = it
+                                prefs.setInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Show SIM Icon in History",
+                            supporting = "Display carrier label next to call entries",
+                            leadingIcon = Icons.Outlined.SimCard,
+                            checked = showSimIconHistory,
+                            onCheckedChange = {
+                                showSimIconHistory = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, it)
                             }
                         )
                     }

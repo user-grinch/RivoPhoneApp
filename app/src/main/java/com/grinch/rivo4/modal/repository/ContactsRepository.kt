@@ -14,6 +14,21 @@ import com.grinch.rivo4.modal.`interface`.IContactsRepository
 class ContactsRepository(private val context: Context) : IContactsRepository {
 
     private val contentResolver: ContentResolver = context.contentResolver
+    private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
+
+    private fun formatName(rawName: String): String {
+        val displayFormat = preferenceManager.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACTS_DISPLAY_ORDER, 0)
+        return if (displayFormat == 1) {
+            val parts = rawName.trim().split(Regex("\\s+"))
+            if (parts.size >= 2) {
+                "${parts.last()}, ${parts.dropLast(1).joinToString(" ")}"
+            } else {
+                rawName
+            }
+        } else {
+            rawName
+        }
+    }
 
     override fun getContacts(): List<Contact> {
         val contactsMap = LinkedHashMap<String, Contact>()
@@ -58,7 +73,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                     } else {
                         contactsMap[id] = Contact(
                             id = id,
-                            name = cursor.getString(nameIdx) ?: "Unknown",
+                            name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
                             accountName = cursor.getString(accountNameIdx),
@@ -71,7 +86,13 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
-        return contactsMap.values.toList()
+        val list = contactsMap.values.toList()
+        val sortOrder = preferenceManager.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACTS_SORT_ORDER, 0)
+        return if (sortOrder == 1) {
+            list.sortedByDescending { it.name.lowercase() }
+        } else {
+            list.sortedBy { it.name.lowercase() }
+        }
     }
 
     override fun getContactById(contactId: String): Contact? {
@@ -122,7 +143,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
                 val currentContact = contact ?: Contact(
                     id = id,
-                    name = cursor.getString(nameIdx) ?: "Unknown",
+                    name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
                     photoUri = cursor.getString(photoIdx),
                     isFavorite = isStarred,
                     customRingtone = ringtone,
@@ -434,7 +455,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
                 return Contact(
                     id = id,
-                    name = name,
+                    name = formatName(name),
                     photoUri = photoUri,
                     isFavorite = starred,
                     phoneNumbers = listOf(number),

@@ -85,9 +85,16 @@ fun DialPadScreen(
         number = ""
     }
 
-    val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
+    val dtmfVolume = remember(settingsState) {
+        when (prefs.getInt(PreferenceManager.KEY_DTMF_TONE_VOLUME, 1)) {
+            0 -> 40
+            2 -> 100
+            else -> 80
+        }
+    }
+    val toneGenerator = remember(dtmfVolume) { ToneGenerator(AudioManager.STREAM_DTMF, dtmfVolume) }
     
-    DisposableEffect(Unit) {
+    DisposableEffect(toneGenerator) {
         onDispose {
             toneGenerator.release()
         }
@@ -99,17 +106,24 @@ fun DialPadScreen(
     val speedDialEnabled by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true))
     }
+    val searchMatchMode by remember(settingsState) {
+        mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0))
+    }
 
     var showSimPicker by remember { mutableStateOf(false) }
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
-    val searchResults by remember(number, allContacts, t9Enabled) {
+    val searchResults by remember(number, allContacts, t9Enabled, searchMatchMode) {
         derivedStateOf {
             if (number.isEmpty()) emptyList()
             else {
                 allContacts.filter { contact ->
-                    val matchesNumber = contact.phoneNumbers.any { it.replace(" ", "").contains(number) }
-                    val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, number)
+                    val matchesNumber = when (searchMatchMode) {
+                        1 -> contact.phoneNumbers.any { it.replace(" ", "").startsWith(number) }
+                        2 -> contact.phoneNumbers.any { it.replace(" ", "") == number }
+                        else -> contact.phoneNumbers.any { it.replace(" ", "").contains(number) }
+                    }
+                    val matchesName = t9Enabled && (searchMatchMode == 0) && T9Matcher.isMatch(contact.name, number)
                     matchesNumber || matchesName
                 }
             }.take(20)
@@ -438,7 +452,13 @@ fun DialPadKey(
                         playDtmf(number, toneGenerator)
                     }
                     if (prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        val strengthVal = prefs.getInt(PreferenceManager.KEY_DIALPAD_VIBRATION_STRENGTH, 1)
+                        val hapticType = when (strengthVal) {
+                            0 -> HapticFeedbackType.TextHandleMove
+                            2 -> HapticFeedbackType.LongPress
+                            else -> HapticFeedbackType.LongPress
+                        }
+                        haptic.performHapticFeedback(hapticType)
                     }
                     onClick(number)
                 },

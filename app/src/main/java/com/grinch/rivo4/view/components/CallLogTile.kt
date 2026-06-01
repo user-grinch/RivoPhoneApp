@@ -30,6 +30,10 @@ fun CallLogTileSimple(
     onCallClick: () -> Unit = {},
     selected: Boolean = false
 ) {
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showSim = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)
+
     val icon = when (log.type) {
         CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
         CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
@@ -62,7 +66,7 @@ fun CallLogTileSimple(
                         append(formatDate(log.date))
                         if (log.duration > 0) append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
                     },
-                    supporting2 = log.simLabel,
+                    supporting2 = if (showSim) log.simLabel else null,
                     avatarName = "", 
                     badgeIcon = icon,
                     badgeColor = badgeColor,
@@ -98,6 +102,10 @@ fun CallLogTile(
     onLongClick: (CallLogEntry) -> Unit = {},
     selected: Boolean = false
 ) {
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showSim = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)
+
     val icon = when (log.type) {
         CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
         CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
@@ -135,7 +143,7 @@ fun CallLogTile(
                             append(formatDate(log.date))
                         }
                     },
-                    supporting2 = log.simLabel,
+                    supporting2 = if (showSim) log.simLabel else null,
                     avatarName = log.name ?: log.number,
                     photoUri = log.photoUri,
                     badgeIcon = icon,

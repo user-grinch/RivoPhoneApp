@@ -30,6 +30,8 @@ import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScr
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
+import org.koin.compose.koinInject
+import com.grinch.rivo4.controller.util.PreferenceManager
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Destination<RootGraph>
@@ -91,6 +93,11 @@ fun ContactSearchContent(
 
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val contacts by contactsVM.allContacts.collectAsState()
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val searchMatchMode by remember(settingsState) {
+        mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0))
+    }
 
     var query by remember { mutableStateOf("") }
     
@@ -106,11 +113,20 @@ fun ContactSearchContent(
         keyboardController?.show()
     }
 
-    val filteredContacts = remember(query, contacts) {
+    val filteredContacts = remember(query, contacts, searchMatchMode) {
         if (query.isBlank()) emptyList()
         else contacts.filter {
-            it.name.contains(query, ignoreCase = true) ||
-                    it.phoneNumbers.any { number -> number.replace(" ", "").contains(query.replace(" ", "")) }
+            val matchesName = when (searchMatchMode) {
+                1 -> it.name.startsWith(query, ignoreCase = true)
+                2 -> it.name.equals(query, ignoreCase = true)
+                else -> it.name.contains(query, ignoreCase = true)
+            }
+            val matchesNumber = when (searchMatchMode) {
+                1 -> it.phoneNumbers.any { number -> number.replace(" ", "").startsWith(query.replace(" ", "")) }
+                2 -> it.phoneNumbers.any { number -> number.replace(" ", "") == query.replace(" ", "") }
+                else -> it.phoneNumbers.any { number -> number.replace(" ", "").contains(query.replace(" ", "")) }
+            }
+            matchesName || matchesNumber
         }
     }
 

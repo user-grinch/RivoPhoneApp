@@ -176,6 +176,13 @@ fun CallLogFullContent(
         val viewModel: CallLogViewModel = koinActivityViewModel()
         val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
         val settingsState by prefs.settingsChanged.collectAsState()
+        val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+        val hapticScrollEnabled = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
+        if (hapticScrollEnabled) {
+            LaunchedEffect(listState.firstVisibleItemIndex) {
+                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
+            }
+        }
         
         LaunchedEffect(Unit) {
             viewModel.fetchLogs()

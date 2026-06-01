@@ -17,6 +17,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -36,6 +37,11 @@ fun SoundVibrationScreen(
     var dialpadVibration by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) }
     var vibrateOnAnswer by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, true)) }
     var vibrateOnHangup by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) }
+    val settingsState by prefs.settingsChanged.collectAsState()
+
+    var dtmfToneVolume by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DTMF_TONE_VOLUME, 1)) }
+    var dialpadVibrationStrength by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_VIBRATION_STRENGTH, 1)) }
+    var hapticListScroll by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)) }
 
     Scaffold(
         topBar = {
@@ -68,6 +74,24 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_DTMF_TONE, it)
                         }
                     )
+                    if (dtmfTone) {
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "DTMF Tone Volume",
+                            supporting = "Volume level for dialpad keypress tones",
+                            leadingIcon = Icons.Outlined.VolumeUp,
+                            options = listOf(
+                                "Low" to 0,
+                                "Normal" to 1,
+                                "High" to 2
+                            ),
+                            selectedValue = dtmfToneVolume,
+                            onValueChange = {
+                                dtmfToneVolume = it
+                                prefs.setInt(PreferenceManager.KEY_DTMF_TONE_VOLUME, it)
+                            }
+                        )
+                    }
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSwitchListItem(
                         headline = "Dialpad vibration",
@@ -79,6 +103,24 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, it)
                         }
                     )
+                    if (dialpadVibration) {
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Vibration Feedback Strength",
+                            supporting = "Haptic feedback strength for keypresses",
+                            leadingIcon = Icons.Outlined.Speed,
+                            options = listOf(
+                                "Light" to 0,
+                                "Medium" to 1,
+                                "Strong" to 2
+                            ),
+                            selectedValue = dialpadVibrationStrength,
+                            onValueChange = {
+                                dialpadVibrationStrength = it
+                                prefs.setInt(PreferenceManager.KEY_DIALPAD_VIBRATION_STRENGTH, it)
+                            }
+                        )
+                    }
                 }
             }
 
@@ -103,6 +145,17 @@ fun SoundVibrationScreen(
                         onCheckedChange = {
                             vibrateOnHangup = it
                             prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, it)
+                        }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSwitchListItem(
+                        headline = "Haptic Scrolling feedback",
+                        supporting = "Vibrate subtly when scrolling lists",
+                        leadingIcon = Icons.Outlined.Gesture,
+                        checked = hapticListScroll,
+                        onCheckedChange = {
+                            hapticListScroll = it
+                            prefs.setBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, it)
                         }
                     )
                 }

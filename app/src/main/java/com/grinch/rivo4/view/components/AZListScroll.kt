@@ -41,6 +41,14 @@ fun AZListScroll(
     val settingsState by prefs.settingsChanged.collectAsState()
     val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
 
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+    val hapticScrollEnabled = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
+    if (hapticScrollEnabled) {
+        LaunchedEffect(listState.firstVisibleItemIndex) {
+            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
+        }
+    }
+
     val finalGrouped = remember(contacts, grouped) {
         if (grouped != null) return@remember grouped
         

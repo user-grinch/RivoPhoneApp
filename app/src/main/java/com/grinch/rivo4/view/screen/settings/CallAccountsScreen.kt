@@ -52,6 +52,8 @@ fun CallAccountsScreen(
     var incomingCallPopup by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)) }
     var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
+    var redialAttempts by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)) }
+    var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     
     var showSimDialog by remember { mutableStateOf(false) }
@@ -174,6 +176,44 @@ fun CallAccountsScreen(
                             prefs.setBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, it)
                         }
                     )
+                    if (autoRedial) {
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Redial Attempts",
+                            supporting = "Maximum number of redial attempts",
+                            leadingIcon = Icons.Outlined.Refresh,
+                            options = listOf(
+                                "1 attempt" to 1,
+                                "2 attempts" to 2,
+                                "3 attempts" to 3,
+                                "5 attempts" to 5,
+                                "10 attempts" to 10
+                            ),
+                            selectedValue = redialAttempts,
+                            onValueChange = {
+                                redialAttempts = it
+                                prefs.setInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = "Redial Delay",
+                            supporting = "Delay between redial attempts",
+                            leadingIcon = Icons.Outlined.Timer,
+                            options = listOf(
+                                "1 second" to 1000,
+                                "2 seconds" to 2000,
+                                "3 seconds" to 3000,
+                                "5 seconds" to 5000,
+                                "10 seconds" to 10000
+                            ),
+                            selectedValue = redialDelay,
+                            onValueChange = {
+                                redialDelay = it
+                                prefs.setInt(PreferenceManager.KEY_REDIAL_DELAY, it)
+                            }
+                        )
+                    }
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
                         headline = "Voicemail",
