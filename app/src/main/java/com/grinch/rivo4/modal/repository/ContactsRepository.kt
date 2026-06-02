@@ -172,7 +172,39 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
     private fun getPhotoBytes(uriString: String): ByteArray? {
         return try {
             val uri = Uri.parse(uriString)
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+            inputStream.close()
+
+            if (bitmap == null) return null
+
+            // Downscale to a reasonable size for Contacts provider (960x960 is usually max)
+            val maxSize = 720
+            val width = bitmap.width
+            val height = bitmap.height
+
+            val finalBitmap = if (width > maxSize || height > maxSize) {
+                val scale = maxSize.toFloat() / Math.max(width, height)
+                android.graphics.Bitmap.createScaledBitmap(
+                    bitmap,
+                    (width * scale).toInt(),
+                    (height * scale).toInt(),
+                    true
+                )
+            } else {
+                bitmap
+            }
+
+            val outputStream = java.io.ByteArrayOutputStream()
+            finalBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, outputStream)
+            val bytes = outputStream.toByteArray()
+
+            if (finalBitmap != bitmap) {
+                finalBitmap.recycle()
+            }
+            bitmap.recycle()
+
+            bytes
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -321,15 +353,24 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                 )
 
                 // Update Photo
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                if (photoBytes != null) {
+                if (contact.photoUri == null) {
+                    ops.add(
+                        ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                            .withSelection(
+                                "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                                arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                            )
+                            .build()
+                    )
+                } else if (photoBytes != null) {
+                    ops.add(
+                        ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                            .withSelection(
+                                "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                                arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                            )
+                            .build()
+                    )
                     ops.add(
                         ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)

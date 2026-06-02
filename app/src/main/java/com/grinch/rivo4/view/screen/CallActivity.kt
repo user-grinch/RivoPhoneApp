@@ -270,11 +270,7 @@ fun ExpressiveCallScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
-
-        // --- EXPRESSIVE BACKGROUND ---
         ExpressiveBackground(photoUri)
-        
-        // Add animated particles for dynamic feel
         FloatingParticles()
 
         Column(
@@ -282,7 +278,7 @@ fun ExpressiveCallScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .padding(horizontal = 24.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // --- HERO SECTION ---
@@ -340,7 +336,7 @@ fun ExpressiveCallScreen(
                 }
 
                 if (!showKeypad) {
-                    Spacer(modifier = Modifier.height(64.dp))
+                    Spacer(modifier = Modifier.height(48.dp))
 
                     if (callState == Call.STATE_RINGING) {
                         PulsingAvatar(photoUri)
@@ -351,7 +347,7 @@ fun ExpressiveCallScreen(
             }
 
             if (showKeypad) {
-                Box(modifier = Modifier.weight(1.5f), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.weight(1.5f), contentAlignment = Alignment.TopStart) {
                     InCallKeypad(
                         call = call,
                         typedDigits = typedDigits,
@@ -455,8 +451,6 @@ fun ExpressiveCallScreen(
                     ) {
                         Icon(Icons.Default.CallEnd, contentDescription = "End Call", modifier = Modifier.size(32.dp))
                     }
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             } else {
 
@@ -858,7 +852,7 @@ fun FloatingParticles() {
 fun HeroAvatar(photoUri: String?) {
     Box(
         modifier = Modifier
-            .size(160.dp)
+            .size(200.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
@@ -874,7 +868,7 @@ fun HeroAvatar(photoUri: String?) {
             Icon(
                 Icons.Default.Person,
                 contentDescription = null,
-                modifier = Modifier.size(80.dp),
+                modifier = Modifier.size(120.dp),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }

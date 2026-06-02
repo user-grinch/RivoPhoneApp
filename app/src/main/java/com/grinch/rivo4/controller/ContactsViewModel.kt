@@ -102,8 +102,8 @@ class ContactsViewModel(
         }
     }
 
-    fun saveContact(contact: Contact) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun saveContact(contact: Contact) {
+        withContext(Dispatchers.IO) {
             contactsRepo.saveContact(contact)
             fetchContacts()
         }
