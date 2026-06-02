@@ -115,8 +115,9 @@ fun DialPadScreen(
         if (permissions[Manifest.permission.CALL_PHONE] == true) {
             val hasPhoneState = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
             if (hasPhoneState) {
+                val defaultSim = prefs.getInt("default_sim", 0)
                 val accounts = telecomManager.callCapablePhoneAccounts
-                if (accounts.size > 1) {
+                if (accounts.size > 1 && defaultSim == 0) {
                     showSimPicker = true
                 } else {
                     makeCall(context, number)
@@ -273,8 +274,9 @@ fun DialPadScreen(
                             if (number.isNotEmpty()) {
                                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                                        val defaultSim = prefs.getInt("default_sim", 0)
                                         val accounts = telecomManager.callCapablePhoneAccounts
-                                        if (accounts.size > 1) {
+                                        if (accounts.size > 1 && defaultSim == 0) {
                                             showSimPicker = true
                                         } else {
                                             makeCall(context, number)

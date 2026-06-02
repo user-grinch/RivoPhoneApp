@@ -376,14 +376,18 @@ class CallService : InCallService() {
                     NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
                 }
             )
-            .addAction(
+
+        if (call.state != Call.STATE_RINGING) {
+            builder.addAction(
                 NotificationCompat.Action.Builder(
                     android.R.drawable.stat_sys_speakerphone,
                     if (isSpeaker) "Handset" else "Speaker",
                     speakerPendingIntent
                 ).build()
             )
-            .setColor(Color.parseColor("#4CAF50"))
+        }
+
+        builder.setColor(Color.parseColor("#4CAF50"))
             .setColorized(true)
 
         val notification = builder.build()

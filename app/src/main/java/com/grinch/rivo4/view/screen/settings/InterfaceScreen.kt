@@ -65,10 +65,8 @@ fun InterfaceScreen(
     var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
-    var keepScreenOn by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
     var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
-    var showSimIconHistory by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)) }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60), Color(0xFF436916),
@@ -249,17 +247,6 @@ fun InterfaceScreen(
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSwitchListItem(
-                            headline = "Keep Screen On during Call",
-                            supporting = "Prevent screen timeout when inside the call UI",
-                            leadingIcon = Icons.Outlined.LightMode,
-                            checked = keepScreenOn,
-                            onCheckedChange = {
-                                keepScreenOn = it
-                                prefs.setBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSelectListItem(
                             headline = "Search Matching Mode",
                             supporting = "Behavior of contacts filtering algorithm",
@@ -273,17 +260,6 @@ fun InterfaceScreen(
                             onValueChange = {
                                 searchMatchMode = it
                                 prefs.setInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, it)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSwitchListItem(
-                            headline = "Show SIM Icon in History",
-                            supporting = "Display carrier label next to call entries",
-                            leadingIcon = Icons.Outlined.SimCard,
-                            checked = showSimIconHistory,
-                            onCheckedChange = {
-                                showSimIconHistory = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, it)
                             }
                         )
                     }

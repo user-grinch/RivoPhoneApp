@@ -60,9 +60,26 @@ fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     val uri = Uri.fromParts("tel", number, null)
     val extras = Bundle()
-    if (accountHandle != null) {
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, accountHandle)
+    
+    var preferredHandle = accountHandle
+    if (preferredHandle == null) {
+        val prefs = PreferenceManager(context)
+        val defaultSim = prefs.getInt("default_sim", 0)
+        if (defaultSim > 0) {
+            val accounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                telecomManager.callCapablePhoneAccounts
+            } else emptyList()
+            
+            if (accounts.size >= defaultSim) {
+                preferredHandle = accounts[defaultSim - 1]
+            }
+        }
     }
+
+    if (preferredHandle != null) {
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, preferredHandle)
+    }
+
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
         telecomManager.placeCall(uri, extras)
     } else {

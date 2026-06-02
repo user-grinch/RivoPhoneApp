@@ -90,11 +90,10 @@ class MainActivity : ComponentActivity() {
                         }
                     } else if (defBar == 1) {
                         navController.navigate(RecentScreenDestination.route) {
-                            popUpTo(ContactScreenDestination.route) {
-                                saveState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
                             }
                             launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 }

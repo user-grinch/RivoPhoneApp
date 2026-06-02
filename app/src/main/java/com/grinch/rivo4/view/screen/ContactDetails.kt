@@ -58,6 +58,7 @@ fun ContactDetailsScreen(
     phoneNumber: String? = null,
     navigator: DestinationsNavigator
 ) {
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val contactsViewModel: ContactsViewModel = koinActivityViewModel()
     val callLogViewModel: CallLogViewModel = koinActivityViewModel()
     
@@ -121,7 +122,7 @@ fun ContactDetailsScreen(
         val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
         if (hasPermission) {
             val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
-            if (accounts.size > 1) {
+            if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
                 pendingNumber = number
                 isSmsAction = false
                 showSimPicker = true

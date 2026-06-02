@@ -7,7 +7,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PreferenceManager(context: Context) {
-    private val prefs: SharedPreferences = context.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences = run {
+        val deviceContext = context.createDeviceProtectedStorageContext()
+        deviceContext.moveSharedPreferencesFrom(context, "rivo_prefs")
+        deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+    }
 
     private val _settingsChanged = MutableStateFlow(0)
     val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()

@@ -33,6 +33,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/rivo_logo"
         android:supportsRtl="true"
+        android:directBootAware="true"
         android:theme="@style/Theme.RivoPhone">
 
         <activity
@@ -40,6 +41,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
+            android:directBootAware="true"
             android:theme="@style/Theme.RivoPhone">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -102,14 +104,16 @@
             android:exported="false"
             android:launchMode="singleInstance"
             android:showForAllUsers="true"
-            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:turnScreenOn="true"
+            android:directBootAware="true"
             android:theme="@style/Theme.RivoPhone" />
 
         <service
             android:name=".controller.CallService"
             android:permission="android.permission.BIND_INCALL_SERVICE"
             android:foregroundServiceType="phoneCall"
+            android:directBootAware="true"
             android:exported="true">
             <meta-data
                 android:name="android.telecom.IN_CALL_SERVICE_UI"

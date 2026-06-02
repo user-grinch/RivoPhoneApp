@@ -281,8 +281,9 @@ fun CallLogFullContent(
                                                         ) == PackageManager.PERMISSION_GRANTED
 
                                                     if (hasPermission) {
+                                                        val defaultSim = prefs.getInt("default_sim", 0)
                                                         val accounts = telecomManager.callCapablePhoneAccounts
-                                                        if (accounts.size > 1) {
+                                                        if (accounts.size > 1 && defaultSim == 0) {
                                                             pendingNumber = log.number
                                                             showSimPicker = true
                                                         } else {

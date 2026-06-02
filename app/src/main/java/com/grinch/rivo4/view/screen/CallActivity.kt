@@ -9,8 +9,10 @@ import android.media.ToneGenerator
 import android.os.*
 import android.provider.ContactsContract
 import android.telecom.Call
+import android.telecom.TelecomManager
 import android.telecom.CallAudioState
 import android.telecom.VideoProfile
+import android.telephony.SubscriptionManager
 import android.view.HapticFeedbackConstants
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -75,12 +77,14 @@ class CallActivity : ComponentActivity() {
     private var proximityWakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
         super.onCreate(savedInstanceState)
         
         // Comprehensive lock screen flags
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
             val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
             keyguardManager?.requestDismissKeyguard(this, null)
         }
@@ -219,6 +223,27 @@ fun ExpressiveCallScreen(
 ) {
     val view = LocalView.current
     val context = LocalContext.current
+    val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
+    val simLabel = remember(call.details.accountHandle) {
+        val handle = call.details.accountHandle
+        if (handle != null) {
+            val account = try {
+                telecomManager.getPhoneAccount(handle)
+            } catch (e: Exception) {
+                null
+            }
+            
+            val label = account?.label?.toString()
+            if (!label.isNullOrEmpty()) {
+                label
+            } else {
+                // If label is missing, try to use the account ID as slot number fallback
+                "SIM ${handle.id}"
+            }
+        } else {
+            null
+        }
+    }
     val isMuted = audioState?.isMuted ?: false
     val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
 
@@ -296,6 +321,21 @@ fun ExpressiveCallScreen(
                             style = MaterialTheme.typography.titleMedium,
                             color = if (isOnHold) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
+
+                        if (simLabel != null) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.padding(top = 8.dp)
+                            ) {
+                                Text(
+                                    text = simLabel,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
                     }
                 }
 
