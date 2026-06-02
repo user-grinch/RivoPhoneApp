@@ -384,7 +384,7 @@ fun ContactDetailsScreen(
                                 RivoExpressiveButton(
                                     icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     label = "Favorite",
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                     contentColor = if (isFavorite) Color.Red else LocalContentColor.current,
                                     onClick = {
                                         fullContact?.let { contact ->
@@ -398,7 +398,7 @@ fun ContactDetailsScreen(
                             RivoExpressiveButton(
                                 icon = Icons.Outlined.QrCode2,
                                 label = "QR Code",
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = { showQrDialog = true }
                             )
                         }
