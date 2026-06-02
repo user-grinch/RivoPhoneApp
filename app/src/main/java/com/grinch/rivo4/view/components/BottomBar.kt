@@ -34,8 +34,8 @@ fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
     val iconOnly = prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)
 
     val tabs = listOf(
-        NavigationTab(ContactScreenDestination.route, "Contacts", Icons.Default.Person, 0),
-        NavigationTab(RecentScreenDestination.route, "Recents", Icons.Default.History, 1)
+        NavigationTab(RecentScreenDestination.route, "Recents", Icons.Default.History, 0),
+        NavigationTab(ContactScreenDestination.route, "Contacts", Icons.Default.Person, 1)
     )
 
     val organizedTabs = if (flipBar) tabs.reversed() else tabs

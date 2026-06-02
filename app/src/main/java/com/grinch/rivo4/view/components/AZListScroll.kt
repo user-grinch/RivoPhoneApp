@@ -52,17 +52,12 @@ fun AZListScroll(
     val finalGrouped = remember(contacts, grouped) {
         if (grouped != null) return@remember grouped
         
-        val favorites = contacts.filter { it.isFavorite }
-        val nonFavs = contacts.filter { !it.isFavorite }
-
-        val mainGroups = nonFavs.groupBy {
+        val mainGroups = contacts.groupBy {
             val firstChar = it.name.firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 
         val finalMap = linkedMapOf<Char, List<Contact>>()
-
-        if (favorites.isNotEmpty()) finalMap['❤'] = favorites
 
         mainGroups.keys.filter { it.isLetter() }.sorted().forEach { char ->
             finalMap[char] = mainGroups[char]!!
@@ -112,7 +107,7 @@ fun AZListScroll(
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = if (initial == '❤') "Favorites" else initial.toString(),
+                            text = initial.toString(),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,

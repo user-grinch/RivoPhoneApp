@@ -225,7 +225,7 @@ fun DialPadScreen(
     ) { innerPadding ->
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize().padding(top=innerPadding.calculateTopPadding())
         ) {
 
             if (number.isEmpty()) {
@@ -268,7 +268,7 @@ fun DialPadScreen(
             if (searchResults.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 420.dp)
+                    contentPadding = PaddingValues(top = 6.dp, bottom = 420.dp)
                 ) {
                     itemsIndexed(searchResults) { index, contact ->
                         val contactNumber = contact.phoneNumbers.firstOrNull()
@@ -292,7 +292,7 @@ fun DialPadScreen(
                                 )
                             ) {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 6.dp),
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Box(modifier = Modifier.weight(1f)) {
@@ -325,7 +325,7 @@ fun DialPadScreen(
                                 }
                                 if (!isLast) {
                                     RivoDivider(
-                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp),
                                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
                                     )
                                 }

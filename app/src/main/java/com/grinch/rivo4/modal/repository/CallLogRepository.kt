@@ -12,10 +12,14 @@ import android.content.ComponentName
 import android.content.ContentValues
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
 
 class CallLogRepository(
     private val contentResolver: ContentResolver,
-    private val context: Context
+    private val context: Context,
+    private val contactsRepo: IContactsRepository
 ) : ICallLogRepository {
 
     private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
@@ -24,6 +28,18 @@ class CallLogRepository(
 
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
+
+        // Optimization: Fetch all contacts once for quick lookup
+        val allContacts = try { contactsRepo.getContacts() } catch (e: Exception) { emptyList() }
+        val contactMap = mutableMapOf<String, Contact>()
+        allContacts.forEach { contact ->
+            contact.phoneNumbers.forEach { number ->
+                val normalized = normalizePhoneNumber(number)
+                // Use last 10 digits as key for flexible matching (local vs international)
+                val key = if (normalized.length >= 10) normalized.takeLast(10) else normalized
+                contactMap[key] = contact
+            }
+        }
 
         val baseProjection = mutableListOf(
             CallLog.Calls._ID,
@@ -52,7 +68,7 @@ class CallLogRepository(
                 "${CallLog.Calls.DATE} DESC"
             )
 
-            cursor?.use { parseCursor(it, callLogs) }
+            cursor?.use { parseCursor(it, callLogs, contactMap) }
         } catch (e: Exception) {
             // If the above fails due to "phone_account_label" or other columns, try a safer subset
             try {
@@ -69,7 +85,7 @@ class CallLogRepository(
                     null,
                     "${CallLog.Calls.DATE} DESC"
                 )
-                cursor?.use { parseCursor(it, callLogs) }
+                cursor?.use { parseCursor(it, callLogs, contactMap) }
             } catch (e2: Exception) {
                 e2.printStackTrace()
             }
@@ -93,7 +109,7 @@ class CallLogRepository(
         }
     }
 
-    private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>) {
+    private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>) {
         val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
         val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
         val cachedNameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
@@ -145,11 +161,14 @@ class CallLogRepository(
 
             if (simLabel?.isEmpty() == true) simLabel = null
 
-            val displayName = cursor.getString(cachedNameIdx)
-            val photoUri = cursor.getString(cachedPhotoIdx)
-            val lookupUri = cursor.getString(cachedLookupIdx)
+            // Enrich with contact data
+            val normalizedNum = normalizePhoneNumber(number)
+            val lookupKey = if (normalizedNum.length >= 10) normalizedNum.takeLast(10) else normalizedNum
+            val matchedContact = contactMap[lookupKey]
             
-            val contactId = lookupUri?.let {
+            val displayName = matchedContact?.name ?: cursor.getString(cachedNameIdx)
+            val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
+            val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
                 try {
                     Uri.parse(it).lastPathSegment
                 } catch (e: Exception) { null }

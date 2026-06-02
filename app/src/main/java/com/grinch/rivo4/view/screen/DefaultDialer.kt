@@ -44,7 +44,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
     val prefs = koinInject<PreferenceManager>()
     val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
 
-    val initialRoute = if (defBar == 1) {
+    val initialRoute = if (defBar == 0) {
         RecentScreenDestination
     } else {
         ContactScreenDestination

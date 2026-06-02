@@ -38,12 +38,20 @@ class CallLogViewModel(
     }
 
     init {
-        contentResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, contentObserver)
+        try {
+            contentResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, contentObserver)
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        contentResolver.unregisterContentObserver(contentObserver)
+        try {
+            contentResolver.unregisterContentObserver(contentObserver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun setFilter(newFilter: CallLogFilter) {

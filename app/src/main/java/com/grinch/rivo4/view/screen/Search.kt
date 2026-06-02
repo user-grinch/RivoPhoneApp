@@ -272,7 +272,7 @@ fun ContactSearchContent(
                                         )
                                     ) {
                                         Row(
-                                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 16.dp),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Box(modifier = Modifier.weight(1f)) {
@@ -301,7 +301,7 @@ fun ContactSearchContent(
                                         }
                                         if (!isLast) {
                                             RivoDivider(
-                                                modifier = Modifier.padding(horizontal = 16.dp),
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
                                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
                                             )
                                         }

@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                                 inclusive = true
                             }
                         }
-                    } else if (defBar == 1) {
+                    } else if (defBar == 0) {
                         navController.navigate(RecentScreenDestination.route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true

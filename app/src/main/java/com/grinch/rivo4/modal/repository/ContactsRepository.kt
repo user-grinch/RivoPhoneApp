@@ -97,64 +97,68 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
         var contact: Contact? = null
 
-        contentResolver.query(
-            ContactsContract.Data.CONTENT_URI,
-            projection,
-            "${ContactsContract.Data.CONTACT_ID} = ?",
-            arrayOf(contactId),
-            null
-        )?.use { cursor ->
-            val idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID)
-            val nameIdx = cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY)
-            val photoIdx = cursor.getColumnIndex(ContactsContract.Data.PHOTO_URI)
-            val mimeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE)
-            val data1Idx = cursor.getColumnIndex(ContactsContract.Data.DATA1)
-            val data2Idx = cursor.getColumnIndex(ContactsContract.Data.DATA2)
-            val data3Idx = cursor.getColumnIndex(ContactsContract.Data.DATA3)
-            val starredIdx = cursor.getColumnIndex(ContactsContract.Data.STARRED)
-            val ringtoneIdx = cursor.getColumnIndex(ContactsContract.Data.CUSTOM_RINGTONE)
+        try {
+            contentResolver.query(
+                ContactsContract.Data.CONTENT_URI,
+                projection,
+                "${ContactsContract.Data.CONTACT_ID} = ?",
+                arrayOf(contactId),
+                null
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID)
+                val nameIdx = cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY)
+                val photoIdx = cursor.getColumnIndex(ContactsContract.Data.PHOTO_URI)
+                val mimeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE)
+                val data1Idx = cursor.getColumnIndex(ContactsContract.Data.DATA1)
+                val data2Idx = cursor.getColumnIndex(ContactsContract.Data.DATA2)
+                val data3Idx = cursor.getColumnIndex(ContactsContract.Data.DATA3)
+                val starredIdx = cursor.getColumnIndex(ContactsContract.Data.STARRED)
+                val ringtoneIdx = cursor.getColumnIndex(ContactsContract.Data.CUSTOM_RINGTONE)
 
-            val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
-            val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
 
-            while (cursor.moveToNext()) {
-                val id = cursor.getString(idIdx) ?: continue
-                val mimeType = cursor.getString(mimeIdx)
-                val data1 = cursor.getString(data1Idx) ?: continue
-                val isStarred = cursor.getInt(starredIdx) == 1
-                val ringtone = cursor.getString(ringtoneIdx)
-                val accountName = cursor.getString(accountNameIdx)
-                val accountType = cursor.getString(accountTypeIdx)
+                while (cursor.moveToNext()) {
+                    val id = cursor.getString(idIdx) ?: continue
+                    val mimeType = cursor.getString(mimeIdx)
+                    val data1 = cursor.getString(data1Idx) ?: continue
+                    val isStarred = cursor.getInt(starredIdx) == 1
+                    val ringtone = cursor.getString(ringtoneIdx)
+                    val accountName = cursor.getString(accountNameIdx)
+                    val accountType = cursor.getString(accountTypeIdx)
 
-                val currentContact = contact ?: Contact(
-                    id = id,
-                    name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
-                    photoUri = cursor.getString(photoIdx),
-                    isFavorite = isStarred,
-                    customRingtone = ringtone,
-                    accountName = accountName,
-                    accountType = accountType
-                )
+                    val currentContact = contact ?: Contact(
+                        id = id,
+                        name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
+                        photoUri = cursor.getString(photoIdx),
+                        isFavorite = isStarred,
+                        customRingtone = ringtone,
+                        accountName = accountName,
+                        accountType = accountType
+                    )
 
-                contact = when (mimeType) {
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
-                        currentContact.copy(phoneNumbers = (currentContact.phoneNumbers + data1).distinct())
+                    contact = when (mimeType) {
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(phoneNumbers = (currentContact.phoneNumbers + data1).distinct())
+                        }
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(emails = (currentContact.emails + data1).distinct())
+                        }
+                        ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(addresses = (currentContact.addresses + data1).distinct())
+                        }
+                        ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE -> {
+                            val type = cursor.getInt(data2Idx)
+                            val label = cursor.getString(data3Idx)
+                            val event = ContactEvent(type, label, data1)
+                            currentContact.copy(events = (currentContact.events + event).distinct())
+                        }
+                        else -> currentContact
                     }
-                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
-                        currentContact.copy(emails = (currentContact.emails + data1).distinct())
-                    }
-                    ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
-                        currentContact.copy(addresses = (currentContact.addresses + data1).distinct())
-                    }
-                    ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE -> {
-                        val type = cursor.getInt(data2Idx)
-                        val label = cursor.getString(data3Idx)
-                        val event = ContactEvent(type, label, data1)
-                        currentContact.copy(events = (currentContact.events + event).distinct())
-                    }
-                    else -> currentContact
                 }
             }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
         }
         return contact
     }
@@ -213,17 +217,21 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
     private fun getRawContactIds(contactId: String): List<String> {
         val ids = mutableListOf<String>()
-        contentResolver.query(
-            ContactsContract.RawContacts.CONTENT_URI,
-            arrayOf(ContactsContract.RawContacts._ID),
-            "${ContactsContract.RawContacts.CONTACT_ID} = ?",
-            arrayOf(contactId),
-            null
-        )?.use { cursor ->
-            val idIdx = cursor.getColumnIndex(ContactsContract.RawContacts._ID)
-            while (cursor.moveToNext()) {
-                ids.add(cursor.getString(idIdx))
+        try {
+            contentResolver.query(
+                ContactsContract.RawContacts.CONTENT_URI,
+                arrayOf(ContactsContract.RawContacts._ID),
+                "${ContactsContract.RawContacts.CONTACT_ID} = ?",
+                arrayOf(contactId),
+                null
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.RawContacts._ID)
+                while (cursor.moveToNext()) {
+                    ids.add(cursor.getString(idIdx))
+                }
             }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
         }
         return ids
     }
@@ -507,7 +515,12 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
     }
 
     override fun getAvailableAccounts(): List<Account> {
-        return AccountManager.get(context).accounts.toList()
+        return try {
+            AccountManager.get(context).accounts.toList()
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     override fun getContactByNumber(number: String): Contact? {
@@ -520,29 +533,33 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
             ContactsContract.PhoneLookup.CUSTOM_RINGTONE
         )
 
-        contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
-                val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-                val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
-                val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
-                val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
+        try {
+            contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
+                    val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
+                    val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
+                    val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
+                    val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
 
-                val id = if (idIdx != -1) cursor.getString(idIdx) else "0"
-                val name = if (nameIdx != -1) cursor.getString(nameIdx) else "Unknown"
-                val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
-                val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
-                val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
+                    val id = if (idIdx != -1) cursor.getString(idIdx) else "0"
+                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else "Unknown"
+                    val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
+                    val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
+                    val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
 
-                return Contact(
-                    id = id,
-                    name = formatName(name),
-                    photoUri = photoUri,
-                    isFavorite = starred,
-                    phoneNumbers = listOf(number),
-                    customRingtone = ringtone
-                )
+                    return Contact(
+                        id = id,
+                        name = formatName(name),
+                        photoUri = photoUri,
+                        isFavorite = starred,
+                        phoneNumbers = listOf(number),
+                        customRingtone = ringtone
+                    )
+                }
             }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
         }
         return null
     }
