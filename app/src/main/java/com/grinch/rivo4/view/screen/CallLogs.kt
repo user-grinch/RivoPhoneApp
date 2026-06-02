@@ -84,11 +84,9 @@ fun CallLogFullScreen(
 
     val filteredLogsByContact = remember(allLogs, contactId, phoneNumber) {
         if (contactId == null && phoneNumber == null) allLogs
-        else {
-            allLogs.filter { log ->
-                (contactId != null && contactId != "null" && log.contactId == contactId) || 
-                (phoneNumber != null && areNumbersEqual(log.number, phoneNumber))
-            }
+        else allLogs.filter { log ->
+            (contactId != null && contactId != "null" && log.contactId == contactId) || 
+            (phoneNumber != null && log.number.replace(" ", "").contains(phoneNumber.replace(" ", "")))
         }
     }
 

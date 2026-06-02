@@ -49,9 +49,7 @@ import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.CallLogFullScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -66,12 +64,11 @@ fun ContactDetailsScreen(
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val contactsViewModel: ContactsViewModel = koinActivityViewModel()
     val callLogViewModel: CallLogViewModel = koinActivityViewModel()
-
+    
     val allLogs by callLogViewModel.allCallLogs.collectAsState()
-
+    
     var fullContact by remember { mutableStateOf<Contact?>(null) }
     var isFullLoading by remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(contactId, phoneNumber) {
         isFullLoading = true
@@ -82,34 +79,13 @@ fun ContactDetailsScreen(
         } else null
         isFullLoading = false
     }
-
-    // Refresh contact data when returning to screen
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                scope.launch {
-                    val updated = if (contactId != null && contactId != "null") {
-                        contactsViewModel.getFullContactById(contactId)
-                    } else if (phoneNumber != null) {
-                        contactsViewModel.getFullContactByNumber(phoneNumber)
-                    } else null
-                    if (updated != null) fullContact = updated
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
+    
     val displayPhone = phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull() ?: "Unknown"
     val displayName = fullContact?.name ?: phoneNumber ?: "Unknown"
 
     val context = LocalContext.current
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
-
+    
     var showSimPicker by remember { mutableStateOf(false) }
     var showNumberPicker by remember { mutableStateOf(false) }
     var isSmsAction by remember { mutableStateOf(false) }
@@ -119,13 +95,14 @@ fun ContactDetailsScreen(
 
     val contactLogs = remember(fullContact, phoneNumber, allLogs) {
         allLogs.filter { log ->
-            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num -> areNumbersEqual(log.number, num) })) ||
-                    (phoneNumber != null && areNumbersEqual(log.number, phoneNumber))
+            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num -> log.number.replace(" ", "").contains(num.replace(" ", "")) })) ||
+            (phoneNumber != null && log.number.replace(" ", "").contains(phoneNumber.replace(" ", "")))
         }
     }
-
+    
     val isFavorite = fullContact?.isFavorite ?: false
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 2
@@ -163,25 +140,20 @@ fun ContactDetailsScreen(
     }
 
     val initiateSms = { number: String ->
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
-        context.startActivity(intent)
-    }
-
-    val openWhatsApp = { num: String ->
-        val url = "https://api.whatsapp.com/send?phone=$num"
-        try {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (e: Exception) {}
-    }
-
-    val openTelegram = { num: String ->
-        val url = "tg://msg?text=&to=$num"
-        try {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (e: Exception) {
-            try {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/$num")))
-            } catch (e2: Exception) {}
+        val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+            if (accounts.size > 1) {
+                pendingNumber = number
+                isSmsAction = true
+                showSimPicker = true
+            } else {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
+                context.startActivity(intent)
+            }
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
+            context.startActivity(intent)
         }
     }
 
@@ -258,8 +230,8 @@ fun ContactDetailsScreen(
                 }
             }
         ) {
-            val vCard = remember(displayName, displayPhone, fullContact?.emails?.firstOrNull()) {
-                QrCodeUtils.generateVCard(displayName, displayPhone, fullContact?.emails?.firstOrNull())
+            val vCard = remember(displayName, displayPhone, fullContact?.emails?.firstOrNull()) { 
+                QrCodeUtils.generateVCard(displayName, displayPhone, fullContact?.emails?.firstOrNull()) 
             }
             val qrBitmap = remember(vCard) { QrCodeUtils.generateQrCode(vCard, 600) }
 
@@ -277,7 +249,7 @@ fun ContactDetailsScreen(
                             .padding(12.dp)
                     )
                 }
-
+                
                 Spacer(Modifier.height(16.dp))
                 Text(
                     displayName,
@@ -304,20 +276,41 @@ fun ContactDetailsScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showQrDialog = true }) {
+                        Icon(Icons.Outlined.QrCode2, contentDescription = "QR Code")
+                    }
                     IconButton(onClick = shareContact) {
                         Icon(Icons.Default.Share, contentDescription = "Share")
                     }
                     if (fullContact != null) {
-                        IconButton(onClick = {
-                            fullContact?.let {
-                                navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                        IconButton(onClick = { 
+                            fullContact?.let { contact ->
+                                val newFavorite = !contact.isFavorite
+                                fullContact = contact.copy(isFavorite = newFavorite)
+                                contactsViewModel.toggleFavorite(contact)
                             }
+                        }) {
+                            Icon(
+                                if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = "Favorite",
+                                tint = if (isFavorite) Color.Red else LocalContentColor.current
+                            )
+                        }
+                        IconButton(onClick = {
+                            val intent = Intent(Intent.ACTION_EDIT).apply {
+                                data = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, fullContact!!.id.toLong())
+                            }
+                            context.startActivity(intent)
                         }) {
                             Icon(Icons.Default.Edit, contentDescription = "Edit")
                         }
                     } else if (phoneNumber != null && phoneNumber != "Unknown") {
                         IconButton(onClick = {
-                            navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
+                            val intent = Intent(Intent.ACTION_INSERT).apply {
+                                type = ContactsContract.RawContacts.CONTENT_TYPE
+                                putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                            }
+                            context.startActivity(intent)
                         }) {
                             Icon(Icons.Default.PersonAdd, contentDescription = "Add Contact")
                         }
@@ -390,26 +383,23 @@ fun ContactDetailsScreen(
                                     }
                                 }
                             )
-                            if (fullContact != null) {
-                                RivoExpressiveButton(
-                                    icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    label = "Favorite",
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = if (isFavorite) Color.Red else LocalContentColor.current,
-                                    onClick = {
-                                        fullContact?.let { contact ->
-                                            val newFavorite = !contact.isFavorite
-                                            fullContact = contact.copy(isFavorite = newFavorite)
-                                            contactsViewModel.toggleFavorite(contact)
-                                        }
-                                    }
-                                )
-                            }
                             RivoExpressiveButton(
-                                icon = Icons.Outlined.QrCode2,
-                                label = "QR Code",
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                onClick = { showQrDialog = true }
+                                icon = Icons.Default.VideoCall,
+                                label = "Video",
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                onClick = {
+                                    if (displayPhone != "Unknown") {
+                                        val uri = Uri.parse("tel:$displayPhone")
+                                        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                            // Attempt to use common video calling schemes
+                                            setDataAndType(uri, "vnd.android.cursor.item/video-chat-address")
+                                        }
+                                        
+                                        // Fallback to a chooser for common apps like Google Meet/Duo, WhatsApp, etc.
+                                        val chooser = Intent.createChooser(intent, "Video Call with")
+                                        context.startActivity(chooser)
+                                    }
+                                }
                             )
                         }
                     }
@@ -445,13 +435,13 @@ fun ContactDetailsScreen(
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
-
+                                
                                 if (fullContact != null) {
                                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     val currentRingtone = fullContact!!.customRingtone?.let {
                                         RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
                                     } ?: "Default"
-
+                                    
                                     RivoListItem(
                                         headline = "Custom Ringtone",
                                         supporting = currentRingtone,
@@ -527,11 +517,10 @@ fun ContactDetailsScreen(
                                     }
 
                                     if (contactLogs.size > 3) {
-                                        val finalContactId = if (fullContact?.id != null) fullContact!!.id else if (contactId != "null") contactId else null
                                         TextButton(
                                             onClick = {
                                                 navigator.navigate(CallLogFullScreenDestination(
-                                                    contactId = finalContactId,
+                                                    contactId = contactId,
                                                     phoneNumber = phoneNumber
                                                 ))
                                             },
@@ -544,58 +533,10 @@ fun ContactDetailsScreen(
                             }
                         }
                     }
-
-                    item {
-                        RivoExpressiveCard(title = "Social Apps", icon = Icons.Default.Public) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                RivoExpressiveButton(
-                                    icon = Icons.Default.Whatsapp,
-                                    label = "WhatsApp",
-                                    containerColor = Color(0xFF25D366).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF25D366),
-                                    size = 48.dp,
-                                    onClick = { openWhatsApp(displayPhone) }
-                                )
-                                RivoExpressiveButton(
-                                    icon = Icons.AutoMirrored.Filled.Send,
-                                    label = "Telegram",
-                                    containerColor = Color(0xFF0088CC).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF0088CC),
-                                    size = 48.dp,
-                                    onClick = { openTelegram(displayPhone) }
-                                )
-                                RivoExpressiveButton(
-                                    icon = Icons.Default.VideoCall,
-                                    label = "Video",
-                                    containerColor = Color(0xFF3F51B5).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF3F51B5),
-                                    size = 48.dp,
-                                    onClick = {
-                                        if (displayPhone != "Unknown") {
-                                            val uri = Uri.parse("tel:$displayPhone")
-                                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                                setDataAndType(
-                                                    uri,
-                                                    "vnd.android.cursor.item/video-chat-address"
-                                                )
-                                            }
-                                            val chooser =
-                                                Intent.createChooser(intent, "Video Call with")
-                                            context.startActivity(chooser)
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
-
                     item { Spacer(modifier = Modifier.height(100.dp)) }
                 }
             }
-
+            
             ScrollToTopButton(
                 visible = showButton,
                 onClick = {

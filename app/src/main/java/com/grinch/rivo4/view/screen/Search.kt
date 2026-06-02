@@ -2,16 +2,13 @@ package com.grinch.rivo4.view.screen
 
 import android.Manifest
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +17,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -36,8 +32,9 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
+import org.koin.compose.koinInject
+import com.grinch.rivo4.controller.util.PreferenceManager
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Destination<RootGraph>
@@ -100,7 +97,6 @@ fun ContactSearchContent(
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val contacts by contactsVM.allContacts.collectAsState()
     val prefs = koinInject<PreferenceManager>()
-    val context = androidx.compose.ui.platform.LocalContext.current
     val settingsState by prefs.settingsChanged.collectAsState()
     val searchMatchMode by remember(settingsState) {
         mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0))
@@ -123,19 +119,18 @@ fun ContactSearchContent(
     val filteredContacts = remember(query, contacts, searchMatchMode) {
         if (query.isBlank()) emptyList()
         else contacts.filter {
-            val cleanQuery = query.replace(" ", "")
             val matchesName = when (searchMatchMode) {
                 1 -> it.name.startsWith(query, ignoreCase = true)
                 2 -> it.name.equals(query, ignoreCase = true)
                 else -> it.name.contains(query, ignoreCase = true)
             }
             val matchesNumber = when (searchMatchMode) {
-                1 -> it.phoneNumbers.any { number -> number.replace(" ", "").startsWith(cleanQuery) }
-                2 -> it.phoneNumbers.any { number -> number.replace(" ", "") == cleanQuery }
-                else -> it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
+                1 -> it.phoneNumbers.any { number -> number.replace(" ", "").startsWith(query.replace(" ", "")) }
+                2 -> it.phoneNumbers.any { number -> number.replace(" ", "") == query.replace(" ", "") }
+                else -> it.phoneNumbers.any { number -> number.replace(" ", "").contains(query.replace(" ", "")) }
             }
             matchesName || matchesNumber
-        }.take(50)
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -153,7 +148,7 @@ fun ContactSearchContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-                placeholder = { Text("Search contacts") },
+                placeholder = { Text("Search name or number") },
                 leadingIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -306,10 +301,17 @@ fun ContactSearchContent(
                                             )
                                         }
                                     }
+                                )
+                                if (index < filteredContacts.size - 1) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                    )
                                 }
                             }
                         }
                     }
+                    item { Spacer(modifier = Modifier.height(100.dp)) }
                 }
             }
         }
