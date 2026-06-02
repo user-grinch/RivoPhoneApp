@@ -31,6 +31,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -207,10 +208,11 @@ fun CallLogFullContent(
         var showSimPicker by remember { mutableStateOf(false) }
         var showNumberPicker by remember { mutableStateOf(false) }
         var pendingNumber by remember { mutableStateOf<String?>(null) }
+        var pendingContactId by remember { mutableStateOf<String?>(null) }
         var activeFavorite by remember { mutableStateOf<Contact?>(null) }
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
 
-        val performCall = { targetNumber: String ->
+        val performCall = { targetNumber: String, contactId: String? ->
             val hasPermission =
                 ContextCompat.checkSelfPermission(
                     context,
@@ -222,16 +224,18 @@ fun CallLogFullContent(
                 val accounts = telecomManager.callCapablePhoneAccounts
                 if (accounts.size > 1 && defaultSim == 0) {
                     pendingNumber = targetNumber
+                    pendingContactId = contactId
                     showSimPicker = true
                 } else {
-                    makeCall(context, targetNumber)
+                    makeCall(context, targetNumber, contactId = contactId)
                 }
             } else {
-                makeCall(context, targetNumber)
+                makeCall(context, targetNumber, contactId = contactId)
             }
         }
 
         if (showNumberPicker && activeFavorite != null) {
+            val lastUsed = activeFavorite?.id?.let { prefs.getLastUsedNumber(it) }
             RivoDialog(
                 onDismissRequest = { showNumberPicker = false },
                 title = "Select Number",
@@ -243,22 +247,28 @@ fun CallLogFullContent(
                 }
             ) {
                 activeFavorite!!.phoneNumbers.forEach { selectedNumber ->
+                    val isRecent = lastUsed != null && areNumbersEqual(lastUsed, selectedNumber)
                     Surface(
                         onClick = {
                             showNumberPicker = false
-                            performCall(selectedNumber)
+                            performCall(selectedNumber, activeFavorite?.id)
                         },
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Phone, null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.Phone, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                             Spacer(Modifier.width(16.dp))
-                            Text(selectedNumber, style = MaterialTheme.typography.bodyLarge)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(selectedNumber, style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
+                                if (isRecent) {
+                                    Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                                }
+                            }
                         }
                     }
                 }
@@ -285,7 +295,7 @@ fun CallLogFullContent(
             SimPickerDialog(
                 onDismissRequest = { showSimPicker = false },
                 onSimSelected = { handle ->
-                    makeCall(context, pendingNumber!!, handle)
+                    makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
                     showSimPicker = false
                 }
             )
@@ -342,7 +352,7 @@ fun CallLogFullContent(
                                                     showNumberPicker = true
                                                 } else {
                                                     contact.phoneNumbers.firstOrNull()?.let { 
-                                                        performCall(it)
+                                                        performCall(it, contact.id)
                                                     }
                                                 }
                                             }
@@ -374,7 +384,7 @@ fun CallLogFullContent(
                                                     }
                                                 },
                                                 onButtonClick = { log ->
-                                                    performCall(log.number)
+                                                    performCall(log.number, log.contactId)
                                                 },
                                                 onLongClick = { log ->
                                                     onToggleSelection(log)

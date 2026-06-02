@@ -125,6 +125,7 @@ fun DialPadScreen(
 
     var showSimPicker by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf("") }
+    var pendingContactId by remember { mutableStateOf<String?>(null) }
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
     val searchResults by remember(number, allContacts, t9Enabled) {
@@ -155,17 +156,18 @@ fun DialPadScreen(
                 if (accounts.size > 1 && defaultSim == 0) {
                     showSimPicker = true
                 } else {
-                    makeCall(context, pendingNumber)
+                    makeCall(context, pendingNumber, contactId = pendingContactId)
                 }
             } else {
-                makeCall(context, pendingNumber)
+                makeCall(context, pendingNumber, contactId = pendingContactId)
             }
         }
     }
 
-    val performCall = { targetNumber: String ->
+    val performCall = { targetNumber: String, contactId: String? ->
         if (targetNumber.isNotEmpty()) {
             pendingNumber = targetNumber
+            pendingContactId = contactId
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                     val defaultSim = prefs.getInt("default_sim", 0)
@@ -173,10 +175,10 @@ fun DialPadScreen(
                     if (accounts.size > 1 && defaultSim == 0) {
                         showSimPicker = true
                     } else {
-                        makeCall(context, targetNumber)
+                        makeCall(context, targetNumber, contactId = contactId)
                     }
                 } else {
-                    makeCall(context, targetNumber)
+                    makeCall(context, targetNumber, contactId = contactId)
                 }
             } else {
                 callPermissionLauncher.launch(arrayOf(Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE))
@@ -188,7 +190,7 @@ fun DialPadScreen(
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                makeCall(context, pendingNumber, handle)
+                makeCall(context, pendingNumber, handle, contactId = pendingContactId)
                 showSimPicker = false
             }
         )
@@ -309,7 +311,7 @@ fun DialPadScreen(
                                     }
                                     contactNumber?.let { num ->
                                         IconButton(
-                                            onClick = { performCall(num) },
+                                            onClick = { performCall(num, contact.id) },
                                             modifier = Modifier.padding(end = 8.dp)
                                         ) {
                                             Icon(
@@ -448,7 +450,7 @@ fun DialPadScreen(
 
                             // Centered Dial Button
                             DialerActionExpressive(
-                                onClick = { performCall(number) },
+                                onClick = { performCall(number, null) },
                                 icon = Icons.Default.Call,
                                 contentDescription = "Call",
                                 containerColor = Color(0xFF4CAF50),

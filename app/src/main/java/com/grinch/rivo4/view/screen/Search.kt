@@ -287,7 +287,7 @@ fun ContactSearchContent(
                                             }
                                             contact.phoneNumbers.firstOrNull()?.let { num ->
                                                 IconButton(
-                                                    onClick = { makeCall(context, num) },
+                                                    onClick = { makeCall(context, num, contactId = contact.id) },
                                                     modifier = Modifier.padding(end = 8.dp)
                                                 ) {
                                                     Icon(

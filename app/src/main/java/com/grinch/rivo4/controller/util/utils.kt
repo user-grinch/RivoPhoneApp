@@ -73,14 +73,18 @@ fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     return false
 }
 
-fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null) {
+fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     val uri = Uri.fromParts("tel", number, null)
     val extras = Bundle()
     
+    val prefs = PreferenceManager(context)
+    if (contactId != null) {
+        prefs.setLastUsedNumber(contactId, number)
+    }
+
     var preferredHandle = accountHandle
     if (preferredHandle == null) {
-        val prefs = PreferenceManager(context)
         val defaultSim = prefs.getInt("default_sim", 0)
         if (defaultSim > 0) {
             val accounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {

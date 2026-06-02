@@ -74,6 +74,7 @@ fun CallLogFullScreen(
 
     var showSimPicker by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf<String?>(null) }
+    var pendingContactId by remember { mutableStateOf<String?>(null) }
 
     val filteredLogsByContact = remember(allLogs, contactId, phoneNumber) {
         if (contactId == null && phoneNumber == null) allLogs
@@ -93,7 +94,7 @@ fun CallLogFullScreen(
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                makeCall(context, pendingNumber!!, handle)
+                makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
                 showSimPicker = false
             }
         )
@@ -230,16 +231,19 @@ fun CallLogFullScreen(
                                                         android.Manifest.permission.READ_PHONE_STATE
                                                     ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
+                                                    val targetContactId = lg.contactId ?: contactId
+
                                                     if (hasPermission) {
                                                         val accounts = telecomManager.callCapablePhoneAccounts
                                                         if (accounts.size > 1) {
                                                             pendingNumber = lg.number
+                                                            pendingContactId = targetContactId
                                                             showSimPicker = true
                                                         } else {
-                                                            makeCall(context, lg.number)
+                                                            makeCall(context, lg.number, contactId = targetContactId)
                                                         }
                                                     } else {
-                                                        makeCall(context, lg.number)
+                                                        makeCall(context, lg.number, contactId = targetContactId)
                                                     }
                                                 },
                                                 selected = selectedEntries.any { it.id == lg.id }

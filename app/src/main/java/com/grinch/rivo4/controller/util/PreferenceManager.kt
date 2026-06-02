@@ -48,6 +48,14 @@ class PreferenceManager(context: Context) {
         prefs.edit().putInt(key, value).apply()
     }
 
+    fun setLastUsedNumber(contactId: String, number: String) {
+        prefs.edit().putString("last_used_number_$contactId", number).apply()
+    }
+
+    fun getLastUsedNumber(contactId: String): String? {
+        return prefs.getString("last_used_number_$contactId", null)
+    }
+
     companion object {
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
