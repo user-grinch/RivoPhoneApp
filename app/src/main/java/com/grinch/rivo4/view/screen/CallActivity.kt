@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
@@ -177,6 +178,7 @@ class CallActivity : ComponentActivity() {
                         call = call,
                         callState = session?.state ?: Call.STATE_ACTIVE,
                         contactName = contactName,
+                        phoneNumber = number,
                         photoUri = photoUri,
                         audioState = audioState
                     )
@@ -218,6 +220,7 @@ fun ExpressiveCallScreen(
     call: Call,
     callState: Int,
     contactName: String,
+    phoneNumber: String,
     photoUri: String?,
     audioState: CallAudioState?
 ) {
@@ -363,10 +366,10 @@ fun ExpressiveCallScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // Row 1 (2 centered)
+                    // Row 1 (3 centered)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CallActionButton(
@@ -377,8 +380,6 @@ fun ExpressiveCallScreen(
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             CallService.mute(!isMuted)
                         }
-                        
-                        Spacer(modifier = Modifier.width(32.dp))
 
                         CallActionButton(
                             icon = Icons.Default.Dialpad,
@@ -387,6 +388,18 @@ fun ExpressiveCallScreen(
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             showKeypad = !showKeypad
+                        }
+
+                        CallActionButton(
+                            icon = Icons.Default.Message,
+                            isActive = false,
+                            label = "Message"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("smsto:$phoneNumber")
+                            }
+                            context.startActivity(intent)
                         }
                     }
 
@@ -461,7 +474,7 @@ fun ExpressiveCallScreen(
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CallActionButton(
@@ -472,8 +485,6 @@ fun ExpressiveCallScreen(
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             CallService.mute(!isMuted)
                         }
-                        
-                        Spacer(modifier = Modifier.width(32.dp))
 
                         CallActionButton(
                             icon = Icons.AutoMirrored.Filled.VolumeUp,
@@ -482,6 +493,19 @@ fun ExpressiveCallScreen(
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             CallService.setSpeaker(!isSpeakerOn)
+                        }
+
+                        CallActionButton(
+                            icon = Icons.Default.Message,
+                            isActive = false,
+                            label = "Message"
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            try { call.disconnect() } catch (e: Exception) {}
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("smsto:$phoneNumber")
+                            }
+                            context.startActivity(intent)
                         }
                     }
 

@@ -54,20 +54,11 @@ RivoPhoneApp is currently under closed testing. You'd need to join this [Google 
 * Smooth performance powered by Jetpack Compose
 * Fully open source etc.
 
-## Community
-
-* Discord: [https://discord.gg/NtEvU3726e](https://discord.gg/NtEvU3726e)
-* Patreon: [https://www.patreon.com/c/grinch_](https://www.patreon.com/c/grinch_)
-
-Join to report bugs, suggest features, or follow development.
-
 ## Contributing
 
 Issues, feature requests, and pull requests are welcome.
 
 If you'd like to discuss ideas or report bugs, join the Discord server.
-
----
 
 ## License
 
