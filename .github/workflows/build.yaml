@@ -1,12 +1,9 @@
-name: Build & Release
+name: Build & Upload APK
 
 on:
   push:
     branches:
       - main
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -14,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: '17'
@@ -25,44 +22,46 @@ jobs:
 
       - name: Decode Keystore
         run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Release APK & AAB
+      - name: Build Release APK
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew assembleRelease bundleRelease
+          ./gradlew assembleRelease
 
-      - name: Collect outputs
+      - name: Sign APK
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
-          mkdir outputs
-          find . -type f \( -name "*.apk" -o -name "*.aab" \) -path "*/release/*" -exec cp {} outputs/ \;
-
-      - name: Generate SHA256 checksums
-        run: |
-          cd outputs
-          sha256sum * > SHA256SUMS.txt
-          for f in *; do
-            sha256sum "$f" > "$f.sha256"
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME/build-tools/"* | sort -V | tail -1)
+          KEYSTORE="${{ github.workspace }}/upload-keystore.jks"
+          for apk in app/build/outputs/apk/release/*.apk; do
+            echo "Signing $(basename "$apk")..."
+            "$BUILD_TOOLS/zipalign" -p -f 4 "$apk" "${apk}.aligned"
+            mv "${apk}.aligned" "$apk"
+            "$BUILD_TOOLS/apksigner" sign \
+              --ks "$KEYSTORE" \
+              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+              --ks-pass "pass:${{ secrets.STORE_PASSWORD }}" \
+              --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+              "$apk"
           done
 
-      - name: Delete old release and tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Collect APK outputs
         run: |
-          gh release delete preview --cleanup-tag -y || true
+          mkdir -p outputs
+          find . -type f -name "*.apk" -path "*/release/*" -exec cp {} outputs/ \;
 
-      - name: Publish Release
-        uses: ncipollo/release-action@v1
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tag: preview
-          name: Preview Build
-          commit: ${{ github.sha }}
-          artifacts: outputs/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
+          name: release-apks
+          path: outputs/
+          if-no-files-found: error

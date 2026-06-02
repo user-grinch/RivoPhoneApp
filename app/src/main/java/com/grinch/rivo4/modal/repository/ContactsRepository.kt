@@ -1,5 +1,4 @@
 package com.grinch.rivo4.modal.repository
-
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.ContentProviderOperation
@@ -34,6 +33,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
             ContactsContract.RawContacts.ACCOUNT_TYPE
         )
 
+        // Query Phone table directly - it's much faster than querying Data table with all mimetypes
         try {
             contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -169,40 +169,8 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
         contentResolver.update(updateUri, contentValue, null, null)
     }
 
-    private fun getPhotoBytes(uriString: String): ByteArray? {
-        return try {
-            val uri = Uri.parse(uriString)
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    private fun getRawContactIds(contactId: String): List<String> {
-        val ids = mutableListOf<String>()
-        contentResolver.query(
-            ContactsContract.RawContacts.CONTENT_URI,
-            arrayOf(ContactsContract.RawContacts._ID),
-            "${ContactsContract.RawContacts.CONTACT_ID} = ?",
-            arrayOf(contactId),
-            null
-        )?.use { cursor ->
-            val idIdx = cursor.getColumnIndex(ContactsContract.RawContacts._ID)
-            while (cursor.moveToNext()) {
-                ids.add(cursor.getString(idIdx))
-            }
-        }
-        return ids
-    }
-
-    private fun getRawContactId(contactId: String): String? {
-        return getRawContactIds(contactId).firstOrNull()
-    }
-
     override fun saveContact(contact: Contact) {
         val ops = ArrayList<ContentProviderOperation>()
-        val photoBytes = contact.photoUri?.let { getPhotoBytes(it) }
 
         if (contact.id.isEmpty() || contact.id == "0") {
             // New Contact
@@ -224,16 +192,6 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
                     .build()
             )
-
-            if (photoBytes != null) {
-                ops.add(
-                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, photoBytes)
-                        .build()
-                )
-            }
 
             contact.phoneNumbers.forEach { number ->
                 ops.add(
@@ -287,135 +245,104 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
             }
         } else {
             // Update
-            val rawContactIds = getRawContactIds(contact.id)
-            if (rawContactIds.isEmpty()) return
+            val rawContactId = getRawContactId(contact.id) ?: return
 
-            rawContactIds.forEach { rawContactId ->
-                // Update Account (Move contact)
-                ops.add(
-                    ContentProviderOperation.newUpdate(ContactsContract.RawContacts.CONTENT_URI)
-                        .withSelection("${ContactsContract.RawContacts._ID}=?", arrayOf(rawContactId))
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, contact.accountType)
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, contact.accountName)
-                        .build()
-                )
+            // Update Account (Move contact)
+            ops.add(
+                ContentProviderOperation.newUpdate(ContactsContract.RawContacts.CONTENT_URI)
+                    .withSelection("${ContactsContract.RawContacts._ID}=?", arrayOf(rawContactId))
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, contact.accountType)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, contact.accountName)
+                    .build()
+            )
 
-                // Update Name (Delete and Insert for reliability)
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
+            // Update Name
+            ops.add(
+                ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                    )
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                    .build()
+            )
+
+            // Update Phone Numbers (Delete and Insert)
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(rawContactId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            contact.phoneNumbers.forEach { number ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
                         .withValue(
                             ContactsContract.Data.MIMETYPE,
-                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
+                        .withValue(
+                            ContactsContract.CommonDataKinds.Phone.TYPE,
+                            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
+                        )
                         .build()
                 )
+            }
 
-                // Update Photo
+            // Update Emails (Delete and Insert)
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(rawContactId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            contact.emails.forEach { email ->
                 ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, email)
+                        .withValue(
+                            ContactsContract.CommonDataKinds.Email.TYPE,
+                            ContactsContract.CommonDataKinds.Email.TYPE_HOME
                         )
                         .build()
                 )
-                if (photoBytes != null) {
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, photoBytes)
-                            .build()
-                    )
-                }
+            }
 
-                // Update Phone Numbers (Delete and Insert)
+            // Update Addresses (Delete and Insert)
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            contact.addresses.forEach { address ->
                 ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
+                        .withValue(
+                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
+                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
                         )
                         .build()
                 )
-                contact.phoneNumbers.forEach { number ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.Phone.TYPE,
-                                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
-                            )
-                            .build()
-                    )
-                }
-
-                // Update Emails (Delete and Insert)
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                contact.emails.forEach { email ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, email)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.Email.TYPE,
-                                ContactsContract.CommonDataKinds.Email.TYPE_HOME
-                            )
-                            .build()
-                    )
-                }
-
-                // Update Addresses (Delete and Insert)
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                contact.addresses.forEach { address ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
-                                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
-                            )
-                            .build()
-                    )
-                }
             }
         }
 
@@ -467,6 +394,24 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
     override fun getAvailableAccounts(): List<Account> {
         return AccountManager.get(context).accounts.toList()
+    }
+
+    private fun getRawContactId(contactId: String): String? {
+        val projection = arrayOf(ContactsContract.RawContacts._ID)
+        val selection = "${ContactsContract.RawContacts.CONTACT_ID} = ?"
+        val selectionArgs = arrayOf(contactId)
+        contentResolver.query(
+            ContactsContract.RawContacts.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            null
+        )?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                return cursor.getString(0)
+            }
+        }
+        return null
     }
 
     override fun getContactByNumber(number: String): Contact? {

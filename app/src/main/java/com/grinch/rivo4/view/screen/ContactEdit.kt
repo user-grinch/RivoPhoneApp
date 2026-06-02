@@ -45,51 +45,48 @@ fun ContactEditScreen(
     navigator: DestinationsNavigator
 ) {
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val allContacts by contactsVM.allContacts.collectAsState()
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
     
-    var name by remember { mutableStateOf(initialName ?: "") }
-    var photoUri by remember { mutableStateOf<String?>(null) }
-    var selectedAccount by remember { mutableStateOf<Account?>(null) }
-    
-    val phoneNumbers = remember { mutableStateListOf<String>("") }
-    val emails = remember { mutableStateListOf<String>("") }
-    val addresses = remember { mutableStateListOf<String>("") }
-
-    LaunchedEffect(contactId) {
+    val existingContact = remember(contactId, allContacts) {
         if (contactId != null && contactId != "0" && contactId != "null") {
-            val existing = contactsVM.getFullContactById(contactId)
-            if (existing != null) {
-                name = existing.name
-                photoUri = existing.photoUri
-                selectedAccount = availableAccounts.find { 
-                    it.name == existing.accountName && it.type == existing.accountType 
-                }
-                
-                phoneNumbers.clear()
-                if (existing.phoneNumbers.isNotEmpty()) {
-                    phoneNumbers.addAll(existing.phoneNumbers)
-                } else {
-                    phoneNumbers.add("")
-                }
-                
-                emails.clear()
-                if (existing.emails.isNotEmpty()) {
-                    emails.addAll(existing.emails)
-                } else {
-                    emails.add("")
-                }
-                
-                addresses.clear()
-                if (existing.addresses.isNotEmpty()) {
-                    addresses.addAll(existing.addresses)
-                } else {
-                    addresses.add("")
-                }
+            allContacts.find { it.id == contactId }
+        } else null
+    }
+
+    var name by remember(existingContact) { mutableStateOf(existingContact?.name ?: initialName ?: "") }
+    var photoUri by remember(existingContact) { mutableStateOf<String?>(existingContact?.photoUri) }
+    var selectedAccount by remember(existingContact, availableAccounts) {
+        mutableStateOf(availableAccounts.find { it.name == existingContact?.accountName && it.type == existingContact?.accountType })
+    }
+    
+    val phoneNumbers = remember(existingContact) { 
+        mutableStateListOf<String>().apply { 
+            if (existingContact != null && existingContact.phoneNumbers.isNotEmpty()) {
+                addAll(existingContact.phoneNumbers)
+            } else if (!initialPhone.isNullOrBlank()) {
+                add(initialPhone)
             }
-        } else if (!initialPhone.isNullOrBlank()) {
-            phoneNumbers.clear()
-            phoneNumbers.add(initialPhone)
-        }
+            if (isEmpty()) add("") 
+        } 
+    }
+    
+    val emails = remember(existingContact) { 
+        mutableStateListOf<String>().apply { 
+            if (existingContact != null && existingContact.emails.isNotEmpty()) {
+                addAll(existingContact.emails)
+            }
+            if (isEmpty()) add("")
+        } 
+    }
+    
+    val addresses = remember(existingContact) { 
+        mutableStateListOf<String>().apply { 
+            if (existingContact != null && existingContact.addresses.isNotEmpty()) {
+                addAll(existingContact.addresses)
+            }
+            if (isEmpty()) add("")
+        } 
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -127,7 +124,7 @@ fun ContactEditScreen(
                     Button(
                         onClick = {
                             val contactToSave = Contact(
-                                id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
+                                id = contactId ?: "0",
                                 name = name,
                                 phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
                                 emails = emails.filter { it.isNotBlank() },

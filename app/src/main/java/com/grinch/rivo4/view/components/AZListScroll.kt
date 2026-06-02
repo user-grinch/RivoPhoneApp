@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,12 +52,17 @@ fun AZListScroll(
     val finalGrouped = remember(contacts, grouped) {
         if (grouped != null) return@remember grouped
         
-        val mainGroups = contacts.groupBy {
+        val favorites = contacts.filter { it.isFavorite }
+        val nonFavs = contacts.filter { !it.isFavorite }
+
+        val mainGroups = nonFavs.groupBy {
             val firstChar = it.name.firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 
         val finalMap = linkedMapOf<Char, List<Contact>>()
+
+        if (favorites.isNotEmpty()) finalMap['❤'] = favorites
 
         mainGroups.keys.filter { it.isLetter() }.sorted().forEach { char ->
             finalMap[char] = mainGroups[char]!!
@@ -105,7 +112,7 @@ fun AZListScroll(
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = initial.toString(),
+                            text = if (initial == '❤') "Favorites" else initial.toString(),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,

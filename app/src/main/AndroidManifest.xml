@@ -109,6 +109,16 @@
             android:directBootAware="true"
             android:theme="@style/Theme.RivoPhone" />
 
+        <activity
+            android:name=".view.screen.CustomCallActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:directBootAware="true"
+            android:theme="@style/Theme.RivoPhone" />
+
         <service
             android:name=".controller.CallService"
             android:permission="android.permission.BIND_INCALL_SERVICE"

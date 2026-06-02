@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+keystore.jks
+upload-keystore.jks
+base64.txt
+app/keystore.jks
+app/base64.txt

@@ -56,23 +56,6 @@ fun formatDuration(durationSeconds: Long): String {
     return DateUtils.formatElapsedTime(durationSeconds)
 }
 
-fun normalizePhoneNumber(number: String): String {
-    return number.replace(Regex("[^0-9+]"), "")
-}
-
-fun areNumbersEqual(num1: String?, num2: String?): Boolean {
-    if (num1 == null || num2 == null) return false
-    val n1 = normalizePhoneNumber(num1)
-    val n2 = normalizePhoneNumber(num2)
-    if (n1 == n2) return true
-    
-    // Match last 10 digits for local/international variants
-    if (n1.length >= 10 && n2.length >= 10) {
-        return n1.takeLast(10) == n2.takeLast(10)
-    }
-    return false
-}
-
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null) {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     val uri = Uri.fromParts("tel", number, null)
