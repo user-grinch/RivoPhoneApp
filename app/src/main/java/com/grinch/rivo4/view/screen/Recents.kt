@@ -335,7 +335,7 @@ fun CallLogFullContent(
                     ) {
                         if (favorites.isNotEmpty() && selectedFilter == CallLogFilter.All) {
                             item {
-                                RivoSectionHeader(title = "Favorites", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                                RivoSectionHeader(title = "Favorites")
                                 LazyRow(
                                     modifier = Modifier
                                         .fillMaxWidth()
