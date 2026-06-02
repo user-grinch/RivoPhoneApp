@@ -7,9 +7,11 @@ import android.provider.CallLog
 import android.telecom.TelecomManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -39,14 +41,17 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>(style = NoTransitions::class)
+@Destination<RootGraph>(start = true, style = NoTransitions::class)
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
@@ -174,6 +179,7 @@ fun CallLogFullContent(
 ) {
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
+        val contactsVM: ContactsViewModel = koinActivityViewModel()
         val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
         val settingsState by prefs.settingsChanged.collectAsState()
         val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
@@ -186,17 +192,78 @@ fun CallLogFullContent(
         
         LaunchedEffect(Unit) {
             viewModel.fetchLogs()
+            contactsVM.fetchContacts()
         }
 
         val logs by viewModel.allCallLogs.collectAsState()
+        val allContacts by contactsVM.allContacts.collectAsState()
+        val favorites = remember(allContacts) { allContacts.filter { it.isFavorite } }
+
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
         val context = LocalContext.current
         val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
         var showSimPicker by remember { mutableStateOf(false) }
+        var showNumberPicker by remember { mutableStateOf(false) }
         var pendingNumber by remember { mutableStateOf<String?>(null) }
+        var activeFavorite by remember { mutableStateOf<Contact?>(null) }
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
+
+        val performCall = { targetNumber: String ->
+            val hasPermission =
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_PHONE_STATE
+                ) == PackageManager.PERMISSION_GRANTED
+
+            if (hasPermission) {
+                val defaultSim = prefs.getInt("default_sim", 0)
+                val accounts = telecomManager.callCapablePhoneAccounts
+                if (accounts.size > 1 && defaultSim == 0) {
+                    pendingNumber = targetNumber
+                    showSimPicker = true
+                } else {
+                    makeCall(context, targetNumber)
+                }
+            } else {
+                makeCall(context, targetNumber)
+            }
+        }
+
+        if (showNumberPicker && activeFavorite != null) {
+            RivoDialog(
+                onDismissRequest = { showNumberPicker = false },
+                title = "Select Number",
+                icon = Icons.Default.Phone,
+                dismissButton = {
+                    TextButton(onClick = { showNumberPicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                activeFavorite!!.phoneNumbers.forEach { selectedNumber ->
+                    Surface(
+                        onClick = {
+                            showNumberPicker = false
+                            performCall(selectedNumber)
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Phone, null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(Modifier.width(16.dp))
+                            Text(selectedNumber, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            }
+        }
 
         val filteredLogs = remember(logs, selectedFilter, blockLogVisibility) {
             val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
@@ -230,7 +297,10 @@ fun CallLogFullContent(
 
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
-            onRefresh = { viewModel.fetchLogs() },
+            onRefresh = { 
+                viewModel.fetchLogs()
+                contactsVM.fetchContacts()
+            },
             modifier = Modifier.fillMaxSize(),
             state = pullToRefreshState,
             indicator = {
@@ -242,7 +312,7 @@ fun CallLogFullContent(
         ) {
             if (isLoading && logs.isEmpty()) {
                 RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
-            } else if (logs.isEmpty()) {
+            } else if (logs.isEmpty() && (favorites.isEmpty() || selectedFilter != CallLogFilter.All)) {
                 EmptyCallLogsState()
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -253,6 +323,36 @@ fun CallLogFullContent(
                         contentPadding = PaddingValues(bottom = 100.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
+                        if (favorites.isNotEmpty() && selectedFilter == CallLogFilter.All) {
+                            item {
+                                RivoSectionHeader(title = "Favorites", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                                LazyRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
+                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    items(favorites) { contact ->
+                                        FavoriteCircleItem(
+                                            contact = contact,
+                                            onClick = {
+                                                if (contact.phoneNumbers.size > 1) {
+                                                    activeFavorite = contact
+                                                    showNumberPicker = true
+                                                } else {
+                                                    contact.phoneNumbers.firstOrNull()?.let { 
+                                                        performCall(it)
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                        }
+
                         groupedLogs.forEach { (header, logsInGroup) ->
                             item {
                                 RivoSectionHeader(title = header)
@@ -274,24 +374,7 @@ fun CallLogFullContent(
                                                     }
                                                 },
                                                 onButtonClick = { log ->
-                                                    val hasPermission =
-                                                        ContextCompat.checkSelfPermission(
-                                                            context,
-                                                            Manifest.permission.READ_PHONE_STATE
-                                                        ) == PackageManager.PERMISSION_GRANTED
-
-                                                    if (hasPermission) {
-                                                        val defaultSim = prefs.getInt("default_sim", 0)
-                                                        val accounts = telecomManager.callCapablePhoneAccounts
-                                                        if (accounts.size > 1 && defaultSim == 0) {
-                                                            pendingNumber = log.number
-                                                            showSimPicker = true
-                                                        } else {
-                                                            makeCall(context, log.number)
-                                                        }
-                                                    } else {
-                                                        makeCall(context, log.number)
-                                                    }
+                                                    performCall(log.number)
                                                 },
                                                 onLongClick = { log ->
                                                     onToggleSelection(log)
@@ -320,6 +403,36 @@ fun CallLogFullContent(
             title = "Call History",
             description = "Rivo needs access to your call logs to show your recent activity and missed calls.",
             onGrantClick = onRequestPermission
+        )
+    }
+}
+
+@Composable
+fun FavoriteCircleItem(
+    contact: Contact,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(72.dp)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        RivoAvatar(
+            name = contact.name,
+            photoUri = contact.photoUri,
+            modifier = Modifier.size(64.dp),
+            shape = CircleShape,
+            badgeIcon = Icons.Default.Call
+        )
+        Text(
+            text = contact.name.split(" ").firstOrNull() ?: "",
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

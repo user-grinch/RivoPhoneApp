@@ -43,17 +43,12 @@ class ContactsViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val groupedContacts = filteredContacts.combine(MutableStateFlow(Unit)) { contacts, _ ->
-        val favorites = contacts.filter { it.isFavorite }
-        val nonFavs = contacts.filter { !it.isFavorite }
-
-        val mainGroups = nonFavs.groupBy {
+        val mainGroups = contacts.groupBy {
             val firstChar = it.name.firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 
         val finalMap = linkedMapOf<Char, List<Contact>>()
-
-        if (favorites.isNotEmpty()) finalMap['❤'] = favorites
 
         mainGroups.keys.filter { it.isLetter() }.sorted().forEach { char ->
             finalMap[char] = mainGroups[char]!!
