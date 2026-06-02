@@ -226,6 +226,7 @@ fun ExpressiveCallScreen(
 ) {
     val view = LocalView.current
     val context = LocalContext.current
+    val preferenceManager = koinInject<PreferenceManager>()
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
     val simLabel = remember(call.details.accountHandle) {
         val handle = call.details.accountHandle
@@ -466,6 +467,7 @@ fun ExpressiveCallScreen(
                     }
                 }
             } else {
+                val useCustomUI = preferenceManager.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -490,10 +492,17 @@ fun ExpressiveCallScreen(
                         }
                     }
 
-                    HorizontalSwipeToAnswer(
-                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
-                        onDecline = { try { call.disconnect() } catch (e: Exception) {} }
-                    )
+                    if (useCustomUI == 1) {
+                        IncomingCallButtons(
+                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                        )
+                    } else {
+                        HorizontalSwipeToAnswer(
+                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                        )
+                    }
                 }
             }
         }
@@ -1014,6 +1023,68 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                        else if (offsetX.value < -10f) Color(0xFFF44336) 
                        else Color.Black, // Default green as in screenshot handle
                 modifier = Modifier.size(36.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
+    val declineColor = MaterialTheme.colorScheme.error
+    val answerColor = Color(0xFF4CAF50)
+
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            FilledIconButton(
+                onClick = onDecline,
+                shape = CircleShape,
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = declineColor,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.size(72.dp)
+            ) {
+                Icon(
+                    Icons.Default.CallEnd,
+                    contentDescription = "Decline",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Decline",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            FilledIconButton(
+                onClick = onAnswer,
+                shape = CircleShape,
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = answerColor,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.size(72.dp)
+            ) {
+                Icon(
+                    Icons.Default.Call,
+                    contentDescription = "Answer",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Answer",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Medium
             )
         }
     }

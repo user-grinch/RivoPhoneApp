@@ -20,7 +20,6 @@ import androidx.core.app.NotificationCompat
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.CallActivity
-import com.grinch.rivo4.view.screen.CustomCallActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -260,11 +259,9 @@ class CallService : InCallService() {
         updateNotification(call)
 
         val usePopup = preferenceManager.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)
-        val useCustomUI = preferenceManager.getBoolean(PreferenceManager.KEY_CUSTOM_INCOMING_CALL_UI, false)
 
         if (!usePopup || call.state != Call.STATE_RINGING) {
-            val targetActivity = if (useCustomUI) CustomCallActivity::class.java else CallActivity::class.java
-            val intent = Intent(this, targetActivity).apply {
+            val intent = Intent(this, CallActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }
             startActivity(intent)
@@ -332,9 +329,7 @@ class CallService : InCallService() {
             } catch (e: SecurityException) { null }
         }
         
-        val useCustomUI = preferenceManager.getBoolean(PreferenceManager.KEY_CUSTOM_INCOMING_CALL_UI, false)
-        val fullScreenTarget = if (useCustomUI && call.state == Call.STATE_RINGING) CustomCallActivity::class.java else CallActivity::class.java
-        val fullScreenIntent = Intent(this, fullScreenTarget).apply {
+        val fullScreenIntent = Intent(this, CallActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -391,9 +386,6 @@ class CallService : InCallService() {
                 ).build()
             )
         }
-
-        builder.setColor(Color.parseColor("#4CAF50"))
-            .setColorized(true)
 
         val notification = builder.build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

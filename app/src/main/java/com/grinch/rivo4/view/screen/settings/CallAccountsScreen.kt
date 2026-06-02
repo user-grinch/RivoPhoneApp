@@ -50,7 +50,7 @@ fun CallAccountsScreen(
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var incomingCallPopup by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)) }
-    var customIncomingUI by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CUSTOM_INCOMING_CALL_UI, false)) }
+    var incomingCallUI by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)) }
     var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
     var redialAttempts by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)) }
@@ -147,14 +147,18 @@ fun CallAccountsScreen(
                         }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoSwitchListItem(
-                        headline = "Custom Incoming Call UI",
-                        supporting = "Use a custom incoming call screen instead of the default",
+                    RivoSelectListItem(
+                        headline = "Incoming Call UI",
+                        supporting = "Choose how to answer incoming calls",
                         leadingIcon = Icons.Outlined.PhoneInTalk,
-                        checked = customIncomingUI,
-                        onCheckedChange = {
-                            customIncomingUI = it
-                            prefs.setBoolean(PreferenceManager.KEY_CUSTOM_INCOMING_CALL_UI, it)
+                        options = listOf(
+                            "Horizontal Swipe" to 0,
+                            "Buttons" to 1
+                        ),
+                        selectedValue = incomingCallUI,
+                        onValueChange = {
+                            incomingCallUI = it
+                            prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
                         }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
