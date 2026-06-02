@@ -46,6 +46,7 @@ import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material.icons.rounded.Call
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import androidx.compose.material3.*
@@ -324,7 +325,7 @@ fun DialPadScreen(
                                     }
                                 }
                                 if (!isLast) {
-                                    HorizontalDivider(
+                                    RivoDivider(
                                         modifier = Modifier.padding(horizontal = 16.dp),
                                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
                                     )

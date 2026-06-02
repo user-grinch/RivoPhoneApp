@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grinch.rivo4.controller.util.PreferenceManager
+import org.koin.compose.koinInject
 import java.util.Locale
 
 
@@ -43,22 +45,60 @@ fun RivoExpressiveCard(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = shape,
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showCards = remember(settingsState) { prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true) }
+
+    if (showCards) {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            shape = shape,
+            colors = CardDefaults.cardColors(
+                containerColor = containerColor
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (title != null || icon != null) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    ) {
+                        if (icon != null) {
+                            Icon(
+                                icon,
+                                null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                        }
+                        if (title != null) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
+                            )
+                        }
+                    }
+                }
+                content()
+            }
+        }
+    } else {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = modifier.fillMaxWidth().padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (title != null || icon != null) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                 ) {
                     if (icon != null) {
                         Icon(
@@ -74,14 +114,27 @@ fun RivoExpressiveCard(
                             text = title,
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
             content()
         }
+    }
+}
+
+@Composable
+fun RivoDivider(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+) {
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showDividers = remember(settingsState) { prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true) }
+
+    if (showDividers) {
+        HorizontalDivider(modifier = modifier, color = color)
     }
 }
 

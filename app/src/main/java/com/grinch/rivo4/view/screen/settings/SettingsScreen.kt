@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.controller.util.openLink
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
@@ -133,7 +134,7 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Palette,
                         onClick = { navigator.navigate(InterfaceScreenDestination) }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = "Sound & Vibration",
                         supporting = "Ringtones and dialpad tones",
@@ -152,7 +153,7 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { navigator.navigate(CallAccountsScreenDestination) }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = "Blocked Numbers",
                         supporting = "Manage blocked calls and spam",
@@ -170,7 +171,7 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = "Manage Contacts",
                         supporting = "Merge duplicates and clean up your list",

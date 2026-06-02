@@ -104,5 +104,6 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_SIM_ICON_HISTORY = "show_sim_icon_history"
         const val KEY_SEARCH_MATCH_MODE = "search_match_mode" // 0: T9 & Contains, 1: Starts With, 2: Exact
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
+        const val KEY_SHOW_CARDS = "show_cards"
     }
 }

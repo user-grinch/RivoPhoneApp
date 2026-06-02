@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
@@ -72,7 +73,7 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_DTMF_TONE, it)
                         }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
                         headline = "Dialpad vibration",
                         supporting = "Dialpad vibration that plays during keypress",
@@ -98,7 +99,7 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, it)
                         }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
                         headline = "Vibrate on Hang up",
                         supporting = "Vibrate when the call ends",
@@ -109,7 +110,7 @@ fun SoundVibrationScreen(
                             prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, it)
                         }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
                         headline = "Haptic Scrolling feedback",
                         supporting = "Vibrate subtly when scrolling lists",

@@ -38,7 +38,6 @@ fun AZListScroll(
 ) {
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
 
     val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
     val hapticScrollEnabled = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
@@ -138,11 +137,8 @@ fun AZListScroll(
                                     },
                                     selected = selectedIds.contains(contact.id)
                                 )
-                                if (showDividers && index < contactsForChar.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-                                    )
+                                if (index < contactsForChar.size - 1) {
+                                    RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                 }
                             }
                         }

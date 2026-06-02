@@ -30,6 +30,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.view.components.*
@@ -37,6 +38,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +50,7 @@ fun CallLogFullScreen(
     phoneNumber: String? = null
 ) {
     val viewModel: CallLogViewModel = koinActivityViewModel()
+    val prefs: PreferenceManager = koinInject()
 
     LaunchedEffect(Unit) {
         viewModel.fetchLogs()
@@ -60,6 +63,8 @@ fun CallLogFullScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     
+    val settingsState by prefs.settingsChanged.collectAsState(initial = 0)
+
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
     
     BackHandler(enabled = selectedEntries.isNotEmpty()) {
@@ -251,10 +256,7 @@ fun CallLogFullScreen(
                                             )
                                             
                                             if (index < logsInGroup.size - 1) {
-                                                HorizontalDivider(
-                                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                                )
+                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                             }
                                         }
                                     }

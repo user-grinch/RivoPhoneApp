@@ -304,8 +304,6 @@ fun CallLogFullContent(
 
         val pullToRefreshState = rememberPullToRefreshState()
 
-        val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
-
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
             onRefresh = { 
@@ -392,11 +390,8 @@ fun CallLogFullContent(
                                                 },
                                                 selected = selectedEntries.any { it.id == lg.id }
                                             )
-                                            if (showDividers && index < logsInGroup.size - 1) {
-                                                HorizontalDivider(
-                                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-                                                )
+                                            if (index < logsInGroup.size - 1) {
+                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                             }
                                         }
                                     }

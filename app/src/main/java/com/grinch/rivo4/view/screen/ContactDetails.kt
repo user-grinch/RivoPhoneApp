@@ -428,7 +428,7 @@ fun ContactDetailsScreen(
                                         onClick = { initiateCall(number) }
                                     )
                                     if (index < fullContact!!.phoneNumbers.size - 1 || fullContact!!.emails.isNotEmpty()) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 fullContact!!.emails.forEachIndexed { index, email ->
@@ -442,12 +442,12 @@ fun ContactDetailsScreen(
                                         }
                                     )
                                     if (index < fullContact!!.emails.size - 1) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
 
                                 if (fullContact != null) {
-                                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     val currentRingtone = fullContact!!.customRingtone?.let {
                                         RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
                                     } ?: "Default"
@@ -489,7 +489,7 @@ fun ContactDetailsScreen(
                                         onClick = { }
                                     )
                                     if (index < fullContact!!.events.size - 1 || fullContact!!.addresses.isNotEmpty()) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 fullContact!!.addresses.forEachIndexed { index, address ->
@@ -503,7 +503,7 @@ fun ContactDetailsScreen(
                                         }
                                     )
                                     if (index < fullContact!!.addresses.size - 1) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                             }
@@ -522,7 +522,7 @@ fun ContactDetailsScreen(
                                             }
                                         )
                                         if (index < 2 && index < contactLogs.size - 1) {
-                                            HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
                                         }
                                     }
 
