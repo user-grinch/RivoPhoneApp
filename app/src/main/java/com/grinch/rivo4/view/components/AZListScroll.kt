@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -120,9 +121,9 @@ fun AZListScroll(
                             contactsForChar.forEachIndexed { index, contact ->
                                 RivoListItem(
                                     headline = contact.name.ifEmpty {
-                                        contact.phoneNumbers.firstOrNull() ?: "Unknown"
+                                        contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: "Unknown"
                                     },
-                                    supporting = contact.phoneNumbers.firstOrNull(),
+                                    supporting = contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) },
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,
                                     onClick = {

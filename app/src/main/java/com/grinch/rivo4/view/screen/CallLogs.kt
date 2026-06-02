@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.data.CallLogFilter
@@ -87,7 +88,7 @@ fun CallLogFullScreen(
     }
 
     val contactName = remember(filteredLogsByContact) {
-        filteredLogsByContact.firstOrNull { it.name != null && it.name != it.number }?.name ?: phoneNumber
+        filteredLogsByContact.firstOrNull { it.name != null && it.name != it.number }?.name ?: (if (phoneNumber != null) formatPhoneNumber(phoneNumber) else null)
     }
 
     if (showSimPicker && pendingNumber != null) {
@@ -166,7 +167,7 @@ fun CallLogFullScreen(
 
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        RivoLoadingIndicatorView()
                     }
                 } else if (filteredLogsByContact.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -66,6 +66,7 @@ import androidx.navigation.NavController
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.SimPickerDialog
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.components.tiles.SingleTile
@@ -297,7 +298,7 @@ fun DialPadScreen(
                                     Box(modifier = Modifier.weight(1f)) {
                                         RivoListItem(
                                             headline = contact.name,
-                                            supporting = contactNumber,
+                                            supporting = contactNumber?.let { formatPhoneNumber(it) },
                                             avatarName = contact.name,
                                             photoUri = contact.photoUri,
                                             onClick = {

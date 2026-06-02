@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.modal.data.CallLogEntry
 
 @Composable
@@ -129,12 +130,12 @@ fun CallLogTile(
             Box(modifier = Modifier.weight(1f)) {
                 RivoListItem(
                     headline = buildString {
-                        append(log.name ?: log.number)
+                        append(log.name ?: formatPhoneNumber(log.number))
                         if (log.count > 1) append(" (${log.count})")
                     },
                     supporting = buildString {
                         if (log.name != null && log.name != log.number) {
-                            append(log.number)
+                            append(formatPhoneNumber(log.number))
                             if (log.type == CallLog.Calls.MISSED_TYPE) {
                                 append(" • ")
                                 append(formatDate(log.date))
@@ -144,7 +145,7 @@ fun CallLogTile(
                         }
                     },
                     supporting2 = if (showSim) log.simLabel else null,
-                    avatarName = log.name ?: log.number,
+                    avatarName = log.name ?: formatPhoneNumber(log.number),
                     photoUri = log.photoUri,
                     badgeIcon = icon,
                     badgeColor = badgeColor,

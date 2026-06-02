@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
+import android.telephony.PhoneNumberUtils
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -56,21 +57,17 @@ fun formatDuration(durationSeconds: Long): String {
     return DateUtils.formatElapsedTime(durationSeconds)
 }
 
+fun formatPhoneNumber(number: String): String {
+    return PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
+}
+
 fun normalizePhoneNumber(number: String): String {
-    return number.replace(Regex("[^0-9+]"), "")
+    return PhoneNumberUtils.normalizeNumber(number)
 }
 
 fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     if (num1 == null || num2 == null) return false
-    val n1 = normalizePhoneNumber(num1)
-    val n2 = normalizePhoneNumber(num2)
-    if (n1 == n2) return true
-    
-    // Match last 10 digits for local/international variants
-    if (n1.length >= 10 && n2.length >= 10) {
-        return n1.takeLast(10) == n2.takeLast(10)
-    }
-    return false
+    return PhoneNumberUtils.compare(num1, num2)
 }
 
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {

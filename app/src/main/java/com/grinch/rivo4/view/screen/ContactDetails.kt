@@ -42,6 +42,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.QrCodeUtils
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
@@ -222,7 +223,7 @@ fun ContactDetailsScreen(
                         Icon(Icons.Default.Phone, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(selectedNumber, style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
+                            Text(formatPhoneNumber(selectedNumber), style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
                             if (isRecent) {
                                 Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                             }
@@ -285,7 +286,7 @@ fun ContactDetailsScreen(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    displayPhone,
+                    formatPhoneNumber(displayPhone),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -420,7 +421,7 @@ fun ContactDetailsScreen(
                                 fullContact!!.phoneNumbers.forEachIndexed { index, number ->
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     RivoListItem(
-                                        headline = number,
+                                        headline = formatPhoneNumber(number),
                                         supporting = if (isRecent) "Mobile • Recent" else "Mobile",
                                         leadingIcon = Icons.Default.Phone,
                                         trailingIcon = if (isRecent) Icons.Default.History else null,
@@ -467,7 +468,7 @@ fun ContactDetailsScreen(
                                 }
                             } else if (phoneNumber != null && phoneNumber != "Unknown") {
                                 RivoListItem(
-                                    headline = phoneNumber,
+                                    headline = formatPhoneNumber(phoneNumber),
                                     supporting = "Unknown Number",
                                     leadingIcon = Icons.Default.Phone,
                                     onClick = { initiateCall(phoneNumber) }
