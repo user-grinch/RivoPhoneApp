@@ -7,9 +7,11 @@ import android.provider.CallLog
 import android.telecom.TelecomManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -41,27 +43,30 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>(style = NoTransitions::class)
+@Destination<RootGraph>(start = true, style = NoTransitions::class)
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val viewModel: CallLogViewModel = koinActivityViewModel()
-    
+
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
-    
+
     BackHandler(enabled = selectedEntries.isNotEmpty()) {
         selectedEntries = emptySet()
     }
-    
+
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 3
@@ -151,7 +156,7 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                     }
                 }
             )
-            
+
             ScrollToTopButton(
                 visible = showButton && selectedEntries.isEmpty(),
                 onClick = {
@@ -176,6 +181,7 @@ fun CallLogFullContent(
 ) {
     if (isGranted) {
         val viewModel: CallLogViewModel = koinActivityViewModel()
+        val contactsVM: ContactsViewModel = koinActivityViewModel()
         val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
         val settingsState by prefs.settingsChanged.collectAsState()
         val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
@@ -185,18 +191,23 @@ fun CallLogFullContent(
                 haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
             }
         }
-        
+
         LaunchedEffect(Unit) {
             viewModel.fetchLogs()
+            contactsVM.fetchContacts()
         }
 
         val logs by viewModel.allCallLogs.collectAsState()
+        val allContacts by contactsVM.allContacts.collectAsState()
+        val favorites = remember(allContacts) { allContacts.filter { it.isFavorite } }
+
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
         val context = LocalContext.current
         val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
         var showSimPicker by remember { mutableStateOf(false) }
+        var showNumberPicker by remember { mutableStateOf(false) }
         var pendingNumber by remember { mutableStateOf<String?>(null) }
         var pendingContactId by remember { mutableStateOf<String?>(null) }
         var activeFavorite by remember { mutableStateOf<Contact?>(null) }
@@ -295,7 +306,10 @@ fun CallLogFullContent(
 
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
-            onRefresh = { viewModel.fetchLogs() },
+            onRefresh = {
+                viewModel.fetchLogs()
+                contactsVM.fetchContacts()
+            },
             modifier = Modifier.fillMaxSize(),
             state = pullToRefreshState,
             indicator = {
@@ -307,7 +321,7 @@ fun CallLogFullContent(
         ) {
             if (isLoading && logs.isEmpty()) {
                 RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
-            } else if (logs.isEmpty()) {
+            } else if (logs.isEmpty() && (favorites.isEmpty() || selectedFilter != CallLogFilter.All)) {
                 EmptyCallLogsState()
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -336,7 +350,7 @@ fun CallLogFullContent(
                                                     activeFavorite = contact
                                                     showNumberPicker = true
                                                 } else {
-                                                    contact.phoneNumbers.firstOrNull()?.let { 
+                                                    contact.phoneNumbers.firstOrNull()?.let {
                                                         performCall(it, contact.id)
                                                     }
                                                 }
@@ -395,6 +409,36 @@ fun CallLogFullContent(
             title = "Call History",
             description = "Rivo needs access to your call logs to show your recent activity and missed calls.",
             onGrantClick = onRequestPermission
+        )
+    }
+}
+
+@Composable
+fun FavoriteCircleItem(
+    contact: Contact,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(72.dp)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        RivoAvatar(
+            name = contact.name,
+            photoUri = contact.photoUri,
+            modifier = Modifier.size(64.dp),
+            shape = CircleShape,
+            badgeIcon = Icons.Default.Call
+        )
+        Text(
+            text = contact.name.split(" ").firstOrNull() ?: "",
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

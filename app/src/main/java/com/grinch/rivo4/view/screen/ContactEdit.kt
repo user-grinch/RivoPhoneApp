@@ -46,59 +46,54 @@ fun ContactEditScreen(
     navigator: DestinationsNavigator
 ) {
     val contactsVM: ContactsViewModel = koinActivityViewModel()
-    val allContacts by contactsVM.allContacts.collectAsState()
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
-    
+
     var name by remember { mutableStateOf(initialName ?: "") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var selectedAccount by remember { mutableStateOf<Account?>(null) }
-    
+
     val phoneNumbers = remember { mutableStateListOf<String>("") }
     val emails = remember { mutableStateListOf<String>("") }
     val addresses = remember { mutableStateListOf<String>("") }
-    
+
     val scope = rememberCoroutineScope()
     var isSaving by remember { mutableStateOf(false) }
 
     LaunchedEffect(contactId) {
         if (contactId != null && contactId != "0" && contactId != "null") {
-            allContacts.find { it.id == contactId }
-        } else null
-    }
+            val existing = contactsVM.getFullContactById(contactId)
+            if (existing != null) {
+                name = existing.name
+                photoUri = existing.photoUri
+                selectedAccount = availableAccounts.find {
+                    it.name == existing.accountName && it.type == existing.accountType
+                }
 
-    var name by remember(existingContact) { mutableStateOf(existingContact?.name ?: initialName ?: "") }
-    var photoUri by remember(existingContact) { mutableStateOf<String?>(existingContact?.photoUri) }
-    var selectedAccount by remember(existingContact, availableAccounts) {
-        mutableStateOf(availableAccounts.find { it.name == existingContact?.accountName && it.type == existingContact?.accountType })
-    }
-    
-    val phoneNumbers = remember(existingContact) { 
-        mutableStateListOf<String>().apply { 
-            if (existingContact != null && existingContact.phoneNumbers.isNotEmpty()) {
-                addAll(existingContact.phoneNumbers)
-            } else if (!initialPhone.isNullOrBlank()) {
-                add(initialPhone)
+                phoneNumbers.clear()
+                if (existing.phoneNumbers.isNotEmpty()) {
+                    phoneNumbers.addAll(existing.phoneNumbers)
+                } else {
+                    phoneNumbers.add("")
+                }
+
+                emails.clear()
+                if (existing.emails.isNotEmpty()) {
+                    emails.addAll(existing.emails)
+                } else {
+                    emails.add("")
+                }
+
+                addresses.clear()
+                if (existing.addresses.isNotEmpty()) {
+                    addresses.addAll(existing.addresses)
+                } else {
+                    addresses.add("")
+                }
             }
-            if (isEmpty()) add("") 
-        } 
-    }
-    
-    val emails = remember(existingContact) { 
-        mutableStateListOf<String>().apply { 
-            if (existingContact != null && existingContact.emails.isNotEmpty()) {
-                addAll(existingContact.emails)
-            }
-            if (isEmpty()) add("")
-        } 
-    }
-    
-    val addresses = remember(existingContact) { 
-        mutableStateListOf<String>().apply { 
-            if (existingContact != null && existingContact.addresses.isNotEmpty()) {
-                addAll(existingContact.addresses)
-            }
-            if (isEmpty()) add("")
-        } 
+        } else if (!initialPhone.isNullOrBlank()) {
+            phoneNumbers.clear()
+            phoneNumbers.add(initialPhone)
+        }
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -109,11 +104,11 @@ fun ContactEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         if (contactId == null || contactId == "0") "Create Contact" else "Edit Contact",
                         fontWeight = FontWeight.Bold
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
@@ -195,7 +190,7 @@ fun ContactEditScreen(
                             modifier = Modifier.size(120.dp),
                             shape = CircleShape
                         )
-                        
+
                         Row {
                             if (photoUri != null) {
                                 SmallFloatingActionButton(
@@ -209,9 +204,9 @@ fun ContactEditScreen(
                                 }
                                 Spacer(Modifier.width(8.dp))
                             }
-                            
+
                             SmallFloatingActionButton(
-                                onClick = { 
+                                onClick = {
                                     photoPickerLauncher.launch(
                                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                     )
@@ -232,7 +227,7 @@ fun ContactEditScreen(
                 RivoSectionHeader(title = "Account")
                 RivoExpressiveCard {
                     var showPicker by remember { mutableStateOf(false) }
-                    
+
                     Surface(
                         onClick = { showPicker = true },
                         shape = RoundedCornerShape(16.dp),
@@ -292,7 +287,7 @@ fun ContactEditScreen(
                                     colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                 )
                             }
-                            
+
                             availableAccounts.forEach { account ->
                                 val isSelected = selectedAccount == account
                                 Surface(
@@ -335,7 +330,7 @@ fun ContactEditScreen(
                 }
             }
 
-            
+
             item {
                 RivoSectionHeader(title = "Phone Numbers")
                 RivoExpressiveCard {
@@ -361,7 +356,7 @@ fun ContactEditScreen(
                 }
             }
 
-            
+
             item {
                 RivoSectionHeader(title = "Emails")
                 RivoExpressiveCard {
@@ -387,7 +382,7 @@ fun ContactEditScreen(
                 }
             }
 
-            
+
             item {
                 RivoSectionHeader(title = "Address")
                 RivoExpressiveCard {
@@ -412,7 +407,7 @@ fun ContactEditScreen(
                     }
                 }
             }
-            
+
             item { Spacer(modifier = Modifier.height(100.dp)) }
         }
     }
@@ -447,8 +442,8 @@ fun EditField(
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(
-                    Icons.Default.DeleteOutline, 
-                    null, 
+                    Icons.Default.DeleteOutline,
+                    null,
                     tint = MaterialTheme.colorScheme.error
                 )
             }

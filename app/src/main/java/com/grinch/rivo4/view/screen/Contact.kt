@@ -54,16 +54,16 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>(start = true, style = NoTransitions::class)
+@Destination<RootGraph>(style = NoTransitions::class)
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
-    
+
     var selectedIds by remember { mutableStateOf(setOf<String>()) }
-    
+
     BackHandler(enabled = selectedIds.isNotEmpty()) {
         selectedIds = emptySet()
     }
@@ -147,7 +147,7 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
                     }
                 }
             )
-            
+
             ScrollToTopButton(
                 visible = showButton && selectedIds.isEmpty(),
                 onClick = {
@@ -332,8 +332,8 @@ fun ContactContent(
                     EmptyContactsState()
                 } else {
                     AZListScroll(
-                        contacts = contacts, 
-                        navigator = navigator, 
+                        contacts = contacts,
+                        navigator = navigator,
                         listState = listState,
                         selectedIds = selectedIds,
                         onToggleSelection = onToggleSelection,

@@ -466,7 +466,6 @@ fun ExpressiveCallScreen(
                     }
                 }
             } else {
-
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -477,24 +476,6 @@ fun ExpressiveCallScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        CallActionButton(
-                            icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                            isActive = isMuted,
-                            label = "Mute"
-                        ) {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            CallService.mute(!isMuted)
-                        }
-
-                        CallActionButton(
-                            icon = Icons.AutoMirrored.Filled.VolumeUp,
-                            isActive = isSpeakerOn,
-                            label = "Speaker"
-                        ) {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            CallService.setSpeaker(!isSpeakerOn)
-                        }
-
                         CallActionButton(
                             icon = Icons.Default.Message,
                             isActive = false,
@@ -1031,7 +1012,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 contentDescription = null,
                 tint = if (offsetX.value > 10f) Color(0xFF4CAF50) 
                        else if (offsetX.value < -10f) Color(0xFFF44336) 
-                       else Color(0xFF4CAF50), // Default green as in screenshot handle
+                       else Color.Black, // Default green as in screenshot handle
                 modifier = Modifier.size(36.dp)
             )
         }
