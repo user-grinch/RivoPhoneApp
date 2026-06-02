@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.view.components.*
@@ -75,9 +77,11 @@ fun CallLogFullScreen(
 
     val filteredLogsByContact = remember(allLogs, contactId, phoneNumber) {
         if (contactId == null && phoneNumber == null) allLogs
-        else allLogs.filter { log ->
-            (contactId != null && contactId != "null" && log.contactId == contactId) || 
-            (phoneNumber != null && log.number.replace(" ", "").contains(phoneNumber.replace(" ", "")))
+        else {
+            allLogs.filter { log ->
+                (contactId != null && contactId != "null" && log.contactId == contactId) || 
+                (phoneNumber != null && areNumbersEqual(log.number, phoneNumber))
+            }
         }
     }
 

@@ -11,19 +11,34 @@ import android.content.Context
 import android.content.ComponentName
 import android.content.ContentValues
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
+import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
 
 class CallLogRepository(
     private val contentResolver: ContentResolver,
-    private val context: Context
+    private val context: Context,
+    private val contactsRepo: IContactsRepository
 ) : ICallLogRepository {
 
     private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
-
     private val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
 
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
+        
+        // Optimization: Fetch all contacts once for quick lookup
+        val allContacts = try { contactsRepo.getContacts() } catch (e: Exception) { emptyList() }
+        val contactMap = mutableMapOf<String, Contact>()
+        allContacts.forEach { contact ->
+            contact.phoneNumbers.forEach { number ->
+                val normalized = normalizePhoneNumber(number)
+                // Use last 10 digits as key for flexible matching (local vs international)
+                val key = if (normalized.length >= 10) normalized.takeLast(10) else normalized
+                contactMap[key] = contact
+            }
+        }
 
         val baseProjection = mutableListOf(
             CallLog.Calls._ID,
@@ -36,7 +51,6 @@ class CallLogRepository(
             CallLog.Calls.DURATION
         )
 
-        // Try adding all possible SIM info columns
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             baseProjection.add("phone_account_label")
         }
@@ -52,9 +66,8 @@ class CallLogRepository(
                 "${CallLog.Calls.DATE} DESC"
             )
 
-            cursor?.use { parseCursor(it, callLogs) }
+            cursor?.use { parseCursor(it, callLogs, contactMap) }
         } catch (e: Exception) {
-            // If the above fails due to "phone_account_label" or other columns, try a safer subset
             try {
                 val safeProjection = arrayOf(
                     CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
@@ -69,7 +82,7 @@ class CallLogRepository(
                     null,
                     "${CallLog.Calls.DATE} DESC"
                 )
-                cursor?.use { parseCursor(it, callLogs) }
+                cursor?.use { parseCursor(it, callLogs, contactMap) }
             } catch (e2: Exception) {
                 e2.printStackTrace()
             }
@@ -78,22 +91,7 @@ class CallLogRepository(
         return callLogs
     }
 
-    override fun saveCallLog(entry: CallLogEntry) {
-        val values = ContentValues().apply {
-            put(CallLog.Calls.NUMBER, entry.number)
-            put(CallLog.Calls.TYPE, entry.type)
-            put(CallLog.Calls.DATE, entry.date)
-            put(CallLog.Calls.DURATION, entry.duration)
-            put(CallLog.Calls.NEW, 1)
-        }
-        try {
-            contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>) {
+    private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>) {
         val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
         val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
         val cachedNameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
@@ -122,10 +120,9 @@ class CallLogRepository(
             val isBlocked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 type == CallLog.Calls.BLOCKED_TYPE || type == CallLog.Calls.REJECTED_TYPE
             } else {
-                type == 6 // REJECTED_TYPE fallback
+                type == 6 
             }
             
-            // If label is missing, try to resolve it from account ID
             if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
                 val accountId = cursor.getString(accountIdIdx)
                 val componentStr = cursor.getString(componentNameIdx)
@@ -145,18 +142,22 @@ class CallLogRepository(
 
             if (simLabel?.isEmpty() == true) simLabel = null
 
-            val displayName = cursor.getString(cachedNameIdx)
-            val photoUri = cursor.getString(cachedPhotoIdx)
-            val lookupUri = cursor.getString(cachedLookupIdx)
+            // Enrich with contact data
+            val normalizedNum = normalizePhoneNumber(number)
+            val lookupKey = if (normalizedNum.length >= 10) normalizedNum.takeLast(10) else normalizedNum
+            val matchedContact = contactMap[lookupKey]
             
-            val contactId = lookupUri?.let {
+            val displayName = matchedContact?.name ?: cursor.getString(cachedNameIdx)
+            val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
+            val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
                 try {
                     Uri.parse(it).lastPathSegment
                 } catch (e: Exception) { null }
             }
 
             val lastEntry = tempLogs.lastOrNull()
-            if (lastEntry != null && lastEntry.number == number) {
+            if (lastEntry != null && lastEntry.number == number && lastEntry.type == type) {
+                // Grouping consecutive same number and type
                 tempLogs[tempLogs.size - 1] = lastEntry.copy(
                     types = lastEntry.types + type,
                     ids = lastEntry.ids + callId
@@ -181,6 +182,21 @@ class CallLogRepository(
             }
         }
         callLogs.addAll(tempLogs)
+    }
+
+    override fun saveCallLog(entry: CallLogEntry) {
+        val values = ContentValues().apply {
+            put(CallLog.Calls.NUMBER, entry.number)
+            put(CallLog.Calls.TYPE, entry.type)
+            put(CallLog.Calls.DATE, entry.date)
+            put(CallLog.Calls.DURATION, entry.duration)
+            put(CallLog.Calls.NEW, 1)
+        }
+        try {
+            contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun deleteCallLog(number: String) {

@@ -41,6 +41,8 @@ import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.QrCodeUtils
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -115,8 +117,8 @@ fun ContactDetailsScreen(
 
     val contactLogs = remember(fullContact, phoneNumber, allLogs) {
         allLogs.filter { log ->
-            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num -> log.number.replace(" ", "").contains(num.replace(" ", "")) })) ||
-                    (phoneNumber != null && log.number.replace(" ", "").contains(phoneNumber.replace(" ", "")))
+            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num -> areNumbersEqual(log.number, num) })) ||
+                    (phoneNumber != null && areNumbersEqual(log.number, phoneNumber))
         }
     }
 
@@ -512,10 +514,11 @@ fun ContactDetailsScreen(
                                     }
 
                                     if (contactLogs.size > 3) {
+                                        val finalContactId = if (fullContact?.id != null) fullContact!!.id else if (contactId != "null") contactId else null
                                         TextButton(
                                             onClick = {
                                                 navigator.navigate(CallLogFullScreenDestination(
-                                                    contactId = contactId,
+                                                    contactId = finalContactId,
                                                     phoneNumber = phoneNumber
                                                 ))
                                             },
