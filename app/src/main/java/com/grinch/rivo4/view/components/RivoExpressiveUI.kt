@@ -24,6 +24,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -205,6 +206,7 @@ fun RivoListItem(
     trailingIcon: ImageVector? = null,
     avatarName: String? = null,
     photoUri: String? = null,
+    avatarShape: Shape? = null,
     badgeIcon: ImageVector? = null,
     badgeColor: Color? = null,
     headlineColor: Color = Color.Unspecified,
@@ -251,6 +253,7 @@ fun RivoListItem(
                     photoUri = photoUri,
                     badgeIcon = badgeIcon,
                     badgeColor = badgeColor,
+                    shape = avatarShape,
                     modifier = Modifier.size(avatarSize)
                 )
                 Spacer(modifier = Modifier.width(16.dp))

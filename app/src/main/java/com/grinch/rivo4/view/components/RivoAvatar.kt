@@ -35,7 +35,7 @@ fun RivoAvatar(
     photoUri: String? = null,
     icon: ImageVector? = null,
     modifier: Modifier = Modifier,
-    shape: Shape = CircleShape,
+    shape: Shape? = null,
     badgeIcon: ImageVector? = null,
     badgeColor: Color? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge
@@ -47,7 +47,7 @@ fun RivoAvatar(
     val showFirstLetter = prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)
     val colorfulAvatars = prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)
     val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
-    val avatarShape = when (shapeVal) {
+    val avatarShape = shape ?: when (shapeVal) {
         1 -> CircleShape
         2 -> RoundedCornerShape(0.dp)
         else -> RoundedCornerShape(12.dp)

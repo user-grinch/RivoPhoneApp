@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -22,11 +23,13 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 data class Contributor(
     val name: String,
     val role: String,
-    val githubUrl: String? = null
+    val githubUrl: String? = null,
+    val imageAsset: String? = null
 )
 
 val appContributors = listOf(
-    Contributor("Grinch_", "Lead Developer", "https://github.com/user-grinch"),
+    Contributor("Grinch_", "Lead Developer", "https://github.com/user-grinch", "grinch.jpeg"),
+    Contributor("Hamma", "Developer", "https://github.com/MoHamed-B-M", "hamma.jpeg")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +64,9 @@ fun ContributorsScreen(
                         RivoListItem(
                             headline = contributor.name,
                             supporting = contributor.role,
+                            avatarName = contributor.name,
+                            photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
+                            avatarShape = CircleShape,
                             trailingIcon = if (contributor.githubUrl != null) Icons.Outlined.Launch else null,
                             onClick = {
                                 contributor.githubUrl?.let { openLink(context, it) }
