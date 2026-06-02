@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
+import android.telephony.PhoneNumberUtils
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -56,14 +57,31 @@ fun formatDuration(durationSeconds: Long): String {
     return DateUtils.formatElapsedTime(durationSeconds)
 }
 
-fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null) {
+fun formatPhoneNumber(number: String): String {
+    return PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
+}
+
+fun normalizePhoneNumber(number: String): String {
+    return PhoneNumberUtils.normalizeNumber(number)
+}
+
+fun areNumbersEqual(num1: String?, num2: String?): Boolean {
+    if (num1 == null || num2 == null) return false
+    return PhoneNumberUtils.compare(num1, num2)
+}
+
+fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     val uri = Uri.fromParts("tel", number, null)
     val extras = Bundle()
     
+    val prefs = PreferenceManager(context)
+    if (contactId != null) {
+        prefs.setLastUsedNumber(contactId, number)
+    }
+
     var preferredHandle = accountHandle
     if (preferredHandle == null) {
-        val prefs = PreferenceManager(context)
         val defaultSim = prefs.getInt("default_sim", 0)
         if (defaultSim > 0) {
             val accounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {

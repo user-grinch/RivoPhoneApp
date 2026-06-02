@@ -48,6 +48,14 @@ class PreferenceManager(context: Context) {
         prefs.edit().putInt(key, value).apply()
     }
 
+    fun setLastUsedNumber(contactId: String, number: String) {
+        prefs.edit().putString("last_used_number_$contactId", number).apply()
+    }
+
+    fun getLastUsedNumber(contactId: String): String? {
+        return prefs.getString("last_used_number_$contactId", null)
+    }
+
     companion object {
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
@@ -97,5 +105,6 @@ class PreferenceManager(context: Context) {
         const val KEY_SEARCH_MATCH_MODE = "search_match_mode" // 0: T9 & Contains, 1: Starts With, 2: Exact
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
         const val KEY_CUSTOM_INCOMING_CALL_UI = "custom_incoming_call_ui"
+        const val KEY_SHOW_CARDS = "show_cards"
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -39,7 +40,6 @@ fun AZListScroll(
 ) {
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val showDividers = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_DIVIDERS, true)
 
     val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
     val hapticScrollEnabled = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
@@ -127,9 +127,9 @@ fun AZListScroll(
                             contactsForChar.forEachIndexed { index, contact ->
                                 RivoListItem(
                                     headline = contact.name.ifEmpty {
-                                        contact.phoneNumbers.firstOrNull() ?: "Unknown"
+                                        contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: "Unknown"
                                     },
-                                    supporting = contact.phoneNumbers.firstOrNull(),
+                                    supporting = contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) },
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,
                                     onClick = {
@@ -144,11 +144,8 @@ fun AZListScroll(
                                     },
                                     selected = selectedIds.contains(contact.id)
                                 )
-                                if (showDividers && index < contactsForChar.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-                                    )
+                                if (index < contactsForChar.size - 1) {
+                                    RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                 }
                             }
                         }

@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectListItem
@@ -63,6 +64,7 @@ fun InterfaceScreen(
     var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
     var roundAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)) }
     var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
+    var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
@@ -122,7 +124,7 @@ fun InterfaceScreen(
                         )
                         
                         if (!dynamicColors) {
-                            HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            RivoDivider(Modifier.padding(horizontal = 16.dp))
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text("Primary Color", style = MaterialTheme.typography.labelLarge)
                                 Spacer(Modifier.height(12.dp))
@@ -149,7 +151,7 @@ fun InterfaceScreen(
                             }
                         }
                         
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = "Amoled dark mode",
                             supporting = "Uses pitch black for UI elements.",
@@ -176,7 +178,7 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, it)
                             }
                         )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = "Use colorful avatars",
                             supporting = "Random colors based on contact name",
@@ -187,7 +189,7 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
                             }
                         )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = "Show picture in avatar",
                             supporting = "Shows the contact picture if available",
@@ -198,7 +200,7 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_PICTURE, it)
                             }
                         )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
                             headline = "Avatar shape",
                             supporting = "Choose the shape for contact avatars",
@@ -229,7 +231,18 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, it)
                             }
                         )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSwitchListItem(
+                            headline = "Use expressive cards",
+                            supporting = "Wraps list items in styled cards",
+                            leadingIcon = Icons.Outlined.DashboardCustomize,
+                            checked = showCards,
+                            onCheckedChange = {
+                                showCards = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_CARDS, it)
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
                             headline = "Transition animation",
                             supporting = "Style of animations between screens",
@@ -246,7 +259,7 @@ fun InterfaceScreen(
                                 prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
                             }
                         )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
                             headline = "Search Matching Mode",
                             supporting = "Behavior of contacts filtering algorithm",

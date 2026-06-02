@@ -27,6 +27,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.Whatsapp
+import androidx.compose.material.icons.rounded.Call
+import com.grinch.rivo4.view.components.RivoDivider
+import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoListItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,6 +50,7 @@ import androidx.navigation.NavController
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.SimPickerDialog
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.components.tiles.SingleTile
@@ -94,6 +100,8 @@ fun DialPadScreen(
     }
 
     var showSimPicker by remember { mutableStateOf(false) }
+    var pendingNumber by remember { mutableStateOf("") }
+    var pendingContactId by remember { mutableStateOf<String?>(null) }
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
     val searchResults by remember(number, allContacts, t9Enabled) {
@@ -120,7 +128,29 @@ fun DialPadScreen(
                 if (accounts.size > 1 && defaultSim == 0) {
                     showSimPicker = true
                 } else {
-                    makeCall(context, number)
+                    makeCall(context, pendingNumber, contactId = pendingContactId)
+                }
+            } else {
+                makeCall(context, pendingNumber, contactId = pendingContactId)
+            }
+        }
+    }
+
+    val performCall = { targetNumber: String, contactId: String? ->
+        if (targetNumber.isNotEmpty()) {
+            pendingNumber = targetNumber
+            pendingContactId = contactId
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    val defaultSim = prefs.getInt("default_sim", 0)
+                    val accounts = telecomManager.callCapablePhoneAccounts
+                    if (accounts.size > 1 && defaultSim == 0) {
+                        showSimPicker = true
+                    } else {
+                        makeCall(context, targetNumber, contactId = contactId)
+                    }
+                } else {
+                    makeCall(context, targetNumber, contactId = contactId)
                 }
             } else {
                 makeCall(context, number)
@@ -132,7 +162,7 @@ fun DialPadScreen(
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                makeCall(context, number, handle)
+                makeCall(context, pendingNumber, handle, contactId = pendingContactId)
                 showSimPicker = false
             }
         )
@@ -153,9 +183,7 @@ fun DialPadScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom
+                .fillMaxSize()
         ) {
 
             Column(
@@ -198,47 +226,61 @@ fun DialPadScreen(
                 )
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp, start = 4.dp, end = 4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                val keys = listOf(
-                    listOf("1", "2", "3"),
-                    listOf("4", "5", "6"),
-                    listOf("7", "8", "9"),
-                    listOf("*", "0", "#")
-                )
-
-                val subKeys = mapOf(
-                    "1" to "   ", "2" to "ABC", "3" to "DEF", "4" to "GHI", "5" to "JKL",
-                    "6" to "MNO", "7" to "PQRS", "8" to "TUV", "9" to "WXYZ", "0" to "+"
-                )
-
-                keys.forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        row.forEach { key ->
-                            DialPadKey(
-                                number = key,
-                                letters = subKeys[key] ?: "",
-                                toneGenerator = toneGenerator,
-                                context = context,
-                                onClick = { digit -> number += digit },
-                                onLongClick = { digit ->
-                                    if (speedDialEnabled && number.isEmpty()) {
-                                        val mapping = prefs.getString("speed_dial_$digit", null)
-                                        val speedNumber = mapping?.split("|")?.getOrNull(1)
-                                        if (speedNumber != null) {
-                                            makeCall(context, speedNumber)
+                        Surface(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            shape = when {
+                                isFirst && isLast -> RoundedCornerShape(28.dp)
+                                isFirst -> RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+                                isLast -> RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+                                else -> androidx.compose.ui.graphics.RectangleShape
+                            },
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(
+                                    top = if (isFirst) 8.dp else 0.dp,
+                                    bottom = if (isLast) 8.dp else 0.dp
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        RivoListItem(
+                                            headline = contact.name,
+                                            supporting = contactNumber?.let { formatPhoneNumber(it) },
+                                            avatarName = contact.name,
+                                            photoUri = contact.photoUri,
+                                            onClick = {
+                                                navigator.navigate(
+                                                    ContactDetailsScreenDestination(
+                                                        contactId = contact.id
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
+                                    contactNumber?.let { num ->
+                                        IconButton(
+                                            onClick = { performCall(num, contact.id) },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Rounded.Call,
+                                                contentDescription = "Call ${contact.name}",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
                                         }
                                     }
                                 }
-                            )
+                                if (!isLast) {
+                                    RivoDivider(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -313,14 +355,13 @@ fun DialPadScreen(
                     Box(modifier = Modifier.size(72.dp), contentAlignment = Alignment.Center) {
                         if (number.isNotEmpty()) {
                             DialerActionExpressive(
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    number = ""
-                                },
-                                onClick = { number = number.dropLast(1) },
-                                icon = Icons.Default.Backspace,
-                                contentDescription = "Backspace",
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                                onClick = { performCall(number, null) },
+                                icon = Icons.Default.Call,
+                                contentDescription = "Call",
+                                containerColor = Color(0xFF4CAF50),
+                                contentColor = Color.White,
+                                modifier = Modifier.width(100.dp).height(72.dp),
+                                isLarge = true
                             )
                         }
                     }

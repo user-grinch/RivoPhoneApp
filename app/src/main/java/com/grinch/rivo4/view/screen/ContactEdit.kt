@@ -33,6 +33,7 @@ import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +49,18 @@ fun ContactEditScreen(
     val allContacts by contactsVM.allContacts.collectAsState()
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
     
-    val existingContact = remember(contactId, allContacts) {
+    var name by remember { mutableStateOf(initialName ?: "") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
+    var selectedAccount by remember { mutableStateOf<Account?>(null) }
+    
+    val phoneNumbers = remember { mutableStateListOf<String>("") }
+    val emails = remember { mutableStateListOf<String>("") }
+    val addresses = remember { mutableStateListOf<String>("") }
+    
+    val scope = rememberCoroutineScope()
+    var isSaving by remember { mutableStateOf(false) }
+
+    LaunchedEffect(contactId) {
         if (contactId != null && contactId != "0" && contactId != "null") {
             allContacts.find { it.id == contactId }
         } else null
@@ -121,29 +133,40 @@ fun ContactEditScreen(
                             Icon(Icons.Default.Delete, null)
                         }
                     }
-                    Button(
-                        onClick = {
-                            val contactToSave = Contact(
-                                id = contactId ?: "0",
-                                name = name,
-                                phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
-                                emails = emails.filter { it.isNotBlank() },
-                                addresses = addresses.filter { it.isNotBlank() },
-                                photoUri = photoUri,
-                                accountName = selectedAccount?.name,
-                                accountType = selectedAccount?.type
-                            )
-                            contactsVM.saveContact(contactToSave)
-                            navigator.navigateUp()
-                        },
-                        enabled = name.isNotBlank() && phoneNumbers.any { it.isNotBlank() },
-                        modifier = Modifier.padding(end = 8.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        elevation = ButtonDefaults.buttonElevation(0.dp)
-                    ) {
-                        Icon(Icons.Default.Check, null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Save")
+                    if (isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp).padding(end = 16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Button(
+                            onClick = {
+                                isSaving = true
+                                scope.launch {
+                                    val contactToSave = Contact(
+                                        id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
+                                        name = name,
+                                        phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
+                                        emails = emails.filter { it.isNotBlank() },
+                                        addresses = addresses.filter { it.isNotBlank() },
+                                        photoUri = photoUri,
+                                        accountName = selectedAccount?.name,
+                                        accountType = selectedAccount?.type
+                                    )
+                                    contactsVM.saveContact(contactToSave)
+                                    navigator.navigateUp()
+                                }
+                            },
+                            enabled = name.isNotBlank() && phoneNumbers.any { it.isNotBlank() },
+                            modifier = Modifier.padding(end = 8.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            elevation = ButtonDefaults.buttonElevation(0.dp)
+                        ) {
+                            Icon(Icons.Default.Check, null)
+                            Spacer(Modifier.width(8.dp))
+                            Text("Save")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

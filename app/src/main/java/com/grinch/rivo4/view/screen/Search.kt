@@ -23,6 +23,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -169,45 +172,134 @@ fun ContactSearchContent(
             )
         }
 
-        when {
-            contacts.isEmpty() -> RivoLoadingIndicatorView()
-            query.isBlank() -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        "Start typing to search contacts",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            filteredContacts.isEmpty() -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        "No results found",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            else -> {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    item {
-                        RivoSectionHeader(title = "Search Results")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        RivoExpressiveCard {
-                            filteredContacts.forEachIndexed { index, contact ->
-                                RivoListItem(
-                                    headline = contact.name,
-                                    supporting = contact.phoneNumbers.firstOrNull(),
-                                    avatarName = contact.name,
-                                    photoUri = contact.photoUri,
-                                    onClick = {
-                                        navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+        Box(modifier = Modifier.weight(1f)) {
+            AnimatedContent(
+                targetState = when {
+                    contacts.isEmpty() -> 0
+                    query.isBlank() -> 1
+                    filteredContacts.isEmpty() -> 2
+                    else -> 3
+                },
+                transitionSpec = {
+                    fadeIn() togetherWith fadeOut()
+                },
+                label = "SearchContentState"
+            ) { state ->
+                when (state) {
+                    0 -> RivoLoadingIndicatorView()
+                    1 -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(32.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                modifier = Modifier.size(120.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        Icons.Default.Search,
+                                        null,
+                                        modifier = Modifier.size(48.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(24.dp))
+                            Text(
+                                "Search Contacts",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                "Type a name or number to start searching",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                        }
+                    }
+                    2 -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "No results found",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    "Try a different name or number",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                    3 -> {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(bottom = 100.dp)
+                        ) {
+                            item {
+                                RivoSectionHeader(title = "Search Results", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                            }
+                            
+                            itemsIndexed(filteredContacts) { index, contact ->
+                                val isFirst = index == 0
+                                val isLast = index == filteredContacts.size - 1
+                                
+                                Surface(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    shape = when {
+                                        isFirst && isLast -> RoundedCornerShape(28.dp)
+                                        isFirst -> RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+                                        isLast -> RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+                                        else -> androidx.compose.ui.graphics.RectangleShape
+                                    },
+                                    color = MaterialTheme.colorScheme.surfaceContainerLow
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(
+                                            top = if (isFirst) 8.dp else 0.dp,
+                                            bottom = if (isLast) 8.dp else 0.dp
+                                        )
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Box(modifier = Modifier.weight(1f)) {
+                                                RivoListItem(
+                                                    headline = contact.name,
+                                                    supporting = contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) },
+                                                    avatarName = contact.name,
+                                                    photoUri = contact.photoUri,
+                                                    onClick = {
+                                                        navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                    }
+                                                )
+                                            }
+                                            contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                IconButton(
+                                                    onClick = { makeCall(context, num, contactId = contact.id) },
+                                                    modifier = Modifier.padding(end = 8.dp)
+                                                ) {
+                                                    Icon(
+                                                        Icons.Rounded.Call,
+                                                        null,
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        if (!isLast) {
+                                            RivoDivider(
+                                                modifier = Modifier.padding(horizontal = 16.dp),
+                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                            )
+                                        }
                                     }
                                 )
                                 if (index < filteredContacts.size - 1) {

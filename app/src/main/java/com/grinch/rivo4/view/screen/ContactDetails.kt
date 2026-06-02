@@ -41,6 +41,9 @@ import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.QrCodeUtils
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -87,6 +90,7 @@ fun ContactDetailsScreen(
     var showNumberPicker by remember { mutableStateOf(false) }
     var isSmsAction by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf<String?>(null) }
+    var pendingContactId by remember { mutableStateOf<String?>(null) }
     var showQrDialog by remember { mutableStateOf(false) }
 
     val contactLogs = remember(fullContact, phoneNumber, allLogs) {
@@ -124,13 +128,14 @@ fun ContactDetailsScreen(
             val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
             if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
                 pendingNumber = number
+                pendingContactId = fullContact?.id
                 isSmsAction = false
                 showSimPicker = true
             } else {
-                makeCall(context, number)
+                makeCall(context, number, contactId = fullContact?.id)
             }
         } else {
-            makeCall(context, number)
+            makeCall(context, number, contactId = fullContact?.id)
         }
     }
 
@@ -161,6 +166,7 @@ fun ContactDetailsScreen(
     }
 
     if (showNumberPicker && fullContact != null) {
+        val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
         RivoDialog(
             onDismissRequest = { showNumberPicker = false },
             title = "Select Number",
@@ -172,22 +178,28 @@ fun ContactDetailsScreen(
             }
         ) {
             fullContact!!.phoneNumbers.forEach { selectedNumber ->
+                val isRecent = lastUsed != null && areNumbersEqual(lastUsed, selectedNumber)
                 Surface(
                     onClick = {
                         showNumberPicker = false
                         if (isSmsAction) initiateSms(selectedNumber) else initiateCall(selectedNumber)
                     },
                     shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Phone, null, tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Default.Phone, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.width(16.dp))
-                        Text(selectedNumber, style = MaterialTheme.typography.bodyLarge)
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(formatPhoneNumber(selectedNumber), style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
+                            if (isRecent) {
+                                Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                            }
+                        }
                     }
                 }
             }
@@ -198,13 +210,7 @@ fun ContactDetailsScreen(
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                if (isSmsAction) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${pendingNumber!!}"))
-                    intent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", handle)
-                    context.startActivity(intent)
-                } else {
-                    makeCall(context, pendingNumber!!, handle)
-                }
+                makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
                 showSimPicker = false
             }
         )
@@ -252,7 +258,7 @@ fun ContactDetailsScreen(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    displayPhone,
+                    formatPhoneNumber(displayPhone),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -399,17 +405,20 @@ fun ContactDetailsScreen(
                     }
 
                     item {
+                        val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
                         RivoExpressiveCard(title = "Contact Info", icon = Icons.Default.Info) {
                             if (fullContact != null) {
                                 fullContact!!.phoneNumbers.forEachIndexed { index, number ->
+                                    val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     RivoListItem(
-                                        headline = number,
-                                        supporting = "Mobile",
+                                        headline = formatPhoneNumber(number),
+                                        supporting = if (isRecent) "Mobile • Recent" else "Mobile",
                                         leadingIcon = Icons.Default.Phone,
+                                        trailingIcon = if (isRecent) Icons.Default.History else null,
                                         onClick = { initiateCall(number) }
                                     )
                                     if (index < fullContact!!.phoneNumbers.size - 1 || fullContact!!.emails.isNotEmpty()) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 fullContact!!.emails.forEachIndexed { index, email ->
@@ -423,13 +432,13 @@ fun ContactDetailsScreen(
                                         }
                                     )
                                     if (index < fullContact!!.emails.size - 1) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 
                                 if (fullContact != null) {
-                                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    val currentRingtone = fullContact!!.customRingtone?.let { 
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                    val currentRingtone = fullContact!!.customRingtone?.let {
                                         RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
                                     } ?: "Default"
                                     
@@ -449,7 +458,7 @@ fun ContactDetailsScreen(
                                 }
                             } else if (phoneNumber != null && phoneNumber != "Unknown") {
                                 RivoListItem(
-                                    headline = phoneNumber,
+                                    headline = formatPhoneNumber(phoneNumber),
                                     supporting = "Unknown Number",
                                     leadingIcon = Icons.Default.Phone,
                                     onClick = { initiateCall(phoneNumber) }
@@ -470,7 +479,7 @@ fun ContactDetailsScreen(
                                         onClick = { }
                                     )
                                     if (index < fullContact!!.events.size - 1 || fullContact!!.addresses.isNotEmpty()) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 fullContact!!.addresses.forEachIndexed { index, address ->
@@ -484,7 +493,7 @@ fun ContactDetailsScreen(
                                         }
                                     )
                                     if (index < fullContact!!.addresses.size - 1) {
-                                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                             }
@@ -503,7 +512,7 @@ fun ContactDetailsScreen(
                                             }
                                         )
                                         if (index < 2 && index < contactLogs.size - 1) {
-                                            HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
                                         }
                                     }
 
