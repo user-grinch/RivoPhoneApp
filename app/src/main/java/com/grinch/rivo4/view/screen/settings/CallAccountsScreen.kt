@@ -49,7 +49,6 @@ fun CallAccountsScreen(
     var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
-    var incomingCallPopup by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, false)) }
     var incomingCallUI by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)) }
     var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
@@ -133,17 +132,6 @@ fun CallAccountsScreen(
                         onCheckedChange = {
                             proximitySensor = it
                             prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
-                        }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoSwitchListItem(
-                        headline = "Incoming Call Popup",
-                        supporting = "Show incoming calls as a popup when phone is in use",
-                        leadingIcon = Icons.Outlined.PictureInPicture,
-                        checked = incomingCallPopup,
-                        onCheckedChange = {
-                            incomingCallPopup = it
-                            prefs.setBoolean(PreferenceManager.KEY_INCOMING_CALL_POPUP, it)
                         }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))

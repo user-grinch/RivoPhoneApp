@@ -204,6 +204,16 @@ class CallActivity : ComponentActivity() {
         releaseProximityLock()
     }
 
+    override fun onStart() {
+        super.onStart()
+        com.grinch.rivo4.controller.CallService.isActivityVisible.value = true
+    }
+
+    override fun onStop() {
+        super.onStop()
+        com.grinch.rivo4.controller.CallService.isActivityVisible.value = false
+    }
+
     private fun acquireProximityLock() {
         if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
             proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
@@ -952,6 +962,17 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val maxDrag = with(density) { 120.dp.toPx() }
     val triggerThreshold = maxDrag * 0.7f
 
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -988,6 +1009,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             modifier = Modifier
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                 .size(90.dp)
+                .scale(if (offsetX.value == 0f) scale else 1f)
                 .padding(4.dp)
                 .clip(CircleShape)
                 .background(Color.White)
@@ -997,11 +1019,19 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                             coroutineScope.launch {
                                 when {
                                     offsetX.value > triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        } else {
+                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        }
                                         onAnswer()
                                     }
                                     offsetX.value < -triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                        } else {
+                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        }
                                         onDecline()
                                     }
                                     else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
@@ -1032,6 +1062,17 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val declineColor = MaterialTheme.colorScheme.error
     val answerColor = Color(0xFF4CAF50)
+
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
@@ -1064,20 +1105,30 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            FilledIconButton(
-                onClick = onAnswer,
-                shape = CircleShape,
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = answerColor,
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.size(72.dp)
-            ) {
-                Icon(
-                    Icons.Default.Call,
-                    contentDescription = "Answer",
-                    modifier = Modifier.size(32.dp)
+            Box(contentAlignment = Alignment.Center) {
+                // Pulsing background for answer button
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .scale(scale * 1.2f)
+                        .background(answerColor.copy(alpha = 0.2f), CircleShape)
                 )
+                
+                FilledIconButton(
+                    onClick = onAnswer,
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = answerColor,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.size(72.dp).scale(scale)
+                ) {
+                    Icon(
+                        Icons.Default.Call,
+                        contentDescription = "Answer",
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
