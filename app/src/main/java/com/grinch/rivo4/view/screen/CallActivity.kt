@@ -780,6 +780,18 @@ fun ExpressiveBackground(photoUri: String?) {
 
 @Composable
 fun PulsingAvatar(photoUri: String?) {
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val avatarShape = remember(settingsState) {
+        val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
+        when (shapeVal) {
+            0 -> RoundedCornerShape(20.dp)
+            1 -> CircleShape
+            2 -> RoundedCornerShape(0.dp)
+            else -> CircleShape
+        }
+    }
+
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -807,14 +819,14 @@ fun PulsingAvatar(photoUri: String?) {
             modifier = Modifier
                 .size(160.dp)
                 .scale(scale)
-                .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha), CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha), avatarShape)
         )
         // Second pulsing ring
         Box(
             modifier = Modifier
                 .size(180.dp)
                 .scale(scale * 1.1f)
-                .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), CircleShape)
+                .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), avatarShape)
         )
         
         HeroAvatar(photoUri)
@@ -874,10 +886,22 @@ fun FloatingParticles() {
 
 @Composable
 fun HeroAvatar(photoUri: String?) {
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val avatarShape = remember(settingsState) {
+        val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
+        when (shapeVal) {
+            0 -> RoundedCornerShape(20.dp)
+            1 -> CircleShape
+            2 -> RoundedCornerShape(0.dp)
+            else -> CircleShape
+        }
+    }
+
     Box(
         modifier = Modifier
             .size(200.dp)
-            .clip(CircleShape)
+            .clip(avatarShape)
             .background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
@@ -885,7 +909,7 @@ fun HeroAvatar(photoUri: String?) {
             AsyncImage(
                 model = photoUri,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize().clip(CircleShape),
+                modifier = Modifier.fillMaxSize().clip(avatarShape),
                 contentScale = ContentScale.Crop
             )
         } else {

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.controller.util.formatTime
 import com.grinch.rivo4.modal.data.CallLogEntry
 
 @Composable
@@ -136,15 +137,15 @@ fun CallLogTile(
                     supporting = buildString {
                         if (log.name != null && log.name != log.number) {
                             append(formatPhoneNumber(log.number))
-                            if (log.type == CallLog.Calls.MISSED_TYPE) {
-                                append(" • ")
-                                append(formatDate(log.date))
-                            }
-                        } else if (log.type == CallLog.Calls.MISSED_TYPE) {
-                            append(formatDate(log.date))
                         }
                     },
-                    supporting2 = if (showSim) log.simLabel else null,
+                    supporting2 = buildString {
+                        if (showSim && log.simLabel != null) {
+                            append(log.simLabel)
+                            append(" • ")
+                        }
+                        append(formatTime(log.date))
+                    },
                     avatarName = log.name ?: formatPhoneNumber(log.number),
                     photoUri = log.photoUri,
                     badgeIcon = icon,

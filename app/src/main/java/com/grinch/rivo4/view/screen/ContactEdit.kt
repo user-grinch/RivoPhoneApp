@@ -187,8 +187,7 @@ fun ContactEditScreen(
                         RivoAvatar(
                             name = name,
                             photoUri = photoUri,
-                            modifier = Modifier.size(120.dp),
-                            shape = CircleShape
+                            modifier = Modifier.size(120.dp)
                         )
 
                         Row {

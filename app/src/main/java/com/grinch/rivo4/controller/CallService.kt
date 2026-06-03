@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -17,6 +19,7 @@ import android.telecom.InCallService
 import android.telecom.TelecomManager
 import android.telecom.VideoProfile
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.IconCompat
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.CallActivity
@@ -37,6 +40,17 @@ class CallService : InCallService() {
     private val preferenceManager: PreferenceManager by inject()
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var redialCount = 0
+
+    private fun getContactBitmap(photoUri: String?): Bitmap? {
+        if (photoUri == null) return null
+        return try {
+            val uri = Uri.parse(photoUri)
+            val inputStream = contentResolver.openInputStream(uri)
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     companion object {
         private const val CHANNEL_ID = "call_channel"
@@ -199,6 +213,7 @@ class CallService : InCallService() {
         } else null
         
         val contactName = contact?.name ?: number.ifEmpty { "Unknown Number" }
+        val contactPhoto = getContactBitmap(contact?.photoUri)
 
         val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
         val simLabel = call.details.accountHandle?.let {
@@ -214,6 +229,7 @@ class CallService : InCallService() {
             .setSmallIcon(android.R.drawable.sym_call_missed)
             .setContentTitle("Missed Call")
             .setContentText("Missed call from $contactName at $timeString${if (simLabel != null) " via $simLabel" else ""}")
+            .setLargeIcon(contactPhoto)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(pendingIntent)
@@ -333,6 +349,8 @@ class CallService : InCallService() {
             number.isNotEmpty() -> number
             else -> "Unknown Number"
         }
+        
+        val contactPhoto = getContactBitmap(contact?.photoUri)
 
         val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
         val accountHandle = call.details.accountHandle
@@ -356,10 +374,14 @@ class CallService : InCallService() {
         val speakerIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_SPEAKER" }
         val speakerPendingIntent = PendingIntent.getService(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val person = androidx.core.app.Person.Builder()
+        val personBuilder = androidx.core.app.Person.Builder()
             .setName(contactName)
             .setImportant(true)
-            .build()
+        
+        if (contactPhoto != null) {
+            personBuilder.setIcon(IconCompat.createWithBitmap(contactPhoto))
+        }
+        val person = personBuilder.build()
 
         val isSpeaker = _audioState.value?.route == CallAudioState.ROUTE_SPEAKER
 

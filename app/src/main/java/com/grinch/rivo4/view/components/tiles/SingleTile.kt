@@ -39,8 +39,7 @@ fun SingleTile(
                 name = title,
                 photoUri = photoUri,
                 icon = icon,
-                modifier = Modifier.size(52.dp),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.size(52.dp)
             )
             
             Column(

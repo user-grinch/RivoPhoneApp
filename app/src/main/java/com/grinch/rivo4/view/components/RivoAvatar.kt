@@ -47,10 +47,11 @@ fun RivoAvatar(
     val showFirstLetter = prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)
     val colorfulAvatars = prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)
     val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
-    val avatarShape = shape ?: when (shapeVal) {
-        1 -> CircleShape
-        2 -> RoundedCornerShape(0.dp)
-        else -> RoundedCornerShape(12.dp)
+    val avatarShape = when (shapeVal) {
+        0 -> RoundedCornerShape(16.dp) // Squircle
+        1 -> CircleShape // Circle
+        2 -> RoundedCornerShape(0.dp) // Square
+        else -> CircleShape
     }
 
     val avatarColors = listOf(

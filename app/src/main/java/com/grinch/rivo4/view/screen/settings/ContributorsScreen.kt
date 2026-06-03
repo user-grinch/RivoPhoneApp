@@ -66,7 +66,6 @@ fun ContributorsScreen(
                             supporting = contributor.role,
                             avatarName = contributor.name,
                             photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
-                            avatarShape = CircleShape,
                             trailingIcon = if (contributor.githubUrl != null) Icons.Outlined.Launch else null,
                             onClick = {
                                 contributor.githubUrl?.let { openLink(context, it) }

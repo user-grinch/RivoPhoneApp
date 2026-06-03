@@ -429,7 +429,6 @@ fun FavoriteCircleItem(
             name = contact.name,
             photoUri = contact.photoUri,
             modifier = Modifier.size(64.dp),
-            shape = CircleShape,
             badgeIcon = Icons.Default.Call
         )
         Text(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -218,6 +219,16 @@ fun RivoListItem(
     val verticalPadding = 6.dp
     val avatarSize = 44.dp
 
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
+    val resolvedShape = avatarShape ?: when (shapeVal) {
+        0 -> RoundedCornerShape(16.dp) // Squircle
+        1 -> CircleShape // Circle
+        2 -> RoundedCornerShape(0.dp) // Square
+        else -> CircleShape
+    }
+
     Surface(
         color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
         modifier = modifier
@@ -238,7 +249,7 @@ fun RivoListItem(
             if (selected) {
                 Surface(
                     modifier = Modifier.size(avatarSize),
-                    shape = RoundedCornerShape(48.dp),
+                    shape = resolvedShape,
                     color = MaterialTheme.colorScheme.primary,
                     shadowElevation = 0.dp
                 ) {
@@ -253,7 +264,7 @@ fun RivoListItem(
                     photoUri = photoUri,
                     badgeIcon = badgeIcon,
                     badgeColor = badgeColor,
-                    shape = avatarShape,
+                    shape = resolvedShape,
                     modifier = Modifier.size(avatarSize)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
