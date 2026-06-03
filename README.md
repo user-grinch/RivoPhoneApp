@@ -32,17 +32,11 @@ RivoPhoneApp is currently under closed testing. You'd need to join this [Google 
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/MoHamed-B-M/RivoPhoneApp/blob/main/images/10.jpg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.jpeg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.jpg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.jpg" width="260">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.jpg" width="260">
-  
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" width="260">
 </p>
 
 ## Features
