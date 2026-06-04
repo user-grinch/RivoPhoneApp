@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.Event
@@ -350,8 +351,8 @@ fun ContactDetailsScreen(
                                 }
                             )
                             RivoExpressiveButton(
-                                icon = Icons.AutoMirrored.Filled.Message,
-                                label = "Text",
+                                icon = Icons.AutoMirrored.Default.Message,
+                                label = "Message",
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     if (fullContact != null && fullContact!!.phoneNumbers.size > 1) {
@@ -421,8 +422,6 @@ fun ContactDetailsScreen(
                                                     } else {
                                                         prefs.setFavoriteNumber(fullContact!!.id, number)
                                                         favoriteNumber = number
-                                                        // Dial to trigger SIM selection for the new favorite
-                                                        callLauncher.dial(number, fullContact)
                                                     }
                                                 }
                                             },

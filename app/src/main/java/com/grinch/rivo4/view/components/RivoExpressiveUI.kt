@@ -179,7 +179,7 @@ fun RivoExpressiveButton(
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Surface(
             onClick = onClick,
-            modifier = Modifier.size(size),
+            modifier = Modifier.height(size).width(size * 1.3f),
             shape = RoundedCornerShape(cornerRadius),
             color = containerColor,
             contentColor = contentColor,
