@@ -57,63 +57,32 @@ fun rememberVideoLauncher(): VideoLauncher {
     }
 
     if (showAppPicker) {
-        RivoDialog(
+        val apps = listOf(
+            "WhatsApp" to "com.whatsapp",
+            "Google Meet" to "com.google.android.apps.meetings",
+            "Zoom" to "us.zoom.videomeetings",
+            "Telegram" to "org.telegram.messenger"
+        )
+
+        RivoSelectionDialog(
             onDismissRequest = { showAppPicker = false },
             title = "Video Call",
-            icon = Icons.Default.VideoCall,
-            dismissButton = {
-                TextButton(onClick = { showAppPicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            val apps = listOf(
-                "WhatsApp" to "com.whatsapp",
-                "Google Meet" to "com.google.android.apps.meetings",
-                "Zoom" to "us.zoom.videomeetings",
-                "Telegram" to "org.telegram.messenger"
-            )
-
-            apps.forEach { (name, pkg) ->
-                Surface(
-                    onClick = {
-                        showAppPicker = false
-                        launchApp(pkg, pendingNumber)
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(name, style = MaterialTheme.typography.bodyLarge)
-                    }
-                }
-            }
-
-            Surface(
-                onClick = {
-                    showAppPicker = false
+            items = apps + ("System Video Call" to "system"),
+            itemLabel = { it.first },
+            onItemSelected = { (name, pkg) ->
+                if (pkg == "system") {
                     val uri = Uri.parse("tel:$pendingNumber")
                     val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                         setDataAndType(uri, "vnd.android.cursor.item/video-chat-address")
                     }
                     context.startActivity(Intent.createChooser(intent, "Video Call"))
-                },
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("System Video Call", style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    launchApp(pkg, pendingNumber)
                 }
-            }
-        }
+            },
+            icon = Icons.Default.VideoCall,
+            itemIcon = { Icons.Default.VideoCall }
+        )
     }
 
     return videoLauncher

@@ -18,8 +18,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -597,4 +599,112 @@ fun RivoFilterChip(
         border = null,
         elevation = FilterChipDefaults.filterChipElevation(elevation = 0.dp)
     )
+}
+
+@Composable
+fun RivoConfirmationDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+    title: String,
+    message: String,
+    confirmLabel: String = "Confirm",
+    dismissLabel: String = "Cancel",
+    icon: ImageVector? = null,
+    isDestructive: Boolean = false
+) {
+    RivoDialog(
+        onDismissRequest = onDismissRequest,
+        title = title,
+        icon = icon,
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                    onDismissRequest()
+                },
+                colors = if (isDestructive) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error) else ButtonDefaults.buttonColors(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(confirmLabel)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(dismissLabel)
+            }
+        }
+    ) {
+        Text(
+            message,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun <T> RivoSelectionDialog(
+    onDismissRequest: () -> Unit,
+    title: String,
+    items: List<T>,
+    itemLabel: (T) -> String,
+    onItemSelected: (T) -> Unit,
+    itemSupporting: ((T) -> String)? = null,
+    icon: ImageVector? = null,
+    itemIcon: ((T) -> ImageVector)? = null,
+    isSelected: (T) -> Boolean = { false },
+) {
+    RivoDialog(
+        onDismissRequest = onDismissRequest,
+        title = title,
+        icon = icon,
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        items.forEach { item ->
+            val selected = isSelected(item)
+            Surface(
+                onClick = {
+                    onItemSelected(item)
+                    onDismissRequest()
+                },
+                shape = RoundedCornerShape(16.dp),
+                color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (itemIcon != null) {
+                        Icon(
+                            itemIcon(item),
+                            null,
+                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(16.dp))
+                    }
+                    Column {
+                        Text(
+                            itemLabel(item),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                        )
+                        if (itemSupporting != null) {
+                            Text(
+                                itemSupporting(item),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

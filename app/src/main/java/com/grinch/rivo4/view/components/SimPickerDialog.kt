@@ -37,68 +37,20 @@ fun SimPickerDialog(
     }
 
     if (phoneAccounts.isNotEmpty()) {
-        RivoDialog(
+        RivoSelectionDialog(
             onDismissRequest = onDismissRequest,
             title = "Select SIM Card",
+            items = phoneAccounts,
+            itemLabel = { handle ->
+                telecomManager.getPhoneAccount(handle)?.label?.toString() ?: "Unknown SIM"
+            },
+            onItemSelected = onSimSelected,
+            itemSupporting = { handle ->
+                telecomManager.getPhoneAccount(handle)?.shortDescription?.toString() ?: ""
+            },
             icon = Icons.Default.SimCard,
-            dismissButton = {
-                TextButton(onClick = onDismissRequest) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            phoneAccounts.forEach { accountHandle ->
-                val info = try {
-                    telecomManager.getPhoneAccount(accountHandle)
-                } catch (e: Exception) {
-                    null
-                }
-                
-                Surface(
-                    onClick = { onSimSelected(accountHandle) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            modifier = Modifier.size(40.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Default.SimCard,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
-                        
-                        Spacer(modifier = Modifier.width(16.dp))
-                        
-                        Column {
-                            Text(
-                                text = info?.label?.toString() ?: "Unknown SIM",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            if (info?.shortDescription != null) {
-                                Text(
-                                    text = info.shortDescription.toString(),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            itemIcon = { Icons.Default.SimCard }
+        )
     } else {
         SideEffect {
             onDismissRequest()

@@ -21,12 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
@@ -58,6 +60,7 @@ fun ContactEditScreen(
 
     val scope = rememberCoroutineScope()
     var isSaving by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(contactId) {
         if (contactId != null && contactId != "0" && contactId != "null") {
@@ -118,10 +121,7 @@ fun ContactEditScreen(
                 actions = {
                     if (contactId != null && contactId != "0") {
                         IconButton(
-                            onClick = {
-                                contactsVM.deleteContact(contactId)
-                                navigator.navigateUp()
-                            },
+                            onClick = { showDeleteDialog = true },
                             modifier = Modifier.padding(end = 8.dp),
                             shape = RoundedCornerShape(24.dp),
                         ) {
@@ -171,6 +171,23 @@ fun ContactEditScreen(
             )
         }
     ) { innerPadding ->
+        if (showDeleteDialog) {
+            RivoConfirmationDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                onConfirm = {
+                    if (contactId != null) {
+                        contactsVM.deleteContact(contactId)
+                        navigator.navigateUp()
+                    }
+                },
+                title = "Delete Contact?",
+                message = "Are you sure you want to delete this contact? This action cannot be undone.",
+                confirmLabel = "Delete",
+                icon = Icons.Default.Delete,
+                isDestructive = true
+            )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)

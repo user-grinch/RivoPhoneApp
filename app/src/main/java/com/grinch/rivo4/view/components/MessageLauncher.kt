@@ -45,15 +45,19 @@ fun rememberMessageLauncher(): MessageLauncher {
 
     val messageLauncher = remember {
         MessageLauncher { number, contact ->
-            if (contact != null && contact.phoneNumbers.size > 1) {
-                val favNum = prefs.getFavoriteNumber(contact.id)
-                if (favNum != null) {
-                    initiateMessage(favNum, contact)
-                } else {
-                    pendingContact = contact
-                    showNumberPicker = true
+            if (number.isBlank() && contact != null) {
+                if (contact.phoneNumbers.size > 1) {
+                    val favNum = prefs.getFavoriteNumber(contact.id)
+                    if (favNum != null) {
+                        initiateMessage(favNum, contact)
+                    } else {
+                        pendingContact = contact
+                        showNumberPicker = true
+                    }
+                } else if (contact.phoneNumbers.isNotEmpty()) {
+                    initiateMessage(contact.phoneNumbers.first(), contact)
                 }
-            } else {
+            } else if (number.isNotBlank()) {
                 initiateMessage(number, contact)
             }
         }
@@ -63,43 +67,19 @@ fun rememberMessageLauncher(): MessageLauncher {
         val contact = pendingContact!!
         val lastUsed = prefs.getLastUsedNumber(contact.id)
         
-        RivoDialog(
+        RivoSelectionDialog(
             onDismissRequest = { showNumberPicker = false },
             title = "Select Number",
+            items = contact.phoneNumbers,
+            itemLabel = { formatPhoneNumber(it) },
+            onItemSelected = { selectedNumber ->
+                initiateMessage(selectedNumber, contact)
+            },
+            itemSupporting = { "Mobile" },
             icon = Icons.AutoMirrored.Filled.Message,
-            dismissButton = {
-                TextButton(onClick = { showNumberPicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            contact.phoneNumbers.forEach { selectedNumber ->
-                val isRecent = lastUsed != null && areNumbersEqual(lastUsed, selectedNumber)
-                Surface(
-                    onClick = {
-                        showNumberPicker = false
-                        initiateMessage(selectedNumber, contact)
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.Message, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(formatPhoneNumber(selectedNumber), style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
-                            if (isRecent) {
-                                Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            itemIcon = { Icons.AutoMirrored.Filled.Message },
+            isSelected = { areNumbersEqual(lastUsed, it) }
+        )
     }
 
     return messageLauncher

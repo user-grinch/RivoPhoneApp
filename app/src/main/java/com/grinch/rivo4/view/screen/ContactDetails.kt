@@ -116,6 +116,11 @@ fun ContactDetailsScreen(
     val videoLauncher = rememberVideoLauncher()
 
     var showQrDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showNumberSelectionDialog by remember { mutableStateOf(false) }
+    var pendingSocialAction by remember { mutableStateOf<((String) -> Unit)?>(null) }
+    var selectionTitle by remember { mutableStateOf("") }
+
     var favoriteNumber by remember { mutableStateOf<String?>(null) }
     var favoriteEmail by remember { mutableStateOf<String?>(null) }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
@@ -178,6 +183,47 @@ fun ContactDetailsScreen(
             putExtra(Intent.EXTRA_TEXT, "Name: $displayName\nPhone: $displayPhone")
         }
         context.startActivity(Intent.createChooser(intent, "Share Contact"))
+    }
+
+    val onNumberActionClick = { action: (String) -> Unit, title: String ->
+        if (fullContact != null && fullContact!!.phoneNumbers.size > 1) {
+            selectionTitle = title
+            pendingSocialAction = { action(it) }
+            showNumberSelectionDialog = true
+        } else {
+            action(displayPhone)
+        }
+    }
+
+    if (showDeleteDialog) {
+        RivoConfirmationDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirm = {
+                if (contactId != null) {
+                    contactsVM.deleteContact(contactId)
+                    navigator.navigateUp()
+                }
+            },
+            title = "Delete Contact?",
+            message = "Are you sure you want to delete this contact? This action cannot be undone.",
+            confirmLabel = "Delete",
+            icon = Icons.Default.Delete,
+            isDestructive = true
+        )
+    }
+
+    if (showNumberSelectionDialog && fullContact != null) {
+        RivoSelectionDialog(
+            onDismissRequest = { showNumberSelectionDialog = false },
+            title = selectionTitle,
+            items = fullContact!!.phoneNumbers,
+            itemLabel = { formatPhoneNumber(it) },
+            onItemSelected = { pendingSocialAction?.invoke(it) },
+            itemSupporting = { "Mobile" },
+            icon = Icons.Default.Phone,
+            itemIcon = { if (areNumbersEqual(favoriteNumber, it)) Icons.Default.Star else Icons.Default.Phone },
+            isSelected = { areNumbersEqual(favoriteNumber, it) }
+        )
     }
 
     if (showQrDialog) {
@@ -315,7 +361,7 @@ fun ContactDetailsScreen(
                                 label = "Call",
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 onClick = {
-                                    callLauncher.dial(displayPhone, fullContact)
+                                    callLauncher.dial(if (fullContact == null) displayPhone else "", fullContact)
                                 }
                             )
                             RivoExpressiveButton(
@@ -323,7 +369,7 @@ fun ContactDetailsScreen(
                                 label = "Message",
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
-                                    messageLauncher.sendMessage(displayPhone, fullContact)
+                                    messageLauncher.sendMessage(if (fullContact == null) displayPhone else "", fullContact)
                                 }
                             )
                             RivoExpressiveButton(
@@ -542,7 +588,7 @@ fun ContactDetailsScreen(
                                     containerColor = Color(0xFF25D366).copy(alpha = 0.2f),
                                     contentColor = Color(0xFF25D366),
                                     size = 48.dp,
-                                    onClick = { openWhatsApp(displayPhone) }
+                                    onClick = { onNumberActionClick(openWhatsApp, "WhatsApp") }
                                 )
                                 RivoExpressiveButton(
                                     icon = Icons.AutoMirrored.Filled.Send,
@@ -550,7 +596,7 @@ fun ContactDetailsScreen(
                                     containerColor = Color(0xFF0088CC).copy(alpha = 0.2f),
                                     contentColor = Color(0xFF0088CC),
                                     size = 48.dp,
-                                    onClick = { openTelegram(displayPhone) }
+                                    onClick = { onNumberActionClick(openTelegram, "Telegram") }
                                 )
                             }
                         }
@@ -595,12 +641,7 @@ fun ContactDetailsScreen(
                                     headline = "Delete",
                                     supporting = "Remove this contact from device",
                                     leadingIcon = Icons.Default.Delete,
-                                    onClick = {
-                                        if (contactId != null) {
-                                            contactsVM.deleteContact(contactId)
-                                            navigator.navigateUp()
-                                        }
-                                    }
+                                    onClick = { showDeleteDialog = true }
                                 )
                             }
                         }
