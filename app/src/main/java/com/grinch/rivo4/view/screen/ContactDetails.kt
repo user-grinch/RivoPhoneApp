@@ -52,7 +52,6 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.CallLogFullScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -110,9 +109,8 @@ fun ContactDetailsScreen(
 
     val context = LocalContext.current
     val callLauncher = rememberCallLauncher()
+    val messageLauncher = rememberMessageLauncher()
     var showQrDialog by remember { mutableStateOf(false) }
-    var showNumberPicker by remember { mutableStateOf(false) }
-    var isSmsAction by remember { mutableStateOf(false) }
     var favoriteNumber by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(fullContact) {
@@ -149,11 +147,6 @@ fun ContactDetailsScreen(
         }
     }
 
-    val initiateSms = { number: String ->
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
-        context.startActivity(intent)
-    }
-
     val openWhatsApp = { num: String ->
         val url = "https://api.whatsapp.com/send?phone=$num"
         try {
@@ -178,48 +171,6 @@ fun ContactDetailsScreen(
             putExtra(Intent.EXTRA_TEXT, "Name: $displayName\nPhone: $displayPhone")
         }
         context.startActivity(Intent.createChooser(intent, "Share Contact"))
-    }
-
-    if (showNumberPicker && fullContact != null) {
-        val lastUsed = prefs.getLastUsedNumber(fullContact!!.id)
-        RivoDialog(
-            onDismissRequest = { showNumberPicker = false },
-            title = "Select Number",
-            icon = Icons.Default.Phone,
-            dismissButton = {
-                TextButton(onClick = { showNumberPicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            fullContact!!.phoneNumbers.forEach { selectedNumber ->
-                val isRecent = lastUsed != null && areNumbersEqual(lastUsed, selectedNumber)
-                Surface(
-                    onClick = {
-                        showNumberPicker = false
-                        if (isSmsAction) initiateSms(selectedNumber)
-                        // Note: Social apps could also be handled here if needed
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Default.Phone, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(formatPhoneNumber(selectedNumber), style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
-                            if (isRecent) {
-                                Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     if (showQrDialog) {
@@ -351,16 +302,11 @@ fun ContactDetailsScreen(
                                 }
                             )
                             RivoExpressiveButton(
-                                icon = Icons.AutoMirrored.Default.Message,
-                                label = "Message",
+                                icon = Icons.AutoMirrored.Filled.Message,
+                                label = "Text",
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
-                                    if (fullContact != null && fullContact!!.phoneNumbers.size > 1) {
-                                        isSmsAction = true
-                                        showNumberPicker = true
-                                    } else if (displayPhone != "Unknown") {
-                                        initiateSms(displayPhone)
-                                    }
+                                    messageLauncher.sendMessage(displayPhone, fullContact)
                                 }
                             )
                             if (fullContact != null) {
@@ -422,6 +368,8 @@ fun ContactDetailsScreen(
                                                     } else {
                                                         prefs.setFavoriteNumber(fullContact!!.id, number)
                                                         favoriteNumber = number
+                                                        // Dialing triggers SIM selection for both call and text
+                                                        callLauncher.dial(number, fullContact)
                                                     }
                                                 }
                                             },
