@@ -100,6 +100,7 @@ fun ContactSearchContent(
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val contacts by contactsVM.allContacts.collectAsState()
     val prefs = koinInject<PreferenceManager>()
+    val callLauncher = rememberCallLauncher()
     val context = androidx.compose.ui.platform.LocalContext.current
     val settingsState by prefs.settingsChanged.collectAsState()
     val searchMatchMode by remember(settingsState) {
@@ -288,7 +289,9 @@ fun ContactSearchContent(
                                             }
                                             contact.phoneNumbers.firstOrNull()?.let { num ->
                                                 IconButton(
-                                                    onClick = { makeCall(context, num, contactId = contact.id) },
+                                                    onClick = { 
+                                                        callLauncher.dial(num, contact)
+                                                    },
                                                     modifier = Modifier.padding(end = 8.dp)
                                                 ) {
                                                     Icon(

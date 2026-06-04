@@ -117,6 +117,9 @@ fun CallLogTile(
     
     val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
+    
+    val favNum = log.contactId?.let { prefs.getFavoriteNumber(it) }
+    val isFavorite = com.grinch.rivo4.controller.util.areNumbersEqual(log.number, favNum)
 
     Box(
         modifier = Modifier
@@ -151,6 +154,7 @@ fun CallLogTile(
                     badgeIcon = icon,
                     badgeColor = badgeColor,
                     headlineColor = headlineColor,
+                    trailingIcon = if (isFavorite) Icons.Default.Star else null,
                     onClick = { onTileClick(log) },
                     onLongClick = { onLongClick(log) },
                     selected = selected

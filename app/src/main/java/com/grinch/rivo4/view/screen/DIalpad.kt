@@ -68,8 +68,8 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.view.components.SimPickerDialog
-import com.grinch.rivo4.view.components.TopBar
+import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.view.components.*
 import com.grinch.rivo4.view.components.tiles.SingleTile
 import com.grinch.rivo4.view.components.tiles.TileGroup
 import com.ramcosta.composedestinations.annotation.Destination
@@ -125,10 +125,7 @@ fun DialPadScreen(
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true))
     }
 
-    var showSimPicker by remember { mutableStateOf(false) }
-    var pendingNumber by remember { mutableStateOf("") }
-    var pendingContactId by remember { mutableStateOf<String?>(null) }
-    val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
+    val callLauncher = rememberCallLauncher()
 
     val searchResults by remember(number, allContacts, t9Enabled) {
         derivedStateOf {
@@ -147,55 +144,9 @@ fun DialPadScreen(
         }
     }
 
-    val callPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions[Manifest.permission.CALL_PHONE] == true) {
-            val hasPhoneState = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-            if (hasPhoneState) {
-                val defaultSim = prefs.getInt("default_sim", 0)
-                val accounts = telecomManager.callCapablePhoneAccounts
-                if (accounts.size > 1 && defaultSim == 0) {
-                    showSimPicker = true
-                } else {
-                    makeCall(context, pendingNumber, contactId = pendingContactId)
-                }
-            } else {
-                makeCall(context, pendingNumber, contactId = pendingContactId)
-            }
-        }
-    }
-
     val performCall = { targetNumber: String, contactId: String? ->
-        if (targetNumber.isNotEmpty()) {
-            pendingNumber = targetNumber
-            pendingContactId = contactId
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                    val defaultSim = prefs.getInt("default_sim", 0)
-                    val accounts = telecomManager.callCapablePhoneAccounts
-                    if (accounts.size > 1 && defaultSim == 0) {
-                        showSimPicker = true
-                    } else {
-                        makeCall(context, targetNumber, contactId = contactId)
-                    }
-                } else {
-                    makeCall(context, targetNumber, contactId = contactId)
-                }
-            } else {
-                callPermissionLauncher.launch(arrayOf(Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE))
-            }
-        }
-    }
-
-    if (showSimPicker) {
-        SimPickerDialog(
-            onDismissRequest = { showSimPicker = false },
-            onSimSelected = { handle ->
-                makeCall(context, pendingNumber, handle, contactId = pendingContactId)
-                showSimPicker = false
-            }
-        )
+        val contact = allContacts.find { it.id == contactId }
+        callLauncher.dial(targetNumber, contact)
     }
 
     Scaffold(
@@ -411,7 +362,9 @@ fun DialPadScreen(
                                                 val mapping = prefs.getString("speed_dial_$digit", null)
                                                 val speedNumber = mapping?.split("|")?.getOrNull(1)
                                                 if (speedNumber != null) {
-                                                    makeCall(context, speedNumber)
+                                                    // We don't have a contact here usually for speed dial mappings
+                                                    // but we could try to find one if needed.
+                                                    callLauncher.dial(speedNumber, null)
                                                 }
                                             } else if (digit == "0") {
                                                 onDigitClick("+")

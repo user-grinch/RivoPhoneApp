@@ -108,14 +108,17 @@ fun ContactDetailsScreen(
     val displayName = fullContact?.name ?: phoneNumber ?: "Unknown"
 
     val context = LocalContext.current
-    val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
-
-    var showSimPicker by remember { mutableStateOf(false) }
+    val callLauncher = rememberCallLauncher()
+    var showQrDialog by remember { mutableStateOf(false) }
     var showNumberPicker by remember { mutableStateOf(false) }
     var isSmsAction by remember { mutableStateOf(false) }
-    var pendingNumber by remember { mutableStateOf<String?>(null) }
-    var pendingContactId by remember { mutableStateOf<String?>(null) }
-    var showQrDialog by remember { mutableStateOf(false) }
+    var favoriteNumber by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(fullContact) {
+        fullContact?.id?.let {
+            favoriteNumber = prefs.getFavoriteNumber(it)
+        }
+    }
 
     val contactLogs = remember(fullContact, phoneNumber, allLogs) {
         allLogs.filter { log ->
@@ -142,23 +145,6 @@ fun ContactDetailsScreen(
                 // Optimistically update UI
                 fullContact = fullContact!!.copy(customRingtone = uri?.toString())
             }
-        }
-    }
-
-    val initiateCall = { number: String ->
-        val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-        if (hasPermission) {
-            val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
-            if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
-                pendingNumber = number
-                pendingContactId = fullContact?.id
-                isSmsAction = false
-                showSimPicker = true
-            } else {
-                makeCall(context, number, contactId = fullContact?.id)
-            }
-        } else {
-            makeCall(context, number, contactId = fullContact?.id)
         }
     }
 
@@ -194,7 +180,7 @@ fun ContactDetailsScreen(
     }
 
     if (showNumberPicker && fullContact != null) {
-        val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
+        val lastUsed = prefs.getLastUsedNumber(fullContact!!.id)
         RivoDialog(
             onDismissRequest = { showNumberPicker = false },
             title = "Select Number",
@@ -210,7 +196,8 @@ fun ContactDetailsScreen(
                 Surface(
                     onClick = {
                         showNumberPicker = false
-                        if (isSmsAction) initiateSms(selectedNumber) else initiateCall(selectedNumber)
+                        if (isSmsAction) initiateSms(selectedNumber)
+                        // Note: Social apps could also be handled here if needed
                     },
                     shape = RoundedCornerShape(16.dp),
                     color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -232,16 +219,6 @@ fun ContactDetailsScreen(
                 }
             }
         }
-    }
-
-    if (showSimPicker && pendingNumber != null) {
-        SimPickerDialog(
-            onDismissRequest = { showSimPicker = false },
-            onSimSelected = { handle ->
-                makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
-                showSimPicker = false
-            }
-        )
     }
 
     if (showQrDialog) {
@@ -369,11 +346,7 @@ fun ContactDetailsScreen(
                                 label = "Call",
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 onClick = {
-                                    if (fullContact != null && fullContact!!.phoneNumbers.size > 1) {
-                                        showNumberPicker = true
-                                    } else if (displayPhone != "Unknown") {
-                                        initiateCall(displayPhone)
-                                    }
+                                    callLauncher.dial(displayPhone, fullContact)
                                 }
                             )
                             RivoExpressiveButton(
@@ -419,13 +392,49 @@ fun ContactDetailsScreen(
                             if (fullContact != null) {
                                 fullContact!!.phoneNumbers.forEachIndexed { index, number ->
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
-                                    RivoListItem(
-                                        headline = formatPhoneNumber(number),
-                                        supporting = if (isRecent) "Mobile • Recent" else "Mobile",
-                                        leadingIcon = Icons.Default.Phone,
-                                        trailingIcon = if (isRecent) Icons.Default.History else null,
-                                        onClick = { initiateCall(number) }
-                                    )
+                                    val isFavoriteNum = areNumbersEqual(favoriteNumber, number)
+                                    
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            RivoListItem(
+                                                headline = formatPhoneNumber(number),
+                                                supporting = buildString {
+                                                    append("Mobile")
+                                                    if (isFavoriteNum) append(" • Favorite")
+                                                    if (isRecent) append(" • Recent")
+                                                },
+                                                leadingIcon = Icons.Default.Phone,
+                                                trailingIcon = if (isRecent) Icons.Default.History else null,
+                                                onClick = { callLauncher.dial(number, fullContact) }
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = {
+                                                if (fullContact != null) {
+                                                    if (isFavoriteNum) {
+                                                        prefs.setFavoriteNumber(fullContact!!.id, null)
+                                                        prefs.setFavoriteSim(fullContact!!.id, null)
+                                                        favoriteNumber = null
+                                                    } else {
+                                                        prefs.setFavoriteNumber(fullContact!!.id, number)
+                                                        favoriteNumber = number
+                                                        // Dial to trigger SIM selection for the new favorite
+                                                        callLauncher.dial(number, fullContact)
+                                                    }
+                                                }
+                                            },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = if (isFavoriteNum) Icons.Default.Star else Icons.Default.StarBorder,
+                                                contentDescription = "Set Favorite",
+                                                tint = if (isFavoriteNum) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
                                     if (index < fullContact!!.phoneNumbers.size - 1 || fullContact!!.emails.isNotEmpty()) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
@@ -470,7 +479,7 @@ fun ContactDetailsScreen(
                                     headline = formatPhoneNumber(phoneNumber),
                                     supporting = "Unknown Number",
                                     leadingIcon = Icons.Default.Phone,
-                                    onClick = { initiateCall(phoneNumber) }
+                                    onClick = { callLauncher.dial(phoneNumber, null) }
                                 )
                             }
                         }
@@ -517,7 +526,7 @@ fun ContactDetailsScreen(
                                         CallLogTileSimple(
                                             log = log,
                                             onCallClick = {
-                                                initiateCall(log.number)
+                                                callLauncher.dial(log.number, fullContact)
                                             }
                                         )
                                         if (index < 2 && index < contactLogs.size - 1) {

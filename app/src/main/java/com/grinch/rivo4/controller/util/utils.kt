@@ -87,13 +87,20 @@ fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle
 
     var preferredHandle = accountHandle
     if (preferredHandle == null) {
-        val defaultSim = prefs.getInt("default_sim", 0)
-        if (defaultSim > 0) {
-            val accounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                telecomManager.callCapablePhoneAccounts
-            } else emptyList()
-            
-            if (accounts.size >= defaultSim) {
+        val accounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+        } else emptyList()
+
+        val favSim = contactId?.let { prefs.getFavoriteSim(it) }
+        val favNum = contactId?.let { prefs.getFavoriteNumber(it) }
+        
+        preferredHandle = if (favSim != null && areNumbersEqual(number, favNum)) {
+            accounts.find { it.id == favSim }
+        } else null
+
+        if (preferredHandle == null) {
+            val defaultSim = prefs.getInt("default_sim", 0)
+            if (defaultSim > 0 && accounts.size >= defaultSim) {
                 preferredHandle = accounts[defaultSim - 1]
             }
         }

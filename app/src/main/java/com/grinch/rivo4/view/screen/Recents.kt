@@ -204,77 +204,8 @@ fun CallLogFullContent(
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
         val context = LocalContext.current
-        val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
-
-        var showSimPicker by remember { mutableStateOf(false) }
-        var showNumberPicker by remember { mutableStateOf(false) }
-        var pendingNumber by remember { mutableStateOf<String?>(null) }
-        var pendingContactId by remember { mutableStateOf<String?>(null) }
-        var activeFavorite by remember { mutableStateOf<Contact?>(null) }
+        val callLauncher = rememberCallLauncher()
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
-
-        val performCall = { targetNumber: String, contactId: String? ->
-            val hasPermission =
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.READ_PHONE_STATE
-                ) == PackageManager.PERMISSION_GRANTED
-
-            if (hasPermission) {
-                val defaultSim = prefs.getInt("default_sim", 0)
-                val accounts = telecomManager.callCapablePhoneAccounts
-                if (accounts.size > 1 && defaultSim == 0) {
-                    pendingNumber = targetNumber
-                    pendingContactId = contactId
-                    showSimPicker = true
-                } else {
-                    makeCall(context, targetNumber, contactId = contactId)
-                }
-            } else {
-                makeCall(context, targetNumber, contactId = contactId)
-            }
-        }
-
-        if (showNumberPicker && activeFavorite != null) {
-            val lastUsed = activeFavorite?.id?.let { prefs.getLastUsedNumber(it) }
-            RivoDialog(
-                onDismissRequest = { showNumberPicker = false },
-                title = "Select Number",
-                icon = Icons.Default.Phone,
-                dismissButton = {
-                    TextButton(onClick = { showNumberPicker = false }) {
-                        Text("Cancel")
-                    }
-                }
-            ) {
-                activeFavorite!!.phoneNumbers.forEach { selectedNumber ->
-                    val isRecent = lastUsed != null && areNumbersEqual(lastUsed, selectedNumber)
-                    Surface(
-                        onClick = {
-                            showNumberPicker = false
-                            performCall(selectedNumber, activeFavorite?.id)
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        color = if (isRecent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(Icons.Default.Phone, null, tint = if (isRecent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
-                            Spacer(Modifier.width(16.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(formatPhoneNumber(selectedNumber), style = MaterialTheme.typography.bodyLarge, fontWeight = if (isRecent) FontWeight.Bold else FontWeight.Normal)
-                                if (isRecent) {
-                                    Text("Recent", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         val filteredLogs = remember(logs, selectedFilter, blockLogVisibility) {
             val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
@@ -290,16 +221,6 @@ fun CallLogFullContent(
 
         val groupedLogs = remember(filteredLogs) {
             filteredLogs.groupBy { formatDateHeader(it.date) }
-        }
-
-        if (showSimPicker && pendingNumber != null) {
-            SimPickerDialog(
-                onDismissRequest = { showSimPicker = false },
-                onSimSelected = { handle ->
-                    makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
-                    showSimPicker = false
-                }
-            )
         }
 
         val pullToRefreshState = rememberPullToRefreshState()
@@ -346,14 +267,7 @@ fun CallLogFullContent(
                                         FavoriteCircleItem(
                                             contact = contact,
                                             onClick = {
-                                                if (contact.phoneNumbers.size > 1) {
-                                                    activeFavorite = contact
-                                                    showNumberPicker = true
-                                                } else {
-                                                    contact.phoneNumbers.firstOrNull()?.let {
-                                                        performCall(it, contact.id)
-                                                    }
-                                                }
+                                                callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
                                             }
                                         )
                                     }
@@ -383,7 +297,8 @@ fun CallLogFullContent(
                                                     }
                                                 },
                                                 onButtonClick = { log ->
-                                                    performCall(log.number, log.contactId)
+                                                    val contact = allContacts.find { it.id == log.contactId }
+                                                    callLauncher.dial(log.number, contact)
                                                 },
                                                 onLongClick = { log ->
                                                     onToggleSelection(log)

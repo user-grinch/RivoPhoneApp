@@ -68,6 +68,22 @@ class PreferenceManager(context: Context) {
         return prefs.getString("last_used_number_$contactId", null)
     }
 
+    fun setFavoriteNumber(contactId: String, number: String?) {
+        prefs.edit().putString("favorite_number_$contactId", number).apply()
+    }
+
+    fun getFavoriteNumber(contactId: String): String? {
+        return prefs.getString("favorite_number_$contactId", null)
+    }
+
+    fun setFavoriteSim(contactId: String, simHandle: String?) {
+        prefs.edit().putString("favorite_sim_$contactId", simHandle).apply()
+    }
+
+    fun getFavoriteSim(contactId: String): String? {
+        return prefs.getString("favorite_sim_$contactId", null)
+    }
+
     companion object {
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
