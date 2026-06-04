@@ -1,14 +1,13 @@
 package com.grinch.rivo4.view.screen
 
 import android.Manifest
-import android.content.ContentUris
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.media.RingtoneManager
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
+import android.telecom.VideoProfile
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -33,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -66,6 +67,7 @@ fun ContactDetailsScreen(
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val contactsViewModel: ContactsViewModel = koinActivityViewModel()
     val callLogViewModel: CallLogViewModel = koinActivityViewModel()
+    val clipboardManager = LocalClipboardManager.current
 
     val allLogs by callLogViewModel.allCallLogs.collectAsState()
 
@@ -110,12 +112,18 @@ fun ContactDetailsScreen(
     val context = LocalContext.current
     val callLauncher = rememberCallLauncher()
     val messageLauncher = rememberMessageLauncher()
+    val emailLauncher = rememberEmailLauncher()
+    val videoLauncher = rememberVideoLauncher()
+
     var showQrDialog by remember { mutableStateOf(false) }
     var favoriteNumber by remember { mutableStateOf<String?>(null) }
+    var favoriteEmail by remember { mutableStateOf<String?>(null) }
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
 
     LaunchedEffect(fullContact) {
         fullContact?.id?.let {
             favoriteNumber = prefs.getFavoriteNumber(it)
+            favoriteEmail = prefs.getFavoriteEmail(it)
         }
     }
 
@@ -141,7 +149,6 @@ fun ContactDetailsScreen(
             val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             if (fullContact != null) {
                 contactsViewModel.setCustomRingtone(fullContact!!.id, uri?.toString())
-                // Optimistically update UI
                 fullContact = fullContact!!.copy(customRingtone = uri?.toString())
             }
         }
@@ -233,10 +240,20 @@ fun ContactDetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = shareContact) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
-                    }
                     if (fullContact != null) {
+                        IconButton(onClick = {
+                            fullContact?.let { contact ->
+                                val newFavorite = !contact.isFavorite
+                                fullContact = contact.copy(isFavorite = newFavorite)
+                                contactsViewModel.toggleFavorite(contact)
+                            }
+                        }) {
+                            Icon(
+                                if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+                                contentDescription = "Favorite",
+                                tint = if (isFavorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                            )
+                        }
                         IconButton(onClick = {
                             fullContact?.let {
                                 navigator.navigate(ContactEditScreenDestination(contactId = it.id))
@@ -303,32 +320,31 @@ fun ContactDetailsScreen(
                             )
                             RivoExpressiveButton(
                                 icon = Icons.AutoMirrored.Filled.Message,
-                                label = "Text",
+                                label = "Message",
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     messageLauncher.sendMessage(displayPhone, fullContact)
                                 }
                             )
-                            if (fullContact != null) {
-                                RivoExpressiveButton(
-                                    icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    label = "Favorite",
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = if (isFavorite) Color.Red else LocalContentColor.current,
-                                    onClick = {
-                                        fullContact?.let { contact ->
-                                            val newFavorite = !contact.isFavorite
-                                            fullContact = contact.copy(isFavorite = newFavorite)
-                                            contactsViewModel.toggleFavorite(contact)
-                                        }
-                                    }
-                                )
-                            }
                             RivoExpressiveButton(
-                                icon = Icons.Outlined.QrCode2,
-                                label = "QR Code",
+                                icon = Icons.Default.VideoCall,
+                                label = "Video",
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                onClick = { showQrDialog = true }
+                                onClick = {
+                                    videoLauncher.startVideoCall(displayPhone, fullContact)
+                                }
+                            )
+                            val hasEmails = fullContact?.emails?.isNotEmpty() == true
+                            RivoExpressiveButton(
+                                icon = Icons.Default.Email,
+                                label = "Email",
+                                containerColor = if (hasEmails) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = if (hasEmails) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f),
+                                onClick = {
+                                    if (hasEmails) {
+                                        emailLauncher.sendEmail("", fullContact)
+                                    }
+                                }
                             )
                         }
                     }
@@ -339,46 +355,50 @@ fun ContactDetailsScreen(
                             if (fullContact != null) {
                                 fullContact!!.phoneNumbers.forEachIndexed { index, number ->
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
-                                    val isFavoriteNum = areNumbersEqual(favoriteNumber, number)
+                                    val isFav = areNumbersEqual(favoriteNumber, number)
                                     
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            RivoListItem(
-                                                headline = formatPhoneNumber(number),
-                                                supporting = buildString {
-                                                    append("Mobile")
-                                                    if (isFavoriteNum) append(" • Favorite")
-                                                    if (isRecent) append(" • Recent")
-                                                },
-                                                leadingIcon = Icons.Default.Phone,
-                                                trailingIcon = if (isRecent) Icons.Default.History else null,
-                                                onClick = { callLauncher.dial(number, fullContact) }
-                                            )
-                                        }
-                                        IconButton(
-                                            onClick = {
-                                                if (fullContact != null) {
-                                                    if (isFavoriteNum) {
+                                    var showMenu by remember { mutableStateOf(false) }
+                                    
+                                    Box {
+                                        RivoListItem(
+                                            headline = formatPhoneNumber(number),
+                                            supporting = buildString {
+                                                append("Mobile")
+                                                if (isFav) append(" • Favorite")
+                                                if (isRecent) append(" • Recent")
+                                            },
+                                            leadingIcon = Icons.Default.Phone,
+                                            trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
+                                            onClick = { callLauncher.dial(number, fullContact) },
+                                            onLongClick = { showMenu = true }
+                                        )
+
+                                        DropdownMenu(
+                                            expanded = showMenu,
+                                            onDismissRequest = { showMenu = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text(if (isFav) "Clear Favorite" else "Set as Favorite") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    if (isFav) {
                                                         prefs.setFavoriteNumber(fullContact!!.id, null)
                                                         prefs.setFavoriteSim(fullContact!!.id, null)
                                                         favoriteNumber = null
                                                     } else {
                                                         prefs.setFavoriteNumber(fullContact!!.id, number)
                                                         favoriteNumber = number
-                                                        // Dialing triggers SIM selection for both call and text
-                                                        callLauncher.dial(number, fullContact)
                                                     }
-                                                }
-                                            },
-                                            modifier = Modifier.padding(end = 8.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = if (isFavoriteNum) Icons.Default.Star else Icons.Default.StarBorder,
-                                                contentDescription = "Set Favorite",
-                                                tint = if (isFavoriteNum) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                },
+                                                leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("Copy to Clipboard") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    clipboardManager.setText(AnnotatedString(number))
+                                                },
+                                                leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
                                             )
                                         }
                                     }
@@ -387,39 +407,49 @@ fun ContactDetailsScreen(
                                     }
                                 }
                                 fullContact!!.emails.forEachIndexed { index, email ->
-                                    RivoListItem(
-                                        headline = email,
-                                        supporting = "Email",
-                                        leadingIcon = Icons.Default.Email,
-                                        onClick = {
-                                            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$email"))
-                                            context.startActivity(intent)
+                                    val isFav = email == favoriteEmail
+                                    var showMenu by remember { mutableStateOf(false) }
+
+                                    Box {
+                                        RivoListItem(
+                                            headline = email,
+                                            supporting = if (isFav) "Email • Favorite" else "Email",
+                                            leadingIcon = Icons.Default.Email,
+                                            onClick = { emailLauncher.sendEmail(email, fullContact) },
+                                            onLongClick = { showMenu = true }
+                                        )
+
+                                        DropdownMenu(
+                                            expanded = showMenu,
+                                            onDismissRequest = { showMenu = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text(if (isFav) "Clear Default" else "Set as Default") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    if (isFav) {
+                                                        prefs.setFavoriteEmail(fullContact!!.id, null)
+                                                        favoriteEmail = null
+                                                    } else {
+                                                        prefs.setFavoriteEmail(fullContact!!.id, email)
+                                                        favoriteEmail = email
+                                                    }
+                                                },
+                                                leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("Copy to Clipboard") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    clipboardManager.setText(AnnotatedString(email))
+                                                },
+                                                leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                            )
                                         }
-                                    )
+                                    }
                                     if (index < fullContact!!.emails.size - 1) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
-                                }
-
-                                if (fullContact != null) {
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    val currentRingtone = fullContact!!.customRingtone?.let {
-                                        RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
-                                    } ?: "Default"
-
-                                    RivoListItem(
-                                        headline = "Custom Ringtone",
-                                        supporting = currentRingtone,
-                                        leadingIcon = Icons.Default.MusicNote,
-                                        onClick = {
-                                            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
-                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
-                                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
-                                            }
-                                            ringtonePickerLauncher.launch(intent)
-                                        }
-                                    )
                                 }
                             } else if (phoneNumber != null && phoneNumber != "Unknown") {
                                 RivoListItem(
@@ -522,24 +552,53 @@ fun ContactDetailsScreen(
                                     size = 48.dp,
                                     onClick = { openTelegram(displayPhone) }
                                 )
-                                RivoExpressiveButton(
-                                    icon = Icons.Default.VideoCall,
-                                    label = "Video",
-                                    containerColor = Color(0xFF3F51B5).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF3F51B5),
-                                    size = 48.dp,
+                            }
+                        }
+                    }
+
+                    if (fullContact != null) {
+                        item {
+                            RivoExpressiveCard(title = "Contact Settings", icon = Icons.Default.Settings) {
+                                val currentRingtone = fullContact!!.customRingtone?.let {
+                                    RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
+                                } ?: "Default"
+
+                                RivoListItem(
+                                    headline = "Custom Ringtone",
+                                    supporting = currentRingtone,
+                                    leadingIcon = Icons.Default.MusicNote,
                                     onClick = {
-                                        if (displayPhone != "Unknown") {
-                                            val uri = Uri.parse("tel:$displayPhone")
-                                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                                setDataAndType(
-                                                    uri,
-                                                    "vnd.android.cursor.item/video-chat-address"
-                                                )
-                                            }
-                                            val chooser =
-                                                Intent.createChooser(intent, "Video Call with")
-                                            context.startActivity(chooser)
+                                        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
+                                        }
+                                        ringtonePickerLauncher.launch(intent)
+                                    }
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
+                                    headline = "Share Contact",
+                                    supporting = "Send contact details to others",
+                                    leadingIcon = Icons.Default.Share,
+                                    onClick = shareContact
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
+                                    headline = "QR Code",
+                                    supporting = "Show contact QR code",
+                                    leadingIcon = Icons.Outlined.QrCode2,
+                                    onClick = { showQrDialog = true }
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
+                                    headline = "Delete",
+                                    supporting = "Remove this contact from device",
+                                    leadingIcon = Icons.Default.Delete,
+                                    onClick = {
+                                        if (contactId != null) {
+                                            contactsVM.deleteContact(contactId)
+                                            navigator.navigateUp()
                                         }
                                     }
                                 )

@@ -84,6 +84,14 @@ class PreferenceManager(context: Context) {
         return prefs.getString("favorite_sim_$contactId", null)
     }
 
+    fun setFavoriteEmail(contactId: String, email: String?) {
+        prefs.edit().putString("favorite_email_$contactId", email).apply()
+    }
+
+    fun getFavoriteEmail(contactId: String): String? {
+        return prefs.getString("favorite_email_$contactId", null)
+    }
+
     companion object {
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
@@ -102,35 +110,35 @@ class PreferenceManager(context: Context) {
         const val KEY_AUTO_REDIAL_BUSY = "auto_redial_busy"
         const val KEY_REDIAL_ATTEMPTS = "redial_attempts"
         const val KEY_REDIAL_DELAY = "redial_delay"
-        const val KEY_BLOCK_METHOD = "block_method" // 0: Decline, 1: Silent
-        const val KEY_BLOCK_LOG_VISIBILITY = "block_log_visibility" // 0: Hide, 1: Show
+        const val KEY_BLOCK_METHOD = "block_method"
+        const val KEY_BLOCK_LOG_VISIBILITY = "block_log_visibility"
         const val KEY_BLOCK_NOTIFICATION = "block_notification"
         const val KEY_VIBRATE_ON_ANSWER = "vibrate_on_answer"
         const val KEY_VIBRATE_ON_HANGUP = "vibrate_on_hangup"
         const val KEY_ROUND_AVATARS = "round_avatars"
         const val KEY_SHOW_DIVIDERS = "show_dividers"
-        const val KEY_TRANSITION_STYLE = "transition_animation_style" // 0: Standard, 1: Slide, 2: Fade, 3: None
-        const val KEY_DIALPAD_STYLE = "dialpad_style" // 0: Modern, 1: Classic, 2: Minimal
+        const val KEY_TRANSITION_STYLE = "transition_animation_style"
+        const val KEY_DIALPAD_STYLE = "dialpad_style"
         const val KEY_VOICEMAIL_NUMBER = "voicemail_number"
         const val KEY_VOICEMAIL_VIBRATION = "voicemail_vibration"
         const val KEY_VOICEMAIL_RINGTONE = "voicemail_ringtone"
         const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
-        const val KEY_AUTO_ANSWER_DELAY = "auto_answer_delay" // 0: Off, 3s: 3000, 5s: 5000, 10s: 10000
+        const val KEY_AUTO_ANSWER_DELAY = "auto_answer_delay"
         const val KEY_SHOW_CALL_SUMMARY_TOAST = "show_call_summary_toast"
         const val KEY_VIBRATE_OUTGOING_RINGING = "vibrate_outgoing_ringing"
         const val KEY_FLIP_TO_SILENCE = "flip_to_silence"
         const val KEY_SILENCE_UNKNOWN = "silence_unknown_calls"
         const val KEY_DISPLAY_CARRIER_INFO = "display_carrier_info"
-        const val KEY_CALL_DURATION_DISPLAY = "call_duration_display_mode" // 0: HH:MM:SS, 1: MM:SS, 2: Hidden
+        const val KEY_CALL_DURATION_DISPLAY = "call_duration_display_mode"
         const val KEY_CALL_LOG_GROUPING = "call_log_grouping"
-        const val KEY_DIALPAD_LAYOUT = "dialpad_layout_style" // 0: Comfort, 1: Compact, 2: Wide
-        const val KEY_AVATAR_SHAPE = "avatar_shape" // 0: Circle, 1: Square, 2: Squircle
+        const val KEY_DIALPAD_LAYOUT = "dialpad_layout_style"
+        const val KEY_AVATAR_SHAPE = "avatar_shape"
         const val KEY_SWIPE_TO_CALL = "swipe_to_call"
-        const val KEY_DIALPAD_VIBRATION_STRENGTH = "dialpad_vibration_strength" // 0: Light, 1: Medium, 2: Strong
-        const val KEY_DTMF_TONE_VOLUME = "dtmf_tone_volume" // 0: Low, 1: Normal, 2: High
+        const val KEY_DIALPAD_VIBRATION_STRENGTH = "dialpad_vibration_strength"
+        const val KEY_DTMF_TONE_VOLUME = "dtmf_tone_volume"
         const val KEY_HAPTIC_LIST_SCROLL = "haptic_list_scroll"
         const val KEY_SHOW_SIM_ICON_HISTORY = "show_sim_icon_history"
-        const val KEY_SEARCH_MATCH_MODE = "search_match_mode" // 0: T9 & Contains, 1: Starts With, 2: Exact
+        const val KEY_SEARCH_MATCH_MODE = "search_match_mode"
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
         const val KEY_INCOMING_CALL_UI_MODE = "incoming_call_ui_mode"
         const val KEY_SHOW_CARDS = "show_cards"
