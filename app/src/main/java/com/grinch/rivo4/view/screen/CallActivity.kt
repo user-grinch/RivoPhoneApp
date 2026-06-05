@@ -983,60 +983,44 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val density = LocalDensity.current
     val view = LocalView.current
 
-    val maxDrag = with(density) { 120.dp.toPx() }
-    val triggerThreshold = maxDrag * 0.7f
-
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "scale"
-    )
+    val maxDrag = with(density) { 130.dp.toPx() }
+    val triggerThreshold = maxDrag * 0.65f
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .height(90.dp)
             .padding(horizontal = 16.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+            .clip(RoundedCornerShape(45.dp))
+            .background(Color(0xFF2D2321)),
         contentAlignment = Alignment.Center
     ) {
-        // Background Labels
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 "Decline",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFF44336), // Solid red
-                modifier = Modifier.alpha( (offsetX.value / -maxDrag).coerceIn(0.4f, 1f) )
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
             )
             Text(
                 "Answer",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4CAF50), // Solid green
-                modifier = Modifier.alpha( (offsetX.value / maxDrag).coerceIn(0.4f, 1f) )
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
             )
         }
 
-        // Draggable Handle (Google Dialer Style: White circle with icon)
         Box(
             modifier = Modifier
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .size(90.dp)
-                .scale(if (offsetX.value == 0f) scale else 1f)
-                .padding(4.dp)
-                .clip(CircleShape)
-                .background(Color.White)
+                .width(130.dp)
+                .height(64.dp)
+                .clip(RoundedCornerShape(32.dp))
+                .background(Color(0xFFF7F2FA))
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
@@ -1073,10 +1057,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Icon(
                 Icons.Default.Call,
                 contentDescription = null,
-                tint = if (offsetX.value > 10f) Color(0xFF4CAF50) 
-                       else if (offsetX.value < -10f) Color(0xFFF44336) 
-                       else Color.Black, // Default green as in screenshot handle
-                modifier = Modifier.size(36.dp)
+                tint = Color(0xFF34A853),
+                modifier = Modifier.size(32.dp)
             )
         }
     }
