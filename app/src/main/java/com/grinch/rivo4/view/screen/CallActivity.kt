@@ -85,13 +85,13 @@ class CallActivity : ComponentActivity() {
             setTurnScreenOn(true)
         }
         super.onCreate(savedInstanceState)
-        
+
         // Comprehensive lock screen flags
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
             keyguardManager?.requestDismissKeyguard(this, null)
         }
-        
+
         @Suppress("DEPRECATION")
         var flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -248,7 +248,7 @@ fun ExpressiveCallScreen(
             } catch (e: Exception) {
                 null
             }
-            
+
             val label = account?.label?.toString()
             if (!label.isNullOrEmpty()) {
                 label
@@ -304,7 +304,7 @@ fun ExpressiveCallScreen(
                 modifier = Modifier.weight(if (showKeypad) 0.7f else 1f)
             ) {
                 Spacer(modifier = Modifier.height(48.dp))
-                
+
                 // Animate content appearance
                 AnimatedVisibility(
                     visible = true,
@@ -529,7 +529,7 @@ fun InCallKeypad(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
-    
+
     DisposableEffect(Unit) {
         onDispose {
             toneGenerator.release()
@@ -664,7 +664,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 Icon(Icons.Default.Call, contentDescription = null, tint = Color(0xFF4CAF50), modifier = Modifier.size(32.dp))
                 Text("Answer", color = Color(0xFF4CAF50), style = MaterialTheme.typography.labelLarge)
             }
-            
+
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha( (offsetY.value / maxDrag).coerceIn(0f, 1f) )) {
                 Text("Decline", color = Color(0xFFF44336), style = MaterialTheme.typography.labelLarge)
                 Icon(Icons.Default.CallEnd, contentDescription = null, tint = Color(0xFFF44336), modifier = Modifier.size(32.dp))
@@ -711,7 +711,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 modifier = Modifier.size(36.dp)
             )
         }
-        
+
         if (offsetY.value == 0f) {
             Text(
                 "Swipe up to answer, down to decline",
@@ -762,7 +762,7 @@ fun ExpressiveBackground(photoUri: String?) {
                     .blur(40.dp)
             )
         }
-        
+
         // Dark overlay for better readability in both light and dark modes
         Box(
             modifier = Modifier
@@ -804,7 +804,7 @@ fun PulsingAvatar(photoUri: String?) {
         ),
         label = "scale"
     )
-    
+
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 0f,
@@ -830,7 +830,7 @@ fun PulsingAvatar(photoUri: String?) {
                 .scale(scale * 1.1f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), avatarShape)
         )
-        
+
         HeroAvatar(photoUri)
     }
 }
@@ -838,12 +838,12 @@ fun PulsingAvatar(photoUri: String?) {
 @Composable
 fun FloatingParticles() {
     val infiniteTransition = rememberInfiniteTransition(label = "particles")
-    
+
     Box(modifier = Modifier.fillMaxSize()) {
         repeat(10) { index ->
             val startX = (index * 100f) % 1000f
             val startY = (index * 150f) % 1500f
-            
+
             val animX by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 100f,
@@ -853,7 +853,7 @@ fun FloatingParticles() {
                 ),
                 label = "x_$index"
             )
-            
+
             val animY by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -150f,
@@ -863,7 +863,7 @@ fun FloatingParticles() {
                 ),
                 label = "y_$index"
             )
-            
+
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 0.1f,
                 targetValue = 0.4f,
@@ -934,17 +934,17 @@ fun CallActionButton(
     onClick: () -> Unit
 ) {
     val scale by animateFloatAsState(if (isActive) 1.1f else 1f, label = "scale")
-    
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(90.dp).alpha(if (enabled) 1f else 0.5f)
     ) {
         val containerColor by animateColorAsState(
-            if (isActive) MaterialTheme.colorScheme.secondaryContainer 
+            if (isActive) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
             label = "color"
         )
-        val contentColor = if (isActive) MaterialTheme.colorScheme.onSecondaryContainer 
+        val contentColor = if (isActive) MaterialTheme.colorScheme.onSecondaryContainer
                           else MaterialTheme.colorScheme.onSurfaceVariant
 
         IconButton(
@@ -985,7 +985,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val density = LocalDensity.current
     val view = LocalView.current
 
-    val handleWidth = 140.dp
+    val handleWidth = 100.dp
     val handleHeight = 50.dp
     val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
@@ -1141,7 +1141,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         .scale(scale * 1.2f)
                         .background(answerColor.copy(alpha = 0.2f), CircleShape)
                 )
-                
+
                 FilledIconButton(
                     onClick = onAnswer,
                     shape = CircleShape,
