@@ -983,43 +983,45 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val density = LocalDensity.current
     val view = LocalView.current
 
-    val maxDrag = with(density) { 130.dp.toPx() }
-    val triggerThreshold = maxDrag * 0.65f
+    val handleWidth = 160.dp
+    val maxDrag = with(density) { 150.dp.toPx() }
+    val triggerThreshold = maxDrag * 0.55f
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp)
+            .height(88.dp)
             .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(45.dp))
-            .background(Color(0xFF2D2321)),
-        contentAlignment = Alignment.Center
+            .clip(RoundedCornerShape(44.dp))
+            .background(Color(0xFF2D2321))
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Decline",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
-            )
-            Text(
-                "Answer",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
-            )
-        }
+        Text(
+            "Decline",
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 24.dp),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
+        )
+
+        Text(
+            "Answer",
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 24.dp),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
+        )
 
         Box(
             modifier = Modifier
+                .align(Alignment.Center)
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .width(130.dp)
-                .height(64.dp)
-                .clip(RoundedCornerShape(32.dp))
+                .width(handleWidth)
+                .height(56.dp)
+                .clip(RoundedCornerShape(28.dp))
                 .background(Color(0xFFF7F2FA))
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
@@ -1058,7 +1060,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 Icons.Default.Call,
                 contentDescription = null,
                 tint = Color(0xFF34A853),
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(28.dp)
             )
         }
     }
