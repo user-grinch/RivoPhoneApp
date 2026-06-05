@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -68,6 +69,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.koinInject
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class CallActivity : ComponentActivity() {
@@ -983,9 +985,24 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val density = LocalDensity.current
     val view = LocalView.current
 
-    val handleWidth = 160.dp
-    val maxDrag = with(density) { 150.dp.toPx() }
-    val triggerThreshold = maxDrag * 0.55f
+    val handleWidth = 140.dp
+    val handleHeight = 50.dp
+    val handleWidthPx = with(density) { handleWidth.toPx() }
+    var trackWidthPx by remember { mutableFloatStateOf(0f) }
+    val maxDrag by remember(trackWidthPx, handleWidthPx) {
+        derivedStateOf {
+            if (trackWidthPx > 0f) (trackWidthPx - handleWidthPx) / 2f else 0f
+        }
+    }
+    val triggerThreshold = maxDrag * 0.88f
+
+    val dragProgress by remember { derivedStateOf {
+        if (maxDrag > 0f) abs(offsetX.value) / maxDrag else 0f
+    } }
+    val handleAlpha by remember { derivedStateOf {
+        if (dragProgress > 0.85f) ((1f - dragProgress) / 0.15f).coerceIn(0f, 1f)
+        else 1f
+    } }
 
     Box(
         modifier = Modifier
@@ -994,12 +1011,13 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(44.dp))
             .background(Color(0xFF2D2321))
+            .onSizeChanged { trackWidthPx = it.width.toFloat() }
     ) {
         Text(
             "Decline",
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 24.dp),
+                .padding(start = 18.dp),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
             color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
@@ -1009,7 +1027,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             "Answer",
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 24.dp),
+                .padding(end = 18.dp),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
             color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
@@ -1020,15 +1038,17 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .align(Alignment.Center)
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                 .width(handleWidth)
-                .height(56.dp)
-                .clip(RoundedCornerShape(28.dp))
+                .height(handleHeight)
+                .clip(RoundedCornerShape(handleHeight / 2))
                 .background(Color(0xFFF7F2FA))
+                .graphicsLayer { alpha = handleAlpha }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
+                                val finalOffset = offsetX.value
                                 when {
-                                    offsetX.value > triggerThreshold -> {
+                                    finalOffset > triggerThreshold -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                                         } else {
@@ -1036,7 +1056,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                                         }
                                         onAnswer()
                                     }
-                                    offsetX.value < -triggerThreshold -> {
+                                    finalOffset < -triggerThreshold -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         } else {
@@ -1060,7 +1080,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 Icons.Default.Call,
                 contentDescription = null,
                 tint = Color(0xFF34A853),
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(24.dp)
             )
         }
     }
