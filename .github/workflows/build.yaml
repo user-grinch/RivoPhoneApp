@@ -3,7 +3,7 @@ name: Build & Release
 on:
   push:
     branches:
-      - any
+      - main
 
 permissions:
   contents: write
