@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -985,7 +986,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val density = LocalDensity.current
     val view = LocalView.current
 
-    val handleWidth = 100.dp
+    val handleWidth = 90.dp
     val handleHeight = 50.dp
     val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
@@ -996,12 +997,31 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     }
     val triggerThreshold = maxDrag * 0.88f
 
-    val dragProgress by remember { derivedStateOf {
+    val dragNormal by remember { derivedStateOf {
         if (maxDrag > 0f) abs(offsetX.value) / maxDrag else 0f
     } }
     val handleAlpha by remember { derivedStateOf {
-        if (dragProgress > 0.85f) ((1f - dragProgress) / 0.15f).coerceIn(0f, 1f)
+        if (dragNormal > 0.85f) ((1f - dragNormal) / 0.15f).coerceIn(0f, 1f)
         else 1f
+    } }
+
+    val cream = Color(0xFFF7F2FA)
+    val answerGreen = Color(0xFF34A853)
+    val declineRed = Color(0xFFEA4335)
+
+    val handleBgColor by remember { derivedStateOf {
+        val t = dragNormal
+        if (t <= 0f) cream
+        else if (offsetX.value > 0f) lerp(cream, answerGreen, t)
+        else if (offsetX.value < 0f) lerp(cream, declineRed, t)
+        else cream
+    } }
+    val iconTint by remember { derivedStateOf {
+        lerp(answerGreen, Color.White, dragNormal)
+    } }
+    val iconRotation by remember { derivedStateOf {
+        val ratio = (offsetX.value / maxDrag).coerceIn(-1f, 0f)
+        ratio * 135f
     } }
 
     Box(
@@ -1040,7 +1060,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .width(handleWidth)
                 .height(handleHeight)
                 .clip(RoundedCornerShape(handleHeight / 2))
-                .background(Color(0xFFF7F2FA))
+                .background(handleBgColor)
                 .graphicsLayer { alpha = handleAlpha }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
@@ -1079,8 +1099,10 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Icon(
                 Icons.Default.Call,
                 contentDescription = null,
-                tint = Color(0xFF34A853),
-                modifier = Modifier.size(24.dp)
+                tint = iconTint,
+                modifier = Modifier
+                    .size(24.dp)
+                    .graphicsLayer { rotationZ = iconRotation }
             )
         }
     }
