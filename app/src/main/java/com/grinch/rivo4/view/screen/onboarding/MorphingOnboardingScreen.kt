@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Gesture
-import androidx.compose.material.icons.filled.Waves
+import androidx.compose.material.icons.filled.Dialpad
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,25 +51,25 @@ data class MorphingPage(
 
 private val pages = listOf(
     MorphingPage(
-        icon = Icons.Default.Gesture,
-        title = "Morphing Shapes",
-        description = "Watch elements transform smoothly between states",
+        icon = Icons.Default.Palette,
+        title = "Expressive Design",
+        description = "Experience a modern interface powered by Material 3 and smooth Jetpack Compose animations.",
         shapeCornerPercent = 50,
         rotation = 0f,
         scale = 1f
     ),
     MorphingPage(
-        icon = Icons.Default.Waves,
-        title = "Fluid Motion",
-        description = "Shapes morph and flow as you navigate",
+        icon = Icons.Default.Dialpad,
+        title = "Lightning-Fast Dialing",
+        description = "Find contacts in an instant with our intelligent T9 search and organized call history.",
         shapeCornerPercent = 30,
         rotation = 45f,
         scale = 1.2f
     ),
     MorphingPage(
-        icon = Icons.Default.AutoAwesome,
-        title = "Magic Awaits",
-        description = "Experience the magic of morphing animations",
+        icon = Icons.Default.Security,
+        title = "Built for You",
+        description = "A fully open-source, proximity-aware calling experience designed for efficiency.",
         shapeCornerPercent = 10,
         rotation = 0f,
         scale = 1f
