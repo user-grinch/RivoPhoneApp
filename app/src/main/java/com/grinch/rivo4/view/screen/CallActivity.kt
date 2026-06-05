@@ -30,6 +30,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -985,8 +986,9 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val offsetX = remember { Animatable(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
+    val isDark = isSystemInDarkTheme()
 
-    val handleWidth = 90.dp
+    val handleWidth = 100.dp
     val handleHeight = 50.dp
     val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
@@ -1009,6 +1011,9 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val answerGreen = Color(0xFF34A853)
     val declineRed = Color(0xFFEA4335)
 
+    val trackBgColor = if (isDark) Color(0xFF2D2321) else MaterialTheme.colorScheme.surfaceContainerHighest
+    val labelColor = if (isDark) Color(0xFFF7F2FA).copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+
     val handleBgColor by remember { derivedStateOf {
         val t = dragNormal
         if (t <= 0f) cream
@@ -1030,7 +1035,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .height(88.dp)
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(44.dp))
-            .background(Color(0xFF2D2321))
+            .background(trackBgColor)
             .onSizeChanged { trackWidthPx = it.width.toFloat() }
     ) {
         Text(
@@ -1040,7 +1045,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .padding(start = 18.dp),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
+            color = labelColor
         )
 
         Text(
@@ -1050,7 +1055,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .padding(end = 18.dp),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFFF7F2FA).copy(alpha = 0.6f)
+            color = labelColor
         )
 
         Box(
