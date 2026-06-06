@@ -20,7 +20,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
@@ -28,6 +28,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
+import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
 import com.grinch.rivo4.view.screen.transitions.getAppTransition
 import com.grinch.rivo4.view.theme.Rivo4Theme
@@ -67,39 +68,50 @@ class MainActivity : ComponentActivity() {
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
                 val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
+                val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, false) }
 
-                // Needed for app transitions
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                ) {
-                    DestinationsNavHost(
-                        navGraph = NavGraphs.root,
-                        navController = navController,
-                        defaultTransitions = getAppTransition(transitionStyle)
-                    )
-                }
+                var showOnboarding by remember { mutableStateOf(!onboardingShown) }
 
-                LaunchedEffect(Unit) {
-                    if (!isAlreadyDefaultDialer(this@MainActivity)) {
-                        navController.navigate(DefaultDialerScreenDestination.route) {
-                            popUpTo(ContactScreenDestination.route) {
-                                inclusive = true
-                            }
+                if (showOnboarding) {
+                    MorphingOnboardingScreen(
+                        onFinished = {
+                            prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
+                            showOnboarding = false
                         }
-                    } else if (defBar == 0) {
-                        navController.navigate(RecentScreenDestination.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black)
+                    ) {
+                        DestinationsNavHost(
+                            navGraph = NavGraphs.root,
+                            navController = navController,
+                            defaultTransitions = getAppTransition(transitionStyle)
+                        )
+                    }
+
+                    LaunchedEffect(Unit) {
+                        if (!isAlreadyDefaultDialer(this@MainActivity)) {
+                            navController.navigate(DefaultDialerScreenDestination.route) {
+                                popUpTo(ContactScreenDestination.route) {
+                                    inclusive = true
+                                }
                             }
-                            launchSingleTop = true
+                        } else if (defBar == 0) {
+                            navController.navigate(RecentScreenDestination.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
-                }
 
-                LaunchedEffect(intent) {
-                    handleIntent(intent, navController)
+                    LaunchedEffect(intent) {
+                        handleIntent(intent, navController)
+                    }
                 }
             }
         }
@@ -108,7 +120,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        
+
     }
 
     private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController) {

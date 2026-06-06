@@ -22,11 +22,10 @@ android {
 
     signingConfigs {
         release {
-            // Ensure the path is correct for your GitHub Action setup
-            storeFile = file("keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "${System.getProperty("user.home")}/.android/debug.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "android"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "androiddebugkey"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "android"
         }
     }
 
@@ -35,12 +34,9 @@ android {
             minifyEnabled = true
             shrinkResources = true
             signingConfig = signingConfigs.release
-            // Set to false for a clean production build
             debuggable = false
         }
         debug {
-            // Allows testing with your release key if needed
-//            signingConfig = signingConfigs.release
         }
     }
 

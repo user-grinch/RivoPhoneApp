@@ -30,6 +30,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -45,9 +46,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -68,6 +71,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.koinInject
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class CallActivity : ComponentActivity() {
@@ -83,13 +87,13 @@ class CallActivity : ComponentActivity() {
             setTurnScreenOn(true)
         }
         super.onCreate(savedInstanceState)
-        
+
         // Comprehensive lock screen flags
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
             keyguardManager?.requestDismissKeyguard(this, null)
         }
-        
+
         @Suppress("DEPRECATION")
         var flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
@@ -246,7 +250,7 @@ fun ExpressiveCallScreen(
             } catch (e: Exception) {
                 null
             }
-            
+
             val label = account?.label?.toString()
             if (!label.isNullOrEmpty()) {
                 label
@@ -302,7 +306,7 @@ fun ExpressiveCallScreen(
                 modifier = Modifier.weight(if (showKeypad) 0.7f else 1f)
             ) {
                 Spacer(modifier = Modifier.height(48.dp))
-                
+
                 // Animate content appearance
                 AnimatedVisibility(
                     visible = true,
@@ -527,7 +531,7 @@ fun InCallKeypad(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
-    
+
     DisposableEffect(Unit) {
         onDispose {
             toneGenerator.release()
@@ -662,7 +666,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 Icon(Icons.Default.Call, contentDescription = null, tint = Color(0xFF4CAF50), modifier = Modifier.size(32.dp))
                 Text("Answer", color = Color(0xFF4CAF50), style = MaterialTheme.typography.labelLarge)
             }
-            
+
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.alpha( (offsetY.value / maxDrag).coerceIn(0f, 1f) )) {
                 Text("Decline", color = Color(0xFFF44336), style = MaterialTheme.typography.labelLarge)
                 Icon(Icons.Default.CallEnd, contentDescription = null, tint = Color(0xFFF44336), modifier = Modifier.size(32.dp))
@@ -709,7 +713,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 modifier = Modifier.size(36.dp)
             )
         }
-        
+
         if (offsetY.value == 0f) {
             Text(
                 "Swipe up to answer, down to decline",
@@ -760,7 +764,7 @@ fun ExpressiveBackground(photoUri: String?) {
                     .blur(40.dp)
             )
         }
-        
+
         // Dark overlay for better readability in both light and dark modes
         Box(
             modifier = Modifier
@@ -802,7 +806,7 @@ fun PulsingAvatar(photoUri: String?) {
         ),
         label = "scale"
     )
-    
+
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 0f,
@@ -828,7 +832,7 @@ fun PulsingAvatar(photoUri: String?) {
                 .scale(scale * 1.1f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), avatarShape)
         )
-        
+
         HeroAvatar(photoUri)
     }
 }
@@ -836,12 +840,12 @@ fun PulsingAvatar(photoUri: String?) {
 @Composable
 fun FloatingParticles() {
     val infiniteTransition = rememberInfiniteTransition(label = "particles")
-    
+
     Box(modifier = Modifier.fillMaxSize()) {
         repeat(10) { index ->
             val startX = (index * 100f) % 1000f
             val startY = (index * 150f) % 1500f
-            
+
             val animX by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 100f,
@@ -851,7 +855,7 @@ fun FloatingParticles() {
                 ),
                 label = "x_$index"
             )
-            
+
             val animY by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -150f,
@@ -861,7 +865,7 @@ fun FloatingParticles() {
                 ),
                 label = "y_$index"
             )
-            
+
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 0.1f,
                 targetValue = 0.4f,
@@ -932,17 +936,17 @@ fun CallActionButton(
     onClick: () -> Unit
 ) {
     val scale by animateFloatAsState(if (isActive) 1.1f else 1f, label = "scale")
-    
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(90.dp).alpha(if (enabled) 1f else 0.5f)
     ) {
         val containerColor by animateColorAsState(
-            if (isActive) MaterialTheme.colorScheme.secondaryContainer 
+            if (isActive) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
             label = "color"
         )
-        val contentColor = if (isActive) MaterialTheme.colorScheme.onSecondaryContainer 
+        val contentColor = if (isActive) MaterialTheme.colorScheme.onSecondaryContainer
                           else MaterialTheme.colorScheme.onSurfaceVariant
 
         IconButton(
@@ -982,67 +986,94 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val offsetX = remember { Animatable(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
+    val isDark = isSystemInDarkTheme()
 
-    val maxDrag = with(density) { 120.dp.toPx() }
-    val triggerThreshold = maxDrag * 0.7f
+    val handleWidth = 100.dp
+    val handleHeight = 50.dp
+    val handleWidthPx = with(density) { handleWidth.toPx() }
+    var trackWidthPx by remember { mutableFloatStateOf(0f) }
+    val maxDrag by remember(trackWidthPx, handleWidthPx) {
+        derivedStateOf {
+            if (trackWidthPx > 0f) (trackWidthPx - handleWidthPx) / 2f else 0f
+        }
+    }
+    val triggerThreshold = maxDrag * 0.88f
 
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "scale"
-    )
+    val dragNormal by remember { derivedStateOf {
+        if (maxDrag > 0f) abs(offsetX.value) / maxDrag else 0f
+    } }
+    val handleAlpha by remember { derivedStateOf {
+        if (dragNormal > 0.85f) ((1f - dragNormal) / 0.15f).coerceIn(0f, 1f)
+        else 1f
+    } }
+
+    val cream = Color(0xFFF7F2FA)
+    val answerGreen = Color(0xFF34A853)
+    val declineRed = Color(0xFFEA4335)
+
+    val trackBgColor = if (isDark) Color(0xFF2D2321) else MaterialTheme.colorScheme.surfaceContainerHighest
+    val labelColor = if (isDark) Color(0xFFF7F2FA).copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+
+    val handleBgColor by remember { derivedStateOf {
+        val t = dragNormal
+        if (t <= 0f) cream
+        else if (offsetX.value > 0f) lerp(cream, answerGreen, t)
+        else if (offsetX.value < 0f) lerp(cream, declineRed, t)
+        else cream
+    } }
+    val iconTint by remember { derivedStateOf {
+        lerp(answerGreen, Color.White, dragNormal)
+    } }
+    val iconRotation by remember { derivedStateOf {
+        val ratio = (offsetX.value / maxDrag).coerceIn(-1f, 0f)
+        ratio * 135f
+    } }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .height(88.dp)
             .padding(horizontal = 16.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
-        contentAlignment = Alignment.Center
+            .clip(RoundedCornerShape(44.dp))
+            .background(trackBgColor)
+            .onSizeChanged { trackWidthPx = it.width.toFloat() }
     ) {
-        // Background Labels
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Decline",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFF44336), // Solid red
-                modifier = Modifier.alpha( (offsetX.value / -maxDrag).coerceIn(0.4f, 1f) )
-            )
-            Text(
-                "Answer",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4CAF50), // Solid green
-                modifier = Modifier.alpha( (offsetX.value / maxDrag).coerceIn(0.4f, 1f) )
-            )
-        }
+        Text(
+            "Decline",
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 18.dp),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = labelColor
+        )
 
-        // Draggable Handle (Google Dialer Style: White circle with icon)
+        Text(
+            "Answer",
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 18.dp),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = labelColor
+        )
+
         Box(
             modifier = Modifier
+                .align(Alignment.Center)
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .size(90.dp)
-                .scale(if (offsetX.value == 0f) scale else 1f)
-                .padding(4.dp)
-                .clip(CircleShape)
-                .background(Color.White)
+                .width(handleWidth)
+                .height(handleHeight)
+                .clip(RoundedCornerShape(handleHeight / 2))
+                .background(handleBgColor)
+                .graphicsLayer { alpha = handleAlpha }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
+                                val finalOffset = offsetX.value
                                 when {
-                                    offsetX.value > triggerThreshold -> {
+                                    finalOffset > triggerThreshold -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                                         } else {
@@ -1050,7 +1081,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                                         }
                                         onAnswer()
                                     }
-                                    offsetX.value < -triggerThreshold -> {
+                                    finalOffset < -triggerThreshold -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         } else {
@@ -1073,10 +1104,10 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Icon(
                 Icons.Default.Call,
                 contentDescription = null,
-                tint = if (offsetX.value > 10f) Color(0xFF4CAF50) 
-                       else if (offsetX.value < -10f) Color(0xFFF44336) 
-                       else Color.Black, // Default green as in screenshot handle
-                modifier = Modifier.size(36.dp)
+                tint = iconTint,
+                modifier = Modifier
+                    .size(24.dp)
+                    .graphicsLayer { rotationZ = iconRotation }
             )
         }
     }
@@ -1137,7 +1168,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         .scale(scale * 1.2f)
                         .background(answerColor.copy(alpha = 0.2f), CircleShape)
                 )
-                
+
                 FilledIconButton(
                     onClick = onAnswer,
                     shape = CircleShape,
