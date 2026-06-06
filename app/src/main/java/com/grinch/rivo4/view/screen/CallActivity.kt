@@ -988,105 +988,138 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
 
-    val handleWidth = 100.dp
-    val handleHeight = 50.dp
+    val trackHeight = 88.dp
+    val handleWidth = 110.dp
+    val handleHeight = 64.dp
     val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
+    
     val maxDrag by remember(trackWidthPx, handleWidthPx) {
         derivedStateOf {
-            if (trackWidthPx > 0f) (trackWidthPx - handleWidthPx) / 2f else 0f
+            if (trackWidthPx > 0f) (trackWidthPx / 2f) - (handleWidthPx / 2f) - with(density) { 12.dp.toPx() }
+            else 0f
         }
     }
-    val triggerThreshold = maxDrag * 0.88f
+    val triggerThreshold = maxDrag * 0.85f
 
-    val dragNormal by remember { derivedStateOf {
-        if (maxDrag > 0f) abs(offsetX.value) / maxDrag else 0f
-    } }
-    val handleAlpha by remember { derivedStateOf {
-        if (dragNormal > 0.85f) ((1f - dragNormal) / 0.15f).coerceIn(0f, 1f)
-        else 1f
-    } }
+    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX.value / maxDrag else 0f } }
+    val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
 
-    val cream = Color(0xFFF7F2FA)
-    val answerGreen = Color(0xFF34A853)
-    val declineRed = Color(0xFFEA4335)
+    // pulse
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    
+    val handlePulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "handlePulse"
+    )
 
-    val trackBgColor = if (isDark) Color(0xFF2D2321) else MaterialTheme.colorScheme.surfaceContainerHighest
-    val labelColor = if (isDark) Color(0xFFF7F2FA).copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+    val hintAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "hintAlpha"
+    )
+
+    val cream = if (isDark) Color(0xFF322F33) else Color(0xFFF7F2FA)
+    val answerGreen = Color(0xFF4CAF50)
+    val declineRed = Color(0xFFF44336)
 
     val handleBgColor by remember { derivedStateOf {
-        val t = dragNormal
-        if (t <= 0f) cream
-        else if (offsetX.value > 0f) lerp(cream, answerGreen, t)
-        else if (offsetX.value < 0f) lerp(cream, declineRed, t)
-        else cream
+        val t = dragNormal.value
+        when {
+            dragProgress.value > 0f -> lerp(cream, answerGreen, t)
+            dragProgress.value < 0f -> lerp(cream, declineRed, t)
+            else -> cream
+        }
     } }
+
     val iconTint by remember { derivedStateOf {
-        lerp(answerGreen, Color.White, dragNormal)
+        lerp(if (isDark) Color.White else answerGreen, Color.White, dragNormal.value.coerceIn(0f, 1f))
     } }
+    
     val iconRotation by remember { derivedStateOf {
-        val ratio = (offsetX.value / maxDrag).coerceIn(-1f, 0f)
-        ratio * 135f
+        dragProgress.value * 135f
     } }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(88.dp)
+            .height(trackHeight)
             .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(44.dp))
-            .background(trackBgColor)
             .onSizeChanged { trackWidthPx = it.width.toFloat() }
+            .clip(CircleShape)
+            .background(if (isDark) Color(0xFF211F24) else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.1f), CircleShape)
     ) {
         Text(
             "Decline",
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 18.dp),
+                .padding(start = 28.dp)
+                .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium,
-            color = labelColor
+            fontWeight = FontWeight.Bold,
+            color = if (isDark) Color.White else MaterialTheme.colorScheme.onSurface
         )
 
         Text(
             "Answer",
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 18.dp),
+                .padding(end = 28.dp)
+                .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium,
-            color = labelColor
+            fontWeight = FontWeight.Bold,
+            color = if (isDark) Color.White else MaterialTheme.colorScheme.onSurface
         )
 
+        if (dragNormal.value < 0.1f) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(handleWidth + 20.dp, handleHeight + 10.dp)
+                    .graphicsLayer { 
+                        scaleX = handlePulseScale + 0.1f
+                        scaleY = handlePulseScale + 0.15f
+                        alpha = (1f - handlePulseScale) * 10f 
+                    }
+                    .background(cream.copy(alpha = 0.2f), CircleShape)
+            )
+        }
+
+        // drag handle
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                .graphicsLayer {
+                    val idleFactor = (1f - dragNormal.value * 5f).coerceIn(0f, 1f)
+                    scaleX = 1f + (handlePulseScale - 1f) * idleFactor
+                    scaleY = 1f + (handlePulseScale - 1f) * idleFactor
+                }
                 .width(handleWidth)
                 .height(handleHeight)
-                .clip(RoundedCornerShape(handleHeight / 2))
+                .clip(CircleShape)
                 .background(handleBgColor)
-                .graphicsLayer { alpha = handleAlpha }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             coroutineScope.launch {
-                                val finalOffset = offsetX.value
                                 when {
-                                    finalOffset > triggerThreshold -> {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                        } else {
-                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                        }
+                                    offsetX.value > triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                                         onAnswer()
                                     }
-                                    finalOffset < -triggerThreshold -> {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                        } else {
-                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                        }
+                                    offsetX.value < -triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         onDecline()
                                     }
                                     else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
@@ -1095,23 +1128,32 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
-                            coroutineScope.launch { offsetX.snapTo((offsetX.value + dragAmount).coerceIn(-maxDrag, maxDrag)) }
+                            coroutineScope.launch { 
+                                val newOffset = (offsetX.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
+                                offsetX.snapTo(newOffset) 
+                            }
                         }
                     )
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                Icons.Default.Call,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier
-                    .size(24.dp)
-                    .graphicsLayer { rotationZ = iconRotation }
-            )
+            val icon = if (dragProgress.value < -0.2f) Icons.Default.CallEnd else Icons.Default.Call
+            
+            Crossfade(targetState = icon, animationSpec = tween(150), label = "icon") { targetIcon ->
+                Icon(
+                    targetIcon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .graphicsLayer { rotationZ = iconRotation }
+                )
+            }
         }
     }
 }
+
+
 
 @Composable
 fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
