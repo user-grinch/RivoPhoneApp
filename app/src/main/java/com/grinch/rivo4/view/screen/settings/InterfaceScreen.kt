@@ -69,6 +69,7 @@ fun InterfaceScreen(
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
     var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
+    var cardRoundness by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28)) }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60), Color(0xFF436916),
@@ -273,6 +274,24 @@ fun InterfaceScreen(
                             onValueChange = {
                                 searchMatchMode = it
                                 prefs.setInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, it)
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSelectListItem(
+                            headline = "Card roundness",
+                            supporting = "Adjust the corner radius of UI cards",
+                            leadingIcon = Icons.Outlined.CropFree,
+                            options = listOf(
+                                "Extra Round" to 32,
+                                "Standard" to 28,
+                                "Rounded" to 20,
+                                "Semi Square" to 12,
+                                "Square" to 0
+                            ),
+                            selectedValue = cardRoundness,
+                            onValueChange = {
+                                cardRoundness = it
+                                prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, it)
                             }
                         )
                     }

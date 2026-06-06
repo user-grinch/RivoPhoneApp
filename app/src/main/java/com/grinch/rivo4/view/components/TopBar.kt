@@ -2,12 +2,15 @@ package com.grinch.rivo4.view.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +22,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val roundness = remember(settingsState) { prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,7 +38,7 @@ fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .height(52.dp),
-            shape = CircleShape,
+            shape = RoundedCornerShape(roundness.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Row(

@@ -169,7 +169,7 @@ fun AccountFilterBar(viewModel: ContactsViewModel) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
+                .padding(vertical = 2.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

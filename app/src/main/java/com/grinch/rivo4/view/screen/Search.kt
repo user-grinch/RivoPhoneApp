@@ -106,6 +106,7 @@ fun ContactSearchContent(
     val searchMatchMode by remember(settingsState) {
         mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0))
     }
+    val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
 
     var query by remember { mutableStateOf("") }
 
@@ -144,7 +145,7 @@ fun ContactSearchContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(32.dp),
+            shape = RoundedCornerShape(roundness.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             shadowElevation = 0.dp
         ) {
@@ -200,7 +201,7 @@ fun ContactSearchContent(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Surface(
-                                shape = RoundedCornerShape(32.dp),
+                                shape = RoundedCornerShape(roundness.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                                 modifier = Modifier.size(120.dp)
                             ) {
@@ -259,9 +260,9 @@ fun ContactSearchContent(
                                 Surface(
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                     shape = when {
-                                        isFirst && isLast -> RoundedCornerShape(28.dp)
-                                        isFirst -> RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
-                                        isLast -> RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+                                        isFirst && isLast -> RoundedCornerShape(roundness.dp)
+                                        isFirst -> RoundedCornerShape(topStart = roundness.dp, topEnd = roundness.dp)
+                                        isLast -> RoundedCornerShape(bottomStart = roundness.dp, bottomEnd = roundness.dp)
                                         else -> androidx.compose.ui.graphics.RectangleShape
                                     },
                                     color = MaterialTheme.colorScheme.surfaceContainerLow

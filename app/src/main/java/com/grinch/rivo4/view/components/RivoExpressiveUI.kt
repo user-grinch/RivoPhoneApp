@@ -51,26 +51,32 @@ fun RivoExpressiveCard(
     modifier: Modifier = Modifier,
     title: String? = null,
     icon: ImageVector? = null,
-    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(28.dp),
+    shape: androidx.compose.ui.graphics.Shape? = null,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    isCompact: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
     val showCards = remember(settingsState) { prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true) }
+    val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
+    val resolvedShape = shape ?: RoundedCornerShape(roundness.dp)
+
+    val padding = if (isCompact) 12.dp else 16.dp
+    val spacing = if (isCompact) 8.dp else 12.dp
 
     if (showCards) {
         Card(
             modifier = modifier.fillMaxWidth(),
-            shape = shape,
+            shape = resolvedShape,
             colors = CardDefaults.cardColors(
                 containerColor = containerColor
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.padding(padding),
+                verticalArrangement = Arrangement.spacedBy(spacing)
             ) {
                 if (title != null || icon != null) {
                     Row(
@@ -222,10 +228,13 @@ fun RivoListItem(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
+    isCompact: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val verticalPadding = 6.dp
-    val avatarSize = 44.dp
+    val verticalPadding = if (isCompact) 6.dp else 10.dp
+    val horizontalPadding = if (isCompact) 10.dp else 12.dp
+    val avatarSize = if (isCompact) 42.dp else 44.dp
+    val spacing = if (isCompact) 14.dp else 16.dp
 
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -250,7 +259,7 @@ fun RivoListItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = verticalPadding)
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -265,7 +274,7 @@ fun RivoListItem(
                         Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
                     }
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(spacing))
             } else if (avatarName != null || photoUri != null) {
                 RivoAvatar(
                     name = avatarName ?: "",
@@ -275,7 +284,7 @@ fun RivoListItem(
                     shape = resolvedShape,
                     modifier = Modifier.size(avatarSize)
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(spacing))
             } else if (leadingIcon != null) {
                 Surface(
                     modifier = Modifier.size(avatarSize),
@@ -287,7 +296,7 @@ fun RivoListItem(
                         Icon(leadingIcon, null, tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(20.dp))
                     }
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(spacing))
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -474,6 +483,9 @@ fun RivoDialog(
 ) {
     val showState = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { showState.value = true }
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
 
     val scale by animateFloatAsState(
         targetValue = if (showState.value) 1f else 0.95f,
@@ -505,7 +517,7 @@ fun RivoDialog(
                         this.alpha = alpha
                     }
                     .animateContentSize(),
-                shape = RoundedCornerShape(32.dp),
+                shape = RoundedCornerShape(roundness.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 8.dp
             ) {

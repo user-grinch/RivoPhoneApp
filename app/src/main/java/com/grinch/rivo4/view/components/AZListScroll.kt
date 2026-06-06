@@ -104,11 +104,11 @@ fun AZListScroll(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .padding(horizontal = 16.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = initial.toString(),
-                            style = MaterialTheme.typography.labelLarge,
+                            style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 8.dp)
@@ -118,13 +118,13 @@ fun AZListScroll(
 
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        RivoExpressiveCard {
+                        RivoExpressiveCard(isCompact = true) {
                             contactsForChar.forEachIndexed { index, contact ->
                                 RivoListItem(
                                     headline = contact.name.ifEmpty {
                                         contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: "Unknown"
                                     },
-                                    supporting = contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) },
+                                    supporting = null,
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,
                                     onClick = {
@@ -137,7 +137,8 @@ fun AZListScroll(
                                     onLongClick = {
                                         onToggleSelection(contact.id)
                                     },
-                                    selected = selectedIds.contains(contact.id)
+                                    selected = selectedIds.contains(contact.id),
+                                    isCompact = true
                                 )
                                 if (index < contactsForChar.size - 1) {
                                     RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -145,7 +146,7 @@ fun AZListScroll(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
