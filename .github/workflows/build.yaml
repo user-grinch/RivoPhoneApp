@@ -23,17 +23,18 @@ jobs:
           java-version: "17"
           cache: gradle
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Generate debug keystore
-        run: |
-          mkdir -p ~/.android
-          keytool -genkey -v -keystore ~/.android/debug.keystore -alias androiddebugkey \
-            -storepass android -keypass android -keyalg RSA -keysize 2048 \
-            -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-
       - name: Build Release APK & AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           ./gradlew assembleRelease bundleRelease
 
@@ -41,6 +42,14 @@ jobs:
         run: |
           mkdir outputs
           find . -type f \( -name "*.apk" -o -name "*.aab" \) -path "*/release/*" -exec cp {} outputs/ \;
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd outputs
+          sha256sum * > SHA256SUMS.txt
+          for f in *; do
+            sha256sum "$f" > "$f.sha256"
+          done
 
       - name: Delete old release and tag
         env:
