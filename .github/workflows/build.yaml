@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -35,6 +38,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
         run: |
           ./gradlew assembleRelease bundleRelease
 
@@ -51,13 +55,16 @@ jobs:
             sha256sum "$f" > "$f.sha256"
           done
 
+      # Only run these steps if the push/PR is to the main branch
       - name: Delete old release and tag
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete preview --cleanup-tag -y || true
 
       - name: Publish Release
+        if: github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
           tag: preview
