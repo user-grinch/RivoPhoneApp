@@ -48,9 +48,11 @@ import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
+    private var intentState by mutableStateOf<Intent?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        intentState = intent
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -109,8 +111,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    LaunchedEffect(intent) {
-                        handleIntent(intent, navController)
+                    LaunchedEffect(intentState) {
+                        handleIntent(intentState, navController)
                     }
                 }
             }
@@ -120,7 +122,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
+        intentState = intent
     }
 
     private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController) {
@@ -129,6 +131,12 @@ class MainActivity : ComponentActivity() {
         val action = intent.action
 
         when (action) {
+            "com.grinch.rivo4.ACTION_VIEW_RECENTS" -> {
+                navController.navigate(RecentScreenDestination.route) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
             Intent.ACTION_DIAL, Intent.ACTION_VIEW -> {
                 if (data?.scheme == "tel") {
                     val number = data.schemeSpecificPart

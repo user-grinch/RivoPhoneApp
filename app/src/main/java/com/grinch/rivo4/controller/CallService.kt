@@ -203,6 +203,16 @@ class CallService : InCallService() {
 
     private fun showMissedCallNotification(call: Call) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID, "Calls", NotificationManager.IMPORTANCE_HIGH).apply {
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                enableVibration(true)
+                setSound(null, null)
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
         
@@ -220,7 +230,10 @@ class CallService : InCallService() {
             try { telecomManager.getPhoneAccount(it)?.label?.toString() } catch (e: SecurityException) { null }
         }
 
-        val intent = Intent(this, CallActivity::class.java)
+        val intent = Intent(this, com.grinch.rivo4.MainActivity::class.java).apply {
+            action = "com.grinch.rivo4.ACTION_VIEW_RECENTS"
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         val pendingIntent = PendingIntent.getActivity(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val timeString = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
