@@ -100,7 +100,7 @@
         </activity>
 
         <activity
-            android:name=".view.screen.CallActivity"
+            android:name=".controller.CallActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:showForAllUsers="true"

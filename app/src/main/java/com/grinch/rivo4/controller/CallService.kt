@@ -22,7 +22,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
-import com.grinch.rivo4.view.screen.CallActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,12 +61,19 @@ class CallService : InCallService() {
         private val _allCalls = MutableStateFlow<List<Call>>(emptyList())
         val allCalls = _allCalls.asStateFlow()
 
+        private val _preferredCall = MutableStateFlow<Call?>(null)
+
         private val _audioState = MutableStateFlow<CallAudioState?>(null)
         val audioState = _audioState.asStateFlow()
 
         val isActivityVisible = MutableStateFlow(false)
 
         private var instance: CallService? = null
+
+        fun setPreferredCall(call: Call) {
+            _preferredCall.value = call
+            instance?.updateCallState()
+        }
 
         fun mute(muted: Boolean) {
             instance?.setMuted(muted)
@@ -253,14 +259,28 @@ class CallService : InCallService() {
     }
 
     private fun updateCallState() {
-        val calls = getCalls()
-        _allCalls.value = calls
+        val calls = getCalls() ?: emptyList()
+        _allCalls.value = ArrayList(calls)
         
-        val activeCall = calls.find { it.state == Call.STATE_ACTIVE || it.state == Call.STATE_DIALING || it.state == Call.STATE_RINGING }
-            ?: calls.firstOrNull()
+        val preferred = _preferredCall.value
+        // Clear preferred if it's gone or disconnected
+        if (preferred != null && (preferred !in calls || preferred.state == Call.STATE_DISCONNECTED)) {
+            _preferredCall.value = null
+        }
+
+        // Priority: Preferred > Ringing > Dialing/Connecting > Active > Holding > Others
+        val activePreferred = if (preferred != null && preferred.state != Call.STATE_DISCONNECTED && preferred.state != Call.STATE_HOLDING) preferred else null
+
+        val priorityCall = activePreferred
+            ?: calls.find { it.state == Call.STATE_RINGING }
+            ?: calls.find { it.state == Call.STATE_DIALING || it.state == Call.STATE_CONNECTING }
+            ?: calls.find { it.state == Call.STATE_ACTIVE }
+            ?: calls.find { it == preferred } // Even if held, if it's preferred and nothing else is active
+            ?: calls.find { it.state == Call.STATE_HOLDING }
+            ?: calls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
             
-        if (activeCall != null) {
-            _currentCallSession.value = CallSession(activeCall, activeCall.state)
+        if (priorityCall != null) {
+            _currentCallSession.value = CallSession(priorityCall, priorityCall.state)
         } else {
             _currentCallSession.value = null
         }
