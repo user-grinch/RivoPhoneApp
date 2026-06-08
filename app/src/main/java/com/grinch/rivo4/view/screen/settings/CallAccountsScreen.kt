@@ -51,6 +51,7 @@ fun CallAccountsScreen(
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var incomingCallUI by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)) }
     var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
+    var dialpadLayout by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_LAYOUT, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
     var redialAttempts by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)) }
     var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
@@ -141,7 +142,9 @@ fun CallAccountsScreen(
                         leadingIcon = Icons.Outlined.PhoneInTalk,
                         options = listOf(
                             "Horizontal Swipe" to 0,
-                            "Buttons" to 1
+                            "Buttons" to 1,
+                            "Slide to Answer (iOS)" to 2,
+                            "Vertical Swipe" to 3
                         ),
                         selectedValue = incomingCallUI,
                         onValueChange = {
@@ -163,6 +166,22 @@ fun CallAccountsScreen(
                         onValueChange = {
                             dialpadStyle = it
                             prefs.setInt(PreferenceManager.KEY_DIALPAD_STYLE, it)
+                        }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSelectListItem(
+                        headline = "Dialpad Layout",
+                        supporting = "Alignment for one-handed use",
+                        leadingIcon = Icons.Outlined.AlignHorizontalLeft,
+                        options = listOf(
+                            "Standard" to 0,
+                            "Left" to 1,
+                            "Right" to 2
+                        ),
+                        selectedValue = dialpadLayout,
+                        onValueChange = {
+                            dialpadLayout = it
+                            prefs.setInt(PreferenceManager.KEY_DIALPAD_LAYOUT, it)
                         }
                     )
                 }

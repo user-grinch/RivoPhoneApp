@@ -20,12 +20,14 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,6 +37,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -216,7 +220,7 @@ fun ExpressiveCallScreen(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.weight(if (showKeypad) 0.7f else 1f)
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 AnimatedVisibility(
                     visible = true,
@@ -264,7 +268,7 @@ fun ExpressiveCallScreen(
                 }
 
                 if (!showKeypad) {
-                    Spacer(modifier = Modifier.height(48.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     if (callState == Call.STATE_RINGING) {
                         PulsingAvatar(photoUri)
@@ -393,32 +397,49 @@ fun ExpressiveCallScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CallActionButton(
-                            icon = Icons.Default.Message,
-                            isActive = false,
-                            label = "Message"
+                    if (useCustomUI != 2 && useCustomUI != 3) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            try { call.disconnect() } catch (e: Exception) {}
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("smsto:$phoneNumber")
+                            CallActionButton(
+                                icon = Icons.Default.Message,
+                                isActive = false,
+                                label = "Message"
+                            ) {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                try { call.disconnect() } catch (e: Exception) {}
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("smsto:$phoneNumber")
+                                }
+                                context.startActivity(intent)
                             }
-                            context.startActivity(intent)
                         }
                     }
 
-                    if (useCustomUI == 1) {
-                        IncomingCallButtons(
+                    when (useCustomUI) {
+                        1 -> IncomingCallButtons(
                             onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
                             onDecline = { try { call.disconnect() } catch (e: Exception) {} }
                         )
-                    } else {
-                        HorizontalSwipeToAnswer(
+                        2 -> IPhoneSwipeToAnswer(
+                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                            onDecline = { try { call.disconnect() } catch (e: Exception) {} },
+                            onMessage = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                try { call.disconnect() } catch (e: Exception) {}
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("smsto:$phoneNumber")
+                                }
+                                context.startActivity(intent)
+                            }
+                        )
+                        3 -> VerticalSwipeToAnswer(
+                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                        )
+                        else -> HorizontalSwipeToAnswer(
                             onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
                             onDecline = { try { call.disconnect() } catch (e: Exception) {} }
                         )
@@ -436,7 +457,11 @@ fun InCallKeypad(
     onDigitClick: (Char) -> Unit
 ) {
     val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
+    val dialpadStyle by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0))
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -477,6 +502,7 @@ fun InCallKeypad(
                     row.forEach { key ->
                         KeypadButton(
                             key = key,
+                            style = dialpadStyle,
                             onClick = {
                                 if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
                                     val toneType = when (key) {
@@ -511,28 +537,38 @@ fun InCallKeypad(
 }
 
 @Composable
-fun KeypadButton(key: Char, onClick: () -> Unit) {
+fun KeypadButton(key: Char, style: Int = 0, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) 16.dp else 32.dp,
+        targetValue = when (style) {
+            1 -> 50.dp // Circular
+            2 -> 0.dp  // Minimal
+            else -> if (isPressed) 16.dp else 32.dp // Modern
+        },
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "ButtonShape"
     )
 
+    val containerColor = when (style) {
+        2 -> if (isPressed) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else Color.Transparent
+        else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+    }
+
     Surface(
         onClick = onClick,
-        modifier = Modifier.size(64.dp),
-        shape = RoundedCornerShape(cornerRadius),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        modifier = Modifier.size(if (style == 1) 72.dp else 64.dp),
+        shape = if (style == 1) CircleShape else RoundedCornerShape(cornerRadius),
+        color = containerColor,
         contentColor = MaterialTheme.colorScheme.onSurface,
+        border = if (style == 2 && !isPressed) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)) else null,
         interactionSource = interactionSource
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = key.toString(),
-                style = MaterialTheme.typography.headlineSmall,
+                style = if (style == 1) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -634,13 +670,13 @@ fun PulsingAvatar(photoUri: String?) {
     Box(contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier
-                .size(160.dp)
+                .size(240.dp)
                 .scale(scale)
                 .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha), avatarShape)
         )
         Box(
             modifier = Modifier
-                .size(180.dp)
+                .size(280.dp)
                 .scale(scale * 1.1f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), avatarShape)
         )
@@ -959,112 +995,331 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val offsetY = remember { Animatable(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
-    val isDark = isSystemInDarkTheme()
 
-    val trackHeight = 320.dp
-    val trackWidth = 80.dp
-    val handleSize = 64.dp
-    val handleSizePx = with(density) { handleSize.toPx() }
-    var trackHeightPx by remember { mutableFloatStateOf(0f) }
+    val handleSize = 80.dp
+    val maxDrag = with(density) { 100.dp.toPx() } // Smaller movement region
+    val triggerThreshold = maxDrag * 0.7f
 
-    val maxDrag by remember(trackHeightPx, handleSizePx) {
-        derivedStateOf {
-            if (trackHeightPx > 0f) (trackHeightPx / 2f) - (handleSizePx / 2f) - with(density) { 16.dp.toPx() }
-            else 0f
-        }
-    }
-    val triggerThreshold = maxDrag * 0.8f
+    val dragProgress = remember { derivedStateOf { offsetY.value / maxDrag } }
+    
+    // Pulse animation for the button
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.25f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "pulseAlpha"
+    )
 
-    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetY.value / maxDrag else 0f } }
-    val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
-
-    val cream = if (isDark) Color(0xFF322F33) else Color(0xFFF7F2FA)
-    val answerGreen = Color(0xFF4CAF50)
-    val declineRed = Color(0xFFF44336)
-
-    val handleBgColor by remember { derivedStateOf {
-        val t = dragNormal.value
-        when {
-            offsetY.value < 0f -> lerp(cream, answerGreen, t)
-            offsetY.value > 0f -> lerp(cream, declineRed, t)
-            else -> cream
-        }
-    } }
-
-    val iconTint by remember { derivedStateOf {
-        lerp(if (isDark) Color.White else answerGreen, Color.White, dragNormal.value.coerceIn(0f, 1f))
-    } }
+    // Arrow bounce animation
+    val arrowOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 12f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "arrowBounce"
+    )
 
     Box(
         modifier = Modifier
-            .width(trackWidth)
-            .height(trackHeight)
-            .onSizeChanged { trackHeightPx = it.height.toFloat() }
-            .clip(RoundedCornerShape(40.dp))
-            .background(if (isDark) Color(0xFF211F24) else MaterialTheme.colorScheme.surfaceContainerHighest)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.1f), RoundedCornerShape(40.dp)),
+            .fillMaxWidth()
+            .height(360.dp),
         contentAlignment = Alignment.Center
     ) {
+        // --- UP SECTION (Answer) ---
         Column(
-            modifier = Modifier.fillMaxHeight().padding(vertical = 24.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-110).dp)
+                .graphicsLayer { 
+                    alpha = (0.4f + (dragProgress.value * -1.8f)).coerceIn(0f, 1f)
+                    translationY = -arrowOffset
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                Icons.Default.Call,
-                contentDescription = null,
-                tint = answerGreen.copy(alpha = 0.3f),
-                modifier = Modifier.size(24.dp)
+            Icon(Icons.Default.KeyboardArrowUp, null, tint = Color.White, modifier = Modifier.size(36.dp))
+            Text(
+                "Swipe up to answer",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White.copy(alpha = 0.9f),
+                fontWeight = FontWeight.Medium
             )
-            Icon(
-                Icons.Default.CallEnd,
-                contentDescription = null,
-                tint = declineRed.copy(alpha = 0.3f),
-                modifier = Modifier.size(24.dp)
+        }
+
+        // --- DOWN SECTION (Reject) ---
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = 110.dp)
+                .graphicsLayer { 
+                    alpha = (0.4f + (dragProgress.value * 1.8f)).coerceIn(0f, 1f)
+                    translationY = arrowOffset
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "Swipe down to reject",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White.copy(alpha = 0.9f),
+                fontWeight = FontWeight.Medium
             )
+            Icon(Icons.Default.KeyboardArrowDown, null, tint = Color.White, modifier = Modifier.size(36.dp))
+        }
+
+        // --- CENTER BUTTON ---
+        Box(contentAlignment = Alignment.Center) {
+            // Pulsing rings
+            if (abs(offsetY.value) < 5f) {
+                Box(
+                    modifier = Modifier
+                        .size(handleSize)
+                        .scale(pulseScale)
+                        .background(Color.White.copy(alpha = pulseAlpha), CircleShape)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(handleSize)
+                        .scale(pulseScale * 1.4f)
+                        .border(1.dp, Color.White.copy(alpha = pulseAlpha * 0.4f), CircleShape)
+                )
+            }
+
+            val handleBgColor by animateColorAsState(
+                targetValue = when {
+                    offsetY.value < -15f -> Color(0xFF4CAF50)
+                    offsetY.value > 15f -> Color(0xFFF44336)
+                    else -> Color.White
+                },
+                label = "bgColor"
+            )
+            
+            val iconTint by animateColorAsState(
+                targetValue = if (abs(offsetY.value) > 15f) Color.White else Color(0xFF4CAF50),
+                label = "iconTint"
+            )
+
+            Box(
+                modifier = Modifier
+                    .offset { IntOffset(0, offsetY.value.roundToInt()) }
+                    .size(handleSize)
+                    .shadow(if (abs(offsetY.value) > 5f) 12.dp else 4.dp, CircleShape)
+                    .background(handleBgColor, CircleShape)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onDragEnd = {
+                                coroutineScope.launch {
+                                    when {
+                                        offsetY.value < -triggerThreshold -> {
+                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                            onAnswer()
+                                        }
+                                        offsetY.value > triggerThreshold -> {
+                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                            onDecline()
+                                        }
+                                        else -> offsetY.animateTo(0f, spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium))
+                                    }
+                                }
+                            },
+                            onVerticalDrag = { change, dragAmount ->
+                                change.consume()
+                                coroutineScope.launch {
+                                    val newOffset = (offsetY.value + dragAmount).coerceIn(-maxDrag, maxDrag)
+                                    offsetY.snapTo(newOffset)
+                                }
+                            }
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                val icon = if (offsetY.value > 5f) Icons.Default.CallEnd else Icons.Default.Call
+                
+                Crossfade(targetState = icon, label = "icon") { targetIcon ->
+                    Icon(
+                        targetIcon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: () -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+    val offsetX = remember { Animatable(0f) }
+    val density = LocalDensity.current
+    val view = LocalView.current
+    val isDark = isSystemInDarkTheme()
+    
+    val trackWidth = 320.dp
+    val trackHeight = 84.dp
+    val handleSize = 68.dp
+    val handlePadding = 8.dp
+    
+    val trackWidthPx = with(density) { trackWidth.toPx() }
+    val handleSizePx = with(density) { handleSize.toPx() }
+    val handlePaddingPx = with(density) { handlePadding.toPx() }
+    
+    val maxDrag = trackWidthPx - handleSizePx - (handlePaddingPx * 2)
+
+    val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
+    val shimmerOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "offset"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(48.dp),
+        modifier = Modifier.padding(bottom = 60.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                IconButton(
+                    onClick = onDecline,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f), 
+                            CircleShape
+                        )
+                ) {
+                    Icon(
+                        Icons.Default.CallEnd, 
+                        contentDescription = "Decline", 
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    "Decline", 
+                    style = MaterialTheme.typography.labelMedium, 
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), 
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                IconButton(
+                    onClick = onMessage,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f), 
+                            CircleShape
+                        )
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Message, 
+                        contentDescription = "Message", 
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    "Message", 
+                    style = MaterialTheme.typography.labelMedium, 
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
 
         Box(
             modifier = Modifier
-                .offset { IntOffset(0, offsetY.value.roundToInt()) }
-                .size(handleSize)
+                .width(trackWidth)
+                .height(trackHeight)
                 .clip(CircleShape)
-                .background(handleBgColor)
-                .pointerInput(Unit) {
-                    detectVerticalDragGestures(
-                        onDragEnd = {
-                            coroutineScope.launch {
-                                when {
-                                    offsetY.value < -triggerThreshold -> {
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (isDark) 0.3f else 0.5f))
+                .border(
+                    1.dp, 
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), 
+                    CircleShape
+                ),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            val baseTextColor = MaterialTheme.colorScheme.onSurface
+            val shimmerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+            
+            val brush = Brush.linearGradient(
+                colors = listOf(shimmerColor, baseTextColor, shimmerColor),
+                start = Offset(trackWidthPx * shimmerOffset - 150f, 0f),
+                end = Offset(trackWidthPx * shimmerOffset + 150f, 0f)
+            )
+
+            Text(
+                text = "slide to answer",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = handleSize + 16.dp)
+                    .graphicsLayer { alpha = (1f - (offsetX.value / maxDrag)).coerceIn(0f, 1f) },
+                style = MaterialTheme.typography.titleMedium.copy(
+                    brush = brush,
+                    fontWeight = FontWeight.Medium
+                ),
+                textAlign = TextAlign.Start
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(start = handlePadding)
+                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .size(handleSize)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragEnd = {
+                                coroutineScope.launch {
+                                    if (offsetX.value > maxDrag * 0.85f) {
                                         view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                                         onAnswer()
+                                    } else {
+                                        offsetX.animateTo(0f, spring(dampingRatio = 0.8f))
                                     }
-                                    offsetY.value > triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                        onDecline()
-                                    }
-                                    else -> offsetY.animateTo(0f, spring(dampingRatio = 0.8f))
+                                }
+                            },
+                            onHorizontalDrag = { change, dragAmount ->
+                                change.consume()
+                                coroutineScope.launch {
+                                    offsetX.snapTo((offsetX.value + dragAmount).coerceIn(0f, maxDrag))
                                 }
                             }
-                        },
-                        onVerticalDrag = { change, dragAmount ->
-                            change.consume()
-                            coroutineScope.launch {
-                                val newOffset = (offsetY.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
-                                offsetY.snapTo(newOffset)
-                            }
-                        }
-                    )
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            val icon = if (offsetY.value > 10f) Icons.Default.CallEnd else Icons.Default.Call
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(28.dp)
-            )
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Default.Call,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
     }
 }
