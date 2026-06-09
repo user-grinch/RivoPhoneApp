@@ -68,12 +68,13 @@ fun InterfaceScreen(
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
+    var showCallScreenAvatar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)) }
     var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
     var cardRoundness by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28)) }
 
     val presetColors = listOf(
-        Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60), Color(0xFF436916),
-        Color(0xFF984061), Color(0xFF006874), Color(0xFF705D00), Color(0xFFBF0031)
+        Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60),
+        Color(0xFF436916), Color(0xFF984061), Color(0xFF808080)
     )
 
     fun showRestartPrompt() {
@@ -215,6 +216,17 @@ fun InterfaceScreen(
                             onValueChange = {
                                 avatarShape = it
                                 prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSwitchListItem(
+                            headline = "Call screen avatar",
+                            supporting = "Show contact picture on call screen",
+                            leadingIcon = Icons.Outlined.ContactPage,
+                            checked = showCallScreenAvatar,
+                            onCheckedChange = {
+                                showCallScreenAvatar = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, it)
                             }
                         )
                     }

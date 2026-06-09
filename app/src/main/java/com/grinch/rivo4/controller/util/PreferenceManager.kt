@@ -142,6 +142,7 @@ class PreferenceManager(context: Context) {
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
         const val KEY_INCOMING_CALL_UI_MODE = "incoming_call_ui_mode"
         const val KEY_SHOW_CARDS = "show_cards"
+        const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
         const val KEY_CARD_ROUNDNESS = "card_roundness"
         const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
     }

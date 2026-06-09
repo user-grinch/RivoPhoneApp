@@ -115,6 +115,11 @@ fun ExpressiveCallScreen(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
+    val settingsState by preferenceManager.settingsChanged.collectAsState()
+    val showCallScreenAvatar = remember(settingsState) {
+        preferenceManager.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)
+    }
+
     LaunchedEffect(callState) {
         if (callState == Call.STATE_ACTIVE) {
             val startTime = System.currentTimeMillis() - (callDuration * 1000)
@@ -268,12 +273,19 @@ fun ExpressiveCallScreen(
                 }
 
                 if (!showKeypad) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    if (callState == Call.STATE_RINGING) {
-                        PulsingAvatar(photoUri)
-                    } else {
-                        HeroAvatar(photoUri)
+                    AnimatedVisibility(
+                        visible = showCallScreenAvatar,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            if (callState == Call.STATE_RINGING) {
+                                PulsingAvatar(photoUri)
+                            } else {
+                                HeroAvatar(photoUri)
+                            }
+                        }
                     }
                 }
             }
