@@ -1,27 +1,15 @@
 package com.grinch.rivo4.view.screen
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.ClipboardManager
-import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
 import android.provider.ContactsContract
-import android.telecom.TelecomManager
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -36,20 +24,16 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material.icons.rounded.Call
 import com.grinch.rivo4.view.components.RivoDivider
-import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.*
@@ -57,30 +41,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.InterceptPlatformTextInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.view.components.*
-import com.grinch.rivo4.view.components.tiles.SingleTile
-import com.grinch.rivo4.view.components.tiles.TileGroup
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -88,7 +64,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.awaitCancellation
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalComposeUiApi::class
@@ -194,7 +169,7 @@ fun DialPadScreen(
     ) { innerPadding ->
         Box(
             modifier = Modifier
-                .fillMaxSize().padding(top=innerPadding.calculateTopPadding())
+                .fillMaxSize().padding(top =innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding())
         ) {
 
             if (number.isEmpty()) {
