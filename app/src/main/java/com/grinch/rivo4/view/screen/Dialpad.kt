@@ -60,6 +60,7 @@ import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.awaitCancellation
 import org.koin.compose.koinInject
@@ -409,11 +410,11 @@ fun DialPadScreen(
                             ) {
                                 DialerActionExpressive(
                                     onClick = {
-                                        val intent = Intent(Intent.ACTION_INSERT).apply {
-                                            type = ContactsContract.RawContacts.CONTENT_TYPE
-                                            putExtra(ContactsContract.Intents.Insert.PHONE, number)
-                                        }
-                                        context.startActivity(intent)
+                                        navigator.navigate(
+                                            ContactEditScreenDestination(
+                                                initialPhone = number
+                                            )
+                                        )
                                     },
                                     icon = Icons.Default.PersonAdd,
                                     contentDescription = "Add Contact",

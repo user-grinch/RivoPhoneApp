@@ -4,6 +4,7 @@ import android.accounts.Account
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ContactsViewModel(
-    private val contactsRepo: IContactsRepository
+    private val contactsRepo: IContactsRepository,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     private val _allContacts = MutableStateFlow<List<Contact>>(emptyList())
@@ -105,7 +107,21 @@ class ContactsViewModel(
     suspend fun saveContact(contact: Contact) {
         withContext(Dispatchers.IO) {
             contactsRepo.saveContact(contact)
+            
+            preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_NAME, contact.accountName)
+            preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_TYPE, contact.accountType)
+            
             fetchContacts()
+        }
+    }
+    
+    fun getLastUsedAccount(): Account? {
+        val name = preferenceManager.getString(PreferenceManager.KEY_LAST_USED_ACCOUNT_NAME, null)
+        val type = preferenceManager.getString(PreferenceManager.KEY_LAST_USED_ACCOUNT_TYPE, null)
+        return if (name != null && type != null) {
+            Account(name, type)
+        } else {
+            null
         }
     }
 

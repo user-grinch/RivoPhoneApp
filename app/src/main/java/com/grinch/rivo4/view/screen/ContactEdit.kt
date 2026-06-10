@@ -62,14 +62,16 @@ fun ContactEditScreen(
     var isSaving by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(contactId) {
+    LaunchedEffect(contactId, availableAccounts) {
         if (contactId != null && contactId != "0" && contactId != "null") {
             val existing = contactsVM.getFullContactById(contactId)
             if (existing != null) {
                 name = existing.name
                 photoUri = existing.photoUri
-                selectedAccount = availableAccounts.find {
-                    it.name == existing.accountName && it.type == existing.accountType
+                if (selectedAccount == null) {
+                    selectedAccount = availableAccounts.find {
+                        it.name == existing.accountName && it.type == existing.accountType
+                    }
                 }
 
                 phoneNumbers.clear()
@@ -93,9 +95,20 @@ fun ContactEditScreen(
                     addresses.add("")
                 }
             }
-        } else if (!initialPhone.isNullOrBlank()) {
-            phoneNumbers.clear()
-            phoneNumbers.add(initialPhone)
+        } else {
+            if (selectedAccount == null) {
+                val lastUsed = contactsVM.getLastUsedAccount()
+                if (lastUsed != null) {
+                    selectedAccount = availableAccounts.find {
+                        it.name == lastUsed.name && it.type == lastUsed.type
+                    }
+                }
+            }
+
+            if (!initialPhone.isNullOrBlank() && phoneNumbers.all { it.isBlank() }) {
+                phoneNumbers.clear()
+                phoneNumbers.add(initialPhone)
+            }
         }
     }
 

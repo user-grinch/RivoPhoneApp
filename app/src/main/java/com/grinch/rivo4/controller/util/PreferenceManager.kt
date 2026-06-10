@@ -145,5 +145,7 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
         const val KEY_CARD_ROUNDNESS = "card_roundness"
         const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
+        const val KEY_LAST_USED_ACCOUNT_NAME = "last_used_account_name"
+        const val KEY_LAST_USED_ACCOUNT_TYPE = "last_used_account_type"
     }
 }

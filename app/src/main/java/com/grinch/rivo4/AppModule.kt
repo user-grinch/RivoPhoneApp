@@ -22,7 +22,7 @@ val appModule = module {
     single {
         PreferenceManager(androidContext())
     }
-    viewModel { ContactsViewModel(get()) }
+    viewModel { ContactsViewModel(get(), get()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
     viewModel { BackupViewModel(get(), get()) }
 }
