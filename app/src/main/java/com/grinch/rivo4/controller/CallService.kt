@@ -348,7 +348,13 @@ class CallService : InCallService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            "ANSWER_CALL" -> answerCall()
+            "ANSWER_CALL" -> {
+                answerCall()
+                val activityIntent = Intent(this, CallActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                }
+                startActivity(activityIntent)
+            }
             "DECLINE_CALL" -> declineCall()
             "TOGGLE_MUTE" -> toggleMute()
             "TOGGLE_SPEAKER" -> toggleSpeaker()
