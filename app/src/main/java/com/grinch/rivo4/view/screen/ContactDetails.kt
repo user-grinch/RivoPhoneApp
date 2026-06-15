@@ -498,12 +498,42 @@ fun ContactDetailsScreen(
                                     }
                                 }
                             } else if (phoneNumber != null && phoneNumber != "Unknown") {
-                                RivoListItem(
-                                    headline = formatPhoneNumber(phoneNumber),
-                                    supporting = "Unknown Number",
-                                    leadingIcon = Icons.Default.Phone,
-                                    onClick = { callLauncher.dial(phoneNumber, null) }
-                                )
+                                var showMenu by remember { mutableStateOf(false) }
+                                Box {
+                                    RivoListItem(
+                                        headline = formatPhoneNumber(phoneNumber),
+                                        supporting = "Unknown Number",
+                                        leadingIcon = Icons.Default.Phone,
+                                        onClick = { callLauncher.dial(phoneNumber, null) },
+                                        onLongClick = { showMenu = true }
+                                    )
+
+                                    DropdownMenu(
+                                        expanded = showMenu,
+                                        onDismissRequest = { showMenu = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Add to Contacts") },
+                                            onClick = {
+                                                showMenu = false
+                                                navigator.navigate(
+                                                    ContactEditScreenDestination(
+                                                        initialPhone = phoneNumber
+                                                    )
+                                                )
+                                            },
+                                            leadingIcon = { Icon(Icons.Default.PersonAdd, null) }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Copy to Clipboard") },
+                                            onClick = {
+                                                showMenu = false
+                                                clipboardManager.setText(AnnotatedString(phoneNumber))
+                                            },
+                                            leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

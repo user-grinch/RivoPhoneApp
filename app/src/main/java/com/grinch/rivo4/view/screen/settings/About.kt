@@ -67,7 +67,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
             Box(contentAlignment = Alignment.Center) {
                 Image(
-                    painter = painterResource(R.mipmap.ic_launcher_round),
+                    painter = painterResource(R.drawable.logo),
                     contentDescription = "Rivo Logo",
                     modifier = Modifier.size(64.dp)
                 )
