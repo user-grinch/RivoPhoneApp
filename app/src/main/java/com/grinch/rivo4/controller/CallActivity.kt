@@ -1,6 +1,6 @@
 package com.grinch.rivo4.controller
 
-import android.app.KeyguardManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -37,27 +37,25 @@ class CallActivity : ComponentActivity() {
     private var proximityWakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Comprehensive lock screen support
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         }
-        super.onCreate(savedInstanceState)
-
-        // Comprehensive lock screen flags
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            val keyguardManager = getSystemService(KEYGUARD_SERVICE) as? KeyguardManager
-            keyguardManager?.requestDismissKeyguard(this, null)
-        }
 
         @Suppress("DEPRECATION")
-        var flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                    WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+        )
+
         if (preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) {
-            flags = flags or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-        window.addFlags(flags)
 
         setupProximitySensor()
         enableEdgeToEdge()
@@ -133,7 +131,9 @@ class CallActivity : ComponentActivity() {
 
                     if (session == null) {
                         delay(1200)
-                        finish()
+                        if (CallService.allCalls.value.isEmpty()) {
+                            finish()
+                        }
                     }
                 }
 
@@ -199,6 +199,11 @@ class CallActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         releaseProximityLock()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 
     override fun onStart() {

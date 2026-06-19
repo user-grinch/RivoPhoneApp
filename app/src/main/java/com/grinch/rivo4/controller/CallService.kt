@@ -116,6 +116,18 @@ class CallService : InCallService() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+        serviceScope.launch {
+            isActivityVisible.collect {
+                _currentCallSession.value?.call?.let { currentCall ->
+                    updateNotification(currentCall)
+                }
+            }
+        }
+    }
+
     private val callCallback = object : Call.Callback() {
         override fun onStateChanged(call: Call, state: Int) {
             super.onStateChanged(call, state)
@@ -309,19 +321,7 @@ class CallService : InCallService() {
         updateCallState()
         updateNotification(call)
 
-        serviceScope.launch {
-            isActivityVisible.collect {
-                _currentCallSession.value?.call?.let { currentCall ->
-                    updateNotification(currentCall)
-                }
-            }
-        }
-
         // If it's an incoming call, we rely on setFullScreenIntent in the notification.
-        // Android will automatically decide:
-        // - If the device is locked: launch the full-screen activity.
-        // - If the user is actively using the device: show a heads-up notification.
-        // This satisfies the requirement: "If the user is actively using device only then the full screen intent wont come but notification will"
         if (call.state != Call.STATE_RINGING) {
             val intent = Intent(this, CallActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -433,9 +433,9 @@ class CallService : InCallService() {
             .setSmallIcon(android.R.drawable.sym_action_call)
             .setContentTitle(contactName)
             .setContentText(contentText)
-            .setPriority(if (isActivityVisible.value) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setFullScreenIntent(fullScreenPendingIntent, !isActivityVisible.value)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

@@ -130,7 +130,8 @@ fun DialPadScreen(
                     .filter { contact ->
                         val matchesNumber = contact.phoneNumbers.any { it.replace(" ", "").contains(cleanQuery) }
                         val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, cleanQuery)
-                        matchesNumber || matchesName
+                        val matchesNickname = t9Enabled && contact.nickname?.let { T9Matcher.isMatch(it, cleanQuery) } ?: false
+                        matchesNumber || matchesName || matchesNickname
                     }
                     .take(50)
                     .toList()
@@ -243,7 +244,10 @@ fun DialPadScreen(
                                     Box(modifier = Modifier.weight(1f)) {
                                         RivoListItem(
                                             headline = contact.name,
-                                            supporting = contactNumber?.let { formatPhoneNumber(it) },
+                                            supporting = buildString {
+                                                contact.nickname?.let { append("$it • ") }
+                                                contactNumber?.let { append(formatPhoneNumber(it)) }
+                                            }.ifEmpty { null },
                                             avatarName = contact.name,
                                             photoUri = contact.photoUri,
                                             onClick = {

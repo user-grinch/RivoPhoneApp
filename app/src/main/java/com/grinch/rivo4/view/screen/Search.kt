@@ -131,12 +131,19 @@ fun ContactSearchContent(
                 2 -> it.name.equals(query, ignoreCase = true)
                 else -> it.name.contains(query, ignoreCase = true)
             }
+            val matchesNickname = it.nickname?.let { nickname ->
+                when (searchMatchMode) {
+                    1 -> nickname.startsWith(query, ignoreCase = true)
+                    2 -> nickname.equals(query, ignoreCase = true)
+                    else -> nickname.contains(query, ignoreCase = true)
+                }
+            } ?: false
             val matchesNumber = when (searchMatchMode) {
                 1 -> it.phoneNumbers.any { number -> number.replace(" ", "").startsWith(cleanQuery) }
                 2 -> it.phoneNumbers.any { number -> number.replace(" ", "") == cleanQuery }
                 else -> it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
             }
-            matchesName || matchesNumber
+            matchesName || matchesNickname || matchesNumber
         }.take(50)
     }
 
@@ -280,7 +287,10 @@ fun ContactSearchContent(
                                             Box(modifier = Modifier.weight(1f)) {
                                                 RivoListItem(
                                                     headline = contact.name,
-                                                    supporting = contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) },
+                                                    supporting = buildString {
+                                                        contact.nickname?.let { append("$it • ") }
+                                                        contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
+                                                    }.ifEmpty { null },
                                                     avatarName = contact.name,
                                                     photoUri = contact.photoUri,
                                                     onClick = {

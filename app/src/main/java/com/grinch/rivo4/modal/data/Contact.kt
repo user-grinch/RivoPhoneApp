@@ -13,6 +13,7 @@ data class ContactEvent(
 data class Contact(
     val id: String,
     val name: String,
+    val nickname: String? = null,
     val phoneNumbers: List<String> = emptyList(),
     val emails: List<String> = emptyList(),
     val addresses: List<String> = emptyList(),

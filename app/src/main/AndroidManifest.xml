@@ -102,7 +102,8 @@
         <activity
             android:name=".controller.CallActivity"
             android:exported="false"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
             android:showForAllUsers="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"

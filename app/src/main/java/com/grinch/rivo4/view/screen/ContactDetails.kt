@@ -348,6 +348,13 @@ fun ContactDetailsScreen(
                                 style = MaterialTheme.typography.headlineLarge,
                                 fontWeight = FontWeight.Bold
                             )
+                            fullContact?.nickname?.let { nickname ->
+                                Text(
+                                    text = nickname,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
 

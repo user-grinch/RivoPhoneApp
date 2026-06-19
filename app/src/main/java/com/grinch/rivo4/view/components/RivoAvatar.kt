@@ -61,15 +61,15 @@ fun RivoAvatar(
         Color(0xFFFFEE58), Color(0xFFFFCA28), Color(0xFFFFA726), Color(0xFFFF7043)
     )
 
-    val hasName = name.trim().isNotEmpty()
+    val hasLetters = name.any { it.isLetter() }
     
-    val backgroundColor = if (colorfulAvatars && hasName) {
+    val backgroundColor = if (colorfulAvatars && hasLetters) {
         avatarColors[abs(name.hashCode()) % avatarColors.size]
     } else {
         MaterialTheme.colorScheme.secondaryContainer
     }
 
-    val contentColor = if (colorfulAvatars && hasName) {
+    val contentColor = if (colorfulAvatars && hasLetters) {
         Color.White
     } else {
         MaterialTheme.colorScheme.onSecondaryContainer
@@ -97,7 +97,7 @@ fun RivoAvatar(
                     tint = contentColor,
                     modifier = Modifier.size(24.dp)
                 )
-            } else if (showFirstLetter && hasName) {
+            } else if (showFirstLetter && hasLetters) {
                 Text(
                     text = name.trim().take(1).uppercase(),
                     style = textStyle,

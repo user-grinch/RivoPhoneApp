@@ -77,7 +77,38 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
             e.printStackTrace()
         }
         val list = contactsMap.values.toList()
-        return list.sortedBy { it.name.lowercase() }
+        
+        // Fetch nicknames
+        val nicknameMap = mutableMapOf<String, String>()
+        try {
+            contentResolver.query(
+                ContactsContract.Data.CONTENT_URI,
+                arrayOf(ContactsContract.CommonDataKinds.Nickname.CONTACT_ID, ContactsContract.CommonDataKinds.Nickname.NAME),
+                "${ContactsContract.Data.MIMETYPE} = ?",
+                arrayOf(ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE),
+                null
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Nickname.CONTACT_ID)
+                val nickIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Nickname.NAME)
+                while (cursor.moveToNext()) {
+                    val id = cursor.getString(idIdx)
+                    val nickname = cursor.getString(nickIdx)
+                    if (id != null && nickname != null) {
+                        nicknameMap[id] = nickname
+                    }
+                }
+            }
+        } catch (e: Exception) {}
+
+        val finalList = list.map { contact ->
+            if (nicknameMap.containsKey(contact.id)) {
+                contact.copy(nickname = nicknameMap[contact.id])
+            } else {
+                contact
+            }
+        }
+
+        return finalList.sortedBy { it.name.lowercase() }
     }
 
     override fun getContactById(contactId: String): Contact? {
@@ -146,6 +177,9 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                         }
                         ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
                             currentContact.copy(addresses = (currentContact.addresses + data1).distinct())
+                        }
+                        ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(nickname = data1)
                         }
                         ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE -> {
                             val type = cursor.getInt(data2Idx)
@@ -275,6 +309,17 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                 )
             }
 
+            if (contact.nickname != null) {
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
+                        .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
+                        .build()
+                )
+            }
+
             contact.phoneNumbers.forEach { number ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -384,6 +429,26 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                             .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
                             .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
                             .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, photoBytes)
+                            .build()
+                    )
+                }
+
+                // Update Nickname
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                        )
+                        .build()
+                )
+                if (contact.nickname != null) {
+                    ops.add(
+                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
+                            .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
                             .build()
                     )
                 }

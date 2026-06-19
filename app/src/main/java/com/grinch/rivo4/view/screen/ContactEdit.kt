@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -51,6 +52,7 @@ fun ContactEditScreen(
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
 
     var name by remember { mutableStateOf(initialName ?: "") }
+    var nickname by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var selectedAccount by remember { mutableStateOf<Account?>(null) }
 
@@ -67,6 +69,7 @@ fun ContactEditScreen(
             val existing = contactsVM.getFullContactById(contactId)
             if (existing != null) {
                 name = existing.name
+                nickname = existing.nickname ?: ""
                 photoUri = existing.photoUri
                 if (selectedAccount == null) {
                     selectedAccount = availableAccounts.find {
@@ -155,6 +158,7 @@ fun ContactEditScreen(
                                     val contactToSave = Contact(
                                         id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
                                         name = name,
+                                        nickname = nickname.ifBlank { null },
                                         phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
                                         emails = emails.filter { it.isNotBlank() },
                                         addresses = addresses.filter { it.isNotBlank() },
@@ -344,18 +348,32 @@ fun ContactEditScreen(
             item {
                 RivoSectionHeader(title = "Identity")
                 RivoExpressiveCard {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Full Name") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        leadingIcon = { Icon(Icons.Default.Person, null) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Full Name") },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            leadingIcon = { Icon(Icons.Default.Person, null) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
                         )
-                    )
+                        OutlinedTextField(
+                            value = nickname,
+                            onValueChange = { nickname = it },
+                            label = { Text("Nickname") },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            leadingIcon = { Icon(Icons.AutoMirrored.Filled.Label, null) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
                 }
             }
 
