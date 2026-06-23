@@ -199,10 +199,21 @@ fun CallLogFullContent(
 
         val logs by viewModel.allCallLogs.collectAsState()
         val allContacts by contactsVM.allContacts.collectAsState()
-        val favorites = remember(allContacts) { allContacts.filter { it.isFavorite } }
+        val favorites = remember(allContacts, settingsState) {
+            val favContacts = allContacts.filter { it.isFavorite }
+            val order = prefs.getFavoritesOrder()
+            favContacts.sortedWith(compareBy<Contact> { contact ->
+                val index = order.indexOf(contact.id)
+                if (index != -1) index else Int.MAX_VALUE
+            }.thenBy { it.name })
+        }
+        var isEditingFavorites by remember { mutableStateOf(false) }
 
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
+        LaunchedEffect(selectedFilter) {
+            isEditingFavorites = false
+        }
         val context = LocalContext.current
         val callLauncher = rememberCallLauncher()
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
@@ -255,23 +266,35 @@ fun CallLogFullContent(
                     ) {
                         if (favorites.isNotEmpty() && selectedFilter == CallLogFilter.All) {
                             item {
-                                RivoSectionHeader(title = "Favorites")
-                                LazyRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp),
-                                    contentPadding = PaddingValues(horizontal = 16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    items(favorites) { contact ->
-                                        FavoriteCircleItem(
-                                            contact = contact,
-                                            onClick = {
-                                                callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
-                                            }
-                                        )
+                                RivoSectionHeader(
+                                    title = "Favorites",
+                                    trailingContent = {
+                                        TextButton(
+                                            onClick = { isEditingFavorites = !isEditingFavorites },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Text(
+                                                text = if (isEditingFavorites) "Done" else "Edit",
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
                                     }
-                                }
+                                )
+                                IPhoneFavoritesRow(
+                                    favorites = favorites,
+                                    isEditing = isEditingFavorites,
+                                    onUnfavorite = { contact ->
+                                        contactsVM.toggleFavorite(contact)
+                                    },
+                                    onSaveOrder = { newOrder ->
+                                        prefs.setFavoritesOrder(newOrder)
+                                    },
+                                    onClick = { contact ->
+                                        callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
+                                    }
+                                )
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
                         }

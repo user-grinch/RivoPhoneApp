@@ -99,7 +99,22 @@ class ContactsViewModel(
 
     fun toggleFavorite(contact: Contact) {
         viewModelScope.launch(Dispatchers.IO) {
-            contactsRepo.toggleFavorite(contact.id, !contact.isFavorite)
+            val newFavStatus = !contact.isFavorite
+            contactsRepo.toggleFavorite(contact.id, newFavStatus)
+            
+            val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
+            if (newFavStatus) {
+                if (!currentOrder.contains(contact.id)) {
+                    currentOrder.add(contact.id)
+                    preferenceManager.setFavoritesOrder(currentOrder)
+                }
+            } else {
+                if (currentOrder.contains(contact.id)) {
+                    currentOrder.remove(contact.id)
+                    preferenceManager.setFavoritesOrder(currentOrder)
+                }
+            }
+            
             fetchContacts()
         }
     }
@@ -128,6 +143,13 @@ class ContactsViewModel(
     fun deleteContact(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             contactsRepo.deleteContact(contactId)
+            
+            val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
+            if (currentOrder.contains(contactId)) {
+                currentOrder.remove(contactId)
+                preferenceManager.setFavoritesOrder(currentOrder)
+            }
+            
             fetchContacts()
         }
     }
@@ -135,6 +157,19 @@ class ContactsViewModel(
     fun deleteContacts(contactIds: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             contactsRepo.deleteContacts(contactIds)
+            
+            val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
+            var changed = false
+            contactIds.forEach { id ->
+                if (currentOrder.contains(id)) {
+                    currentOrder.remove(id)
+                    changed = true
+                }
+            }
+            if (changed) {
+                preferenceManager.setFavoritesOrder(currentOrder)
+            }
+            
             fetchContacts()
         }
     }

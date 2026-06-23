@@ -157,17 +157,26 @@ fun RivoDivider(
 @Composable
 fun RivoSectionHeader(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable (() -> Unit)? = null
 ) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp)
-    )
+            .padding(horizontal = 20.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
+        )
+        if (trailingContent != null) {
+            trailingContent()
+        }
+    }
 }
 
 @Composable
