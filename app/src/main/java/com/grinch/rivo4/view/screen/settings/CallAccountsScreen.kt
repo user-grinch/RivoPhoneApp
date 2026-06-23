@@ -26,6 +26,9 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import android.telecom.TelecomManager
 
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
@@ -36,6 +39,7 @@ import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDe
 fun CallAccountsScreen(
     navigator: DestinationsNavigator
 ) {
+    val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -108,6 +112,34 @@ fun CallAccountsScreen(
                         },
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { showSimDialog = true }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = "Calling accounts",
+                        supporting = "Configure carrier settings (Call Waiting, Forwarding, etc.)",
+                        leadingIcon = Icons.Outlined.Settings,
+                        onClick = {
+                            try {
+                                val intent = Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                try {
+                                    val intent = Intent("android.telecom.action.SHOW_CALL_SETTINGS").apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    context.startActivity(intent)
+                                } catch (e2: Exception) {
+                                    try {
+                                        val intent = Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        }
+                                        context.startActivity(intent)
+                                    } catch (e3: Exception) {}
+                                }
+                            }
+                        }
                     )
                 }
             }

@@ -12,6 +12,7 @@ import android.provider.ContactsContract
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.telephony.PhoneNumberUtils
+import android.telephony.TelephonyManager
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -75,9 +76,40 @@ fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     return PhoneNumberUtils.compare(num1, num2)
 }
 
+fun getSystemVoicemailNumber(context: Context): String? {
+    val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        try {
+            val accounts = telecomManager.callCapablePhoneAccounts
+            val defaultHandle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                telecomManager.getDefaultOutgoingPhoneAccount(Uri.fromParts("tel", "123", null).scheme)
+            } else null
+            
+            val handle = defaultHandle ?: accounts.firstOrNull()
+            if (handle != null) {
+                val num = telecomManager.getVoiceMailNumber(handle)
+                if (!num.isNullOrEmpty()) return num
+            }
+        } catch (e: SecurityException) {
+        } catch (e: Exception) {}
+        
+        try {
+            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            val num = tm.voiceMailNumber
+            if (!num.isNullOrEmpty()) return num
+        } catch (e: SecurityException) {
+        } catch (e: Exception) {}
+    }
+    return null
+}
+
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-    val uri = Uri.fromParts("tel", number, null)
+    val uri = if (number.startsWith("voicemail:")) {
+        Uri.parse(number)
+    } else {
+        Uri.fromParts("tel", number, null)
+    }
     val extras = Bundle()
     
     val prefs = PreferenceManager(context)

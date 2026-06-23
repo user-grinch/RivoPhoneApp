@@ -56,6 +56,7 @@ import androidx.navigation.NavController
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.controller.util.getSystemVoicemailNumber
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -382,13 +383,23 @@ fun DialPadScreen(
                                         style = dialpadStyle,
                                         onClick = onDigitClick,
                                         onLongClick = { digit ->
-                                            if (speedDialEnabled && number.isEmpty()) {
-                                                val mapping = prefs.getString("speed_dial_$digit", null)
-                                                val speedNumber = mapping?.split("|")?.getOrNull(1)
-                                                if (speedNumber != null) {
-                                                    // We don't have a contact here usually for speed dial mappings
-                                                    // but we could try to find one if needed.
-                                                    callLauncher.dial(speedNumber, null)
+                                            if (number.isEmpty()) {
+                                                if (digit == "1") {
+                                                    var voicemailNumber = prefs.getString(PreferenceManager.KEY_VOICEMAIL_NUMBER, "") ?: ""
+                                                    if (voicemailNumber.isEmpty()) {
+                                                        voicemailNumber = getSystemVoicemailNumber(context) ?: ""
+                                                    }
+                                                    if (voicemailNumber.isNotEmpty()) {
+                                                        callLauncher.dial(voicemailNumber, null)
+                                                    } else {
+                                                        callLauncher.dial("voicemail:", null)
+                                                    }
+                                                } else if (speedDialEnabled) {
+                                                    val mapping = prefs.getString("speed_dial_$digit", null)
+                                                    val speedNumber = mapping?.split("|")?.getOrNull(1)
+                                                    if (speedNumber != null) {
+                                                        callLauncher.dial(speedNumber, null)
+                                                    }
                                                 }
                                             } else if (digit == "0") {
                                                 onDigitClick("+")
