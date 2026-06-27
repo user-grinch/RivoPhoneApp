@@ -9,54 +9,55 @@ import android.provider.ContactsContract
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Dialpad
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.Whatsapp
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Call
-import com.grinch.rivo4.view.components.RivoDivider
-import com.grinch.rivo4.view.components.RivoListItem
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.InterceptPlatformTextInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.controller.util.getSystemVoicemailNumber
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -86,6 +87,8 @@ fun DialPadScreen(
     val allContacts by contactsVM.allContacts.collectAsState()
     var textFieldValue by remember { mutableStateOf(TextFieldValue(initialNumber ?: "")) }
     val number = textFieldValue.text
+
+    var showSocialDialog by remember { mutableStateOf(false) }
 
     BackHandler(enabled = number.isNotEmpty()) {
         textFieldValue = TextFieldValue("")
@@ -157,13 +160,8 @@ fun DialPadScreen(
                 },
                 actions = {
                     if (number.isNotEmpty()) {
-                        IconButton(onClick = {
-                            val url = "https://api.whatsapp.com/send?phone=$number"
-                            try {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                            } catch (e: Exception) {}
-                        }) {
-                            Icon(Icons.Default.Whatsapp, "WhatsApp", tint = Color(0xFF25D366))
+                        IconButton(onClick = { showSocialDialog = true }) {
+                            Icon(Icons.AutoMirrored.Filled.Chat, "Social Apps")
                         }
                     }
                 }
@@ -383,23 +381,11 @@ fun DialPadScreen(
                                         style = dialpadStyle,
                                         onClick = onDigitClick,
                                         onLongClick = { digit ->
-                                            if (number.isEmpty()) {
-                                                if (digit == "1") {
-                                                    var voicemailNumber = prefs.getString(PreferenceManager.KEY_VOICEMAIL_NUMBER, "") ?: ""
-                                                    if (voicemailNumber.isEmpty()) {
-                                                        voicemailNumber = getSystemVoicemailNumber(context) ?: ""
-                                                    }
-                                                    if (voicemailNumber.isNotEmpty()) {
-                                                        callLauncher.dial(voicemailNumber, null)
-                                                    } else {
-                                                        callLauncher.dial("voicemail:", null)
-                                                    }
-                                                } else if (speedDialEnabled) {
-                                                    val mapping = prefs.getString("speed_dial_$digit", null)
-                                                    val speedNumber = mapping?.split("|")?.getOrNull(1)
-                                                    if (speedNumber != null) {
-                                                        callLauncher.dial(speedNumber, null)
-                                                    }
+                                            if (speedDialEnabled && number.isEmpty()) {
+                                                val mapping = prefs.getString("speed_dial_$digit", null)
+                                                val speedNumber = mapping?.split("|")?.getOrNull(1)
+                                                if (speedNumber != null) {
+                                                    callLauncher.dial(speedNumber, null)
                                                 }
                                             } else if (digit == "0") {
                                                 onDigitClick("+")
@@ -480,6 +466,63 @@ fun DialPadScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    if (showSocialDialog) {
+        RivoDialog(
+            onDismissRequest = { showSocialDialog = false },
+            title = "Connect via Social",
+            icon = Icons.AutoMirrored.Filled.Chat,
+            dismissButton = {
+                TextButton(
+                    onClick = { showSocialDialog = false },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("Close")
+                }
+            }
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RivoExpressiveButton(
+                    painter = rememberAsyncImagePainter("file:///android_asset/icons/whatsapp.png"),
+                    label = "WhatsApp",
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    size = 52.dp,
+                    iconSize = 32.dp,
+                    onClick = {
+                        SocialUtils.openWhatsApp(context, number)
+                        showSocialDialog = false
+                    }
+                )
+                RivoExpressiveButton(
+                    painter = rememberAsyncImagePainter("file:///android_asset/icons/telegram.png"),
+                    label = "Telegram",
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    size = 52.dp,
+                    iconSize = 32.dp,
+                    onClick = {
+                        SocialUtils.openTelegram(context, number)
+                        showSocialDialog = false
+                    }
+                )
+                RivoExpressiveButton(
+                    painter = rememberAsyncImagePainter("file:///android_asset/icons/signal.png"),
+                    label = "Signal",
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    size = 52.dp,
+                    iconSize = 32.dp,
+                    onClick = {
+                        SocialUtils.openSignal(context, number)
+                        showSocialDialog = false
+                    }
+                )
             }
         }
     }

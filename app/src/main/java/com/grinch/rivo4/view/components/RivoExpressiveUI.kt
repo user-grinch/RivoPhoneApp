@@ -182,7 +182,8 @@ fun RivoSectionHeader(
 @Composable
 fun RivoExpressiveButton(
     onClick: () -> Unit,
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    painter: androidx.compose.ui.graphics.painter.Painter? = null,
     label: String? = null,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -210,7 +211,11 @@ fun RivoExpressiveButton(
             shadowElevation = 0.dp
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = label, modifier = Modifier.size(iconSize))
+                if (icon != null) {
+                    Icon(icon, contentDescription = label, modifier = Modifier.size(iconSize))
+                } else if (painter != null) {
+                    Icon(painter, contentDescription = label, modifier = Modifier.size(iconSize), tint = Color.Unspecified)
+                }
             }
         }
         if (label != null) {

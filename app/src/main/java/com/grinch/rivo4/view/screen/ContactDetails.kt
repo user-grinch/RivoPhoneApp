@@ -39,13 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
-import com.grinch.rivo4.controller.util.QrCodeUtils
-import com.grinch.rivo4.controller.util.makeCall
-import com.grinch.rivo4.controller.util.normalizePhoneNumber
-import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -159,23 +157,9 @@ fun ContactDetailsScreen(
         }
     }
 
-    val openWhatsApp = { num: String ->
-        val url = "https://api.whatsapp.com/send?phone=$num"
-        try {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (e: Exception) {}
-    }
-
-    val openTelegram = { num: String ->
-        val url = "tg://msg?text=&to=$num"
-        try {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (e: Exception) {
-            try {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/$num")))
-            } catch (e2: Exception) {}
-        }
-    }
+    val openWhatsApp = { num: String -> SocialUtils.openWhatsApp(context, num) }
+    val openTelegram = { num: String -> SocialUtils.openTelegram(context, num) }
+    val openSignal = { num: String -> SocialUtils.openSignal(context, num) }
 
     val shareContact = {
         val intent = Intent(Intent.ACTION_SEND).apply {
@@ -614,26 +598,34 @@ fun ContactDetailsScreen(
                     }
 
                     item {
-                        RivoExpressiveCard(title = "Social Apps", icon = Icons.Default.Public) {
+                        RivoExpressiveCard(title = "Social Apps", icon = Icons.AutoMirrored.Filled.Chat) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 RivoExpressiveButton(
-                                    icon = Icons.Default.Whatsapp,
+                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/whatsapp.png"),
                                     label = "WhatsApp",
-                                    containerColor = Color(0xFF25D366).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF25D366),
-                                    size = 48.dp,
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    size = 52.dp,
+                                    iconSize = 32.dp,
                                     onClick = { onNumberActionClick(openWhatsApp, "WhatsApp") }
                                 )
                                 RivoExpressiveButton(
-                                    icon = Icons.AutoMirrored.Filled.Send,
+                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/telegram.png"),
                                     label = "Telegram",
-                                    containerColor = Color(0xFF0088CC).copy(alpha = 0.2f),
-                                    contentColor = Color(0xFF0088CC),
-                                    size = 48.dp,
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    size = 52.dp,
+                                    iconSize = 32.dp,
                                     onClick = { onNumberActionClick(openTelegram, "Telegram") }
+                                )
+                                RivoExpressiveButton(
+                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/signal.png"),
+                                    label = "Signal",
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    size = 52.dp,
+                                    iconSize = 32.dp,
+                                    onClick = { onNumberActionClick(openSignal, "Signal") }
                                 )
                             }
                         }
