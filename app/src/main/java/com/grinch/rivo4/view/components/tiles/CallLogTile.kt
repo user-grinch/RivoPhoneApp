@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.modal.data.CallLogEntry
@@ -26,6 +27,7 @@ fun CallLogTile(
     onClick: () -> Unit = {}
 ) {
     val isMissed = log.types.any { it == CallLog.Calls.MISSED_TYPE } || (log.types.isEmpty() && log.type == CallLog.Calls.MISSED_TYPE)
+    val context = LocalContext.current
 
     SingleTile(
         title = log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" },
@@ -68,7 +70,7 @@ fun CallLogTile(
 
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = formatDate(log.date),
+                    text = formatDate(context, log.date),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.formatTime
@@ -46,6 +47,8 @@ fun CallLogTileSimple(
     val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
 
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,7 +68,7 @@ fun CallLogTileSimple(
                         else -> "Call"
                     },
                     supporting = buildString {
-                        append(formatDate(log.date))
+                        append(formatDate(context, log.date))
                         if (log.duration > 0) append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
                     },
                     supporting2 = if (showSim) log.simLabel else null,
@@ -120,6 +123,7 @@ fun CallLogTile(
     
     val favNum = log.contactId?.let { prefs.getFavoriteNumber(it) }
     val isFavorite = com.grinch.rivo4.controller.util.areNumbersEqual(log.number, favNum)
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -147,7 +151,7 @@ fun CallLogTile(
                             append(log.simLabel)
                             append(" • ")
                         }
-                        append(formatTime(log.date))
+                        append(formatTime(context, log.date))
                     },
                     avatarName = log.name ?: formatPhoneNumber(log.number),
                     photoUri = log.photoUri,

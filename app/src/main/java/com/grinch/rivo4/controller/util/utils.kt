@@ -47,15 +47,15 @@ fun formatDateHeader(timestamp: Long): String {
     return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(timestamp))
 }
 
-fun formatDate(timestamp: Long): String {
+fun formatDate(context: Context, timestamp: Long): String {
     val relative = getRelativeDay(timestamp)
-    val time = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
+    val time = android.text.format.DateFormat.getTimeFormat(context).format(Date(timestamp))
 
     return if (relative != null) "$relative, $time" else "${formatDateHeader(timestamp)}, $time"
 }
 
-fun formatTime(timestamp: Long): String {
-    val time = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
+fun formatTime(context: Context, timestamp: Long): String {
+    val time = android.text.format.DateFormat.getTimeFormat(context).format(Date(timestamp))
     return "$time"
 }
 
