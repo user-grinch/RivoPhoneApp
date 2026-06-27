@@ -11,6 +11,8 @@ import android.provider.ContactsContract
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.modal.data.ContactEvent
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import com.grinch.rivo4.controller.util.deduplicateNumbers
+import com.grinch.rivo4.controller.util.areNumbersEqual
 
 class ContactsRepository(private val context: Context) : IContactsRepository {
 
@@ -57,7 +59,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
                     val existingContact = contactsMap[id]
                     if (existingContact != null) {
                         val numbers = existingContact.phoneNumbers as MutableList<String>
-                        if (!numbers.contains(number) && numbers.size < 5) {
+                        if (numbers.none { areNumbersEqual(it, number) } && numbers.size < 5) {
                             numbers.add(number)
                         }
                     } else {
@@ -170,7 +172,7 @@ class ContactsRepository(private val context: Context) : IContactsRepository {
 
                     contact = when (mimeType) {
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
-                            currentContact.copy(phoneNumbers = (currentContact.phoneNumbers + data1).distinct())
+                            currentContact.copy(phoneNumbers = deduplicateNumbers(currentContact.phoneNumbers + data1))
                         }
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
                             currentContact.copy(emails = (currentContact.emails + data1).distinct())

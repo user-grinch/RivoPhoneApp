@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -22,11 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
+import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
@@ -79,7 +82,7 @@ fun ContactEditScreen(
 
                 phoneNumbers.clear()
                 if (existing.phoneNumbers.isNotEmpty()) {
-                    phoneNumbers.addAll(existing.phoneNumbers)
+                    phoneNumbers.addAll(deduplicateNumbers(existing.phoneNumbers))
                 } else {
                     phoneNumbers.add("")
                 }
@@ -388,7 +391,13 @@ fun ContactEditScreen(
                                 onValueChange = { phoneNumbers[index] = it },
                                 label = "Phone",
                                 icon = Icons.Default.Phone,
-                                onDelete = if (phoneNumbers.size > 1) { { phoneNumbers.removeAt(index) } } else null
+                                onDelete = {
+                                    if (phoneNumbers.size > 1) {
+                                        phoneNumbers.removeAt(index)
+                                    } else {
+                                        phoneNumbers[0] = ""
+                                    }
+                                }
                             )
                         }
                         TextButton(
@@ -414,7 +423,13 @@ fun ContactEditScreen(
                                 onValueChange = { emails[index] = it },
                                 label = "Email",
                                 icon = Icons.Default.Email,
-                                onDelete = if (emails.size > 1) { { emails.removeAt(index) } } else null
+                                onDelete = {
+                                    if (emails.size > 1) {
+                                        emails.removeAt(index)
+                                    } else {
+                                        emails[0] = ""
+                                    }
+                                }
                             )
                         }
                         TextButton(
@@ -440,7 +455,13 @@ fun ContactEditScreen(
                                 onValueChange = { addresses[index] = it },
                                 label = "Address",
                                 icon = Icons.Default.LocationOn,
-                                onDelete = if (addresses.size > 1) { { addresses.removeAt(index) } } else null
+                                onDelete = {
+                                    if (addresses.size > 1) {
+                                        addresses.removeAt(index)
+                                    } else {
+                                        addresses[0] = ""
+                                    }
+                                }
                             )
                         }
                         TextButton(
@@ -466,7 +487,7 @@ fun EditField(
     onValueChange: (String) -> Unit,
     label: String,
     icon: ImageVector,
-    onDelete: (() -> Unit)? = null
+    onDelete: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -478,22 +499,26 @@ fun EditField(
             label = { Text(label) },
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
+            leadingIcon = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
+            keyboardOptions = when (label) {
+                "Phone" -> KeyboardOptions(keyboardType = KeyboardType.Phone)
+                "Email" -> KeyboardOptions(keyboardType = KeyboardType.Email)
+                else -> KeyboardOptions.Default
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                 focusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
-        if (onDelete != null) {
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Icon(
-                    Icons.Default.DeleteOutline,
-                    null,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
+        IconButton(
+            onClick = onDelete,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Icon(
+                Icons.Default.RemoveCircleOutline,
+                null,
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
 }

@@ -390,7 +390,10 @@ fun ContactDetailsScreen(
                         val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
                         RivoExpressiveCard(title = "Contact Info", icon = Icons.Default.Info) {
                             if (fullContact != null) {
-                                fullContact!!.phoneNumbers.forEachIndexed { index, number ->
+                                val uniquePhoneNumbers = remember(fullContact) {
+                                    deduplicateNumbers(fullContact!!.phoneNumbers)
+                                }
+                                uniquePhoneNumbers.forEachIndexed { index, number ->
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     val isFav = areNumbersEqual(favoriteNumber, number)
                                     

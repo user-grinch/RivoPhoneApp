@@ -76,6 +76,25 @@ fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     return PhoneNumberUtils.compare(num1, num2)
 }
 
+fun deduplicateNumbers(numbers: List<String>): List<String> {
+    val unique = mutableListOf<String>()
+    numbers.forEach { number ->
+        val existingIndex = unique.indexOfFirst { areNumbersEqual(it, number) }
+        if (existingIndex == -1) {
+            unique.add(number)
+        } else {
+            // Prefer the number with a '+' or the longer one (usually more complete)
+            val existing = unique[existingIndex]
+            if (number.contains("+") && !existing.contains("+")) {
+                unique[existingIndex] = number
+            } else if (number.length > existing.length && (number.contains("+") == existing.contains("+"))) {
+                unique[existingIndex] = number
+            }
+        }
+    }
+    return unique
+}
+
 fun getSystemVoicemailNumber(context: Context): String? {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
