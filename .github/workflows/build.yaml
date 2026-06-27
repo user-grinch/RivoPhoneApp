@@ -38,7 +38,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
+          KEYSTORE_PATH: ../app/keystore.jks # Adjusted path for gradle context
         run: |
           ./gradlew assembleRelease bundleRelease
 
@@ -47,12 +47,24 @@ jobs:
           mkdir outputs
           find . -type f \( -name "*.apk" -o -name "*.aab" \) -path "*/release/*" -exec cp {} outputs/ \;
 
+      - name: Extract Signing Certificate Fingerprint
+        run: |
+          echo "Extracting SHA256 Fingerprint from Keystore..."
+          keytool -list -v -keystore app/keystore.jks -alias "${{ secrets.KEY_ALIAS }}" -storepass "${{ secrets.KEYSTORE_PASSWORD }}" > outputs/certificate_full_details.txt
+          
+          # Extract just the SHA256 line for easy viewing
+          echo "APK Signing Certificate SHA256 Fingerprint:" > outputs/SIGNING_CERTIFICATE_SHA256.txt
+          grep "SHA256: " outputs/certificate_full_details.txt | cut -d " " -f 3 >> outputs/SIGNING_CERTIFICATE_SHA256.txt
+
       - name: Generate SHA256 checksums
         run: |
           cd outputs
           sha256sum * > SHA256SUMS.txt
           for f in *; do
-            sha256sum "$f" > "$f.sha256"
+            # Don't generate a checksum of a checksum file
+            if [[ "$f" != *.sha256 && "$f" != "SHA256SUMS.txt" ]]; then
+              sha256sum "$f" > "$f.sha256"
+            fi
           done
 
       # Only run these steps if the push/PR is to the main branch
