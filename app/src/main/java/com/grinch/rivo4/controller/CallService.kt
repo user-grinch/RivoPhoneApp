@@ -53,6 +53,7 @@ class CallService : InCallService() {
 
     companion object {
         private const val CHANNEL_ID = "call_channel"
+        private const val MISSED_CHANNEL_ID = "missed_call_channel"
         private const val NOTIFICATION_ID = 101
 
         private val _currentCallSession = MutableStateFlow<CallSession?>(null)
@@ -174,7 +175,10 @@ class CallService : InCallService() {
         }
 
         // Missed Call Notification
-        if (call.state == Call.STATE_RINGING || (cause != null && cause.code == DisconnectCause.MISSED)) {
+        val wasNeverConnected = call.details.connectTimeMillis == 0L
+        val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        
+        if (isIncoming && wasNeverConnected && (cause?.code == DisconnectCause.MISSED || cause?.code == DisconnectCause.REMOTE || cause?.code == DisconnectCause.REJECTED)) {
             if (!isNumberBlocked(number) || preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 1) {
                 showMissedCallNotification(call)
             }
@@ -223,10 +227,10 @@ class CallService : InCallService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, "Calls", NotificationManager.IMPORTANCE_HIGH).apply {
+            val channel = NotificationChannel(MISSED_CHANNEL_ID, "Missed Calls", NotificationManager.IMPORTANCE_DEFAULT).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 enableVibration(true)
-                setSound(null, null)
+                setShowBadge(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -256,7 +260,7 @@ class CallService : InCallService() {
 
         val timeString = android.text.format.DateFormat.getTimeFormat(this).format(java.util.Date())
 
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, MISSED_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.sym_call_missed)
             .setContentTitle("Missed Call")
             .setContentText("Missed call from $contactName at $timeString${if (simLabel != null) " via $simLabel" else ""}")
@@ -280,11 +284,11 @@ class CallService : InCallService() {
             _preferredCall.value = null
         }
 
-        // Priority: Preferred > Ringing > Dialing/Connecting > Active > Holding > Others
+        // Priority: Ringing > Preferred > Dialing/Connecting > Active > Holding > Others
         val activePreferred = if (preferred != null && preferred.state != Call.STATE_DISCONNECTED && preferred.state != Call.STATE_HOLDING) preferred else null
 
-        val priorityCall = activePreferred
-            ?: calls.find { it.state == Call.STATE_RINGING }
+        val priorityCall = calls.find { it.state == Call.STATE_RINGING }
+            ?: activePreferred
             ?: calls.find { it.state == Call.STATE_DIALING || it.state == Call.STATE_CONNECTING }
             ?: calls.find { it.state == Call.STATE_ACTIVE }
             ?: calls.find { it == preferred } // Even if held, if it's preferred and nothing else is active
@@ -310,6 +314,7 @@ class CallService : InCallService() {
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
         instance = this
+        redialCount = 0
         call.registerCallback(callCallback)
 
         val number = call.details.handle?.schemeSpecificPart ?: ""
@@ -321,12 +326,17 @@ class CallService : InCallService() {
         updateCallState()
         updateNotification(call)
 
-        // If it's an incoming call, we rely on setFullScreenIntent in the notification.
-        if (call.state != Call.STATE_RINGING) {
-            val intent = Intent(this, CallActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            }
+        // Start CallActivity for all new calls to ensure UI is displayed.
+        // For incoming calls while the screen is off, setFullScreenIntent in updateNotification 
+        // will handle it, but for second calls or when already in foreground, 
+        // an explicit startActivity is more reliable.
+        val intent = Intent(this, CallActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        try {
             startActivity(intent)
+        } catch (e: Exception) {
+            // Background activity start might fail on some Android versions if not default dialer
         }
     }
 
@@ -334,9 +344,12 @@ class CallService : InCallService() {
         super.onCallRemoved(call)
         call.unregisterCallback(callCallback)
         updateCallState()
-        if ((getCalls()?.size ?: 0) == 0) {
+        val calls = getCalls() ?: emptyList()
+        if (calls.isEmpty()) {
             removeForeground()
             cancelNotification()
+        } else {
+            _currentCallSession.value?.call?.let { updateNotification(it) }
         }
     }
 
@@ -369,7 +382,6 @@ class CallService : InCallService() {
             val channel = NotificationChannel(CHANNEL_ID, "Calls", NotificationManager.IMPORTANCE_HIGH).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 enableVibration(true)
-                setSound(null, null)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -400,9 +412,14 @@ class CallService : InCallService() {
         }
         
         val fullScreenIntent = Intent(this, CallActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        val fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val fullScreenPendingIntent = PendingIntent.getActivity(
+            this,
+            if (call.state == Call.STATE_RINGING) call.hashCode() else 0,
+            fullScreenIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val answerIntent = Intent(this, CallService::class.java).apply { action = "ANSWER_CALL" }
         val answerPendingIntent = PendingIntent.getService(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -441,7 +458,7 @@ class CallService : InCallService() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
             .setSilent(call.state != Call.STATE_RINGING)
-            .setOnlyAlertOnce(true)
+            .setOnlyAlertOnce(call.state != Call.STATE_RINGING)
             .setDefaults(if (call.state == Call.STATE_RINGING) NotificationCompat.DEFAULT_ALL else 0)
             .setStyle(
                 if (call.state == Call.STATE_RINGING) {
@@ -476,6 +493,7 @@ class CallService : InCallService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (instance == this) instance = null
         serviceScope.cancel()
     }
 }
