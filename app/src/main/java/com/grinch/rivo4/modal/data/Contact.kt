@@ -22,5 +22,6 @@ data class Contact(
     val isFavorite: Boolean = false,
     val customRingtone: String? = null,
     val accountName: String? = null,
-    val accountType: String? = null
+    val accountType: String? = null,
+    val isPrivate: Boolean = false
 )

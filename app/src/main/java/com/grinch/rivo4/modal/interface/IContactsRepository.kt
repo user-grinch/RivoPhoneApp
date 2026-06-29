@@ -1,10 +1,11 @@
 package com.grinch.rivo4.modal.`interface`
 
 import android.accounts.Account
+import android.net.Uri
 import com.grinch.rivo4.modal.data.Contact
 
 interface IContactsRepository {
-    fun getContacts(): List<Contact>
+    fun getContacts(includePrivate: Boolean = true): List<Contact>
     fun getContactById(contactId: String): Contact?
     fun getContactByNumber(number: String): Contact?
     fun toggleFavorite(contactId: String, isFavorite: Boolean)
@@ -17,4 +18,10 @@ interface IContactsRepository {
     fun mergeContacts(targetContactId: String, sourceContactIds: List<String>)
     fun setCustomRingtone(contactId: String, ringtoneUri: String?)
     fun formatAllPhoneNumbers(onProgress: ((current: Int, total: Int) -> Unit)? = null)
+
+    // Private Contacts
+    fun makeContactPrivate(contactId: String)
+    fun makeContactPublic(contactId: String)
+    fun exportPrivateContacts(uri: Uri)
+    fun importPrivateContacts(uri: Uri)
 }

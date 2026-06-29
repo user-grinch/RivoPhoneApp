@@ -20,6 +20,7 @@ import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -85,6 +86,20 @@ fun ContactManagementScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                item {
+                    RivoExpressiveCard(
+                        title = "Storage",
+                        icon = Icons.Outlined.Storage
+                    ) {
+                        RivoListItem(
+                            headline = "Private Contacts",
+                            supporting = "Manage contacts stored only in this app",
+                            leadingIcon = Icons.Outlined.Lock,
+                            onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                        )
+                    }
+                }
+
                 item {
                     RivoExpressiveCard(
                         title = "Quick Fixes",

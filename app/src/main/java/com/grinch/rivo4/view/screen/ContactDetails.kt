@@ -670,6 +670,20 @@ fun ContactDetailsScreen(
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
+                                    headline = if (fullContact!!.isPrivate) "Move to Public Storage" else "Move to Private Storage",
+                                    supporting = if (fullContact!!.isPrivate) "Make visible to other apps" else "Hide from other apps",
+                                    leadingIcon = if (fullContact!!.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
+                                    onClick = {
+                                        if (fullContact!!.isPrivate) {
+                                            contactsViewModel.makeContactPublic(fullContact!!.id)
+                                        } else {
+                                            contactsViewModel.makeContactPrivate(fullContact!!.id)
+                                        }
+                                        navigator.navigateUp()
+                                    }
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
                                     headline = "Delete",
                                     supporting = "Remove this contact from device",
                                     leadingIcon = Icons.Default.Delete,

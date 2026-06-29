@@ -1,6 +1,7 @@
 package com.grinch.rivo4.controller
 
 import android.accounts.Account
+import android.net.Uri
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,11 +37,14 @@ class ContactsViewModel(
     private val _selectedAccount = MutableStateFlow<Account?>(null)
     val selectedAccount = _selectedAccount.asStateFlow()
 
-    val filteredContacts = combine(_allContacts, _selectedAccount) { contacts, account ->
-        if (account == null) {
-            contacts
-        } else {
-            contacts.filter { it.accountName == account.name && it.accountType == account.type }
+    private val _showPrivateOnly = MutableStateFlow(false)
+    val showPrivateOnly = _showPrivateOnly.asStateFlow()
+
+    val filteredContacts = combine(_allContacts, _selectedAccount, _showPrivateOnly) { contacts, account, privateOnly ->
+        when {
+            privateOnly -> contacts.filter { it.isPrivate }
+            account == null -> contacts
+            else -> contacts.filter { it.accountName == account.name && it.accountType == account.type }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -95,6 +99,12 @@ class ContactsViewModel(
 
     fun selectAccount(account: Account?) {
         _selectedAccount.value = account
+        if (account != null) _showPrivateOnly.value = false
+    }
+
+    fun setShowPrivateOnly(show: Boolean) {
+        _showPrivateOnly.value = show
+        if (show) _selectedAccount.value = null
     }
 
     fun toggleFavorite(contact: Contact) {
@@ -211,6 +221,33 @@ class ContactsViewModel(
             }
             fetchContacts()
             _standardizeProgress.value = null
+        }
+    }
+
+    fun makeContactPrivate(contactId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.makeContactPrivate(contactId)
+            fetchContacts()
+        }
+    }
+
+    fun makeContactPublic(contactId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.makeContactPublic(contactId)
+            fetchContacts()
+        }
+    }
+
+    fun exportPrivateContacts(uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.exportPrivateContacts(uri)
+        }
+    }
+
+    fun importPrivateContacts(uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.importPrivateContacts(uri)
+            fetchContacts()
         }
     }
 }

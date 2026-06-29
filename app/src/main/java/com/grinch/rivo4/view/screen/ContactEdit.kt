@@ -58,6 +58,7 @@ fun ContactEditScreen(
     var nickname by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var selectedAccount by remember { mutableStateOf<Account?>(null) }
+    var isPrivate by remember { mutableStateOf(false) }
 
     val phoneNumbers = remember { mutableStateListOf<String>("") }
     val emails = remember { mutableStateListOf<String>("") }
@@ -74,7 +75,8 @@ fun ContactEditScreen(
                 name = existing.name
                 nickname = existing.nickname ?: ""
                 photoUri = existing.photoUri
-                if (selectedAccount == null) {
+                isPrivate = existing.isPrivate
+                if (selectedAccount == null && !existing.isPrivate) {
                     selectedAccount = availableAccounts.find {
                         it.name == existing.accountName && it.type == existing.accountType
                     }
@@ -166,8 +168,9 @@ fun ContactEditScreen(
                                         emails = emails.filter { it.isNotBlank() },
                                         addresses = addresses.filter { it.isNotBlank() },
                                         photoUri = photoUri,
-                                        accountName = selectedAccount?.name,
-                                        accountType = selectedAccount?.type
+                                        accountName = if (isPrivate) null else selectedAccount?.name,
+                                        accountType = if (isPrivate) null else selectedAccount?.type,
+                                        isPrivate = isPrivate
                                     )
                                     contactsVM.saveContact(contactToSave)
                                     navigator.navigateUp()
@@ -276,7 +279,11 @@ fun ContactEditScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = selectedAccount?.let { ContactUtils.getAccountIcon(it) } ?: Icons.Default.CloudOff,
+                                imageVector = when {
+                                    isPrivate -> Icons.Default.Lock
+                                    selectedAccount != null -> ContactUtils.getAccountIcon(selectedAccount!!)
+                                    else -> Icons.Default.CloudOff
+                                },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -288,7 +295,11 @@ fun ContactEditScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = selectedAccount?.let { ContactUtils.getFriendlyAccountName(it) } ?: "Local (Device Only)",
+                                    text = when {
+                                        isPrivate -> "Private Storage (App Only)"
+                                        selectedAccount != null -> ContactUtils.getFriendlyAccountName(selectedAccount!!)
+                                        else -> "Local (Device Only)"
+                                    },
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -311,10 +322,29 @@ fun ContactEditScreen(
                             Surface(
                                 onClick = {
                                     selectedAccount = null
+                                    isPrivate = true
                                     showPicker = false
                                 },
                                 shape = RoundedCornerShape(12.dp),
-                                color = if (selectedAccount == null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                color = if (isPrivate) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                ListItem(
+                                    headlineContent = { Text("Private Storage (App Only)") },
+                                    supportingContent = { Text("Not visible to other apps") },
+                                    leadingContent = { Icon(Icons.Default.Lock, null) },
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                )
+                            }
+
+                            Surface(
+                                onClick = {
+                                    selectedAccount = null
+                                    isPrivate = false
+                                    showPicker = false
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (selectedAccount == null && !isPrivate) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 ListItem(
@@ -325,10 +355,11 @@ fun ContactEditScreen(
                             }
 
                             availableAccounts.forEach { account ->
-                                val isSelected = selectedAccount == account
+                                val isSelected = selectedAccount == account && !isPrivate
                                 Surface(
                                     onClick = {
                                         selectedAccount = account
+                                        isPrivate = false
                                         showPicker = false
                                     },
                                     shape = RoundedCornerShape(12.dp),

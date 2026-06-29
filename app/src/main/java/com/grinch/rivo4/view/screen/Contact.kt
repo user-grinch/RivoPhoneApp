@@ -102,6 +102,10 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
                                 contactsVM.moveContacts(selectedIds.toList(), account)
                                 selectedIds = emptySet()
                             },
+                            onMoveToPrivate = {
+                                selectedIds.forEach { contactsVM.makeContactPrivate(it) }
+                                selectedIds = emptySet()
+                            },
                             availableAccounts = contactsVM.availableAccounts.collectAsState().value
                         )
                     }
@@ -164,27 +168,30 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
 fun AccountFilterBar(viewModel: ContactsViewModel) {
     val accounts by viewModel.availableAccounts.collectAsState()
     val selectedAccount by viewModel.selectedAccount.collectAsState()
+    val showPrivateOnly by viewModel.showPrivateOnly.collectAsState()
 
-    if (accounts.isNotEmpty()) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 2.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                RivoFilterChip("All", selectedAccount == null, {
-                        _ ->
-                    viewModel.selectAccount(null)
-                })
-            }
-            items(accounts) { account ->
-                RivoFilterChip(ContactUtils.getFriendlyAccountName(account), selectedAccount == account, {
-                        _ ->
-                    viewModel.selectAccount(account)
-                })
-            }
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            RivoFilterChip("All", selectedAccount == null && !showPrivateOnly, {
+                viewModel.selectAccount(null)
+                viewModel.setShowPrivateOnly(false)
+            })
+        }
+        item {
+            RivoFilterChip("Private", showPrivateOnly, {
+                viewModel.setShowPrivateOnly(true)
+            })
+        }
+        items(accounts) { account ->
+            RivoFilterChip(ContactUtils.getFriendlyAccountName(account), selectedAccount == account, {
+                viewModel.selectAccount(account)
+            })
         }
     }
 }
@@ -195,7 +202,8 @@ fun BatchActionBar(
     selectedCount: Int,
     onClear: () -> Unit,
     onDelete: () -> Unit,
-    onMove: (Account) -> Unit,
+    onMove: (Account?) -> Unit,
+    onMoveToPrivate: () -> Unit,
     availableAccounts: List<Account>
 ) {
     var showMoveDialog by remember { mutableStateOf(false) }
@@ -236,7 +244,7 @@ fun BatchActionBar(
     if (showMoveDialog) {
         RivoDialog(
             onDismissRequest = { showMoveDialog = false },
-            title = "Move to Account",
+            title = "Move to Storage",
             icon = Icons.AutoMirrored.Filled.DriveFileMove,
             dismissButton = {
                 TextButton(onClick = { showMoveDialog = false }) {
@@ -244,6 +252,86 @@ fun BatchActionBar(
                 }
             }
         ) {
+            Surface(
+                onClick = {
+                    onMoveToPrivate()
+                    showMoveDialog = false
+                },
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Transparent,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier.size(40.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.Lock, null, modifier = Modifier.size(20.dp))
+                        }
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            "Private Storage",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            "App-only storage",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                onClick = {
+                    onMove(null)
+                    showMoveDialog = false
+                },
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Transparent,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier.size(40.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.CloudOff, null, modifier = Modifier.size(20.dp))
+                        }
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            "Local Storage",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            "Device only",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
             availableAccounts.forEachIndexed { index, account ->
                 Surface(
                     onClick = {

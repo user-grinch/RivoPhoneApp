@@ -1,5 +1,7 @@
 package com.grinch.rivo4
 
+import androidx.room.Room
+import com.grinch.rivo4.modal.db.RivoDatabase
 import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
@@ -13,8 +15,17 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            RivoDatabase::class.java,
+            "rivo_database"
+        ).allowMainThreadQueries().build()
+    }
+    single { get<RivoDatabase>().privateContactDao() }
+
     single<IContactsRepository> {
-        ContactsRepository(androidContext())
+        ContactsRepository(androidContext(), get())
     }
     single<ICallLogRepository> {
         CallLogRepository(androidContext().contentResolver, androidContext(), get())
