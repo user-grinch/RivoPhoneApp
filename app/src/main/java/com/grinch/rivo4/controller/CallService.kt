@@ -347,17 +347,12 @@ class CallService : InCallService() {
         updateCallState()
         updateNotification(call)
 
-        // Start CallActivity for all new calls to ensure UI is displayed.
-        // For incoming calls while the screen is off, setFullScreenIntent in updateNotification 
-        // will handle it, but for second calls or when already in foreground, 
-        // an explicit startActivity is more reliable.
         val intent = Intent(this, CallActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         try {
             startActivity(intent)
         } catch (e: Exception) {
-            // Background activity start might fail on some Android versions if not default dialer
         }
     }
 

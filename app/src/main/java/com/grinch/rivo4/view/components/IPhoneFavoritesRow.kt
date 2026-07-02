@@ -1,12 +1,17 @@
 package com.grinch.rivo4.view.components
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,7 +21,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -27,10 +35,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.modal.data.Contact
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -53,100 +64,159 @@ fun IPhoneFavoritesRow(
 
     val density = LocalDensity.current
     val haptic = LocalHapticFeedback.current
+    val lazyListState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
-    val itemWidth = 90.dp
-    val spacing = 12.dp
+    val itemWidth = 140.dp
+    val itemHeight = 180.dp
+    val spacing = 10.dp
     val itemWidthPx = with(density) { itemWidth.toPx() }
     val spacingPx = with(density) { spacing.toPx() }
     val itemTotalWidthPx = itemWidthPx + spacingPx
 
-    // iOS Wiggle animation variables
+    // iOS Wiggle animation
     val infiniteTransition = rememberInfiniteTransition(label = "wiggle")
     val rotation by infiniteTransition.animateFloat(
-        initialValue = -1.5f,
-        targetValue = 1.5f,
+        initialValue = -1.2f,
+        targetValue = 1.2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(120, easing = LinearEasing),
+            animation = tween(140, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "wiggleRotation"
     )
     val translationY by infiniteTransition.animateFloat(
-        initialValue = -1f,
-        targetValue = 1f,
+        initialValue = -0.8f,
+        targetValue = 0.8f,
         animationSpec = infiniteRepeatable(
-            animation = tween(100, easing = LinearEasing),
+            animation = tween(120, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "wiggleTranslation"
     )
 
-    val scrollState = rememberScrollState()
+    LaunchedEffect(draggedIndex, dragOffsetX) {
+        if (draggedIndex != -1) {
+            val layoutInfo = lazyListState.layoutInfo
+            val containerWidth = layoutInfo.viewportEndOffset
+            val draggedItemInfo = layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
+            
+            if (draggedItemInfo != null) {
+                val currentPos = draggedItemInfo.offset + dragOffsetX
+                val scrollThreshold = 120f
+                
+                if (currentPos < scrollThreshold) {
+                    scope.launch { lazyListState.animateScrollBy(-500f) }
+                } else if (currentPos > containerWidth - itemWidthPx - scrollThreshold) {
+                    scope.launch { lazyListState.animateScrollBy(500f) }
+                }
+            }
+        }
+    }
 
-    Row(
+    LazyRow(
+        state = lazyListState,
+        flingBehavior = rememberSnapFlingBehavior(lazyListState),
         modifier = Modifier
             .fillMaxWidth()
-            .horizontalScroll(scrollState)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 12.dp),
+        contentPadding = PaddingValues(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(spacing)
     ) {
-        favoritesList.forEachIndexed { index, contact ->
-            Column(
+        itemsIndexed(
+            items = favoritesList,
+            key = { _, contact -> contact.id }
+        ) { index, contact ->
+            val isDragged = index == draggedIndex
+            
+            val animatedScale by animateFloatAsState(
+                targetValue = if (isDragged) 1.08f else 1.0f,
+                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow),
+                label = "scale"
+            )
+            
+            val animatedElevation by animateDpAsState(
+                targetValue = if (isDragged) 16.dp else 2.dp,
+                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow),
+                label = "elevation"
+            )
+
+            Box(
                 modifier = Modifier
                     .width(itemWidth)
-                    .zIndex(if (index == draggedIndex) 1f else 0f)
-                    .graphicsLayer {
-                        // Drag translation for visual continuity
-                        if (index == draggedIndex) {
-                            translationX = dragOffsetX
-                            scaleX = 1.1f
-                            scaleY = 1.1f
-                            shadowElevation = 8.dp.toPx()
-                        }
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(itemHeight)
+                    // The fix: only animate placement when NOT being dragged to avoid weird jumps
+                    .then(if (!isDragged) Modifier.animateItem(
+                        placementSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
+                    ) else Modifier)
+                    .zIndex(if (isDragged) 100f else 0f)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(width = itemWidth, height = 120.dp)
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            if (isDragged) {
+                                translationX = dragOffsetX
+                                scaleX = animatedScale
+                                scaleY = animatedScale
+                            }
+                        }
                 ) {
-                    Card(
+                    Surface(
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(2.dp)
                             .graphicsLayer {
-                                // iOS-like Wiggle when editing
-                                if (isEditing && index != draggedIndex) {
+                                if (isEditing && !isDragged) {
                                     rotationZ = rotation
                                     this.translationY = translationY * density.density
                                 }
                             }
-                            .pointerInput(index) {
+                            .shadow(
+                                elevation = animatedElevation,
+                                shape = RoundedCornerShape(24.dp),
+                                ambientColor = Color.Black.copy(alpha = 0.25f),
+                                spotColor = Color.Black.copy(alpha = 0.4f)
+                            )
+                            .pointerInput(contact.id) { // Use stable key
                                 detectDragGesturesAfterLongPress(
                                     onDragStart = {
-                                        draggedIndex = index
+                                        draggedIndex = favoritesList.indexOfFirst { it.id == contact.id }
                                         dragOffsetX = 0f
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     },
                                     onDrag = { change, dragAmount ->
                                         change.consume()
                                         dragOffsetX += dragAmount.x
-                                        val shift = (dragOffsetX / itemTotalWidthPx).roundToInt()
-                                        if (shift != 0) {
-                                            val targetIndex = (draggedIndex + shift).coerceIn(0, favoritesList.lastIndex)
-                                            if (targetIndex != draggedIndex) {
-                                                val temp = favoritesList[draggedIndex]
-                                                favoritesList.removeAt(draggedIndex)
-                                                favoritesList.add(targetIndex, temp)
-                                                draggedIndex = targetIndex
-                                                dragOffsetX -= shift * itemTotalWidthPx
-                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            }
+                                        
+                                        val currentIndex = favoritesList.indexOfFirst { it.id == contact.id }
+                                        if (currentIndex == -1) return@detectDragGesturesAfterLongPress
+                                        
+                                        val swapThreshold = itemTotalWidthPx * 0.55f
+                                        
+                                        if (dragOffsetX > swapThreshold && currentIndex < favoritesList.lastIndex) {
+                                            val targetIndex = currentIndex + 1
+                                            val item = favoritesList[currentIndex]
+                                            favoritesList.removeAt(currentIndex)
+                                            favoritesList.add(targetIndex, item)
+                                            draggedIndex = targetIndex
+                                            dragOffsetX -= itemTotalWidthPx
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                        } else if (dragOffsetX < -swapThreshold && currentIndex > 0) {
+                                            val targetIndex = currentIndex - 1
+                                            val item = favoritesList[currentIndex]
+                                            favoritesList.removeAt(currentIndex)
+                                            favoritesList.add(targetIndex, item)
+                                            draggedIndex = targetIndex
+                                            dragOffsetX += itemTotalWidthPx
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                         }
                                     },
                                     onDragEnd = {
                                         onSaveOrder(favoritesList.map { it.id })
                                         draggedIndex = -1
                                         dragOffsetX = 0f
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     },
                                     onDragCancel = {
                                         draggedIndex = -1
@@ -159,14 +229,12 @@ fun IPhoneFavoritesRow(
                                 onClick = { onClick(contact) }
                             ),
                         shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = if (index == draggedIndex) 8.dp else 2.dp
-                        )
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f)),
+                        tonalElevation = animatedElevation / 3
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
+                            // Background
                             if (!contact.photoUri.isNullOrEmpty()) {
                                 AsyncImage(
                                     model = contact.photoUri,
@@ -175,21 +243,7 @@ fun IPhoneFavoritesRow(
                                     contentScale = ContentScale.Crop
                                 )
                             } else {
-                                val avatarColors = listOf(
-                                    Pair(Color(0xFFEF5350), Color(0xFFC62828)),
-                                    Pair(Color(0xFFEC407A), Color(0xFFAD1457)),
-                                    Pair(Color(0xFFAB47BC), Color(0xFF6A1B9A)),
-                                    Pair(Color(0xFF7E57C2), Color(0xFF4527A0)),
-                                    Pair(Color(0xFF5C6BC0), Color(0xFF283593)),
-                                    Pair(Color(0xFF42A5F5), Color(0xFF1565C0)),
-                                    Pair(Color(0xFF29B6F6), Color(0xFF0277BD)),
-                                    Pair(Color(0xFF26C6DA), Color(0xFF00838F)),
-                                    Pair(Color(0xFF26A69A), Color(0xFF00695C)),
-                                    Pair(Color(0xFF66BB6A), Color(0xFF2E7D32)),
-                                    Pair(Color(0xFF9CCC65), Color(0xFF558B2F)),
-                                    Pair(Color(0xFFFF7043), Color(0xFFD84315))
-                                )
-                                val colorPair = avatarColors[abs(contact.name.hashCode()) % avatarColors.size]
+                                val colorPair = getModernGradient(contact.name)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -198,57 +252,103 @@ fun IPhoneFavoritesRow(
                                 ) {
                                     Text(
                                         text = contact.name.trim().take(1).uppercase(),
-                                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                                        color = Color.White
+                                        style = MaterialTheme.typography.displayLarge.copy(
+                                            fontWeight = FontWeight.Black,
+                                            color = Color.White.copy(alpha = 0.7f)
+                                        ),
+                                        modifier = Modifier.padding(bottom = 12.dp)
                                     )
+                                }
+                            }
+                            
+                            // Label Overlay
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.45f)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                                        )
+                                    ),
+                                contentAlignment = Alignment.BottomStart
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = contact.name,
+                                        style = MaterialTheme.typography.titleSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            letterSpacing = (-0.2).sp
+                                        ),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Call,
+                                            contentDescription = null,
+                                            tint = Color.White.copy(alpha = 0.7f),
+                                            modifier = Modifier.size(10.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = "Mobile",
+                                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                            color = Color.White.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
 
-                    // iOS-like red delete badge
-                    if (isEditing) {
-                        IconButton(
+                    // Floating Delete Button (Fixed & Scaled)
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = isEditing,
+                        enter = scaleIn() + fadeIn(),
+                        exit = scaleOut() + fadeOut(),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .zIndex(110f) // Ensure it's above everything
+                    ) {
+                        Surface(
                             onClick = { onUnfavorite(contact) },
                             modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .offset(x = (-8).dp, y = (-8).dp)
-                                .size(24.dp)
-                                .background(Color(0xFFD32F2F), CircleShape)
+                                .size(22.dp)
+                                .offset(x = (-6).dp, y = (-6).dp),
+                            shape = CircleShape,
+                            color = Color(0xFFE53935),
+                            shadowElevation = 4.dp,
+                            border = BorderStroke(1.5.dp, Color.White)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Remove,
                                 contentDescription = "Remove Favorite",
                                 tint = Color.White,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.padding(4.dp)
                             )
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Call,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = contact.name.split(" ").firstOrNull() ?: "",
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
             }
         }
     }
+}
+
+private fun getModernGradient(seed: String): Pair<Color, Color> {
+    val gradients = listOf(
+        Color(0xFF8E2DE2) to Color(0xFF4A00E0),
+        Color(0xFF00c6ff) to Color(0xFF0072ff),
+        Color(0xFFf857a6) to Color(0xFFff5858),
+        Color(0xFF11998E) to Color(0xFF38EF7D),
+        Color(0xFFf7971e) to Color(0xFFffd200),
+        Color(0xFFeb3349) to Color(0xFFf45c43),
+        Color(0xFF1fa2ff) to Color(0xFF12d8fa),
+        Color(0xFF70e1f5) to Color(0xFFffd194)
+    )
+    return gradients[abs(seed.hashCode()) % gradients.size]
 }
