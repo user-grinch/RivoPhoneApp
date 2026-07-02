@@ -80,19 +80,40 @@ class CallService : InCallService() {
             instance?.setMuted(muted)
         }
 
-        fun setSpeaker(on: Boolean) {
-            val route = if (on) CallAudioState.ROUTE_SPEAKER else CallAudioState.ROUTE_EARPIECE
-            instance?.setAudioRoute(route)
-        }
-
         fun toggleMute() {
             val currentMute = _audioState.value?.isMuted ?: false
             mute(!currentMute)
         }
 
-        fun toggleSpeaker() {
-            val isSpeaker = _audioState.value?.route == CallAudioState.ROUTE_SPEAKER
-            setSpeaker(!isSpeaker)
+        fun cycleAudioRoute() {
+            val state = _audioState.value ?: return
+            val supported = state.supportedRouteMask
+            val current = state.route
+
+            val nextRoute = when (current) {
+                CallAudioState.ROUTE_EARPIECE, CallAudioState.ROUTE_WIRED_HEADSET -> {
+                    if ((supported and CallAudioState.ROUTE_BLUETOOTH) != 0) CallAudioState.ROUTE_BLUETOOTH
+                    else if ((supported and CallAudioState.ROUTE_SPEAKER) != 0) CallAudioState.ROUTE_SPEAKER
+                    else current
+                }
+                CallAudioState.ROUTE_BLUETOOTH -> {
+                    if ((supported and CallAudioState.ROUTE_SPEAKER) != 0) CallAudioState.ROUTE_SPEAKER
+                    else if ((supported and CallAudioState.ROUTE_EARPIECE) != 0) CallAudioState.ROUTE_EARPIECE
+                    else if ((supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0) CallAudioState.ROUTE_WIRED_HEADSET
+                    else current
+                }
+                CallAudioState.ROUTE_SPEAKER -> {
+                    if ((supported and CallAudioState.ROUTE_EARPIECE) != 0) CallAudioState.ROUTE_EARPIECE
+                    else if ((supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0) CallAudioState.ROUTE_WIRED_HEADSET
+                    else if ((supported and CallAudioState.ROUTE_BLUETOOTH) != 0) CallAudioState.ROUTE_BLUETOOTH
+                    else current
+                }
+                else -> current
+            }
+
+            if (nextRoute != current) {
+                instance?.setAudioRoute(nextRoute)
+            }
         }
 
         fun mergeCalls() {
@@ -370,7 +391,7 @@ class CallService : InCallService() {
             }
             "DECLINE_CALL" -> declineCall()
             "TOGGLE_MUTE" -> toggleMute()
-            "TOGGLE_SPEAKER" -> toggleSpeaker()
+            "TOGGLE_SPEAKER" -> cycleAudioRoute()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -439,7 +460,20 @@ class CallService : InCallService() {
         }
         val person = personBuilder.build()
 
-        val isSpeaker = _audioState.value?.route == CallAudioState.ROUTE_SPEAKER
+        val audioState = _audioState.value
+        val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+        val audioLabel = when (audioRoute) {
+            CallAudioState.ROUTE_SPEAKER -> "Speaker"
+            CallAudioState.ROUTE_BLUETOOTH -> {
+                try {
+                    audioState?.activeBluetoothDevice?.name ?: "Bluetooth"
+                } catch (e: SecurityException) {
+                    "Bluetooth"
+                }
+            }
+            CallAudioState.ROUTE_WIRED_HEADSET -> "Headset"
+            else -> "Handset"
+        }
 
         val contentText = buildString {
             if (call.state == Call.STATE_RINGING) append("Incoming call") else append("Active call")
@@ -472,7 +506,7 @@ class CallService : InCallService() {
             builder.addAction(
                 NotificationCompat.Action.Builder(
                     android.R.drawable.stat_sys_speakerphone,
-                    if (isSpeaker) "Handset" else "Speaker",
+                    audioLabel,
                     speakerPendingIntent
                 ).build()
             )

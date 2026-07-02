@@ -106,7 +106,6 @@ fun ExpressiveCallScreen(
         }
     }
     val isMuted = audioState?.isMuted ?: false
-    val isSpeakerOn = audioState?.route == CallAudioState.ROUTE_SPEAKER
 
     var callDuration by remember { mutableLongStateOf(0L) }
     var showKeypad by remember { mutableStateOf(false) }
@@ -350,13 +349,34 @@ fun ExpressiveCallScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+                        val audioIcon = when (audioRoute) {
+                            CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
+                            CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
+                            CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
+                            else -> Icons.Default.Phone
+                        }
+
+                        val audioLabel = when (audioRoute) {
+                            CallAudioState.ROUTE_SPEAKER -> "Speaker"
+                            CallAudioState.ROUTE_BLUETOOTH -> {
+                                try {
+                                    audioState?.activeBluetoothDevice?.name ?: "Bluetooth"
+                                } catch (e: SecurityException) {
+                                    "Bluetooth"
+                                }
+                            }
+                            CallAudioState.ROUTE_WIRED_HEADSET -> "Headset"
+                            else -> "Handset"
+                        }
+
                         CallActionButton(
-                            icon = Icons.AutoMirrored.Filled.VolumeUp,
-                            isActive = isSpeakerOn,
-                            label = "Speaker"
+                            icon = audioIcon,
+                            isActive = audioRoute == CallAudioState.ROUTE_SPEAKER || audioRoute == CallAudioState.ROUTE_BLUETOOTH,
+                            label = audioLabel
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            CallService.setSpeaker(!isSpeakerOn)
+                            CallService.cycleAudioRoute()
                         }
 
                         CallActionButton(
