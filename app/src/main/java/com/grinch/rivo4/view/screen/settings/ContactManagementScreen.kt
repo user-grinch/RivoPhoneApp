@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.ContactVisibilityScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -96,6 +98,13 @@ fun ContactManagementScreen(
                             supporting = "Manage contacts stored only in this app",
                             leadingIcon = Icons.Outlined.Lock,
                             onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                        )
+                        RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        RivoListItem(
+                            headline = "Visibility",
+                            supporting = "Choose which accounts to show in your list",
+                            leadingIcon = Icons.Outlined.Visibility,
+                            onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                         )
                     }
                 }

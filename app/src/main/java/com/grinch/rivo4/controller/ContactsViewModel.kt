@@ -40,12 +40,26 @@ class ContactsViewModel(
     private val _showPrivateOnly = MutableStateFlow(false)
     val showPrivateOnly = _showPrivateOnly.asStateFlow()
 
-    val filteredContacts = combine(_allContacts, _selectedAccount, _showPrivateOnly) { contacts, account, privateOnly ->
-        when {
+    private val _showLocalOnly = MutableStateFlow(false)
+    val showLocalOnly = _showLocalOnly.asStateFlow()
+
+    private val _visibleAccounts = MutableStateFlow<Set<String>?>(preferenceManager.getVisibleAccounts())
+    val visibleAccountsFlow = _visibleAccounts.asStateFlow()
+
+    val filteredContacts = combine(_allContacts, _selectedAccount, _showPrivateOnly, _showLocalOnly, _visibleAccounts) { contacts, account, privateOnly, localOnly, visibleAccounts ->
+        val baseFiltered = when {
             privateOnly -> contacts.filter { it.isPrivate }
-            account == null -> contacts
+            localOnly -> contacts.filter { it.accountName == null && it.accountType == null }
+            account == null -> {
+                if (visibleAccounts == null) contacts
+                else contacts.filter { contact ->
+                    val key = if (contact.accountType == null && contact.accountName == null) "local|local" else "${contact.accountType}|${contact.accountName}"
+                    visibleAccounts.contains(key) || contact.isPrivate
+                }
+            }
             else -> contacts.filter { it.accountName == account.name && it.accountType == account.type }
         }
+        baseFiltered
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val groupedContacts = filteredContacts.combine(MutableStateFlow(Unit)) { contacts, _ ->
@@ -99,12 +113,35 @@ class ContactsViewModel(
 
     fun selectAccount(account: Account?) {
         _selectedAccount.value = account
-        if (account != null) _showPrivateOnly.value = false
+        if (account != null) {
+            _showPrivateOnly.value = false
+            _showLocalOnly.value = false
+        }
     }
 
     fun setShowPrivateOnly(show: Boolean) {
         _showPrivateOnly.value = show
-        if (show) _selectedAccount.value = null
+        if (show) {
+            _selectedAccount.value = null
+            _showLocalOnly.value = false
+        }
+    }
+
+    fun setShowLocalOnly(show: Boolean) {
+        _showLocalOnly.value = show
+        if (show) {
+            _selectedAccount.value = null
+            _showPrivateOnly.value = false
+        }
+    }
+
+    fun setVisibleAccounts(accounts: Set<String>?) {
+        if (accounts == null) {
+            preferenceManager.setString(PreferenceManager.KEY_VISIBLE_ACCOUNTS, null)
+        } else {
+            preferenceManager.setVisibleAccounts(accounts)
+        }
+        _visibleAccounts.value = accounts
     }
 
     fun toggleFavorite(contact: Contact) {

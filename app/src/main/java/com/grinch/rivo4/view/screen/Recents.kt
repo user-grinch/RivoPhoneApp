@@ -169,6 +169,53 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
     }
 }
 
+@Composable
+fun FavoriteCircleItem(
+    contact: Contact,
+    isEditing: Boolean = false,
+    onUnfavorite: () -> Unit = {},
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(72.dp)
+            .clickable(enabled = !isEditing, onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(contentAlignment = Alignment.TopEnd) {
+            RivoAvatar(
+                name = contact.name,
+                photoUri = contact.photoUri,
+                modifier = Modifier.size(64.dp)
+            )
+            
+            if (isEditing) {
+                Surface(
+                    onClick = onUnfavorite,
+                    modifier = Modifier.size(20.dp).offset(x = 4.dp, y = (-4).dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                    shadowElevation = 2.dp
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(Icons.Default.Remove, null, modifier = Modifier.size(14.dp))
+                    }
+                }
+            }
+        }
+        Text(
+            text = contact.name.split(" ").firstOrNull() ?: "",
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CallLogFullContent(
@@ -282,19 +329,24 @@ fun CallLogFullContent(
                                         }
                                     }
                                 )
-                                IPhoneFavoritesRow(
-                                    favorites = favorites,
-                                    isEditing = isEditingFavorites,
-                                    onUnfavorite = { contact ->
-                                        contactsVM.toggleFavorite(contact)
-                                    },
-                                    onSaveOrder = { newOrder ->
-                                        prefs.setFavoritesOrder(newOrder)
-                                    },
-                                    onClick = { contact ->
-                                        callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
+                                LazyRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 12.dp),
+                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    items(favorites) { contact ->
+                                        FavoriteCircleItem(
+                                            contact = contact,
+                                            isEditing = isEditingFavorites,
+                                            onUnfavorite = { contactsVM.toggleFavorite(contact) },
+                                            onClick = {
+                                                callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
+                                            }
+                                        )
                                     }
-                                )
+                                }
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
                         }
@@ -350,36 +402,6 @@ fun CallLogFullContent(
         )
     }
 }
-
-@Composable
-fun FavoriteCircleItem(
-    contact: Contact,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .width(72.dp)
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        RivoAvatar(
-            name = contact.name,
-            photoUri = contact.photoUri,
-            modifier = Modifier.size(64.dp),
-            badgeIcon = Icons.Default.Call
-        )
-        Text(
-            text = contact.name.split(" ").firstOrNull() ?: "",
-            style = MaterialTheme.typography.labelMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
 
 @Composable
 fun EmptyCallLogsState() {

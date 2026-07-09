@@ -88,6 +88,7 @@ dependencies {
 
     // Navigation & Serialization
     implementation 'androidx.navigation:navigation-compose:2.8.5'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
 
     // Compose Destinations

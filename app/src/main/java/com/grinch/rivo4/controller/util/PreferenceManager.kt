@@ -101,6 +101,15 @@ class PreferenceManager(context: Context) {
         setString(KEY_FAVORITES_ORDER, order.joinToString(","))
     }
 
+    fun getVisibleAccounts(): Set<String>? {
+        val str = getString(KEY_VISIBLE_ACCOUNTS, null) ?: return null
+        return str.split(",").filter { it.isNotEmpty() }.toSet()
+    }
+
+    fun setVisibleAccounts(accounts: Set<String>) {
+        setString(KEY_VISIBLE_ACCOUNTS, accounts.joinToString(","))
+    }
+
     companion object {
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
@@ -157,5 +166,6 @@ class PreferenceManager(context: Context) {
         const val KEY_LAST_USED_ACCOUNT_NAME = "last_used_account_name"
         const val KEY_LAST_USED_ACCOUNT_TYPE = "last_used_account_type"
         const val KEY_FAVORITES_ORDER = "favorites_order"
+        const val KEY_VISIBLE_ACCOUNTS = "visible_accounts"
     }
 }

@@ -31,6 +31,8 @@ import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -55,9 +57,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.controller.util.PreferenceManager
 import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.CallService
-import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -119,11 +121,11 @@ fun ExpressiveCallScreen(
         preferenceManager.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)
     }
 
-    LaunchedEffect(callState) {
+    LaunchedEffect(callState, call.details.connectTimeMillis) {
         if (callState == Call.STATE_ACTIVE) {
-            val startTime = System.currentTimeMillis() - (callDuration * 1000)
+            val connectTime = if (call.details.connectTimeMillis > 0) call.details.connectTimeMillis else System.currentTimeMillis()
             while (true) {
-                callDuration = (System.currentTimeMillis() - startTime) / 1000
+                callDuration = (System.currentTimeMillis() - connectTime) / 1000
                 delay(1000)
             }
         }
@@ -135,7 +137,6 @@ fun ExpressiveCallScreen(
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         ExpressiveBackground(photoUri)
-        FloatingParticles()
 
         Column(
             modifier = Modifier
@@ -1014,7 +1015,10 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     tint = iconTint,
                     modifier = Modifier
                         .size(32.dp)
-                        .graphicsLayer { rotationZ = iconRotation }
+                        .graphicsLayer { 
+                            rotationZ = iconRotation 
+                            if (targetIcon == Icons.Default.Call) scaleY = -1f
+                        }
                 )
             }
         }
@@ -1185,7 +1189,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         targetIcon,
                         contentDescription = null,
                         tint = iconTint,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(36.dp).graphicsLayer(scaleY = if (targetIcon == Icons.Default.Call) -1f else 1f)
                     )
                 }
             }
@@ -1349,7 +1353,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     Icons.Default.Call,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(36.dp).graphicsLayer(scaleY = -1f)
                 )
             }
         }
@@ -1423,7 +1427,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     Icon(
                         Icons.Default.Call,
                         contentDescription = "Answer",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp).graphicsLayer(scaleY = -1f)
                     )
                 }
             }

@@ -20,6 +20,7 @@ import android.telecom.TelecomManager
 import android.telecom.VideoProfile
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import kotlinx.coroutines.*
@@ -30,7 +31,8 @@ import org.koin.android.ext.android.inject
 data class CallSession(
     val call: Call,
     val state: Int,
-    val updateTime: Long = System.currentTimeMillis()
+    val updateTime: Long = System.currentTimeMillis(),
+    val connectTimeMillis: Long = 0L
 )
 
 class CallService : InCallService() {
@@ -317,7 +319,14 @@ class CallService : InCallService() {
             ?: calls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
             
         if (priorityCall != null) {
-            _currentCallSession.value = CallSession(priorityCall, priorityCall.state)
+            val connectTime = if (priorityCall.state == Call.STATE_ACTIVE) {
+                if (priorityCall.details.connectTimeMillis > 0) {
+                    priorityCall.details.connectTimeMillis
+                } else {
+                    System.currentTimeMillis()
+                }
+            } else 0L
+            _currentCallSession.value = CallSession(priorityCall, priorityCall.state, connectTimeMillis = connectTime)
         } else {
             _currentCallSession.value = null
         }
@@ -476,7 +485,7 @@ class CallService : InCallService() {
         }
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.sym_action_call)
+            .setSmallIcon(if (call.state == Call.STATE_RINGING) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
             .setContentTitle(contactName)
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -508,11 +517,7 @@ class CallService : InCallService() {
         }
 
         val notification = builder.build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
-        } else {
-            startForeground(NOTIFICATION_ID, notification)
-        }
+        startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
     }
 
     private fun cancelNotification() {

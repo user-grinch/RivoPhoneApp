@@ -169,6 +169,7 @@ fun AccountFilterBar(viewModel: ContactsViewModel) {
     val accounts by viewModel.availableAccounts.collectAsState()
     val selectedAccount by viewModel.selectedAccount.collectAsState()
     val showPrivateOnly by viewModel.showPrivateOnly.collectAsState()
+    val showLocalOnly by viewModel.showLocalOnly.collectAsState()
 
     LazyRow(
         modifier = Modifier
@@ -178,9 +179,15 @@ fun AccountFilterBar(viewModel: ContactsViewModel) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
-            RivoFilterChip("All", selectedAccount == null && !showPrivateOnly, {
+            RivoFilterChip("All", selectedAccount == null && !showPrivateOnly && !showLocalOnly, {
                 viewModel.selectAccount(null)
                 viewModel.setShowPrivateOnly(false)
+                viewModel.setShowLocalOnly(false)
+            })
+        }
+        item {
+            RivoFilterChip("Local Memory", showLocalOnly, {
+                viewModel.setShowLocalOnly(true)
             })
         }
         item {
@@ -319,7 +326,7 @@ fun BatchActionBar(
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(
-                            "Local Storage",
+                            "Local Memory",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
