@@ -105,7 +105,8 @@ fun CallLogTile(
     onTileClick: (CallLogEntry) -> Unit,
     onButtonClick: (CallLogEntry) -> Unit,
     onLongClick: (CallLogEntry) -> Unit = {},
-    selected: Boolean = false
+    selected: Boolean = false,
+    displayOrder: Int = 0
 ) {
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -136,9 +137,15 @@ fun CallLogTile(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.weight(1f)) {
+                val displayName = remember(log.name, displayOrder) {
+                    log.name?.let { 
+                        if (it.isNotEmpty()) com.grinch.rivo4.controller.util.ContactUtils.formatContactName(it, displayOrder) else null
+                    } ?: formatPhoneNumber(log.number)
+                }
+
                 RivoListItem(
                     headline = buildString {
-                        append(log.name ?: formatPhoneNumber(log.number))
+                        append(displayName)
                         if (log.count > 1) append(" (${log.count})")
                     },
                     supporting = buildString {

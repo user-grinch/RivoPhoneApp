@@ -1,10 +1,7 @@
 package com.grinch.rivo4.view.screen
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.provider.CallLog
-import android.telecom.TelecomManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
@@ -23,16 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
-import com.grinch.rivo4.controller.util.makeCall
-import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -173,6 +166,7 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
 fun FavoriteCircleItem(
     contact: Contact,
     isEditing: Boolean = false,
+    displayOrder: Int = 0,
     onUnfavorite: () -> Unit = {},
     onClick: () -> Unit
 ) {
@@ -206,7 +200,7 @@ fun FavoriteCircleItem(
             }
         }
         Text(
-            text = contact.name.split(" ").firstOrNull() ?: "",
+            text = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact.name, displayOrder).split(" ").firstOrNull() ?: "",
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -264,6 +258,7 @@ fun CallLogFullContent(
         val context = LocalContext.current
         val callLauncher = rememberCallLauncher()
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
+        val displayOrder = remember(settingsState) { prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
 
         val filteredLogs = remember(logs, selectedFilter, blockLogVisibility) {
             val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
@@ -340,6 +335,7 @@ fun CallLogFullContent(
                                         FavoriteCircleItem(
                                             contact = contact,
                                             isEditing = isEditingFavorites,
+                                            displayOrder = displayOrder,
                                             onUnfavorite = { contactsVM.toggleFavorite(contact) },
                                             onClick = {
                                                 callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
@@ -359,6 +355,7 @@ fun CallLogFullContent(
                                         logsInGroup.forEachIndexed { index, lg ->
                                             CallLogTile(
                                                 log = lg,
+                                                displayOrder = displayOrder,
                                                 onTileClick = { log ->
                                                     if (selectedEntries.isNotEmpty()) {
                                                         onToggleSelection(log)

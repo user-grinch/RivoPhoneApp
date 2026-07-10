@@ -27,4 +27,14 @@ object ContactUtils {
             else -> Icons.Default.AccountCircle
         }
     }
+
+    fun formatContactName(name: String, displayOrder: Int): String {
+        if (displayOrder == 1) { // Last Name First
+            val parts = name.trim().split("\\s+".toRegex())
+            if (parts.size > 1) {
+                return "${parts.last()}, ${parts.dropLast(1).joinToString(" ")}"
+            }
+        }
+        return name
+    }
 }

@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.ContactUtils
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -42,7 +44,9 @@ fun AZListScroll(
     val settingsState by prefs.settingsChanged.collectAsState()
 
     val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
-    val hapticScrollEnabled = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
+    val hapticScrollEnabled = prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
+    val displayOrder = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
+
     if (hapticScrollEnabled) {
         LaunchedEffect(listState.firstVisibleItemIndex) {
             haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
@@ -120,10 +124,14 @@ fun AZListScroll(
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         RivoExpressiveCard(isCompact = true) {
                             contactsForChar.forEachIndexed { index, contact ->
-                                RivoListItem(
-                                    headline = contact.name.ifEmpty {
+                                val displayName = ContactUtils.formatContactName(
+                                    contact.name.ifEmpty {
                                         contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: "Unknown"
                                     },
+                                    displayOrder
+                                )
+                                RivoListItem(
+                                    headline = displayName,
                                     supporting = null,
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,

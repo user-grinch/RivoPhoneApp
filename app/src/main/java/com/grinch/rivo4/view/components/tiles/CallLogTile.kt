@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.modal.data.CallLogEntry
 
@@ -23,14 +24,19 @@ import com.grinch.rivo4.modal.data.CallLogEntry
 fun CallLogTile(
     log: CallLogEntry,
     modifier: Modifier = Modifier,
+    displayOrder: Int = 0,
     onCallClick: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val isMissed = log.types.any { it == CallLog.Calls.MISSED_TYPE } || (log.types.isEmpty() && log.type == CallLog.Calls.MISSED_TYPE)
     val context = LocalContext.current
 
+    val title = log.name?.let { 
+        if (it.isNotEmpty()) ContactUtils.formatContactName(it, displayOrder) else null
+    } ?: log.number.ifEmpty { "Unknown" }
+
     SingleTile(
-        title = log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" },
+        title = title,
         photoUri = log.photoUri,
         isMissedCall = isMissed,
         modifier = modifier,

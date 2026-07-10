@@ -42,9 +42,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import android.os.Build
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -67,6 +67,7 @@ import org.koin.compose.koinInject
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ExpressiveCallScreen(
@@ -85,6 +86,7 @@ fun ExpressiveCallScreen(
     
     val allCalls by CallService.allCalls.collectAsState()
     val otherCall = remember(allCalls, call) {
+        @Suppress("DEPRECATION")
         allCalls.find { it != call && it.state != Call.STATE_DISCONNECTED }
     }
 
@@ -126,7 +128,7 @@ fun ExpressiveCallScreen(
             val connectTime = if (call.details.connectTimeMillis > 0) call.details.connectTimeMillis else System.currentTimeMillis()
             while (true) {
                 callDuration = (System.currentTimeMillis() - connectTime) / 1000
-                delay(1000)
+                delay(1.seconds)
             }
         }
     }
@@ -157,8 +159,8 @@ fun ExpressiveCallScreen(
                     LaunchedEffect(oc) {
                         val number = oc.details.handle?.schemeSpecificPart ?: ""
                         if (number.isNotEmpty()) {
-                            val contact = try { contactsRepo.getContactByNumber(number) } catch (e: Exception) { null }
-                            if (contact != null) ocName = contact.name
+                            val contact = try { contactsRepo.getContactByNumber(number) } catch (_: Exception) { null }
+                            if (contact != null) ocName = (contact as? com.grinch.rivo4.modal.data.Contact)?.name ?: number
                         }
                     }
                     
@@ -984,11 +986,19 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                             coroutineScope.launch {
                                 when {
                                     offsetX.value > triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        } else {
+                                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                        }
                                         onAnswer()
                                     }
                                     offsetX.value < -triggerThreshold -> {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                         view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                    } else {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    }
                                         onDecline()
                                     }
                                     else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
@@ -1160,11 +1170,19 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                                 coroutineScope.launch {
                                     when {
                                         offsetY.value < -triggerThreshold -> {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        } else {
+                                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                        }
                                             onAnswer()
                                         }
                                         offsetY.value > triggerThreshold -> {
-                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                    } else {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    }
                                             onDecline()
                                         }
                                         else -> offsetY.animateTo(0f, spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium))
@@ -1332,7 +1350,11 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                             onDragEnd = {
                                 coroutineScope.launch {
                                     if (offsetX.value > maxDrag * 0.85f) {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        } else {
+                                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                        }
                                         onAnswer()
                                     } else {
                                         offsetX.animateTo(0f, spring(dampingRatio = 0.8f))

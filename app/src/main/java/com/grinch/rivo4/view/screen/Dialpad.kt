@@ -122,6 +122,9 @@ fun DialPadScreen(
     val dialpadLayout by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_LAYOUT, 0))
     }
+    val displayOrder by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
+    }
 
     val callLauncher = rememberCallLauncher()
 
@@ -242,7 +245,7 @@ fun DialPadScreen(
                                 ) {
                                     Box(modifier = Modifier.weight(1f)) {
                                         RivoListItem(
-                                            headline = contact.name,
+                                            headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact.name, displayOrder),
                                             supporting = buildString {
                                                 contact.nickname?.let { append("$it • ") }
                                                 contactNumber?.let { append(formatPhoneNumber(it)) }

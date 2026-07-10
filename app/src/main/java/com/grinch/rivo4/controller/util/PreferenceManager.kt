@@ -167,5 +167,7 @@ class PreferenceManager(context: Context) {
         const val KEY_LAST_USED_ACCOUNT_TYPE = "last_used_account_type"
         const val KEY_FAVORITES_ORDER = "favorites_order"
         const val KEY_VISIBLE_ACCOUNTS = "visible_accounts"
+        const val KEY_CONTACT_SORT_ORDER = "contact_sort_order"
+        const val KEY_CONTACT_DISPLAY_ORDER = "contact_display_order"
     }
 }
