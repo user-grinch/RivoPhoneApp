@@ -19,16 +19,26 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
+import com.grinch.rivo4.controller.util.openLink
+import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
 import com.grinch.rivo4.view.screen.transitions.getAppTransition
@@ -94,6 +104,53 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             defaultTransitions = getAppTransition(transitionStyle)
                         )
+
+                        var showPatreonPrompt by remember { 
+                            mutableStateOf(!prefs.getBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, false)) 
+                        }
+
+                        if (showPatreonPrompt) {
+                            val context = LocalContext.current
+                            RivoDialog(
+                                onDismissRequest = { 
+                                    prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
+                                    showPatreonPrompt = false 
+                                },
+                                title = "Support Rivo",
+                                icon = Icons.Default.Favorite,
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            openLink(context, PATREON_URL)
+                                            prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
+                                            showPatreonPrompt = false
+                                        },
+                                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                                        shape = RoundedCornerShape(16.dp)
+                                    ) {
+                                        Text("Support on Patreon", fontWeight = FontWeight.Bold)
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(
+                                        onClick = {
+                                            prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
+                                            showPatreonPrompt = false
+                                        },
+                                        modifier = Modifier.fillMaxWidth().height(52.dp)
+                                    ) {
+                                        Text("Maybe later")
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    "Rivo is free and open source. If you like the app, please consider supporting its development on Patreon!",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
 
                     LaunchedEffect(Unit) {

@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace = 'com.grinch.rivo4'
-    compileSdk = 35 // Changed from 36 to 35 for better stability with current tools
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.grinch.rivo4"
         minSdk = 29
         targetSdk = 35
-        versionCode = 2026062401
-        versionName = "1.9"
+        versionCode = 2026071001
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

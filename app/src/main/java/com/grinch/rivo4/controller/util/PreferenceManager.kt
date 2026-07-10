@@ -169,5 +169,6 @@ class PreferenceManager(context: Context) {
         const val KEY_VISIBLE_ACCOUNTS = "visible_accounts"
         const val KEY_CONTACT_SORT_ORDER = "contact_sort_order"
         const val KEY_CONTACT_DISPLAY_ORDER = "contact_display_order"
+        const val KEY_PATREON_PROMPT_SHOWN = "patreon_prompt_shown"
     }
 }
