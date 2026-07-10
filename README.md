@@ -32,11 +32,12 @@ RivoPhoneApp is currently under closed testing. You'd need to join this [Google 
 ## Screenshots
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/1.png">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/2.png" width="260">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.png" width="260">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" width="260">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" width="260">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.png" width="260">
 </p>
 
 ## Features
@@ -48,6 +49,7 @@ RivoPhoneApp is currently under closed testing. You'd need to join this [Google 
 * Native in-call screen and controls
 * Automatic screen handling with proximity sensor support
 * Smooth performance powered by Jetpack Compose
+* Private Contacts
 * Fully open source etc.
 
 ## Contributing
