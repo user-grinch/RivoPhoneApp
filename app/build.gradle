@@ -14,7 +14,7 @@ android {
         applicationId = "com.grinch.rivo4"
         minSdk = 29
         targetSdk = 35
-        versionCode = 226071101
+        versionCode = 2026062402
         versionName = "2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

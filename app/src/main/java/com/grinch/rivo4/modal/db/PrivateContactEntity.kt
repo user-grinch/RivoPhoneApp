@@ -19,7 +19,8 @@ data class PrivateContactEntity(
     val eventsJson: String,
     val photoUri: String? = null,
     val isFavorite: Boolean = false,
-    val customRingtone: String? = null
+    val customRingtone: String? = null,
+    val notes: String? = null
 ) {
     fun toContact(): Contact {
         return Contact(
@@ -33,7 +34,8 @@ data class PrivateContactEntity(
             photoUri = photoUri,
             isFavorite = isFavorite,
             customRingtone = customRingtone,
-            isPrivate = true
+            isPrivate = true,
+            notes = notes
         )
     }
 
@@ -49,7 +51,8 @@ data class PrivateContactEntity(
                 eventsJson = Json.encodeToString(contact.events),
                 photoUri = contact.photoUri,
                 isFavorite = contact.isFavorite,
-                customRingtone = contact.customRingtone
+                customRingtone = contact.customRingtone,
+                notes = contact.notes
             )
         }
     }

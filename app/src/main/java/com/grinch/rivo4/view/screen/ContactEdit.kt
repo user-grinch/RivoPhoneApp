@@ -10,8 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Label
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -51,6 +50,7 @@ fun ContactEditScreen(
 
     var name by remember { mutableStateOf(initialName ?: "") }
     var nickname by remember { mutableStateOf("") }
+    var notes by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var selectedAccount by remember { mutableStateOf<Account?>(null) }
     var isPrivate by remember { mutableStateOf(false) }
@@ -69,6 +69,7 @@ fun ContactEditScreen(
             if (existing != null) {
                 name = existing.name
                 nickname = existing.nickname ?: ""
+                notes = existing.notes ?: ""
                 photoUri = existing.photoUri
                 isPrivate = existing.isPrivate
                 if (selectedAccount == null && !existing.isPrivate) {
@@ -165,7 +166,8 @@ fun ContactEditScreen(
                                         photoUri = photoUri,
                                         accountName = if (isPrivate) null else selectedAccount?.name,
                                         accountType = if (isPrivate) null else selectedAccount?.type,
-                                        isPrivate = isPrivate
+                                        isPrivate = isPrivate,
+                                        notes = notes.ifBlank { null }
                                     )
                                     contactsVM.saveContact(contactToSave)
                                     navigator.navigateUp()
@@ -499,6 +501,25 @@ fun ContactEditScreen(
                             Text("Add Address")
                         }
                     }
+                }
+            }
+
+            item {
+                RivoSectionHeader(title = "Notes")
+                RivoExpressiveCard {
+                    OutlinedTextField(
+                        value = notes,
+                        onValueChange = { notes = it },
+                        label = { Text("Notes") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, null) },
+                        minLines = 3,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
                 }
             }
 

@@ -20,7 +20,9 @@ val appModule = module {
             androidContext(),
             RivoDatabase::class.java,
             "rivo_database"
-        ).allowMainThreadQueries().build()
+        ).allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
+            .build()
     }
     single { get<RivoDatabase>().privateContactDao() }
 

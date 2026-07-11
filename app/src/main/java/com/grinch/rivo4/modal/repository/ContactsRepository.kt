@@ -207,6 +207,9 @@ class ContactsRepository(
                             val event = ContactEvent(type, label, data1)
                             currentContact.copy(events = (currentContact.events + event).distinct())
                         }
+                        ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(notes = data1)
+                        }
                         else -> currentContact
                     }
                 }
@@ -356,6 +359,16 @@ class ContactsRepository(
                 )
             }
 
+            if (contact.notes != null) {
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Note.NOTE, contact.notes)
+                        .build()
+                )
+            }
+
             contact.phoneNumbers.forEach { number ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -485,6 +498,25 @@ class ContactsRepository(
                             .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
                             .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
                             .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
+                            .build()
+                    )
+                }
+
+                // Update Notes
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                        )
+                        .build()
+                )
+                if (contact.notes != null) {
+                    ops.add(
+                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Note.NOTE, contact.notes)
                             .build()
                     )
                 }

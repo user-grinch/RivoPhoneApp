@@ -11,8 +11,10 @@ import android.telecom.VideoProfile
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -54,7 +56,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Destination<RootGraph>
 @Composable
 fun ContactDetailsScreen(
@@ -559,6 +561,41 @@ fun ContactDetailsScreen(
                                     )
                                     if (index < fullContact!!.addresses.size - 1) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (fullContact?.notes?.isNotBlank() == true) {
+                        item {
+                            var showNotesMenu by remember { mutableStateOf(false) }
+                            RivoExpressiveCard(title = "Notes", icon = Icons.AutoMirrored.Filled.Notes) {
+                                Box {
+                                    Text(
+                                        text = fullContact!!.notes!!,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .combinedClickable(
+                                                onClick = { },
+                                                onLongClick = { showNotesMenu = true }
+                                            )
+                                            .padding(16.dp),
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+
+                                    DropdownMenu(
+                                        expanded = showNotesMenu,
+                                        onDismissRequest = { showNotesMenu = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Copy to Clipboard") },
+                                            onClick = {
+                                                showNotesMenu = false
+                                                clipboardManager.setText(AnnotatedString(fullContact!!.notes!!))
+                                            },
+                                            leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                        )
                                     }
                                 }
                             }
