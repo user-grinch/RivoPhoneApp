@@ -19,15 +19,13 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
   <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
       <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="100">
   </a>
-  <a href="https://play.google.com/apps/testing/com.grinch.rivo4">
+  <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
       <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Download from Google Play" height="70" width="230">
   </a>
   <a href="https://github.com/user-grinch/RivoPhoneApp/releases">
       <img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" alt="Download from GitHub Releases" height="100">
   </a>
 </p>
-
-RivoPhoneApp is currently under closed testing. You'd need to join this [Google Group](https://groups.google.com/g/rivophoneapp) before you can become a tester for the app.
 
 ## Screenshots
 
