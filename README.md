@@ -29,6 +29,13 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 
 RivoPhoneApp is currently under closed testing. You'd need to join this [Google Group](https://groups.google.com/g/rivophoneapp) before you can become a tester for the app.
 
+### APK Certificate Signing Key Hash
+
+```
+com.grinch.rivo4
+AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11:89:F4:56:50:C5
+```
+
 ## Screenshots
 
 <p align="center">
