@@ -19,7 +19,7 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
   <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
       <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="100">
   </a>
-  <a href="https://play.google.com/apps/testing/com.grinch.rivo4">
+  <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
       <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Download from Google Play" height="70" width="230">
   </a>
   <a href="https://github.com/user-grinch/RivoPhoneApp/releases">
@@ -27,7 +27,12 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
   </a>
 </p>
 
-RivoPhoneApp is currently under closed testing. You'd need to join this [Google Group](https://groups.google.com/g/rivophoneapp) before you can become a tester for the app.
+### APK Certificate Signing Key Hash
+
+```
+com.grinch.rivo4
+AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11:89:F4:56:50:C5
+```
 
 ## Screenshots
 
