@@ -2,9 +2,21 @@ name: Build & Release
 
 on:
   push:
+    paths-ignore:
+      - '*.md'         # Ignore documentation
+      - '.gitignore'
+      - 'LICENSE'    
+      - 'images/**'    # Ignore any images
+      - '.idea/**'     # Ignore IntelliJ
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - '*.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'images/**'
+      - '.idea/**'
     branches:
       - main
 
