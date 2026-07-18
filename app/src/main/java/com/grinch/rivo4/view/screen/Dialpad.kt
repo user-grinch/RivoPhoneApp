@@ -126,6 +126,28 @@ fun DialPadScreen(
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
     }
 
+    // Handle Secret Codes (e.g. *#*#4636#*#*)
+    LaunchedEffect(number) {
+        val cleanNumber = number.replace(" ", "")
+        if (cleanNumber.startsWith("*#") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
+            if (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length > 8) {
+                val code = cleanNumber.substring(4, cleanNumber.length - 4)
+                val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
+                context.sendBroadcast(intent)
+                textFieldValue = TextFieldValue("")
+            } else if (cleanNumber == "*#06#") {
+                val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://06"))
+                context.sendBroadcast(intent)
+                textFieldValue = TextFieldValue("")
+            }
+        } else if (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
+             val code = cleanNumber.replace("#", "")
+             val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
+             context.sendBroadcast(intent)
+             textFieldValue = TextFieldValue("")
+        }
+    }
+
     val callLauncher = rememberCallLauncher()
 
     val searchResults by remember(number, allContacts, t9Enabled) {
@@ -147,8 +169,28 @@ fun DialPadScreen(
     }
 
     val performCall = { targetNumber: String, contactId: String? ->
-        val contact = allContacts.find { it.id == contactId }
-        callLauncher.dial(targetNumber, contact)
+        val cleanNumber = targetNumber.replace(" ", "")
+        if (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length > 8) {
+            val code = cleanNumber.substring(4, cleanNumber.length - 4)
+            val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
+            context.sendBroadcast(intent)
+            textFieldValue = TextFieldValue("")
+        } else if (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
+            val code = cleanNumber.replace("#", "")
+            val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
+            context.sendBroadcast(intent)
+            textFieldValue = TextFieldValue("")
+        } else {
+            // For USSD (*123#) or other codes, use call launcher
+            // which now correctly encodes # in utils.kt
+            val contact = allContacts.find { it.id == contactId }
+            callLauncher.dial(targetNumber, contact)
+            
+            // Clear dialpad if it looks like a command (e.g. USSD or MMI)
+            if (cleanNumber.startsWith("*") && cleanNumber.endsWith("#")) {
+                textFieldValue = TextFieldValue("")
+            }
+        }
     }
 
     Scaffold(

@@ -163,7 +163,8 @@ class CallActivity : ComponentActivity() {
                             contactName = if (targetCall == call) contactName else (targetCall.details.handle?.schemeSpecificPart ?: "Unknown"),
                             phoneNumber = targetCall.details.handle?.schemeSpecificPart ?: "",
                             photoUri = if (targetCall == call) photoUri else null,
-                            audioState = audioState
+                            audioState = audioState,
+                            initialConnectTime = if (targetCall == call) session?.connectTimeMillis ?: 0L else 0L
                         )
                     }
                 } else {

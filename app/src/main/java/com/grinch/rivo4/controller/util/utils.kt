@@ -124,8 +124,12 @@ fun getSystemVoicemailNumber(context: Context): String? {
 
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+    
+    // For MMI/USSD codes, we need to use Uri.parse with encoded # to tel:%23
     val uri = if (number.startsWith("voicemail:")) {
         Uri.parse(number)
+    } else if (number.contains("#")) {
+        Uri.parse("tel:" + Uri.encode(number))
     } else {
         Uri.fromParts("tel", number, null)
     }
