@@ -18,9 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
@@ -123,10 +125,11 @@ fun AZListScroll(
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         RivoExpressiveCard(isCompact = true) {
+                            val unknownLabel = stringResource(R.string.label_unknown)
                             contactsForChar.forEachIndexed { index, contact ->
                                 val displayName = ContactUtils.formatContactName(
                                     contact.name.ifEmpty {
-                                        contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: "Unknown"
+                                        contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: unknownLabel
                                     },
                                     displayOrder
                                 )

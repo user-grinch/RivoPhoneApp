@@ -19,7 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 
 @Composable
 fun ScrollToTopButton(
@@ -43,7 +45,7 @@ fun ScrollToTopButton(
                 ),
                 modifier = Modifier.size(52.dp)
             ) {
-                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Scroll to top")
+                Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.content_desc_scroll_to_top))
             }
         }
     }

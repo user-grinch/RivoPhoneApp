@@ -44,6 +44,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.InterceptPlatformTextInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SocialUtils
@@ -197,16 +199,16 @@ fun DialPadScreen(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             TopAppBar(
-                title = { Text("Dialpad", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.dialpad_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     if (number.isNotEmpty()) {
                         IconButton(onClick = { showSocialDialog = true }) {
-                            Icon(Icons.AutoMirrored.Filled.Chat, "Social Apps")
+                            Icon(Icons.AutoMirrored.Filled.Chat, stringResource(R.string.label_social_apps))
                         }
                     }
                 }
@@ -242,12 +244,12 @@ fun DialPadScreen(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        "Start Dialing",
+                        stringResource(R.string.dialpad_start_dialing),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "Enter a name or number to start",
+                        stringResource(R.string.dialpad_start_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -310,7 +312,7 @@ fun DialPadScreen(
                                         ) {
                                             Icon(
                                                 Icons.Rounded.Call,
-                                                contentDescription = "Call ${contact.name}",
+                                                contentDescription = stringResource(R.string.content_desc_call_named, contact.name),
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
@@ -463,7 +465,7 @@ fun DialPadScreen(
                                         )
                                     },
                                     icon = Icons.Default.PersonAdd,
-                                    contentDescription = "Add Contact",
+                                    contentDescription = stringResource(R.string.action_add_contact),
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                                 )
                             }
@@ -472,7 +474,7 @@ fun DialPadScreen(
                             DialerActionExpressive(
                                 onClick = { performCall(number, null) },
                                 icon = Icons.Default.Call,
-                                contentDescription = "Call",
+                                contentDescription = stringResource(R.string.action_call),
                                 containerColor = Color(0xFF4CAF50),
                                 contentColor = Color.White,
                                 modifier = Modifier.width(100.dp).height(72.dp),
@@ -504,7 +506,7 @@ fun DialPadScreen(
                                         }
                                     },
                                     icon = Icons.AutoMirrored.Filled.Backspace,
-                                    contentDescription = "Backspace",
+                                    contentDescription = stringResource(R.string.content_desc_backspace),
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                                 )
                             }
@@ -518,7 +520,7 @@ fun DialPadScreen(
     if (showSocialDialog) {
         RivoDialog(
             onDismissRequest = { showSocialDialog = false },
-            title = "Connect via Social",
+            title = stringResource(R.string.dialpad_connect_via_social),
             icon = Icons.AutoMirrored.Filled.Chat,
             dismissButton = {
                 TextButton(
@@ -526,7 +528,7 @@ fun DialPadScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         ) {
@@ -537,7 +539,7 @@ fun DialPadScreen(
             ) {
                 RivoExpressiveButton(
                     painter = rememberAsyncImagePainter("file:///android_asset/icons/whatsapp.png"),
-                    label = "WhatsApp",
+                    label = stringResource(R.string.brand_whatsapp),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     size = 52.dp,
                     iconSize = 32.dp,
@@ -548,7 +550,7 @@ fun DialPadScreen(
                 )
                 RivoExpressiveButton(
                     painter = rememberAsyncImagePainter("file:///android_asset/icons/telegram.png"),
-                    label = "Telegram",
+                    label = stringResource(R.string.brand_telegram),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     size = 52.dp,
                     iconSize = 32.dp,
@@ -559,7 +561,7 @@ fun DialPadScreen(
                 )
                 RivoExpressiveButton(
                     painter = rememberAsyncImagePainter("file:///android_asset/icons/signal.png"),
-                    label = "Signal",
+                    label = stringResource(R.string.brand_signal),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     size = 52.dp,
                     iconSize = 32.dp,

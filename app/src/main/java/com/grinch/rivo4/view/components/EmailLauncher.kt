@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
 import org.koin.compose.koinInject
@@ -31,6 +33,7 @@ class EmailLauncher(
 fun rememberEmailLauncher(): EmailLauncher {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
+    val emailLabel = stringResource(R.string.label_email)
 
     var showEmailPicker by remember { mutableStateOf(false) }
     var pendingContact by remember { mutableStateOf<Contact?>(null) }
@@ -64,11 +67,11 @@ fun rememberEmailLauncher(): EmailLauncher {
 
         RivoSelectionDialog(
             onDismissRequest = { showEmailPicker = false },
-            title = "Select Email",
+            title = stringResource(R.string.select_email_title),
             items = contact.emails,
             itemLabel = { it },
             onItemSelected = { performFinalEmail(it) },
-            itemSupporting = { "Email" },
+            itemSupporting = { emailLabel },
             icon = Icons.Default.Email,
             itemIcon = { if (it == favEmail) Icons.Default.Star else Icons.Default.Email },
             isSelected = { it == favEmail }

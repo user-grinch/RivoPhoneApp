@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
@@ -34,8 +36,8 @@ fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
     val iconOnly = prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)
 
     val tabs = listOf(
-        NavigationTab(RecentScreenDestination.route, "Recents", Icons.Default.History, 0),
-        NavigationTab(ContactScreenDestination.route, "Contacts", Icons.Default.Person, 1)
+        NavigationTab(RecentScreenDestination.route, stringResource(R.string.nav_recents), Icons.Default.History, 0),
+        NavigationTab(ContactScreenDestination.route, stringResource(R.string.nav_contacts), Icons.Default.Person, 1)
     )
 
     val organizedTabs = if (flipBar) tabs.reversed() else tabs

@@ -14,9 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.grinch.rivo4.R
 
 @Composable
 fun SimPickerDialog(
@@ -37,12 +39,13 @@ fun SimPickerDialog(
     }
 
     if (phoneAccounts.isNotEmpty()) {
+        val unknownSimLabel = stringResource(R.string.sim_picker_unknown_sim)
         RivoSelectionDialog(
             onDismissRequest = onDismissRequest,
-            title = "Select SIM Card",
+            title = stringResource(R.string.sim_picker_title),
             items = phoneAccounts,
             itemLabel = { handle ->
-                telecomManager.getPhoneAccount(handle)?.label?.toString() ?: "Unknown SIM"
+                telecomManager.getPhoneAccount(handle)?.label?.toString() ?: unknownSimLabel
             },
             onItemSelected = onSimSelected,
             itemSupporting = { handle ->

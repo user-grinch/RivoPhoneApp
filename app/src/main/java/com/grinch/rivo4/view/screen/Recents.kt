@@ -19,11 +19,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.view.components.*
@@ -41,6 +43,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.displayLabel
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -88,10 +91,10 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(CallLogFilter.entries) { filter ->
-                                RivoFilterChip(filter.name, selectedFilter == filter, {
+                                RivoFilterChip(filter.displayLabel(), selectedFilter == filter, {
                                         _ ->
                                     viewModel.setFilter(filter)
-                                })
+                                }, isAllFilter = filter == CallLogFilter.All)
                             }
                         }
                     }
@@ -121,7 +124,7 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                     shape = RoundedCornerShape(20.dp),
                     elevation = FloatingActionButtonDefaults.elevation(0.dp)
                 ) {
-                    Icon(Icons.Default.Dialpad, "Dialpad")
+                    Icon(Icons.Default.Dialpad, stringResource(R.string.content_desc_dialpad))
                 }
             }
         },
@@ -273,7 +276,7 @@ fun CallLogFullContent(
         }
 
         val groupedLogs = remember(filteredLogs) {
-            filteredLogs.groupBy { formatDateHeader(it.date) }
+            filteredLogs.groupBy { formatDateHeader(context, it.date) }
         }
 
         val pullToRefreshState = rememberPullToRefreshState()
@@ -309,14 +312,14 @@ fun CallLogFullContent(
                         if (favorites.isNotEmpty() && selectedFilter == CallLogFilter.All) {
                             item {
                                 RivoSectionHeader(
-                                    title = "Favorites",
+                                    title = stringResource(R.string.recents_favorites),
                                     trailingContent = {
                                         TextButton(
                                             onClick = { isEditingFavorites = !isEditingFavorites },
                                             modifier = Modifier.padding(end = 8.dp)
                                         ) {
                                             Text(
-                                                text = if (isEditingFavorites) "Done" else "Edit",
+                                                text = if (isEditingFavorites) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -393,8 +396,8 @@ fun CallLogFullContent(
     } else {
         PermissionDeniedView(
             icon = Icons.Default.Call,
-            title = "Call History",
-            description = "Rivo needs access to your call logs to show your recent activity and missed calls.",
+            title = stringResource(R.string.recents_permission_title),
+            description = stringResource(R.string.recents_permission_description),
             onGrantClick = onRequestPermission
         )
     }
@@ -423,12 +426,12 @@ fun EmptyCallLogsState() {
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Your call log is empty",
+            text = stringResource(R.string.recents_empty_call_log),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Try clearing your filters or add a new contact.",
+            text = stringResource(R.string.empty_state_try_clearing_filters),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

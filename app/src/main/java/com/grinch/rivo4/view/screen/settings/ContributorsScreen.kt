@@ -1,5 +1,6 @@
 package com.grinch.rivo4.view.screen.settings
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -11,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
@@ -22,14 +25,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 data class Contributor(
     val name: String,
-    val role: String,
+    @StringRes val role: Int,
     val githubUrl: String? = null,
     val imageAsset: String? = null
 )
 
 val appContributors = listOf(
-    Contributor("Grinch_", "Lead Developer", "https://github.com/user-grinch", "grinch.jpeg"),
-    Contributor("Hamma", "Developer", "https://github.com/MoHamed-B-M", "hamma.jpeg")
+    Contributor("Grinch_", R.string.contributor_role_lead_developer, "https://github.com/user-grinch", "grinch.jpeg"),
+    Contributor("Hamma", R.string.contributor_role_developer, "https://github.com/MoHamed-B-M", "hamma.jpeg")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,10 +45,10 @@ fun ContributorsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Contributors", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.contributors_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -63,7 +66,7 @@ fun ContributorsScreen(
                     appContributors.forEachIndexed { index, contributor ->
                         RivoListItem(
                             headline = contributor.name,
-                            supporting = contributor.role,
+                            supporting = stringResource(contributor.role),
                             avatarName = contributor.name,
                             photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
                             trailingIcon = if (contributor.githubUrl != null) Icons.Outlined.Launch else null,

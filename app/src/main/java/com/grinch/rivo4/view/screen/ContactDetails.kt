@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +44,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.*
@@ -106,8 +108,10 @@ fun ContactDetailsScreen(
         }
     }
 
-    val displayPhone = phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull() ?: "Unknown"
-    val displayName = fullContact?.name ?: phoneNumber ?: "Unknown"
+    val unknownLabel = stringResource(R.string.label_unknown)
+    val displayPhone = phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull() ?: unknownLabel
+    val displayName = fullContact?.name ?: phoneNumber ?: unknownLabel
+    val shareContactLabel = stringResource(R.string.contact_share)
 
     val context = LocalContext.current
     val callLauncher = rememberCallLauncher()
@@ -163,12 +167,13 @@ fun ContactDetailsScreen(
     val openTelegram = { num: String -> SocialUtils.openTelegram(context, num) }
     val openSignal = { num: String -> SocialUtils.openSignal(context, num) }
 
+    val shareContactText = stringResource(R.string.contact_share_text, displayName, displayPhone)
     val shareContact = {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, "Name: $displayName\nPhone: $displayPhone")
+            putExtra(Intent.EXTRA_TEXT, shareContactText)
         }
-        context.startActivity(Intent.createChooser(intent, "Share Contact"))
+        context.startActivity(Intent.createChooser(intent, shareContactLabel))
     }
 
     val onNumberActionClick = { action: (String) -> Unit, title: String ->
@@ -190,22 +195,23 @@ fun ContactDetailsScreen(
                     navigator.navigateUp()
                 }
             },
-            title = "Delete Contact?",
-            message = "Are you sure you want to delete this contact? This action cannot be undone.",
-            confirmLabel = "Delete",
+            title = stringResource(R.string.contact_delete_dialog_title),
+            message = stringResource(R.string.contact_delete_dialog_message),
+            confirmLabel = stringResource(R.string.action_delete),
             icon = Icons.Default.Delete,
             isDestructive = true
         )
     }
 
     if (showNumberSelectionDialog && fullContact != null) {
+        val mobileLabel = stringResource(R.string.label_mobile)
         RivoSelectionDialog(
             onDismissRequest = { showNumberSelectionDialog = false },
             title = selectionTitle,
             items = fullContact!!.phoneNumbers,
             itemLabel = { formatPhoneNumber(it) },
             onItemSelected = { pendingSocialAction?.invoke(it) },
-            itemSupporting = { "Mobile" },
+            itemSupporting = { mobileLabel },
             icon = Icons.Default.Phone,
             itemIcon = { if (areNumbersEqual(favoriteNumber, it)) Icons.Default.Star else Icons.Default.Phone },
             isSelected = { areNumbersEqual(favoriteNumber, it) }
@@ -215,14 +221,14 @@ fun ContactDetailsScreen(
     if (showQrDialog) {
         RivoDialog(
             onDismissRequest = { showQrDialog = false },
-            title = "Contact QR",
+            title = stringResource(R.string.contact_details_qr_title),
             icon = Icons.Default.QrCode,
             confirmButton = {
                 Button(
                     onClick = { showQrDialog = false },
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         ) {
@@ -238,7 +244,7 @@ fun ContactDetailsScreen(
                 qrBitmap?.let {
                     Image(
                         bitmap = it.asImageBitmap(),
-                        contentDescription = "QR Code",
+                        contentDescription = stringResource(R.string.contact_details_qr_content_desc),
                         modifier = Modifier
                             .size(240.dp)
                             .background(Color.White, RoundedCornerShape(12.dp))
@@ -268,7 +274,7 @@ fun ContactDetailsScreen(
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
@@ -282,7 +288,7 @@ fun ContactDetailsScreen(
                         }) {
                             Icon(
                                 if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
-                                contentDescription = "Favorite",
+                                contentDescription = stringResource(R.string.content_desc_favorite),
                                 tint = if (isFavorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
                             )
                         }
@@ -291,13 +297,13 @@ fun ContactDetailsScreen(
                                 navigator.navigate(ContactEditScreenDestination(contactId = it.id))
                             }
                         }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit")
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
                         }
-                    } else if (phoneNumber != null && phoneNumber != "Unknown") {
+                    } else if (phoneNumber != null && phoneNumber != unknownLabel) {
                         IconButton(onClick = {
                             navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
                         }) {
-                            Icon(Icons.Default.PersonAdd, contentDescription = "Add Contact")
+                            Icon(Icons.Default.PersonAdd, contentDescription = stringResource(R.string.action_add_contact))
                         }
                     }
                 }
@@ -351,7 +357,7 @@ fun ContactDetailsScreen(
                         ) {
                             RivoExpressiveButton(
                                 icon = Icons.Default.Call,
-                                label = "Call",
+                                label = stringResource(R.string.contact_details_call),
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 onClick = {
                                     callLauncher.dial(if (fullContact == null) displayPhone else "", fullContact)
@@ -359,7 +365,7 @@ fun ContactDetailsScreen(
                             )
                             RivoExpressiveButton(
                                 icon = Icons.AutoMirrored.Filled.Message,
-                                label = "Message",
+                                label = stringResource(R.string.action_message),
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     messageLauncher.sendMessage(if (fullContact == null) displayPhone else "", fullContact)
@@ -367,7 +373,7 @@ fun ContactDetailsScreen(
                             )
                             RivoExpressiveButton(
                                 icon = Icons.Default.VideoCall,
-                                label = "Video",
+                                label = stringResource(R.string.contact_details_video),
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     videoLauncher.startVideoCall(displayPhone, fullContact)
@@ -376,7 +382,7 @@ fun ContactDetailsScreen(
                             val hasEmails = fullContact?.emails?.isNotEmpty() == true
                             RivoExpressiveButton(
                                 icon = Icons.Default.Email,
-                                label = "Email",
+                                label = stringResource(R.string.label_email),
                                 containerColor = if (hasEmails) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                                 contentColor = if (hasEmails) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f),
                                 onClick = {
@@ -390,7 +396,10 @@ fun ContactDetailsScreen(
 
                     item {
                         val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
-                        RivoExpressiveCard(title = "Contact Info", icon = Icons.Default.Info) {
+                        val mobileLabel = stringResource(R.string.label_mobile)
+                        val bulletFavorite = stringResource(R.string.contact_bullet_favorite)
+                        val bulletRecent = stringResource(R.string.contact_bullet_recent)
+                        RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info) {
                             if (fullContact != null) {
                                 val uniquePhoneNumbers = remember(fullContact) {
                                     deduplicateNumbers(fullContact!!.phoneNumbers)
@@ -398,16 +407,16 @@ fun ContactDetailsScreen(
                                 uniquePhoneNumbers.forEachIndexed { index, number ->
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     val isFav = areNumbersEqual(favoriteNumber, number)
-                                    
+
                                     var showMenu by remember { mutableStateOf(false) }
-                                    
+
                                     Box {
                                         RivoListItem(
                                             headline = formatPhoneNumber(number),
                                             supporting = buildString {
-                                                append("Mobile")
-                                                if (isFav) append(" • Favorite")
-                                                if (isRecent) append(" • Recent")
+                                                append(mobileLabel)
+                                                if (isFav) append(bulletFavorite)
+                                                if (isRecent) append(bulletRecent)
                                             },
                                             leadingIcon = Icons.Default.Phone,
                                             trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
@@ -420,7 +429,7 @@ fun ContactDetailsScreen(
                                             onDismissRequest = { showMenu = false }
                                         ) {
                                             DropdownMenuItem(
-                                                text = { Text(if (isFav) "Clear Favorite" else "Set as Favorite") },
+                                                text = { Text(if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(R.string.contact_set_as_favorite)) },
                                                 onClick = {
                                                     showMenu = false
                                                     if (isFav) {
@@ -435,7 +444,7 @@ fun ContactDetailsScreen(
                                                 leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
                                             )
                                             DropdownMenuItem(
-                                                text = { Text("Copy to Clipboard") },
+                                                text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                                 onClick = {
                                                     showMenu = false
                                                     clipboardManager.setText(AnnotatedString(number))
@@ -455,7 +464,7 @@ fun ContactDetailsScreen(
                                     Box {
                                         RivoListItem(
                                             headline = email,
-                                            supporting = if (isFav) "Email • Favorite" else "Email",
+                                            supporting = if (isFav) stringResource(R.string.label_email) + stringResource(R.string.contact_bullet_favorite) else stringResource(R.string.label_email),
                                             leadingIcon = Icons.Default.Email,
                                             onClick = { emailLauncher.sendEmail(email, fullContact) },
                                             onLongClick = { showMenu = true }
@@ -466,7 +475,7 @@ fun ContactDetailsScreen(
                                             onDismissRequest = { showMenu = false }
                                         ) {
                                             DropdownMenuItem(
-                                                text = { Text(if (isFav) "Clear Default" else "Set as Default") },
+                                                text = { Text(if (isFav) stringResource(R.string.contact_clear_default) else stringResource(R.string.contact_set_as_default)) },
                                                 onClick = {
                                                     showMenu = false
                                                     if (isFav) {
@@ -480,7 +489,7 @@ fun ContactDetailsScreen(
                                                 leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
                                             )
                                             DropdownMenuItem(
-                                                text = { Text("Copy to Clipboard") },
+                                                text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                                 onClick = {
                                                     showMenu = false
                                                     clipboardManager.setText(AnnotatedString(email))
@@ -493,12 +502,12 @@ fun ContactDetailsScreen(
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
-                            } else if (phoneNumber != null && phoneNumber != "Unknown") {
+                            } else if (phoneNumber != null && phoneNumber != unknownLabel) {
                                 var showMenu by remember { mutableStateOf(false) }
                                 Box {
                                     RivoListItem(
                                         headline = formatPhoneNumber(phoneNumber),
-                                        supporting = "Unknown Number",
+                                        supporting = stringResource(R.string.label_unknown_number),
                                         leadingIcon = Icons.Default.Phone,
                                         onClick = { callLauncher.dial(phoneNumber, null) },
                                         onLongClick = { showMenu = true }
@@ -509,7 +518,7 @@ fun ContactDetailsScreen(
                                         onDismissRequest = { showMenu = false }
                                     ) {
                                         DropdownMenuItem(
-                                            text = { Text("Add to Contacts") },
+                                            text = { Text(stringResource(R.string.contact_add_to_contacts)) },
                                             onClick = {
                                                 showMenu = false
                                                 navigator.navigate(
@@ -521,7 +530,7 @@ fun ContactDetailsScreen(
                                             leadingIcon = { Icon(Icons.Default.PersonAdd, null) }
                                         )
                                         DropdownMenuItem(
-                                            text = { Text("Copy to Clipboard") },
+                                            text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                             onClick = {
                                                 showMenu = false
                                                 clipboardManager.setText(AnnotatedString(phoneNumber))
@@ -536,12 +545,12 @@ fun ContactDetailsScreen(
 
                     if (fullContact != null && (fullContact!!.events.isNotEmpty() || fullContact!!.addresses.isNotEmpty())) {
                         item {
-                            RivoExpressiveCard(title = "Events & More", icon = Icons.Default.Event) {
+                            RivoExpressiveCard(title = stringResource(R.string.contact_events_title), icon = Icons.Default.Event) {
                                 fullContact!!.events.forEachIndexed { index, event ->
                                     val isBirthday = event.type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
                                     RivoListItem(
                                         headline = event.date,
-                                        supporting = event.label ?: if (isBirthday) "Birthday" else "Event",
+                                        supporting = event.label ?: if (isBirthday) stringResource(R.string.contact_event_birthday) else stringResource(R.string.contact_event_generic),
                                         leadingIcon = if (isBirthday) Icons.Outlined.Cake else Icons.Outlined.Event,
                                         onClick = { }
                                     )
@@ -552,7 +561,7 @@ fun ContactDetailsScreen(
                                 fullContact!!.addresses.forEachIndexed { index, address ->
                                     RivoListItem(
                                         headline = address,
-                                        supporting = "Address",
+                                        supporting = stringResource(R.string.label_address),
                                         leadingIcon = Icons.Default.LocationOn,
                                         onClick = {
                                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$address"))
@@ -570,7 +579,7 @@ fun ContactDetailsScreen(
                     if (fullContact?.notes?.isNotBlank() == true) {
                         item {
                             var showNotesMenu by remember { mutableStateOf(false) }
-                            RivoExpressiveCard(title = "Notes", icon = Icons.AutoMirrored.Filled.Notes) {
+                            RivoExpressiveCard(title = stringResource(R.string.label_notes), icon = Icons.AutoMirrored.Filled.Notes) {
                                 Box {
                                     Text(
                                         text = fullContact!!.notes!!,
@@ -589,7 +598,7 @@ fun ContactDetailsScreen(
                                         onDismissRequest = { showNotesMenu = false }
                                     ) {
                                         DropdownMenuItem(
-                                            text = { Text("Copy to Clipboard") },
+                                            text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                             onClick = {
                                                 showNotesMenu = false
                                                 clipboardManager.setText(AnnotatedString(fullContact!!.notes!!))
@@ -604,7 +613,7 @@ fun ContactDetailsScreen(
 
                     if (contactLogs.isNotEmpty()) {
                         item {
-                            RivoExpressiveCard(title = "Recent Activity", icon = Icons.Default.History) {
+                            RivoExpressiveCard(title = stringResource(R.string.contact_recent_activity_title), icon = Icons.Default.History) {
                                 Column(modifier = Modifier.animateContentSize()) {
                                     contactLogs.take(3).forEachIndexed { index, log ->
                                         CallLogTileSimple(
@@ -629,7 +638,7 @@ fun ContactDetailsScreen(
                                             },
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text("Show full history")
+                                            Text(stringResource(R.string.contact_show_full_history))
                                         }
                                     }
                                 }
@@ -638,34 +647,37 @@ fun ContactDetailsScreen(
                     }
 
                     item {
-                        RivoExpressiveCard(title = "Social Apps", icon = Icons.AutoMirrored.Filled.Chat) {
+                        val whatsAppLabel = stringResource(R.string.brand_whatsapp)
+                        val telegramLabel = stringResource(R.string.brand_telegram)
+                        val signalLabel = stringResource(R.string.brand_signal)
+                        RivoExpressiveCard(title = stringResource(R.string.label_social_apps), icon = Icons.AutoMirrored.Filled.Chat) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 RivoExpressiveButton(
                                     painter = rememberAsyncImagePainter("file:///android_asset/icons/whatsapp.png"),
-                                    label = "WhatsApp",
+                                    label = whatsAppLabel,
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                     size = 52.dp,
                                     iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openWhatsApp, "WhatsApp") }
+                                    onClick = { onNumberActionClick(openWhatsApp, whatsAppLabel) }
                                 )
                                 RivoExpressiveButton(
                                     painter = rememberAsyncImagePainter("file:///android_asset/icons/telegram.png"),
-                                    label = "Telegram",
+                                    label = telegramLabel,
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                     size = 52.dp,
                                     iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openTelegram, "Telegram") }
+                                    onClick = { onNumberActionClick(openTelegram, telegramLabel) }
                                 )
                                 RivoExpressiveButton(
                                     painter = rememberAsyncImagePainter("file:///android_asset/icons/signal.png"),
-                                    label = "Signal",
+                                    label = signalLabel,
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                     size = 52.dp,
                                     iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openSignal, "Signal") }
+                                    onClick = { onNumberActionClick(openSignal, signalLabel) }
                                 )
                             }
                         }
@@ -673,19 +685,22 @@ fun ContactDetailsScreen(
 
                     if (fullContact != null) {
                         item {
-                            RivoExpressiveCard(title = "Contact Settings", icon = Icons.Default.Settings) {
+                            val defaultRingtoneLabel = stringResource(R.string.ringtone_default)
+                            val customRingtoneLabel = stringResource(R.string.ringtone_custom)
+                            val selectRingtoneLabel = stringResource(R.string.contact_select_ringtone)
+                            RivoExpressiveCard(title = stringResource(R.string.contact_settings_title), icon = Icons.Default.Settings) {
                                 val currentRingtone = fullContact!!.customRingtone?.let {
-                                    RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: "Custom"
-                                } ?: "Default"
+                                    RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: customRingtoneLabel
+                                } ?: defaultRingtoneLabel
 
                                 RivoListItem(
-                                    headline = "Custom Ringtone",
+                                    headline = stringResource(R.string.contact_custom_ringtone),
                                     supporting = currentRingtone,
                                     leadingIcon = Icons.Default.MusicNote,
                                     onClick = {
                                         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
-                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Ringtone")
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
                                             putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
                                         }
                                         ringtonePickerLauncher.launch(intent)
@@ -693,22 +708,22 @@ fun ContactDetailsScreen(
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
-                                    headline = "Share Contact",
-                                    supporting = "Send contact details to others",
+                                    headline = shareContactLabel,
+                                    supporting = stringResource(R.string.contact_share_description),
                                     leadingIcon = Icons.Default.Share,
                                     onClick = shareContact
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
-                                    headline = "QR Code",
-                                    supporting = "Show contact QR code",
+                                    headline = stringResource(R.string.contact_qr_code),
+                                    supporting = stringResource(R.string.contact_qr_code_description),
                                     leadingIcon = Icons.Outlined.QrCode2,
                                     onClick = { showQrDialog = true }
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
-                                    headline = if (fullContact!!.isPrivate) "Move to Public Storage" else "Move to Private Storage",
-                                    supporting = if (fullContact!!.isPrivate) "Make visible to other apps" else "Hide from other apps",
+                                    headline = if (fullContact!!.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
+                                    supporting = if (fullContact!!.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
                                     leadingIcon = if (fullContact!!.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
                                     onClick = {
                                         if (fullContact!!.isPrivate) {
@@ -721,8 +736,8 @@ fun ContactDetailsScreen(
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
-                                    headline = "Delete",
-                                    supporting = "Remove this contact from device",
+                                    headline = stringResource(R.string.action_delete),
+                                    supporting = stringResource(R.string.contact_remove_from_device),
                                     leadingIcon = Icons.Default.Delete,
                                     onClick = { showDeleteDialog = true }
                                 )

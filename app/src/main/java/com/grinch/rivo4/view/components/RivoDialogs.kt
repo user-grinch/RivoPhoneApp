@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
 
@@ -158,8 +160,8 @@ fun RivoConfirmationDialog(
     onConfirm: () -> Unit,
     title: String,
     message: String,
-    confirmLabel: String = "Confirm",
-    dismissLabel: String = "Cancel",
+    confirmLabel: String = stringResource(R.string.action_confirm),
+    dismissLabel: String = stringResource(R.string.action_cancel),
     icon: ImageVector? = null,
     isDestructive: Boolean = false
 ) {
@@ -223,7 +225,7 @@ fun <T> RivoSelectionDialog(
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Cancel", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.action_cancel), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             }
         }
     ) {
@@ -277,7 +279,7 @@ fun <T> RivoSelectionDialog(
                     if (selected) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Selected",
+                            contentDescription = stringResource(R.string.content_desc_selected_item),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )

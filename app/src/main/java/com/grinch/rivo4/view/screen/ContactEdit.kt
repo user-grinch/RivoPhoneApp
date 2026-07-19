@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.deduplicateNumbers
@@ -126,13 +128,13 @@ fun ContactEditScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (contactId == null || contactId == "0") "Create Contact" else "Edit Contact",
+                        if (contactId == null || contactId == "0") stringResource(R.string.contact_create_title) else stringResource(R.string.contact_edit_title),
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
@@ -180,7 +182,7 @@ fun ContactEditScreen(
                         ) {
                             Icon(Icons.Default.Check, null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Save")
+                            Text(stringResource(R.string.action_save))
                         }
                     }
                 },
@@ -200,9 +202,9 @@ fun ContactEditScreen(
                         navigator.navigateUp()
                     }
                 },
-                title = "Delete Contact?",
-                message = "Are you sure you want to delete this contact? This action cannot be undone.",
-                confirmLabel = "Delete",
+                title = stringResource(R.string.contact_delete_dialog_title),
+                message = stringResource(R.string.contact_delete_dialog_message),
+                confirmLabel = stringResource(R.string.action_delete),
                 icon = Icons.Default.Delete,
                 isDestructive = true
             )
@@ -260,7 +262,7 @@ fun ContactEditScreen(
             }
 
             item {
-                RivoSectionHeader(title = "Account")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_account_header))
                 RivoExpressiveCard {
                     var showPicker by remember { mutableStateOf(false) }
 
@@ -287,15 +289,15 @@ fun ContactEditScreen(
                             Spacer(Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Save to Account",
+                                    text = stringResource(R.string.contact_edit_save_to_account),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
                                     text = when {
-                                        isPrivate -> "Private Storage (App Only)"
+                                        isPrivate -> stringResource(R.string.contact_edit_private_storage)
                                         selectedAccount != null -> ContactUtils.getFriendlyAccountName(selectedAccount!!)
-                                        else -> "Local Memory"
+                                        else -> stringResource(R.string.label_local_memory)
                                     },
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold
@@ -308,11 +310,11 @@ fun ContactEditScreen(
                     if (showPicker) {
                         RivoDialog(
                             onDismissRequest = { showPicker = false },
-                            title = "Select Account",
+                            title = stringResource(R.string.contact_edit_select_account_title),
                             icon = Icons.Default.AccountBalance,
                             dismissButton = {
                                 TextButton(onClick = { showPicker = false }) {
-                                    Text("Cancel")
+                                    Text(stringResource(R.string.action_cancel))
                                 }
                             }
                         ) {
@@ -327,8 +329,8 @@ fun ContactEditScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 ListItem(
-                                    headlineContent = { Text("Private Storage (App Only)") },
-                                    supportingContent = { Text("Not visible to other apps") },
+                                    headlineContent = { Text(stringResource(R.string.contact_edit_private_storage)) },
+                                    supportingContent = { Text(stringResource(R.string.contact_edit_private_storage_description)) },
                                     leadingContent = { Icon(Icons.Default.Lock, null) },
                                     colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                 )
@@ -345,7 +347,7 @@ fun ContactEditScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 ListItem(
-                                    headlineContent = { Text("Local Memory") },
+                                    headlineContent = { Text(stringResource(R.string.label_local_memory)) },
                                     leadingContent = { Icon(Icons.Default.CloudOff, null) },
                                     colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                 )
@@ -377,13 +379,13 @@ fun ContactEditScreen(
             }
 
             item {
-                RivoSectionHeader(title = "Identity")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_identity_header))
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Full Name") },
+                            label = { Text(stringResource(R.string.contact_edit_full_name)) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             leadingIcon = { Icon(Icons.Default.Person, null) },
@@ -395,7 +397,7 @@ fun ContactEditScreen(
                         OutlinedTextField(
                             value = nickname,
                             onValueChange = { nickname = it },
-                            label = { Text("Nickname") },
+                            label = { Text(stringResource(R.string.contact_edit_nickname)) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             leadingIcon = { Icon(Icons.AutoMirrored.Filled.Label, null) },
@@ -410,15 +412,17 @@ fun ContactEditScreen(
 
 
             item {
-                RivoSectionHeader(title = "Phone Numbers")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_phone_numbers_header))
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        val phoneFieldLabel = stringResource(R.string.contact_edit_phone_field_label)
                         phoneNumbers.forEachIndexed { index, phone ->
                             EditField(
                                 value = phone,
                                 onValueChange = { phoneNumbers[index] = it },
-                                label = "Phone",
+                                label = phoneFieldLabel,
                                 icon = Icons.Default.Phone,
+                                keyboardType = KeyboardType.Phone,
                                 onDelete = {
                                     if (phoneNumbers.size > 1) {
                                         phoneNumbers.removeAt(index)
@@ -434,7 +438,7 @@ fun ContactEditScreen(
                         ) {
                             Icon(Icons.Default.Add, null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Add Phone")
+                            Text(stringResource(R.string.contact_edit_add_phone))
                         }
                     }
                 }
@@ -442,15 +446,17 @@ fun ContactEditScreen(
 
 
             item {
-                RivoSectionHeader(title = "Emails")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_emails_header))
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        val emailFieldLabel = stringResource(R.string.label_email)
                         emails.forEachIndexed { index, email ->
                             EditField(
                                 value = email,
                                 onValueChange = { emails[index] = it },
-                                label = "Email",
+                                label = emailFieldLabel,
                                 icon = Icons.Default.Email,
+                                keyboardType = KeyboardType.Email,
                                 onDelete = {
                                     if (emails.size > 1) {
                                         emails.removeAt(index)
@@ -466,7 +472,7 @@ fun ContactEditScreen(
                         ) {
                             Icon(Icons.Default.Add, null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Add Email")
+                            Text(stringResource(R.string.contact_edit_add_email))
                         }
                     }
                 }
@@ -474,14 +480,15 @@ fun ContactEditScreen(
 
 
             item {
-                RivoSectionHeader(title = "Address")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_address_header))
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        val addressFieldLabel = stringResource(R.string.label_address)
                         addresses.forEachIndexed { index, address ->
                             EditField(
                                 value = address,
                                 onValueChange = { addresses[index] = it },
-                                label = "Address",
+                                label = addressFieldLabel,
                                 icon = Icons.Default.LocationOn,
                                 onDelete = {
                                     if (addresses.size > 1) {
@@ -498,19 +505,19 @@ fun ContactEditScreen(
                         ) {
                             Icon(Icons.Default.Add, null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Add Address")
+                            Text(stringResource(R.string.contact_edit_add_address))
                         }
                     }
                 }
             }
 
             item {
-                RivoSectionHeader(title = "Notes")
+                RivoSectionHeader(title = stringResource(R.string.contact_edit_notes_header))
                 RivoExpressiveCard {
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
-                        label = { Text("Notes") },
+                        label = { Text(stringResource(R.string.label_notes)) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, null) },
@@ -534,7 +541,8 @@ fun EditField(
     onValueChange: (String) -> Unit,
     label: String,
     icon: ImageVector,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -547,11 +555,7 @@ fun EditField(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
             leadingIcon = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
-            keyboardOptions = when (label) {
-                "Phone" -> KeyboardOptions(keyboardType = KeyboardType.Phone)
-                "Email" -> KeyboardOptions(keyboardType = KeyboardType.Email)
-                else -> KeyboardOptions.Default
-            },
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                 focusedBorderColor = MaterialTheme.colorScheme.primary

@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.AZListScroll
@@ -123,7 +125,7 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
                     shape = RoundedCornerShape(24.dp),
                     elevation = FloatingActionButtonDefaults.elevation(0.dp)
                 ) {
-                    Icon(Icons.Default.PersonAdd, "Add Contact")
+                    Icon(Icons.Default.PersonAdd, stringResource(R.string.action_add_contact))
                 }
             }
         },
@@ -179,19 +181,19 @@ fun AccountFilterBar(viewModel: ContactsViewModel) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
-            RivoFilterChip("All", selectedAccount == null && !showPrivateOnly && !showLocalOnly, {
+            RivoFilterChip(stringResource(R.string.filter_all), selectedAccount == null && !showPrivateOnly && !showLocalOnly, {
                 viewModel.selectAccount(null)
                 viewModel.setShowPrivateOnly(false)
                 viewModel.setShowLocalOnly(false)
-            })
+            }, isAllFilter = true)
         }
         item {
-            RivoFilterChip("Local Memory", showLocalOnly, {
+            RivoFilterChip(stringResource(R.string.label_local_memory), showLocalOnly, {
                 viewModel.setShowLocalOnly(true)
             })
         }
         item {
-            RivoFilterChip("Private", showPrivateOnly, {
+            RivoFilterChip(stringResource(R.string.contact_filter_private), showPrivateOnly, {
                 viewModel.setShowPrivateOnly(true)
             })
         }
@@ -231,19 +233,19 @@ fun BatchActionBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onClear) {
-                Icon(Icons.Default.Close, "Clear selection")
+                Icon(Icons.Default.Close, stringResource(R.string.action_clear_selection))
             }
             Text(
-                text = "$selectedCount Selected",
+                text = stringResource(R.string.selection_count_selected, selectedCount),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
             IconButton(onClick = { showMoveDialog = true }) {
-                Icon(Icons.AutoMirrored.Filled.DriveFileMove, "Move")
+                Icon(Icons.AutoMirrored.Filled.DriveFileMove, stringResource(R.string.content_desc_move))
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, "Delete")
+                Icon(Icons.Default.Delete, stringResource(R.string.action_delete))
             }
         }
     }
@@ -251,11 +253,11 @@ fun BatchActionBar(
     if (showMoveDialog) {
         RivoDialog(
             onDismissRequest = { showMoveDialog = false },
-            title = "Move to Storage",
+            title = stringResource(R.string.contact_move_to_storage),
             icon = Icons.AutoMirrored.Filled.DriveFileMove,
             dismissButton = {
                 TextButton(onClick = { showMoveDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
@@ -286,12 +288,12 @@ fun BatchActionBar(
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(
-                            "Private Storage",
+                            stringResource(R.string.contact_move_private_storage_title),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            "App-only storage",
+                            stringResource(R.string.contact_move_private_storage_supporting),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -326,12 +328,12 @@ fun BatchActionBar(
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(
-                            "Local Memory",
+                            stringResource(R.string.label_local_memory),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            "Device only",
+                            stringResource(R.string.contact_move_local_memory_supporting),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -465,12 +467,12 @@ fun EmptyContactsState() {
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "No contacts found",
+            text = stringResource(R.string.contacts_empty_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Try clearing your filters or add a new contact.",
+            text = stringResource(R.string.empty_state_try_clearing_filters),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -505,7 +507,7 @@ fun PermissionRequiredState(onRequestPermission: () -> Unit) {
         Text(
             modifier = Modifier.padding(horizontal = 32.dp),
             textAlign = TextAlign.Center,
-            text = "To show your contact list and identify incoming calls, Rivo needs permission to access your contacts.",
+            text = stringResource(R.string.contacts_permission_rationale),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium
         )
@@ -515,7 +517,7 @@ fun PermissionRequiredState(onRequestPermission: () -> Unit) {
             shape = RoundedCornerShape(24.dp),
             elevation = ButtonDefaults.buttonElevation(0.dp)
         ) {
-            Text("Grant permission")
+            Text(stringResource(R.string.action_grant_permission_lower))
         }
     }
 }
