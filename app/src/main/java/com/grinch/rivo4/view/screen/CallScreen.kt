@@ -55,11 +55,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.CallService
@@ -72,6 +74,17 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
+
+@Composable
+private fun audioRouteLabel(audioRoute: Int, audioState: CallAudioState?): String {
+    val bluetoothShortLabel = stringResource(R.string.audio_route_bluetooth_short)
+    return when (audioRoute) {
+        CallAudioState.ROUTE_SPEAKER -> stringResource(R.string.audio_route_speaker)
+        CallAudioState.ROUTE_BLUETOOTH -> try { audioState?.activeBluetoothDevice?.name ?: bluetoothShortLabel } catch (e: Exception) { bluetoothShortLabel }
+        CallAudioState.ROUTE_WIRED_HEADSET -> stringResource(R.string.audio_route_headset)
+        else -> stringResource(R.string.audio_route_handset)
+    }
+}
 
 @Composable
 fun ExpressiveCallScreen(
@@ -95,11 +108,12 @@ fun ExpressiveCallScreen(
         allCalls.find { it != call && it.state != Call.STATE_DISCONNECTED }
     }
 
-    val simLabel = remember(call.details.accountHandle) {
-        val handle = call.details.accountHandle
-        if (handle != null) {
+    val accountHandle = call.details.accountHandle
+    val simLabelFallback = accountHandle?.let { stringResource(R.string.call_screen_sim_label, it.id) }
+    val simLabel = remember(accountHandle, simLabelFallback) {
+        if (accountHandle != null) {
             val account = try {
-                telecomManager.getPhoneAccount(handle)
+                telecomManager.getPhoneAccount(accountHandle)
             } catch (e: Exception) {
                 null
             }
@@ -108,7 +122,7 @@ fun ExpressiveCallScreen(
             if (!label.isNullOrEmpty()) {
                 label
             } else {
-                "SIM ${handle.id}"
+                simLabelFallback
             }
         } else {
             null
@@ -152,25 +166,29 @@ fun ExpressiveCallScreen(
 
     if (showAudioPicker) {
         val supported = audioState?.supportedRouteMask ?: 0
-        val options = remember(supported) {
+        val handsetLabel = stringResource(R.string.audio_route_handset)
+        val speakerLabel = stringResource(R.string.audio_route_speaker)
+        val headsetLabel = stringResource(R.string.audio_route_headset)
+        val bluetoothLabel = stringResource(R.string.audio_route_bluetooth)
+        val options = remember(supported, handsetLabel, speakerLabel, headsetLabel, bluetoothLabel) {
             mutableListOf<Pair<String, Int>>().apply {
-                if ((supported and CallAudioState.ROUTE_EARPIECE) != 0) add("Handset" to CallAudioState.ROUTE_EARPIECE)
-                if ((supported and CallAudioState.ROUTE_SPEAKER) != 0) add("Speaker" to CallAudioState.ROUTE_SPEAKER)
-                if ((supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0) add("Headset" to CallAudioState.ROUTE_WIRED_HEADSET)
+                if ((supported and CallAudioState.ROUTE_EARPIECE) != 0) add(handsetLabel to CallAudioState.ROUTE_EARPIECE)
+                if ((supported and CallAudioState.ROUTE_SPEAKER) != 0) add(speakerLabel to CallAudioState.ROUTE_SPEAKER)
+                if ((supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0) add(headsetLabel to CallAudioState.ROUTE_WIRED_HEADSET)
                 if ((supported and CallAudioState.ROUTE_BLUETOOTH) != 0) {
                     val deviceName = try {
                         audioState?.activeBluetoothDevice?.name
                     } catch (e: SecurityException) {
                         null
                     }
-                    add((deviceName ?: "Bluetooth") to CallAudioState.ROUTE_BLUETOOTH)
+                    add((deviceName ?: bluetoothLabel) to CallAudioState.ROUTE_BLUETOOTH)
                 }
             }
         }
 
         RivoSelectionDialog<Pair<String, Int>>(
             onDismissRequest = { showAudioPicker = false },
-            title = "Audio Output",
+            title = stringResource(R.string.audio_output_title),
             items = options,
             itemLabel = { option -> option.first },
             onItemSelected = { option ->
@@ -208,7 +226,8 @@ fun ExpressiveCallScreen(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 otherCall?.let { oc ->
-                    var ocName by remember(oc) { mutableStateOf(oc.details.handle?.schemeSpecificPart ?: "Unknown") }
+                    val unknownLabel = stringResource(R.string.label_unknown)
+                    var ocName by remember(oc, unknownLabel) { mutableStateOf(oc.details.handle?.schemeSpecificPart ?: unknownLabel) }
                     LaunchedEffect(oc) {
                         val number = oc.details.handle?.schemeSpecificPart ?: ""
                         if (number.isNotEmpty()) {
@@ -258,14 +277,14 @@ fun ExpressiveCallScreen(
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
-                                        text = "On Hold",
+                                        text = stringResource(R.string.call_status_on_hold),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
                             IconButton(onClick = { oc.disconnect() }) {
-                                Icon(Icons.Default.CallEnd, contentDescription = "End", tint = Color.Red)
+                                Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = Color.Red)
                             }
                         }
                     }
@@ -294,14 +313,14 @@ fun ExpressiveCallScreen(
                         )
 
                         val statusText = when (callState) {
-                            Call.STATE_DISCONNECTED -> "Call Ended"
-                            Call.STATE_HOLDING -> "On Hold"
+                            Call.STATE_DISCONNECTED -> stringResource(R.string.call_status_ended)
+                            Call.STATE_HOLDING -> stringResource(R.string.call_status_on_hold)
                             Call.STATE_ACTIVE -> formatDuration(callDuration)
-                            Call.STATE_DIALING -> "Calling..."
-                            Call.STATE_RINGING -> "Incoming call"
+                            Call.STATE_DIALING -> stringResource(R.string.call_status_calling)
+                            Call.STATE_RINGING -> stringResource(R.string.call_status_incoming)
                             Call.STATE_DISCONNECTING -> ""
-                            Call.STATE_CONNECTING -> "Connecting..."
-                            else -> "Connecting..."
+                            Call.STATE_CONNECTING -> stringResource(R.string.call_status_connecting)
+                            else -> stringResource(R.string.call_status_connecting)
                         }
 
                         Text(
@@ -372,7 +391,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
                                 isActive = isMuted,
-                                label = "Mute"
+                                label = stringResource(R.string.action_mute)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 CallService.mute(!isMuted)
@@ -381,7 +400,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = Icons.Default.Dialpad,
                                 isActive = showKeypad,
-                                label = "Keypad"
+                                label = stringResource(R.string.action_keypad)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 showKeypad = !showKeypad
@@ -394,12 +413,7 @@ fun ExpressiveCallScreen(
                                 CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
                                 else -> Icons.Default.Phone
                             }
-                            val audioLabel = when (audioRoute) {
-                                CallAudioState.ROUTE_SPEAKER -> "Speaker"
-                                CallAudioState.ROUTE_BLUETOOTH -> try { audioState?.activeBluetoothDevice?.name ?: "BT" } catch (e: Exception) { "BT" }
-                                CallAudioState.ROUTE_WIRED_HEADSET -> "Headset"
-                                else -> "Handset"
-                            }
+                            val audioLabel = audioRouteLabel(audioRoute, audioState)
                             val hasBluetooth = (audioState?.supportedRouteMask ?: 0 and CallAudioState.ROUTE_BLUETOOTH) != 0
 
                             CallActionButton(
@@ -420,7 +434,7 @@ fun ExpressiveCallScreen(
                                     .size(64.dp)
                                     .background(Color(0xFFF44336), CircleShape)
                             ) {
-                                Icon(Icons.Default.CallEnd, contentDescription = "End", tint = Color.White, modifier = Modifier.size(28.dp))
+                                Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = Color.White, modifier = Modifier.size(28.dp))
                             }
                         }
                     } else {
@@ -433,7 +447,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
                                 isActive = isMuted,
-                                label = "Mute"
+                                label = stringResource(R.string.action_mute)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 CallService.mute(!isMuted)
@@ -442,7 +456,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = Icons.Default.Dialpad,
                                 isActive = showKeypad,
-                                label = "Keypad"
+                                label = stringResource(R.string.action_keypad)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 showKeypad = !showKeypad
@@ -451,7 +465,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = Icons.AutoMirrored.Filled.Message,
                                 isActive = false,
-                                label = "Message"
+                                label = stringResource(R.string.action_message)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -475,12 +489,7 @@ fun ExpressiveCallScreen(
                                 else -> Icons.Default.Phone
                             }
 
-                            val audioLabel = when (audioRoute) {
-                                CallAudioState.ROUTE_SPEAKER -> "Speaker"
-                                CallAudioState.ROUTE_BLUETOOTH -> try { audioState?.activeBluetoothDevice?.name ?: "BT" } catch (e: Exception) { "BT" }
-                                CallAudioState.ROUTE_WIRED_HEADSET -> "Headset"
-                                else -> "Handset"
-                            }
+                            val audioLabel = audioRouteLabel(audioRoute, audioState)
 
                             val hasBluetooth = (audioState?.supportedRouteMask ?: 0 and CallAudioState.ROUTE_BLUETOOTH) != 0
 
@@ -496,7 +505,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = Icons.Default.Add,
                                 isActive = false,
-                                label = "Add call"
+                                label = stringResource(R.string.action_add_call)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 if (callState != Call.STATE_HOLDING) {
@@ -509,7 +518,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = if (callState == Call.STATE_HOLDING) Icons.Default.PlayArrow else Icons.Default.Pause,
                                 isActive = callState == Call.STATE_HOLDING,
-                                label = if (callState == Call.STATE_HOLDING) "Resume" else "Hold"
+                                label = if (callState == Call.STATE_HOLDING) stringResource(R.string.action_resume) else stringResource(R.string.action_hold)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 if (callState == Call.STATE_HOLDING) call.unhold() else call.hold()
@@ -533,7 +542,7 @@ fun ExpressiveCallScreen(
                             ),
                             interactionSource = interactionSource
                         ) {
-                            Icon(Icons.Default.CallEnd, contentDescription = "End Call", modifier = Modifier.size(32.dp))
+                            Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end_call), modifier = Modifier.size(32.dp))
                         }
                     }
                 }
@@ -553,7 +562,7 @@ fun ExpressiveCallScreen(
                             CallActionButton(
                                 icon = Icons.AutoMirrored.Filled.Message,
                                 isActive = false,
-                                label = "Message"
+                                label = stringResource(R.string.action_message)
                             ) {
                                 view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                 try { call.disconnect() } catch (e: Exception) {}
@@ -963,7 +972,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f), CircleShape)
     ) {
         Text(
-            "Decline",
+            stringResource(R.string.action_decline),
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 32.dp)
@@ -974,7 +983,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         )
 
         Text(
-            "Answer",
+            stringResource(R.string.action_answer),
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 32.dp)
@@ -1122,7 +1131,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         ) {
             Icon(Icons.Default.KeyboardArrowUp, null, tint = Color.White, modifier = Modifier.size(if (isLandscape) 28.dp else 36.dp))
             Text(
-                "Swipe up to answer",
+                stringResource(R.string.swipe_up_to_answer),
                 style = if (isLandscape) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
                 color = Color.White.copy(alpha = 0.9f),
                 fontWeight = FontWeight.Medium
@@ -1141,7 +1150,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Swipe down to reject",
+                stringResource(R.string.swipe_down_to_reject),
                 style = if (isLandscape) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
                 color = Color.White.copy(alpha = 0.9f),
                 fontWeight = FontWeight.Medium
@@ -1291,40 +1300,40 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                         )
                 ) {
                     Icon(
-                        Icons.Default.CallEnd, 
-                        contentDescription = "Decline", 
+                        Icons.Default.CallEnd,
+                        contentDescription = stringResource(R.string.action_decline),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                 }
                 Text(
-                    "Decline", 
-                    style = MaterialTheme.typography.labelMedium, 
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), 
+                    stringResource(R.string.action_decline),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
-            
+
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     onClick = onMessage,
                     modifier = Modifier
                         .size(if (isLandscape) 48.dp else 60.dp)
                         .background(
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f), 
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f),
                             CircleShape
                         )
                 ) {
                     Icon(
-                        Icons.AutoMirrored.Filled.Message, 
-                        contentDescription = "Message", 
+                        Icons.AutoMirrored.Filled.Message,
+                        contentDescription = stringResource(R.string.action_message),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                 }
                 Text(
-                    "Message", 
-                    style = MaterialTheme.typography.labelMedium, 
+                    stringResource(R.string.action_message),
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -1354,7 +1363,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
             )
 
             Text(
-                text = "slide to answer",
+                text = stringResource(R.string.slide_to_answer),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = handleSize + 16.dp)
@@ -1443,13 +1452,13 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
             ) {
                 Icon(
                     Icons.Default.CallEnd,
-                    contentDescription = "Decline",
+                    contentDescription = stringResource(R.string.action_decline),
                     modifier = Modifier.size(32.dp)
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Decline",
+                text = stringResource(R.string.action_decline),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium
@@ -1476,14 +1485,14 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 ) {
                     Icon(
                         Icons.Default.Call,
-                        contentDescription = "Answer",
+                        contentDescription = stringResource(R.string.action_answer),
                         modifier = Modifier.size(32.dp).graphicsLayer(scaleY = -1f)
                     )
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Answer",
+                text = stringResource(R.string.action_answer),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium

@@ -25,6 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.ExpressiveCallScreen
@@ -130,8 +132,9 @@ class CallActivity : ComponentActivity() {
                 if (call != null && session != null) {
                     val details = call.details
                     val number = details?.handle?.schemeSpecificPart ?: ""
+                    val unknownLabel = stringResource(R.string.label_unknown)
 
-                    var contactName by remember(number) { mutableStateOf(number.ifEmpty { "Unknown" }) }
+                    var contactName by remember(number, unknownLabel) { mutableStateOf(number.ifEmpty { unknownLabel }) }
                     var photoUri by remember(number) { mutableStateOf<String?>(null) }
 
                     LaunchedEffect(number) {
@@ -160,7 +163,7 @@ class CallActivity : ComponentActivity() {
                         ExpressiveCallScreen(
                             call = targetCall,
                             callState = if (targetCall == call) session?.state ?: Call.STATE_ACTIVE else targetCall.state,
-                            contactName = if (targetCall == call) contactName else (targetCall.details.handle?.schemeSpecificPart ?: "Unknown"),
+                            contactName = if (targetCall == call) contactName else (targetCall.details.handle?.schemeSpecificPart ?: unknownLabel),
                             phoneNumber = targetCall.details.handle?.schemeSpecificPart ?: "",
                             photoUri = if (targetCall == call) photoUri else null,
                             audioState = audioState,

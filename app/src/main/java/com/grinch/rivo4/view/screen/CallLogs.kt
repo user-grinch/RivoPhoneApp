@@ -22,8 +22,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.makeCall
@@ -33,6 +35,7 @@ import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.data.displayLabel
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -115,16 +118,16 @@ fun CallLogFullScreen(
             ) { isSelecting ->
                 if (!isSelecting) {
                     TopAppBar(
-                        title = { 
+                        title = {
                             Text(
-                                if (contactName != null) "History with $contactName" else "Call History", 
+                                if (contactName != null) stringResource(R.string.call_history_with_contact, contactName) else stringResource(R.string.call_history_title),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleMedium
-                            ) 
+                            )
                         },
                         navigationIcon = {
                             IconButton(onClick = { navigator.navigateUp() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -161,10 +164,10 @@ fun CallLogFullScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(CallLogFilter.entries) { filter ->
-                        RivoFilterChip(filter.name, selectedFilter == filter, {
+                        RivoFilterChip(filter.displayLabel(), selectedFilter == filter, {
                             _ ->
                             viewModel.setFilter(filter)
-                        })
+                        }, isAllFilter = filter == CallLogFilter.All)
                     }
                 }
 
@@ -182,7 +185,7 @@ fun CallLogFullScreen(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                             Spacer(Modifier.height(16.dp))
-                            Text("No call history found", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(stringResource(R.string.call_log_no_history_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 } else {
@@ -196,10 +199,10 @@ fun CallLogFullScreen(
 
                     if (finalLogs.isEmpty()) {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No calls match this filter", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(stringResource(R.string.call_log_no_filter_match), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     } else {
-                        val groupedLogs = finalLogs.groupBy { formatDateHeader(it.date) }
+                        val groupedLogs = finalLogs.groupBy { formatDateHeader(context, it.date) }
 
                         LazyColumn(
                             state = listState,

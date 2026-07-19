@@ -246,19 +246,19 @@ class CallService : InCallService() {
         
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel)
-            .setContentTitle("Blocked Call")
-            .setContentText("Blocked call from $number")
+            .setContentTitle(getString(R.string.notif_blocked_call_title))
+            .setContentText(getString(R.string.notif_blocked_call_text, number))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setAutoCancel(true)
-        
+
         notificationManager.notify(number.hashCode(), builder.build())
     }
 
     private fun showMissedCallNotification(call: Call) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(MISSED_CHANNEL_ID, "Missed Calls", NotificationManager.IMPORTANCE_DEFAULT).apply {
+            val channel = NotificationChannel(MISSED_CHANNEL_ID, getString(R.string.notif_channel_missed_calls), NotificationManager.IMPORTANCE_DEFAULT).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 enableVibration(true)
                 setShowBadge(true)
@@ -268,14 +268,14 @@ class CallService : InCallService() {
 
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
-        
+
         val contact = if (number.isNotEmpty()) {
             try {
                 contactsRepository.getContactByNumber(number)
             } catch (e: Exception) { null }
         } else null
-        
-        val contactName = contact?.name ?: number.ifEmpty { "Unknown Number" }
+
+        val contactName = contact?.name ?: number.ifEmpty { getString(R.string.label_unknown_number) }
         val contactPhoto = getContactBitmap(contact?.photoUri)
 
         val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
@@ -291,10 +291,18 @@ class CallService : InCallService() {
 
         val timeString = android.text.format.DateFormat.getTimeFormat(this).format(java.util.Date())
 
+        val missedCallText = buildString {
+            append(getString(R.string.notif_missed_call_text, contactName, timeString))
+            if (simLabel != null) {
+                append(" ")
+                append(getString(R.string.notif_via_sim, simLabel))
+            }
+        }
+
         val builder = NotificationCompat.Builder(this, MISSED_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.sym_call_missed)
-            .setContentTitle("Missed Call")
-            .setContentText("Missed call from $contactName at $timeString${if (simLabel != null) " via $simLabel" else ""}")
+            .setContentTitle(getString(R.string.notif_missed_call_title))
+            .setContentText(missedCallText)
             .setLargeIcon(contactPhoto)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
@@ -412,7 +420,7 @@ class CallService : InCallService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, "Calls", NotificationManager.IMPORTANCE_HIGH).apply {
+            val channel = NotificationChannel(CHANNEL_ID, getString(R.string.notif_channel_calls), NotificationManager.IMPORTANCE_HIGH).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 enableVibration(true)
             }
@@ -421,17 +429,17 @@ class CallService : InCallService() {
 
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
-        
+
         val contact = if (number.isNotEmpty()) {
             try {
                 contactsRepository.getContactByNumber(number)
             } catch (e: Exception) { null }
         } else null
-        
+
         val contactName = when {
             contact != null -> contact.name
             number.isNotEmpty() -> number
-            else -> "Unknown Number"
+            else -> getString(R.string.label_unknown_number)
         }
         
         val contactPhoto = getContactBitmap(contact?.photoUri)
@@ -475,21 +483,24 @@ class CallService : InCallService() {
         val audioState = _audioState.value
         val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
         val audioLabel = when (audioRoute) {
-            CallAudioState.ROUTE_SPEAKER -> "Speaker"
+            CallAudioState.ROUTE_SPEAKER -> getString(R.string.audio_route_speaker)
             CallAudioState.ROUTE_BLUETOOTH -> {
                 try {
-                    audioState?.activeBluetoothDevice?.name ?: "Bluetooth"
+                    audioState?.activeBluetoothDevice?.name ?: getString(R.string.audio_route_bluetooth)
                 } catch (e: SecurityException) {
-                    "Bluetooth"
+                    getString(R.string.audio_route_bluetooth)
                 }
             }
-            CallAudioState.ROUTE_WIRED_HEADSET -> "Headset"
-            else -> "Handset"
+            CallAudioState.ROUTE_WIRED_HEADSET -> getString(R.string.audio_route_headset)
+            else -> getString(R.string.audio_route_handset)
         }
 
         val contentText = buildString {
-            if (call.state == Call.STATE_RINGING) append("Incoming call") else append("Active call")
-            if (!simLabel.isNullOrEmpty()) append(" via $simLabel")
+            if (call.state == Call.STATE_RINGING) append(getString(R.string.call_status_incoming)) else append(getString(R.string.notif_active_call))
+            if (!simLabel.isNullOrEmpty()) {
+                append(" ")
+                append(getString(R.string.notif_via_sim, simLabel))
+            }
         }
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)

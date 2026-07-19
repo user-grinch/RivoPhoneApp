@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import com.grinch.rivo4.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -31,16 +32,16 @@ private fun isSameYear(timestamp1: Long, timestamp2: Long): Boolean {
     return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
 }
 
-private fun getRelativeDay(timestamp: Long): String? {
+private fun getRelativeDay(context: Context, timestamp: Long): String? {
     return when {
-        DateUtils.isToday(timestamp) -> "Today"
-        isYesterday(timestamp) -> "Yesterday"
+        DateUtils.isToday(timestamp) -> context.getString(R.string.date_today)
+        isYesterday(timestamp) -> context.getString(R.string.date_yesterday)
         else -> null
     }
 }
 
-fun formatDateHeader(timestamp: Long): String {
-    val relative = getRelativeDay(timestamp)
+fun formatDateHeader(context: Context, timestamp: Long): String {
+    val relative = getRelativeDay(context, timestamp)
     if (relative != null) return relative
 
     val pattern = if (isSameYear(timestamp, System.currentTimeMillis())) "MMMM d" else "MMMM d, yyyy"
@@ -48,10 +49,10 @@ fun formatDateHeader(timestamp: Long): String {
 }
 
 fun formatDate(context: Context, timestamp: Long): String {
-    val relative = getRelativeDay(timestamp)
+    val relative = getRelativeDay(context, timestamp)
     val time = android.text.format.DateFormat.getTimeFormat(context).format(Date(timestamp))
 
-    return if (relative != null) "$relative, $time" else "${formatDateHeader(timestamp)}, $time"
+    return if (relative != null) "$relative, $time" else "${formatDateHeader(context, timestamp)}, $time"
 }
 
 fun formatTime(context: Context, timestamp: Long): String {
@@ -201,14 +202,14 @@ fun getAppVersion(context: Context): Pair<String, Long> {
             context.packageManager.getPackageInfo(context.packageName, 0)
         }
 
-        val versionName = packageInfo.versionName ?: "Unknown"
+        val versionName = packageInfo.versionName ?: context.getString(R.string.label_unknown)
         // PackageInfoCompat handles retrieving long version codes safely across old/new API levels
         val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
 
         Pair(versionName, versionCode)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
-        Pair("Unknown", -1L)
+        Pair(context.getString(R.string.label_unknown), -1L)
     }
 }
 

@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getDefaultDialerIntent
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
@@ -115,7 +117,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Text(
-                    text = "Make Rivo your official dialer",
+                    text = stringResource(R.string.default_dialer_headline),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -125,7 +127,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "To make and receive calls, manage your call history, and experience spam protection, Rivo needs to be set as your default phone app.",
+                    text = stringResource(R.string.default_dialer_description),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -142,7 +144,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "Rivo cannot function without this permission. Please try again.",
+                            text = stringResource(R.string.default_dialer_denied_message),
                             color = MaterialTheme.colorScheme.onErrorContainer,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(16.dp),
@@ -168,7 +170,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
-                        text = "Set as default",
+                        text = stringResource(R.string.default_dialer_set_as_default),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )

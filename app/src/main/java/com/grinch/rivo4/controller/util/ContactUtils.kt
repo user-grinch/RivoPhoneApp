@@ -5,16 +5,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.SimCard
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 
 object ContactUtils {
+    @Composable
     fun getFriendlyAccountName(account: Account): String {
         return when {
             account.type == "com.google" -> account.name
-            account.type == "com.whatsapp" -> "WhatsApp"
-            account.type.contains("telegram", ignoreCase = true) -> "Telegram"
-            account.type.contains("xiaomi", ignoreCase = true) -> "Mi Account"
-            account.type.contains("sim", ignoreCase = true) -> "SIM Card"
+            account.type == "com.whatsapp" -> stringResource(R.string.brand_whatsapp)
+            account.type.contains("telegram", ignoreCase = true) -> stringResource(R.string.brand_telegram)
+            account.type.contains("xiaomi", ignoreCase = true) -> stringResource(R.string.account_mi_account)
+            account.type.contains("sim", ignoreCase = true) -> stringResource(R.string.account_sim_card)
             account.name.contains("@") -> account.name.substringBefore("@")
             else -> account.name
         }

@@ -15,9 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
 import org.koin.compose.koinInject
@@ -34,6 +36,7 @@ class CallLauncher(
 fun rememberCallLauncher(): CallLauncher {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
+    val mobileLabel = stringResource(R.string.label_mobile)
     val telecomManager = remember { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
 
     var showSimPicker by remember { mutableStateOf(false) }
@@ -109,13 +112,13 @@ fun rememberCallLauncher(): CallLauncher {
         
         RivoSelectionDialog(
             onDismissRequest = { showNumberPicker = false },
-            title = "Select Number",
+            title = stringResource(R.string.select_number_title),
             items = contact.phoneNumbers,
             itemLabel = { formatPhoneNumber(it) },
             onItemSelected = { selectedNumber ->
                 initiateCall(selectedNumber, contact)
             },
-            itemSupporting = { "Mobile" },
+            itemSupporting = { mobileLabel },
             icon = Icons.Default.Phone,
             itemIcon = { Icons.Default.Phone },
             isSelected = { areNumbersEqual(lastUsed, it) }

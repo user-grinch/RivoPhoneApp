@@ -27,9 +27,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoDivider
@@ -55,10 +57,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -99,13 +101,13 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "Support Rivo",
+                                stringResource(R.string.settings_support_rivo_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                "Help us keep Rivo free and open source",
+                                stringResource(R.string.settings_support_rivo_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
@@ -119,44 +121,44 @@ fun SettingsScreen(
                             shape = MaterialTheme.shapes.medium,
                             contentPadding = PaddingValues(horizontal = 16.dp)
                         ) {
-                            Text("Donate")
+                            Text(stringResource(R.string.settings_donate))
                         }
                     }
                 }
             }
 
-            
+
             item {
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Interface",
-                        supporting = "Theme, colors, and accessibility",
+                        headline = stringResource(R.string.settings_interface_headline),
+                        supporting = stringResource(R.string.settings_interface_supporting),
                         leadingIcon = Icons.Outlined.Palette,
                         onClick = { navigator.navigate(InterfaceScreenDestination) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
-                        headline = "Sound & Vibration",
-                        supporting = "Ringtones and dialpad tones",
+                        headline = stringResource(R.string.settings_sound_vibration_headline),
+                        supporting = stringResource(R.string.settings_sound_vibration_supporting),
                         leadingIcon = Icons.Outlined.VolumeUp,
                         onClick = { navigator.navigate(SoundVibrationScreenDestination) }
                     )
                 }
             }
 
-            
+
             item {
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Call Settings",
-                        supporting = "Manage SIMs, dialing, and redial",
+                        headline = stringResource(R.string.settings_call_settings_headline),
+                        supporting = stringResource(R.string.settings_call_settings_supporting),
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { navigator.navigate(CallAccountsScreenDestination) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
-                        headline = "Blocked Numbers",
-                        supporting = "Manage blocked calls and spam",
+                        headline = stringResource(R.string.settings_blocked_numbers_headline),
+                        supporting = stringResource(R.string.settings_blocked_numbers_supporting),
                         leadingIcon = Icons.Outlined.Block,
                         onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
                     )
@@ -166,27 +168,27 @@ fun SettingsScreen(
             item {
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Backup & Restore",
-                        supporting = "Import and export contacts and logs",
+                        headline = stringResource(R.string.settings_backup_restore_headline),
+                        supporting = stringResource(R.string.settings_backup_restore_supporting),
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
-                        headline = "Manage Contacts",
-                        supporting = "Merge duplicates and clean up your list",
+                        headline = stringResource(R.string.settings_manage_contacts_headline),
+                        supporting = stringResource(R.string.settings_manage_contacts_supporting),
                         leadingIcon = Icons.Outlined.ContactPage,
                         onClick = { navigator.navigate(ContactManagementScreenDestination) }
                     )
                 }
             }
 
-            
+
             item {
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "About Rivo",
-                        supporting = "Version, licenses, and privacy policy",
+                        headline = stringResource(R.string.settings_about_headline),
+                        supporting = stringResource(R.string.settings_about_supporting),
                         leadingIcon = Icons.Outlined.Info,
                         onClick = { navigator.navigate(AboutScreenDestination) }
                     )

@@ -59,6 +59,10 @@ android {
         compose = true
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     splits {
         abi {
             enable = false

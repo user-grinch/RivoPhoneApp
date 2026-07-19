@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
@@ -52,9 +53,9 @@ class BackupViewModel(
                         writer.write(vCard)
                     }
                 }
-                _status.value = "Contacts exported successfully"
+                _status.value = context.getString(R.string.backup_contacts_export_success)
             } catch (e: Exception) {
-                _status.value = "Export failed: ${e.message}"
+                _status.value = context.getString(R.string.backup_export_failed, e.message)
             }
         }
     }
@@ -99,9 +100,9 @@ class BackupViewModel(
                         }
                     }
                 }
-                _status.value = "Contacts imported successfully"
+                _status.value = context.getString(R.string.backup_contacts_import_success)
             } catch (e: Exception) {
-                _status.value = "Import failed: ${e.message}"
+                _status.value = context.getString(R.string.backup_import_failed, e.message)
             }
         }
     }
@@ -116,9 +117,9 @@ class BackupViewModel(
                         writer.write(jsonString)
                     }
                 }
-                _status.value = "Call logs exported successfully"
+                _status.value = context.getString(R.string.backup_call_logs_export_success)
             } catch (e: Exception) {
-                _status.value = "Export failed: ${e.message}"
+                _status.value = context.getString(R.string.backup_export_failed, e.message)
             }
         }
     }
@@ -133,9 +134,9 @@ class BackupViewModel(
                         callLogRepo.saveCallLog(log)
                     }
                 }
-                _status.value = "Call logs imported successfully"
+                _status.value = context.getString(R.string.backup_call_logs_import_success)
             } catch (e: Exception) {
-                _status.value = "Import failed: ${e.message}"
+                _status.value = context.getString(R.string.backup_import_failed, e.message)
             }
         }
     }

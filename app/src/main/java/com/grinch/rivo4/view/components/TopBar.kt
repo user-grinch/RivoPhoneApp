@@ -13,9 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.grinch.rivo4.R
 import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,11 +52,11 @@ fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
+                    contentDescription = stringResource(R.string.content_desc_search),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Search in Rivo",
+                    text = stringResource(R.string.top_bar_search_placeholder),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -63,14 +65,14 @@ fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 IconButton(
-                    onClick = { 
+                    onClick = {
                         navigator.navigate(SettingsScreenDestination)
                     },
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Tune,
-                        contentDescription = "Settings",
+                        contentDescription = stringResource(R.string.settings_title),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )

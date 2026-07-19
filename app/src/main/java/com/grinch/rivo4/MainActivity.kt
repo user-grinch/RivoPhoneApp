@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -116,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                     prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
                                     showPatreonPrompt = false 
                                 },
-                                title = "Support Rivo",
+                                title = stringResource(R.string.patreon_prompt_title),
                                 icon = Icons.Default.Favorite,
                                 confirmButton = {
                                     Button(
@@ -128,7 +129,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().height(52.dp),
                                         shape = RoundedCornerShape(16.dp)
                                     ) {
-                                        Text("Support on Patreon", fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.patreon_prompt_confirm), fontWeight = FontWeight.Bold)
                                     }
                                 },
                                 dismissButton = {
@@ -139,12 +140,12 @@ class MainActivity : ComponentActivity() {
                                         },
                                         modifier = Modifier.fillMaxWidth().height(52.dp)
                                     ) {
-                                        Text("Maybe later")
+                                        Text(stringResource(R.string.patreon_prompt_dismiss))
                                     }
                                 }
                             ) {
                                 Text(
-                                    "Rivo is free and open source. If you like the app, please consider supporting its development on Patreon!",
+                                    stringResource(R.string.patreon_prompt_body),
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant

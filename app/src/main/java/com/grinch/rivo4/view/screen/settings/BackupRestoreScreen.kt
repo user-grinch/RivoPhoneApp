@@ -12,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
@@ -67,10 +69,10 @@ fun BackupRestoreScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Backup & Restore", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_backup_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -87,7 +89,7 @@ fun BackupRestoreScreen(
         ) {
             item {
                 Text(
-                    "Contacts",
+                    stringResource(R.string.settings_backup_contacts_header),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp)
@@ -95,15 +97,15 @@ fun BackupRestoreScreen(
                 Spacer(Modifier.height(8.dp))
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Export Contacts",
-                        supporting = "Save contacts to a VCF file",
+                        headline = stringResource(R.string.settings_backup_export_contacts),
+                        supporting = stringResource(R.string.settings_backup_export_contacts_supporting),
                         leadingIcon = Icons.Outlined.FileUpload,
                         onClick = { exportContactsLauncher.launch("contacts_backup.vcf") }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
-                        headline = "Import Contacts",
-                        supporting = "Restore contacts from a VCF file",
+                        headline = stringResource(R.string.settings_backup_import_contacts),
+                        supporting = stringResource(R.string.settings_backup_import_contacts_supporting),
                         leadingIcon = Icons.Outlined.FileDownload,
                         onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard")) }
                     )
@@ -112,7 +114,7 @@ fun BackupRestoreScreen(
 
             item {
                 Text(
-                    "Call Logs",
+                    stringResource(R.string.settings_backup_call_logs_header),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp)
@@ -120,15 +122,15 @@ fun BackupRestoreScreen(
                 Spacer(Modifier.height(8.dp))
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Export Call Logs",
-                        supporting = "Save history to a JSON file",
+                        headline = stringResource(R.string.settings_backup_export_logs),
+                        supporting = stringResource(R.string.settings_backup_export_logs_supporting),
                         leadingIcon = Icons.Outlined.History,
                         onClick = { exportLogsLauncher.launch("call_logs_backup.json") }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
-                        headline = "Import Call Logs",
-                        supporting = "Restore history from a JSON file",
+                        headline = stringResource(R.string.settings_backup_import_logs),
+                        supporting = stringResource(R.string.settings_backup_import_logs_supporting),
                         leadingIcon = Icons.Outlined.Restore,
                         onClick = { importLogsLauncher.launch(arrayOf("application/json")) }
                     )

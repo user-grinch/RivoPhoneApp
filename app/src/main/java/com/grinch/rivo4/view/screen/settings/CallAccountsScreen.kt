@@ -9,8 +9,10 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -66,10 +68,10 @@ fun CallAccountsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Call Settings", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_call_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -94,29 +96,30 @@ fun CallAccountsScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
+                val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Speed dial",
-                        supporting = if (speedDial) "Enabled" else "Disabled",
+                        headline = stringResource(R.string.settings_call_speed_dial),
+                        supporting = if (speedDial) stringResource(R.string.settings_call_enabled) else stringResource(R.string.settings_call_disabled),
                         leadingIcon = Icons.Outlined.Speed,
                         onClick = { navigator.navigate(SpeedDialScreenDestination) }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
-                        headline = "Default SIM",
+                        headline = stringResource(R.string.settings_call_default_sim),
                         supporting = when(defaultSim) {
-                            0 -> "Ask every time"
-                            1 -> "SIM 1"
-                            2 -> "SIM 2"
-                            else -> "Ask every time"
+                            0 -> askEveryTimeLabel
+                            1 -> stringResource(R.string.sim_slot_1)
+                            2 -> stringResource(R.string.sim_slot_2)
+                            else -> askEveryTimeLabel
                         },
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { showSimDialog = true }
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
-                        headline = "Calling accounts",
-                        supporting = "Configure carrier settings (Call Waiting, Forwarding, etc.)",
+                        headline = stringResource(R.string.settings_call_calling_accounts),
+                        supporting = stringResource(R.string.settings_call_calling_accounts_supporting),
                         leadingIcon = Icons.Outlined.Settings,
                         onClick = {
                             try {
@@ -147,8 +150,8 @@ fun CallAccountsScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "T9 Dialing",
-                        supporting = "Predicts words from numeric keypad inputs",
+                        headline = stringResource(R.string.settings_call_t9_dialing),
+                        supporting = stringResource(R.string.settings_call_t9_dialing_supporting),
                         leadingIcon = Icons.Outlined.Dialpad,
                         checked = t9Dialing,
                         onCheckedChange = {
@@ -158,8 +161,8 @@ fun CallAccountsScreen(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSwitchListItem(
-                        headline = "Proximity Sensor",
-                        supporting = "Turn off screen during calls when near ear",
+                        headline = stringResource(R.string.settings_call_proximity_sensor),
+                        supporting = stringResource(R.string.settings_call_proximity_sensor_supporting),
                         leadingIcon = Icons.Outlined.Sensors,
                         checked = proximitySensor,
                         onCheckedChange = {
@@ -169,14 +172,14 @@ fun CallAccountsScreen(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSelectListItem(
-                        headline = "Incoming Call UI",
-                        supporting = "Choose how to answer incoming calls",
+                        headline = stringResource(R.string.settings_call_incoming_ui),
+                        supporting = stringResource(R.string.settings_call_incoming_ui_supporting),
                         leadingIcon = Icons.Outlined.PhoneInTalk,
                         options = listOf(
-                            "Horizontal Swipe" to 0,
-                            "Buttons" to 1,
-                            "Slide to Answer (iOS)" to 2,
-                            "Vertical Swipe" to 3
+                            stringResource(R.string.settings_call_incoming_ui_horizontal_swipe) to 0,
+                            stringResource(R.string.settings_call_incoming_ui_buttons) to 1,
+                            stringResource(R.string.settings_call_incoming_ui_slide_ios) to 2,
+                            stringResource(R.string.settings_call_incoming_ui_vertical_swipe) to 3
                         ),
                         selectedValue = incomingCallUI,
                         onValueChange = {
@@ -186,13 +189,13 @@ fun CallAccountsScreen(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSelectListItem(
-                        headline = "Dialpad Style",
-                        supporting = "Visual appearance of the phone dialer",
+                        headline = stringResource(R.string.settings_call_dialpad_style),
+                        supporting = stringResource(R.string.settings_call_dialpad_style_supporting),
                         leadingIcon = Icons.Outlined.Dialpad,
                         options = listOf(
-                            "Modern" to 0,
-                            "Classic" to 1,
-                            "Minimal" to 2
+                            stringResource(R.string.settings_call_dialpad_style_modern) to 0,
+                            stringResource(R.string.settings_call_dialpad_style_classic) to 1,
+                            stringResource(R.string.settings_call_dialpad_style_minimal) to 2
                         ),
                         selectedValue = dialpadStyle,
                         onValueChange = {
@@ -202,13 +205,13 @@ fun CallAccountsScreen(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSelectListItem(
-                        headline = "Dialpad Layout",
-                        supporting = "Alignment for one-handed use",
+                        headline = stringResource(R.string.settings_call_dialpad_layout),
+                        supporting = stringResource(R.string.settings_call_dialpad_layout_supporting),
                         leadingIcon = Icons.Outlined.AlignHorizontalLeft,
                         options = listOf(
-                            "Standard" to 0,
-                            "Left" to 1,
-                            "Right" to 2
+                            stringResource(R.string.option_standard) to 0,
+                            stringResource(R.string.settings_call_dialpad_layout_left) to 1,
+                            stringResource(R.string.settings_call_dialpad_layout_right) to 2
                         ),
                         selectedValue = dialpadLayout,
                         onValueChange = {
@@ -222,8 +225,8 @@ fun CallAccountsScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "Auto Redial",
-                        supporting = "Automatically redial if the line is busy",
+                        headline = stringResource(R.string.settings_call_auto_redial),
+                        supporting = stringResource(R.string.settings_call_auto_redial_supporting),
                         leadingIcon = Icons.Outlined.Replay,
                         checked = autoRedial,
                         onCheckedChange = {
@@ -234,15 +237,15 @@ fun CallAccountsScreen(
                     if (autoRedial) {
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSelectListItem(
-                            headline = "Redial Attempts",
-                            supporting = "Maximum number of redial attempts",
+                            headline = stringResource(R.string.settings_call_redial_attempts),
+                            supporting = stringResource(R.string.settings_call_redial_attempts_supporting),
                             leadingIcon = Icons.Outlined.Refresh,
                             options = listOf(
-                                "1 attempt" to 1,
-                                "2 attempts" to 2,
-                                "3 attempts" to 3,
-                                "5 attempts" to 5,
-                                "10 attempts" to 10
+                                stringResource(R.string.settings_call_redial_attempts_1) to 1,
+                                stringResource(R.string.settings_call_redial_attempts_2) to 2,
+                                stringResource(R.string.settings_call_redial_attempts_3) to 3,
+                                stringResource(R.string.settings_call_redial_attempts_5) to 5,
+                                stringResource(R.string.settings_call_redial_attempts_10) to 10
                             ),
                             selectedValue = redialAttempts,
                             onValueChange = {
@@ -252,15 +255,15 @@ fun CallAccountsScreen(
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSelectListItem(
-                            headline = "Redial Delay",
-                            supporting = "Delay between redial attempts",
+                            headline = stringResource(R.string.settings_call_redial_delay),
+                            supporting = stringResource(R.string.settings_call_redial_delay_supporting),
                             leadingIcon = Icons.Outlined.Timer,
                             options = listOf(
-                                "1 second" to 1000,
-                                "2 seconds" to 2000,
-                                "3 seconds" to 3000,
-                                "5 seconds" to 5000,
-                                "10 seconds" to 10000
+                                stringResource(R.string.settings_call_redial_delay_1s) to 1000,
+                                stringResource(R.string.settings_call_redial_delay_2s) to 2000,
+                                stringResource(R.string.settings_call_redial_delay_3s) to 3000,
+                                stringResource(R.string.settings_call_redial_delay_5s) to 5000,
+                                stringResource(R.string.settings_call_redial_delay_10s) to 10000
                             ),
                             selectedValue = redialDelay,
                             onValueChange = {
@@ -271,8 +274,8 @@ fun CallAccountsScreen(
                     }
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoListItem(
-                        headline = "Voicemail",
-                        supporting = "Configure your mailbox",
+                        headline = stringResource(R.string.settings_call_voicemail),
+                        supporting = stringResource(R.string.settings_call_voicemail_supporting),
                         leadingIcon = Icons.Outlined.Voicemail,
                         onClick = { navigator.navigate(VoicemailScreenDestination) }
                     )
@@ -288,15 +291,15 @@ fun CallAccountsScreen(
     if (showSimDialog) {
         RivoDialog(
             onDismissRequest = { showSimDialog = false },
-            title = "Default SIM",
+            title = stringResource(R.string.settings_call_default_sim),
             icon = Icons.Outlined.SimCard,
             dismissButton = {
                 TextButton(onClick = { showSimDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
-            listOf("Ask every time", "SIM 1", "SIM 2").forEachIndexed { index, label ->
+            listOf(stringResource(R.string.sim_ask_every_time), stringResource(R.string.sim_slot_1), stringResource(R.string.sim_slot_2)).forEachIndexed { index, label ->
                 Surface(
                     onClick = {
                         defaultSim = index

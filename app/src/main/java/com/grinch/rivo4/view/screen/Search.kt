@@ -20,12 +20,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.makeCall
@@ -90,8 +92,8 @@ fun ContactSearchContent(
     if (!isGranted) {
         PermissionDeniedView(
             icon = Icons.Default.Person,
-            title = "Contacts permission required",
-            description = "To search your contacts and identify incoming calls, Rivo needs access to your contacts.",
+            title = stringResource(R.string.search_contacts_permission_title),
+            description = stringResource(R.string.search_contacts_permission_description),
             onGrantClick = onRequestPermission
         )
         return
@@ -162,16 +164,16 @@ fun ContactSearchContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-                placeholder = { Text("Search contacts") },
+                placeholder = { Text(stringResource(R.string.search_contacts_placeholder)) },
                 leadingIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 trailingIcon = {
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { query = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_clear))
                         }
                     }
                 },
@@ -223,12 +225,12 @@ fun ContactSearchContent(
                             }
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                "Search Contacts",
+                                stringResource(R.string.search_contacts_title),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Type a name or number to start searching",
+                                stringResource(R.string.search_type_to_start),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -239,12 +241,12 @@ fun ContactSearchContent(
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "No results found",
+                                    stringResource(R.string.search_no_results_title),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "Try a different name or number",
+                                    stringResource(R.string.search_no_results_hint),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -257,7 +259,7 @@ fun ContactSearchContent(
                             contentPadding = PaddingValues(bottom = 100.dp)
                         ) {
                             item {
-                                RivoSectionHeader(title = "Search Results", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                                RivoSectionHeader(title = stringResource(R.string.search_results_header), modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                             }
 
                             itemsIndexed(filteredContacts) { index, contact ->
