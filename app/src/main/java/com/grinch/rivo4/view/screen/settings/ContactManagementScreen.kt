@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.Contact
@@ -42,7 +44,7 @@ fun ContactManagementScreen(
     if (standardizeProgress != null) {
         RivoDialog(
             onDismissRequest = {},
-            title = "Standardizing numbers",
+            title = stringResource(R.string.settings_manage_standardizing_title),
             icon = Icons.Outlined.FormatListNumbered
         ) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -53,7 +55,7 @@ fun ContactManagementScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "${(progress * 100).toInt()}% completed",
+                text = stringResource(R.string.settings_manage_percent_completed, (progress * 100).toInt()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.End)
@@ -71,10 +73,10 @@ fun ContactManagementScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Manage Contacts", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_manage_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -93,30 +95,30 @@ fun ContactManagementScreen(
                 item {
                     val sortOrder by viewModel.sortOrder.collectAsState()
                     val displayOrder by viewModel.displayOrder.collectAsState()
-                    
+
                     RivoExpressiveCard(
-                        title = "Display & Sorting",
+                        title = stringResource(R.string.settings_manage_display_sorting),
                         icon = Icons.Outlined.DisplaySettings
                     ) {
                         RivoSelectListItem(
-                            headline = "Sort by",
-                            supporting = "Choose how contacts are ordered",
+                            headline = stringResource(R.string.settings_manage_sort_by),
+                            supporting = stringResource(R.string.settings_manage_sort_by_supporting),
                             leadingIcon = Icons.Outlined.SortByAlpha,
                             options = listOf(
-                                "First Name" to 0,
-                                "Last Name" to 1
+                                stringResource(R.string.settings_manage_sort_first_name) to 0,
+                                stringResource(R.string.settings_manage_sort_last_name) to 1
                             ),
                             selectedValue = sortOrder,
                             onValueChange = { newValue: Int -> viewModel.setSortOrder(newValue) }
                         )
                         RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = "Name format",
-                            supporting = "Choose how names are displayed",
+                            headline = stringResource(R.string.settings_manage_name_format),
+                            supporting = stringResource(R.string.settings_manage_name_format_supporting),
                             leadingIcon = Icons.Outlined.Badge,
                             options = listOf(
-                                "First Name First" to 0,
-                                "Last Name First" to 1
+                                stringResource(R.string.settings_manage_name_format_first_first) to 0,
+                                stringResource(R.string.settings_manage_name_format_last_first) to 1
                             ),
                             selectedValue = displayOrder,
                             onValueChange = { newValue: Int -> viewModel.setDisplayOrder(newValue) }
@@ -126,19 +128,19 @@ fun ContactManagementScreen(
 
                 item {
                     RivoExpressiveCard(
-                        title = "Storage",
+                        title = stringResource(R.string.settings_manage_storage),
                         icon = Icons.Outlined.Storage
                     ) {
                         RivoListItem(
-                            headline = "Private Contacts",
-                            supporting = "Manage contacts stored only in this app",
+                            headline = stringResource(R.string.settings_manage_private_contacts),
+                            supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
                             leadingIcon = Icons.Outlined.Lock,
                             onClick = { navigator.navigate(PrivateContactsScreenDestination) }
                         )
                         RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         RivoListItem(
-                            headline = "Visibility",
-                            supporting = "Choose which accounts to show in your list",
+                            headline = stringResource(R.string.settings_manage_visibility),
+                            supporting = stringResource(R.string.settings_manage_visibility_supporting),
                             leadingIcon = Icons.Outlined.Visibility,
                             onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                         )
@@ -147,12 +149,12 @@ fun ContactManagementScreen(
 
                 item {
                     RivoExpressiveCard(
-                        title = "Quick Fixes",
+                        title = stringResource(R.string.settings_manage_quick_fixes),
                         icon = Icons.Outlined.AutoFixHigh
                     ) {
                         RivoListItem(
-                            headline = "Standardize phone numbers",
-                            supporting = "Remove spaces and special characters from all numbers",
+                            headline = stringResource(R.string.settings_manage_standardize_numbers),
+                            supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
                             leadingIcon = Icons.Outlined.FormatListNumbered,
                             onClick = { viewModel.formatAllPhoneNumbers() }
                         )
@@ -162,13 +164,13 @@ fun ContactManagementScreen(
                 if (duplicateGroups.isEmpty()) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No duplicates found.", style = MaterialTheme.typography.bodyLarge)
+                            Text(stringResource(R.string.settings_manage_no_duplicates), style = MaterialTheme.typography.bodyLarge)
                         }
                     }
                 } else {
                     item {
                         Text(
-                            "Found ${duplicateGroups.size} groups of duplicates",
+                            stringResource(R.string.settings_manage_found_duplicates, duplicateGroups.size),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 8.dp)
@@ -216,7 +218,7 @@ fun DuplicateGroupCard(
         ) {
             Icon(Icons.Outlined.Merge, null)
             Spacer(Modifier.width(8.dp))
-            Text("Merge duplicates")
+            Text(stringResource(R.string.settings_manage_merge_duplicates))
         }
     }
 }

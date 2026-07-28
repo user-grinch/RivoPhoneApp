@@ -20,8 +20,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getSystemVoicemailNumber
 import com.grinch.rivo4.controller.util.makeCall
@@ -71,22 +73,24 @@ fun VoicemailScreen(
         }
     }
 
-    val currentRingtoneName = remember(ringtoneUri) {
-        if (ringtoneUri == null) "Default"
+    val defaultRingtoneLabel = stringResource(R.string.ringtone_default)
+    val customRingtoneLabel = stringResource(R.string.ringtone_custom)
+    val currentRingtoneName = remember(ringtoneUri, defaultRingtoneLabel, customRingtoneLabel) {
+        if (ringtoneUri == null) defaultRingtoneLabel
         else {
             try {
-                RingtoneManager.getRingtone(context, Uri.parse(ringtoneUri))?.getTitle(context) ?: "Custom"
-            } catch (e: Exception) { "Custom" }
+                RingtoneManager.getRingtone(context, Uri.parse(ringtoneUri))?.getTitle(context) ?: customRingtoneLabel
+            } catch (e: Exception) { customRingtoneLabel }
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Voicemail", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_voicemail_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -101,16 +105,16 @@ fun VoicemailScreen(
         ) {
             item {
                 RivoExpressiveCard(
-                    title = "Carrier Settings",
+                    title = stringResource(R.string.settings_voicemail_carrier_settings),
                     icon = Icons.Outlined.Settings
                 ) {
                     OutlinedTextField(
                         value = voicemailNumber,
-                        onValueChange = { 
+                        onValueChange = {
                             voicemailNumber = it
                             prefs.setString(PreferenceManager.KEY_VOICEMAIL_NUMBER, it)
                         },
-                        label = { Text("Voicemail Number") },
+                        label = { Text(stringResource(R.string.settings_voicemail_number)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
@@ -124,29 +128,29 @@ fun VoicemailScreen(
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.SimCard,
-                                    contentDescription = "Auto-detect from SIM"
+                                    contentDescription = stringResource(R.string.content_desc_auto_detect_sim)
                                 )
                             }
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Text(
-                        text = "Your carrier's voicemail access number.",
+                        text = stringResource(R.string.settings_voicemail_number_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     RivoListItem(
-                        headline = "Call Voicemail",
-                        supporting = "Dial your voicemail service directly",
+                        headline = stringResource(R.string.settings_voicemail_call_voicemail),
+                        supporting = stringResource(R.string.settings_voicemail_call_voicemail_supporting),
                         leadingIcon = Icons.Outlined.Voicemail,
                         onClick = {
                             val num = voicemailNumber.ifEmpty { "voicemail:" }
@@ -157,32 +161,33 @@ fun VoicemailScreen(
             }
 
             item {
+                val selectVoicemailNotificationLabel = stringResource(R.string.settings_voicemail_select_notification_ringtone)
                 RivoExpressiveCard(
-                    title = "Notifications",
+                    title = stringResource(R.string.settings_voicemail_notifications_header),
                     icon = Icons.Outlined.Notifications
                 ) {
                     RivoListItem(
-                        headline = "Voicemail Ringtone",
+                        headline = stringResource(R.string.settings_voicemail_ringtone),
                         supporting = currentRingtoneName,
                         leadingIcon = Icons.Outlined.Notifications,
                         onClick = {
                             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Voicemail Notification")
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectVoicemailNotificationLabel)
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtoneUri?.let { Uri.parse(it) })
                             }
                             ringtonePickerLauncher.launch(intent)
                         }
                     )
-                    
+
                     HorizontalDivider(
                         Modifier.padding(horizontal = 16.dp),
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
-                    
+
                     RivoSwitchListItem(
-                        headline = "Vibration",
-                        supporting = "Vibrate for new voicemail notifications",
+                        headline = stringResource(R.string.settings_voicemail_vibration),
+                        supporting = stringResource(R.string.settings_voicemail_vibration_supporting),
                         leadingIcon = Icons.Outlined.Vibration,
                         checked = vibrationEnabled,
                         onCheckedChange = {
@@ -195,11 +200,11 @@ fun VoicemailScreen(
 
             item {
                 RivoExpressiveCard(
-                    title = "Visual Voicemail",
+                    title = stringResource(R.string.settings_voicemail_visual_header),
                     icon = Icons.Outlined.Voicemail
                 ) {
                     Text(
-                        "Visual Voicemail is currently managed by your carrier. Ensure your carrier app is installed for the best experience.",
+                        stringResource(R.string.settings_voicemail_visual_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -36,14 +36,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 
 data class MorphingPage(
     val icon: ImageVector,
-    val title: String,
-    val description: String,
+    @androidx.annotation.StringRes val titleRes: Int,
+    @androidx.annotation.StringRes val descriptionRes: Int,
     val shapeCornerPercent: Int,
     val rotation: Float,
     val scale: Float
@@ -52,24 +54,24 @@ data class MorphingPage(
 private val pages = listOf(
     MorphingPage(
         icon = Icons.Default.Palette,
-        title = "Expressive Design",
-        description = "Experience a modern interface powered by Material 3 and smooth Jetpack Compose animations.",
+        titleRes = R.string.onboarding_page1_title,
+        descriptionRes = R.string.onboarding_page1_description,
         shapeCornerPercent = 50,
         rotation = 0f,
         scale = 1f
     ),
     MorphingPage(
         icon = Icons.Default.Dialpad,
-        title = "Lightning-Fast Dialing",
-        description = "Find contacts in an instant with our intelligent T9 search and organized call history.",
+        titleRes = R.string.onboarding_page2_title,
+        descriptionRes = R.string.onboarding_page2_description,
         shapeCornerPercent = 30,
         rotation = 45f,
         scale = 1.2f
     ),
     MorphingPage(
         icon = Icons.Default.Security,
-        title = "Built for You",
-        description = "A fully open-source, proximity-aware calling experience designed for efficiency.",
+        titleRes = R.string.onboarding_page3_title,
+        descriptionRes = R.string.onboarding_page3_description,
         shapeCornerPercent = 10,
         rotation = 0f,
         scale = 1f
@@ -133,7 +135,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
             ) {
-                Text("Skip")
+                Text(stringResource(R.string.onboarding_skip))
             }
 
             Column(
@@ -167,7 +169,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
                 // Title
                 Text(
-                    text = pages[currentPage].title,
+                    text = stringResource(pages[currentPage].titleRes),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -178,7 +180,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
                 // Description
                 Text(
-                    text = pages[currentPage].description,
+                    text = stringResource(pages[currentPage].descriptionRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -227,7 +229,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                 ) {
                     if (currentPage > 0) {
                         TextButton(onClick = { currentPage-- }) {
-                            Text("Back")
+                            Text(stringResource(R.string.action_back))
                         }
                     } else {
                         Spacer(modifier = Modifier.weight(1f))
@@ -244,7 +246,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                         shape = RoundedCornerShape(cornerPercent.toInt().coerceIn(10, 50))
                     ) {
                         Text(
-                            text = if (currentPage == pages.size - 1) "Get Started" else "Next",
+                            text = if (currentPage == pages.size - 1) stringResource(R.string.onboarding_get_started) else stringResource(R.string.onboarding_next),
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }

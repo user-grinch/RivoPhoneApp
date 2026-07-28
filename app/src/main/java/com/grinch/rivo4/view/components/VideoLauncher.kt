@@ -12,7 +12,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
 import org.koin.compose.koinInject
@@ -29,6 +31,8 @@ class VideoLauncher(
 fun rememberVideoLauncher(): VideoLauncher {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
+    val videoCallTitle = stringResource(R.string.video_call_title)
+    val videoCallChooserWith = stringResource(R.string.video_call_chooser_with)
 
     var showAppPicker by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf("") }
@@ -44,7 +48,7 @@ fun rememberVideoLauncher(): VideoLauncher {
         try {
             context.startActivity(intent)
         } catch (e: Exception) {
-            val chooser = Intent.createChooser(Intent(Intent.ACTION_VIEW, uri), "Video Call with")
+            val chooser = Intent.createChooser(Intent(Intent.ACTION_VIEW, uri), videoCallChooserWith)
             context.startActivity(chooser)
         }
     }
@@ -58,16 +62,16 @@ fun rememberVideoLauncher(): VideoLauncher {
 
     if (showAppPicker) {
         val apps = listOf(
-            "WhatsApp" to "com.whatsapp",
-            "Google Meet" to "com.google.android.apps.meetings",
-            "Zoom" to "us.zoom.videomeetings",
-            "Telegram" to "org.telegram.messenger"
+            stringResource(R.string.brand_whatsapp) to "com.whatsapp",
+            stringResource(R.string.brand_google_meet) to "com.google.android.apps.meetings",
+            stringResource(R.string.brand_zoom) to "us.zoom.videomeetings",
+            stringResource(R.string.brand_telegram) to "org.telegram.messenger"
         )
 
         RivoSelectionDialog(
             onDismissRequest = { showAppPicker = false },
-            title = "Video Call",
-            items = apps + ("System Video Call" to "system"),
+            title = videoCallTitle,
+            items = apps + (stringResource(R.string.video_call_system) to "system"),
             itemLabel = { it.first },
             onItemSelected = { (name, pkg) ->
                 if (pkg == "system") {
@@ -75,7 +79,7 @@ fun rememberVideoLauncher(): VideoLauncher {
                     val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                         setDataAndType(uri, "vnd.android.cursor.item/video-chat-address")
                     }
-                    context.startActivity(Intent.createChooser(intent, "Video Call"))
+                    context.startActivity(Intent.createChooser(intent, videoCallTitle))
                 } else {
                     launchApp(pkg, pendingNumber)
                 }

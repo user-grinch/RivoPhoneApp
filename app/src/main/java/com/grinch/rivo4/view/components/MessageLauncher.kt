@@ -12,8 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
 import org.koin.compose.koinInject
@@ -30,6 +32,7 @@ class MessageLauncher(
 fun rememberMessageLauncher(): MessageLauncher {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
+    val mobileLabel = stringResource(R.string.label_mobile)
 
     var showNumberPicker by remember { mutableStateOf(false) }
     var pendingContact by remember { mutableStateOf<Contact?>(null) }
@@ -69,13 +72,13 @@ fun rememberMessageLauncher(): MessageLauncher {
         
         RivoSelectionDialog(
             onDismissRequest = { showNumberPicker = false },
-            title = "Select Number",
+            title = stringResource(R.string.select_number_title),
             items = contact.phoneNumbers,
             itemLabel = { formatPhoneNumber(it) },
             onItemSelected = { selectedNumber ->
                 initiateMessage(selectedNumber, contact)
             },
-            itemSupporting = { "Mobile" },
+            itemSupporting = { mobileLabel },
             icon = Icons.AutoMirrored.Filled.Message,
             itemIcon = { Icons.AutoMirrored.Filled.Message },
             isSelected = { areNumbersEqual(lastUsed, it) }

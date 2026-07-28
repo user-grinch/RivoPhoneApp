@@ -35,12 +35,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
 import java.util.Locale
@@ -466,7 +468,7 @@ fun RivoSelectListItem(
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Select option",
+                contentDescription = stringResource(R.string.content_desc_select_option),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 modifier = Modifier.size(20.dp)
             )
@@ -492,6 +494,7 @@ fun RivoFilterChip(
     selected: Boolean,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isAllFilter: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     FilterChip(
@@ -512,7 +515,7 @@ fun RivoFilterChip(
             selectedContainerColor = MaterialTheme.colorScheme.primary,
             selectedLabelColor = MaterialTheme.colorScheme.onPrimary
         ),
-        leadingIcon = leadingIcon ?: if (label == "All") {
+        leadingIcon = leadingIcon ?: if (isAllFilter) {
             { Icon(Icons.Default.FilterList, null, Modifier.size(18.dp), tint = if (selected)  MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface) }
         } else null,
         border = null,

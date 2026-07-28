@@ -1,3 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RivoPhone</string>
+
+    <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
+    <string name="action_close">Close</string>
+    <string name="action_back">Back</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_done">Done</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_clear_selection">Clear selection</string>
+    <string name="action_call">Call</string>
+    <string name="action_message">Message</string>
+    <string name="action_add_contact">Add Contact</string>
+    <string name="action_grant_permission">Grant Permission</string>
+    <string name="action_grant_permission_lower">Grant permission</string>
+    <string name="action_answer">Answer</string>
+    <string name="action_decline">Decline</string>
+    <string name="action_end">End</string>
+    <string name="action_mute">Mute</string>
+    <string name="action_keypad">Keypad</string>
+    <string name="action_add_call">Add call</string>
+    <string name="action_hold">Hold</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_end_call">End Call</string>
+    <string name="content_desc_selected_item">Selected</string>
+    <string name="select_number_title">Select Number</string>
+    <string name="select_email_title">Select Email</string>
+    <string name="content_desc_remove_favorite">Remove Favorite</string>
+    <string name="content_desc_select_option">Select option</string>
+    <string name="content_desc_scroll_to_top">Scroll to top</string>
+    <string name="sim_picker_title">Select SIM Card</string>
+    <string name="sim_picker_unknown_sim">Unknown SIM</string>
+    <string name="selection_count_selected">%1$d Selected</string>
+    <string name="label_unknown">Unknown</string>
+    <string name="label_unknown_number">Unknown Number</string>
+    <string name="label_mobile">Mobile</string>
+    <string name="label_email">Email</string>
+    <string name="label_address">Address</string>
+    <string name="label_notes">Notes</string>
+    <string name="label_social_apps">Social Apps</string>
+    <string name="label_local_memory">Local Memory</string>
+    <string name="option_standard">Standard</string>
+    <string name="ringtone_default">Default</string>
+    <string name="ringtone_custom">Custom</string>
+    <string name="empty_state_try_clearing_filters">Try clearing your filters or add a new contact.</string>
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="nav_recents">Recents</string>
+    <string name="call_type_incoming">Incoming</string>
+    <string name="call_type_outgoing">Outgoing</string>
+    <string name="call_type_missed">Missed</string>
+    <string name="filter_all">All</string>
+    <string name="sim_ask_every_time">Ask every time</string>
+    <string name="sim_slot_1">SIM 1</string>
+    <string name="sim_slot_2">SIM 2</string>
+    <string name="brand_whatsapp">WhatsApp</string>
+    <string name="brand_telegram">Telegram</string>
+    <string name="brand_signal">Signal</string>
+    <string name="brand_google_meet">Google Meet</string>
+    <string name="brand_zoom">Zoom</string>
+    <string name="account_mi_account">Mi Account</string>
+    <string name="account_sim_card">SIM Card</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_page1_title">Expressive Design</string>
+    <string name="onboarding_page1_description">Experience a modern interface powered by Material 3 and smooth Jetpack Compose animations.</string>
+    <string name="onboarding_page2_title">Lightning-Fast Dialing</string>
+    <string name="onboarding_page2_description">Find contacts in an instant with our intelligent T9 search and organized call history.</string>
+    <string name="onboarding_page3_title">Built for You</string>
+    <string name="onboarding_page3_description">A fully open-source, proximity-aware calling experience designed for efficiency.</string>
+
+    <!-- Patreon support prompt (MainActivity) -->
+    <string name="patreon_prompt_title">Support Rivo</string>
+    <string name="patreon_prompt_confirm">Support on Patreon</string>
+    <string name="patreon_prompt_dismiss">Maybe later</string>
+    <string name="patreon_prompt_body">Rivo is free and open source. If you like the app, please consider supporting its development on Patreon!</string>
+
+    <!-- Default dialer prompt -->
+    <string name="default_dialer_headline">Make Rivo your official dialer</string>
+    <string name="default_dialer_description">To make and receive calls, manage your call history, and experience spam protection, Rivo needs to be set as your default phone app.</string>
+    <string name="default_dialer_denied_message">Rivo cannot function without this permission. Please try again.</string>
+    <string name="default_dialer_set_as_default">Set as default</string>
+
+    <!-- Top bar / bottom navigation -->
+    <string name="top_bar_search_placeholder">Search in Rivo</string>
+    <string name="content_desc_search">Search</string>
+
+    <!-- Recents / Call log -->
+    <string name="call_history_title">Call History</string>
+    <string name="call_history_with_contact">History with %1$s</string>
+    <string name="call_log_no_history_found">No call history found</string>
+    <string name="call_log_no_filter_match">No calls match this filter</string>
+    <string name="call_log_delete_confirm">Are you sure you want to delete %1$d selected call logs?</string>
+    <string name="call_log_delete_title">Delete Call Logs</string>
+    <string name="call_log_clear_all_title">Clear All Logs</string>
+    <string name="call_log_clear_all_confirm">Clear All</string>
+    <string name="call_log_clear_all_message">This will delete your entire call history. This action cannot be undone.</string>
+    <string name="content_desc_clear_all_logs">Clear all logs</string>
+    <string name="content_desc_delete_selected">Delete selected</string>
+    <string name="recents_permission_title">Call History</string>
+    <string name="recents_permission_description">Rivo needs access to your call logs to show your recent activity and missed calls.</string>
+    <string name="recents_favorites">Favorites</string>
+    <string name="recents_empty_call_log">Your call log is empty</string>
+    <string name="content_desc_dialpad">Dialpad</string>
+
+    <!-- Contacts list -->
+    <string name="contact_filter_private">Private</string>
+    <string name="contact_move_to_storage">Move to Storage</string>
+    <string name="contact_move_private_storage_title">Private Storage</string>
+    <string name="contact_move_private_storage_supporting">App-only storage</string>
+    <string name="contact_move_local_memory_supporting">Device only</string>
+    <string name="content_desc_move">Move</string>
+    <string name="contacts_empty_title">No contacts found</string>
+    <string name="contacts_permission_rationale">To show your contact list and identify incoming calls, Rivo needs permission to access your contacts.</string>
+
+    <!-- Contact details -->
+    <string name="contact_details_qr_title">Contact QR</string>
+    <string name="contact_details_qr_content_desc">QR Code</string>
+    <string name="contact_details_call">Call</string>
+    <string name="contact_details_video">Video</string>
+    <string name="contact_details_info_title">Contact Info</string>
+    <string name="contact_bullet_favorite">" • Favorite"</string>
+    <string name="contact_bullet_recent">" • Recent"</string>
+    <string name="content_desc_favorite">Favorite</string>
+    <string name="contact_clear_favorite">Clear Favorite</string>
+    <string name="contact_set_as_favorite">Set as Favorite</string>
+    <string name="contact_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="contact_clear_default">Clear Default</string>
+    <string name="contact_set_as_default">Set as Default</string>
+    <string name="contact_add_to_contacts">Add to Contacts</string>
+    <string name="contact_events_title">Events &amp; More</string>
+    <string name="contact_event_birthday">Birthday</string>
+    <string name="contact_event_generic">Event</string>
+    <string name="contact_recent_activity_title">Recent Activity</string>
+    <string name="contact_show_full_history">Show full history</string>
+    <string name="contact_settings_title">Contact Settings</string>
+    <string name="contact_custom_ringtone">Custom Ringtone</string>
+    <string name="contact_select_ringtone">Select Ringtone</string>
+    <string name="contact_share">Share Contact</string>
+    <string name="contact_share_description">Send contact details to others</string>
+    <string name="contact_share_text">Name: %1$s\nPhone: %2$s</string>
+    <string name="contact_qr_code">QR Code</string>
+    <string name="contact_qr_code_description">Show contact QR code</string>
+    <string name="contact_move_to_public_storage">Move to Public Storage</string>
+    <string name="contact_move_to_private_storage">Move to Private Storage</string>
+    <string name="contact_visible_to_other_apps">Make visible to other apps</string>
+    <string name="contact_hidden_from_other_apps">Hide from other apps</string>
+    <string name="contact_remove_from_device">Remove this contact from device</string>
+    <string name="contact_delete_dialog_title">Delete Contact?</string>
+    <string name="contact_delete_dialog_message">Are you sure you want to delete this contact? This action cannot be undone.</string>
+
+    <!-- Contact edit -->
+    <string name="contact_create_title">Create Contact</string>
+    <string name="contact_edit_title">Edit Contact</string>
+    <string name="contact_edit_account_header">Account</string>
+    <string name="contact_edit_save_to_account">Save to Account</string>
+    <string name="contact_edit_private_storage">Private Storage (App Only)</string>
+    <string name="contact_edit_select_account_title">Select Account</string>
+    <string name="contact_edit_private_storage_description">Not visible to other apps</string>
+    <string name="contact_edit_identity_header">Identity</string>
+    <string name="contact_edit_full_name">Full Name</string>
+    <string name="contact_edit_nickname">Nickname</string>
+    <string name="contact_edit_phone_numbers_header">Phone Numbers</string>
+    <string name="contact_edit_phone_field_label">Phone</string>
+    <string name="contact_edit_add_phone">Add Phone</string>
+    <string name="contact_edit_emails_header">Emails</string>
+    <string name="contact_edit_add_email">Add Email</string>
+    <string name="contact_edit_address_header">Address</string>
+    <string name="contact_edit_add_address">Add Address</string>
+    <string name="contact_edit_notes_header">Notes</string>
+
+    <!-- Dialpad -->
+    <string name="dialpad_title">Dialpad</string>
+    <string name="dialpad_start_dialing">Start Dialing</string>
+    <string name="dialpad_start_hint">Enter a name or number to start</string>
+    <string name="content_desc_call_named">Call %1$s</string>
+    <string name="content_desc_backspace">Backspace</string>
+    <string name="dialpad_connect_via_social">Connect via Social</string>
+
+    <!-- Search -->
+    <string name="search_contacts_placeholder">Search contacts</string>
+    <string name="search_contacts_title">Search Contacts</string>
+    <string name="search_type_to_start">Type a name or number to start searching</string>
+    <string name="search_no_results_title">No results found</string>
+    <string name="search_no_results_hint">Try a different name or number</string>
+    <string name="search_results_header">Search Results</string>
+    <string name="search_contacts_permission_title">Contacts permission required</string>
+    <string name="search_contacts_permission_description">To search your contacts and identify incoming calls, Rivo needs access to your contacts.</string>
+
+    <!-- Call screen -->
+    <string name="call_screen_sim_label">SIM %1$s</string>
+    <string name="call_status_ended">Call Ended</string>
+    <string name="call_status_on_hold">On Hold</string>
+    <string name="call_status_calling">Calling...</string>
+    <string name="call_status_incoming">Incoming call</string>
+    <string name="call_status_connecting">Connecting...</string>
+    <string name="audio_route_handset">Handset</string>
+    <string name="audio_route_speaker">Speaker</string>
+    <string name="audio_route_headset">Headset</string>
+    <string name="audio_route_bluetooth">Bluetooth</string>
+    <string name="audio_route_bluetooth_short">BT</string>
+    <string name="audio_output_title">Audio Output</string>
+    <string name="swipe_up_to_answer">Swipe up to answer</string>
+    <string name="swipe_down_to_reject">Swipe down to reject</string>
+    <string name="slide_to_answer">slide to answer</string>
+
+    <!-- Call notifications (CallService) -->
+    <string name="notif_channel_calls">Calls</string>
+    <string name="notif_channel_missed_calls">Missed Calls</string>
+    <string name="notif_blocked_call_title">Blocked Call</string>
+    <string name="notif_blocked_call_text">Blocked call from %1$s</string>
+    <string name="notif_missed_call_title">Missed Call</string>
+    <string name="notif_missed_call_text">Missed call from %1$s at %2$s</string>
+    <string name="notif_via_sim">via %1$s</string>
+    <string name="notif_active_call">Active call</string>
+
+    <!-- Backup & restore (status messages) -->
+    <string name="backup_contacts_export_success">Contacts exported successfully</string>
+    <string name="backup_contacts_import_success">Contacts imported successfully</string>
+    <string name="backup_call_logs_export_success">Call logs exported successfully</string>
+    <string name="backup_call_logs_import_success">Call logs imported successfully</string>
+    <string name="backup_export_failed">Export failed: %1$s</string>
+    <string name="backup_import_failed">Import failed: %1$s</string>
+
+    <!-- Settings > root -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_support_rivo_title">Support Rivo</string>
+    <string name="settings_support_rivo_description">Help us keep Rivo free and open source</string>
+    <string name="settings_donate">Donate</string>
+    <string name="settings_interface_headline">Interface</string>
+    <string name="settings_interface_supporting">Theme, colors, and accessibility</string>
+    <string name="settings_sound_vibration_headline">Sound &amp; Vibration</string>
+    <string name="settings_sound_vibration_supporting">Ringtones and dialpad tones</string>
+    <string name="settings_call_settings_headline">Call Settings</string>
+    <string name="settings_call_settings_supporting">Manage SIMs, dialing, and redial</string>
+    <string name="settings_blocked_numbers_headline">Blocked Numbers</string>
+    <string name="settings_blocked_numbers_supporting">Manage blocked calls and spam</string>
+    <string name="settings_backup_restore_headline">Backup &amp; Restore</string>
+    <string name="settings_backup_restore_supporting">Import and export contacts and logs</string>
+    <string name="settings_manage_contacts_headline">Manage Contacts</string>
+    <string name="settings_manage_contacts_supporting">Merge duplicates and clean up your list</string>
+    <string name="settings_about_headline">About Rivo</string>
+    <string name="settings_about_supporting">Version, licenses, and privacy policy</string>
+
+    <!-- Settings > Interface -->
+    <string name="settings_interface_title">User Interface</string>
+    <string name="settings_interface_restart_required">Restart required to apply theme changes fully.</string>
+    <string name="settings_interface_restart_action">Restart</string>
+    <string name="settings_interface_material_you">Material You theming</string>
+    <string name="settings_interface_material_you_supporting">Wallpaper based app color theming.</string>
+    <string name="settings_interface_primary_color">Primary Color</string>
+    <string name="settings_interface_amoled">Amoled dark mode</string>
+    <string name="settings_interface_amoled_supporting">Uses pitch black for UI elements.</string>
+    <string name="settings_interface_show_first_letter">Show first letter in avatar</string>
+    <string name="settings_interface_show_first_letter_supporting">Displays letter when picture is missing</string>
+    <string name="settings_interface_colorful_avatars">Use colorful avatars</string>
+    <string name="settings_interface_colorful_avatars_supporting">Random colors based on contact name</string>
+    <string name="settings_interface_show_picture">Show picture in avatar</string>
+    <string name="settings_interface_show_picture_supporting">Shows the contact picture if available</string>
+    <string name="settings_interface_avatar_shape">Avatar shape</string>
+    <string name="settings_interface_avatar_shape_supporting">Choose the shape for contact avatars</string>
+    <string name="settings_interface_avatar_shape_squircle">Squircle</string>
+    <string name="settings_interface_avatar_shape_circle">Circle</string>
+    <string name="settings_interface_avatar_shape_square">Square</string>
+    <string name="settings_interface_call_screen_avatar">Call screen avatar</string>
+    <string name="settings_interface_call_screen_avatar_supporting">Show contact picture on call screen</string>
+    <string name="settings_interface_show_dividers">Show dividers</string>
+    <string name="settings_interface_show_dividers_supporting">Display lines between list items</string>
+    <string name="settings_interface_expressive_cards">Use expressive cards</string>
+    <string name="settings_interface_expressive_cards_supporting">Wraps list items in styled cards</string>
+    <string name="settings_interface_transition_animation">Transition animation</string>
+    <string name="settings_interface_transition_animation_supporting">Style of animations between screens</string>
+    <string name="settings_interface_transition_slide">Slide</string>
+    <string name="settings_interface_transition_fade">Fade</string>
+    <string name="settings_interface_transition_none">None</string>
+    <string name="settings_interface_search_matching_mode">Search Matching Mode</string>
+    <string name="settings_interface_search_matching_mode_supporting">Behavior of contacts filtering algorithm</string>
+    <string name="settings_interface_search_mode_t9_contains">T9 &amp; Contains</string>
+    <string name="settings_interface_search_mode_starts_with">Starts With</string>
+    <string name="settings_interface_search_mode_exact_match">Exact Match</string>
+    <string name="settings_interface_card_roundness">Card roundness</string>
+    <string name="settings_interface_card_roundness_supporting">Adjust the corner radius of UI cards</string>
+    <string name="settings_interface_roundness_extra_round">Extra Round</string>
+    <string name="settings_interface_roundness_rounded">Rounded</string>
+    <string name="settings_interface_roundness_semi_square">Semi Square</string>
+    <string name="settings_interface_roundness_square">Square</string>
+    <string name="settings_interface_default_bottom_bar">Default bottom bar</string>
+    <string name="settings_interface_default_bottom_bar_supporting">Select which tab opens initially</string>
+    <string name="settings_interface_flip_bottom_bar">Flip bottom bar</string>
+    <string name="settings_interface_flip_bottom_bar_supporting">Flips the position of the contacts &amp; recents tabs</string>
+    <string name="settings_interface_icon_only_bar">Icon-only bottom bar</string>
+    <string name="settings_interface_icon_only_bar_supporting">Removes text labels from navigation</string>
+
+    <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_title">Sound &amp; Vibration</string>
+    <string name="settings_sound_dtmf_tone">DTMF tone</string>
+    <string name="settings_sound_dtmf_tone_supporting">Dialpad tone that plays during keypress</string>
+    <string name="settings_sound_dialpad_vibration">Dialpad vibration</string>
+    <string name="settings_sound_dialpad_vibration_supporting">Dialpad vibration that plays during keypress</string>
+    <string name="settings_sound_vibrate_on_answer">Vibrate on Answer</string>
+    <string name="settings_sound_vibrate_on_answer_supporting">Vibrate when the other party answers</string>
+    <string name="settings_sound_vibrate_on_hangup">Vibrate on Hang up</string>
+    <string name="settings_sound_vibrate_on_hangup_supporting">Vibrate when the call ends</string>
+    <string name="settings_sound_haptic_scroll">Haptic Scrolling feedback</string>
+    <string name="settings_sound_haptic_scroll_supporting">Vibrate subtly when scrolling lists</string>
+    <string name="settings_sound_ringtone_settings">Ringtone Settings</string>
+    <string name="settings_sound_ringtone_settings_supporting">Open system sound settings</string>
+
+    <!-- Settings > Call accounts -->
+    <string name="settings_call_title">Call Settings</string>
+    <string name="settings_call_speed_dial">Speed dial</string>
+    <string name="settings_call_enabled">Enabled</string>
+    <string name="settings_call_disabled">Disabled</string>
+    <string name="settings_call_default_sim">Default SIM</string>
+    <string name="settings_call_calling_accounts">Calling accounts</string>
+    <string name="settings_call_calling_accounts_supporting">Configure carrier settings (Call Waiting, Forwarding, etc.)</string>
+    <string name="settings_call_t9_dialing">T9 Dialing</string>
+    <string name="settings_call_t9_dialing_supporting">Predicts words from numeric keypad inputs</string>
+    <string name="settings_call_proximity_sensor">Proximity Sensor</string>
+    <string name="settings_call_proximity_sensor_supporting">Turn off screen during calls when near ear</string>
+    <string name="settings_call_incoming_ui">Incoming Call UI</string>
+    <string name="settings_call_incoming_ui_supporting">Choose how to answer incoming calls</string>
+    <string name="settings_call_incoming_ui_horizontal_swipe">Horizontal Swipe</string>
+    <string name="settings_call_incoming_ui_buttons">Buttons</string>
+    <string name="settings_call_incoming_ui_slide_ios">Slide to Answer (iOS)</string>
+    <string name="settings_call_incoming_ui_vertical_swipe">Vertical Swipe</string>
+    <string name="settings_call_dialpad_style">Dialpad Style</string>
+    <string name="settings_call_dialpad_style_supporting">Visual appearance of the phone dialer</string>
+    <string name="settings_call_dialpad_style_modern">Modern</string>
+    <string name="settings_call_dialpad_style_classic">Classic</string>
+    <string name="settings_call_dialpad_style_minimal">Minimal</string>
+    <string name="settings_call_dialpad_layout">Dialpad Layout</string>
+    <string name="settings_call_dialpad_layout_supporting">Alignment for one-handed use</string>
+    <string name="settings_call_dialpad_layout_left">Left</string>
+    <string name="settings_call_dialpad_layout_right">Right</string>
+    <string name="settings_call_auto_redial">Auto Redial</string>
+    <string name="settings_call_auto_redial_supporting">Automatically redial if the line is busy</string>
+    <string name="settings_call_redial_attempts">Redial Attempts</string>
+    <string name="settings_call_redial_attempts_supporting">Maximum number of redial attempts</string>
+    <string name="settings_call_redial_attempts_1">1 attempt</string>
+    <string name="settings_call_redial_attempts_2">2 attempts</string>
+    <string name="settings_call_redial_attempts_3">3 attempts</string>
+    <string name="settings_call_redial_attempts_5">5 attempts</string>
+    <string name="settings_call_redial_attempts_10">10 attempts</string>
+    <string name="settings_call_redial_delay">Redial Delay</string>
+    <string name="settings_call_redial_delay_supporting">Delay between redial attempts</string>
+    <string name="settings_call_redial_delay_1s">1 second</string>
+    <string name="settings_call_redial_delay_2s">2 seconds</string>
+    <string name="settings_call_redial_delay_3s">3 seconds</string>
+    <string name="settings_call_redial_delay_5s">5 seconds</string>
+    <string name="settings_call_redial_delay_10s">10 seconds</string>
+    <string name="settings_call_voicemail">Voicemail</string>
+    <string name="settings_call_voicemail_supporting">Configure your mailbox</string>
+
+    <!-- Settings > Blocked numbers -->
+    <string name="settings_blocked_title">Blocked Numbers</string>
+    <string name="settings_blocked_method">Block method</string>
+    <string name="settings_blocked_method_supporting">How blocked calls are handled</string>
+    <string name="settings_blocked_method_decline">Decline automatically</string>
+    <string name="settings_blocked_method_silent">Ring silently</string>
+    <string name="settings_blocked_log_visibility">Log visibility</string>
+    <string name="settings_blocked_log_visibility_supporting">Show or hide blocked calls in recents</string>
+    <string name="settings_blocked_log_hide">Hide from logs</string>
+    <string name="settings_blocked_log_show">Show in logs</string>
+    <string name="settings_blocked_notifications">Block notifications</string>
+    <string name="settings_blocked_notifications_supporting">Show a low-priority alert for blocked calls</string>
+    <string name="settings_blocked_system_button">System Blocked Numbers</string>
+
+    <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_title">Backup &amp; Restore</string>
+    <string name="settings_backup_contacts_header">Contacts</string>
+    <string name="settings_backup_export_contacts">Export Contacts</string>
+    <string name="settings_backup_export_contacts_supporting">Save contacts to a VCF file</string>
+    <string name="settings_backup_import_contacts">Import Contacts</string>
+    <string name="settings_backup_import_contacts_supporting">Restore contacts from a VCF file</string>
+    <string name="settings_backup_call_logs_header">Call Logs</string>
+    <string name="settings_backup_export_logs">Export Call Logs</string>
+    <string name="settings_backup_export_logs_supporting">Save history to a JSON file</string>
+    <string name="settings_backup_import_logs">Import Call Logs</string>
+    <string name="settings_backup_import_logs_supporting">Restore history from a JSON file</string>
+
+    <!-- Settings > Manage contacts -->
+    <string name="settings_manage_title">Manage Contacts</string>
+    <string name="settings_manage_standardizing_title">Standardizing numbers</string>
+    <string name="settings_manage_percent_completed">%1$d%% completed</string>
+    <string name="settings_manage_display_sorting">Display &amp; Sorting</string>
+    <string name="settings_manage_sort_by">Sort by</string>
+    <string name="settings_manage_sort_by_supporting">Choose how contacts are ordered</string>
+    <string name="settings_manage_sort_first_name">First Name</string>
+    <string name="settings_manage_sort_last_name">Last Name</string>
+    <string name="settings_manage_name_format">Name format</string>
+    <string name="settings_manage_name_format_supporting">Choose how names are displayed</string>
+    <string name="settings_manage_name_format_first_first">First Name First</string>
+    <string name="settings_manage_name_format_last_first">Last Name First</string>
+    <string name="settings_manage_storage">Storage</string>
+    <string name="settings_manage_private_contacts">Private Contacts</string>
+    <string name="settings_manage_private_contacts_supporting">Manage contacts stored only in this app</string>
+    <string name="settings_manage_visibility">Visibility</string>
+    <string name="settings_manage_visibility_supporting">Choose which accounts to show in your list</string>
+    <string name="settings_manage_quick_fixes">Quick Fixes</string>
+    <string name="settings_manage_standardize_numbers">Standardize phone numbers</string>
+    <string name="settings_manage_standardize_numbers_supporting">Remove spaces and special characters from all numbers</string>
+    <string name="settings_manage_no_duplicates">No duplicates found.</string>
+    <string name="settings_manage_found_duplicates">Found %1$d groups of duplicates</string>
+    <string name="settings_manage_merge_duplicates">Merge duplicates</string>
+
+    <!-- Settings > Contact visibility -->
+    <string name="settings_visibility_title">Contact Visibility</string>
+    <string name="settings_visibility_description">Select which accounts should be visible in your contact list. Deselecting an account will hide its contacts but won\'t delete them.</string>
+    <string name="settings_visibility_accounts_header">Accounts</string>
+    <string name="settings_visibility_local_memory_supporting">Contacts stored on device</string>
+    <string name="settings_visibility_reset_all">Reset to Show All</string>
+
+    <!-- Settings > Private contacts -->
+    <string name="settings_private_title">Private Contacts</string>
+    <string name="content_desc_import">Import</string>
+    <string name="content_desc_export">Export</string>
+    <string name="settings_private_empty">No private contacts found</string>
+    <string name="settings_private_manage_hint">Manage your encrypted local contacts</string>
+
+    <!-- Settings > Speed dial -->
+    <string name="settings_speed_dial_title">Speed Dial</string>
+    <string name="settings_speed_dial_enable">Enable Speed Dial</string>
+    <string name="settings_speed_dial_enable_supporting">Long press a key to call assigned contact</string>
+    <string name="settings_speed_dial_assignments_header">Assignments</string>
+    <string name="settings_speed_dial_not_assigned">Not assigned</string>
+    <string name="content_desc_assign">Assign</string>
+    <string name="settings_speed_dial_search_contact">Search contact</string>
+    <string name="settings_speed_dial_no_number">No number</string>
+
+    <!-- Settings > Voicemail -->
+    <string name="settings_voicemail_title">Voicemail</string>
+    <string name="settings_voicemail_carrier_settings">Carrier Settings</string>
+    <string name="settings_voicemail_number">Voicemail Number</string>
+    <string name="content_desc_auto_detect_sim">Auto-detect from SIM</string>
+    <string name="settings_voicemail_number_hint">Your carrier\'s voicemail access number.</string>
+    <string name="settings_voicemail_call_voicemail">Call Voicemail</string>
+    <string name="settings_voicemail_call_voicemail_supporting">Dial your voicemail service directly</string>
+    <string name="settings_voicemail_notifications_header">Notifications</string>
+    <string name="settings_voicemail_ringtone">Voicemail Ringtone</string>
+    <string name="settings_voicemail_select_notification_ringtone">Select Voicemail Notification</string>
+    <string name="settings_voicemail_vibration">Vibration</string>
+    <string name="settings_voicemail_vibration_supporting">Vibrate for new voicemail notifications</string>
+    <string name="settings_voicemail_visual_header">Visual Voicemail</string>
+    <string name="settings_voicemail_visual_description">Visual Voicemail is currently managed by your carrier. Ensure your carrier app is installed for the best experience.</string>
+
+    <!-- Settings > About -->
+    <string name="about_title">About</string>
+    <string name="about_logo_content_desc">Rivo Logo</string>
+    <string name="about_app_display_name">Rivo</string>
+    <string name="about_app_card_title">About the App</string>
+    <string name="about_app_card_body">Rivo is a modern dialer app that brings simplicity and elegance to calling. Designed with Material You, it adapts seamlessly to your theme.</string>
+    <string name="about_version">Version</string>
+    <string name="about_build_number">Build number</string>
+    <string name="contributors_title">Contributors</string>
+    <string name="about_contributors_supporting">Meet the team behind the project</string>
+    <string name="about_patreon">Support Us on Patreon</string>
+    <string name="about_patreon_supporting">Help keep the project alive</string>
+    <string name="about_discord">Discord Server</string>
+    <string name="about_discord_supporting">Join the community</string>
+    <string name="about_source_code">Source Code</string>
+    <string name="about_source_code_supporting">View the source code on GitHub</string>
+    <string name="about_check_updates">Check for Updates</string>
+    <string name="about_current_version">Current version: %1$s</string>
+    <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
+
+    <!-- Settings > Contributors -->
+    <string name="contributor_role_lead_developer">Lead Developer</string>
+    <string name="contributor_role_developer">Developer</string>
+
+    <!-- Video calling app picker -->
+    <string name="video_call_title">Video Call</string>
+    <string name="video_call_chooser_with">Video Call with</string>
+    <string name="video_call_system">System Video Call</string>
 </resources>

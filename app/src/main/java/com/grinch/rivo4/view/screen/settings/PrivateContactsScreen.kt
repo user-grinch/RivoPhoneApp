@@ -15,8 +15,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
@@ -60,18 +62,18 @@ fun PrivateContactsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Private Contacts", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_private_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { importLauncher.launch("text/vcard") }) {
-                        Icon(Icons.Default.FileDownload, "Import")
+                        Icon(Icons.Default.FileDownload, stringResource(R.string.content_desc_import))
                     }
                     IconButton(onClick = { exportLauncher.launch("private_contacts.vcf") }) {
-                        Icon(Icons.Default.FileUpload, "Export")
+                        Icon(Icons.Default.FileUpload, stringResource(R.string.content_desc_export))
                     }
                 }
             )
@@ -84,7 +86,7 @@ fun PrivateContactsScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.Lock, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
                     Spacer(Modifier.height(16.dp))
-                    Text("No private contacts found", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.settings_private_empty), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         } else {
@@ -95,7 +97,7 @@ fun PrivateContactsScreen(
             ) {
                 item {
                     Text(
-                        "Manage your encrypted local contacts",
+                        stringResource(R.string.settings_private_manage_hint),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
@@ -141,7 +143,7 @@ fun PrivateContactCard(
                 }
                 DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     DropdownMenuItem(
-                        text = { Text("Move to Public Storage") },
+                        text = { Text(stringResource(R.string.contact_move_to_public_storage)) },
                         onClick = {
                             showMenu = false
                             onMoveToPublic()
@@ -149,7 +151,7 @@ fun PrivateContactCard(
                         leadingIcon = { Icon(Icons.Default.LockOpen, null) }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text(stringResource(R.string.action_delete)) },
                         onClick = {
                             showMenu = false
                             onDelete()

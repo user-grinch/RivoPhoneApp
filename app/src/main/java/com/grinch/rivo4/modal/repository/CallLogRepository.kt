@@ -10,6 +10,7 @@ import android.telecom.TelecomManager
 import android.content.Context
 import android.content.ComponentName
 import android.content.ContentValues
+import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
@@ -125,10 +126,11 @@ class CallLogRepository(
 
         val tempLogs = mutableListOf<CallLogEntry>()
         val simCache = mutableMapOf<String, String>()
+        val unknownLabel = context.getString(R.string.label_unknown)
 
         while (cursor.moveToNext()) {
             val callId = cursor.getLong(idIdx)
-            val number = cursor.getString(numberIdx) ?: "Unknown"
+            val number = cursor.getString(numberIdx) ?: unknownLabel
             val type = cursor.getInt(typeIdx)
             val date = cursor.getLong(dateIdx)
             val duration = cursor.getLong(durationIdx)

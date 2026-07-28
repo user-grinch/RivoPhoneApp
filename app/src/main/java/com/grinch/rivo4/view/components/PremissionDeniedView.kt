@@ -19,15 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 
 @Composable
 fun PermissionDeniedView(
     icon: ImageVector,
     title: String,
     description: String,
-    buttonText: String = "Grant Permission",
+    buttonText: String = stringResource(R.string.action_grant_permission),
     onGrantClick: () -> Unit
 ) {
     Column(

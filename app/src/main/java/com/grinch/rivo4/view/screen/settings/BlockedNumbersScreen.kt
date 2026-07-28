@@ -12,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSelectListItem
@@ -40,10 +42,10 @@ fun BlockedNumbersScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Blocked Numbers", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_blocked_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -59,12 +61,12 @@ fun BlockedNumbersScreen(
             item {
                 RivoExpressiveCard {
                     RivoSelectListItem(
-                        headline = "Block method",
-                        supporting = "How blocked calls are handled",
+                        headline = stringResource(R.string.settings_blocked_method),
+                        supporting = stringResource(R.string.settings_blocked_method_supporting),
                         leadingIcon = Icons.Outlined.Gavel,
                         options = listOf(
-                            "Decline automatically" to 0,
-                            "Ring silently" to 1
+                            stringResource(R.string.settings_blocked_method_decline) to 0,
+                            stringResource(R.string.settings_blocked_method_silent) to 1
                         ),
                         selectedValue = blockMethod,
                         onValueChange = {
@@ -74,12 +76,12 @@ fun BlockedNumbersScreen(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     RivoSelectListItem(
-                        headline = "Log visibility",
-                        supporting = "Show or hide blocked calls in recents",
+                        headline = stringResource(R.string.settings_blocked_log_visibility),
+                        supporting = stringResource(R.string.settings_blocked_log_visibility_supporting),
                         leadingIcon = Icons.Outlined.Visibility,
                         options = listOf(
-                            "Hide from logs" to 0,
-                            "Show in logs" to 1
+                            stringResource(R.string.settings_blocked_log_hide) to 0,
+                            stringResource(R.string.settings_blocked_log_show) to 1
                         ),
                         selectedValue = logVisibility,
                         onValueChange = {
@@ -93,8 +95,8 @@ fun BlockedNumbersScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "Block notifications",
-                        supporting = "Show a low-priority alert for blocked calls",
+                        headline = stringResource(R.string.settings_blocked_notifications),
+                        supporting = stringResource(R.string.settings_blocked_notifications_supporting),
                         leadingIcon = Icons.Outlined.NotificationsPaused,
                         checked = blockNotification,
                         onCheckedChange = {
@@ -104,10 +106,10 @@ fun BlockedNumbersScreen(
                     )
                 }
             }
-            
+
             item {
                 Button(
-                    onClick = { 
+                    onClick = {
                         val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
                         try {
                             val intent = telecomManager.createManageBlockedNumbersIntent()
@@ -121,7 +123,7 @@ fun BlockedNumbersScreen(
                 ) {
                     Icon(Icons.AutoMirrored.Outlined.List, null)
                     Spacer(Modifier.width(8.dp))
-                    Text("System Blocked Numbers")
+                    Text(stringResource(R.string.settings_blocked_system_button))
                 }
             }
         }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.DISCORD_URL
@@ -45,10 +46,10 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.about_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -68,7 +69,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Box(contentAlignment = Alignment.Center) {
                 Image(
                     painter = painterResource(R.drawable.logo),
-                    contentDescription = "Rivo Logo",
+                    contentDescription = stringResource(R.string.about_logo_content_desc),
                     modifier = Modifier.size(64.dp)
                 )
             }
@@ -76,24 +77,24 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Rivo",
+                text = stringResource(R.string.about_app_display_name),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Spacer(modifier = Modifier.height(32.dp))
 
             RivoExpressiveCard(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Text(
-                    "About the App",
+                    stringResource(R.string.about_app_card_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    "Rivo is a modern dialer app that brings simplicity and elegance to calling. Designed with Material You, it adapts seamlessly to your theme.",
+                    stringResource(R.string.about_app_card_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                 )
@@ -103,22 +104,22 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
             RivoExpressiveCard {
                 RivoListItem(
-                    headline = "Version",
+                    headline = stringResource(R.string.about_version),
                     supporting = appInfo.first,
                     leadingIcon = Icons.Outlined.Info,
                     onClick = { }
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
-                    headline = "Build number",
+                    headline = stringResource(R.string.about_build_number),
                     supporting = appInfo.second.toString(),
                     leadingIcon = Icons.Default.Numbers,
                     onClick = { }
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
-                    headline = "Contributors",
-                    supporting = "Meet the team behind the project",
+                    headline = stringResource(R.string.contributors_title),
+                    supporting = stringResource(R.string.about_contributors_supporting),
                     leadingIcon = Icons.Outlined.Groups,
                     onClick = { navigator.navigate(ContributorsScreenDestination) }
                 )
@@ -128,15 +129,15 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
             RivoExpressiveCard {
                 RivoListItem(
-                    headline = "Support Us on Patreon",
-                    supporting = "Help keep the project alive",
+                    headline = stringResource(R.string.about_patreon),
+                    supporting = stringResource(R.string.about_patreon_supporting),
                     leadingIcon = Icons.Default.Favorite,
                     onClick = { openLink(context, PATREON_URL) }
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
-                    headline = "Discord Server",
-                    supporting = "Join the community",
+                    headline = stringResource(R.string.about_discord),
+                    supporting = stringResource(R.string.about_discord_supporting),
                     leadingIcon = Icons.Default.Chat,
                     onClick = { openLink(context, DISCORD_URL) }
                 )
@@ -146,15 +147,15 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
             RivoExpressiveCard {
                 RivoListItem(
-                    headline = "Source Code",
-                    supporting = "View the source code on GitHub",
+                    headline = stringResource(R.string.about_source_code),
+                    supporting = stringResource(R.string.about_source_code_supporting),
                     leadingIcon = Icons.Outlined.Code,
                     onClick = { openLink(context, GITHUB_URL) }
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 RivoListItem(
-                    headline = "Check for Updates",
-                    supporting = "Current version: ${appInfo.first}",
+                    headline = stringResource(R.string.about_check_updates),
+                    supporting = stringResource(R.string.about_current_version, appInfo.first),
                     leadingIcon = Icons.Outlined.SystemUpdate,
                     onClick = { openLink(context, "$GITHUB_URL/releases") }
                 )
@@ -163,7 +164,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(18.dp))
 
             Text(
-                text = "© 2025-2026 RivoPhone Project",
+                text = stringResource(R.string.about_copyright),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.outline
             )

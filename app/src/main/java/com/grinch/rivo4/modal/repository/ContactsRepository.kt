@@ -8,6 +8,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.ContactsContract
+import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.modal.data.ContactEvent
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
@@ -25,6 +26,7 @@ class ContactsRepository(
 
     private val contentResolver: ContentResolver = context.contentResolver
     private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
+    private val unknownLabel: String get() = context.getString(R.string.label_unknown)
 
     private fun formatName(rawName: String): String {
         return rawName
@@ -79,7 +81,7 @@ class ContactsRepository(
                     } else {
                         contactsMap[id] = Contact(
                             id = id,
-                            name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
+                            name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
                             accountName = cursor.getString(accountNameIdx),
@@ -180,7 +182,7 @@ class ContactsRepository(
 
                     val currentContact = contact ?: Contact(
                         id = id,
-                        name = formatName(cursor.getString(nameIdx) ?: "Unknown"),
+                        name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                         photoUri = cursor.getString(photoIdx),
                         isFavorite = isStarred,
                         customRingtone = ringtone,
@@ -694,7 +696,7 @@ class ContactsRepository(
                     val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
 
                     val id = if (idIdx != -1) cursor.getString(idIdx) else "0"
-                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else "Unknown"
+                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else unknownLabel
                     val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
                     val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
                     val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
@@ -918,7 +920,7 @@ class ContactsRepository(
                 if (name.isNotBlank() || numbers.isNotEmpty()) {
                     saveContact(Contact(
                         id = "0",
-                        name = if (name.isBlank()) numbers.firstOrNull() ?: "Unknown" else name,
+                        name = if (name.isBlank()) numbers.firstOrNull() ?: unknownLabel else name,
                         phoneNumbers = numbers,
                         emails = emails,
                         isPrivate = true

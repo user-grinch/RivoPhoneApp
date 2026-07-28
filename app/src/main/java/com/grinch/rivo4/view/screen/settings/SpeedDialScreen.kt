@@ -15,10 +15,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.Contact
@@ -49,10 +51,10 @@ fun SpeedDialScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Speed Dial", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_speed_dial_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -69,8 +71,8 @@ fun SpeedDialScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "Enable Speed Dial",
-                        supporting = "Long press a key to call assigned contact",
+                        headline = stringResource(R.string.settings_speed_dial_enable),
+                        supporting = stringResource(R.string.settings_speed_dial_enable_supporting),
                         leadingIcon = Icons.Outlined.Speed,
                         checked = speedDialEnabled,
                         onCheckedChange = {
@@ -82,7 +84,7 @@ fun SpeedDialScreen(
             }
 
             item {
-                RivoSectionHeader(title = "Assignments")
+                RivoSectionHeader(title = stringResource(R.string.settings_speed_dial_assignments_header))
             }
 
             items(8) { index ->
@@ -118,7 +120,7 @@ fun SpeedDialScreen(
                         
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = name ?: "Not assigned",
+                                text = name ?: stringResource(R.string.settings_speed_dial_not_assigned),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.SemiBold,
                                 color = if (name == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
@@ -133,15 +135,15 @@ fun SpeedDialScreen(
                         }
 
                         if (mapping != null) {
-                            IconButton(onClick = { 
+                            IconButton(onClick = {
                                 prefs.setString("speed_dial_$key", null)
                             }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Clear", tint = MaterialTheme.colorScheme.error)
+                                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_clear), tint = MaterialTheme.colorScheme.error)
                             }
                         }
                         
                         IconButton(onClick = { showContactPicker = key }) {
-                            Icon(if (mapping == null) Icons.Default.Add else Icons.Default.Add, contentDescription = "Assign")
+                            Icon(if (mapping == null) Icons.Default.Add else Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_assign))
                         }
                     }
                 }
@@ -195,7 +197,7 @@ fun ContactPickerDialog(
                             TextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
-                                placeholder = { Text("Search contact") },
+                                placeholder = { Text(stringResource(R.string.settings_speed_dial_search_contact)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
@@ -210,7 +212,7 @@ fun ContactPickerDialog(
                         },
                         navigationIcon = {
                             IconButton(onClick = onDismissRequest) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -229,7 +231,7 @@ fun ContactPickerDialog(
                     items(filteredContacts) { contact ->
                         RivoListItem(
                             headline = contact.name,
-                            supporting = contact.phoneNumbers.firstOrNull() ?: "No number",
+                            supporting = contact.phoneNumbers.firstOrNull() ?: stringResource(R.string.settings_speed_dial_no_number),
                             avatarName = contact.name,
                             photoUri = contact.photoUri,
                             onClick = { onContactSelected(contact) }

@@ -34,12 +34,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -296,7 +298,7 @@ fun IPhoneFavoritesRow(
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
                                         Text(
-                                            text = "Mobile",
+                                            text = stringResource(R.string.label_mobile),
                                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                                             color = Color.White.copy(alpha = 0.7f)
                                         )
@@ -327,7 +329,7 @@ fun IPhoneFavoritesRow(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Remove,
-                                contentDescription = "Remove Favorite",
+                                contentDescription = stringResource(R.string.content_desc_remove_favorite),
                                 tint = Color.White,
                                 modifier = Modifier.padding(4.dp)
                             )

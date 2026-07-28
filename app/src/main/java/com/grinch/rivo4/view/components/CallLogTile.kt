@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.formatTime
@@ -62,10 +64,10 @@ fun CallLogTileSimple(
             Box(modifier = Modifier.weight(1f)) {
                 RivoListItem(
                     headline = when (log.type) {
-                        CallLog.Calls.INCOMING_TYPE -> "Incoming"
-                        CallLog.Calls.OUTGOING_TYPE -> "Outgoing"
-                        CallLog.Calls.MISSED_TYPE -> "Missed"
-                        else -> "Call"
+                        CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
+                        CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
+                        CallLog.Calls.MISSED_TYPE -> stringResource(R.string.call_type_missed)
+                        else -> stringResource(R.string.action_call)
                     },
                     supporting = buildString {
                         append(formatDate(context, log.date))
@@ -89,7 +91,7 @@ fun CallLogTileSimple(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Call,
-                        contentDescription = "Call",
+                        contentDescription = stringResource(R.string.action_call),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -179,7 +181,7 @@ fun CallLogTile(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Call,
-                        contentDescription = "Call",
+                        contentDescription = stringResource(R.string.action_call),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -214,19 +216,19 @@ fun BatchCallLogActionBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onClearSelection) {
-                Icon(Icons.Default.Close, "Clear selection")
+                Icon(Icons.Default.Close, stringResource(R.string.action_clear_selection))
             }
             Text(
-                text = "$selectedCount Selected",
+                text = stringResource(R.string.selection_count_selected, selectedCount),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
             IconButton(onClick = { showClearAllConfirm = true }) {
-                Icon(Icons.Default.DeleteSweep, "Clear all logs")
+                Icon(Icons.Default.DeleteSweep, stringResource(R.string.content_desc_clear_all_logs))
             }
             IconButton(onClick = { showDeleteConfirm = true }) {
-                Icon(Icons.Default.Delete, "Delete selected")
+                Icon(Icons.Default.Delete, stringResource(R.string.content_desc_delete_selected))
             }
         }
     }
@@ -234,24 +236,24 @@ fun BatchCallLogActionBar(
     if (showDeleteConfirm) {
         RivoDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = "Delete Call Logs",
+            title = stringResource(R.string.call_log_delete_title),
             icon = Icons.Default.Delete,
             confirmButton = {
                 TextButton(onClick = {
                     onDelete()
                     showDeleteConfirm = false
                 }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
             Text(
-                "Are you sure you want to delete $selectedCount selected call logs?",
+                stringResource(R.string.call_log_delete_confirm, selectedCount),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -263,24 +265,24 @@ fun BatchCallLogActionBar(
     if (showClearAllConfirm) {
         RivoDialog(
             onDismissRequest = { showClearAllConfirm = false },
-            title = "Clear All Logs",
+            title = stringResource(R.string.call_log_clear_all_title),
             icon = Icons.Default.DeleteSweep,
             confirmButton = {
                 TextButton(onClick = {
                     onClearAll()
                     showClearAllConfirm = false
                 }) {
-                    Text("Clear All", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.call_log_clear_all_confirm), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearAllConfirm = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
             Text(
-                "This will delete your entire call history. This action cannot be undone.",
+                stringResource(R.string.call_log_clear_all_message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

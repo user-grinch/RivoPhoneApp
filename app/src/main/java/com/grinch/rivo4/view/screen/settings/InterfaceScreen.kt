@@ -21,8 +21,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -77,11 +79,14 @@ fun InterfaceScreen(
         Color(0xFF436916), Color(0xFF984061), Color(0xFF808080)
     )
 
+    val restartRequiredMessage = stringResource(R.string.settings_interface_restart_required)
+    val restartActionLabel = stringResource(R.string.settings_interface_restart_action)
+
     fun showRestartPrompt() {
         scope.launch {
             val result = snackbarHostState.showSnackbar(
-                message = "Restart required to apply theme changes fully.",
-                actionLabel = "Restart",
+                message = restartRequiredMessage,
+                actionLabel = restartActionLabel,
                 duration = SnackbarDuration.Short
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -93,10 +98,10 @@ fun InterfaceScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("User Interface", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_interface_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -114,8 +119,8 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveCard {
                         RivoSwitchListItem(
-                            headline = "Material You theming",
-                            supporting = "Wallpaper based app color theming.",
+                            headline = stringResource(R.string.settings_interface_material_you),
+                            supporting = stringResource(R.string.settings_interface_material_you_supporting),
                             leadingIcon = Icons.Outlined.Palette,
                             checked = dynamicColors,
                             onCheckedChange = {
@@ -124,11 +129,11 @@ fun InterfaceScreen(
                                 showRestartPrompt()
                             }
                         )
-                        
+
                         if (!dynamicColors) {
                             RivoDivider(Modifier.padding(horizontal = 16.dp))
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Primary Color", style = MaterialTheme.typography.labelLarge)
+                                Text(stringResource(R.string.settings_interface_primary_color), style = MaterialTheme.typography.labelLarge)
                                 Spacer(Modifier.height(12.dp))
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     items(presetColors) { color ->
@@ -155,8 +160,8 @@ fun InterfaceScreen(
                         
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
-                            headline = "Amoled dark mode",
-                            supporting = "Uses pitch black for UI elements.",
+                            headline = stringResource(R.string.settings_interface_amoled),
+                            supporting = stringResource(R.string.settings_interface_amoled_supporting),
                             leadingIcon = Icons.Outlined.DarkMode,
                             checked = amoledMode,
                             onCheckedChange = {
@@ -171,8 +176,8 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveCard {
                         RivoSwitchListItem(
-                            headline = "Show first letter in avatar",
-                            supporting = "Displays letter when picture is missing",
+                            headline = stringResource(R.string.settings_interface_show_first_letter),
+                            supporting = stringResource(R.string.settings_interface_show_first_letter_supporting),
                             leadingIcon = Icons.Outlined.Title,
                             checked = showFirstLetter,
                             onCheckedChange = {
@@ -182,8 +187,8 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
-                            headline = "Use colorful avatars",
-                            supporting = "Random colors based on contact name",
+                            headline = stringResource(R.string.settings_interface_colorful_avatars),
+                            supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
                             leadingIcon = Icons.Outlined.Palette,
                             checked = colorfulAvatars,
                             onCheckedChange = {
@@ -193,8 +198,8 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
-                            headline = "Show picture in avatar",
-                            supporting = "Shows the contact picture if available",
+                            headline = stringResource(R.string.settings_interface_show_picture),
+                            supporting = stringResource(R.string.settings_interface_show_picture_supporting),
                             leadingIcon = Icons.Outlined.AccountCircle,
                             checked = showPicture,
                             onCheckedChange = {
@@ -204,13 +209,13 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = "Avatar shape",
-                            supporting = "Choose the shape for contact avatars",
+                            headline = stringResource(R.string.settings_interface_avatar_shape),
+                            supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
                             leadingIcon = Icons.Outlined.AccountBox,
                             options = listOf(
-                                "Squircle" to 0,
-                                "Circle" to 1,
-                                "Square" to 2
+                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
+                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
+                                stringResource(R.string.settings_interface_avatar_shape_square) to 2
                             ),
                             selectedValue = avatarShape,
                             onValueChange = {
@@ -220,8 +225,8 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
-                            headline = "Call screen avatar",
-                            supporting = "Show contact picture on call screen",
+                            headline = stringResource(R.string.settings_interface_call_screen_avatar),
+                            supporting = stringResource(R.string.settings_interface_call_screen_avatar_supporting),
                             leadingIcon = Icons.Outlined.ContactPage,
                             checked = showCallScreenAvatar,
                             onCheckedChange = {
@@ -235,8 +240,8 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveCard {
                         RivoSwitchListItem(
-                            headline = "Show dividers",
-                            supporting = "Display lines between list items",
+                            headline = stringResource(R.string.settings_interface_show_dividers),
+                            supporting = stringResource(R.string.settings_interface_show_dividers_supporting),
                             leadingIcon = Icons.Outlined.HorizontalRule,
                             checked = showDividers,
                             onCheckedChange = {
@@ -246,8 +251,8 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
-                            headline = "Use expressive cards",
-                            supporting = "Wraps list items in styled cards",
+                            headline = stringResource(R.string.settings_interface_expressive_cards),
+                            supporting = stringResource(R.string.settings_interface_expressive_cards_supporting),
                             leadingIcon = Icons.Outlined.DashboardCustomize,
                             checked = showCards,
                             onCheckedChange = {
@@ -257,14 +262,14 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = "Transition animation",
-                            supporting = "Style of animations between screens",
+                            headline = stringResource(R.string.settings_interface_transition_animation),
+                            supporting = stringResource(R.string.settings_interface_transition_animation_supporting),
                             leadingIcon = Icons.Outlined.Animation,
                             options = listOf(
-                                "Standard" to 0,
-                                "Slide" to 1,
-                                "Fade" to 2,
-                                "None" to 3
+                                stringResource(R.string.option_standard) to 0,
+                                stringResource(R.string.settings_interface_transition_slide) to 1,
+                                stringResource(R.string.settings_interface_transition_fade) to 2,
+                                stringResource(R.string.settings_interface_transition_none) to 3
                             ),
                             selectedValue = transitionStyle,
                             onValueChange = {
@@ -274,13 +279,13 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = "Search Matching Mode",
-                            supporting = "Behavior of contacts filtering algorithm",
+                            headline = stringResource(R.string.settings_interface_search_matching_mode),
+                            supporting = stringResource(R.string.settings_interface_search_matching_mode_supporting),
                             leadingIcon = Icons.Outlined.Search,
                             options = listOf(
-                                "T9 & Contains" to 0,
-                                "Starts With" to 1,
-                                "Exact Match" to 2
+                                stringResource(R.string.settings_interface_search_mode_t9_contains) to 0,
+                                stringResource(R.string.settings_interface_search_mode_starts_with) to 1,
+                                stringResource(R.string.settings_interface_search_mode_exact_match) to 2
                             ),
                             selectedValue = searchMatchMode,
                             onValueChange = {
@@ -290,15 +295,15 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = "Card roundness",
-                            supporting = "Adjust the corner radius of UI cards",
+                            headline = stringResource(R.string.settings_interface_card_roundness),
+                            supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
                             leadingIcon = Icons.Outlined.CropFree,
                             options = listOf(
-                                "Extra Round" to 32,
-                                "Standard" to 28,
-                                "Rounded" to 20,
-                                "Semi Square" to 12,
-                                "Square" to 0
+                                stringResource(R.string.settings_interface_roundness_extra_round) to 32,
+                                stringResource(R.string.option_standard) to 28,
+                                stringResource(R.string.settings_interface_roundness_rounded) to 20,
+                                stringResource(R.string.settings_interface_roundness_semi_square) to 12,
+                                stringResource(R.string.settings_interface_roundness_square) to 0
                             ),
                             selectedValue = cardRoundness,
                             onValueChange = {
@@ -312,12 +317,12 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveCard {
                         RivoSelectListItem(
-                            headline = "Default bottom bar",
-                            supporting = "Select which tab opens initially",
+                            headline = stringResource(R.string.settings_interface_default_bottom_bar),
+                            supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SpaceDashboard,
                             options = listOf(
-                                "Contacts" to 0,
-                                "Recents" to 1,
+                                stringResource(R.string.nav_contacts) to 0,
+                                stringResource(R.string.nav_recents) to 1,
                             ),
                             selectedValue = defaultBottomBar,
                             onValueChange = { selectedInt ->
@@ -326,8 +331,8 @@ fun InterfaceScreen(
                             }
                         )
                         RivoSwitchListItem(
-                            headline = "Flip bottom bar",
-                            supporting = "Flips the position of the contacts & recents tabs",
+                            headline = stringResource(R.string.settings_interface_flip_bottom_bar),
+                            supporting = stringResource(R.string.settings_interface_flip_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SwapHoriz,
                             checked = flipBottomBar,
                             onCheckedChange = {
@@ -336,8 +341,8 @@ fun InterfaceScreen(
                             }
                         )
                         RivoSwitchListItem(
-                            headline = "Icon-only bottom bar",
-                            supporting = "Removes text labels from navigation",
+                            headline = stringResource(R.string.settings_interface_icon_only_bar),
+                            supporting = stringResource(R.string.settings_interface_icon_only_bar_supporting),
                             leadingIcon = Icons.Outlined.ViewStream,
                             checked = iconOnlyNav,
                             onCheckedChange = {

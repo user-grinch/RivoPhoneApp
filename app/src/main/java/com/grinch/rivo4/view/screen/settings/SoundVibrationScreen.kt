@@ -11,8 +11,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -45,10 +47,10 @@ fun SoundVibrationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sound & Vibration", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_sound_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -64,8 +66,8 @@ fun SoundVibrationScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "DTMF tone",
-                        supporting = "Dialpad tone that plays during keypress",
+                        headline = stringResource(R.string.settings_sound_dtmf_tone),
+                        supporting = stringResource(R.string.settings_sound_dtmf_tone_supporting),
                         leadingIcon = Icons.Outlined.Audiotrack,
                         checked = dtmfTone,
                         onCheckedChange = {
@@ -75,8 +77,8 @@ fun SoundVibrationScreen(
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
-                        headline = "Dialpad vibration",
-                        supporting = "Dialpad vibration that plays during keypress",
+                        headline = stringResource(R.string.settings_sound_dialpad_vibration),
+                        supporting = stringResource(R.string.settings_sound_dialpad_vibration_supporting),
                         leadingIcon = Icons.Outlined.Vibration,
                         checked = dialpadVibration,
                         onCheckedChange = {
@@ -90,8 +92,8 @@ fun SoundVibrationScreen(
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
-                        headline = "Vibrate on Answer",
-                        supporting = "Vibrate when the other party answers",
+                        headline = stringResource(R.string.settings_sound_vibrate_on_answer),
+                        supporting = stringResource(R.string.settings_sound_vibrate_on_answer_supporting),
                         leadingIcon = Icons.Outlined.Vibration,
                         checked = vibrateOnAnswer,
                         onCheckedChange = {
@@ -101,8 +103,8 @@ fun SoundVibrationScreen(
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
-                        headline = "Vibrate on Hang up",
-                        supporting = "Vibrate when the call ends",
+                        headline = stringResource(R.string.settings_sound_vibrate_on_hangup),
+                        supporting = stringResource(R.string.settings_sound_vibrate_on_hangup_supporting),
                         leadingIcon = Icons.Outlined.Vibration,
                         checked = vibrateOnHangup,
                         onCheckedChange = {
@@ -112,8 +114,8 @@ fun SoundVibrationScreen(
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoSwitchListItem(
-                        headline = "Haptic Scrolling feedback",
-                        supporting = "Vibrate subtly when scrolling lists",
+                        headline = stringResource(R.string.settings_sound_haptic_scroll),
+                        supporting = stringResource(R.string.settings_sound_haptic_scroll_supporting),
                         leadingIcon = Icons.Outlined.Gesture,
                         checked = hapticListScroll,
                         onCheckedChange = {
@@ -127,8 +129,8 @@ fun SoundVibrationScreen(
             item {
                 RivoExpressiveCard {
                     RivoListItem(
-                        headline = "Ringtone Settings",
-                        supporting = "Open system sound settings",
+                        headline = stringResource(R.string.settings_sound_ringtone_settings),
+                        supporting = stringResource(R.string.settings_sound_ringtone_settings_supporting),
                         leadingIcon = Icons.Outlined.MusicNote,
                         onClick = {
                             context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
