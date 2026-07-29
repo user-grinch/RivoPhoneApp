@@ -72,6 +72,24 @@ android {
         //     universalApk = true
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "RivoPhone-${variant.versionName}.apk"
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.named("bundleRelease").configure {
+        doLast {
+            def outDir = layout.buildDirectory.dir("outputs/bundle/release").get().asFile
+            def original = new File(outDir, "app-release.aab")
+            if (original.exists()) {
+                original.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}.aab"))
+            }
+        }
+    }
 }
 
 dependencies {
