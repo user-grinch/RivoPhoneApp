@@ -899,11 +899,13 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val isDark = isSystemInDarkTheme()
 
     val trackHeight = 96.dp // Increased from 88.dp
-    val handleWidth = 110.dp
+    val maxHandleWidth = 110.dp
     val handleHeight = 72.dp // Increased from 64.dp
-    val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
-    
+    val trackWidth = with(density) { trackWidthPx.toDp() }
+    val handleWidth = if (trackWidthPx > 0f) (trackWidth * 0.32f).coerceAtMost(maxHandleWidth) else maxHandleWidth
+    val handleWidthPx = with(density) { handleWidth.toPx() }
+
     val maxDrag by remember(trackWidthPx, handleWidthPx) {
         derivedStateOf {
             if (trackWidthPx > 0f) (trackWidthPx / 2f) - (handleWidthPx / 2f) - with(density) { 12.dp.toPx() }
@@ -971,27 +973,38 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f), CircleShape)
     ) {
-        Text(
-            stringResource(R.string.action_decline),
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 32.dp)
-                .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = declineRed.copy(alpha = 0.8f)
-        )
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.action_decline),
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = declineRed.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        Text(
-            stringResource(R.string.action_answer),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 32.dp)
-                .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = answerGreen.copy(alpha = 0.8f)
-        )
+            Spacer(modifier = Modifier.width(handleWidth))
+
+            Text(
+                stringResource(R.string.action_answer),
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = answerGreen.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
         // drag handle
         Box(
