@@ -442,7 +442,7 @@ fun ExpressiveCallScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top
                         ) {
                             CallActionButton(
                                 icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
@@ -479,7 +479,7 @@ fun ExpressiveCallScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top
                         ) {
                             val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
                             val audioIcon = when (audioRoute) {
@@ -879,7 +879,10 @@ fun CallActionButton(
             text = label,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
