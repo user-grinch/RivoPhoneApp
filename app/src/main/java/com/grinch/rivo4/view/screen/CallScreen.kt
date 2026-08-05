@@ -59,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
@@ -727,16 +728,18 @@ fun PulsingAvatar(photoUri: String?) {
         label = "alpha"
     )
 
+    val avatarSize = heroAvatarSize(isLandscape = false)
+
     Box(contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier
-                .size(180.dp)
+                .size(avatarSize * 0.9f)
                 .scale(scale)
                 .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha), CircleShape)
         )
         Box(
             modifier = Modifier
-                .size(220.dp)
+                .size(avatarSize * 1.1f)
                 .scale(scale * 1.2f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), CircleShape)
         )
@@ -796,6 +799,13 @@ fun FloatingParticles() {
 }
 
 @Composable
+private fun heroAvatarSize(isLandscape: Boolean): Dp {
+    val configuration = LocalConfiguration.current
+    return if (isLandscape) 120.dp
+           else (configuration.screenHeightDp.dp * 0.22f).coerceAtMost(200.dp)
+}
+
+@Composable
 fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -809,8 +819,8 @@ fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
         }
     }
 
-    val size = if (isLandscape) 120.dp else 200.dp
-    val iconSize = if (isLandscape) 72.dp else 120.dp
+    val size = heroAvatarSize(isLandscape)
+    val iconSize = size * 0.6f
 
     Box(
         modifier = Modifier
