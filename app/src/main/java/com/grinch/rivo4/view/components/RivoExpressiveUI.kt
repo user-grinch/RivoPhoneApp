@@ -205,7 +205,7 @@ fun RivoExpressiveButton(
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Surface(
             onClick = onClick,
-            modifier = Modifier.height(size).width(size * 1.3f),
+            modifier = Modifier.height(size).widthIn(max = size * 1.3f).fillMaxWidth(),
             shape = RoundedCornerShape(cornerRadius),
             color = containerColor,
             contentColor = contentColor,
@@ -222,7 +222,15 @@ fun RivoExpressiveButton(
         }
         if (label != null) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -321,7 +329,7 @@ fun RivoListItem(
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = headlineColor,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
@@ -329,7 +337,7 @@ fun RivoListItem(
                         text = supporting,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
@@ -452,7 +460,7 @@ fun RivoSelectListItem(
                     text = headline,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
@@ -460,7 +468,7 @@ fun RivoSelectListItem(
                         text = supporting,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }

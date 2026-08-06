@@ -59,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
@@ -442,7 +443,7 @@ fun ExpressiveCallScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top
                         ) {
                             CallActionButton(
                                 icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
@@ -479,7 +480,7 @@ fun ExpressiveCallScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top
                         ) {
                             val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
                             val audioIcon = when (audioRoute) {
@@ -727,16 +728,18 @@ fun PulsingAvatar(photoUri: String?) {
         label = "alpha"
     )
 
+    val avatarSize = heroAvatarSize(isLandscape = false)
+
     Box(contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier
-                .size(180.dp)
+                .size(avatarSize * 0.9f)
                 .scale(scale)
                 .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha), CircleShape)
         )
         Box(
             modifier = Modifier
-                .size(220.dp)
+                .size(avatarSize * 1.1f)
                 .scale(scale * 1.2f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), CircleShape)
         )
@@ -796,6 +799,13 @@ fun FloatingParticles() {
 }
 
 @Composable
+private fun heroAvatarSize(isLandscape: Boolean): Dp {
+    val configuration = LocalConfiguration.current
+    return if (isLandscape) 120.dp
+           else (configuration.screenHeightDp.dp * 0.22f).coerceAtMost(200.dp)
+}
+
+@Composable
 fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -809,8 +819,8 @@ fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
         }
     }
 
-    val size = if (isLandscape) 120.dp else 200.dp
-    val iconSize = if (isLandscape) 72.dp else 120.dp
+    val size = heroAvatarSize(isLandscape)
+    val iconSize = size * 0.6f
 
     Box(
         modifier = Modifier
@@ -879,7 +889,10 @@ fun CallActionButton(
             text = label,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -899,11 +912,13 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val isDark = isSystemInDarkTheme()
 
     val trackHeight = 96.dp // Increased from 88.dp
-    val handleWidth = 110.dp
+    val maxHandleWidth = 110.dp
     val handleHeight = 72.dp // Increased from 64.dp
-    val handleWidthPx = with(density) { handleWidth.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
-    
+    val trackWidth = with(density) { trackWidthPx.toDp() }
+    val handleWidth = if (trackWidthPx > 0f) (trackWidth * 0.32f).coerceAtMost(maxHandleWidth) else maxHandleWidth
+    val handleWidthPx = with(density) { handleWidth.toPx() }
+
     val maxDrag by remember(trackWidthPx, handleWidthPx) {
         derivedStateOf {
             if (trackWidthPx > 0f) (trackWidthPx / 2f) - (handleWidthPx / 2f) - with(density) { 12.dp.toPx() }
@@ -971,27 +986,38 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f), CircleShape)
     ) {
-        Text(
-            stringResource(R.string.action_decline),
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 32.dp)
-                .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = declineRed.copy(alpha = 0.8f)
-        )
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.action_decline),
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = declineRed.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        Text(
-            stringResource(R.string.action_answer),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 32.dp)
-                .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = answerGreen.copy(alpha = 0.8f)
-        )
+            Spacer(modifier = Modifier.width(handleWidth))
+
+            Text(
+                stringResource(R.string.action_answer),
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = answerGreen.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
         // drag handle
         Box(

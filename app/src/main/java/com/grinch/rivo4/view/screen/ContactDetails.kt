@@ -353,7 +353,7 @@ fun ContactDetailsScreen(
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             RivoExpressiveButton(
                                 icon = Icons.Default.Call,
@@ -361,7 +361,8 @@ fun ContactDetailsScreen(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 onClick = {
                                     callLauncher.dial(if (fullContact == null) displayPhone else "", fullContact)
-                                }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                             RivoExpressiveButton(
                                 icon = Icons.AutoMirrored.Filled.Message,
@@ -369,7 +370,8 @@ fun ContactDetailsScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     messageLauncher.sendMessage(if (fullContact == null) displayPhone else "", fullContact)
-                                }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                             RivoExpressiveButton(
                                 icon = Icons.Default.VideoCall,
@@ -377,7 +379,8 @@ fun ContactDetailsScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 onClick = {
                                     videoLauncher.startVideoCall(displayPhone, fullContact)
-                                }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                             val hasEmails = fullContact?.emails?.isNotEmpty() == true
                             RivoExpressiveButton(
@@ -389,7 +392,8 @@ fun ContactDetailsScreen(
                                     if (hasEmails) {
                                         emailLauncher.sendEmail("", fullContact)
                                     }
-                                }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
