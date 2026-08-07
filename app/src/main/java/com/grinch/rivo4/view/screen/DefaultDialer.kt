@@ -31,9 +31,8 @@ import com.grinch.rivo4.controller.util.getDefaultDialerIntent
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
 
@@ -46,15 +45,9 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
     val prefs = koinInject<PreferenceManager>()
     val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
 
-    val initialRoute = if (defBar == 0) {
-        RecentScreenDestination
-    } else {
-        ContactScreenDestination
-    }
-
     LaunchedEffect(Unit) {
         if (isAlreadyDefaultDialer(context)) {
-            navigator.navigate(initialRoute) {
+            navigator.navigate(MainScreenDestination(initialTab = defBar)) {
                 popUpTo(DefaultDialerScreenDestination) { inclusive = true }
             }
         }
@@ -65,7 +58,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             isDenied = false
-            navigator.navigate(initialRoute) {
+            navigator.navigate(MainScreenDestination(initialTab = defBar)) {
                 popUpTo(DefaultDialerScreenDestination) { inclusive = true }
             }
         } else {

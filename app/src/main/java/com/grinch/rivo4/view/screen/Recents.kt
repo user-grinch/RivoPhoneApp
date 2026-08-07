@@ -49,9 +49,15 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>(start = true, style = NoTransitions::class)
+@Destination<RootGraph>(style = NoTransitions::class)
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
+    RecentScreenContent(navController, navigator)
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RecentScreenContent(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -126,11 +132,6 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
                 ) {
                     Icon(Icons.Default.Dialpad, stringResource(R.string.content_desc_dialpad))
                 }
-            }
-        },
-        bottomBar = {
-            if (selectedEntries.isEmpty()) {
-                BottomBar(navController, navigator)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface

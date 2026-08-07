@@ -184,9 +184,18 @@ fun openInContacts(context: Context, contactId: String) {
 }
 
 fun openLink(context: Context, link: String) {
-    val intent = Intent(Intent.ACTION_VIEW,
-        link.toUri())
-    context.startActivity(intent)
+    try {
+        val uri = link.toUri()
+        val intent = if (uri.scheme == "tel") {
+            Intent(Intent.ACTION_DIAL, uri)
+        } else {
+            Intent(Intent.ACTION_VIEW, uri)
+        }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 

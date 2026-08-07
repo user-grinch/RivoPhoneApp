@@ -29,7 +29,12 @@ data class NavigationTab(
 )
 
 @Composable
-fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
+fun BottomBar(
+    navController: NavController,
+    navigator: DestinationsNavigator,
+    pagerState: androidx.compose.foundation.pager.PagerState? = null,
+    onPageSelected: ((Int) -> Unit)? = null
+) {
     val prefs = koinInject<PreferenceManager>()
 
     val flipBar = prefs.getBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, false)
@@ -50,18 +55,28 @@ fun BottomBar(navController: NavController, navigator: DestinationsNavigator) {
         val currentDestination = navBackStackEntry?.destination
 
         organizedTabs.forEach { tab ->
+            val isSelected = if (pagerState != null) {
+                pagerState.currentPage == tab.value
+            } else {
+                currentDestination?.hierarchy?.any { it.route == tab.route } == true
+            }
+
             NavigationBarItem(
                 icon = { Icon(tab.icon, contentDescription = tab.label) },
                 label = if (iconOnly) null else ({ Text(tab.label) }),
                 alwaysShowLabel = !iconOnly,
-                selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+                selected = isSelected,
                 onClick = {
-                    navController.navigate(tab.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if (onPageSelected != null && pagerState != null) {
+                        onPageSelected(tab.value)
+                    } else {
+                        navController.navigate(tab.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )

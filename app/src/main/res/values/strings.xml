@@ -203,6 +203,7 @@
     <string name="call_status_calling">Calling...</string>
     <string name="call_status_incoming">Incoming call</string>
     <string name="call_status_connecting">Connecting...</string>
+    <string name="call_status_disconnecting">Ending call...</string>
     <string name="audio_route_handset">Handset</string>
     <string name="audio_route_speaker">Speaker</string>
     <string name="audio_route_headset">Headset</string>

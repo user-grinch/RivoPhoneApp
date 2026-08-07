@@ -38,6 +38,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
+import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
@@ -47,6 +48,7 @@ import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
@@ -157,16 +159,9 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(Unit) {
                         if (!isAlreadyDefaultDialer(this@MainActivity)) {
                             navController.navigate(DefaultDialerScreenDestination.route) {
-                                popUpTo(ContactScreenDestination.route) {
+                                popUpTo(MainScreenDestination.route) {
                                     inclusive = true
                                 }
-                            }
-                        } else if (defBar == 0) {
-                            navController.navigate(RecentScreenDestination.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
                             }
                         }
                     }
@@ -192,15 +187,19 @@ class MainActivity : ComponentActivity() {
 
         when (action) {
             "com.grinch.rivo4.ACTION_VIEW_RECENTS" -> {
-                navController.navigate(RecentScreenDestination.route) {
+                navController.navigate(MainScreenDestination(initialTab = 0).route) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true
                 }
             }
-            Intent.ACTION_DIAL, Intent.ACTION_VIEW -> {
+            Intent.ACTION_DIAL, Intent.ACTION_VIEW, Intent.ACTION_CALL -> {
                 if (data?.scheme == "tel") {
                     val number = data.schemeSpecificPart
-                    navController.navigate(DialPadScreenDestination(initialNumber = number).route)
+                    if (action == Intent.ACTION_CALL && isAlreadyDefaultDialer(this)) {
+                        makeCall(this, number)
+                    } else {
+                        navController.navigate(DialPadScreenDestination(initialNumber = number).route)
+                    }
                 } else if (data?.toString()?.contains("contacts") == true || data?.toString()?.contains("com.android.contacts") == true || intent.hasExtra("contact_id")) {
                     val id = data?.lastPathSegment ?: intent.getStringExtra("contact_id")
                     if (id != null) {

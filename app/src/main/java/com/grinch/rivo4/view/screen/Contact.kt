@@ -59,6 +59,12 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Destination<RootGraph>(style = NoTransitions::class)
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
+    ContactScreenContent(navController, navigator)
+}
+
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun ContactScreenContent(navController: NavController, navigator: DestinationsNavigator) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -127,11 +133,6 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
                 ) {
                     Icon(Icons.Default.PersonAdd, stringResource(R.string.action_add_contact))
                 }
-            }
-        },
-        bottomBar = {
-            if (selectedIds.isEmpty()) {
-                BottomBar(navController, navigator)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface

@@ -60,7 +60,9 @@ class CallLogViewModel(
 
     fun fetchLogs() {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.value = true
+            if (_allCallLogs.value.isEmpty()) {
+                _isLoading.value = true
+            }
             val result = callLogRepo.getCallLogs()
             _allCallLogs.value = result
             _isLoading.value = false

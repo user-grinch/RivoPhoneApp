@@ -321,7 +321,7 @@ fun ExpressiveCallScreen(
                             Call.STATE_RINGING -> stringResource(R.string.call_status_incoming)
                             Call.STATE_DISCONNECTING -> ""
                             Call.STATE_CONNECTING -> stringResource(R.string.call_status_connecting)
-                            else -> stringResource(R.string.call_status_connecting)
+                            else -> ""
                         }
 
                         Text(
@@ -1080,7 +1080,6 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         .size(32.dp)
                         .graphicsLayer { 
                             rotationZ = iconRotation 
-                            if (targetIcon == Icons.Default.Call) scaleY = -1f
                         }
                 )
             }
@@ -1265,7 +1264,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         targetIcon,
                         contentDescription = null,
                         tint = iconTint,
-                        modifier = Modifier.size(36.dp).graphicsLayer(scaleY = if (targetIcon == Icons.Default.Call) -1f else 1f)
+                        modifier = Modifier.size(36.dp)
                     )
                 }
             }
@@ -1438,7 +1437,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     Icons.Default.Call,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(36.dp).graphicsLayer(scaleY = -1f)
+                    modifier = Modifier.size(36.dp)
                 )
             }
         }
@@ -1512,7 +1511,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     Icon(
                         Icons.Default.Call,
                         contentDescription = stringResource(R.string.action_answer),
-                        modifier = Modifier.size(32.dp).graphicsLayer(scaleY = -1f)
+                        modifier = Modifier.size(32.dp)
                     )
                 }
             }

@@ -116,7 +116,9 @@ class ContactsViewModel(
 
     fun fetchContacts() {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.value = true
+            if (_allContacts.value.isEmpty()) {
+                _isLoading.value = true
+            }
             val result = contactsRepo.getContacts()
             _allContacts.value = result
             _isLoading.value = false
