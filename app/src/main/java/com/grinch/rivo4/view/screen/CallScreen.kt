@@ -21,6 +21,8 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -65,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import coil.compose.AsyncImage
+import com.grinch.rivo4.controller.CallRecorder
 import com.grinch.rivo4.controller.CallService
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.components.RivoSelectionDialog
@@ -95,7 +98,8 @@ fun ExpressiveCallScreen(
     phoneNumber: String,
     photoUri: String?,
     audioState: CallAudioState?,
-    initialConnectTime: Long = 0L
+    initialConnectTime: Long = 0L,
+    backgroundUri: String? = null
 ) {
     val view = LocalView.current
     val context = LocalContext.current
@@ -131,7 +135,11 @@ fun ExpressiveCallScreen(
     }
     val isMuted = audioState?.isMuted ?: false
 
-    var callDuration by rememberSaveable { mutableLongStateOf(0L) }
+    var callDuration by remember(initialConnectTime) {
+        mutableLongStateOf(
+            if (initialConnectTime > 0) (System.currentTimeMillis() - initialConnectTime) / 1000 else 0L
+        )
+    }
     var showKeypad by remember { mutableStateOf(false) }
     var showAudioPicker by remember { mutableStateOf(false) }
     var typedDigits by remember { mutableStateOf("") }
@@ -209,397 +217,463 @@ fun ExpressiveCallScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
-        ExpressiveBackground(photoUri)
+    val recordingEnabled = remember(settingsState) {
+        preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, false)
+    }
+    val isRecording by CallRecorder.isRecording.collectAsState()
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(horizontal = 24.dp, vertical = if (isLandscape) 8.dp else 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    val statusText = when (callState) {
+        Call.STATE_DISCONNECTED -> stringResource(R.string.call_status_ended)
+        Call.STATE_HOLDING -> stringResource(R.string.call_status_on_hold)
+        Call.STATE_ACTIVE -> formatDuration(callDuration)
+        Call.STATE_DIALING -> stringResource(R.string.call_status_calling)
+        Call.STATE_RINGING -> stringResource(R.string.call_status_incoming)
+        Call.STATE_DISCONNECTING -> ""
+        Call.STATE_CONNECTING -> stringResource(R.string.call_status_connecting)
+        else -> ""
+    }
+
+    val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+    val audioIcon = when (audioRoute) {
+        CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
+        CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
+        CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
+        else -> Icons.Default.Phone
+    }
+    val audioLabel = audioRouteLabel(audioRoute, audioState)
+    val hasBluetooth = ((audioState?.supportedRouteMask ?: 0) and CallAudioState.ROUTE_BLUETOOTH) != 0
+
+    val otherCallCard: @Composable () -> Unit = {
+        AnimatedVisibility(
+            visible = otherCall != null,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
         ) {
-            // Other Call Card
-            AnimatedVisibility(
-                visible = otherCall != null,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                otherCall?.let { oc ->
-                    val unknownLabel = stringResource(R.string.label_unknown)
-                    var ocName by remember(oc, unknownLabel) { mutableStateOf(oc.details.handle?.schemeSpecificPart ?: unknownLabel) }
-                    LaunchedEffect(oc) {
-                        val number = oc.details.handle?.schemeSpecificPart ?: ""
-                        if (number.isNotEmpty()) {
-                            val contact = try { contactsRepo.getContactByNumber(number) } catch (_: Exception) { null }
-                            if (contact != null) ocName = (contact as? com.grinch.rivo4.modal.data.Contact)?.name ?: number
-                        }
-                    }
-                    
-                    Surface(
-                        onClick = {
-                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                            try {
-                                CallService.setPreferredCall(oc)
-                                if (call.state != Call.STATE_HOLDING) {
-                                    call.hold()
-                                }
-                                oc.unhold()
-                            } catch (e: Exception) {
-                                try { oc.unhold() } catch (e2: Exception) {}
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
-                        tonalElevation = 4.dp
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                Icon(
-                                    Icons.Default.PauseCircle,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Column {
-                                    Text(
-                                        text = ocName,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.call_status_on_hold),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                            IconButton(onClick = { oc.disconnect() }) {
-                                Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = Color.Red)
-                            }
-                        }
+            otherCall?.let { oc ->
+                val unknownLabel = stringResource(R.string.label_unknown)
+                var ocName by remember(oc, unknownLabel) { mutableStateOf(oc.details.handle?.schemeSpecificPart ?: unknownLabel) }
+                LaunchedEffect(oc) {
+                    val number = oc.details.handle?.schemeSpecificPart ?: ""
+                    if (number.isNotEmpty()) {
+                        val contact = try { contactsRepo.getContactByNumber(number) } catch (_: Exception) { null }
+                        if (contact != null) ocName = (contact as? com.grinch.rivo4.modal.data.Contact)?.name ?: number
                     }
                 }
-            }
 
-            // --- HERO SECTION ---
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.weight(if (showKeypad) 0.7f else if (isLandscape && callState == Call.STATE_RINGING) 0.5f else 1f)
-            ) {
-                if (!isLandscape) Spacer(modifier = Modifier.height(16.dp))
-
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(tween(1000)) + expandVertically(tween(800))
+                Surface(
+                    onClick = {
+                        view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                        try {
+                            CallService.setPreferredCall(oc)
+                            if (call.state != Call.STATE_HOLDING) {
+                                call.hold()
+                            }
+                            oc.unhold()
+                        } catch (e: Exception) {
+                            try { oc.unhold() } catch (e2: Exception) {}
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
+                    tonalElevation = 4.dp
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = contactName,
-                            style = if (isLandscape) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.displaySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center
-                        )
-
-                        val statusText = when (callState) {
-                            Call.STATE_DISCONNECTED -> stringResource(R.string.call_status_ended)
-                            Call.STATE_HOLDING -> stringResource(R.string.call_status_on_hold)
-                            Call.STATE_ACTIVE -> formatDuration(callDuration)
-                            Call.STATE_DIALING -> stringResource(R.string.call_status_calling)
-                            Call.STATE_RINGING -> stringResource(R.string.call_status_incoming)
-                            Call.STATE_DISCONNECTING -> ""
-                            Call.STATE_CONNECTING -> stringResource(R.string.call_status_connecting)
-                            else -> ""
-                        }
-
-                        Text(
-                            text = statusText,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = if (callState == Call.STATE_HOLDING) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        if (simLabel != null) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.padding(top = 8.dp)
-                            ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                            Icon(
+                                Icons.Default.PauseCircle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
                                 Text(
-                                    text = simLabel,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                    text = ocName,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = stringResource(R.string.call_status_on_hold),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
-                    }
-                }
-
-                if (!showKeypad) {
-                    AnimatedVisibility(
-                        visible = showCallScreenAvatar && (!isLandscape || callState != Call.STATE_RINGING),
-                        enter = fadeIn() + expandVertically(),
-                        exit = fadeOut() + shrinkVertically()
-                    ) {
-                        Column {
-                            if (!isLandscape) Spacer(modifier = Modifier.height(24.dp))
-                            if (callState == Call.STATE_RINGING) {
-                                PulsingAvatar(photoUri)
-                            } else {
-                                HeroAvatar(photoUri, isLandscape)
-                            }
+                        IconButton(onClick = { oc.disconnect() }) {
+                            Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = Color.Red)
                         }
                     }
                 }
             }
+        }
+    }
 
-            if (showKeypad) {
-                Box(modifier = Modifier.weight(1.5f), contentAlignment = Alignment.TopStart) {
-                    InCallKeypad(
-                        call = call,
-                        typedDigits = typedDigits,
-                        onDigitClick = { digit -> typedDigits += digit }
+    val heroSection: @Composable () -> Unit = {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = contactName,
+                style = if (isLandscape) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.titleMedium,
+                color = if (callState == Call.STATE_HOLDING) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            if (isRecording) {
+                Row(
+                    modifier = Modifier.padding(top = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.FiberManualRecord,
+                        contentDescription = null,
+                        tint = Color(0xFFF44336),
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.call_recording_in_progress),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color(0xFFF44336)
                     )
                 }
             }
 
-            // --- UI CONTROLS ---
-            if (callState != Call.STATE_RINGING) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().weight(if (isLandscape) 1f else 1f, fill = false),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 24.dp)
+            if (simLabel != null) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.padding(top = 8.dp)
                 ) {
-                    if (isLandscape) {
-                        // Compact row for landscape
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CallActionButton(
-                                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                                isActive = isMuted,
-                                label = stringResource(R.string.action_mute)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                CallService.mute(!isMuted)
-                            }
+                    Text(
+                        text = simLabel,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
+                }
+            }
 
-                            CallActionButton(
-                                icon = Icons.Default.Dialpad,
-                                isActive = showKeypad,
-                                label = stringResource(R.string.action_keypad)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                showKeypad = !showKeypad
-                            }
-
-                            val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
-                            val audioIcon = when (audioRoute) {
-                                CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
-                                CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
-                                CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
-                                else -> Icons.Default.Phone
-                            }
-                            val audioLabel = audioRouteLabel(audioRoute, audioState)
-                            val hasBluetooth = (audioState?.supportedRouteMask ?: 0 and CallAudioState.ROUTE_BLUETOOTH) != 0
-
-                            CallActionButton(
-                                icon = audioIcon,
-                                isActive = audioRoute == CallAudioState.ROUTE_SPEAKER || audioRoute == CallAudioState.ROUTE_BLUETOOTH,
-                                label = audioLabel
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                if (hasBluetooth) showAudioPicker = true else CallService.cycleAudioRoute()
-                            }
-
-                            IconButton(
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                    try { call.disconnect() } catch (e: Exception) {}
-                                },
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .background(Color(0xFFF44336), CircleShape)
-                            ) {
-                                Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = Color.White, modifier = Modifier.size(28.dp))
-                            }
-                        }
-                    } else {
-                        // Row 1
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            CallActionButton(
-                                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                                isActive = isMuted,
-                                label = stringResource(R.string.action_mute)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                CallService.mute(!isMuted)
-                            }
-
-                            CallActionButton(
-                                icon = Icons.Default.Dialpad,
-                                isActive = showKeypad,
-                                label = stringResource(R.string.action_keypad)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                showKeypad = !showKeypad
-                            }
-
-                            CallActionButton(
-                                icon = Icons.AutoMirrored.Filled.Message,
-                                isActive = false,
-                                label = stringResource(R.string.action_message)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = Uri.parse("smsto:$phoneNumber")
-                                }
-                                context.startActivity(intent)
-                            }
-                        }
-
-                        // Row 2
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
-                            val audioIcon = when (audioRoute) {
-                                CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
-                                CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
-                                CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
-                                else -> Icons.Default.Phone
-                            }
-
-                            val audioLabel = audioRouteLabel(audioRoute, audioState)
-
-                            val hasBluetooth = (audioState?.supportedRouteMask ?: 0 and CallAudioState.ROUTE_BLUETOOTH) != 0
-
-                            CallActionButton(
-                                icon = audioIcon,
-                                isActive = audioRoute == CallAudioState.ROUTE_SPEAKER || audioRoute == CallAudioState.ROUTE_BLUETOOTH,
-                                label = audioLabel
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                if (hasBluetooth) showAudioPicker = true else CallService.cycleAudioRoute()
-                            }
-
-                            CallActionButton(
-                                icon = Icons.Default.Add,
-                                isActive = false,
-                                label = stringResource(R.string.action_add_call)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                if (callState != Call.STATE_HOLDING) {
-                                    try { call.hold() } catch (e: Exception) {}
-                                }
-                                val intent = Intent(Intent.ACTION_DIAL)
-                                context.startActivity(intent)
-                            }
-
-                            CallActionButton(
-                                icon = if (callState == Call.STATE_HOLDING) Icons.Default.PlayArrow else Icons.Default.Pause,
-                                isActive = callState == Call.STATE_HOLDING,
-                                label = if (callState == Call.STATE_HOLDING) stringResource(R.string.action_resume) else stringResource(R.string.action_hold)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                if (callState == Call.STATE_HOLDING) call.unhold() else call.hold()
-                            }
-                        }
-
-                        // End Call Button
-                        Button(
-                            onClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                try { call.disconnect() } catch (e: Exception) {}
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth(0.85f)
-                                .height(64.dp)
-                                .scale(if (isPressed) 0.96f else 1f),
-                            shape = CircleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFF44336),
-                                contentColor = Color.White
-                            ),
-                            interactionSource = interactionSource
-                        ) {
-                            Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end_call), modifier = Modifier.size(32.dp))
+            if (!showKeypad) {
+                AnimatedVisibility(
+                    visible = showCallScreenAvatar,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 24.dp))
+                        if (callState == Call.STATE_RINGING) {
+                            PulsingAvatar(photoUri, isLandscape)
+                        } else {
+                            HeroAvatar(photoUri, isLandscape)
                         }
                     }
                 }
-            } else {
-                val useCustomUI = preferenceManager.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)
-                Column(
-                    modifier = Modifier.fillMaxWidth().weight(if (isLandscape) 1f else 1f, fill = false),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(if (isLandscape) 8.dp else 24.dp)
+            }
+        }
+    }
+
+    val keypadSection: @Composable (Boolean) -> Unit = { compact ->
+        InCallKeypad(
+            call = call,
+            typedDigits = typedDigits,
+            compact = compact,
+            onDigitClick = { digit -> typedDigits += digit }
+        )
+    }
+
+    val activeControls: @Composable (Boolean) -> Unit = { compact ->
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 24.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Top
+            ) {
+                CallActionButton(
+                    icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                    isActive = isMuted,
+                    label = stringResource(R.string.action_mute),
+                    compact = compact
                 ) {
-                    if (useCustomUI != 2 && useCustomUI != 3) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CallActionButton(
-                                icon = Icons.AutoMirrored.Filled.Message,
-                                isActive = false,
-                                label = stringResource(R.string.action_message)
-                            ) {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                try { call.disconnect() } catch (e: Exception) {}
-                                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = Uri.parse("smsto:$phoneNumber")
-                                }
-                                context.startActivity(intent)
-                            }
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    CallService.mute(!isMuted)
+                }
+
+                CallActionButton(
+                    icon = Icons.Default.Dialpad,
+                    isActive = showKeypad,
+                    label = stringResource(R.string.action_keypad),
+                    compact = compact
+                ) {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    showKeypad = !showKeypad
+                }
+
+                CallActionButton(
+                    icon = audioIcon,
+                    isActive = audioRoute == CallAudioState.ROUTE_SPEAKER || audioRoute == CallAudioState.ROUTE_BLUETOOTH,
+                    label = audioLabel,
+                    compact = compact
+                ) {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    if (hasBluetooth) showAudioPicker = true else CallService.cycleAudioRoute()
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Top
+            ) {
+                CallActionButton(
+                    icon = Icons.Default.Add,
+                    isActive = false,
+                    label = stringResource(R.string.action_add_call),
+                    compact = compact
+                ) {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    if (callState != Call.STATE_HOLDING) {
+                        try { call.hold() } catch (e: Exception) {}
+                    }
+                    val intent = Intent(Intent.ACTION_DIAL)
+                    context.startActivity(intent)
+                }
+
+                CallActionButton(
+                    icon = if (callState == Call.STATE_HOLDING) Icons.Default.PlayArrow else Icons.Default.Pause,
+                    isActive = callState == Call.STATE_HOLDING,
+                    label = if (callState == Call.STATE_HOLDING) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                    compact = compact
+                ) {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    if (callState == Call.STATE_HOLDING) call.unhold() else call.hold()
+                }
+
+                CallActionButton(
+                    icon = Icons.AutoMirrored.Filled.Message,
+                    isActive = false,
+                    label = stringResource(R.string.action_message),
+                    compact = compact
+                ) {
+                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("smsto:$phoneNumber")
+                    }
+                    context.startActivity(intent)
+                }
+            }
+
+            if (recordingEnabled) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CallActionButton(
+                        icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
+                        isActive = isRecording,
+                        label = if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
+                        compact = compact
+                    ) {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        if (isRecording) {
+                            CallRecorder.stop()
+                        } else {
+                            CallRecorder.start(context, contactName.ifBlank { phoneNumber })
                         }
                     }
+                }
+            }
 
-                    when (useCustomUI) {
-                        1 -> IncomingCallButtons(
-                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
-                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
-                        )
-                        2 -> IPhoneSwipeToAnswer(
-                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
-                            onDecline = { try { call.disconnect() } catch (e: Exception) {} },
-                            onMessage = {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                try { call.disconnect() } catch (e: Exception) {}
-                                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = Uri.parse("smsto:$phoneNumber")
-                                }
-                                context.startActivity(intent)
+            Button(
+                onClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    try { call.disconnect() } catch (e: Exception) {}
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .height(if (compact) 56.dp else 64.dp)
+                    .scale(if (isPressed) 0.96f else 1f),
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF44336),
+                    contentColor = Color.White
+                ),
+                interactionSource = interactionSource
+            ) {
+                Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end_call), modifier = Modifier.size(if (compact) 26.dp else 32.dp))
+            }
+        }
+    }
+
+    val incomingControls: @Composable (Boolean) -> Unit = { compact ->
+        val useCustomUI = preferenceManager.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 24.dp)
+        ) {
+            if (otherCall != null) {
+                CallWaitingButtons(
+                    onAnswerHold = {
+                        view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                        CallService.answerRingingCall(endActive = false)
+                    },
+                    onEndAndAnswer = {
+                        view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                        CallService.answerRingingCall(endActive = true)
+                    },
+                    onDecline = {
+                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        try { call.disconnect() } catch (e: Exception) {}
+                    }
+                )
+            } else {
+                if (useCustomUI != 2 && useCustomUI != 3) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CallActionButton(
+                            icon = Icons.AutoMirrored.Filled.Message,
+                            isActive = false,
+                            label = stringResource(R.string.action_message),
+                            compact = compact
+                        ) {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            try { call.disconnect() } catch (e: Exception) {}
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("smsto:$phoneNumber")
                             }
-                        )
-                        3 -> VerticalSwipeToAnswer(
-                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
-                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
-                        )
-                        else -> HorizontalSwipeToAnswer(
-                            onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
-                            onDecline = { try { call.disconnect() } catch (e: Exception) {} }
-                        )
+                            context.startActivity(intent)
+                        }
+                    }
+                }
+
+                when (useCustomUI) {
+                    1 -> IncomingCallButtons(
+                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                    )
+                    2 -> IPhoneSwipeToAnswer(
+                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onDecline = { try { call.disconnect() } catch (e: Exception) {} },
+                        onMessage = {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            try { call.disconnect() } catch (e: Exception) {}
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("smsto:$phoneNumber")
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
+                    3 -> VerticalSwipeToAnswer(
+                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                    )
+                    else -> HorizontalSwipeToAnswer(
+                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onDecline = { try { call.disconnect() } catch (e: Exception) {} }
+                    )
+                }
+            }
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
+        ExpressiveBackground(photoUri, backgroundUri)
+
+        if (isLandscape) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    otherCallCard()
+                    heroSection()
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    when {
+                        showKeypad -> keypadSection(true)
+                        callState == Call.STATE_RINGING -> incomingControls(true)
+                        else -> activeControls(true)
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                otherCallCard()
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.weight(if (showKeypad) 0.7f else 1f)
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    heroSection()
+                }
+
+                if (showKeypad) {
+                    Box(modifier = Modifier.weight(1.5f), contentAlignment = Alignment.TopStart) {
+                        keypadSection(false)
+                    }
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (callState == Call.STATE_RINGING) {
+                        incomingControls(false)
+                    } else {
+                        activeControls(false)
                     }
                 }
             }
@@ -611,22 +685,19 @@ fun ExpressiveCallScreen(
 fun InCallKeypad(
     call: Call,
     typedDigits: String,
+    compact: Boolean = false,
     onDigitClick: (Char) -> Unit
 ) {
-    val prefs = koinInject<PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
-    val isDark = isSystemInDarkTheme()
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(if (compact) 8.dp else 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(if (compact) 8.dp else 16.dp)
     ) {
         Text(
             text = typedDigits,
-            style = MaterialTheme.typography.displaySmall,
+            style = if (compact) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
@@ -646,7 +717,7 @@ fun InCallKeypad(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 row.forEach { key ->
-                    KeypadButton(key) {
+                    KeypadButton(key, compact) {
                         onDigitClick(key)
                         call.playDtmfTone(key)
                         call.stopDtmfTone()
@@ -658,12 +729,12 @@ fun InCallKeypad(
 }
 
 @Composable
-fun KeypadButton(key: Char, style: Int = 0, onClick: () -> Unit) {
+fun KeypadButton(key: Char, compact: Boolean = false, onClick: () -> Unit) {
     val isDark = isSystemInDarkTheme()
-    
+
     Surface(
         onClick = onClick,
-        modifier = Modifier.size(72.dp),
+        modifier = Modifier.size(if (compact) 52.dp else 72.dp),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (isDark) 0.15f else 0.3f),
         contentColor = MaterialTheme.colorScheme.onSurface
@@ -671,7 +742,7 @@ fun KeypadButton(key: Char, style: Int = 0, onClick: () -> Unit) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = key.toString(),
-                style = MaterialTheme.typography.headlineMedium,
+                style = if (compact) MaterialTheme.typography.titleLarge else MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -679,9 +750,18 @@ fun KeypadButton(key: Char, style: Int = 0, onClick: () -> Unit) {
 }
 
 @Composable
-fun ExpressiveBackground(photoUri: String?) {
+fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
+    val hasCustomBackground = !backgroundUri.isNullOrEmpty()
+
     Box(modifier = Modifier.fillMaxSize()) {
-        if (!photoUri.isNullOrEmpty()) {
+        if (hasCustomBackground) {
+            AsyncImage(
+                model = backgroundUri,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else if (!photoUri.isNullOrEmpty()) {
             AsyncImage(
                 model = photoUri,
                 contentDescription = null,
@@ -692,22 +772,34 @@ fun ExpressiveBackground(photoUri: String?) {
                 contentScale = ContentScale.Crop
             )
         }
-        
+
         val isDark = isSystemInDarkTheme()
-        val gradient = Brush.verticalGradient(
-            colors = if (isDark) {
-                listOf(Color.Black.copy(alpha = 0.8f), Color.Transparent, Color.Black.copy(alpha = 0.9f))
-            } else {
-                listOf(Color.White.copy(alpha = 0.6f), Color.Transparent, Color.White.copy(alpha = 0.8f))
-            }
-        )
+        val gradient = if (hasCustomBackground) {
+            Brush.verticalGradient(
+                colors = if (isDark) {
+                    listOf(Color.Black.copy(alpha = 0.85f), Color.Black.copy(alpha = 0.45f), Color.Black.copy(alpha = 0.9f))
+                } else {
+                    listOf(Color.White.copy(alpha = 0.88f), Color.White.copy(alpha = 0.55f), Color.White.copy(alpha = 0.92f))
+                }
+            )
+        } else {
+            Brush.verticalGradient(
+                colors = if (isDark) {
+                    listOf(Color.Black.copy(alpha = 0.8f), Color.Transparent, Color.Black.copy(alpha = 0.9f))
+                } else {
+                    listOf(Color.White.copy(alpha = 0.6f), Color.Transparent, Color.White.copy(alpha = 0.8f))
+                }
+            )
+        }
         Box(modifier = Modifier.fillMaxSize().background(gradient))
-        FloatingParticles()
+        if (!hasCustomBackground) {
+            FloatingParticles()
+        }
     }
 }
 
 @Composable
-fun PulsingAvatar(photoUri: String?) {
+fun PulsingAvatar(photoUri: String?, isLandscape: Boolean = false) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -728,7 +820,7 @@ fun PulsingAvatar(photoUri: String?) {
         label = "alpha"
     )
 
-    val avatarSize = heroAvatarSize(isLandscape = false)
+    val avatarSize = heroAvatarSize(isLandscape)
 
     Box(contentAlignment = Alignment.Center) {
         Box(
@@ -743,7 +835,7 @@ fun PulsingAvatar(photoUri: String?) {
                 .scale(scale * 1.2f)
                 .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = alpha * 0.5f), CircleShape)
         )
-        HeroAvatar(photoUri)
+        HeroAvatar(photoUri, isLandscape)
     }
 }
 
@@ -853,13 +945,14 @@ fun CallActionButton(
     isActive: Boolean,
     label: String,
     enabled: Boolean = true,
+    compact: Boolean = false,
     onClick: () -> Unit
 ) {
     val scale by animateFloatAsState(if (isActive) 1.1f else 1f, label = "scale")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(90.dp).alpha(if (enabled) 1f else 0.5f)
+        modifier = Modifier.width(if (compact) 76.dp else 90.dp).alpha(if (enabled) 1f else 0.5f)
     ) {
         val containerColor by animateColorAsState(
             if (isActive) MaterialTheme.colorScheme.secondaryContainer
@@ -873,7 +966,7 @@ fun CallActionButton(
             onClick = onClick,
             enabled = enabled,
             modifier = Modifier
-                .size(64.dp)
+                .size(if (compact) 54.dp else 64.dp)
                 .scale(scale)
                 .background(containerColor, CircleShape)
         ) {
@@ -881,10 +974,10 @@ fun CallActionButton(
                 icon,
                 contentDescription = label,
                 tint = contentColor,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(if (compact) 24.dp else 28.dp)
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(if (compact) 4.dp else 8.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
@@ -1440,6 +1533,56 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     modifier = Modifier.size(36.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun CallWaitingButtons(
+    onAnswerHold: () -> Unit,
+    onEndAndAnswer: () -> Unit,
+    onDecline: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            onClick = onAnswerHold,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4CAF50),
+                contentColor = Color.White
+            )
+        ) {
+            Icon(Icons.Default.PauseCircle, contentDescription = null, modifier = Modifier.size(22.dp))
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(stringResource(R.string.call_waiting_answer_hold), fontWeight = FontWeight.Bold)
+        }
+
+        Button(
+            onClick = onEndAndAnswer,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        ) {
+            Icon(Icons.Default.SwapCalls, contentDescription = null, modifier = Modifier.size(22.dp))
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(stringResource(R.string.call_waiting_end_and_answer), fontWeight = FontWeight.Bold)
+        }
+
+        TextButton(
+            onClick = onDecline,
+            modifier = Modifier.fillMaxWidth().height(48.dp)
+        ) {
+            Icon(Icons.Default.CallEnd, contentDescription = null, tint = Color(0xFFF44336), modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.action_decline), color = Color(0xFFF44336), fontWeight = FontWeight.Bold)
         }
     }
 }

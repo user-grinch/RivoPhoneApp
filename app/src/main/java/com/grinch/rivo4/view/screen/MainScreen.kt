@@ -1,6 +1,7 @@
 package com.grinch.rivo4.view.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -30,23 +32,36 @@ fun MainScreen(
     initialTab: Int? = null
 ) {
     val prefs = koinInject<PreferenceManager>()
-    val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
-    
-    val pagerState = rememberPagerState(initialPage = initialTab ?: defBar) { 2 }
+    val settingsState by prefs.settingsChanged.collectAsState()
+
+    val visibleTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
+    val defaultTab = remember(settingsState) {
+        prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)
+    }
+
+    val requestedTab = initialTab ?: defaultTab
+    val startPage = visibleTabs.indexOf(requestedTab).coerceAtLeast(0)
+
+    val pagerState = rememberPagerState(initialPage = startPage) { visibleTabs.size }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(initialTab) {
-        if (initialTab != null && pagerState.currentPage != initialTab) {
-            pagerState.scrollToPage(initialTab)
+    LaunchedEffect(initialTab, visibleTabs) {
+        val target = visibleTabs.indexOf(requestedTab)
+        if (initialTab != null && target >= 0 && pagerState.currentPage != target) {
+            pagerState.scrollToPage(target)
+        } else if (pagerState.currentPage > visibleTabs.lastIndex) {
+            pagerState.scrollToPage(visibleTabs.lastIndex.coerceAtLeast(0))
         }
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         bottomBar = {
             BottomBar(
                 navController = navController,
                 navigator = navigator,
                 pagerState = pagerState,
+                visibleTabs = visibleTabs,
                 onPageSelected = { page ->
                     scope.launch {
                         pagerState.animateScrollToPage(page)
@@ -61,9 +76,10 @@ fun MainScreen(
                 modifier = Modifier.fillMaxSize(),
                 beyondViewportPageCount = 1
             ) { page ->
-                when (page) {
-                    0 -> RecentScreenContent(navController, navigator)
-                    1 -> ContactScreenContent(navController, navigator)
+                when (visibleTabs.getOrNull(page)) {
+                    PreferenceManager.TAB_RECENTS -> RecentScreenContent(navController, navigator)
+                    PreferenceManager.TAB_FAVORITES -> FavoritesScreenContent(navController, navigator)
+                    PreferenceManager.TAB_CONTACTS -> ContactScreenContent(navController, navigator)
                 }
             }
         }

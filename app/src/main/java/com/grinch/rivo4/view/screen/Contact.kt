@@ -135,7 +135,8 @@ fun ContactScreenContent(navController: NavController, navigator: DestinationsNa
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
         Box (
             modifier = Modifier.padding(innerPadding).fillMaxSize()

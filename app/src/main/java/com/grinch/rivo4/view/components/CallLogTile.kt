@@ -195,10 +195,12 @@ fun BatchCallLogActionBar(
     selectedCount: Int,
     onClearSelection: () -> Unit,
     onDelete: () -> Unit,
-    onClearAll: () -> Unit
+    onClearAll: () -> Unit,
+    onBlock: () -> Unit
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showClearAllConfirm by remember { mutableStateOf(false) }
+    var showBlockConfirm by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -224,6 +226,9 @@ fun BatchCallLogActionBar(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
+            IconButton(onClick = { showBlockConfirm = true }) {
+                Icon(Icons.Default.Block, stringResource(R.string.action_block_number))
+            }
             IconButton(onClick = { showClearAllConfirm = true }) {
                 Icon(Icons.Default.DeleteSweep, stringResource(R.string.content_desc_clear_all_logs))
             }
@@ -254,6 +259,35 @@ fun BatchCallLogActionBar(
         ) {
             Text(
                 stringResource(R.string.call_log_delete_confirm, selectedCount),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+    if (showBlockConfirm) {
+        RivoDialog(
+            onDismissRequest = { showBlockConfirm = false },
+            title = stringResource(R.string.call_log_block_title),
+            icon = Icons.Default.Block,
+            confirmButton = {
+                TextButton(onClick = {
+                    onBlock()
+                    showBlockConfirm = false
+                }) {
+                    Text(stringResource(R.string.action_block), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBlockConfirm = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            Text(
+                stringResource(R.string.call_log_block_message, selectedCount),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

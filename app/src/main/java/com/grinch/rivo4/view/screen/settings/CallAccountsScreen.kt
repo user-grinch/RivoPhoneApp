@@ -32,10 +32,15 @@ import androidx.compose.ui.platform.LocalContext
 import android.content.Intent
 import android.telecom.TelecomManager
 
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+import com.grinch.rivo4.controller.CallRecorder
+import com.grinch.rivo4.controller.util.makeCall
+import com.ramcosta.composedestinations.generated.destinations.CallRecordingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Destination<RootGraph>
 @Composable
 fun CallAccountsScreen(
@@ -62,8 +67,13 @@ fun CallAccountsScreen(
     var redialAttempts by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)) }
     var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
-    
+    var callRecording by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING, false)) }
+    var autoRecord by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)) }
+
+    val recordAudioPermission = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+
     var showSimDialog by remember { mutableStateOf(false) }
+    var showCallWaitingDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -279,11 +289,105 @@ fun CallAccountsScreen(
                         leadingIcon = Icons.Outlined.Voicemail,
                         onClick = { navigator.navigate(VoicemailScreenDestination) }
                     )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_call_waiting),
+                        supporting = stringResource(R.string.settings_call_waiting_supporting),
+                        leadingIcon = Icons.Outlined.PhoneCallback,
+                        onClick = { showCallWaitingDialog = true }
+                    )
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_call_recording),
+                        supporting = stringResource(R.string.settings_call_recording_supporting),
+                        leadingIcon = Icons.Outlined.FiberManualRecord,
+                        checked = callRecording,
+                        onCheckedChange = { enabled ->
+                            if (enabled && !CallRecorder.hasPermission(context)) {
+                                recordAudioPermission.launchPermissionRequest()
+                            }
+                            callRecording = enabled
+                            prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING, enabled)
+                            if (!enabled) {
+                                autoRecord = false
+                                prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)
+                            }
+                        }
+                    )
+                    if (callRecording) {
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_call_recording_auto),
+                            supporting = stringResource(R.string.settings_call_recording_auto_supporting),
+                            leadingIcon = Icons.Outlined.Autorenew,
+                            checked = autoRecord,
+                            onCheckedChange = {
+                                if (it && !CallRecorder.hasPermission(context)) {
+                                    recordAudioPermission.launchPermissionRequest()
+                                }
+                                autoRecord = it
+                                prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoListItem(
+                            headline = stringResource(R.string.call_recordings_title),
+                            supporting = stringResource(R.string.call_recordings_supporting),
+                            leadingIcon = Icons.Outlined.LibraryMusic,
+                            onClick = { navigator.navigate(CallRecordingsScreenDestination) }
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.settings_call_recording_notice),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
                 }
             }
 
             item {
                 Spacer(modifier = Modifier.height(100.dp))
+            }
+        }
+    }
+
+    if (showCallWaitingDialog) {
+        val callWaitingOptions = listOf(
+            Triple(stringResource(R.string.settings_call_waiting_enable), "*43#", Icons.Outlined.PhoneCallback),
+            Triple(stringResource(R.string.settings_call_waiting_disable), "#43#", Icons.Outlined.PhoneDisabled),
+            Triple(stringResource(R.string.settings_call_waiting_check), "*#43#", Icons.Outlined.Info)
+        )
+        RivoDialog(
+            onDismissRequest = { showCallWaitingDialog = false },
+            title = stringResource(R.string.settings_call_waiting),
+            icon = Icons.Outlined.PhoneCallback,
+            dismissButton = {
+                TextButton(onClick = { showCallWaitingDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            Text(
+                text = stringResource(R.string.settings_call_waiting_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+            callWaitingOptions.forEach { (label, code, icon) ->
+                RivoListItem(
+                    headline = label,
+                    supporting = code,
+                    leadingIcon = icon,
+                    onClick = {
+                        showCallWaitingDialog = false
+                        makeCall(context, code)
+                    }
+                )
             }
         }
     }

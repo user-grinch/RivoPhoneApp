@@ -41,6 +41,7 @@ class CallService : InCallService() {
     private val preferenceManager: PreferenceManager by inject()
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var redialCount = 0
+    private val callStartTimes = mutableMapOf<Call, Long>()
 
     private fun getContactBitmap(photoUri: String?): Bitmap? {
         if (photoUri == null) return null
@@ -143,6 +144,24 @@ class CallService : InCallService() {
             _currentCallSession.value?.call?.answer(VideoProfile.STATE_AUDIO_ONLY)
         }
 
+        fun answerRingingCall(endActive: Boolean) {
+            val calls = instance?.getCalls() ?: return
+            val ringing = calls.find { it.state == Call.STATE_RINGING } ?: return
+            val others = calls.filter { it != ringing && it.state != Call.STATE_DISCONNECTED }
+
+            others.forEach { other ->
+                try {
+                    if (endActive) other.disconnect() else if (other.state == Call.STATE_ACTIVE) other.hold()
+                } catch (e: Exception) {
+                }
+            }
+
+            try {
+                ringing.answer(VideoProfile.STATE_AUDIO_ONLY)
+            } catch (e: Exception) {
+            }
+        }
+
         fun declineCall() {
             _currentCallSession.value?.call?.disconnect()
         }
@@ -167,13 +186,15 @@ class CallService : InCallService() {
             
             if (state == Call.STATE_ACTIVE) {
                 redialCount = 0
+                startAutoRecordingIfEnabled(call)
             }
 
             if (state == Call.STATE_DISCONNECTED) {
                 val cause = call.details.disconnectCause
                 handleDisconnect(call, cause)
 
-                if ((instance?.getCalls()?.size ?: 0) == 0) {
+                val remaining = getCalls()?.filter { it.state != Call.STATE_DISCONNECTED } ?: emptyList()
+                if (remaining.isEmpty()) {
                     removeForeground()
                     cancelNotification()
                 }
@@ -183,9 +204,30 @@ class CallService : InCallService() {
         }
     }
 
+    private fun startAutoRecordingIfEnabled(call: Call) {
+        if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, false)) return
+        if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)) return
+        if (CallRecorder.isRecording.value) return
+
+        val number = call.details.handle?.schemeSpecificPart ?: ""
+        serviceScope.launch(Dispatchers.IO) {
+            val name = if (number.isNotEmpty()) {
+                try { contactsRepository.getContactByNumber(number)?.name } catch (e: Exception) { null } ?: number
+            } else {
+                getString(R.string.label_unknown_number)
+            }
+            CallRecorder.start(this@CallService, name)
+        }
+    }
+
     private fun handleDisconnect(call: Call, cause: DisconnectCause?) {
         val number = call.details.handle?.schemeSpecificPart ?: ""
-        
+
+        if (CallRecorder.isRecording.value &&
+            (getCalls()?.none { it != call && it.state == Call.STATE_ACTIVE } != false)) {
+            CallRecorder.stop()
+        }
+
         // Auto Redial on Busy
         if (cause?.code == DisconnectCause.BUSY && 
             preferenceManager.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) {
@@ -316,7 +358,19 @@ class CallService : InCallService() {
     private fun updateCallState() {
         val calls = getCalls() ?: emptyList()
         _allCalls.value = ArrayList(calls)
-        
+
+        calls.forEach { c ->
+            if (c.state == Call.STATE_ACTIVE) {
+                val detailsTime = c.details.connectTimeMillis
+                if (detailsTime > 0) {
+                    callStartTimes[c] = detailsTime
+                } else if (!callStartTimes.containsKey(c)) {
+                    callStartTimes[c] = System.currentTimeMillis()
+                }
+            }
+        }
+        callStartTimes.keys.retainAll(calls.toSet())
+
         val preferred = _preferredCall.value
         // Clear preferred if it's gone or disconnected
         if (preferred != null && (preferred !in calls || preferred.state == Call.STATE_DISCONNECTED)) {
@@ -335,13 +389,7 @@ class CallService : InCallService() {
             ?: calls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
             
         if (priorityCall != null) {
-            val connectTime = if (priorityCall.state == Call.STATE_ACTIVE) {
-                if (priorityCall.details.connectTimeMillis > 0) {
-                    priorityCall.details.connectTimeMillis
-                } else {
-                    System.currentTimeMillis()
-                }
-            } else 0L
+            val connectTime = callStartTimes[priorityCall] ?: 0L
             _currentCallSession.value = CallSession(priorityCall, priorityCall.state, connectTimeMillis = connectTime)
         } else {
             _currentCallSession.value = null
@@ -387,6 +435,7 @@ class CallService : InCallService() {
         updateCallState()
         val calls = getCalls() ?: emptyList()
         if (calls.isEmpty()) {
+            if (CallRecorder.isRecording.value) CallRecorder.stop()
             removeForeground()
             cancelNotification()
         } else {
@@ -510,7 +559,6 @@ class CallService : InCallService() {
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setFullScreenIntent(fullScreenPendingIntent, true)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -526,7 +574,9 @@ class CallService : InCallService() {
                 }
             )
 
-        if (call.state != Call.STATE_RINGING) {
+        if (call.state == Call.STATE_RINGING) {
+            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+        } else {
             builder.addAction(
                 NotificationCompat.Action.Builder(
                     android.R.drawable.stat_sys_speakerphone,
@@ -547,6 +597,7 @@ class CallService : InCallService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (CallRecorder.isRecording.value) CallRecorder.stop()
         if (instance == this) instance = null
         serviceScope.cancel()
     }

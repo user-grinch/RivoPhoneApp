@@ -28,12 +28,14 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -58,8 +60,8 @@ fun InterfaceScreen(
     
     var dynamicColors by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)) }
     var amoledMode by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false)) }
-    var flipBottomBar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, defaultValue = false)) }
-    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, defaultValue = 0)) }
+    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, defaultValue = PreferenceManager.TAB_RECENTS)) }
+    var mergeFavorites by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true)) }
     var showFirstLetter by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)) }
     var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
     var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
@@ -321,8 +323,9 @@ fun InterfaceScreen(
                             supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SpaceDashboard,
                             options = listOf(
-                                stringResource(R.string.nav_contacts) to 0,
-                                stringResource(R.string.nav_recents) to 1,
+                                stringResource(R.string.nav_recents) to 0,
+                                stringResource(R.string.nav_favorites) to 1,
+                                stringResource(R.string.nav_contacts) to 2,
                             ),
                             selectedValue = defaultBottomBar,
                             onValueChange = { selectedInt ->
@@ -330,14 +333,20 @@ fun InterfaceScreen(
                                 prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, selectedInt)
                             }
                         )
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_flip_bottom_bar),
-                            supporting = stringResource(R.string.settings_interface_flip_bottom_bar_supporting),
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_bottom_nav_title),
+                            supporting = stringResource(R.string.settings_bottom_nav_supporting),
                             leadingIcon = Icons.Outlined.SwapHoriz,
-                            checked = flipBottomBar,
+                            onClick = { navigator.navigate(BottomNavScreenDestination) }
+                        )
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_merge_favorites),
+                            supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
+                            leadingIcon = Icons.Outlined.Star,
+                            checked = mergeFavorites,
                             onCheckedChange = {
-                                flipBottomBar = it
-                                prefs.setBoolean(PreferenceManager.KEY_FLIP_BOTTOM_NAV, it)
+                                mergeFavorites = it
+                                prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
                             }
                         )
                         RivoSwitchListItem(

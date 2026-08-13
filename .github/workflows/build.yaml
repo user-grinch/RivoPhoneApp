@@ -51,6 +51,8 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PATH: ../app/keystore.jks # Adjusted path for gradle context
+          BUILD_NUMBER: ${{ github.run_number }}
+          PREVIEW_BUILD: ${{ github.ref == 'refs/heads/main' }}
         run: |
           ./gradlew assembleRelease bundleRelease
 

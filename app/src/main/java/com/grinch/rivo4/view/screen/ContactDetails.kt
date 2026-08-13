@@ -127,12 +127,43 @@ fun ContactDetailsScreen(
 
     var favoriteNumber by remember { mutableStateOf<String?>(null) }
     var favoriteEmail by remember { mutableStateOf<String?>(null) }
+    var callBackground by remember { mutableStateOf<String?>(null) }
+    var showBackgroundDialog by remember { mutableStateOf(false) }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
 
     LaunchedEffect(fullContact) {
         fullContact?.id?.let {
             favoriteNumber = prefs.getFavoriteNumber(it)
             favoriteEmail = prefs.getFavoriteEmail(it)
+            callBackground = prefs.getContactBackground(it)
+        }
+    }
+
+    var blockedVersion by remember { mutableIntStateOf(0) }
+    val knownNumbers = remember(fullContact, phoneNumber) {
+        ((fullContact?.phoneNumbers ?: emptyList()) + listOfNotNull(phoneNumber)).distinct()
+    }
+    val blockedNumbers = remember(knownNumbers, blockedVersion) {
+        knownNumbers.filter { BlockedNumbersManager.isBlocked(context, it) }.toSet()
+    }
+    val isNumberBlocked: (String) -> Boolean = { number ->
+        blockedNumbers.any { areNumbersEqual(it, number) }
+    }
+
+    val backgroundPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        val id = fullContact?.id
+        if (uri != null && id != null) {
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+            }
+            prefs.setContactBackground(id, uri.toString())
+            callBackground = uri.toString()
         }
     }
 
@@ -216,6 +247,39 @@ fun ContactDetailsScreen(
             itemIcon = { if (areNumbersEqual(favoriteNumber, it)) Icons.Default.Star else Icons.Default.Phone },
             isSelected = { areNumbersEqual(favoriteNumber, it) }
         )
+    }
+
+    if (showBackgroundDialog) {
+        RivoDialog(
+            onDismissRequest = { showBackgroundDialog = false },
+            title = stringResource(R.string.contact_call_background),
+            icon = Icons.Default.Wallpaper,
+            dismissButton = {
+                TextButton(onClick = { showBackgroundDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            RivoListItem(
+                headline = stringResource(R.string.contact_call_background_choose),
+                leadingIcon = Icons.Default.Image,
+                onClick = {
+                    showBackgroundDialog = false
+                    backgroundPickerLauncher.launch(arrayOf("image/*"))
+                }
+            )
+            if (callBackground != null) {
+                RivoListItem(
+                    headline = stringResource(R.string.contact_call_background_remove),
+                    leadingIcon = Icons.Default.Delete,
+                    onClick = {
+                        showBackgroundDialog = false
+                        fullContact?.id?.let { prefs.setContactBackground(it, null) }
+                        callBackground = null
+                    }
+                )
+            }
+        }
     }
 
     if (showQrDialog) {
@@ -455,6 +519,20 @@ fun ContactDetailsScreen(
                                                 },
                                                 leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
                                             )
+                                            val numberBlocked = isNumberBlocked(number)
+                                            DropdownMenuItem(
+                                                text = { Text(if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number)) },
+                                                onClick = {
+                                                    showMenu = false
+                                                    if (numberBlocked) {
+                                                        BlockedNumbersManager.unblock(context, number)
+                                                    } else {
+                                                        BlockedNumbersManager.block(context, number)
+                                                    }
+                                                    blockedVersion++
+                                                },
+                                                leadingIcon = { Icon(if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block, null) }
+                                            )
                                         }
                                     }
                                     if (index < fullContact!!.phoneNumbers.size - 1 || fullContact!!.emails.isNotEmpty()) {
@@ -540,6 +618,20 @@ fun ContactDetailsScreen(
                                                 clipboardManager.setText(AnnotatedString(phoneNumber))
                                             },
                                             leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                        )
+                                        val numberBlocked = isNumberBlocked(phoneNumber)
+                                        DropdownMenuItem(
+                                            text = { Text(if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number)) },
+                                            onClick = {
+                                                showMenu = false
+                                                if (numberBlocked) {
+                                                    BlockedNumbersManager.unblock(context, phoneNumber)
+                                                } else {
+                                                    BlockedNumbersManager.block(context, phoneNumber)
+                                                }
+                                                blockedVersion++
+                                            },
+                                            leadingIcon = { Icon(if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block, null) }
                                         )
                                     }
                                 }
@@ -708,6 +800,37 @@ fun ContactDetailsScreen(
                                             putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
                                         }
                                         ringtonePickerLauncher.launch(intent)
+                                    }
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
+                                    headline = stringResource(R.string.contact_call_background),
+                                    supporting = if (callBackground != null) stringResource(R.string.contact_call_background_set) else stringResource(R.string.contact_call_background_none),
+                                    leadingIcon = Icons.Default.Wallpaper,
+                                    onClick = {
+                                        if (callBackground != null) {
+                                            showBackgroundDialog = true
+                                        } else {
+                                            backgroundPickerLauncher.launch(arrayOf("image/*"))
+                                        }
+                                    }
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                val contactNumbers = fullContact!!.phoneNumbers
+                                val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
+                                RivoListItem(
+                                    headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
+                                    supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
+                                    leadingIcon = if (contactBlocked) Icons.Default.LockOpen else Icons.Default.Block,
+                                    onClick = {
+                                        contactNumbers.forEach { number ->
+                                            if (contactBlocked) {
+                                                BlockedNumbersManager.unblock(context, number)
+                                            } else {
+                                                BlockedNumbersManager.block(context, number)
+                                            }
+                                        }
+                                        blockedVersion++
                                     }
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))

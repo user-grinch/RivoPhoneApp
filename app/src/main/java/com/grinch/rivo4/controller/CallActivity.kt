@@ -39,10 +39,18 @@ class CallActivity : ComponentActivity() {
     private val contactsRepo: IContactsRepository by inject()
     private val preferenceManager: PreferenceManager by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
+    private var isFinishingCall = false
+    private var keyguardDismissRequested = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
+        if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
+            CallService.currentCallSession.value == null) {
+            finish()
+            return
+        }
+
         turnScreenOnAndShowWhileLocked()
 
         if (preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) {
@@ -114,8 +122,8 @@ class CallActivity : ComponentActivity() {
                                 )
                             }
                             releaseProximityLock()
-                            delay(1200) // Brief delay to show "Call Ended" state
-                            finish()
+                            delay(1200)
+                            dismissCallScreen()
                         }
 
                         else -> releaseProximityLock()
@@ -123,8 +131,8 @@ class CallActivity : ComponentActivity() {
 
                     if (session == null) {
                         delay(1200)
-                        if (CallService.allCalls.value.isEmpty()) {
-                            finish()
+                        if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED }) {
+                            dismissCallScreen()
                         }
                     }
                 }
@@ -136,6 +144,7 @@ class CallActivity : ComponentActivity() {
 
                     var contactName by remember(number, unknownLabel) { mutableStateOf(number.ifEmpty { unknownLabel }) }
                     var photoUri by remember(number) { mutableStateOf<String?>(null) }
+                    var backgroundUri by remember(number) { mutableStateOf<String?>(null) }
 
                     LaunchedEffect(number) {
                         if (number.isNotEmpty()) {
@@ -148,6 +157,7 @@ class CallActivity : ComponentActivity() {
                             if (contact != null) {
                                 contactName = contact.name
                                 photoUri = contact.photoUri
+                                backgroundUri = preferenceManager.getContactBackground(contact.id)
                             }
                         }
                     }
@@ -167,7 +177,8 @@ class CallActivity : ComponentActivity() {
                             phoneNumber = targetCall.details.handle?.schemeSpecificPart ?: "",
                             photoUri = if (targetCall == call) photoUri else null,
                             audioState = audioState,
-                            initialConnectTime = if (targetCall == call) session?.connectTimeMillis ?: 0L else 0L
+                            initialConnectTime = if (targetCall == call) session?.connectTimeMillis ?: 0L else 0L,
+                            backgroundUri = if (targetCall == call) backgroundUri else null
                         )
                     }
                 } else {
@@ -198,15 +209,44 @@ class CallActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        turnScreenOnAndShowWhileLocked()
+        if (!isFinishingCall && CallService.allCalls.value.any { it.state != Call.STATE_DISCONNECTED }) {
+            turnScreenOnAndShowWhileLocked()
+        }
+    }
+
+    private fun dismissCallScreen() {
+        if (isFinishingCall) return
+        isFinishingCall = true
+
+        if (CallService.allCalls.value.any { it.state != Call.STATE_DISCONNECTED }) {
+            isFinishingCall = false
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(false)
+            setTurnScreenOn(false)
+        } else {
+            @Suppress("DEPRECATION")
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+            )
+        }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        finishAndRemoveTask()
     }
 
     private fun turnScreenOnAndShowWhileLocked() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            keyguardManager.requestDismissKeyguard(this, null)
+            if (!keyguardDismissRequested) {
+                keyguardDismissRequested = true
+                val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                keyguardManager.requestDismissKeyguard(this, null)
+            }
         } else {
             @Suppress("DEPRECATION")
             window.addFlags(

@@ -101,6 +101,62 @@ class PreferenceManager(context: Context) {
         setString(KEY_FAVORITES_ORDER, order.joinToString(","))
     }
 
+    fun getBottomNavOrder(): List<Int> {
+        val stored = getString(KEY_BOTTOM_NAV_ORDER, null)
+        val parsed = stored
+            ?.split(",")
+            ?.mapNotNull { it.trim().toIntOrNull() }
+            ?.filter { DEFAULT_BOTTOM_NAV_ORDER.contains(it) }
+            ?.distinct()
+            ?: emptyList()
+
+        val result = parsed.toMutableList()
+        if (result.isEmpty() && getBoolean(KEY_FLIP_BOTTOM_NAV, false)) {
+            result.addAll(DEFAULT_BOTTOM_NAV_ORDER.reversed())
+        }
+        DEFAULT_BOTTOM_NAV_ORDER.forEach { tab ->
+            if (!result.contains(tab)) result.add(tab)
+        }
+        return result
+    }
+
+    fun setBottomNavOrder(order: List<Int>) {
+        setString(KEY_BOTTOM_NAV_ORDER, order.joinToString(","))
+    }
+
+    fun getHiddenBottomNavTabs(): Set<Int> {
+        val stored = getString(KEY_BOTTOM_NAV_HIDDEN, null) ?: return emptySet()
+        return stored.split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
+    }
+
+    fun setHiddenBottomNavTabs(hidden: Set<Int>) {
+        setString(KEY_BOTTOM_NAV_HIDDEN, hidden.joinToString(","))
+    }
+
+    fun getVisibleBottomNavTabs(): List<Int> {
+        val hidden = getHiddenBottomNavTabs()
+        val visible = getBottomNavOrder().filter { !hidden.contains(it) }
+        return visible.ifEmpty { listOf(TAB_RECENTS) }
+    }
+
+    fun resetBottomNavLayout() {
+        setBottomNavOrder(DEFAULT_BOTTOM_NAV_ORDER)
+        setHiddenBottomNavTabs(emptySet())
+        setBoolean(KEY_FLIP_BOTTOM_NAV, false)
+    }
+
+    fun setContactBackground(contactId: String, uri: String?) {
+        if (uri == null) {
+            prefs.edit().remove("contact_background_$contactId").apply()
+        } else {
+            prefs.edit().putString("contact_background_$contactId", uri).apply()
+        }
+    }
+
+    fun getContactBackground(contactId: String): String? {
+        return prefs.getString("contact_background_$contactId", null)
+    }
+
     fun getVisibleAccounts(): Set<String>? {
         val str = getString(KEY_VISIBLE_ACCOUNTS, null) ?: return null
         return str.split(",").filter { it.isNotEmpty() }.toSet()
@@ -170,5 +226,16 @@ class PreferenceManager(context: Context) {
         const val KEY_CONTACT_SORT_ORDER = "contact_sort_order"
         const val KEY_CONTACT_DISPLAY_ORDER = "contact_display_order"
         const val KEY_PATREON_PROMPT_SHOWN = "patreon_prompt_shown"
+        const val KEY_CALL_RECORDING = "call_recording"
+        const val KEY_CALL_RECORDING_AUTO = "call_recording_auto"
+        const val KEY_BOTTOM_NAV_ORDER = "bottom_nav_order"
+        const val KEY_BOTTOM_NAV_HIDDEN = "bottom_nav_hidden"
+        const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"
+
+        const val TAB_RECENTS = 0
+        const val TAB_FAVORITES = 1
+        const val TAB_CONTACTS = 2
+
+        val DEFAULT_BOTTOM_NAV_ORDER = listOf(TAB_RECENTS, TAB_CONTACTS, TAB_FAVORITES)
     }
 }

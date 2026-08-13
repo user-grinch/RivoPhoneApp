@@ -61,6 +61,7 @@ fun RecentScreenContent(navController: NavController, navigator: DestinationsNav
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val viewModel: CallLogViewModel = koinActivityViewModel()
 
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
@@ -116,6 +117,12 @@ fun RecentScreenContent(navController: NavController, navigator: DestinationsNav
                         onClearAll = {
                             viewModel.clearCallLogs()
                             selectedEntries = emptySet()
+                        },
+                        onBlock = {
+                            selectedEntries.forEach { entry ->
+                                com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)
+                            }
+                            selectedEntries = emptySet()
                         }
                     )
                 }
@@ -134,7 +141,8 @@ fun RecentScreenContent(navController: NavController, navigator: DestinationsNav
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
         Box(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -187,7 +195,7 @@ fun FavoriteCircleItem(
                 photoUri = contact.photoUri,
                 modifier = Modifier.size(64.dp)
             )
-            
+
             if (isEditing) {
                 Surface(
                     onClick = onUnfavorite,
@@ -244,19 +252,27 @@ fun CallLogFullContent(
 
         val logs by viewModel.allCallLogs.collectAsState()
         val allContacts by contactsVM.allContacts.collectAsState()
-        val favorites = remember(allContacts, settingsState) {
-            val favContacts = allContacts.filter { it.isFavorite }
-            val order = prefs.getFavoritesOrder()
-            favContacts.sortedWith(compareBy<Contact> { contact ->
-                val index = order.indexOf(contact.id)
-                if (index != -1) index else Int.MAX_VALUE
-            }.thenBy { it.name })
+
+        val mergeFavorites = remember(settingsState) {
+            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true)
+        }
+        val favorites = remember(allContacts, settingsState, mergeFavorites) {
+            if (!mergeFavorites) {
+                emptyList()
+            } else {
+                val favContacts = allContacts.filter { it.isFavorite }
+                val order = prefs.getFavoritesOrder()
+                favContacts.sortedWith(compareBy<Contact> { contact ->
+                    val index = order.indexOf(contact.id)
+                    if (index != -1) index else Int.MAX_VALUE
+                }.thenBy { it.name })
+            }
         }
         var isEditingFavorites by remember { mutableStateOf(false) }
 
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
-        LaunchedEffect(selectedFilter) {
+        LaunchedEffect(selectedFilter, mergeFavorites) {
             isEditingFavorites = false
         }
         val context = LocalContext.current

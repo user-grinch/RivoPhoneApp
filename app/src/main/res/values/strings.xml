@@ -478,6 +478,79 @@
     <string name="contributor_role_lead_developer">Lead Developer</string>
     <string name="contributor_role_developer">Developer</string>
 
+    <!-- Favorites -->
+    <string name="nav_favorites">Favorites</string>
+    <string name="favorites_permission_title">Contacts permission needed</string>
+    <string name="favorites_permission_description">Allow access to your contacts to show your favorites here.</string>
+    <string name="favorites_empty_title">No favorites yet</string>
+    <string name="favorites_empty_description">Mark a contact as favorite to see it in this grid.</string>
+
+    <!-- Bottom navigation layout -->
+    <string name="settings_bottom_nav_title">Bottom navigation</string>
+    <string name="settings_bottom_nav_supporting">Reorder, show or hide the navigation buttons</string>
+    <string name="settings_bottom_nav_description">Drag order and visibility of the buttons at the bottom of the app. At least one button has to stay visible.</string>
+    <string name="settings_bottom_nav_preview">Preview</string>
+    <string name="settings_bottom_nav_buttons">Buttons</string>
+    <string name="settings_bottom_nav_position">Position %1$d</string>
+    <string name="settings_bottom_nav_hidden">Hidden</string>
+    <string name="settings_bottom_nav_move_up">Move up</string>
+    <string name="settings_bottom_nav_move_down">Move down</string>
+    <string name="settings_bottom_nav_reset">Reset to default</string>
+    <string name="settings_interface_merge_favorites">Show favorites on Recents</string>
+    <string name="settings_interface_merge_favorites_supporting">Keep the favorites row at the top of the recent calls list</string>
+
+    <!-- Blocking -->
+    <string name="action_block">Block</string>
+    <string name="action_unblock">Unblock</string>
+    <string name="action_block_number">Block number</string>
+    <string name="action_unblock_number">Unblock number</string>
+    <string name="blocked_list_title">Blocked numbers</string>
+    <string name="blocked_list_empty">You have not blocked any numbers yet.</string>
+    <string name="blocked_list_item_supporting">Calls from this number are blocked</string>
+    <string name="blocked_add_number">Block a number</string>
+    <string name="blocked_add_number_hint">Phone number</string>
+    <string name="contact_block">Block contact</string>
+    <string name="contact_block_supporting">Stop receiving calls from this contact</string>
+    <string name="contact_unblock">Unblock contact</string>
+    <string name="contact_unblock_supporting">Allow calls from this contact again</string>
+    <string name="call_log_block_title">Block numbers?</string>
+    <string name="call_log_block_message">Calls from the %1$d selected entries will be blocked.</string>
+
+    <!-- Contact call screen background -->
+    <string name="contact_call_background">Call screen background</string>
+    <string name="contact_call_background_set">Custom image selected</string>
+    <string name="contact_call_background_none">Use the default background</string>
+    <string name="contact_call_background_choose">Choose an image</string>
+    <string name="contact_call_background_remove">Remove background</string>
+
+    <!-- Call waiting -->
+    <string name="settings_call_waiting">Call waiting</string>
+    <string name="settings_call_waiting_supporting">Receive a second call while you are already on a call</string>
+    <string name="settings_call_waiting_description">Call waiting is a carrier service. Choosing an option below dials the standard code on your SIM.</string>
+    <string name="settings_call_waiting_enable">Turn on call waiting</string>
+    <string name="settings_call_waiting_disable">Turn off call waiting</string>
+    <string name="settings_call_waiting_check">Check current status</string>
+    <string name="call_waiting_answer_hold">Answer and hold</string>
+    <string name="call_waiting_end_and_answer">End and answer</string>
+
+    <!-- Call recording -->
+    <string name="settings_call_recording">Call recording</string>
+    <string name="settings_call_recording_supporting">Show a record button during calls</string>
+    <string name="settings_call_recording_auto">Record every call</string>
+    <string name="settings_call_recording_auto_supporting">Start recording automatically when a call connects</string>
+    <string name="settings_call_recording_notice">Recording calls may be restricted by your device or by law in your region. Make sure you are allowed to record before using this feature.</string>
+    <string name="action_record">Record</string>
+    <string name="action_stop_recording">Stop</string>
+    <string name="call_recording_in_progress">Recording</string>
+    <string name="call_recordings_title">Recordings</string>
+    <string name="call_recordings_supporting">Play, share or delete saved recordings</string>
+    <string name="call_recordings_empty">No recordings</string>
+    <string name="call_recordings_empty_description">Recordings you make during calls will appear here.</string>
+    <string name="call_recordings_play">Play</string>
+    <string name="call_recordings_share">Share recording</string>
+    <string name="call_recordings_delete_title">Delete recording?</string>
+    <string name="call_recordings_delete_message">This recording will be permanently removed from your device.</string>
+
     <!-- Video calling app picker -->
     <string name="video_call_title">Video Call</string>
     <string name="video_call_chooser_with">Video Call with</string>
