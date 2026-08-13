@@ -145,16 +145,77 @@ class PreferenceManager(context: Context) {
         setBoolean(KEY_FLIP_BOTTOM_NAV, false)
     }
 
+    fun contactBackgroundIdKey(contactId: String): String {
+        return CONTACT_BACKGROUND_PREFIX + contactId
+    }
+
+    fun contactBackgroundNumberKey(numberKey: String): String {
+        return CONTACT_BACKGROUND_NUMBER_PREFIX + numberKey
+    }
+
     fun setContactBackground(contactId: String, uri: String?) {
         if (uri == null) {
-            prefs.edit().remove("contact_background_$contactId").apply()
+            prefs.edit().remove(contactBackgroundIdKey(contactId)).apply()
         } else {
-            prefs.edit().putString("contact_background_$contactId", uri).apply()
+            prefs.edit().putString(contactBackgroundIdKey(contactId), uri).apply()
         }
     }
 
     fun getContactBackground(contactId: String): String? {
-        return prefs.getString("contact_background_$contactId", null)
+        return try {
+            prefs.getString(contactBackgroundIdKey(contactId), null)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun setContactBackgroundForNumber(numberKey: String, value: String?) {
+        if (value == null) {
+            prefs.edit().remove(contactBackgroundNumberKey(numberKey)).apply()
+        } else {
+            prefs.edit().putString(contactBackgroundNumberKey(numberKey), value).apply()
+        }
+    }
+
+    fun getContactBackgroundForNumber(numberKey: String): String? {
+        return try {
+            prefs.getString(contactBackgroundNumberKey(numberKey), null)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun getContactBackgroundEntries(): Map<String, String> {
+        return try {
+            prefs.all
+                .filterKeys { it.startsWith(CONTACT_BACKGROUND_PREFIX) }
+                .mapNotNull { entry ->
+                    val value = entry.value as? String
+                    if (value.isNullOrBlank()) null else entry.key to value
+                }
+                .toMap()
+        } catch (e: Exception) {
+            emptyMap()
+        }
+    }
+
+    fun getContactBackgroundNumberEntries(): Map<String, String> {
+        return getContactBackgroundEntries()
+            .filterKeys { it.startsWith(CONTACT_BACKGROUND_NUMBER_PREFIX) }
+            .mapKeys { it.key.removePrefix(CONTACT_BACKGROUND_NUMBER_PREFIX) }
+    }
+
+    fun updateContactBackgroundEntries(updates: Map<String, String?>) {
+        if (updates.isEmpty()) return
+        val editor = prefs.edit()
+        var touched = false
+        updates.forEach { (key, value) ->
+            if (key.startsWith(CONTACT_BACKGROUND_PREFIX)) {
+                touched = true
+                if (value == null) editor.remove(key) else editor.putString(key, value)
+            }
+        }
+        if (touched) editor.apply()
     }
 
     fun getVisibleAccounts(): Set<String>? {
@@ -167,6 +228,9 @@ class PreferenceManager(context: Context) {
     }
 
     companion object {
+        const val CONTACT_BACKGROUND_PREFIX = "contact_background_"
+        const val CONTACT_BACKGROUND_NUMBER_PREFIX = "contact_background_num_"
+
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
         const val KEY_SHOW_FIRST_LETTER = "show_first_letter"

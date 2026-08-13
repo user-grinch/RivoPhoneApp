@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.provider.BlockedNumberContract
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -163,7 +162,16 @@ class CallService : InCallService() {
         }
 
         fun declineCall() {
-            _currentCallSession.value?.call?.disconnect()
+            val call = _currentCallSession.value?.call ?: return
+            try {
+                if (call.state == Call.STATE_RINGING) {
+                    call.reject(Call.REJECT_REASON_DECLINED)
+                } else {
+                    call.disconnect()
+                }
+            } catch (e: Exception) {
+                try { call.disconnect() } catch (e: Exception) {}
+            }
         }
     }
 
@@ -228,8 +236,7 @@ class CallService : InCallService() {
             CallRecorder.stop()
         }
 
-        // Auto Redial on Busy
-        if (cause?.code == DisconnectCause.BUSY && 
+        if (cause?.code == DisconnectCause.BUSY &&
             preferenceManager.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) {
             
             val maxAttempts = preferenceManager.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)
@@ -247,7 +254,6 @@ class CallService : InCallService() {
             }
         }
 
-        // Missed Call Notification
         val wasNeverConnected = call.details.connectTimeMillis == 0L
         val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
         
@@ -268,16 +274,12 @@ class CallService : InCallService() {
     }
 
     private fun handleBlockedCall(call: Call, number: String) {
-        val method = preferenceManager.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0) // 0: Decline, 1: Silent
-        
+        val method = preferenceManager.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0)
+
         if (method == 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                call.reject(Call.REJECT_REASON_DECLINED)
-            } else {
-                call.disconnect()
-            }
+            call.reject(Call.REJECT_REASON_DECLINED)
         }
-        
+
         if (preferenceManager.getBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, true)) {
             showBlockedNotification(number)
         }
@@ -299,14 +301,16 @@ class CallService : InCallService() {
     private fun showMissedCallNotification(call: Call) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(MISSED_CHANNEL_ID, getString(R.string.notif_channel_missed_calls), NotificationManager.IMPORTANCE_DEFAULT).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                enableVibration(true)
-                setShowBadge(true)
-            }
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            MISSED_CHANNEL_ID,
+            getString(R.string.notif_channel_missed_calls),
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            enableVibration(true)
+            setShowBadge(true)
         }
+        notificationManager.createNotificationChannel(channel)
 
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
@@ -372,22 +376,20 @@ class CallService : InCallService() {
         callStartTimes.keys.retainAll(calls.toSet())
 
         val preferred = _preferredCall.value
-        // Clear preferred if it's gone or disconnected
         if (preferred != null && (preferred !in calls || preferred.state == Call.STATE_DISCONNECTED)) {
             _preferredCall.value = null
         }
 
-        // Priority: Ringing > Preferred > Dialing/Connecting > Active > Holding > Others
         val activePreferred = if (preferred != null && preferred.state != Call.STATE_DISCONNECTED && preferred.state != Call.STATE_HOLDING) preferred else null
 
         val priorityCall = calls.find { it.state == Call.STATE_RINGING }
             ?: activePreferred
             ?: calls.find { it.state == Call.STATE_DIALING || it.state == Call.STATE_CONNECTING }
             ?: calls.find { it.state == Call.STATE_ACTIVE }
-            ?: calls.find { it == preferred } // Even if held, if it's preferred and nothing else is active
+            ?: calls.find { it == preferred }
             ?: calls.find { it.state == Call.STATE_HOLDING }
             ?: calls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
-            
+
         if (priorityCall != null) {
             val connectTime = callStartTimes[priorityCall] ?: 0L
             _currentCallSession.value = CallSession(priorityCall, priorityCall.state, connectTimeMillis = connectTime)
@@ -397,12 +399,7 @@ class CallService : InCallService() {
     }
 
     private fun removeForeground() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        } else {
-            @Suppress("DEPRECATION")
-            stopForeground(true)
-        }
+        stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     override fun onCallAdded(call: Call) {
@@ -469,13 +466,15 @@ class CallService : InCallService() {
     private fun updateNotification(call: Call) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, getString(R.string.notif_channel_calls), NotificationManager.IMPORTANCE_HIGH).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                enableVibration(true)
-            }
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            getString(R.string.notif_channel_calls),
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            enableVibration(true)
         }
+        notificationManager.createNotificationChannel(channel)
 
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""

@@ -26,9 +26,17 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import coil.compose.AsyncImage
+import com.grinch.rivo4.controller.util.CallBackgroundStore
 import android.content.Intent
 import android.telecom.TelecomManager
 
@@ -61,8 +69,6 @@ fun CallAccountsScreen(
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var incomingCallUI by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)) }
-    var dialpadStyle by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0)) }
-    var dialpadLayout by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_LAYOUT, 0)) }
     var autoRedial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) }
     var redialAttempts by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)) }
     var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
@@ -71,6 +77,27 @@ fun CallAccountsScreen(
     var autoRecord by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)) }
 
     val recordAudioPermission = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+
+    var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
+    var savingCallBg by remember { mutableStateOf(false) }
+    val defaultCallBgLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+            scope.launch {
+                savingCallBg = true
+                val ok = CallBackgroundStore.saveDefault(context, uri)
+                savingCallBg = false
+                if (ok) defaultCallBg = CallBackgroundStore.defaultModelAsync(context)
+            }
+        }
+    }
 
     var showSimDialog by remember { mutableStateOf(false) }
     var showCallWaitingDialog by remember { mutableStateOf(false) }
@@ -195,39 +222,8 @@ fun CallAccountsScreen(
                         onValueChange = {
                             incomingCallUI = it
                             prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
-                        }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoSelectListItem(
-                        headline = stringResource(R.string.settings_call_dialpad_style),
-                        supporting = stringResource(R.string.settings_call_dialpad_style_supporting),
-                        leadingIcon = Icons.Outlined.Dialpad,
-                        options = listOf(
-                            stringResource(R.string.settings_call_dialpad_style_modern) to 0,
-                            stringResource(R.string.settings_call_dialpad_style_classic) to 1,
-                            stringResource(R.string.settings_call_dialpad_style_minimal) to 2
-                        ),
-                        selectedValue = dialpadStyle,
-                        onValueChange = {
-                            dialpadStyle = it
-                            prefs.setInt(PreferenceManager.KEY_DIALPAD_STYLE, it)
-                        }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoSelectListItem(
-                        headline = stringResource(R.string.settings_call_dialpad_layout),
-                        supporting = stringResource(R.string.settings_call_dialpad_layout_supporting),
-                        leadingIcon = Icons.Outlined.AlignHorizontalLeft,
-                        options = listOf(
-                            stringResource(R.string.option_standard) to 0,
-                            stringResource(R.string.settings_call_dialpad_layout_left) to 1,
-                            stringResource(R.string.settings_call_dialpad_layout_right) to 2
-                        ),
-                        selectedValue = dialpadLayout,
-                        onValueChange = {
-                            dialpadLayout = it
-                            prefs.setInt(PreferenceManager.KEY_DIALPAD_LAYOUT, it)
-                        }
+                        },
+                        preview = { IncomingCallUiPreview(it) }
                     )
                 }
             }
@@ -282,25 +278,19 @@ fun CallAccountsScreen(
                             }
                         )
                     }
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_call_voicemail),
-                        supporting = stringResource(R.string.settings_call_voicemail_supporting),
-                        leadingIcon = Icons.Outlined.Voicemail,
-                        onClick = { navigator.navigate(VoicemailScreenDestination) }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_call_waiting),
-                        supporting = stringResource(R.string.settings_call_waiting_supporting),
-                        leadingIcon = Icons.Outlined.PhoneCallback,
-                        onClick = { showCallWaitingDialog = true }
-                    )
                 }
             }
 
+            // Work In Progress Section
             item {
-                RivoExpressiveCard {
+                RivoSectionHeader(
+                    title = "Work in Progress",
+                    icon = Icons.Outlined.Construction
+                )
+                Spacer(Modifier.height(8.dp))
+                RivoExpressiveCard(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
+                ) {
                     RivoSwitchListItem(
                         headline = stringResource(R.string.settings_call_recording),
                         supporting = stringResource(R.string.settings_call_recording_supporting),
@@ -341,11 +331,101 @@ fun CallAccountsScreen(
                             onClick = { navigator.navigate(CallRecordingsScreenDestination) }
                         )
                     }
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_call_voicemail),
+                        supporting = stringResource(R.string.settings_call_voicemail_supporting),
+                        leadingIcon = Icons.Outlined.Voicemail,
+                        onClick = { navigator.navigate(VoicemailScreenDestination) }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_call_waiting),
+                        supporting = stringResource(R.string.settings_call_waiting_supporting),
+                        leadingIcon = Icons.Outlined.PhoneCallback,
+                        onClick = { showCallWaitingDialog = true }
+                    )
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_call_default_background),
+                        supporting = if (defaultCallBg != null) {
+                            stringResource(R.string.settings_call_default_background_set)
+                        } else {
+                            stringResource(R.string.settings_call_default_background_none)
+                        },
+                        leadingIcon = Icons.Outlined.Wallpaper,
+                        onClick = { defaultCallBgLauncher.launch(arrayOf("image/*")) }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .aspectRatio(2f)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (defaultCallBg != null) {
+                            AsyncImage(
+                                model = defaultCallBg,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.Image,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        if (savingCallBg) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilledTonalButton(
+                            onClick = { defaultCallBgLauncher.launch(arrayOf("image/*")) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(Icons.Outlined.Image, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                if (defaultCallBg != null) {
+                                    stringResource(R.string.settings_call_default_background_change)
+                                } else {
+                                    stringResource(R.string.settings_call_default_background_choose)
+                                }
+                            )
+                        }
+                        if (defaultCallBg != null) {
+                            OutlinedButton(
+                                onClick = {
+                                    CallBackgroundStore.clearDefault(context)
+                                    defaultCallBg = null
+                                }
+                            ) {
+                                Icon(Icons.Outlined.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.action_remove))
+                            }
+                        }
+                    }
                     Text(
-                        text = stringResource(R.string.settings_call_recording_notice),
+                        text = stringResource(R.string.settings_call_default_background_supporting),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 }
             }

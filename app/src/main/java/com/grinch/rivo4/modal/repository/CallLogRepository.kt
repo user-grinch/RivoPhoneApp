@@ -3,7 +3,6 @@ package com.grinch.rivo4.modal.repository
 import android.content.ContentResolver
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.provider.CallLog
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
@@ -53,10 +52,7 @@ class CallLogRepository(
             CallLog.Calls.DURATION
         )
 
-        // Try adding all possible SIM info columns
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            baseProjection.add("phone_account_label")
-        }
+        baseProjection.add("phone_account_label")
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_ID)
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
 
@@ -110,6 +106,15 @@ class CallLogRepository(
         }
     }
 
+    private fun contactIdFromLookupUri(lookupUri: String): String? {
+        return try {
+            val segments = Uri.parse(lookupUri).pathSegments
+            segments.lastOrNull { it.toLongOrNull() != null } ?: segments.lastOrNull()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>) {
         val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
         val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
@@ -137,11 +142,7 @@ class CallLogRepository(
             
             var simLabel = if (labelIdx != -1) cursor.getString(labelIdx) else null
             
-            val isBlocked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                type == CallLog.Calls.BLOCKED_TYPE || type == CallLog.Calls.REJECTED_TYPE
-            } else {
-                type == 6 // REJECTED_TYPE fallback
-            }
+            val isBlocked = type == CallLog.Calls.BLOCKED_TYPE || type == CallLog.Calls.REJECTED_TYPE
             
             // If label is missing, try to resolve it from account ID
             if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
@@ -171,9 +172,7 @@ class CallLogRepository(
             val displayName = matchedContact?.name ?: cursor.getString(cachedNameIdx)
             val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
             val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
-                try {
-                    Uri.parse(it).lastPathSegment
-                } catch (e: Exception) { null }
+                contactIdFromLookupUri(it)
             }
 
             val lastEntry = tempLogs.lastOrNull()

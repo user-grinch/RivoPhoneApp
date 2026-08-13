@@ -73,7 +73,6 @@ fun InterfaceScreen(
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
     var showCallScreenAvatar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)) }
-    var searchMatchMode by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0)) }
     var cardRoundness by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28)) }
 
     val presetColors = listOf(
@@ -223,7 +222,8 @@ fun InterfaceScreen(
                             onValueChange = {
                                 avatarShape = it
                                 prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
-                            }
+                            },
+                            preview = { AvatarShapePreview(it) }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
@@ -281,22 +281,6 @@ fun InterfaceScreen(
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSelectListItem(
-                            headline = stringResource(R.string.settings_interface_search_matching_mode),
-                            supporting = stringResource(R.string.settings_interface_search_matching_mode_supporting),
-                            leadingIcon = Icons.Outlined.Search,
-                            options = listOf(
-                                stringResource(R.string.settings_interface_search_mode_t9_contains) to 0,
-                                stringResource(R.string.settings_interface_search_mode_starts_with) to 1,
-                                stringResource(R.string.settings_interface_search_mode_exact_match) to 2
-                            ),
-                            selectedValue = searchMatchMode,
-                            onValueChange = {
-                                searchMatchMode = it
-                                prefs.setInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSelectListItem(
                             headline = stringResource(R.string.settings_interface_card_roundness),
                             supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
                             leadingIcon = Icons.Outlined.CropFree,
@@ -311,7 +295,8 @@ fun InterfaceScreen(
                             onValueChange = {
                                 cardRoundness = it
                                 prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, it)
-                            }
+                            },
+                            preview = { CardRoundnessPreview(it) }
                         )
                     }
                 }

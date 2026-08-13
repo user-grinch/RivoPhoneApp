@@ -36,6 +36,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
@@ -61,6 +62,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.*
+import com.grinch.rivo4.view.theme.callColors
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -117,12 +119,6 @@ fun DialPadScreen(
     }
     val speedDialEnabled by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true))
-    }
-    val dialpadStyle by remember(settingsState) {
-        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 0))
-    }
-    val dialpadLayout by remember(settingsState) {
-        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_LAYOUT, 0))
     }
     val displayOrder by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
@@ -332,22 +328,11 @@ fun DialPadScreen(
 
             Surface(
                 modifier = Modifier
-                    .align(
-                        when (dialpadLayout) {
-                            1 -> Alignment.BottomStart
-                            2 -> Alignment.BottomEnd
-                            else -> Alignment.BottomCenter
-                        }
-                    )
-                    .fillMaxWidth(if (dialpadLayout != 0) 0.85f else 1f),
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shadowElevation = 16.dp,
-                shape = RoundedCornerShape(
-                    topStart = 36.dp,
-                    topEnd = 36.dp,
-                    bottomEnd = if (dialpadLayout == 1) 36.dp else 0.dp,
-                    bottomStart = if (dialpadLayout == 2) 36.dp else 0.dp
-                )
+                shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -425,7 +410,6 @@ fun DialPadScreen(
                                         letters = subKeys[key] ?: "",
                                         toneGenerator = toneGenerator,
                                         context = context,
-                                        style = dialpadStyle,
                                         onClick = onDigitClick,
                                         onLongClick = { digit ->
                                             if (speedDialEnabled && number.isEmpty()) {
@@ -470,13 +454,12 @@ fun DialPadScreen(
                                 )
                             }
 
-                            // Centered Dial Button
                             DialerActionExpressive(
                                 onClick = { performCall(number, null) },
                                 icon = Icons.Default.Call,
                                 contentDescription = stringResource(R.string.action_call),
-                                containerColor = Color(0xFF4CAF50),
-                                contentColor = Color.White,
+                                containerColor = MaterialTheme.callColors.answer,
+                                contentColor = MaterialTheme.callColors.onAnswer,
                                 modifier = Modifier.width(100.dp).height(72.dp),
                                 isLarge = true
                             )
@@ -621,7 +604,6 @@ fun DialPadKey(
     letters: String,
     toneGenerator: ToneGenerator,
     context: Context,
-    style: Int = 0,
     onClick: (String) -> Unit,
     onLongClick: ((String) -> Unit)? = null
 ) {
@@ -631,28 +613,20 @@ fun DialPadKey(
     val haptic = LocalHapticFeedback.current
 
     val cornerRadius by animateDpAsState(
-        targetValue = when (style) {
-            1 -> 50.dp
-            2 -> 0.dp
-            else -> if (isPressed) 16.dp else 32.dp
-        },
+        targetValue = if (isPressed) 16.dp else 28.dp,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
-        label = "ButtonShapeAnimation"
+        label = "KeyCornerRadius"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.94f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "KeyScale"
     )
 
-    val containerColor = when (style) {
-        2 -> if (isPressed) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else Color.Transparent
-        else -> MaterialTheme.colorScheme.surfaceContainerHigh
-    }
-
-    val keyModifier = if (style == 1) {
-        Modifier.size(72.dp)
-    } else {
-        Modifier.size(width = 100.dp, height = 64.dp)
-    }
-
     Surface(
-        modifier = keyModifier
+        modifier = Modifier
+            .size(width = 96.dp, height = 64.dp)
+            .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -667,9 +641,8 @@ fun DialPadKey(
                 },
                 onLongClick = onLongClick?.let { { it(number) } }
             ),
-        shape = if (style == 1) CircleShape else RoundedCornerShape(cornerRadius),
-        color = containerColor,
-        border = if (style == 2 && !isPressed) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)) else null
+        shape = RoundedCornerShape(cornerRadius),
+        color = if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -678,14 +651,15 @@ fun DialPadKey(
         ) {
             Text(
                 text = number,
-                style = if (style == 1) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Bold,
+                color = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             )
-            if (letters.isNotBlank() && style != 2) {
+            if (letters.isNotBlank()) {
                 Text(
                     text = letters,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 2.sp
                 )
             }

@@ -6,75 +6,48 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    displayLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 57.sp,
-        lineHeight = 64.sp,
-        letterSpacing = (-0.25).sp
-    ),
-    displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 45.sp,
-        lineHeight = 52.sp,
-        letterSpacing = 0.sp
-    ),
-    displaySmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 36.sp,
-        lineHeight = 44.sp,
-        letterSpacing = 0.sp
-    ),
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = 0.sp
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.sp
-    ),
-    headlineSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 32.sp,
-        letterSpacing = 0.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.15.sp
-    ),
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    labelLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.1.sp
-    )
+private fun rivoTextStyle(
+    fontSize: Float,
+    lineHeight: Float,
+    letterSpacing: Float,
+    fontWeight: FontWeight
+): TextStyle = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = fontWeight,
+    fontSize = fontSize.sp,
+    lineHeight = lineHeight.sp,
+    letterSpacing = letterSpacing.sp
+)
+
+val RivoTypography: Typography = Typography(
+    displayLarge = rivoTextStyle(57f, 64f, -0.2f, FontWeight.Normal),
+    displayMedium = rivoTextStyle(45f, 52f, 0f, FontWeight.Normal),
+    displaySmall = rivoTextStyle(36f, 44f, 0f, FontWeight.Normal),
+    headlineLarge = rivoTextStyle(32f, 40f, 0f, FontWeight.Normal),
+    headlineMedium = rivoTextStyle(28f, 36f, 0f, FontWeight.Normal),
+    headlineSmall = rivoTextStyle(24f, 32f, 0f, FontWeight.Normal),
+    titleLarge = rivoTextStyle(22f, 28f, 0f, FontWeight.Normal),
+    titleMedium = rivoTextStyle(16f, 24f, 0.2f, FontWeight.Medium),
+    titleSmall = rivoTextStyle(14f, 20f, 0.1f, FontWeight.Medium),
+    bodyLarge = rivoTextStyle(16f, 24f, 0.5f, FontWeight.Normal),
+    bodyMedium = rivoTextStyle(14f, 20f, 0.2f, FontWeight.Normal),
+    bodySmall = rivoTextStyle(12f, 16f, 0.4f, FontWeight.Normal),
+    labelLarge = rivoTextStyle(14f, 20f, 0.1f, FontWeight.Medium),
+    labelMedium = rivoTextStyle(12f, 16f, 0.5f, FontWeight.Medium),
+    labelSmall = rivoTextStyle(11f, 16f, 0.5f, FontWeight.Medium),
+    displayLargeEmphasized = rivoTextStyle(57f, 64f, 0f, FontWeight.Medium),
+    displayMediumEmphasized = rivoTextStyle(45f, 52f, 0f, FontWeight.Medium),
+    displaySmallEmphasized = rivoTextStyle(36f, 44f, 0f, FontWeight.Medium),
+    headlineLargeEmphasized = rivoTextStyle(32f, 40f, 0f, FontWeight.Medium),
+    headlineMediumEmphasized = rivoTextStyle(28f, 36f, 0f, FontWeight.Medium),
+    headlineSmallEmphasized = rivoTextStyle(24f, 32f, 0f, FontWeight.Medium),
+    titleLargeEmphasized = rivoTextStyle(22f, 28f, 0f, FontWeight.Medium),
+    titleMediumEmphasized = rivoTextStyle(16f, 24f, 0.15f, FontWeight.Bold),
+    titleSmallEmphasized = rivoTextStyle(14f, 20f, 0.1f, FontWeight.Bold),
+    bodyLargeEmphasized = rivoTextStyle(16f, 24f, 0.15f, FontWeight.Medium),
+    bodyMediumEmphasized = rivoTextStyle(14f, 20f, 0.25f, FontWeight.Medium),
+    bodySmallEmphasized = rivoTextStyle(12f, 16f, 0.4f, FontWeight.Medium),
+    labelLargeEmphasized = rivoTextStyle(14f, 20f, 0.1f, FontWeight.Bold),
+    labelMediumEmphasized = rivoTextStyle(12f, 16f, 0.5f, FontWeight.Bold),
+    labelSmallEmphasized = rivoTextStyle(11f, 16f, 0.5f, FontWeight.Bold)
 )

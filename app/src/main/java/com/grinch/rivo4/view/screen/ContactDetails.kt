@@ -31,8 +31,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
@@ -58,6 +60,47 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
+@Composable
+private fun CallBackgroundRow(
+    background: String?,
+    saving: Boolean,
+    onClick: () -> Unit
+) {
+    val previewDescription = stringResource(R.string.contact_call_background_preview)
+    val headline = stringResource(R.string.contact_call_background)
+    val supporting = when {
+        saving -> stringResource(R.string.contact_call_background_saving)
+        background != null -> stringResource(R.string.contact_call_background_set)
+        else -> stringResource(R.string.contact_call_background_none)
+    }
+
+    if (background == null) {
+        RivoListItem(
+            headline = headline,
+            supporting = supporting,
+            leadingIcon = Icons.Default.Wallpaper,
+            onClick = onClick
+        )
+    } else {
+        RivoListItem(
+            headline = headline,
+            supporting = supporting,
+            leadingIcon = Icons.Default.Wallpaper,
+            onClick = onClick,
+            trailingContent = {
+                AsyncImage(
+                    model = background,
+                    contentDescription = previewDescription,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(width = 56.dp, height = 40.dp)
+                        .clip(MaterialTheme.shapes.small)
+                )
+            }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Destination<RootGraph>
 @Composable
@@ -77,27 +120,26 @@ fun ContactDetailsScreen(
     var isFullLoading by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
 
+    suspend fun loadContact(): Contact? {
+        val byId = if (contactId != null && contactId != "null") {
+            contactsViewModel.getFullContactById(contactId)
+        } else null
+        if (byId != null) return byId
+        return if (phoneNumber != null) contactsViewModel.getFullContactByNumber(phoneNumber) else null
+    }
+
     LaunchedEffect(contactId, phoneNumber) {
         isFullLoading = true
-        fullContact = if (contactId != null && contactId != "null") {
-            contactsViewModel.getFullContactById(contactId)
-        } else if (phoneNumber != null) {
-            contactsViewModel.getFullContactByNumber(phoneNumber)
-        } else null
+        fullContact = loadContact()
         isFullLoading = false
     }
 
-    // Refresh contact data when returning to screen
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
                 scope.launch {
-                    val updated = if (contactId != null && contactId != "null") {
-                        contactsViewModel.getFullContactById(contactId)
-                    } else if (phoneNumber != null) {
-                        contactsViewModel.getFullContactByNumber(phoneNumber)
-                    } else null
+                    val updated = loadContact()
                     if (updated != null) fullContact = updated
                 }
             }
@@ -128,14 +170,15 @@ fun ContactDetailsScreen(
     var favoriteNumber by remember { mutableStateOf<String?>(null) }
     var favoriteEmail by remember { mutableStateOf<String?>(null) }
     var callBackground by remember { mutableStateOf<String?>(null) }
+    var backgroundSaving by remember { mutableStateOf(false) }
     var showBackgroundDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
 
     LaunchedEffect(fullContact) {
         fullContact?.id?.let {
             favoriteNumber = prefs.getFavoriteNumber(it)
             favoriteEmail = prefs.getFavoriteEmail(it)
-            callBackground = prefs.getContactBackground(it)
         }
     }
 
@@ -150,20 +193,54 @@ fun ContactDetailsScreen(
         blockedNumbers.any { areNumbersEqual(it, number) }
     }
 
+    val backgroundContactId = fullContact?.id?.takeIf { it.isNotBlank() }
+    val backgroundNumbers = knownNumbers
+    val backgroundKeys = remember(backgroundNumbers) {
+        CallBackgroundStore.numberKeys(backgroundNumbers)
+    }
+    val backgroundAvailable = backgroundContactId != null || backgroundKeys.isNotEmpty()
+    val backgroundErrorMessage = stringResource(R.string.contact_call_background_error)
+    val backgroundNoTargetMessage = stringResource(R.string.contact_call_background_no_target)
+
+    LaunchedEffect(backgroundContactId, backgroundNumbers) {
+        callBackground = CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+    }
+
     val backgroundPickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
-        val id = fullContact?.id
-        if (uri != null && id != null) {
-            try {
+        if (uri != null) {
+            runCatching {
                 context.contentResolver.takePersistableUriPermission(
                     uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-            } catch (e: Exception) {
             }
-            prefs.setContactBackground(id, uri.toString())
-            callBackground = uri.toString()
+            scope.launch {
+                backgroundSaving = true
+                val saved = CallBackgroundStore.save(
+                    context,
+                    backgroundContactId,
+                    backgroundNumbers,
+                    uri
+                )
+                backgroundSaving = false
+                if (saved) {
+                    callBackground = CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+                } else {
+                    snackbarHostState.showSnackbar(backgroundErrorMessage)
+                }
+            }
+        }
+    }
+
+    val onBackgroundClick: () -> Unit = {
+        when {
+            !backgroundAvailable -> {
+                scope.launch { snackbarHostState.showSnackbar(backgroundNoTargetMessage) }
+            }
+            callBackground != null -> showBackgroundDialog = true
+            else -> backgroundPickerLauncher.launch(arrayOf("image/*"))
         }
     }
 
@@ -221,8 +298,9 @@ fun ContactDetailsScreen(
         RivoConfirmationDialog(
             onDismissRequest = { showDeleteDialog = false },
             onConfirm = {
-                if (contactId != null) {
-                    contactsVM.deleteContact(contactId)
+                val targetId = fullContact?.id?.takeIf { it.isNotBlank() } ?: contactId
+                if (targetId != null) {
+                    contactsVM.deleteContact(targetId)
                     navigator.navigateUp()
                 }
             },
@@ -260,8 +338,24 @@ fun ContactDetailsScreen(
                 }
             }
         ) {
+            callBackground?.let { current ->
+                AsyncImage(
+                    model = current,
+                    contentDescription = stringResource(R.string.contact_call_background_preview),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .clip(MaterialTheme.shapes.large)
+                )
+                Spacer(Modifier.height(12.dp))
+            }
             RivoListItem(
-                headline = stringResource(R.string.contact_call_background_choose),
+                headline = if (callBackground != null) {
+                    stringResource(R.string.contact_call_background_change)
+                } else {
+                    stringResource(R.string.contact_call_background_choose)
+                },
                 leadingIcon = Icons.Default.Image,
                 onClick = {
                     showBackgroundDialog = false
@@ -274,8 +368,10 @@ fun ContactDetailsScreen(
                     leadingIcon = Icons.Default.Delete,
                     onClick = {
                         showBackgroundDialog = false
-                        fullContact?.id?.let { prefs.setContactBackground(it, null) }
-                        callBackground = null
+                        scope.launch {
+                            CallBackgroundStore.clear(context, backgroundContactId, backgroundNumbers)
+                            callBackground = null
+                        }
                     }
                 )
             }
@@ -333,6 +429,7 @@ fun ContactDetailsScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { },
@@ -779,6 +876,21 @@ fun ContactDetailsScreen(
                         }
                     }
 
+                    if (fullContact == null && backgroundAvailable) {
+                        item {
+                            RivoExpressiveCard(
+                                title = stringResource(R.string.contact_settings_title),
+                                icon = Icons.Default.Settings
+                            ) {
+                                CallBackgroundRow(
+                                    background = callBackground,
+                                    saving = backgroundSaving,
+                                    onClick = onBackgroundClick
+                                )
+                            }
+                        }
+                    }
+
                     if (fullContact != null) {
                         item {
                             val defaultRingtoneLabel = stringResource(R.string.ringtone_default)
@@ -803,17 +915,10 @@ fun ContactDetailsScreen(
                                     }
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = stringResource(R.string.contact_call_background),
-                                    supporting = if (callBackground != null) stringResource(R.string.contact_call_background_set) else stringResource(R.string.contact_call_background_none),
-                                    leadingIcon = Icons.Default.Wallpaper,
-                                    onClick = {
-                                        if (callBackground != null) {
-                                            showBackgroundDialog = true
-                                        } else {
-                                            backgroundPickerLauncher.launch(arrayOf("image/*"))
-                                        }
-                                    }
+                                CallBackgroundRow(
+                                    background = callBackground,
+                                    saving = backgroundSaving,
+                                    onClick = onBackgroundClick
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 val contactNumbers = fullContact!!.phoneNumbers

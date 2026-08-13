@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.view.theme.RivoMaterialShapes
+import com.grinch.rivo4.view.theme.rivoPolygonShape
+
+private val IllustrationSize = 140.dp
+private val IllustrationIconSize = 56.dp
+private val BodyMaxWidth = 320.dp
 
 @Composable
 fun PermissionDeniedView(
@@ -41,28 +47,29 @@ fun PermissionDeniedView(
     ) {
         Box(
             modifier = Modifier
-                .size(120.dp)
+                .size(IllustrationSize)
                 .background(
                     color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(28.dp)
+                    shape = rivoPolygonShape(RivoMaterialShapes.Cookie9Sided)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(60.dp),
+                modifier = Modifier.size(IllustrationIconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmallEmphasized,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.widthIn(max = BodyMaxWidth)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -71,16 +78,21 @@ fun PermissionDeniedView(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.widthIn(max = BodyMaxWidth)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = onGrantClick,
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp)
+            shape = MaterialTheme.shapes.large,
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 14.dp)
         ) {
-            Text(buttonText)
+            Text(
+                text = buttonText,
+                style = MaterialTheme.typography.labelLargeEmphasized
+            )
         }
     }
 }

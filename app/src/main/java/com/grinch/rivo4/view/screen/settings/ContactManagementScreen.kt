@@ -89,8 +89,8 @@ fun ContactManagementScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 item {
                     val sortOrder by viewModel.sortOrder.collectAsState()
@@ -98,7 +98,8 @@ fun ContactManagementScreen(
 
                     RivoExpressiveCard(
                         title = stringResource(R.string.settings_manage_display_sorting),
-                        icon = Icons.Outlined.DisplaySettings
+                        icon = Icons.Outlined.DisplaySettings,
+                        isCompact = true
                     ) {
                         RivoSelectListItem(
                             headline = stringResource(R.string.settings_manage_sort_by),
@@ -111,7 +112,7 @@ fun ContactManagementScreen(
                             selectedValue = sortOrder,
                             onValueChange = { newValue: Int -> viewModel.setSortOrder(newValue) }
                         )
-                        RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        RivoDivider(modifier = Modifier.padding(horizontal = 12.dp))
                         RivoSelectListItem(
                             headline = stringResource(R.string.settings_manage_name_format),
                             supporting = stringResource(R.string.settings_manage_name_format_supporting),
@@ -129,19 +130,22 @@ fun ContactManagementScreen(
                 item {
                     RivoExpressiveCard(
                         title = stringResource(R.string.settings_manage_storage),
-                        icon = Icons.Outlined.Storage
+                        icon = Icons.Outlined.Storage,
+                        isCompact = true
                     ) {
                         RivoListItem(
                             headline = stringResource(R.string.settings_manage_private_contacts),
                             supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
                             leadingIcon = Icons.Outlined.Lock,
+                            isCompact = true,
                             onClick = { navigator.navigate(PrivateContactsScreenDestination) }
                         )
-                        RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        RivoDivider(modifier = Modifier.padding(horizontal = 12.dp))
                         RivoListItem(
                             headline = stringResource(R.string.settings_manage_visibility),
                             supporting = stringResource(R.string.settings_manage_visibility_supporting),
                             leadingIcon = Icons.Outlined.Visibility,
+                            isCompact = true,
                             onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                         )
                     }
@@ -150,12 +154,14 @@ fun ContactManagementScreen(
                 item {
                     RivoExpressiveCard(
                         title = stringResource(R.string.settings_manage_quick_fixes),
-                        icon = Icons.Outlined.AutoFixHigh
+                        icon = Icons.Outlined.AutoFixHigh,
+                        isCompact = true
                     ) {
                         RivoListItem(
                             headline = stringResource(R.string.settings_manage_standardize_numbers),
                             supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
                             leadingIcon = Icons.Outlined.FormatListNumbered,
+                            isCompact = true,
                             onClick = { viewModel.formatAllPhoneNumbers() }
                         )
                     }

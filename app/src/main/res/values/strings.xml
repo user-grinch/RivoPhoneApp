@@ -521,7 +521,12 @@
     <string name="contact_call_background_set">Custom image selected</string>
     <string name="contact_call_background_none">Use the default background</string>
     <string name="contact_call_background_choose">Choose an image</string>
+    <string name="contact_call_background_change">Change image</string>
     <string name="contact_call_background_remove">Remove background</string>
+    <string name="contact_call_background_saving">Saving image…</string>
+    <string name="contact_call_background_error">Could not save that image</string>
+    <string name="contact_call_background_no_target">Save the number as a contact first</string>
+    <string name="contact_call_background_preview">Call screen background preview</string>
 
     <!-- Call waiting -->
     <string name="settings_call_waiting">Call waiting</string>
@@ -539,6 +544,13 @@
     <string name="settings_call_recording_auto">Record every call</string>
     <string name="settings_call_recording_auto_supporting">Start recording automatically when a call connects</string>
     <string name="settings_call_recording_notice">Recording calls may be restricted by your device or by law in your region. Make sure you are allowed to record before using this feature.</string>
+    <string name="settings_call_default_background">Default call background</string>
+    <string name="settings_call_default_background_set">A custom image is shown on every call</string>
+    <string name="settings_call_default_background_none">Not set — calls use the app theme</string>
+    <string name="settings_call_default_background_choose">Choose image</string>
+    <string name="settings_call_default_background_change">Change</string>
+    <string name="settings_call_default_background_supporting">Shown on every incoming and outgoing call, unless a contact has its own background.</string>
+    <string name="action_remove">Remove</string>
     <string name="action_record">Record</string>
     <string name="action_stop_recording">Stop</string>
     <string name="call_recording_in_progress">Recording</string>
@@ -555,4 +567,19 @@
     <string name="video_call_title">Video Call</string>
     <string name="video_call_chooser_with">Video Call with</string>
     <string name="video_call_system">System Video Call</string>
+
+    <!-- Call screen background and active controls -->
+    <string name="callbg_image_unavailable">Call background image could not be loaded</string>
+
+    <!-- Incoming call controls and in-call keypad -->
+    <string name="callin_handle_horizontal_desc">Incoming call. Swipe right to answer, left to decline.</string>
+    <string name="callin_handle_vertical_desc">Incoming call. Swipe up to answer, down to reject.</string>
+    <string name="callin_handle_slide_desc">Incoming call. Slide right to answer.</string>
+    <string name="callin_action_answer">Answer call</string>
+    <string name="callin_action_decline">Decline call</string>
+    <string name="callin_action_message">Reply with a message</string>
+    <string name="callin_waiting_actions">Call waiting options</string>
+    <string name="callkp_digit_desc">Dial %1$s</string>
+    <string name="callkp_entered_desc">Digits entered: %1$s</string>
+    <string name="callkp_entered_empty">No digits entered</string>
 </resources>

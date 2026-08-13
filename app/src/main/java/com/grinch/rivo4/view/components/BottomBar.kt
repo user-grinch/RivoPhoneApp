@@ -1,16 +1,26 @@
 package com.grinch.rivo4.view.components
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
+import androidx.compose.material3.ShortNavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,7 +37,7 @@ data class NavigationTab(
     val id: Int,
     val route: String,
     val label: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val icon: ImageVector,
     val value: Int
 )
 
@@ -38,10 +48,10 @@ fun navigationTabLabel(tabId: Int): String = when (tabId) {
     else -> stringResource(R.string.nav_recents)
 }
 
-fun navigationTabIcon(tabId: Int): androidx.compose.ui.graphics.vector.ImageVector = when (tabId) {
-    PreferenceManager.TAB_FAVORITES -> Icons.Default.Star
-    PreferenceManager.TAB_CONTACTS -> Icons.Default.Person
-    else -> Icons.Default.History
+fun navigationTabIcon(tabId: Int): ImageVector = when (tabId) {
+    PreferenceManager.TAB_FAVORITES -> Icons.Filled.Star
+    PreferenceManager.TAB_CONTACTS -> Icons.Filled.Person
+    else -> Icons.Filled.History
 }
 
 fun navigationTabRoute(tabId: Int): String = when (tabId) {
@@ -50,19 +60,28 @@ fun navigationTabRoute(tabId: Int): String = when (tabId) {
     else -> RecentScreenDestination.route
 }
 
+private fun navigationTabUnselectedIcon(tabId: Int): ImageVector = when (tabId) {
+    PreferenceManager.TAB_FAVORITES -> Icons.Outlined.Star
+    PreferenceManager.TAB_CONTACTS -> Icons.Outlined.Person
+    else -> Icons.Outlined.History
+}
+
 @Composable
 fun BottomBar(
     navController: NavController,
     navigator: DestinationsNavigator,
-    pagerState: androidx.compose.foundation.pager.PagerState? = null,
+    pagerState: PagerState? = null,
     onPageSelected: ((Int) -> Unit)? = null,
     visibleTabs: List<Int>? = null
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
 
-    val iconOnly = remember(settingsState) { prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false) }
-    val tabIds = visibleTabs ?: remember(settingsState) { prefs.getVisibleBottomNavTabs() }
+    val iconOnly = remember(settingsState) {
+        prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)
+    }
+    val storedTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
+    val tabIds = visibleTabs ?: storedTabs
 
     val tabs = tabIds.mapIndexed { index, id ->
         NavigationTab(
@@ -74,13 +93,21 @@ fun BottomBar(
         )
     }
 
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 0.dp
-    ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
+    val itemColors = ShortNavigationBarItemDefaults.colors(
+        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+        selectedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+
+    ShortNavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ) {
         tabs.forEach { tab ->
             val isSelected = if (pagerState != null) {
                 pagerState.currentPage == tab.value
@@ -88,10 +115,7 @@ fun BottomBar(
                 currentDestination?.hierarchy?.any { it.route == tab.route } == true
             }
 
-            NavigationBarItem(
-                icon = { Icon(tab.icon, contentDescription = tab.label) },
-                label = if (iconOnly) null else ({ Text(tab.label) }),
-                alwaysShowLabel = !iconOnly,
+            ShortNavigationBarItem(
                 selected = isSelected,
                 onClick = {
                     if (onPageSelected != null && pagerState != null) {
@@ -105,7 +129,21 @@ fun BottomBar(
                             restoreState = true
                         }
                     }
-                }
+                },
+                icon = {
+                    Icon(
+                        imageVector = if (isSelected) tab.icon else navigationTabUnselectedIcon(tab.id),
+                        contentDescription = if (iconOnly) tab.label else null
+                    )
+                },
+                label = if (iconOnly) null else ({
+                    Text(
+                        text = tab.label,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }),
+                colors = itemColors
             )
         }
     }

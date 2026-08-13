@@ -103,11 +103,7 @@ fun ContactSearchContent(
     val contacts by contactsVM.allContacts.collectAsState()
     val prefs = koinInject<PreferenceManager>()
     val callLauncher = rememberCallLauncher()
-    val context = androidx.compose.ui.platform.LocalContext.current
     val settingsState by prefs.settingsChanged.collectAsState()
-    val searchMatchMode by remember(settingsState) {
-        mutableStateOf(prefs.getInt(PreferenceManager.KEY_SEARCH_MATCH_MODE, 0))
-    }
     val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
 
     var query by remember { mutableStateOf("") }
@@ -124,27 +120,13 @@ fun ContactSearchContent(
         keyboardController?.show()
     }
 
-    val filteredContacts = remember(query, contacts, searchMatchMode) {
+    val filteredContacts = remember(query, contacts) {
         if (query.isBlank()) emptyList()
         else contacts.filter {
             val cleanQuery = query.replace(" ", "")
-            val matchesName = when (searchMatchMode) {
-                1 -> it.name.startsWith(query, ignoreCase = true)
-                2 -> it.name.equals(query, ignoreCase = true)
-                else -> it.name.contains(query, ignoreCase = true)
-            }
-            val matchesNickname = it.nickname?.let { nickname ->
-                when (searchMatchMode) {
-                    1 -> nickname.startsWith(query, ignoreCase = true)
-                    2 -> nickname.equals(query, ignoreCase = true)
-                    else -> nickname.contains(query, ignoreCase = true)
-                }
-            } ?: false
-            val matchesNumber = when (searchMatchMode) {
-                1 -> it.phoneNumbers.any { number -> number.replace(" ", "").startsWith(cleanQuery) }
-                2 -> it.phoneNumbers.any { number -> number.replace(" ", "") == cleanQuery }
-                else -> it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
-            }
+            val matchesName = it.name.contains(query, ignoreCase = true)
+            val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
+            val matchesNumber = it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
             matchesName || matchesNickname || matchesNumber
         }.take(50)
     }

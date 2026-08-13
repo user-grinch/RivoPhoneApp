@@ -16,6 +16,7 @@ import com.grinch.rivo4.modal.db.PrivateContactDao
 import com.grinch.rivo4.modal.db.PrivateContactEntity
 import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.CallBackgroundStore
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -129,10 +130,57 @@ class ContactsRepository(
         return finalList.sortedBy { it.name.lowercase() }
     }
 
+    private fun resolveLookupKey(lookupKey: String): String? {
+        return try {
+            val uri = Uri.withAppendedPath(
+                ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                Uri.encode(lookupKey)
+            )
+            var resolved: String? = null
+            contentResolver.query(
+                uri,
+                arrayOf(ContactsContract.Contacts._ID),
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) resolved = cursor.getString(0)
+            }
+            resolved
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getNumbersForContactId(contactId: String): List<String> {
+        val numbers = mutableListOf<String>()
+        try {
+            contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?",
+                arrayOf(contactId),
+                null
+            )?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    cursor.getString(0)?.let { numbers.add(it) }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return numbers
+    }
+
     override fun getContactById(contactId: String): Contact? {
         if (contactId.startsWith("p")) {
             val id = contactId.substring(1).toLongOrNull() ?: return null
             return privateContactDao.getById(id)?.toContact()
+        }
+        val resolvedId = if (contactId.toLongOrNull() != null) {
+            contactId
+        } else {
+            resolveLookupKey(contactId) ?: return null
         }
         val projection = arrayOf(
             ContactsContract.Data.CONTACT_ID,
@@ -155,7 +203,7 @@ class ContactsRepository(
                 ContactsContract.Data.CONTENT_URI,
                 projection,
                 "${ContactsContract.Data.CONTACT_ID} = ?",
-                arrayOf(contactId),
+                arrayOf(resolvedId),
                 null
             )?.use { cursor ->
                 val idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID)
@@ -610,7 +658,17 @@ class ContactsRepository(
         }
     }
 
-    override fun deleteContact(contactId: String) {
+    private fun clearCallBackground(contactId: String) {
+        val numbers: List<String> = try {
+            getContactById(contactId)?.phoneNumbers ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+        CallBackgroundStore.clearBlocking(context, contactId, numbers)
+    }
+
+    private fun deleteContactInternal(contactId: String, clearBackground: Boolean) {
+        if (clearBackground) clearCallBackground(contactId)
         if (contactId.startsWith("p")) {
             val id = contactId.substring(1).toLongOrNull() ?: return
             privateContactDao.deleteById(id)
@@ -620,9 +678,14 @@ class ContactsRepository(
         contentResolver.delete(uri, null, null)
     }
 
+    override fun deleteContact(contactId: String) {
+        deleteContactInternal(contactId, true)
+    }
+
     override fun deleteContacts(contactIds: List<String>) {
         val ops = ArrayList<ContentProviderOperation>()
         contactIds.forEach { id ->
+            clearCallBackground(id)
             if (id.startsWith("p")) {
                 val lid = id.substring(1).toLongOrNull()
                 if (lid != null) privateContactDao.deleteById(lid)
@@ -679,7 +742,7 @@ class ContactsRepository(
 
         val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
         val projection = arrayOf(
-            ContactsContract.PhoneLookup._ID,
+            ContactsContract.PhoneLookup.CONTACT_ID,
             ContactsContract.PhoneLookup.DISPLAY_NAME,
             ContactsContract.PhoneLookup.PHOTO_URI,
             ContactsContract.PhoneLookup.STARRED,
@@ -689,24 +752,30 @@ class ContactsRepository(
         try {
             contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
-                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup._ID)
+                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CONTACT_ID)
                     val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
                     val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
                     val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
                     val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
 
-                    val id = if (idIdx != -1) cursor.getString(idIdx) else "0"
+                    val id = if (idIdx != -1) cursor.getString(idIdx).orEmpty() else ""
                     val name = if (nameIdx != -1) cursor.getString(nameIdx) else unknownLabel
                     val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
                     val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
                     val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
 
+                    val numbers = if (id.isNotBlank()) {
+                        deduplicateNumbers(listOf(number) + getNumbersForContactId(id))
+                    } else {
+                        listOf(number)
+                    }
+
                     return Contact(
                         id = id,
-                        name = formatName(name),
+                        name = formatName(name ?: unknownLabel),
                         photoUri = photoUri,
                         isFavorite = starred,
-                        phoneNumbers = listOf(number),
+                        phoneNumbers = numbers,
                         customRingtone = ringtone
                     )
                 }
@@ -775,7 +844,8 @@ class ContactsRepository(
             }
             // ... similar for other data types if needed ...
 
-            // Delete source contact
+            CallBackgroundStore.clearBlocking(context, sourceId, emptyList())
+
             ops.add(ContentProviderOperation.newDelete(Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, sourceId))
                 .build())
         }
@@ -853,23 +923,26 @@ class ContactsRepository(
         val contact = getContactById(contactId) ?: return
         if (contact.isPrivate) return
 
-        // 1. Save to local DB
         val privateContact = contact.copy(isPrivate = true)
-        privateContactDao.insert(PrivateContactEntity.fromContact(privateContact))
+        val localId = privateContactDao.insert(PrivateContactEntity.fromContact(privateContact))
 
-        // 2. Delete from system contacts
-        deleteContact(contactId)
+        deleteContactInternal(contactId, false)
+
+        CallBackgroundStore.carryBlocking(context, contactId, "p$localId", contact.phoneNumbers)
     }
 
     override fun makeContactPublic(contactId: String) {
         val contact = getContactById(contactId) ?: return
         if (!contact.isPrivate) return
 
-        // 1. Save to system contacts
         saveContact(contact.copy(id = "", isPrivate = false))
 
-        // 2. Delete from local DB
-        deleteContact(contactId)
+        deleteContactInternal(contactId, false)
+
+        val newId = contact.phoneNumbers.firstNotNullOfOrNull { number ->
+            getContactByNumber(number)?.id?.takeIf { it.isNotBlank() && !it.startsWith("p") }
+        }
+        CallBackgroundStore.carryBlocking(context, contactId, newId, contact.phoneNumbers)
     }
 
     override fun exportPrivateContacts(uri: Uri) {
