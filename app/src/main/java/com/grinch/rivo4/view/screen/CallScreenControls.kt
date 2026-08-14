@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,13 +31,10 @@ import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.StopCircle
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -89,16 +87,23 @@ fun CallActionButton(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.90f else 1f,
+        targetValue = if (isPressed) 0.94f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "CallActionScale"
+    )
+
+    val restingRadius = if (compact) 22.dp else 28.dp
+    val cornerRadius by animateFloatAsState(
+        targetValue = if (isPressed) restingRadius.value * 1.6f else restingRadius.value,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "CallActionCorner"
     )
 
     val containerColor by animateColorAsState(
         targetValue = when {
             !enabled -> scheme.surfaceContainerHigh.copy(alpha = 0.4f)
-            isDanger -> MaterialTheme.callColors.decline
-            isActive -> scheme.primaryContainer
+            isDanger && isActive -> MaterialTheme.callColors.decline
+            isActive -> scheme.primary
             else -> scheme.surfaceContainerHigh
         },
         label = "CallActionContainer"
@@ -107,59 +112,56 @@ fun CallActionButton(
     val contentColor by animateColorAsState(
         targetValue = when {
             !enabled -> scheme.onSurface.copy(alpha = 0.38f)
-            isDanger -> MaterialTheme.callColors.onDecline
-            isActive -> scheme.onPrimaryContainer
-            else -> scheme.onSurface
+            isDanger && isActive -> MaterialTheme.callColors.onDecline
+            isActive -> scheme.onPrimary
+            else -> scheme.onSurfaceVariant
         },
         label = "CallActionContent"
     )
 
-    val buttonSize = if (compact) 54.dp else 64.dp
-    val iconSize = if (compact) 24.dp else 28.dp
+    val buttonHeight = if (compact) 60.dp else 74.dp
+    val iconSize = if (compact) 22.dp else 26.dp
 
-    Column(
-        modifier = modifier.scale(scale),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Surface(
-            onClick = {
-                if (enabled) {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onClick()
-                }
-            },
-            modifier = Modifier.size(buttonSize),
-            enabled = enabled,
-            shape = CircleShape,
-            color = containerColor,
-            contentColor = contentColor,
-            interactionSource = interactionSource
-        ) {
-            Column(
-                modifier = Modifier.size(buttonSize),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(iconSize),
-                    tint = contentColor
-                )
+    Surface(
+        onClick = {
+            if (enabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                onClick()
             }
+        },
+        modifier = modifier
+            .height(buttonHeight)
+            .scale(scale),
+        enabled = enabled,
+        shape = RoundedCornerShape(cornerRadius.dp),
+        color = containerColor,
+        contentColor = contentColor,
+        interactionSource = interactionSource
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(iconSize),
+                tint = contentColor
+            )
+            Spacer(modifier = Modifier.height(if (compact) 3.dp else 5.dp))
+            Text(
+                text = label,
+                style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                color = contentColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
-            color = if (enabled) scheme.onSurface else scheme.onSurface.copy(alpha = 0.38f),
-            minLines = 1,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
@@ -170,32 +172,35 @@ private fun EndCallButton(compact: Boolean, onEndCall: () -> Unit) {
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val buttonScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.90f else 1f,
+        targetValue = if (isPressed) 0.96f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "endCallScale"
     )
 
-    val fabSize = if (compact) 64.dp else 72.dp
+    val barHeight = if (compact) 58.dp else 68.dp
 
-    FloatingActionButton(
+    Surface(
         onClick = {
             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
             onEndCall()
         },
         modifier = Modifier
-            .size(fabSize)
+            .fillMaxWidth()
+            .padding(horizontal = if (compact) 24.dp else 48.dp)
+            .height(barHeight)
             .scale(buttonScale),
         shape = CircleShape,
-        containerColor = MaterialTheme.callColors.decline,
+        color = MaterialTheme.callColors.decline,
         contentColor = MaterialTheme.callColors.onDecline,
-        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
         interactionSource = interactionSource
     ) {
-        Icon(
-            imageVector = Icons.Default.CallEnd,
-            contentDescription = stringResource(R.string.action_end_call),
-            modifier = Modifier.size(if (compact) 30.dp else 36.dp)
-        )
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = Icons.Default.CallEnd,
+                contentDescription = stringResource(R.string.action_end_call),
+                modifier = Modifier.size(if (compact) 28.dp else 32.dp)
+            )
+        }
     }
 }
 
@@ -223,7 +228,7 @@ fun ActiveCallControls(
         audioRoute == CallAudioState.ROUTE_BLUETOOTH
     val isHolding = callState == Call.STATE_HOLDING
 
-    val spacing = if (compact) 10.dp else 16.dp
+    val cellSpacing = if (compact) 8.dp else 12.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -232,7 +237,7 @@ fun ActiveCallControls(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CallActionButton(
@@ -240,6 +245,7 @@ fun ActiveCallControls(
                 isActive = isMuted,
                 label = stringResource(R.string.action_mute),
                 compact = compact,
+                modifier = Modifier.weight(1f),
                 onClick = onToggleMute
             )
             CallActionButton(
@@ -247,6 +253,7 @@ fun ActiveCallControls(
                 isActive = showKeypad,
                 label = stringResource(R.string.action_keypad),
                 compact = compact,
+                modifier = Modifier.weight(1f),
                 onClick = onToggleKeypad
             )
             CallActionButton(
@@ -254,15 +261,16 @@ fun ActiveCallControls(
                 isActive = audioActive,
                 label = callAudioRouteLabel(audioRoute),
                 compact = compact,
+                modifier = Modifier.weight(1f),
                 onClick = onAudioClick
             )
         }
 
-        Spacer(modifier = Modifier.height(spacing))
+        Spacer(modifier = Modifier.height(cellSpacing))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CallActionButton(
@@ -270,6 +278,7 @@ fun ActiveCallControls(
                 isActive = false,
                 label = stringResource(R.string.action_add_call),
                 compact = compact,
+                modifier = Modifier.weight(1f),
                 onClick = onAddCall
             )
             CallActionButton(
@@ -277,6 +286,7 @@ fun ActiveCallControls(
                 isActive = isHolding,
                 label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
                 compact = compact,
+                modifier = Modifier.weight(1f),
                 onClick = onToggleHold
             )
             if (recordingEnabled) {
@@ -286,6 +296,7 @@ fun ActiveCallControls(
                     isDanger = isRecording,
                     label = if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
                     compact = compact,
+                    modifier = Modifier.weight(1f),
                     onClick = onToggleRecording
                 )
             } else {
@@ -294,6 +305,7 @@ fun ActiveCallControls(
                     isActive = false,
                     label = stringResource(R.string.action_message),
                     compact = compact,
+                    modifier = Modifier.weight(1f),
                     onClick = onMessage
                 )
             }

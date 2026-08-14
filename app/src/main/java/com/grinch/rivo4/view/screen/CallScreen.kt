@@ -340,8 +340,7 @@ fun ExpressiveCallScreen(
 
             Text(
                 text = contactName,
-                style = if (isLandscape) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
+                style = if (isLandscape) MaterialTheme.typography.headlineMediumEmphasized else MaterialTheme.typography.displaySmallEmphasized,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -358,26 +357,25 @@ fun ExpressiveCallScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Surface(
                 color = when (callState) {
                     Call.STATE_ACTIVE -> MaterialTheme.colorScheme.primaryContainer
                     Call.STATE_HOLDING -> MaterialTheme.colorScheme.tertiaryContainer
-                    else -> MaterialTheme.colorScheme.surfaceContainerHighest
+                    else -> MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
                 },
-                shape = RoundedCornerShape(16.dp)
+                shape = CircleShape
             ) {
                 Text(
                     text = statusText,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmallEmphasized,
                     color = when (callState) {
                         Call.STATE_ACTIVE -> MaterialTheme.colorScheme.onPrimaryContainer
                         Call.STATE_HOLDING -> MaterialTheme.colorScheme.onTertiaryContainer
                         else -> MaterialTheme.colorScheme.onSurfaceVariant
                     },
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
                 )
             }
 
@@ -512,14 +510,15 @@ fun ExpressiveCallScreen(
                 if (useCustomUI != 2 && useCustomUI != 3) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CallActionButton(
                             icon = Icons.AutoMirrored.Filled.Message,
                             isActive = false,
                             label = stringResource(R.string.action_message),
-                            compact = compact
+                            compact = compact,
+                            modifier = Modifier.width(if (compact) 108.dp else 132.dp)
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             onDeclineCallAction()
@@ -1363,19 +1362,33 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val onDeclineColor = MaterialTheme.callColors.onDecline
     val onAnswerColor = MaterialTheme.callColors.onAnswer
 
+    // Only the answer control pulses so it clearly draws the eye, matching the
+    // calm-but-inviting feel of the Google Dialer incoming screen.
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.15f,
+        targetValue = 1.08f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
+            animation = tween(1000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "scale"
     )
+    val haloAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.28f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "halo"
+    )
+
+    val buttonSize = 84.dp
+    val iconSize = 36.dp
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).padding(bottom = 24.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp).padding(bottom = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1387,30 +1400,30 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     containerColor = declineColor,
                     contentColor = onDeclineColor
                 ),
-                modifier = Modifier.size(72.dp)
+                modifier = Modifier.size(buttonSize)
             ) {
                 Icon(
                     Icons.Default.CallEnd,
                     contentDescription = stringResource(R.string.action_decline),
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(iconSize)
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(R.string.action_decline),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.labelLargeEmphasized
             )
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
+                // Expanding ripple halo
                 Box(
                     modifier = Modifier
-                        .size(72.dp)
-                        .scale(scale * 1.2f)
-                        .background(answerColor.copy(alpha = 0.2f), CircleShape)
+                        .size(buttonSize)
+                        .scale(1f + (1f - haloAlpha / 0.28f) * 0.5f)
+                        .background(answerColor.copy(alpha = haloAlpha), CircleShape)
                 )
 
                 FilledIconButton(
@@ -1420,21 +1433,20 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         containerColor = answerColor,
                         contentColor = onAnswerColor
                     ),
-                    modifier = Modifier.size(72.dp).scale(scale)
+                    modifier = Modifier.size(buttonSize).scale(scale)
                 ) {
                     Icon(
                         Icons.Default.Call,
                         contentDescription = stringResource(R.string.action_answer),
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(iconSize)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(R.string.action_answer),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.labelLargeEmphasized
             )
         }
     }

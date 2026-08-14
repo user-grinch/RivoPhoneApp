@@ -58,21 +58,21 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
 
     val infiniteTransition = rememberInfiniteTransition(label = "ambientBg")
     val blob1Offset by infiniteTransition.animateFloat(
-        initialValue = -60f,
-        targetValue = 60f,
-        animationSpec = infiniteRepeatable(tween(7000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        initialValue = -28f,
+        targetValue = 28f,
+        animationSpec = infiniteRepeatable(tween(11000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "b1"
     )
     val blob2Offset by infiniteTransition.animateFloat(
-        initialValue = 60f,
-        targetValue = -60f,
-        animationSpec = infiniteRepeatable(tween(9000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        initialValue = 28f,
+        targetValue = -28f,
+        animationSpec = infiniteRepeatable(tween(13000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "b2"
     )
     val blobAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.25f,
-        targetValue = 0.55f,
-        animationSpec = infiniteRepeatable(tween(4000, easing = LinearEasing), RepeatMode.Reverse),
+        initialValue = 0.18f,
+        targetValue = 0.34f,
+        animationSpec = infiniteRepeatable(tween(6000, easing = LinearEasing), RepeatMode.Reverse),
         label = "ba"
     )
 
