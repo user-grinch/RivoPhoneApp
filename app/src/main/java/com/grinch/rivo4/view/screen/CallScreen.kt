@@ -71,6 +71,7 @@ import com.grinch.rivo4.controller.CallService
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.theme.callColors
+import com.grinch.rivo4.view.theme.rivoAvatarShape
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -747,16 +748,8 @@ private fun heroAvatarSize(isLandscape: Boolean): Dp {
 @Composable
 fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
     val prefs = koinInject<PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
-    val avatarShape = remember(settingsState) {
-        val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
-        when (shapeVal) {
-            0 -> RoundedCornerShape(20.dp)
-            1 -> CircleShape
-            2 -> RoundedCornerShape(0.dp)
-            else -> CircleShape
-        }
-    }
+    val shapeVal = prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)
+    val avatarShape = rivoAvatarShape(shapeVal)
 
     val size = heroAvatarSize(isLandscape)
     val iconSize = size * 0.6f

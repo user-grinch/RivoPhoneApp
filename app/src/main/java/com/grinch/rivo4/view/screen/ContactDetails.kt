@@ -591,11 +591,11 @@ fun ContactDetailsScreen(
                                             onLongClick = { showMenu = true }
                                         )
 
-                                        DropdownMenu(
+                                        RivoDropdownMenu(
                                             expanded = showMenu,
                                             onDismissRequest = { showMenu = false }
                                         ) {
-                                            DropdownMenuItem(
+                                            RivoDropdownMenuItem(
                                                 text = { Text(if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(R.string.contact_set_as_favorite)) },
                                                 onClick = {
                                                     showMenu = false
@@ -610,7 +610,7 @@ fun ContactDetailsScreen(
                                                 },
                                                 leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
                                             )
-                                            DropdownMenuItem(
+                                            RivoDropdownMenuItem(
                                                 text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                                 onClick = {
                                                     showMenu = false
@@ -619,7 +619,7 @@ fun ContactDetailsScreen(
                                                 leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
                                             )
                                             val numberBlocked = isNumberBlocked(number)
-                                            DropdownMenuItem(
+                                            RivoDropdownMenuItem(
                                                 text = { Text(if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number)) },
                                                 onClick = {
                                                     showMenu = false
@@ -658,11 +658,11 @@ fun ContactDetailsScreen(
                                             onLongClick = { showMenu = true }
                                         )
 
-                                        DropdownMenu(
+                                        RivoDropdownMenu(
                                             expanded = showMenu,
                                             onDismissRequest = { showMenu = false }
                                         ) {
-                                            DropdownMenuItem(
+                                            RivoDropdownMenuItem(
                                                 text = { Text(if (isFav) stringResource(R.string.contact_clear_default) else stringResource(R.string.contact_set_as_default)) },
                                                 onClick = {
                                                     showMenu = false
@@ -676,7 +676,7 @@ fun ContactDetailsScreen(
                                                 },
                                                 leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
                                             )
-                                            DropdownMenuItem(
+                                            RivoDropdownMenuItem(
                                                 text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                                 onClick = {
                                                     showMenu = false
@@ -799,7 +799,7 @@ fun ContactDetailsScreen(
                                         expanded = showNotesMenu,
                                         onDismissRequest = { showNotesMenu = false }
                                     ) {
-                                        DropdownMenuItem(
+                                        RivoDropdownMenuItem(
                                             text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
                                             onClick = {
                                                 showNotesMenu = false

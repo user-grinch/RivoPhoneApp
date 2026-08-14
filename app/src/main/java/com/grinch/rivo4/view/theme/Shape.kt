@@ -123,15 +123,25 @@ const val RIVO_AVATAR_SHAPE_SQUARE: Int = 2
 const val RIVO_AVATAR_SHAPE_COOKIE: Int = 3
 const val RIVO_AVATAR_SHAPE_CLOVER: Int = 4
 const val RIVO_AVATAR_SHAPE_ARCH: Int = 5
+const val RIVO_AVATAR_SHAPE_PILL: Int = 6
+const val RIVO_AVATAR_SHAPE_GEM: Int = 7
+const val RIVO_AVATAR_SHAPE_SUNNY: Int = 8
+const val RIVO_AVATAR_SHAPE_HEART: Int = 9
+const val RIVO_AVATAR_SHAPE_BURST: Int = 10
 
 @Composable
 fun rivoAvatarShape(shapeIndex: Int): Shape = when (shapeIndex) {
     RIVO_AVATAR_SHAPE_SQUIRCLE -> MaterialTheme.shapes.large
     RIVO_AVATAR_SHAPE_CIRCLE -> CircleShape
-    RIVO_AVATAR_SHAPE_SQUARE -> RectangleShape
+    RIVO_AVATAR_SHAPE_SQUARE -> RoundedCornerShape(8.dp)
     RIVO_AVATAR_SHAPE_COOKIE -> MaterialShapes.Cookie9Sided.toShape()
     RIVO_AVATAR_SHAPE_CLOVER -> MaterialShapes.Clover4Leaf.toShape()
     RIVO_AVATAR_SHAPE_ARCH -> MaterialShapes.Arch.toShape()
+    RIVO_AVATAR_SHAPE_PILL -> MaterialShapes.Pill.toShape()
+    RIVO_AVATAR_SHAPE_GEM -> MaterialShapes.Gem.toShape()
+    RIVO_AVATAR_SHAPE_SUNNY -> MaterialShapes.Sunny.toShape()
+    RIVO_AVATAR_SHAPE_HEART -> MaterialShapes.Heart.toShape()
+    RIVO_AVATAR_SHAPE_BURST -> MaterialShapes.SoftBurst.toShape()
     else -> CircleShape
 }
 

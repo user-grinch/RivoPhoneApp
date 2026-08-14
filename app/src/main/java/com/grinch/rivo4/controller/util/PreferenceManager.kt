@@ -295,6 +295,7 @@ class PreferenceManager(context: Context) {
         const val KEY_BOTTOM_NAV_ORDER = "bottom_nav_order"
         const val KEY_BOTTOM_NAV_HIDDEN = "bottom_nav_hidden"
         const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"
+        const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
 
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1

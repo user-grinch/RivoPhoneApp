@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,6 +38,13 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,6 +80,7 @@ import com.grinch.rivo4.view.theme.RivoMorphShape
 import com.grinch.rivo4.view.theme.RivoMotion
 import com.grinch.rivo4.view.theme.RivoShapeDefaults
 import com.grinch.rivo4.view.theme.rememberRivoMorph
+import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.grinch.rivo4.view.theme.rivoCornerDp
 
 @Immutable
@@ -196,11 +205,13 @@ fun RivoDialog(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             if (icon != null) {
+                                val headerMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { scale }
                                 Surface(
                                     modifier = Modifier.size(DialogHeaderTileSize),
-                                    shape = MaterialTheme.shapes.largeIncreased,
+                                    shape = headerMorph,
                                     color = headerContainer,
-                                    contentColor = headerContent
+                                    contentColor = headerContent,
+                                    shadowElevation = 2.dp
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
@@ -621,9 +632,10 @@ fun RivoBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (icon != null) {
+                    val sheetHeaderMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.5f }
                     Surface(
                         modifier = Modifier.size(DialogHeaderTileSize),
-                        shape = MaterialTheme.shapes.largeIncreased,
+                        shape = sheetHeaderMorph,
                         color = if (destructive) {
                             MaterialTheme.colorScheme.errorContainer
                         } else {
@@ -633,7 +645,8 @@ fun RivoBottomSheet(
                             MaterialTheme.colorScheme.onErrorContainer
                         } else {
                             MaterialTheme.colorScheme.onPrimaryContainer
-                        }
+                        },
+                        shadowElevation = 2.dp
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
@@ -699,5 +712,71 @@ fun RivoBottomSheet(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun RivoDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    offset: DpOffset = DpOffset(0.dp, 0.dp),
+    properties: PopupProperties = PopupProperties(focusable = true),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val roundness = LocalCardRoundness.current
+    val cornerDp = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness)
+
+    MaterialTheme(
+        shapes = MaterialTheme.shapes.copy(
+            extraSmall = RoundedCornerShape(cornerDp)
+        )
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = modifier,
+            offset = offset,
+            scrollState = rememberScrollState(),
+            properties = properties,
+            shape = RoundedCornerShape(cornerDp),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 6.dp,
+            shadowElevation = 8.dp,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun RivoDropdownMenuItem(
+    text: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+    destructive: Boolean = false
+) {
+    val contentColor = if (destructive) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+    CompositionLocalProvider(LocalContentColor provides contentColor) {
+        DropdownMenuItem(
+            text = text,
+            onClick = onClick,
+            modifier = modifier,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            enabled = enabled,
+            colors = MenuDefaults.itemColors(
+                textColor = contentColor,
+                leadingIconColor = contentColor,
+                trailingIconColor = contentColor
+            ),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        )
     }
 }

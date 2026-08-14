@@ -1,8 +1,11 @@
 package com.grinch.rivo4.view.screen.onboarding
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -43,12 +47,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.RivoMaterialShapes
+import com.grinch.rivo4.view.theme.RivoMorphShape
+import com.grinch.rivo4.view.theme.RivoMotion
+import com.grinch.rivo4.view.theme.rememberRivoMorph
+import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import com.grinch.rivo4.view.theme.rivoCornerDp
 
 data class MorphingPage(
     val icon: ImageVector,
     @androidx.annotation.StringRes val titleRes: Int,
     @androidx.annotation.StringRes val descriptionRes: Int,
-    val shapeCornerPercent: Int,
+    val morphProgress: Float,
     val rotation: Float,
     val scale: Float
 )
@@ -58,7 +69,7 @@ private val pages = listOf(
         icon = Icons.Default.Palette,
         titleRes = R.string.onboarding_page1_title,
         descriptionRes = R.string.onboarding_page1_description,
-        shapeCornerPercent = 50,
+        morphProgress = 0f,
         rotation = 0f,
         scale = 1f
     ),
@@ -66,15 +77,15 @@ private val pages = listOf(
         icon = Icons.Default.Dialpad,
         titleRes = R.string.onboarding_page2_title,
         descriptionRes = R.string.onboarding_page2_description,
-        shapeCornerPercent = 30,
-        rotation = 45f,
-        scale = 1.2f
+        morphProgress = 0.5f,
+        rotation = 30f,
+        scale = 1.15f
     ),
     MorphingPage(
         icon = Icons.Default.Security,
         titleRes = R.string.onboarding_page3_title,
         descriptionRes = R.string.onboarding_page3_description,
-        shapeCornerPercent = 10,
+        morphProgress = 1f,
         rotation = 0f,
         scale = 1f
     )
@@ -83,51 +94,58 @@ private val pages = listOf(
 @Composable
 fun MorphingOnboardingScreen(onFinished: () -> Unit) {
     var currentPage by remember { mutableIntStateOf(0) }
+    val roundness = LocalCardRoundness.current
 
-    val cornerPercent by animateFloatAsState(
-        targetValue = pages[currentPage].shapeCornerPercent.toFloat(),
-        animationSpec = tween(500),
-        label = "corner"
+    val morphProgress by animateFloatAsState(
+        targetValue = pages[currentPage].morphProgress,
+        animationSpec = RivoMotion.shapeMorph(),
+        label = "onboardingMorph"
     )
     val rotation by animateFloatAsState(
         targetValue = pages[currentPage].rotation,
-        animationSpec = tween(500),
-        label = "rotation"
+        animationSpec = RivoMotion.spatialDefault(),
+        label = "onboardingRotation"
     )
     val scale by animateFloatAsState(
         targetValue = pages[currentPage].scale,
-        animationSpec = tween(500),
-        label = "scale"
+        animationSpec = RivoMotion.spatialDefault(),
+        label = "onboardingScale"
     )
     val shapeSize by animateDpAsState(
-        targetValue = (140 * pages[currentPage].scale).dp,
-        animationSpec = tween(500),
-        label = "size"
+        targetValue = (144 * pages[currentPage].scale).dp,
+        animationSpec = RivoMotion.spatialDefault(),
+        label = "onboardingSize"
     )
+
+    val heroMorph = rememberRivoMorph(RivoMaterialShapes.Circle, RivoMaterialShapes.Cookie12Sided)
+    val heroShape = RivoMorphShape(heroMorph) { morphProgress }
+
+    val bgMorph = rememberRivoMorph(RivoMaterialShapes.Cookie9Sided, RivoMaterialShapes.Circle)
+    val bgShape = RivoMorphShape(bgMorph) { morphProgress }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.surfaceContainerLow
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Background morphing shapes
+            // Background expressive morphing shapes
             Box(
                 modifier = Modifier
-                    .size(200.dp)
-                    .offset(x = (-50).dp, y = 100.dp)
-                    .rotate(rotation * 2)
-                    .clip(RoundedCornerShape(cornerPercent.toInt()))
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f))
+                    .size(220.dp)
+                    .offset(x = (-60).dp, y = 80.dp)
+                    .rotate(rotation * 1.5f)
+                    .clip(bgShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f))
             )
 
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(170.dp)
                     .align(Alignment.TopEnd)
-                    .offset(x = 50.dp, y = 200.dp)
+                    .offset(x = 60.dp, y = 180.dp)
                     .rotate(-rotation)
-                    .clip(RoundedCornerShape((50 - cornerPercent / 2).toInt()))
-                    .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f))
+                    .clip(heroShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f))
             )
 
             // Skip button
@@ -138,7 +156,11 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                     .statusBarsPadding()
                     .padding(16.dp)
             ) {
-                Text(stringResource(R.string.onboarding_skip))
+                Text(
+                    text = stringResource(R.string.onboarding_skip),
+                    style = MaterialTheme.typography.labelLargeEmphasized,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
 
             Column(
@@ -151,89 +173,105 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Main morphing shape with icon
-                Box(
+                Surface(
                     modifier = Modifier
                         .size(shapeSize)
-                        .rotate(rotation)
-                        .clip(RoundedCornerShape(cornerPercent.toInt()))
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
+                        .rotate(rotation),
+                    shape = heroShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shadowElevation = 4.dp
                 ) {
-                    Icon(
-                        imageVector = pages[currentPage].icon,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .rotate(-rotation), // Counter-rotate to keep icon upright
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(48.dp))
-
-                // Title
-                Text(
-                    text = stringResource(pages[currentPage].titleRes),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Description
-                Text(
-                    text = stringResource(pages[currentPage].descriptionRes),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // Morphing indicators
-                Row(
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    repeat(pages.size) { index ->
-                        val indicatorCorner by animateFloatAsState(
-                            targetValue = if (index == currentPage) 4f else 50f,
-                            animationSpec = tween(300),
-                            label = "indicatorCorner"
-                        )
-                        val indicatorWidth by animateDpAsState(
-                            targetValue = if (index == currentPage) 24.dp else 8.dp,
-                            animationSpec = tween(300),
-                            label = "indicatorWidth"
-                        )
-
-                        Box(
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = pages[currentPage].icon,
+                            contentDescription = null,
                             modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .size(indicatorWidth, 8.dp)
-                                .clip(RoundedCornerShape(indicatorCorner.toInt()))
-                                .background(
-                                    if (index == currentPage)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.outlineVariant
-                                )
+                                .size(60.dp)
+                                .rotate(-rotation),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(48.dp))
 
-                // Navigation
+                // Title & Description with MD3 Expressive animated text
+                AnimatedContent(
+                    targetState = currentPage,
+                    transitionSpec = {
+                        (fadeIn() togetherWith fadeOut())
+                    },
+                    label = "onboardingTextTransition"
+                ) { pageIdx ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(pages[pageIdx].titleRes),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(pages[pageIdx].descriptionRes),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Expressive fluid page indicators
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(pages.size) { index ->
+                        val isCurrent = index == currentPage
+                        val indicatorWidth by animateDpAsState(
+                            targetValue = if (isCurrent) 28.dp else 10.dp,
+                            animationSpec = RivoMotion.shapeMorph(),
+                            label = "indicatorWidth"
+                        )
+                        val indicatorColor = if (isCurrent) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outlineVariant
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .size(indicatorWidth, 10.dp)
+                                .clip(RoundedCornerShape(rivoCornerDp(12, roundness)))
+                                .background(indicatorColor)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(36.dp))
+
+                // Navigation controls
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (currentPage > 0) {
                         TextButton(onClick = { currentPage-- }) {
-                            Text(stringResource(R.string.action_back))
+                            Text(
+                                text = stringResource(R.string.action_back),
+                                style = MaterialTheme.typography.labelLargeEmphasized
+                            )
                         }
                     } else {
                         Spacer(modifier = Modifier.weight(1f))
@@ -247,10 +285,16 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                                 onFinished()
                             }
                         },
-                        shape = RoundedCornerShape(cornerPercent.toInt().coerceIn(10, 50))
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.height(52.dp)
                     ) {
                         Text(
                             text = if (currentPage == pages.size - 1) stringResource(R.string.onboarding_get_started) else stringResource(R.string.onboarding_next),
+                            style = MaterialTheme.typography.labelLargeEmphasized,
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }

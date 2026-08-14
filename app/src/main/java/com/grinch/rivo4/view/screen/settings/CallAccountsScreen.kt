@@ -19,6 +19,7 @@ import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectListItem
+import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.ramcosta.composedestinations.annotation.Destination
@@ -207,8 +208,7 @@ fun CallAccountsScreen(
                             prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
                         }
                     )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoSelectListItem(
+                    RivoVisualOptionSelectorRow(
                         headline = stringResource(R.string.settings_call_incoming_ui),
                         supporting = stringResource(R.string.settings_call_incoming_ui_supporting),
                         leadingIcon = Icons.Outlined.PhoneInTalk,
@@ -223,8 +223,11 @@ fun CallAccountsScreen(
                             incomingCallUI = it
                             prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
                         },
-                        preview = { IncomingCallUiPreview(it) }
-                    )
+                        tileWidth = 110.dp,
+                        tileHeight = 76.dp
+                    ) { value, _ ->
+                        IncomingCallUiPreview(value)
+                    }
                 }
             }
 

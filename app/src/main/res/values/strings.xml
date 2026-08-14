@@ -80,7 +80,7 @@
 
     <!-- Patreon support prompt (MainActivity) -->
     <string name="patreon_prompt_title">Support Rivo</string>
-    <string name="patreon_prompt_confirm">Support on Patreon</string>
+    <string name="patreon_prompt_confirm">Support Us</string>
     <string name="patreon_prompt_dismiss">Maybe later</string>
     <string name="patreon_prompt_body">Rivo is free and open source. If you like the app, please consider supporting its development on Patreon!</string>
 
@@ -278,6 +278,14 @@
     <string name="settings_interface_avatar_shape_squircle">Squircle</string>
     <string name="settings_interface_avatar_shape_circle">Circle</string>
     <string name="settings_interface_avatar_shape_square">Square</string>
+    <string name="settings_interface_avatar_shape_cookie">Cookie</string>
+    <string name="settings_interface_avatar_shape_clover">Clover</string>
+    <string name="settings_interface_avatar_shape_arch">Arch</string>
+    <string name="settings_interface_avatar_shape_pill">Pill</string>
+    <string name="settings_interface_avatar_shape_gem">Gem</string>
+    <string name="settings_interface_avatar_shape_sunny">Sunny</string>
+    <string name="settings_interface_avatar_shape_heart">Heart</string>
+    <string name="settings_interface_avatar_shape_burst">Soft Burst</string>
     <string name="settings_interface_call_screen_avatar">Call screen avatar</string>
     <string name="settings_interface_call_screen_avatar_supporting">Show contact picture on call screen</string>
     <string name="settings_interface_show_dividers">Show dividers</string>
@@ -470,7 +478,7 @@
     <string name="about_build_number">Build number</string>
     <string name="contributors_title">Contributors</string>
     <string name="about_contributors_supporting">Meet the team behind the project</string>
-    <string name="about_patreon">Support Us on Patreon</string>
+    <string name="about_patreon">Support Us</string>
     <string name="about_patreon_supporting">Help keep the project alive</string>
     <string name="about_discord">Discord Server</string>
     <string name="about_discord_supporting">Join the community</string>
@@ -491,6 +499,12 @@
     <string name="favorites_empty_title">No favorites yet</string>
     <string name="favorites_empty_description">Mark a contact as favorite to see it in this grid.</string>
     <string name="favorites_drag_to_reorder">Drag to reorder</string>
+    <string name="favorites_add_title">Add Favorite Contact</string>
+    <string name="favorites_add_button">Add Favorite</string>
+    <string name="favorites_collapse">Collapse Favorites</string>
+    <string name="favorites_expand">Expand Favorites</string>
+    <string name="blocked_select_contact">Select Contact</string>
+    <string name="blocked_search_contact_hint">Search contact name or number...</string>
 
     <!-- Bottom navigation layout -->
     <string name="settings_bottom_nav_title">Bottom navigation</string>

@@ -121,30 +121,21 @@ class MainActivity : ComponentActivity() {
                                 },
                                 title = stringResource(R.string.patreon_prompt_title),
                                 icon = Icons.Default.Favorite,
-                                confirmButton = {
-                                    Button(
-                                        onClick = {
-                                            openLink(context, PATREON_URL)
-                                            prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
-                                            showPatreonPrompt = false
-                                        },
-                                        modifier = Modifier.fillMaxWidth().height(52.dp),
-                                        shape = RoundedCornerShape(16.dp)
-                                    ) {
-                                        Text(stringResource(R.string.patreon_prompt_confirm), fontWeight = FontWeight.Bold)
+                                confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                                    label = stringResource(R.string.patreon_prompt_confirm),
+                                    onClick = {
+                                        openLink(context, PATREON_URL)
+                                        prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
+                                        showPatreonPrompt = false
                                     }
-                                },
-                                dismissButton = {
-                                    TextButton(
-                                        onClick = {
-                                            prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
-                                            showPatreonPrompt = false
-                                        },
-                                        modifier = Modifier.fillMaxWidth().height(52.dp)
-                                    ) {
-                                        Text(stringResource(R.string.patreon_prompt_dismiss))
+                                ),
+                                dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                                    label = stringResource(R.string.patreon_prompt_dismiss),
+                                    onClick = {
+                                        prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
+                                        showPatreonPrompt = false
                                     }
-                                }
+                                )
                             ) {
                                 Text(
                                     stringResource(R.string.patreon_prompt_body),

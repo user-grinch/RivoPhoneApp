@@ -100,3 +100,69 @@ class GridDragDropState internal constructor(
 
     private fun androidx.compose.ui.unit.IntOffset.toOffset() = Offset(x.toFloat(), y.toFloat())
 }
+
+@Composable
+fun rememberRowDragDropState(
+    lazyListState: androidx.compose.foundation.lazy.LazyListState,
+    onMove: (fromIndex: Int, toIndex: Int) -> Unit
+): RowDragDropState {
+    val scope = rememberCoroutineScope()
+    return remember(lazyListState) {
+        RowDragDropState(state = lazyListState, scope = scope, onMove = onMove)
+    }
+}
+
+class RowDragDropState internal constructor(
+    private val state: androidx.compose.foundation.lazy.LazyListState,
+    private val scope: CoroutineScope,
+    private val onMove: (Int, Int) -> Unit
+) {
+    var draggingItemIndex by mutableStateOf<Int?>(null)
+        private set
+
+    internal val scrollChannel = Channel<Float>()
+
+    private var draggingItemDraggedDelta by mutableStateOf(Offset.Zero)
+    private var draggingItemInitialOffset by mutableStateOf(Offset.Zero)
+
+    internal val draggingItemOffset: Offset
+        get() = draggingItemLayoutInfo?.let { item ->
+            draggingItemInitialOffset + draggingItemDraggedDelta - Offset(item.offset.toFloat(), 0f)
+        } ?: Offset.Zero
+
+    private val draggingItemLayoutInfo: androidx.compose.foundation.lazy.LazyListItemInfo?
+        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
+
+    internal fun onDragStart(offset: Offset) {
+        state.layoutInfo.visibleItemsInfo.firstOrNull { item ->
+            offset.x.toInt() in item.offset..(item.offset + item.size)
+        }?.also {
+            draggingItemIndex = it.index
+            draggingItemInitialOffset = Offset(it.offset.toFloat(), 0f)
+        }
+    }
+
+    internal fun onDragInterrupted() {
+        draggingItemIndex = null
+        draggingItemDraggedDelta = Offset.Zero
+        draggingItemInitialOffset = Offset.Zero
+    }
+
+    internal fun onDrag(offset: Offset) {
+        draggingItemDraggedDelta += offset
+
+        val draggingItem = draggingItemLayoutInfo ?: return
+        val startOffset = draggingItemInitialOffset + draggingItemDraggedDelta
+        val middleX = startOffset.x + (draggingItem.size / 2f)
+
+        val targetItem = state.layoutInfo.visibleItemsInfo.find { item ->
+            middleX.toInt() in item.offset..(item.offset + item.size) &&
+                draggingItem.index != item.index
+        }
+
+        if (targetItem != null) {
+            onMove(draggingItem.index, targetItem.index)
+            draggingItemIndex = targetItem.index
+        }
+    }
+}

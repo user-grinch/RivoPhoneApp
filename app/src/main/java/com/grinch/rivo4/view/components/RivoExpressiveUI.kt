@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
@@ -16,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.RoundedCorner
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -48,6 +51,10 @@ import com.grinch.rivo4.view.theme.RivoMotion
 import com.grinch.rivo4.view.theme.RivoShapeDefaults
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.grinch.rivo4.view.theme.rivoCornerDp
+import com.grinch.rivo4.view.theme.rivoAvatarShape
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.text.font.FontWeight
 import org.koin.compose.koinInject
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -217,10 +224,7 @@ fun RivoDivider(
     color: Color = MaterialTheme.colorScheme.outlineVariant,
     visible: Boolean? = null
 ) {
-    val showDividers = visible ?: rivoSurfaceStyle().showDividers
-    if (showDividers) {
-        HorizontalDivider(modifier = modifier, color = color)
-    }
+    // Separator lines removed per user design request
 }
 
 @Composable
@@ -940,6 +944,238 @@ fun RivoPreviewTile(
                 overflow = TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+@Composable
+fun RivoAvatarShapeSelectorRow(
+    headline: String,
+    supporting: String?,
+    options: List<Pair<String, Int>>,
+    selectedValue: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = RivoListItemDefaults.VerticalPadding),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RivoLeadingIconTile(icon = Icons.Outlined.AccountBox)
+            Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = headline,
+                    style = RivoListItemDefaults.headlineStyle(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (supporting != null) {
+                    Text(
+                        text = supporting,
+                        style = RivoListItemDefaults.supportingStyle(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            val currentShape = rivoAvatarShape(selectedValue)
+            Surface(
+                modifier = Modifier.size(44.dp),
+                shape = currentShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                shadowElevation = 2.dp
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "R",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(options) { (label, shapeIndex) ->
+                val selected = shapeIndex == selectedValue
+                val shape = rivoAvatarShape(shapeIndex)
+
+                RivoPreviewTile(
+                    label = label,
+                    selected = selected,
+                    onClick = { onValueChange(shapeIndex) },
+                    width = 88.dp,
+                    previewHeight = 72.dp
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(
+                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                                shape = shape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "R",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RivoVisualOptionSelectorRow(
+    headline: String,
+    options: List<Pair<String, Int>>,
+    selectedValue: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    supporting: String? = null,
+    leadingIcon: ImageVector? = null,
+    tileWidth: Dp = 100.dp,
+    tileHeight: Dp = 72.dp,
+    optionContent: @Composable BoxScope.(Int, Boolean) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = RivoListItemDefaults.VerticalPadding),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (leadingIcon != null) {
+                RivoLeadingIconTile(icon = leadingIcon)
+                Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = headline,
+                    style = RivoListItemDefaults.headlineStyle(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (supporting != null) {
+                    Text(
+                        text = supporting,
+                        style = RivoListItemDefaults.supportingStyle(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(options) { (label, value) ->
+                val selected = value == selectedValue
+
+                RivoPreviewTile(
+                    label = label,
+                    selected = selected,
+                    onClick = { onValueChange(value) },
+                    width = tileWidth,
+                    previewHeight = tileHeight
+                ) {
+                    optionContent(value, selected)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RivoInteractiveRoundnessSlider(
+    headline: String,
+    supporting: String?,
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+    onValueChange: (Float) -> Unit,
+    onValueChangeFinished: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = RivoListItemDefaults.HorizontalPadding,
+                vertical = RivoListItemDefaults.VerticalPadding
+            ),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RivoLeadingIconTile(icon = Icons.Outlined.RoundedCorner)
+            Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = headline,
+                    style = RivoListItemDefaults.headlineStyle()
+                )
+                if (supporting != null) {
+                    Text(
+                        text = supporting,
+                        style = RivoListItemDefaults.supportingStyle(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp),
+            shape = RoundedCornerShape(value.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Live Corner Roundness: ${value.roundToInt()}dp",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = valueRange,
+            steps = steps,
+            onValueChangeFinished = onValueChangeFinished,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

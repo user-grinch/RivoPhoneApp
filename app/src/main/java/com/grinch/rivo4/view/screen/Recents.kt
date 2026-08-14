@@ -34,8 +34,22 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -174,18 +188,31 @@ fun RecentScreenContent(navController: NavController, navigator: DestinationsNav
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavoriteCircleItem(
     contact: Contact,
     isEditing: Boolean = false,
+    isDragging: Boolean = false,
     displayOrder: Int = 0,
     onUnfavorite: () -> Unit = {},
-    onClick: () -> Unit
+    onLongClick: () -> Unit = {},
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "favoriteWiggleRecents")
+    val wiggle by infiniteTransition.animateFloat(
+        initialValue = -1.5f,
+        targetValue = 1.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(150, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "wiggle"
+    )
+
     Column(
-        modifier = Modifier
-            .width(72.dp)
-            .clickable(enabled = !isEditing, onClick = onClick),
+        modifier = modifier.width(76.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -193,20 +220,29 @@ fun FavoriteCircleItem(
             RivoAvatar(
                 name = contact.name,
                 photoUri = contact.photoUri,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier
+                    .size(64.dp)
+                    .graphicsLayer { if (isEditing && !isDragging) rotationZ = wiggle }
+                    .combinedClickable(
+                        enabled = true,
+                        onClick = {
+                            if (!isEditing) onClick()
+                        },
+                        onLongClick = onLongClick
+                    )
             )
 
             if (isEditing) {
                 Surface(
                     onClick = onUnfavorite,
-                    modifier = Modifier.size(20.dp).offset(x = 4.dp, y = (-4).dp),
+                    modifier = Modifier.size(22.dp).offset(x = 4.dp, y = (-4).dp),
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
                     shadowElevation = 2.dp
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(Icons.Default.Remove, null, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.Remove, stringResource(R.string.content_desc_remove_favorite), modifier = Modifier.size(14.dp))
                     }
                 }
             }
@@ -219,6 +255,72 @@ fun FavoriteCircleItem(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+@Composable
+fun AddFavoriteDialog(
+    allContacts: List<Contact>,
+    onDismissRequest: () -> Unit,
+    onContactSelected: (Contact) -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+    val availableContacts = remember(allContacts, searchQuery) {
+        val nonFavs = allContacts.filter { !it.isFavorite }
+        if (searchQuery.isBlank()) {
+            nonFavs
+        } else {
+            nonFavs.filter {
+                it.name.contains(searchQuery, ignoreCase = true) ||
+                it.phoneNumbers.any { num -> num.contains(searchQuery) }
+            }
+        }
+    }
+
+    RivoDialog(
+        onDismissRequest = onDismissRequest,
+        title = stringResource(R.string.favorites_add_title),
+        icon = Icons.Default.Star,
+        dismissAction = RivoDialogAction(
+            label = stringResource(R.string.action_cancel),
+            onClick = onDismissRequest
+        )
+    ) {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.search_contacts_placeholder)) },
+            leadingIcon = { Icon(Icons.Default.Search, null) },
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        if (availableContacts.isEmpty()) {
+            Text(
+                text = stringResource(R.string.search_no_results_title),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                availableContacts.take(40).forEach { contact ->
+                    RivoListItem(
+                        headline = contact.name,
+                        supporting = contact.phoneNumbers.firstOrNull() ?: "",
+                        avatarName = contact.name,
+                        photoUri = contact.photoUri,
+                        onClick = {
+                            onContactSelected(contact)
+                            onDismissRequest()
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -269,6 +371,32 @@ fun CallLogFullContent(
             }
         }
         var isEditingFavorites by remember { mutableStateOf(false) }
+        var isFavoritesCollapsed by remember(settingsState) {
+            mutableStateOf(prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_RECENTS_FAVORITES_COLLAPSED, false))
+        }
+        var showAddFavoriteDialog by remember { mutableStateOf(false) }
+
+        val favRowState = rememberLazyListState()
+        val favItems = remember { mutableStateListOf<Contact>() }
+        LaunchedEffect(favorites) {
+            if (favItems.map { it.id }.toSet() != favorites.map { it.id }.toSet()) {
+                favItems.clear()
+                favItems.addAll(favorites)
+            } else {
+                val byId = favorites.associateBy { it.id }
+                for (i in favItems.indices) byId[favItems[i].id]?.let { favItems[i] = it }
+            }
+        }
+
+        val rowDragDropState = rememberRowDragDropState(favRowState) { from, to ->
+            favItems.add(to, favItems.removeAt(from))
+        }
+        LaunchedEffect(rowDragDropState) {
+            while (true) {
+                val diff = rowDragDropState.scrollChannel.receive()
+                favRowState.scrollBy(diff)
+            }
+        }
 
         val isLoading by viewModel.isLoading.collectAsState()
         val selectedFilter by viewModel.selectedFilter.collectAsState()
@@ -297,6 +425,16 @@ fun CallLogFullContent(
         }
 
         val pullToRefreshState = rememberPullToRefreshState()
+
+        if (showAddFavoriteDialog) {
+            AddFavoriteDialog(
+                allContacts = allContacts,
+                onDismissRequest = { showAddFavoriteDialog = false },
+                onContactSelected = { contact ->
+                    contactsVM.toggleFavorite(contact)
+                }
+            )
+        }
 
         PullToRefreshBox(
             isRefreshing = isLoading && logs.isNotEmpty(),
@@ -328,39 +466,131 @@ fun CallLogFullContent(
                     ) {
                         if (favorites.isNotEmpty() && selectedFilter == CallLogFilter.All) {
                             item {
-                                RivoSectionHeader(
-                                    title = stringResource(R.string.recents_favorites),
-                                    trailingContent = {
-                                        TextButton(
-                                            onClick = { isEditingFavorites = !isEditingFavorites },
-                                            modifier = Modifier.padding(end = 8.dp)
-                                        ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 20.dp, end = 8.dp, top = 8.dp, bottom = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.clickable {
+                                            val newCollapsed = !isFavoritesCollapsed
+                                            isFavoritesCollapsed = newCollapsed
+                                            prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_RECENTS_FAVORITES_COLLAPSED, newCollapsed)
+                                        }
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.recents_favorites),
+                                            style = MaterialTheme.typography.labelLargeEmphasized,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(
+                                            imageVector = if (isFavoritesCollapsed) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                                            contentDescription = stringResource(if (isFavoritesCollapsed) R.string.favorites_expand else R.string.favorites_collapse),
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+
+                                    if (isEditingFavorites) {
+                                        TextButton(onClick = { isEditingFavorites = false }) {
                                             Text(
-                                                text = if (isEditingFavorites) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
+                                                text = stringResource(R.string.action_done),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     }
-                                )
-                                LazyRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 12.dp),
-                                    contentPadding = PaddingValues(horizontal = 16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    items(favorites) { contact ->
-                                        FavoriteCircleItem(
-                                            contact = contact,
-                                            isEditing = isEditingFavorites,
-                                            displayOrder = displayOrder,
-                                            onUnfavorite = { contactsVM.toggleFavorite(contact) },
-                                            onClick = {
-                                                callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
+                                }
+                                AnimatedVisibility(visible = !isFavoritesCollapsed) {
+                                    LazyRow(
+                                        state = favRowState,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .then(
+                                                if (isEditingFavorites) {
+                                                    Modifier.pointerInput(rowDragDropState) {
+                                                        detectDragGesturesAfterLongPress(
+                                                            onDragStart = { offset -> rowDragDropState.onDragStart(offset) },
+                                                            onDrag = { change, offset ->
+                                                                change.consume()
+                                                                rowDragDropState.onDrag(offset)
+                                                            },
+                                                            onDragEnd = {
+                                                                rowDragDropState.onDragInterrupted()
+                                                                prefs.setFavoritesOrder(favItems.map { it.id })
+                                                            },
+                                                            onDragCancel = { rowDragDropState.onDragInterrupted() }
+                                                        )
+                                                    }
+                                                } else {
+                                                    Modifier
+                                                }
+                                            ),
+                                        contentPadding = PaddingValues(horizontal = 16.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                    ) {
+                                        itemsIndexed(favItems, key = { _, c -> c.id }) { index, contact ->
+                                            val dragging = index == rowDragDropState.draggingItemIndex
+                                            val itemModifier = if (dragging) {
+                                                Modifier
+                                                    .zIndex(1f)
+                                                    .graphicsLayer {
+                                                        translationX = rowDragDropState.draggingItemOffset.x
+                                                        scaleX = 1.08f
+                                                        scaleY = 1.08f
+                                                    }
+                                            } else {
+                                                Modifier.animateItem()
                                             }
-                                        )
+                                            FavoriteCircleItem(
+                                                modifier = itemModifier,
+                                                contact = contact,
+                                                isEditing = isEditingFavorites,
+                                                isDragging = dragging,
+                                                displayOrder = displayOrder,
+                                                onUnfavorite = { contactsVM.toggleFavorite(contact) },
+                                                onLongClick = { isEditingFavorites = true },
+                                                onClick = {
+                                                    callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)
+                                                }
+                                            )
+                                        }
+                                        if (!isEditingFavorites) {
+                                            item {
+                                                Column(
+                                                    modifier = Modifier
+                                                        .width(76.dp)
+                                                        .clickable { showAddFavoriteDialog = true },
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                    Surface(
+                                                        modifier = Modifier.size(64.dp),
+                                                        shape = CircleShape,
+                                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                        contentColor = MaterialTheme.colorScheme.primary
+                                                    ) {
+                                                        Box(contentAlignment = Alignment.Center) {
+                                                            Icon(Icons.Default.Add, stringResource(R.string.favorites_add_button), modifier = Modifier.size(28.dp))
+                                                        }
+                                                    }
+                                                    Text(
+                                                        text = stringResource(R.string.favorites_add_button),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        textAlign = TextAlign.Center,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))

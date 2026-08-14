@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -182,61 +183,47 @@ fun ContactPickerDialog(
         }
     }
 
-    Dialog(
+    RivoDialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        title = stringResource(R.string.settings_speed_dial_search_contact),
+        icon = Icons.Outlined.Speed,
+        dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
+            label = stringResource(R.string.action_cancel),
+            onClick = onDismissRequest
+        )
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            TextField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                placeholder = { Text(stringResource(R.string.settings_speed_dial_search_contact)) },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    disabledContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                ),
-                                singleLine = true,
-                                textStyle = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = onDismissRequest) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.search_contacts_placeholder)) },
+            leadingIcon = { Icon(Icons.Default.Search, null) },
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        if (filteredContacts.isEmpty()) {
+            Text(
+                text = stringResource(R.string.search_no_results_title),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                filteredContacts.take(30).forEach { contact ->
+                    RivoListItem(
+                        headline = contact.name,
+                        supporting = contact.phoneNumbers.firstOrNull() ?: stringResource(R.string.settings_speed_dial_no_number),
+                        avatarName = contact.name,
+                        photoUri = contact.photoUri,
+                        onClick = {
+                            onContactSelected(contact)
+                            onDismissRequest()
+                        }
                     )
-                }
-            ) { padding ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(filteredContacts) { contact ->
-                        RivoListItem(
-                            headline = contact.name,
-                            supporting = contact.phoneNumbers.firstOrNull() ?: stringResource(R.string.settings_speed_dial_no_number),
-                            avatarName = contact.name,
-                            photoUri = contact.photoUri,
-                            onClick = { onContactSelected(contact) }
-                        )
-                    }
                 }
             }
         }

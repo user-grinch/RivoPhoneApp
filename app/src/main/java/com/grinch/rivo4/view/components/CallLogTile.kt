@@ -239,89 +239,41 @@ fun BatchCallLogActionBar(
     }
 
     if (showDeleteConfirm) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showDeleteConfirm = false },
+            onConfirm = onDelete,
             title = stringResource(R.string.call_log_delete_title),
+            message = stringResource(R.string.call_log_delete_confirm, selectedCount),
+            confirmLabel = stringResource(R.string.action_delete),
+            dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Default.Delete,
-            confirmButton = {
-                TextButton(onClick = {
-                    onDelete()
-                    showDeleteConfirm = false
-                }) {
-                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                stringResource(R.string.call_log_delete_confirm, selectedCount),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+            isDestructive = true
+        )
     }
 
     if (showBlockConfirm) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showBlockConfirm = false },
+            onConfirm = onBlock,
             title = stringResource(R.string.call_log_block_title),
+            message = stringResource(R.string.call_log_block_message, selectedCount),
+            confirmLabel = stringResource(R.string.action_block),
+            dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Default.Block,
-            confirmButton = {
-                TextButton(onClick = {
-                    onBlock()
-                    showBlockConfirm = false
-                }) {
-                    Text(stringResource(R.string.action_block), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showBlockConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                stringResource(R.string.call_log_block_message, selectedCount),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+            isDestructive = true
+        )
     }
 
     if (showClearAllConfirm) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showClearAllConfirm = false },
+            onConfirm = onClearAll,
             title = stringResource(R.string.call_log_clear_all_title),
+            message = stringResource(R.string.call_log_clear_all_message),
+            confirmLabel = stringResource(R.string.call_log_clear_all_confirm),
+            dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Default.DeleteSweep,
-            confirmButton = {
-                TextButton(onClick = {
-                    onClearAll()
-                    showClearAllConfirm = false
-                }) {
-                    Text(stringResource(R.string.call_log_clear_all_confirm), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showClearAllConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                stringResource(R.string.call_log_clear_all_message),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+            isDestructive = true
+        )
     }
 }

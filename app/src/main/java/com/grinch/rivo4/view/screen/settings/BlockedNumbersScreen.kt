@@ -4,6 +4,7 @@ import android.content.Context
 import android.telecom.TelecomManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,8 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.BlockedNumber
 import com.grinch.rivo4.controller.util.BlockedNumbersManager
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.RivoDialog
@@ -34,6 +37,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -43,6 +47,8 @@ fun BlockedNumbersScreen(
 ) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val allContacts by contactsVM.allContacts.collectAsState()
     val settingsState by prefs.settingsChanged.collectAsState()
 
     var blockMethod by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0)) }
@@ -53,9 +59,11 @@ fun BlockedNumbersScreen(
     var refreshKey by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
     var newNumber by remember { mutableStateOf("") }
+    var showContactPickerTab by remember { mutableStateOf(false) }
 
     LaunchedEffect(refreshKey) {
         blockedNumbers = BlockedNumbersManager.getAll(context)
+        contactsVM.fetchContacts()
     }
 
     Scaffold(
@@ -72,6 +80,7 @@ fun BlockedNumbersScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 newNumber = ""
+                showContactPickerTab = false
                 showAddDialog = true
             }) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.blocked_add_number))
@@ -99,17 +108,32 @@ fun BlockedNumbersScreen(
                         )
                     } else {
                         blockedNumbers.forEachIndexed { index, entry ->
+                            val matchedContact = remember(allContacts, entry.originalNumber) {
+                                allContacts.find { c ->
+                                    c.phoneNumbers.any { num -> com.grinch.rivo4.controller.util.areNumbersEqual(num, entry.originalNumber) }
+                                }
+                            }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(modifier = Modifier.weight(1f)) {
-                                    RivoListItem(
-                                        headline = formatPhoneNumber(entry.originalNumber),
-                                        supporting = stringResource(R.string.blocked_list_item_supporting),
-                                        leadingIcon = Icons.Outlined.Block,
-                                        onClick = { }
-                                    )
+                                    if (matchedContact != null) {
+                                        RivoListItem(
+                                            headline = matchedContact.name,
+                                            supporting = formatPhoneNumber(entry.originalNumber),
+                                            avatarName = matchedContact.name,
+                                            photoUri = matchedContact.photoUri,
+                                            onClick = { }
+                                        )
+                                    } else {
+                                        RivoListItem(
+                                            headline = formatPhoneNumber(entry.originalNumber),
+                                            supporting = stringResource(R.string.blocked_list_item_supporting),
+                                            leadingIcon = Icons.Outlined.Block,
+                                            onClick = { }
+                                        )
+                                    }
                                 }
                                 TextButton(onClick = {
                                     BlockedNumbersManager.unblockById(context, entry.id)
@@ -199,6 +223,17 @@ fun BlockedNumbersScreen(
     }
 
     if (showAddDialog) {
+        val filteredContacts = remember(allContacts, newNumber) {
+            if (newNumber.isBlank()) {
+                allContacts
+            } else {
+                allContacts.filter { c ->
+                    c.name.contains(newNumber, ignoreCase = true) ||
+                    c.phoneNumbers.any { num -> num.contains(newNumber) }
+                }
+            }
+        }
+
         RivoDialog(
             onDismissRequest = { showAddDialog = false },
             title = stringResource(R.string.blocked_add_number),
@@ -221,14 +256,49 @@ fun BlockedNumbersScreen(
                 }
             }
         ) {
-            OutlinedTextField(
-                value = newNumber,
-                onValueChange = { newNumber = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.blocked_add_number_hint)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = newNumber,
+                    onValueChange = { newNumber = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.blocked_add_number_hint)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    leadingIcon = { Icon(Icons.Outlined.Search, null) },
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                if (filteredContacts.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.blocked_select_contact),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.heightIn(max = 240.dp)
+                    ) {
+                        filteredContacts.take(15).forEach { contact ->
+                            RivoListItem(
+                                headline = contact.name,
+                                supporting = contact.phoneNumbers.firstOrNull() ?: "",
+                                avatarName = contact.name,
+                                photoUri = contact.photoUri,
+                                isCompact = true,
+                                onClick = {
+                                    val numberToBlock = contact.phoneNumbers.firstOrNull() ?: newNumber
+                                    if (numberToBlock.isNotBlank()) {
+                                        BlockedNumbersManager.block(context, numberToBlock.trim())
+                                        showAddDialog = false
+                                        refreshKey++
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

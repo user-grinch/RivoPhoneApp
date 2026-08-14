@@ -34,6 +34,8 @@ import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDropdownMenu
+import com.grinch.rivo4.view.components.RivoDropdownMenuItem
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.ramcosta.composedestinations.annotation.Destination
@@ -626,12 +628,12 @@ fun TypedEditField(
                 Text(typeLabel(typeValue), style = MaterialTheme.typography.labelLarge)
                 Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(18.dp))
             }
-            DropdownMenu(
+            RivoDropdownMenu(
                 expanded = showTypeMenu,
                 onDismissRequest = { showTypeMenu = false }
             ) {
                 typeOptions.forEach { option ->
-                    DropdownMenuItem(
+                    RivoDropdownMenuItem(
                         text = { Text(typeLabel(option)) },
                         onClick = {
                             onTypeChange(option)

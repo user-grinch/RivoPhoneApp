@@ -23,6 +23,8 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoDropdownMenu
+import com.grinch.rivo4.view.components.RivoDropdownMenuItem
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.ramcosta.composedestinations.annotation.Destination
@@ -141,8 +143,8 @@ fun PrivateContactCard(
                 IconButton(onClick = { showMenu = true }) {
                     Icon(Icons.Default.MoreVert, null)
                 }
-                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                    DropdownMenuItem(
+                RivoDropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    RivoDropdownMenuItem(
                         text = { Text(stringResource(R.string.contact_move_to_public_storage)) },
                         onClick = {
                             showMenu = false
@@ -150,13 +152,14 @@ fun PrivateContactCard(
                         },
                         leadingIcon = { Icon(Icons.Default.LockOpen, null) }
                     )
-                    DropdownMenuItem(
+                    RivoDropdownMenuItem(
                         text = { Text(stringResource(R.string.action_delete)) },
                         onClick = {
                             showMenu = false
                             onDelete()
                         },
-                        leadingIcon = { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) }
+                        leadingIcon = { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) },
+                        destructive = true
                     )
                 }
             }

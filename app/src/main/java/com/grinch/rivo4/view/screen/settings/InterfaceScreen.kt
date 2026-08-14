@@ -20,6 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoAvatarShapeSelectorRow
+import com.grinch.rivo4.view.components.RivoInteractiveRoundnessSlider
+import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.RivoColorSwatchRow
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -153,19 +156,26 @@ fun InterfaceScreen(
                 // ---- Avatars ----
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_avatars)) {
-                        RivoOptionRow(
+                        RivoAvatarShapeSelectorRow(
                             headline = stringResource(R.string.settings_interface_avatar_shape),
                             supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
-                            leadingIcon = Icons.Outlined.AccountBox,
                             options = listOf(
                                 stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
                                 stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
-                                stringResource(R.string.settings_interface_avatar_shape_square) to 2
+                                stringResource(R.string.settings_interface_avatar_shape_square) to 2,
+                                stringResource(R.string.settings_interface_avatar_shape_cookie) to 3,
+                                stringResource(R.string.settings_interface_avatar_shape_clover) to 4,
+                                stringResource(R.string.settings_interface_avatar_shape_arch) to 5,
+                                stringResource(R.string.settings_interface_avatar_shape_pill) to 6,
+                                stringResource(R.string.settings_interface_avatar_shape_gem) to 7,
+                                stringResource(R.string.settings_interface_avatar_shape_sunny) to 8,
+                                stringResource(R.string.settings_interface_avatar_shape_heart) to 9,
+                                stringResource(R.string.settings_interface_avatar_shape_burst) to 10
                             ),
                             selectedValue = avatarShape,
-                            onValueChange = {
-                                avatarShape = it
-                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
+                            onValueChange = { selected ->
+                                avatarShape = selected
+                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, selected)
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
@@ -190,37 +200,24 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
                             }
                         )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_call_screen_avatar),
-                            supporting = stringResource(R.string.settings_interface_call_screen_avatar_supporting),
-                            leadingIcon = Icons.Outlined.ContactPage,
-                            checked = showCallScreenAvatar,
-                            onCheckedChange = {
-                                showCallScreenAvatar = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, it)
-                            }
-                        )
                     }
                 }
 
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_shape_motion)) {
-                        RivoSliderListItem(
+                        RivoInteractiveRoundnessSlider(
                             headline = stringResource(R.string.settings_interface_card_roundness),
                             supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
-                            leadingIcon = Icons.Outlined.RoundedCorner,
                             value = cardRoundness.toFloat(),
                             valueRange = 0f..32f,
                             steps = 7,
-                            valueLabel = "${cardRoundness}dp",
                             onValueChange = { cardRoundness = it.roundToInt() },
                             onValueChangeFinished = {
                                 prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, cardRoundness)
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoOptionRow(
+                        RivoVisualOptionSelectorRow(
                             headline = stringResource(R.string.settings_interface_transition_animation),
                             supporting = stringResource(R.string.settings_interface_transition_animation_supporting),
                             leadingIcon = Icons.Outlined.Animation,
@@ -235,14 +232,27 @@ fun InterfaceScreen(
                                 transitionStyle = it
                                 prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
                             }
-                        )
+                        ) { value, selected ->
+                            val icon = when (value) {
+                                0 -> Icons.Outlined.Animation
+                                1 -> Icons.Outlined.CompareArrows
+                                2 -> Icons.Outlined.AutoAwesome
+                                else -> Icons.Outlined.Block
+                            }
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
 
                 // ---- Navigation ----
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_navigation)) {
-                        RivoOptionRow(
+                        RivoVisualOptionSelectorRow(
                             headline = stringResource(R.string.settings_interface_default_bottom_bar),
                             supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SpaceDashboard,
@@ -255,9 +265,16 @@ fun InterfaceScreen(
                             onValueChange = {
                                 defaultBottomBar = it
                                 prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, it)
-                            },
-                            optionIcon = { defaultTabIcon(it) }
-                        )
+                            }
+                        ) { value, selected ->
+                            val icon = defaultTabIcon(value) ?: Icons.Outlined.SpaceDashboard
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoListItem(
                             headline = stringResource(R.string.settings_bottom_nav_title),
