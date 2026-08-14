@@ -51,6 +51,8 @@ import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.EmailEntry
+import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -547,13 +549,9 @@ fun ContactDetailsScreen(
                             RivoExpressiveButton(
                                 icon = Icons.Default.Email,
                                 label = stringResource(R.string.label_email),
-                                containerColor = if (hasEmails) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = if (hasEmails) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f),
-                                onClick = {
-                                    if (hasEmails) {
-                                        emailLauncher.sendEmail("", fullContact)
-                                    }
-                                },
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                enabled = hasEmails,
+                                onClick = { emailLauncher.sendEmail("", fullContact) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -566,10 +564,14 @@ fun ContactDetailsScreen(
                         val bulletRecent = stringResource(R.string.contact_bullet_recent)
                         RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info) {
                             if (fullContact != null) {
-                                val uniquePhoneNumbers = remember(fullContact) {
-                                    deduplicateNumbers(fullContact!!.phoneNumbers)
+                                val phoneEntries = remember(fullContact) {
+                                    val fc = fullContact!!
+                                    if (fc.phones.isNotEmpty()) fc.phones
+                                    else deduplicateNumbers(fc.phoneNumbers).map { PhoneNumberEntry(it) }
                                 }
-                                uniquePhoneNumbers.forEachIndexed { index, number ->
+                                phoneEntries.forEachIndexed { index, phoneEntry ->
+                                    val number = phoneEntry.number
+                                    val typeText = ContactTypeLabels.phoneTypeLabel(context, phoneEntry.type, phoneEntry.label)
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     val isFav = areNumbersEqual(favoriteNumber, number)
 
@@ -579,7 +581,7 @@ fun ContactDetailsScreen(
                                         RivoListItem(
                                             headline = formatPhoneNumber(number),
                                             supporting = buildString {
-                                                append(mobileLabel)
+                                                append(typeText.ifBlank { mobileLabel })
                                                 if (isFav) append(bulletFavorite)
                                                 if (isRecent) append(bulletRecent)
                                             },
@@ -632,18 +634,25 @@ fun ContactDetailsScreen(
                                             )
                                         }
                                     }
-                                    if (index < fullContact!!.phoneNumbers.size - 1 || fullContact!!.emails.isNotEmpty()) {
+                                    if (index < phoneEntries.size - 1 || fullContact!!.emails.isNotEmpty()) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
-                                fullContact!!.emails.forEachIndexed { index, email ->
+                                val emailEntries = remember(fullContact) {
+                                    val fc = fullContact!!
+                                    if (fc.emailEntries.isNotEmpty()) fc.emailEntries
+                                    else fc.emails.map { EmailEntry(it) }
+                                }
+                                emailEntries.forEachIndexed { index, emailEntry ->
+                                    val email = emailEntry.address
+                                    val emailTypeText = ContactTypeLabels.emailTypeLabel(context, emailEntry.type, emailEntry.label)
                                     val isFav = email == favoriteEmail
                                     var showMenu by remember { mutableStateOf(false) }
 
                                     Box {
                                         RivoListItem(
                                             headline = email,
-                                            supporting = if (isFav) stringResource(R.string.label_email) + stringResource(R.string.contact_bullet_favorite) else stringResource(R.string.label_email),
+                                            supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) stringResource(R.string.contact_bullet_favorite) else "",
                                             leadingIcon = Icons.Default.Email,
                                             onClick = { emailLauncher.sendEmail(email, fullContact) },
                                             onLongClick = { showMenu = true }
@@ -677,7 +686,7 @@ fun ContactDetailsScreen(
                                             )
                                         }
                                     }
-                                    if (index < fullContact!!.emails.size - 1) {
+                                    if (index < emailEntries.size - 1) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
@@ -745,7 +754,7 @@ fun ContactDetailsScreen(
                                         headline = event.date,
                                         supporting = event.label ?: if (isBirthday) stringResource(R.string.contact_event_birthday) else stringResource(R.string.contact_event_generic),
                                         leadingIcon = if (isBirthday) Icons.Outlined.Cake else Icons.Outlined.Event,
-                                        onClick = { }
+                                        onClick = { clipboardManager.setText(AnnotatedString(event.date)) }
                                     )
                                     if (index < fullContact!!.events.size - 1 || fullContact!!.addresses.isNotEmpty()) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
@@ -779,7 +788,7 @@ fun ContactDetailsScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .combinedClickable(
-                                                onClick = { },
+                                                onClick = { showNotesMenu = true },
                                                 onLongClick = { showNotesMenu = true }
                                             )
                                             .padding(16.dp),

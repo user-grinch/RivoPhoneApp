@@ -1,15 +1,9 @@
 package com.grinch.rivo4.view.screen.settings
 
 import android.app.Activity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -17,20 +11,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoColorSwatchRow
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.RivoSectionHeader
-import com.grinch.rivo4.view.components.RivoSelectListItem
+import com.grinch.rivo4.view.components.RivoOptionRow
+import com.grinch.rivo4.view.components.RivoSliderListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.ramcosta.composedestinations.annotation.Destination
@@ -39,6 +34,7 @@ import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDe
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -51,24 +47,18 @@ fun InterfaceScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    
+
     val showButton by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 2
-        }
+        derivedStateOf { listState.firstVisibleItemIndex > 1 }
     }
-    
+
     var dynamicColors by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)) }
     var amoledMode by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false)) }
-    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, defaultValue = PreferenceManager.TAB_RECENTS)) }
+    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)) }
     var mergeFavorites by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true)) }
-    var showFirstLetter by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)) }
     var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
     var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
     var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
-    var roundAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ROUND_AVATARS, true)) }
-    var showDividers by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, true)) }
-    var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
@@ -117,8 +107,9 @@ fun InterfaceScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+                // ---- Colour ----
                 item {
-                    RivoExpressiveCard {
+                    RivoExpressiveCard(title = stringResource(R.string.settings_group_color)) {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_interface_material_you),
                             supporting = stringResource(R.string.settings_interface_material_you_supporting),
@@ -133,32 +124,17 @@ fun InterfaceScreen(
 
                         if (!dynamicColors) {
                             RivoDivider(Modifier.padding(horizontal = 16.dp))
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(stringResource(R.string.settings_interface_primary_color), style = MaterialTheme.typography.labelLarge)
-                                Spacer(Modifier.height(12.dp))
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    items(presetColors) { color ->
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .clip(CircleShape)
-                                                .background(color)
-                                                .border(
-                                                    width = if (customPrimaryColor == color.toArgb()) 3.dp else 0.dp,
-                                                    color = MaterialTheme.colorScheme.onSurface,
-                                                    shape = CircleShape
-                                                )
-                                                .clickable {
-                                                    customPrimaryColor = color.toArgb()
-                                                    prefs.setInt("custom_primary_color", color.toArgb())
-                                                    showRestartPrompt()
-                                                }
-                                        )
-                                    }
+                            RivoColorSwatchRow(
+                                colors = presetColors,
+                                selectedColor = presetColors.firstOrNull { it.toArgb() == customPrimaryColor },
+                                onColorSelected = { color ->
+                                    customPrimaryColor = color.toArgb()
+                                    prefs.setInt("custom_primary_color", color.toArgb())
+                                    showRestartPrompt()
                                 }
-                            }
+                            )
                         }
-                        
+
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_interface_amoled),
@@ -174,27 +150,22 @@ fun InterfaceScreen(
                     }
                 }
 
+                // ---- Avatars ----
                 item {
-                    RivoExpressiveCard {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_show_first_letter),
-                            supporting = stringResource(R.string.settings_interface_show_first_letter_supporting),
-                            leadingIcon = Icons.Outlined.Title,
-                            checked = showFirstLetter,
-                            onCheckedChange = {
-                                showFirstLetter = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_colorful_avatars),
-                            supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
-                            leadingIcon = Icons.Outlined.Palette,
-                            checked = colorfulAvatars,
-                            onCheckedChange = {
-                                colorfulAvatars = it
-                                prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
+                    RivoExpressiveCard(title = stringResource(R.string.settings_group_avatars)) {
+                        RivoOptionRow(
+                            headline = stringResource(R.string.settings_interface_avatar_shape),
+                            supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
+                            leadingIcon = Icons.Outlined.AccountBox,
+                            options = listOf(
+                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
+                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
+                                stringResource(R.string.settings_interface_avatar_shape_square) to 2
+                            ),
+                            selectedValue = avatarShape,
+                            onValueChange = {
+                                avatarShape = it
+                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
@@ -209,21 +180,15 @@ fun InterfaceScreen(
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSelectListItem(
-                            headline = stringResource(R.string.settings_interface_avatar_shape),
-                            supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
-                            leadingIcon = Icons.Outlined.AccountBox,
-                            options = listOf(
-                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
-                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
-                                stringResource(R.string.settings_interface_avatar_shape_square) to 2
-                            ),
-                            selectedValue = avatarShape,
-                            onValueChange = {
-                                avatarShape = it
-                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, it)
-                            },
-                            preview = { AvatarShapePreview(it) }
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_colorful_avatars),
+                            supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
+                            leadingIcon = Icons.Outlined.Palette,
+                            checked = colorfulAvatars,
+                            onCheckedChange = {
+                                colorfulAvatars = it
+                                prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
+                            }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
@@ -240,30 +205,22 @@ fun InterfaceScreen(
                 }
 
                 item {
-                    RivoExpressiveCard {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_show_dividers),
-                            supporting = stringResource(R.string.settings_interface_show_dividers_supporting),
-                            leadingIcon = Icons.Outlined.HorizontalRule,
-                            checked = showDividers,
-                            onCheckedChange = {
-                                showDividers = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_DIVIDERS, it)
+                    RivoExpressiveCard(title = stringResource(R.string.settings_group_shape_motion)) {
+                        RivoSliderListItem(
+                            headline = stringResource(R.string.settings_interface_card_roundness),
+                            supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
+                            leadingIcon = Icons.Outlined.RoundedCorner,
+                            value = cardRoundness.toFloat(),
+                            valueRange = 0f..32f,
+                            steps = 7,
+                            valueLabel = "${cardRoundness}dp",
+                            onValueChange = { cardRoundness = it.roundToInt() },
+                            onValueChangeFinished = {
+                                prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, cardRoundness)
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_expressive_cards),
-                            supporting = stringResource(R.string.settings_interface_expressive_cards_supporting),
-                            leadingIcon = Icons.Outlined.DashboardCustomize,
-                            checked = showCards,
-                            onCheckedChange = {
-                                showCards = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_CARDS, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSelectListItem(
+                        RivoOptionRow(
                             headline = stringResource(R.string.settings_interface_transition_animation),
                             supporting = stringResource(R.string.settings_interface_transition_animation_supporting),
                             leadingIcon = Icons.Outlined.Animation,
@@ -279,61 +236,36 @@ fun InterfaceScreen(
                                 prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
                             }
                         )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSelectListItem(
-                            headline = stringResource(R.string.settings_interface_card_roundness),
-                            supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
-                            leadingIcon = Icons.Outlined.CropFree,
-                            options = listOf(
-                                stringResource(R.string.settings_interface_roundness_extra_round) to 32,
-                                stringResource(R.string.option_standard) to 28,
-                                stringResource(R.string.settings_interface_roundness_rounded) to 20,
-                                stringResource(R.string.settings_interface_roundness_semi_square) to 12,
-                                stringResource(R.string.settings_interface_roundness_square) to 0
-                            ),
-                            selectedValue = cardRoundness,
-                            onValueChange = {
-                                cardRoundness = it
-                                prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, it)
-                            },
-                            preview = { CardRoundnessPreview(it) }
-                        )
                     }
                 }
 
+                // ---- Navigation ----
                 item {
-                    RivoExpressiveCard {
-                        RivoSelectListItem(
+                    RivoExpressiveCard(title = stringResource(R.string.settings_group_navigation)) {
+                        RivoOptionRow(
                             headline = stringResource(R.string.settings_interface_default_bottom_bar),
                             supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SpaceDashboard,
                             options = listOf(
                                 stringResource(R.string.nav_recents) to 0,
                                 stringResource(R.string.nav_favorites) to 1,
-                                stringResource(R.string.nav_contacts) to 2,
+                                stringResource(R.string.nav_contacts) to 2
                             ),
                             selectedValue = defaultBottomBar,
-                            onValueChange = { selectedInt ->
-                                defaultBottomBar = selectedInt
-                                prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, selectedInt)
-                            }
+                            onValueChange = {
+                                defaultBottomBar = it
+                                prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, it)
+                            },
+                            optionIcon = { defaultTabIcon(it) }
                         )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoListItem(
                             headline = stringResource(R.string.settings_bottom_nav_title),
                             supporting = stringResource(R.string.settings_bottom_nav_supporting),
                             leadingIcon = Icons.Outlined.SwapHoriz,
                             onClick = { navigator.navigate(BottomNavScreenDestination) }
                         )
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_merge_favorites),
-                            supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
-                            leadingIcon = Icons.Outlined.Star,
-                            checked = mergeFavorites,
-                            onCheckedChange = {
-                                mergeFavorites = it
-                                prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
-                            }
-                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_interface_icon_only_bar),
                             supporting = stringResource(R.string.settings_interface_icon_only_bar_supporting),
@@ -344,20 +276,35 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, it)
                             }
                         )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_merge_favorites),
+                            supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
+                            leadingIcon = Icons.Outlined.Star,
+                            checked = mergeFavorites,
+                            onCheckedChange = {
+                                mergeFavorites = it
+                                prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
+                            }
+                        )
                     }
                 }
-                
+
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
-            
+
             ScrollToTopButton(
                 visible = showButton,
                 onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                    }
+                    scope.launch { listState.animateScrollToItem(0) }
                 }
             )
         }
     }
+}
+
+private fun defaultTabIcon(tab: Int): ImageVector = when (tab) {
+    PreferenceManager.TAB_FAVORITES -> Icons.Outlined.Star
+    PreferenceManager.TAB_CONTACTS -> Icons.Outlined.Person
+    else -> Icons.Outlined.History
 }

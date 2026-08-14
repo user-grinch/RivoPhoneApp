@@ -168,6 +168,8 @@
     <string name="contact_edit_private_storage_description">Not visible to other apps</string>
     <string name="contact_edit_identity_header">Identity</string>
     <string name="contact_edit_full_name">Full Name</string>
+    <string name="contact_edit_first_name">First name</string>
+    <string name="contact_edit_last_name">Last name</string>
     <string name="contact_edit_nickname">Nickname</string>
     <string name="contact_edit_phone_numbers_header">Phone Numbers</string>
     <string name="contact_edit_phone_field_label">Phone</string>
@@ -254,6 +256,10 @@
 
     <!-- Settings > Interface -->
     <string name="settings_interface_title">User Interface</string>
+    <string name="settings_group_color">Colour</string>
+    <string name="settings_group_avatars">Avatars</string>
+    <string name="settings_group_shape_motion">Shape &amp; motion</string>
+    <string name="settings_group_navigation">Navigation</string>
     <string name="settings_interface_restart_required">Restart required to apply theme changes fully.</string>
     <string name="settings_interface_restart_action">Restart</string>
     <string name="settings_interface_material_you">Material You theming</string>
@@ -484,6 +490,7 @@
     <string name="favorites_permission_description">Allow access to your contacts to show your favorites here.</string>
     <string name="favorites_empty_title">No favorites yet</string>
     <string name="favorites_empty_description">Mark a contact as favorite to see it in this grid.</string>
+    <string name="favorites_drag_to_reorder">Drag to reorder</string>
 
     <!-- Bottom navigation layout -->
     <string name="settings_bottom_nav_title">Bottom navigation</string>

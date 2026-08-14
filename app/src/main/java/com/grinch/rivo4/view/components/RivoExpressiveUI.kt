@@ -727,37 +727,35 @@ fun RivoSegmentedOptionRow(
     optionIcon: ((Int) -> ImageVector?)? = null,
     enabled: Boolean = true
 ) {
-    ButtonGroup(
-        overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        options.forEach { option ->
+    SingleChoiceSegmentedButtonRow(modifier = modifier.fillMaxWidth()) {
+        options.forEachIndexed { index, option ->
             val optionValue = option.second
+            val isSelected = optionValue == selectedValue
             val glyph = optionIcon?.invoke(optionValue)
-            if (glyph != null) {
-                toggleableItem(
-                    checked = optionValue == selectedValue,
-                    label = option.first,
-                    onCheckedChange = { if (it) onValueChange(optionValue) },
-                    icon = {
+            SegmentedButton(
+                selected = isSelected,
+                onClick = { onValueChange(optionValue) },
+                enabled = enabled,
+                shape = SegmentedButtonDefaults.itemShape(index, options.size),
+                icon = {
+                    if (glyph != null) {
                         Icon(
                             imageVector = glyph,
                             contentDescription = null,
-                            modifier = Modifier.size(ToggleButtonDefaults.IconSize)
+                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
                         )
-                    },
-                    enabled = enabled
-                )
-            } else {
-                toggleableItem(
-                    checked = optionValue == selectedValue,
-                    label = option.first,
-                    onCheckedChange = { if (it) onValueChange(optionValue) },
-                    enabled = enabled
-                )
-            }
+                    } else {
+                        SegmentedButtonDefaults.Icon(active = isSelected)
+                    }
+                },
+                label = {
+                    Text(
+                        text = option.first,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
         }
     }
 }

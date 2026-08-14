@@ -18,15 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.ContactTypeLabels
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.EmailEntry
+import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
@@ -49,17 +53,22 @@ fun ContactEditScreen(
 ) {
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
+    val context = LocalContext.current
 
-    var name by remember { mutableStateOf(initialName ?: "") }
+    val initialSplit = remember { splitDisplayName(initialName ?: "") }
+    var givenName by remember { mutableStateOf(initialSplit.first) }
+    var familyName by remember { mutableStateOf(initialSplit.second) }
     var nickname by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var selectedAccount by remember { mutableStateOf<Account?>(null) }
     var isPrivate by remember { mutableStateOf(false) }
 
-    val phoneNumbers = remember { mutableStateListOf<String>("") }
-    val emails = remember { mutableStateListOf<String>("") }
+    val phones = remember { mutableStateListOf(PhoneNumberEntry("")) }
+    val emails = remember { mutableStateListOf(EmailEntry("")) }
     val addresses = remember { mutableStateListOf<String>("") }
+
+    val displayName = "${givenName.trim()} ${familyName.trim()}".trim()
 
     val scope = rememberCoroutineScope()
     var isSaving by remember { mutableStateOf(false) }
@@ -69,7 +78,13 @@ fun ContactEditScreen(
         if (contactId != null && contactId != "0" && contactId != "null") {
             val existing = contactsVM.getFullContactById(contactId)
             if (existing != null) {
-                name = existing.name
+                val split = if (!existing.givenName.isNullOrBlank() || !existing.familyName.isNullOrBlank()) {
+                    (existing.givenName ?: "") to (existing.familyName ?: "")
+                } else {
+                    splitDisplayName(existing.name)
+                }
+                givenName = split.first
+                familyName = split.second
                 nickname = existing.nickname ?: ""
                 notes = existing.notes ?: ""
                 photoUri = existing.photoUri
@@ -80,18 +95,24 @@ fun ContactEditScreen(
                     }
                 }
 
-                phoneNumbers.clear()
-                if (existing.phoneNumbers.isNotEmpty()) {
-                    phoneNumbers.addAll(deduplicateNumbers(existing.phoneNumbers))
+                phones.clear()
+                val existingPhones = existing.phones.ifEmpty {
+                    existing.phoneNumbers.map { PhoneNumberEntry(it) }
+                }
+                if (existingPhones.isNotEmpty()) {
+                    phones.addAll(existingPhones)
                 } else {
-                    phoneNumbers.add("")
+                    phones.add(PhoneNumberEntry(""))
                 }
 
                 emails.clear()
-                if (existing.emails.isNotEmpty()) {
-                    emails.addAll(existing.emails)
+                val existingEmails = existing.emailEntries.ifEmpty {
+                    existing.emails.map { EmailEntry(it) }
+                }
+                if (existingEmails.isNotEmpty()) {
+                    emails.addAll(existingEmails)
                 } else {
-                    emails.add("")
+                    emails.add(EmailEntry(""))
                 }
 
                 addresses.clear()
@@ -111,9 +132,9 @@ fun ContactEditScreen(
                 }
             }
 
-            if (!initialPhone.isNullOrBlank() && phoneNumbers.all { it.isBlank() }) {
-                phoneNumbers.clear()
-                phoneNumbers.add(initialPhone)
+            if (!initialPhone.isNullOrBlank() && phones.all { it.number.isBlank() }) {
+                phones.clear()
+                phones.add(PhoneNumberEntry(initialPhone))
             }
         }
     }
@@ -158,12 +179,18 @@ fun ContactEditScreen(
                             onClick = {
                                 isSaving = true
                                 scope.launch {
+                                    val savedPhones = phones.filter { it.number.isNotBlank() }
+                                    val savedEmails = emails.filter { it.address.isNotBlank() }
                                     val contactToSave = Contact(
                                         id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
-                                        name = name,
+                                        name = displayName,
+                                        givenName = givenName.trim().ifBlank { null },
+                                        familyName = familyName.trim().ifBlank { null },
                                         nickname = nickname.ifBlank { null },
-                                        phoneNumbers = phoneNumbers.filter { it.isNotBlank() },
-                                        emails = emails.filter { it.isNotBlank() },
+                                        phoneNumbers = savedPhones.map { it.number },
+                                        emails = savedEmails.map { it.address },
+                                        phones = savedPhones,
+                                        emailEntries = savedEmails,
                                         addresses = addresses.filter { it.isNotBlank() },
                                         photoUri = photoUri,
                                         accountName = if (isPrivate) null else selectedAccount?.name,
@@ -175,7 +202,7 @@ fun ContactEditScreen(
                                     navigator.navigateUp()
                                 }
                             },
-                            enabled = name.isNotBlank() && phoneNumbers.any { it.isNotBlank() },
+                            enabled = displayName.isNotBlank() && phones.any { it.number.isNotBlank() },
                             modifier = Modifier.padding(end = 8.dp),
                             shape = RoundedCornerShape(24.dp),
                             elevation = ButtonDefaults.buttonElevation(0.dp)
@@ -224,7 +251,7 @@ fun ContactEditScreen(
                 ) {
                     Box(contentAlignment = Alignment.BottomEnd) {
                         RivoAvatar(
-                            name = name,
+                            name = displayName,
                             photoUri = photoUri,
                             modifier = Modifier.size(120.dp)
                         )
@@ -383,12 +410,24 @@ fun ContactEditScreen(
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text(stringResource(R.string.contact_edit_full_name)) },
+                            value = givenName,
+                            onValueChange = { givenName = it },
+                            label = { Text(stringResource(R.string.contact_edit_first_name)) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             leadingIcon = { Icon(Icons.Default.Person, null) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                        OutlinedTextField(
+                            value = familyName,
+                            onValueChange = { familyName = it },
+                            label = { Text(stringResource(R.string.contact_edit_last_name)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            leadingIcon = { Icon(Icons.Default.Badge, null) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                 focusedBorderColor = MaterialTheme.colorScheme.primary
@@ -416,24 +455,28 @@ fun ContactEditScreen(
                 RivoExpressiveCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         val phoneFieldLabel = stringResource(R.string.contact_edit_phone_field_label)
-                        phoneNumbers.forEachIndexed { index, phone ->
-                            EditField(
-                                value = phone,
-                                onValueChange = { phoneNumbers[index] = it },
+                        phones.forEachIndexed { index, phone ->
+                            TypedEditField(
+                                value = phone.number,
+                                onValueChange = { phones[index] = phone.copy(number = it) },
                                 label = phoneFieldLabel,
                                 icon = Icons.Default.Phone,
                                 keyboardType = KeyboardType.Phone,
+                                typeValue = phone.type,
+                                typeOptions = ContactTypeLabels.phoneTypeOptions,
+                                typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
+                                onTypeChange = { phones[index] = phone.copy(type = it) },
                                 onDelete = {
-                                    if (phoneNumbers.size > 1) {
-                                        phoneNumbers.removeAt(index)
+                                    if (phones.size > 1) {
+                                        phones.removeAt(index)
                                     } else {
-                                        phoneNumbers[0] = ""
+                                        phones[0] = PhoneNumberEntry("")
                                     }
                                 }
                             )
                         }
                         TextButton(
-                            onClick = { phoneNumbers.add("") },
+                            onClick = { phones.add(PhoneNumberEntry("")) },
                             modifier = Modifier.align(Alignment.Start)
                         ) {
                             Icon(Icons.Default.Add, null)
@@ -451,23 +494,27 @@ fun ContactEditScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         val emailFieldLabel = stringResource(R.string.label_email)
                         emails.forEachIndexed { index, email ->
-                            EditField(
-                                value = email,
-                                onValueChange = { emails[index] = it },
+                            TypedEditField(
+                                value = email.address,
+                                onValueChange = { emails[index] = email.copy(address = it) },
                                 label = emailFieldLabel,
                                 icon = Icons.Default.Email,
                                 keyboardType = KeyboardType.Email,
+                                typeValue = email.type,
+                                typeOptions = ContactTypeLabels.emailTypeOptions,
+                                typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
+                                onTypeChange = { emails[index] = email.copy(type = it) },
                                 onDelete = {
                                     if (emails.size > 1) {
                                         emails.removeAt(index)
                                     } else {
-                                        emails[0] = ""
+                                        emails[0] = EmailEntry("")
                                     }
                                 }
                             )
                         }
                         TextButton(
-                            onClick = { emails.add("") },
+                            onClick = { emails.add(EmailEntry("")) },
                             modifier = Modifier.align(Alignment.Start)
                         ) {
                             Icon(Icons.Default.Add, null)
@@ -531,6 +578,68 @@ fun ContactEditScreen(
             }
 
             item { Spacer(modifier = Modifier.height(100.dp)) }
+        }
+    }
+}
+
+fun splitDisplayName(full: String): Pair<String, String> {
+    val trimmed = full.trim()
+    if (trimmed.isEmpty()) return "" to ""
+    val parts = trimmed.split(Regex("\\s+"))
+    return if (parts.size == 1) {
+        parts[0] to ""
+    } else {
+        parts.first() to parts.drop(1).joinToString(" ")
+    }
+}
+
+@Composable
+fun TypedEditField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    typeValue: Int,
+    typeOptions: List<Int>,
+    typeLabel: (Int) -> String,
+    onTypeChange: (Int) -> Unit,
+    onDelete: () -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        EditField(
+            value = value,
+            onValueChange = onValueChange,
+            label = label,
+            icon = icon,
+            keyboardType = keyboardType,
+            onDelete = onDelete
+        )
+        var showTypeMenu by remember { mutableStateOf(false) }
+        Box(modifier = Modifier.padding(start = 8.dp)) {
+            TextButton(onClick = { showTypeMenu = true }) {
+                Icon(Icons.Default.Sell, null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(typeLabel(typeValue), style = MaterialTheme.typography.labelLarge)
+                Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(18.dp))
+            }
+            DropdownMenu(
+                expanded = showTypeMenu,
+                onDismissRequest = { showTypeMenu = false }
+            ) {
+                typeOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(typeLabel(option)) },
+                        onClick = {
+                            onTypeChange(option)
+                            showTypeMenu = false
+                        }
+                    )
+                }
+            }
         }
     }
 }

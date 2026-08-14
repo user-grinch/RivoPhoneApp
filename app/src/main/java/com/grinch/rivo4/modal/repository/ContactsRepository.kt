@@ -11,6 +11,8 @@ import android.provider.ContactsContract
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.modal.data.ContactEvent
+import com.grinch.rivo4.modal.data.EmailEntry
+import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.db.PrivateContactDao
 import com.grinch.rivo4.modal.db.PrivateContactEntity
@@ -239,11 +241,35 @@ class ContactsRepository(
                     )
 
                     contact = when (mimeType) {
+                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE -> {
+                            currentContact.copy(
+                                givenName = cursor.getString(data2Idx),
+                                familyName = cursor.getString(data3Idx)
+                            )
+                        }
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
-                            currentContact.copy(phoneNumbers = deduplicateNumbers(currentContact.phoneNumbers + data1))
+                            val entry = PhoneNumberEntry(
+                                number = data1,
+                                type = cursor.getInt(data2Idx),
+                                label = cursor.getString(data3Idx)
+                            )
+                            val alreadyPresent = currentContact.phones.any { areNumbersEqual(it.number, data1) }
+                            currentContact.copy(
+                                phoneNumbers = deduplicateNumbers(currentContact.phoneNumbers + data1),
+                                phones = if (alreadyPresent) currentContact.phones else currentContact.phones + entry
+                            )
                         }
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
-                            currentContact.copy(emails = (currentContact.emails + data1).distinct())
+                            val entry = EmailEntry(
+                                address = data1,
+                                type = cursor.getInt(data2Idx),
+                                label = cursor.getString(data3Idx)
+                            )
+                            val alreadyPresent = currentContact.emailEntries.any { it.address == data1 }
+                            currentContact.copy(
+                                emails = (currentContact.emails + data1).distinct(),
+                                emailEntries = if (alreadyPresent) currentContact.emailEntries else currentContact.emailEntries + entry
+                            )
                         }
                         ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
                             currentContact.copy(addresses = (currentContact.addresses + data1).distinct())
@@ -367,6 +393,17 @@ class ContactsRepository(
         val ops = ArrayList<ContentProviderOperation>()
         val photoBytes = contact.photoUri?.let { getPhotoBytes(it) }
 
+        val effectivePhones = if (contact.phones.isNotEmpty()) {
+            contact.phones
+        } else {
+            contact.phoneNumbers.map { PhoneNumberEntry(it) }
+        }
+        val effectiveEmails = if (contact.emailEntries.isNotEmpty()) {
+            contact.emailEntries
+        } else {
+            contact.emails.map { EmailEntry(it) }
+        }
+
         if (contact.id.isEmpty() || contact.id == "0") {
             // New Contact
             val rawContactIndex = ops.size
@@ -385,6 +422,8 @@ class ContactsRepository(
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
                     )
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                     .build()
             )
 
@@ -419,7 +458,7 @@ class ContactsRepository(
                 )
             }
 
-            contact.phoneNumbers.forEach { number ->
+            effectivePhones.forEach { entry ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -427,16 +466,14 @@ class ContactsRepository(
                             ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
-                        .withValue(
-                            ContactsContract.CommonDataKinds.Phone.TYPE,
-                            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
-                        )
+                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, entry.number)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, entry.type)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, entry.label)
                         .build()
                 )
             }
 
-            contact.emails.forEach { email ->
+            effectiveEmails.forEach { entry ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -444,11 +481,9 @@ class ContactsRepository(
                             ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, email)
-                        .withValue(
-                            ContactsContract.CommonDataKinds.Email.TYPE,
-                            ContactsContract.CommonDataKinds.Email.TYPE_HOME
-                        )
+                        .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, entry.address)
+                        .withValue(ContactsContract.CommonDataKinds.Email.TYPE, entry.type)
+                        .withValue(ContactsContract.CommonDataKinds.Email.LABEL, entry.label)
                         .build()
                 )
             }
@@ -501,6 +536,8 @@ class ContactsRepository(
                             ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
                         )
                         .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                         .build()
                 )
 
@@ -580,7 +617,7 @@ class ContactsRepository(
                         )
                         .build()
                 )
-                contact.phoneNumbers.forEach { number ->
+                effectivePhones.forEach { entry ->
                     ops.add(
                         ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
@@ -588,11 +625,9 @@ class ContactsRepository(
                                 ContactsContract.Data.MIMETYPE,
                                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
                             )
-                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.Phone.TYPE,
-                                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
-                            )
+                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, entry.number)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, entry.type)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, entry.label)
                             .build()
                     )
                 }
@@ -606,7 +641,7 @@ class ContactsRepository(
                         )
                         .build()
                 )
-                contact.emails.forEach { email ->
+                effectiveEmails.forEach { entry ->
                     ops.add(
                         ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                             .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
@@ -614,11 +649,9 @@ class ContactsRepository(
                                 ContactsContract.Data.MIMETYPE,
                                 ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
                             )
-                            .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, email)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.Email.TYPE,
-                                ContactsContract.CommonDataKinds.Email.TYPE_HOME
-                            )
+                            .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, entry.address)
+                            .withValue(ContactsContract.CommonDataKinds.Email.TYPE, entry.type)
+                            .withValue(ContactsContract.CommonDataKinds.Email.LABEL, entry.label)
                             .build()
                     )
                 }
