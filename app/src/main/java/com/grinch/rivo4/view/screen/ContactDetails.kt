@@ -123,11 +123,16 @@ fun ContactDetailsScreen(
     val scope = rememberCoroutineScope()
 
     suspend fun loadContact(): Contact? {
-        val byId = if (contactId != null && contactId != "null") {
-            contactsViewModel.getFullContactById(contactId)
-        } else null
-        if (byId != null) return byId
-        return if (phoneNumber != null) contactsViewModel.getFullContactByNumber(phoneNumber) else null
+        return try {
+            val byId = if (contactId != null && contactId != "null") {
+                contactsViewModel.getFullContactById(contactId)
+            } else null
+            if (byId != null) return byId
+            if (phoneNumber != null) contactsViewModel.getFullContactByNumber(phoneNumber) else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     LaunchedEffect(contactId, phoneNumber) {
@@ -906,8 +911,8 @@ fun ContactDetailsScreen(
                             val customRingtoneLabel = stringResource(R.string.ringtone_custom)
                             val selectRingtoneLabel = stringResource(R.string.contact_select_ringtone)
                             RivoExpressiveCard(title = stringResource(R.string.contact_settings_title), icon = Icons.Default.Settings) {
-                                val currentRingtone = fullContact!!.customRingtone?.let {
-                                    RingtoneManager.getRingtone(context, Uri.parse(it))?.getTitle(context) ?: customRingtoneLabel
+                                val currentRingtone = fullContact!!.customRingtone?.let { uriStr ->
+                                    runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
                                 } ?: defaultRingtoneLabel
 
                                 RivoListItem(

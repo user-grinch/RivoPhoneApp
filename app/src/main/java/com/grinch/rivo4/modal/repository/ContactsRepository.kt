@@ -77,9 +77,10 @@ class ContactsRepository(
 
                     val existingContact = contactsMap[id]
                     if (existingContact != null) {
-                        val numbers = existingContact.phoneNumbers as MutableList<String>
+                        val numbers = existingContact.phoneNumbers.toMutableList()
                         if (numbers.none { areNumbersEqual(it, number) } && numbers.size < 5) {
                             numbers.add(number)
+                            contactsMap[id] = existingContact.copy(phoneNumbers = numbers)
                         }
                     } else {
                         contactsMap[id] = Contact(

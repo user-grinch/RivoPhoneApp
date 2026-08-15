@@ -27,10 +27,10 @@ data class PrivateContactEntity(
             id = "p$localId",
             name = name,
             nickname = nickname,
-            phoneNumbers = Json.decodeFromString(phoneNumbersJson),
-            emails = Json.decodeFromString(emailsJson),
-            addresses = Json.decodeFromString(addressesJson),
-            events = Json.decodeFromString(eventsJson),
+            phoneNumbers = runCatching { Json.decodeFromString<List<String>>(phoneNumbersJson) }.getOrDefault(emptyList()),
+            emails = runCatching { Json.decodeFromString<List<String>>(emailsJson) }.getOrDefault(emptyList()),
+            addresses = runCatching { Json.decodeFromString<List<String>>(addressesJson) }.getOrDefault(emptyList()),
+            events = runCatching { Json.decodeFromString<List<ContactEvent>>(eventsJson) }.getOrDefault(emptyList()),
             photoUri = photoUri,
             isFavorite = isFavorite,
             customRingtone = customRingtone,
@@ -42,7 +42,7 @@ data class PrivateContactEntity(
     companion object {
         fun fromContact(contact: Contact): PrivateContactEntity {
             return PrivateContactEntity(
-                localId = if (contact.id.startsWith("p")) contact.id.substring(1).toLong() else 0,
+                localId = if (contact.id.startsWith("p")) contact.id.substring(1).toLongOrNull() ?: 0L else 0L,
                 name = contact.name,
                 nickname = contact.nickname,
                 phoneNumbersJson = Json.encodeToString(contact.phoneNumbers),
