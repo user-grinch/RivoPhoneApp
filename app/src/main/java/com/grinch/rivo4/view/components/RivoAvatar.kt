@@ -179,25 +179,21 @@ private fun gradientAvatarBrush(name: String, dark: Boolean): Brush {
 
     return if (dark) {
         Brush.radialGradient(
-            listOf(
-                0.0f to hslColor(warmAccent, 0.80f, 0.52f),
-                0.25f to hslColor(baseHue, 0.70f, 0.38f),
-                0.55f to hslColor(coolAccent, 0.55f, 0.26f),
-                0.85f to hslColor(deepAccent, 0.50f, 0.18f),
-                1.0f to hslColor(baseHue, 0.45f, 0.14f)
-            ),
+            0.0f to hslColor(warmAccent, 0.80f, 0.52f),
+            0.25f to hslColor(baseHue, 0.70f, 0.38f),
+            0.55f to hslColor(coolAccent, 0.55f, 0.26f),
+            0.85f to hslColor(deepAccent, 0.50f, 0.18f),
+            1.0f to hslColor(baseHue, 0.45f, 0.14f),
             center = Offset(0.22f, 0.12f),
             radius = 1.35f
         )
     } else {
         Brush.radialGradient(
-            listOf(
-                0.0f to hslColor(warmAccent, 0.85f, 0.92f),
-                0.25f to hslColor(baseHue, 0.78f, 0.80f),
-                0.55f to hslColor(coolAccent, 0.65f, 0.66f),
-                0.85f to hslColor(deepAccent, 0.60f, 0.56f),
-                1.0f to hslColor(baseHue, 0.55f, 0.50f)
-            ),
+            0.0f to hslColor(warmAccent, 0.85f, 0.92f),
+            0.25f to hslColor(baseHue, 0.78f, 0.80f),
+            0.55f to hslColor(coolAccent, 0.65f, 0.66f),
+            0.85f to hslColor(deepAccent, 0.60f, 0.56f),
+            1.0f to hslColor(baseHue, 0.55f, 0.50f),
             center = Offset(0.22f, 0.12f),
             radius = 1.35f
         )
