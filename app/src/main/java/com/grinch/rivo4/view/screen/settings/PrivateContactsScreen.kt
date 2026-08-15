@@ -45,7 +45,7 @@ import com.ramcosta.composedestinations.generated.destinations.ContactEditScreen
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.ResultRecipient
+import com.ramcosta.composedestinations.result.OpenResultRecipient
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +53,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Composable
 fun PrivateContactsScreen(
     navigator: DestinationsNavigator,
-    resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
+    resultRecipient: OpenResultRecipient<String>
 ) {
     val context = LocalContext.current
     val viewModel: ContactsViewModel = koinActivityViewModel()

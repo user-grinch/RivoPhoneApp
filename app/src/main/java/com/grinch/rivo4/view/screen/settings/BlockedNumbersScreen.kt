@@ -37,7 +37,7 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.ResultRecipient
+import com.ramcosta.composedestinations.result.OpenResultRecipient
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -46,7 +46,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Composable
 fun BlockedNumbersScreen(
     navigator: DestinationsNavigator,
-    resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
+    resultRecipient: OpenResultRecipient<String>
 ) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
