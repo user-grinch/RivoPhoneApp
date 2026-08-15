@@ -185,8 +185,11 @@ class MainActivity : ComponentActivity() {
             }
             Intent.ACTION_DIAL, Intent.ACTION_VIEW, Intent.ACTION_CALL -> {
                 if (data?.scheme == "tel") {
-                    val number = data.schemeSpecificPart
-                    if (action == Intent.ACTION_CALL && isAlreadyDefaultDialer(this)) {
+                    val rawNumber = data.schemeSpecificPart
+                    val number = android.net.Uri.decode(rawNumber) ?: rawNumber
+                    val cleanNumber = number.replace(" ", "")
+                    val isSecretOrImei = cleanNumber == "*#06#" || cleanNumber.startsWith("*#*#") || cleanNumber.startsWith("##") || (cleanNumber.startsWith("*#") && cleanNumber.endsWith("#"))
+                    if (action == Intent.ACTION_CALL && isAlreadyDefaultDialer(this) && !isSecretOrImei) {
                         makeCall(this, number)
                     } else {
                         navController.navigate(DialPadScreenDestination(initialNumber = number).route)

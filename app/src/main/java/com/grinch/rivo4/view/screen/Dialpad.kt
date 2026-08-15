@@ -124,25 +124,27 @@ fun DialPadScreen(
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
     }
 
-    // Handle Secret Codes (e.g. *#*#4636#*#*)
+    // Handle Secret Codes & System Codes across all OEMs
+    val isKnownSecretCode = remember {
+        { input: String ->
+            val knownExact = setOf(
+                "*#06#", "*#07#", "*#0*#", "*#0228#", "*#9900#", "*#1234#", "*#0808#",
+                "*#9090#", "*#2663#", "*#800#", "*#808#", "*#888#", "*#899#", "*#6776#"
+            )
+            if (input in knownExact) true
+            else if (input.startsWith("*#*#") && input.endsWith("#*#*") && input.length >= 9) true
+            else if (input.startsWith("##") && input.endsWith("##") && input.length >= 6) true
+            else false
+        }
+    }
+
     LaunchedEffect(number) {
         val cleanNumber = number.replace(" ", "")
-        if (cleanNumber.startsWith("*#") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
-            if (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length > 8) {
-                val code = cleanNumber.substring(4, cleanNumber.length - 4)
-                val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
-                context.sendBroadcast(intent)
-                textFieldValue = TextFieldValue("")
-            } else if (cleanNumber == "*#06#") {
-                val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://06"))
-                context.sendBroadcast(intent)
+        if (isKnownSecretCode(cleanNumber)) {
+            val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
+            if (handled) {
                 textFieldValue = TextFieldValue("")
             }
-        } else if (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
-             val code = cleanNumber.replace("#", "")
-             val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
-             context.sendBroadcast(intent)
-             textFieldValue = TextFieldValue("")
         }
     }
 
@@ -168,19 +170,18 @@ fun DialPadScreen(
 
     val performCall = { targetNumber: String, contactId: String? ->
         val cleanNumber = targetNumber.replace(" ", "")
-        if (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length > 8) {
-            val code = cleanNumber.substring(4, cleanNumber.length - 4)
-            val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
-            context.sendBroadcast(intent)
-            textFieldValue = TextFieldValue("")
-        } else if (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4) {
-            val code = cleanNumber.replace("#", "")
-            val intent = Intent("android.provider.Telephony.SECRET_CODE", Uri.parse("android_secret_code://$code"))
-            context.sendBroadcast(intent)
-            textFieldValue = TextFieldValue("")
+        if (cleanNumber == "*#06#" ||
+            (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
+            (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4)) {
+            val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
+            if (handled) {
+                textFieldValue = TextFieldValue("")
+            } else {
+                val contact = allContacts.find { it.id == contactId }
+                callLauncher.dial(targetNumber, contact)
+            }
         } else {
-            // For USSD (*123#) or other codes, use call launcher
-            // which now correctly encodes # in utils.kt
+            // For USSD (*123#) or MMI (*#21#) or standard phone calls
             val contact = allContacts.find { it.id == contactId }
             callLauncher.dial(targetNumber, contact)
             
