@@ -71,7 +71,11 @@ fun RecentScreen(navController: NavController, navigator: DestinationsNavigator)
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RecentScreenContent(navController: NavController, navigator: DestinationsNavigator) {
+fun RecentScreenContent(
+    navController: NavController,
+    navigator: DestinationsNavigator,
+    onSelectionStateChange: ((Boolean, (@Composable () -> Unit)?) -> Unit)? = null
+) {
     val permState = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -91,54 +95,75 @@ fun RecentScreenContent(navController: NavController, navigator: DestinationsNav
     }
     val selectedFilter by viewModel.selectedFilter.collectAsState()
 
+    val isSelecting = selectedEntries.isNotEmpty()
+    val batchActionBar: @Composable () -> Unit = {
+        BatchCallLogActionBar(
+            selectedCount = selectedEntries.size,
+            onClearSelection = { selectedEntries = emptySet() },
+            onDelete = {
+                val allIdsToDelete = selectedEntries.flatMap { it.ids }
+                viewModel.deleteCallLogsByIds(allIdsToDelete)
+                selectedEntries = emptySet()
+            },
+            onClearAll = {
+                viewModel.clearCallLogs()
+                selectedEntries = emptySet()
+            },
+            onBlock = {
+                selectedEntries.forEach { entry ->
+                    com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)
+                }
+                selectedEntries = emptySet()
+            }
+        )
+    }
+
+    LaunchedEffect(isSelecting, selectedEntries.size) {
+        onSelectionStateChange?.invoke(isSelecting, if (isSelecting) batchActionBar else null)
+    }
+
+    val filterChipsRow: @Composable () -> Unit = {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(CallLogFilter.entries) { filter ->
+                RivoFilterChip(
+                    label = filter.displayLabel(),
+                    selected = selectedFilter == filter,
+                    onClick = { _ -> viewModel.setFilter(filter) },
+                    isAllFilter = filter == CallLogFilter.All
+                )
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AnimatedContent(
-                targetState = selectedEntries.isNotEmpty(),
-                transitionSpec = {
-                    (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
-                },
-                label = "TopBarTransition"
-            ) { isSelecting ->
+            if (onSelectionStateChange != null) {
                 if (!isSelecting) {
-                    Column {
-                        TopBar(navController, navigator)
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(CallLogFilter.entries) { filter ->
-                                RivoFilterChip(filter.displayLabel(), selectedFilter == filter, {
-                                        _ ->
-                                    viewModel.setFilter(filter)
-                                }, isAllFilter = filter == CallLogFilter.All)
-                            }
+                    filterChipsRow()
+                }
+            } else {
+                AnimatedContent(
+                    targetState = isSelecting,
+                    transitionSpec = {
+                        (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
+                    },
+                    label = "TopBarTransition"
+                ) { selecting ->
+                    if (!selecting) {
+                        Column {
+                            TopBar(navController, navigator)
+                            filterChipsRow()
                         }
+                    } else {
+                        batchActionBar()
                     }
-                } else {
-                    BatchCallLogActionBar(
-                        selectedCount = selectedEntries.size,
-                        onClearSelection = { selectedEntries = emptySet() },
-                        onDelete = {
-                            val allIdsToDelete = selectedEntries.flatMap { it.ids }
-                            viewModel.deleteCallLogsByIds(allIdsToDelete)
-                            selectedEntries = emptySet()
-                        },
-                        onClearAll = {
-                            viewModel.clearCallLogs()
-                            selectedEntries = emptySet()
-                        },
-                        onBlock = {
-                            selectedEntries.forEach { entry ->
-                                com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)
-                            }
-                            selectedEntries = emptySet()
-                        }
-                    )
                 }
             }
         },

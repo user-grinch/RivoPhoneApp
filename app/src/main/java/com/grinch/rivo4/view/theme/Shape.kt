@@ -43,17 +43,21 @@ object RivoShapeDefaults {
 }
 
 fun rivoRoundnessScale(roundness: Int): Float =
-    roundness.coerceIn(0, RivoShapeDefaults.BaseExtraExtraLarge) /
+    roundness.coerceIn(1, RivoShapeDefaults.BaseExtraExtraLarge) /
         RivoShapeDefaults.DefaultRoundness.toFloat()
 
-fun rivoCornerDp(baseDp: Int, roundness: Int): Dp = (baseDp * rivoRoundnessScale(roundness)).dp
+fun rivoCornerDp(baseDp: Int, roundness: Int): Dp =
+    (baseDp * rivoRoundnessScale(roundness)).coerceAtLeast(1f).dp
 
 fun rivoCornerShape(baseDp: Int, roundness: Int): CornerBasedShape =
     RoundedCornerShape(rivoCornerDp(baseDp, roundness))
 
 fun rivoShapes(roundness: Int = RivoShapeDefaults.DefaultRoundness): Shapes {
     val scale = rivoRoundnessScale(roundness)
-    fun corner(baseDp: Int): CornerBasedShape = RoundedCornerShape((baseDp * scale).dp)
+    fun corner(baseDp: Int): CornerBasedShape {
+        val cornerDp = (baseDp * scale).coerceAtLeast(1f).dp
+        return RoundedCornerShape(cornerDp)
+    }
     return Shapes(
         extraSmall = corner(RivoShapeDefaults.BaseExtraSmall),
         small = corner(RivoShapeDefaults.BaseSmall),
@@ -157,14 +161,23 @@ class RivoMorphShape(
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
-        val path = morph.toPath(progress().coerceIn(0f, 1f))
+        if (size.width <= 0f || size.height <= 0f) return Outline.Rectangle(androidx.compose.ui.geometry.Rect.Zero)
+        val p = progress()
+        if (p.isNaN()) return Outline.Rectangle(androidx.compose.ui.geometry.Rect.Zero)
+        val path = morph.toPath(p.coerceIn(0f, 1f))
         val bounds = path.getBounds()
-        if (bounds.width > 0f && bounds.height > 0f) {
-            val matrix = Matrix()
-            matrix.scale(size.width / bounds.width, size.height / bounds.height)
-            matrix.translate(-bounds.left, -bounds.top)
-            path.transform(matrix)
+        if (bounds.width <= 0f || bounds.height <= 0f || bounds.width.isNaN() || bounds.height.isNaN()) {
+            return Outline.Rectangle(androidx.compose.ui.geometry.Rect.Zero)
         }
+        val scaleX = size.width / bounds.width
+        val scaleY = size.height / bounds.height
+        if (scaleX.isNaN() || scaleY.isNaN() || scaleX.isInfinite() || scaleY.isInfinite()) {
+            return Outline.Rectangle(androidx.compose.ui.geometry.Rect.Zero)
+        }
+        val matrix = Matrix()
+        matrix.scale(scaleX, scaleY)
+        matrix.translate(-bounds.left, -bounds.top)
+        path.transform(matrix)
         return Outline.Generic(path)
     }
 }

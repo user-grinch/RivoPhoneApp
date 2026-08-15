@@ -419,7 +419,7 @@
     <string name="settings_manage_storage">Storage</string>
     <string name="settings_manage_private_contacts">Private Contacts</string>
     <string name="settings_manage_private_contacts_supporting">Manage contacts stored only in this app</string>
-    <string name="settings_manage_visibility">Visibility</string>
+    <string name="settings_manage_visibility">Contact Visibility</string>
     <string name="settings_manage_visibility_supporting">Choose which accounts to show in your list</string>
     <string name="settings_manage_quick_fixes">Quick Fixes</string>
     <string name="settings_manage_standardize_numbers">Standardize phone numbers</string>

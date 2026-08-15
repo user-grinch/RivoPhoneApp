@@ -1154,7 +1154,7 @@ fun RivoInteractiveRoundnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),
-            shape = RoundedCornerShape(value.dp),
+            shape = RoundedCornerShape(value.coerceAtLeast(1f).dp),
             color = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)

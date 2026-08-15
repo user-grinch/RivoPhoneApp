@@ -67,13 +67,21 @@ fun FavoritesScreen(navController: NavController, navigator: DestinationsNavigat
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun FavoritesScreenContent(navController: NavController, navigator: DestinationsNavigator) {
+fun FavoritesScreenContent(
+    navController: NavController,
+    navigator: DestinationsNavigator,
+    showTopBar: Boolean = true
+) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
     val isGranted = permState.status == PermissionStatus.Granted
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar(navController, navigator) },
+        topBar = {
+            if (showTopBar) {
+                TopBar(navController, navigator)
+            }
+        },
         containerColor = MaterialTheme.colorScheme.surface,
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->

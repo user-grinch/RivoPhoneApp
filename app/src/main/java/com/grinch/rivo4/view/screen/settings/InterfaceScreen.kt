@@ -208,8 +208,8 @@ fun InterfaceScreen(
                         RivoInteractiveRoundnessSlider(
                             headline = stringResource(R.string.settings_interface_card_roundness),
                             supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
-                            value = cardRoundness.toFloat(),
-                            valueRange = 0f..32f,
+                            value = cardRoundness.toFloat().coerceAtLeast(1f),
+                            valueRange = 1f..32f,
                             steps = 7,
                             onValueChange = { cardRoundness = it.roundToInt() },
                             onValueChangeFinished = {
@@ -231,6 +231,7 @@ fun InterfaceScreen(
                             onValueChange = {
                                 transitionStyle = it
                                 prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
+                                showRestartPrompt()
                             }
                         ) { value, selected ->
                             val icon = when (value) {

@@ -159,23 +159,30 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
                     RivoListItem(
-                        headline = stringResource(R.string.settings_manage_contacts_headline),
-                        supporting = stringResource(R.string.settings_manage_contacts_supporting),
-                        leadingIcon = Icons.Outlined.ContactPage,
-                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
+                        headline = stringResource(R.string.settings_manage_private_contacts),
+                        supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
+                        leadingIcon = Icons.Outlined.Lock,
+                        onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                    )
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_manage_visibility),
+                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
+                        leadingIcon = Icons.Outlined.Visibility,
+                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                     )
                 }
             }
 
             item {
-                RivoExpressiveCard {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_about_headline),
-                        supporting = stringResource(R.string.settings_about_supporting),
-                        leadingIcon = Icons.Outlined.Info,
-                        onClick = { navigator.navigate(AboutScreenDestination) }
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.about_copyright),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.outline,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                )
             }
         }
     }

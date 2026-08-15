@@ -251,6 +251,7 @@ fun ContactSearchContent(
                                 Surface(
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                     shape = when {
+                                        roundness <= 0 -> androidx.compose.ui.graphics.RectangleShape
                                         isFirst && isLast -> RoundedCornerShape(roundness.dp)
                                         isFirst -> RoundedCornerShape(topStart = roundness.dp, topEnd = roundness.dp)
                                         isLast -> RoundedCornerShape(bottomStart = roundness.dp, bottomEnd = roundness.dp)

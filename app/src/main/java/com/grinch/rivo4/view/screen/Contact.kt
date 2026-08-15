@@ -64,7 +64,11 @@ fun ContactScreen(navController: NavController, navigator: DestinationsNavigator
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ContactScreenContent(navController: NavController, navigator: DestinationsNavigator) {
+fun ContactScreenContent(
+    navController: NavController,
+    navigator: DestinationsNavigator,
+    onSelectionStateChange: ((Boolean, (@Composable () -> Unit)?) -> Unit)? = null
+) {
     val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -82,40 +86,56 @@ fun ContactScreenContent(navController: NavController, navigator: DestinationsNa
         }
     }
 
+    val availableAccounts by contactsVM.availableAccounts.collectAsState()
+    val isSelecting = selectedIds.isNotEmpty()
+    val batchActionBar: @Composable () -> Unit = {
+        BatchActionBar(
+            selectedCount = selectedIds.size,
+            onClear = { selectedIds = emptySet() },
+            onDelete = {
+                contactsVM.deleteContacts(selectedIds.toList())
+                selectedIds = emptySet()
+            },
+            onMove = { account ->
+                contactsVM.moveContacts(selectedIds.toList(), account)
+                selectedIds = emptySet()
+            },
+            onMoveToPrivate = {
+                selectedIds.forEach { contactsVM.makeContactPrivate(it) }
+                selectedIds = emptySet()
+            },
+            availableAccounts = availableAccounts
+        )
+    }
+
+    LaunchedEffect(isSelecting, selectedIds.size, availableAccounts) {
+        onSelectionStateChange?.invoke(isSelecting, if (isSelecting) batchActionBar else null)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column {
-                AnimatedContent(
-                    targetState = selectedIds.isNotEmpty(),
-                    transitionSpec = {
-                        (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
-                    },
-                    label = "TopBarTransition"
-                ) { isSelecting ->
-                    if (!isSelecting) {
-                        Column {
-                            TopBar(navController, navigator)
-                            AccountFilterBar(contactsVM)
+            if (onSelectionStateChange != null) {
+                if (!isSelecting) {
+                    AccountFilterBar(contactsVM)
+                }
+            } else {
+                Column {
+                    AnimatedContent(
+                        targetState = isSelecting,
+                        transitionSpec = {
+                            (fadeIn() + expandVertically()) togetherWith (fadeOut() + shrinkVertically())
+                        },
+                        label = "TopBarTransition"
+                    ) { selecting ->
+                        if (!selecting) {
+                            Column {
+                                TopBar(navController, navigator)
+                                AccountFilterBar(contactsVM)
+                            }
+                        } else {
+                            batchActionBar()
                         }
-                    } else {
-                        BatchActionBar(
-                            selectedCount = selectedIds.size,
-                            onClear = { selectedIds = emptySet() },
-                            onDelete = {
-                                contactsVM.deleteContacts(selectedIds.toList())
-                                selectedIds = emptySet()
-                            },
-                            onMove = { account ->
-                                contactsVM.moveContacts(selectedIds.toList(), account)
-                                selectedIds = emptySet()
-                            },
-                            onMoveToPrivate = {
-                                selectedIds.forEach { contactsVM.makeContactPrivate(it) }
-                                selectedIds = emptySet()
-                            },
-                            availableAccounts = contactsVM.availableAccounts.collectAsState().value
-                        )
                     }
                 }
             }
