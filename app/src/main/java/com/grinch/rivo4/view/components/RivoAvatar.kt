@@ -26,6 +26,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.luminance
@@ -53,6 +55,7 @@ data class RivoAvatarStyle(
     val showPicture: Boolean,
     val showFirstLetter: Boolean,
     val colorful: Boolean,
+    val gradient: Boolean,
     val shapeIndex: Int,
     val shape: Shape
 )
@@ -96,12 +99,15 @@ fun rememberRivoAvatarStyle(prefs: PreferenceManager = koinInject()): RivoAvatar
     val colorful = remember(settingsVersion) {
         prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)
     }
+    val gradient = remember(settingsVersion) {
+        prefs.getBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, false)
+    }
     val shapeIndex = remember(settingsVersion) {
         prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, RIVO_AVATAR_SHAPE_SQUIRCLE)
     }
     val shape = rivoAvatarShape(shapeIndex)
-    return remember(showPicture, showFirstLetter, colorful, shapeIndex, shape) {
-        RivoAvatarStyle(showPicture, showFirstLetter, colorful, shapeIndex, shape)
+    return remember(showPicture, showFirstLetter, colorful, gradient, shapeIndex, shape) {
+        RivoAvatarStyle(showPicture, showFirstLetter, colorful, gradient, shapeIndex, shape)
     }
 }
 
@@ -165,6 +171,42 @@ fun rivoAvatarColors(name: String, colorful: Boolean = true): RivoAvatarColors {
     }
 }
 
+private fun gradientAvatarColors(name: String, dark: Boolean): List<Color> {
+    val baseHue = rivoAvatarHueIndex(name) * (360f / RivoAvatarDefaults.HueCount)
+    val accent1 = (baseHue + 25f) % 360f
+    val accent2 = (baseHue + 175f) % 360f
+    val accent3 = (baseHue + 280f) % 360f
+    return if (dark) {
+        listOf(
+            hslColor(accent1, 0.65f, 0.38f),
+            hslColor(accent2, 0.55f, 0.24f),
+            hslColor(baseHue, 0.75f, 0.42f),
+            hslColor(accent3, 0.60f, 0.30f)
+        )
+    } else {
+        listOf(
+            hslColor(accent1, 0.78f, 0.82f),
+            hslColor(accent2, 0.65f, 0.58f),
+            hslColor(baseHue, 0.85f, 0.88f),
+            hslColor(accent3, 0.70f, 0.68f)
+        )
+    }
+}
+
+private fun contactInitials(name: String, useTwo: Boolean): String {
+    val letters = name.filter { it.isLetter() }
+    if (letters.isEmpty()) return ""
+    if (!useTwo) return letters.first().uppercase()
+    val words = name.trim().split(Regex("\\s+")).filter { it.any { c -> c.isLetter() } }
+    return if (words.size >= 2) {
+        words.take(2).joinToString("") { word ->
+            word.first { it.isLetter() }.uppercase()
+        }
+    } else {
+        letters.take(2).uppercase()
+    }
+}
+
 @Composable
 fun RivoAvatar(
     name: String,
@@ -205,6 +247,16 @@ fun RivoAvatar(
     }
 
     val colors = rivoAvatarColors(name, style.colorful)
+    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val gradientBrush = if (style.gradient) {
+        remember(name, dark) {
+            Brush.radialGradient(
+                colors = gradientAvatarColors(name, dark),
+                center = Offset(0.3f, 0.2f),
+                radius = 1.15f
+            )
+        }
+    } else null
     val hasLetters = name.any { it.isLetter() }
     val description = contentDescription
 
@@ -235,7 +287,7 @@ fun RivoAvatar(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.container, avatarShape)
+                .background(gradientBrush ?: colors.container, avatarShape)
                 .clip(avatarShape),
             contentAlignment = Alignment.Center
         ) {
@@ -255,7 +307,7 @@ fun RivoAvatar(
                 )
             } else if (style.showFirstLetter && hasLetters) {
                 Text(
-                    text = name.trim().take(1).uppercase(),
+                    text = contactInitials(name, style.gradient),
                     style = textStyle,
                     color = colors.content
                 )
