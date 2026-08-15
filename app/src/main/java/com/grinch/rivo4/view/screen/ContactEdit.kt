@@ -38,6 +38,7 @@ import com.grinch.rivo4.view.components.RivoDropdownMenu
 import com.grinch.rivo4.view.components.RivoDropdownMenuItem
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -325,7 +326,7 @@ fun ContactEditScreen(
                                 Text(
                                     text = when {
                                         isPrivate -> stringResource(R.string.contact_edit_private_storage)
-                                        selectedAccount != null -> ContactUtils.getFriendlyAccountName(selectedAccount!!)
+                                        selectedAccount != null -> ContactUtils.getFriendlyAccountName(context, selectedAccount!!)
                                         else -> stringResource(R.string.label_local_memory)
                                     },
                                     style = MaterialTheme.typography.bodyLarge,
@@ -337,72 +338,52 @@ fun ContactEditScreen(
                     }
 
                     if (showPicker) {
-                        RivoDialog(
+                        val privateTitle = stringResource(R.string.contact_edit_private_storage)
+                        val privateDesc = stringResource(R.string.contact_edit_private_storage_description)
+                        val localTitle = stringResource(R.string.label_local_memory)
+
+                        val accountOptions = remember(availableAccounts, privateTitle, localTitle) {
+                            listOf(
+                                "private" to Triple(privateTitle, privateDesc, Icons.Default.Lock),
+                                "local" to Triple(localTitle, "", Icons.Default.CloudOff)
+                            ) + availableAccounts.map { acc ->
+                                acc.name to Triple(ContactUtils.getFriendlyAccountName(context, acc), acc.name, ContactUtils.getAccountIcon(acc))
+                            }
+                        }
+
+                        RivoSelectionDialog(
                             onDismissRequest = { showPicker = false },
                             title = stringResource(R.string.contact_edit_select_account_title),
                             icon = Icons.Default.AccountBalance,
-                            dismissButton = {
-                                TextButton(onClick = { showPicker = false }) {
-                                    Text(stringResource(R.string.action_cancel))
+                            items = accountOptions,
+                            itemLabel = { option -> option.second.first },
+                            itemSupporting = { option -> option.second.second },
+                            itemIcon = { option -> option.second.third },
+                            isSelected = { option ->
+                                when (option.first) {
+                                    "private" -> isPrivate
+                                    "local" -> !isPrivate && selectedAccount == null
+                                    else -> !isPrivate && selectedAccount?.name == option.first
                                 }
-                            }
-                        ) {
-                            Surface(
-                                onClick = {
-                                    selectedAccount = null
-                                    isPrivate = true
-                                    showPicker = false
-                                },
-                                shape = RoundedCornerShape(12.dp),
-                                color = if (isPrivate) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(stringResource(R.string.contact_edit_private_storage)) },
-                                    supportingContent = { Text(stringResource(R.string.contact_edit_private_storage_description)) },
-                                    leadingContent = { Icon(Icons.Default.Lock, null) },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                                )
-                            }
-
-                            Surface(
-                                onClick = {
-                                    selectedAccount = null
-                                    isPrivate = false
-                                    showPicker = false
-                                },
-                                shape = RoundedCornerShape(12.dp),
-                                color = if (selectedAccount == null && !isPrivate) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(stringResource(R.string.label_local_memory)) },
-                                    leadingContent = { Icon(Icons.Default.CloudOff, null) },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                                )
-                            }
-
-                            availableAccounts.forEach { account ->
-                                val isSelected = selectedAccount == account && !isPrivate
-                                Surface(
-                                    onClick = {
-                                        selectedAccount = account
+                            },
+                            onItemSelected = { selectedOption ->
+                                when (selectedOption.first) {
+                                    "private" -> {
+                                        selectedAccount = null
+                                        isPrivate = true
+                                    }
+                                    "local" -> {
+                                        selectedAccount = null
                                         isPrivate = false
-                                        showPicker = false
-                                    },
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    ListItem(
-                                        headlineContent = { Text(ContactUtils.getFriendlyAccountName(account)) },
-                                        supportingContent = { Text(account.name) },
-                                        leadingContent = { Icon(ContactUtils.getAccountIcon(account), null) },
-                                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                                    )
+                                    }
+                                    else -> {
+                                        selectedAccount = availableAccounts.find { it.name == selectedOption.first }
+                                        isPrivate = false
+                                    }
                                 }
+                                showPicker = false
                             }
-                        }
+                        )
                     }
                 }
             }

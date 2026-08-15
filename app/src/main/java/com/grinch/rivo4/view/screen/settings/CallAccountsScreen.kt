@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
@@ -40,6 +41,7 @@ import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.util.CallBackgroundStore
 import android.content.Intent
 import android.telecom.TelecomManager
+import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
 
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -441,85 +443,45 @@ fun CallAccountsScreen(
 
     if (showCallWaitingDialog) {
         val callWaitingOptions = listOf(
-            Triple(stringResource(R.string.settings_call_waiting_enable), "*43#", Icons.Outlined.PhoneCallback),
+            Triple(stringResource(R.string.settings_call_waiting_enable), "*43#", Icons.AutoMirrored.Outlined.PhoneCallback),
             Triple(stringResource(R.string.settings_call_waiting_disable), "#43#", Icons.Outlined.PhoneDisabled),
             Triple(stringResource(R.string.settings_call_waiting_check), "*#43#", Icons.Outlined.Info)
         )
-        RivoDialog(
+        RivoSelectionDialog(
             onDismissRequest = { showCallWaitingDialog = false },
             title = stringResource(R.string.settings_call_waiting),
-            icon = Icons.Outlined.PhoneCallback,
-            dismissButton = {
-                TextButton(onClick = { showCallWaitingDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
+            icon = Icons.AutoMirrored.Outlined.PhoneCallback,
+            items = callWaitingOptions,
+            itemLabel = { option -> option.first },
+            itemSupporting = { option -> option.second },
+            itemIcon = { option -> option.third },
+            onItemSelected = { option ->
+                showCallWaitingDialog = false
+                makeCall(context, option.second)
             }
-        ) {
-            Text(
-                text = stringResource(R.string.settings_call_waiting_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            )
-            callWaitingOptions.forEach { (label, code, icon) ->
-                RivoListItem(
-                    headline = label,
-                    supporting = code,
-                    leadingIcon = icon,
-                    onClick = {
-                        showCallWaitingDialog = false
-                        makeCall(context, code)
-                    }
-                )
-            }
-        }
+        )
     }
 
     if (showSimDialog) {
-        RivoDialog(
+        val simOptions = listOf(
+            stringResource(R.string.sim_ask_every_time),
+            stringResource(R.string.sim_slot_1),
+            stringResource(R.string.sim_slot_2)
+        )
+        RivoSelectionDialog(
             onDismissRequest = { showSimDialog = false },
             title = stringResource(R.string.settings_call_default_sim),
             icon = Icons.Outlined.SimCard,
-            dismissButton = {
-                TextButton(onClick = { showSimDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
+            items = simOptions,
+            itemLabel = { option -> option },
+            itemIcon = { Icons.Outlined.SimCard },
+            isSelected = { option -> simOptions.indexOf(option) == defaultSim },
+            onItemSelected = { selectedLabel ->
+                val index = simOptions.indexOf(selectedLabel)
+                defaultSim = index
+                prefs.setInt("default_sim", index)
+                showSimDialog = false
             }
-        ) {
-            listOf(stringResource(R.string.sim_ask_every_time), stringResource(R.string.sim_slot_1), stringResource(R.string.sim_slot_2)).forEachIndexed { index, label ->
-                Surface(
-                    onClick = {
-                        defaultSim = index
-                        prefs.setInt("default_sim", index)
-                        showSimDialog = false
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    color = if (defaultSim == index) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = defaultSim == index,
-                            onClick = {
-                                defaultSim = index
-                                prefs.setInt("default_sim", index)
-                                showSimDialog = false
-                            }
-                        )
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 8.dp),
-                            fontWeight = if (defaultSim == index) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                }
-            }
-        }
+        )
     }
 }

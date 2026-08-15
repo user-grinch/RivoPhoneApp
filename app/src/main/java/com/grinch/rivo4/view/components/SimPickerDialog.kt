@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SimCard
+import androidx.compose.material.icons.outlined.SimCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -26,7 +26,7 @@ fun SimPickerDialog(
         context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     }
 
-    val phoneAccounts = remember(telecomManager) {
+    val phoneAccounts = remember(telecomManager, context) {
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.READ_PHONE_STATE
@@ -54,15 +54,30 @@ fun SimPickerDialog(
         title = stringResource(R.string.sim_picker_title),
         items = phoneAccounts,
         itemLabel = { handle ->
-            telecomManager.getPhoneAccount(handle)?.label?.toString()?.takeIf { it.isNotBlank() }
-                ?: unknownSimLabel
+            val account = telecomManager.getPhoneAccount(handle)
+            val labelStr = account?.label?.toString()?.takeIf { it.isNotBlank() }
+            if (labelStr != null) {
+                labelStr
+            } else {
+                val index = phoneAccounts.indexOf(handle) + 1
+                "SIM $index ($unknownSimLabel)"
+            }
         },
         onItemSelected = onSimSelected,
         itemSupporting = { handle ->
-            telecomManager.getPhoneAccount(handle)?.shortDescription?.toString().orEmpty()
+            val account = telecomManager.getPhoneAccount(handle)
+            val address = account?.address?.schemeSpecificPart
+            val desc = account?.shortDescription?.toString()
+            if (!address.isNullOrBlank()) {
+                address
+            } else if (!desc.isNullOrBlank()) {
+                desc
+            } else {
+                "Slot ${phoneAccounts.indexOf(handle) + 1}"
+            }
         },
-        icon = Icons.Default.SimCard,
-        itemIcon = { Icons.Default.SimCard },
+        icon = Icons.Outlined.SimCard,
+        itemIcon = { Icons.Outlined.SimCard },
         isSelected = { handle -> selectedAccount != null && handle == selectedAccount }
     )
 }

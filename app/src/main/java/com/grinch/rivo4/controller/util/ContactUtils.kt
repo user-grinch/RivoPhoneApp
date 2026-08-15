@@ -1,24 +1,22 @@
 package com.grinch.rivo4.controller.util
 
 import android.accounts.Account
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import com.grinch.rivo4.R
 
 object ContactUtils {
-    @Composable
-    fun getFriendlyAccountName(account: Account): String {
+    fun getFriendlyAccountName(context: Context, account: Account): String {
         return when {
             account.type == "com.google" -> account.name
-            account.type == "com.whatsapp" -> stringResource(R.string.brand_whatsapp)
-            account.type.contains("telegram", ignoreCase = true) -> stringResource(R.string.brand_telegram)
-            account.type.contains("xiaomi", ignoreCase = true) -> stringResource(R.string.account_mi_account)
-            account.type.contains("sim", ignoreCase = true) -> stringResource(R.string.account_sim_card)
+            account.type == "com.whatsapp" -> context.getString(R.string.brand_whatsapp)
+            account.type.contains("telegram", ignoreCase = true) -> context.getString(R.string.brand_telegram)
+            account.type.contains("xiaomi", ignoreCase = true) -> context.getString(R.string.account_mi_account)
+            account.type.contains("sim", ignoreCase = true) -> context.getString(R.string.account_sim_card)
             account.name.contains("@") -> account.name.substringBefore("@")
             else -> account.name
         }

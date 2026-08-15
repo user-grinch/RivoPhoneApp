@@ -176,6 +176,9 @@ fun RivoDialog(
                 MaterialTheme.colorScheme.onPrimaryContainer
             }
 
+            val roundness = LocalCardRoundness.current
+            val dialogCornerDp = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness)
+
             Surface(
                 modifier = modifier
                     .fillMaxWidth()
@@ -188,9 +191,10 @@ fun RivoDialog(
                     .pointerInput(Unit) { detectTapGestures { } }
                     .animateContentSize(animationSpec = RivoMotion.spatialDefault<IntSize>())
                     .semantics { if (title != null) paneTitle = title },
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = RoundedCornerShape(dialogCornerDp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 24.dp),

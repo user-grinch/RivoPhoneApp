@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -86,7 +87,7 @@ fun ContactVisibilityScreen(
                     accounts.forEach { account ->
                         val key = "${account.type}|${account.name}"
                         RivoSwitchListItem(
-                            headline = ContactUtils.getFriendlyAccountName(account),
+                            headline = ContactUtils.getFriendlyAccountName(LocalContext.current, account),
                             supporting = account.name,
                             leadingIcon = ContactUtils.getAccountIcon(account),
                             checked = currentVisible.contains(key),

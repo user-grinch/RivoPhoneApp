@@ -32,6 +32,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.components.RivoDropdownMenu
 import com.grinch.rivo4.view.components.RivoDropdownMenuItem
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -388,58 +389,38 @@ fun PrivateContactsScreen(
     }
 
     if (showMoveAccountDialog && targetContactsToMove.isNotEmpty()) {
-        RivoDialog(
+        val publicLabel = stringResource(R.string.contact_move_to_public_storage)
+        val publicDesc = "Move to public device contacts database"
+        val storageOptions = remember(availableAccounts, publicLabel) {
+            listOf("public" to Pair(publicLabel, publicDesc)) +
+            availableAccounts.map { acc -> acc.name to Pair(acc.name, acc.type) }
+        }
+        RivoSelectionDialog(
             onDismissRequest = {
                 showMoveAccountDialog = false
                 targetContactsToMove = emptyList()
             },
-            title = stringResource(R.string.contact_move_to_public_storage),
+            title = publicLabel,
             icon = Icons.Outlined.DriveFileMove,
-            confirmButton = {
-                TextButton(onClick = {
-                    showMoveAccountDialog = false
-                    targetContactsToMove = emptyList()
-                }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = "Select target storage or account:",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                RivoListItem(
-                    headline = stringResource(R.string.contact_move_to_public_storage),
-                    supporting = "Move to public device contacts database",
-                    leadingIcon = Icons.Outlined.PhoneAndroid,
-                    isCompact = true,
-                    onClick = {
-                        val ids = targetContactsToMove.map { it.id }
-                        ids.forEach { viewModel.makeContactPublic(it) }
-                        if (isSelecting) selectedContactIds = emptySet()
-                        showMoveAccountDialog = false
-                        targetContactsToMove = emptyList()
+            items = storageOptions,
+            itemLabel = { option -> option.second.first },
+            itemSupporting = { option -> option.second.second },
+            itemIcon = { option -> if (option.first == "public") Icons.Outlined.PhoneAndroid else Icons.Outlined.Cloud },
+            onItemSelected = { selected ->
+                val ids = targetContactsToMove.map { contact -> contact.id }
+                if (selected.first == "public") {
+                    ids.forEach { id -> viewModel.makeContactPublic(id) }
+                } else {
+                    val targetAcc = availableAccounts.find { acc -> acc.name == selected.first }
+                    if (targetAcc != null) {
+                        viewModel.moveContacts(ids, targetAcc)
                     }
-                )
-                availableAccounts.forEach { acc ->
-                    RivoListItem(
-                        headline = acc.name,
-                        supporting = acc.type,
-                        leadingIcon = Icons.Outlined.Cloud,
-                        isCompact = true,
-                        onClick = {
-                            val ids = targetContactsToMove.map { it.id }
-                            viewModel.moveContacts(ids, acc)
-                            if (isSelecting) selectedContactIds = emptySet()
-                            showMoveAccountDialog = false
-                            targetContactsToMove = emptyList()
-                        }
-                    )
                 }
+                if (isSelecting) selectedContactIds = emptySet()
+                showMoveAccountDialog = false
+                targetContactsToMove = emptyList()
             }
-        }
+        )
     }
 }
 
