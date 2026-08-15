@@ -173,29 +173,21 @@ fun rivoAvatarColors(name: String, colorful: Boolean = true): RivoAvatarColors {
 
 private fun gradientAvatarBrush(name: String, dark: Boolean): Brush {
     val baseHue = rivoAvatarHueIndex(name) * (360f / RivoAvatarDefaults.HueCount)
-    val warmAccent = (baseHue + 35f) % 360f
-    val coolAccent = (baseHue + 190f) % 360f
-    val deepAccent = (baseHue + 240f) % 360f
+    val accentHue = (baseHue + 180f) % 360f
 
     return if (dark) {
         Brush.radialGradient(
-            0.0f to hslColor(warmAccent, 0.80f, 0.52f),
-            0.25f to hslColor(baseHue, 0.70f, 0.38f),
-            0.55f to hslColor(coolAccent, 0.55f, 0.26f),
-            0.85f to hslColor(deepAccent, 0.50f, 0.18f),
-            1.0f to hslColor(baseHue, 0.45f, 0.14f),
-            center = Offset(0.22f, 0.12f),
-            radius = 1.35f
+            0.0f to hslColor(baseHue, 0.75f, 0.45f),
+            1.0f to hslColor(accentHue, 0.60f, 0.22f),
+            center = Offset(0.25f, 0.15f),
+            radius = 1.3f
         )
     } else {
         Brush.radialGradient(
-            0.0f to hslColor(warmAccent, 0.85f, 0.92f),
-            0.25f to hslColor(baseHue, 0.78f, 0.80f),
-            0.55f to hslColor(coolAccent, 0.65f, 0.66f),
-            0.85f to hslColor(deepAccent, 0.60f, 0.56f),
-            1.0f to hslColor(baseHue, 0.55f, 0.50f),
-            center = Offset(0.22f, 0.12f),
-            radius = 1.35f
+            0.0f to hslColor(baseHue, 0.80f, 0.85f),
+            1.0f to hslColor(accentHue, 0.65f, 0.55f),
+            center = Offset(0.25f, 0.15f),
+            radius = 1.3f
         )
     }
 }
