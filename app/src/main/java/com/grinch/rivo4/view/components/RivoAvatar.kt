@@ -171,24 +171,35 @@ fun rivoAvatarColors(name: String, colorful: Boolean = true): RivoAvatarColors {
     }
 }
 
-private fun gradientAvatarColors(name: String, dark: Boolean): List<Color> {
+private fun gradientAvatarBrush(name: String, dark: Boolean): Brush {
     val baseHue = rivoAvatarHueIndex(name) * (360f / RivoAvatarDefaults.HueCount)
-    val accent1 = (baseHue + 25f) % 360f
-    val accent2 = (baseHue + 175f) % 360f
-    val accent3 = (baseHue + 280f) % 360f
+    val warmAccent = (baseHue + 35f) % 360f
+    val coolAccent = (baseHue + 190f) % 360f
+    val deepAccent = (baseHue + 240f) % 360f
+
     return if (dark) {
-        listOf(
-            hslColor(accent1, 0.65f, 0.38f),
-            hslColor(accent2, 0.55f, 0.24f),
-            hslColor(baseHue, 0.75f, 0.42f),
-            hslColor(accent3, 0.60f, 0.30f)
+        Brush.radialGradient(
+            colorStops = listOf(
+                0.0f to hslColor(warmAccent, 0.80f, 0.52f),
+                0.25f to hslColor(baseHue, 0.70f, 0.38f),
+                0.55f to hslColor(coolAccent, 0.55f, 0.26f),
+                0.85f to hslColor(deepAccent, 0.50f, 0.18f),
+                1.0f to hslColor(baseHue, 0.45f, 0.14f)
+            ),
+            center = Offset(0.22f, 0.12f),
+            radius = 1.35f
         )
     } else {
-        listOf(
-            hslColor(accent1, 0.78f, 0.82f),
-            hslColor(accent2, 0.65f, 0.58f),
-            hslColor(baseHue, 0.85f, 0.88f),
-            hslColor(accent3, 0.70f, 0.68f)
+        Brush.radialGradient(
+            colorStops = listOf(
+                0.0f to hslColor(warmAccent, 0.85f, 0.92f),
+                0.25f to hslColor(baseHue, 0.78f, 0.80f),
+                0.55f to hslColor(coolAccent, 0.65f, 0.66f),
+                0.85f to hslColor(deepAccent, 0.60f, 0.56f),
+                1.0f to hslColor(baseHue, 0.55f, 0.50f)
+            ),
+            center = Offset(0.22f, 0.12f),
+            radius = 1.35f
         )
     }
 }
@@ -249,13 +260,7 @@ fun RivoAvatar(
     val colors = rivoAvatarColors(name, style.colorful)
     val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
     val gradientBrush = if (style.gradient) {
-        remember(name, dark) {
-            Brush.radialGradient(
-                colors = gradientAvatarColors(name, dark),
-                center = Offset(0.3f, 0.2f),
-                radius = 1.15f
-            )
-        }
+        remember(name, dark) { gradientAvatarBrush(name, dark) }
     } else null
     val hasLetters = name.any { it.isLetter() }
     val description = contentDescription
