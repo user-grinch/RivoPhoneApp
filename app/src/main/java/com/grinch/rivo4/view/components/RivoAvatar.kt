@@ -283,11 +283,17 @@ fun RivoAvatar(
             }
         )
 
+    val backgroundModifier = if (gradientBrush != null) {
+        Modifier.background(gradientBrush, avatarShape)
+    } else {
+        Modifier.background(colors.container, avatarShape)
+    }
+
     Box(modifier = rootModifier) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(gradientBrush ?: colors.container, avatarShape)
+                .then(backgroundModifier)
                 .clip(avatarShape),
             contentAlignment = Alignment.Center
         ) {
