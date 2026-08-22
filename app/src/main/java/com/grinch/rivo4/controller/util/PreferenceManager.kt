@@ -235,6 +235,7 @@ class PreferenceManager(context: Context) {
         const val KEY_AMOLED_MODE = "amoled_mode"
         const val KEY_SHOW_FIRST_LETTER = "show_first_letter"
         const val KEY_COLORFUL_AVATARS = "colorful_avatars"
+        const val KEY_GRADIENT_AVATARS = "gradient_avatars"
         const val KEY_SHOW_PICTURE = "show_picture"
         const val KEY_ICON_ONLY_NAV = "icon_only_nav"
         const val KEY_FLIP_BOTTOM_NAV = "flip_bottom_nav"

@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.grinch.rivo4"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 35
         versionCode = baseVersionCode + buildNumber
         versionName = isPreviewBuild ? "${baseVersionName}.${buildNumber}-preview" : baseVersionName
@@ -37,7 +37,7 @@ android {
         release {
             minifyEnabled = true
             shrinkResources = true
-            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.debug
             debuggable = false
         }
         debug {
