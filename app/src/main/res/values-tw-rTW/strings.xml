@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared actions / generic labels reused across multiple screens -->
+    <!-- Onboarding -->
+    <!-- Permission Popup -->
+    <!-- Patreon support prompt (MainActivity) -->
+    <!-- Disable ads warning dialog -->
+    <!-- Default dialer prompt -->
+    <!-- Top bar / bottom navigation -->
+    <!-- Recents / Call log -->
+    <!-- Contacts list -->
+    <!-- Contact details -->
+    <!-- Contact edit -->
+    <!-- Dialpad -->
+    <!-- Search -->
+    <!-- Call screen -->
+    <!-- Call notifications (CallService) -->
+    <!-- Backup & restore (status messages) -->
+    <!-- Settings > root -->
+    <!-- Settings > Interface -->
+    <!-- Settings > Sound & Vibration -->
+    <!-- Settings > Call accounts -->
+    <!-- Settings > Blocked numbers -->
+    <!-- Settings > Backup & Restore -->
+    <!-- Settings > Manage contacts -->
+    <!-- Settings > Contact visibility -->
+    <!-- Settings > Private contacts -->
+    <!-- Settings > Speed dial -->
+    <!-- Settings > Voicemail -->
+    <!-- Settings > About -->
+    <!-- Settings > Contributors -->
+    <!-- Favorites -->
+    <!-- Bottom navigation layout -->
+    <!-- Blocking -->
+    <!-- Contact call screen background -->
+    <!-- Call waiting -->
+    <!-- Call recording -->
+    <!-- Video calling app picker -->
+    <!-- Call screen background and active controls -->
+    <!-- Incoming call controls and in-call keypad -->
+    <!-- IMEI / Secret codes -->
+</resources>
