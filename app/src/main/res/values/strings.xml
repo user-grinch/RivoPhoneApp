@@ -271,6 +271,8 @@
     <string name="settings_interface_show_first_letter_supporting">Displays letter when picture is missing</string>
     <string name="settings_interface_colorful_avatars">Use colorful avatars</string>
     <string name="settings_interface_colorful_avatars_supporting">Random colors based on contact name</string>
+    <string name="settings_interface_gradient_avatars">Gradient contact avatars</string>
+    <string name="settings_interface_gradient_avatars_supporting">Use multi-color gradient backgrounds</string>
     <string name="settings_interface_show_picture">Show picture in avatar</string>
     <string name="settings_interface_show_picture_supporting">Shows the contact picture if available</string>
     <string name="settings_interface_avatar_shape">Avatar shape</string>

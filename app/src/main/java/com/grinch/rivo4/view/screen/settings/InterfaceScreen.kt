@@ -60,6 +60,7 @@ fun InterfaceScreen(
     var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)) }
     var mergeFavorites by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true)) }
     var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
+    var gradientAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, false)) }
     var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
     var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
     var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
@@ -198,6 +199,17 @@ fun InterfaceScreen(
                             onCheckedChange = {
                                 colorfulAvatars = it
                                 prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_gradient_avatars),
+                            supporting = stringResource(R.string.settings_interface_gradient_avatars_supporting),
+                            leadingIcon = Icons.Outlined.Gradient,
+                            checked = gradientAvatars,
+                            onCheckedChange = {
+                                gradientAvatars = it
+                                prefs.setBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, it)
                             }
                         )
                     }
