@@ -57,14 +57,26 @@ AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11
 * Private Contacts
 * Fully open source etc.
 
+## Translations
+
+Help translate Rivo into your language on [Crowdin](https://crowdin.com/project/rivophone)!
+
+<p align="center">
+  <a href="https://crowdin.com/project/rivophone">
+    <img src="https://badges.crowdin.net/rivophone/localized.svg" alt="Crowdin Translations Status">
+  </a>
+</p>
+
 ## Contributing
 
 Issues, feature requests, and pull requests are welcome.
 
-If you'd like to discuss ideas or report bugs, join the Discord server.
+* **Translations**: Help localize Rivo into more languages on [Crowdin](https://crowdin.com/project/rivophone).
+* **Community**: If you'd like to discuss ideas or report bugs, join the [Discord server](https://discord.gg/NtEvU3726e).
 
 ## License
 
 Licensed under the GNU GPL v3.0.
 
 See the LICENSE file for details.
+
