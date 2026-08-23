@@ -43,6 +43,7 @@ fun SoundVibrationScreen(
     val settingsState by prefs.settingsChanged.collectAsState()
 
     var hapticListScroll by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)) }
+    var missedCallNotifications by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) }
 
     Scaffold(
         topBar = {
@@ -128,6 +129,17 @@ fun SoundVibrationScreen(
 
             item {
                 RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_sound_missed_call_notifications),
+                        supporting = stringResource(R.string.settings_sound_missed_call_notifications_supporting),
+                        leadingIcon = Icons.Outlined.PhoneMissed,
+                        checked = missedCallNotifications,
+                        onCheckedChange = {
+                            missedCallNotifications = it
+                            prefs.setBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, it)
+                        }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = stringResource(R.string.settings_sound_ringtone_settings),
                         supporting = stringResource(R.string.settings_sound_ringtone_settings_supporting),

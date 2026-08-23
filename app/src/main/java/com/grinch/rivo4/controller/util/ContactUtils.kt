@@ -17,7 +17,6 @@ object ContactUtils {
             account.type.contains("telegram", ignoreCase = true) -> context.getString(R.string.brand_telegram)
             account.type.contains("xiaomi", ignoreCase = true) -> context.getString(R.string.account_mi_account)
             account.type.contains("sim", ignoreCase = true) -> context.getString(R.string.account_sim_card)
-            account.name.contains("@") -> account.name.substringBefore("@")
             else -> account.name
         }
     }
@@ -31,7 +30,7 @@ object ContactUtils {
     }
 
     fun formatContactName(name: String, displayOrder: Int): String {
-        if (displayOrder == 1) { // Last Name First
+        if (displayOrder == 1) {
             val parts = name.trim().split("\\s+".toRegex())
             if (parts.size > 1) {
                 return "${parts.last()}, ${parts.dropLast(1).joinToString(" ")}"

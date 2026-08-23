@@ -100,7 +100,6 @@ class ContactsRepository(
         }
         val list = contactsMap.values.toList()
         
-        // Fetch nicknames
         val nicknameMap = mutableMapOf<String, String>()
         try {
             contentResolver.query(
@@ -323,7 +322,6 @@ class ContactsRepository(
 
             if (bitmap == null) return null
 
-            // Downscale to a reasonable size for Contacts provider (960x960 is usually max)
             val maxSize = 720
             val width = bitmap.width
             val height = bitmap.height
@@ -406,7 +404,6 @@ class ContactsRepository(
         }
 
         if (contact.id.isEmpty() || contact.id == "0") {
-            // New Contact
             val rawContactIndex = ops.size
             ops.add(
                 ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -506,12 +503,10 @@ class ContactsRepository(
                 )
             }
         } else {
-            // Update
             val rawContactIds = getRawContactIds(contact.id)
             if (rawContactIds.isEmpty()) return
 
             rawContactIds.forEach { rawContactId ->
-                // Update Account (Move contact)
                 ops.add(
                     ContentProviderOperation.newUpdate(ContactsContract.RawContacts.CONTENT_URI)
                         .withSelection("${ContactsContract.RawContacts._ID}=?", arrayOf(rawContactId))
@@ -520,7 +515,6 @@ class ContactsRepository(
                         .build()
                 )
 
-                // Update Name (Delete and Insert for reliability)
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -542,7 +536,6 @@ class ContactsRepository(
                         .build()
                 )
 
-                // Update Photo
                 if (contact.photoUri == null) {
                     ops.add(
                         ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
@@ -570,7 +563,6 @@ class ContactsRepository(
                     )
                 }
 
-                // Update Nickname
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -590,7 +582,6 @@ class ContactsRepository(
                     )
                 }
 
-                // Update Notes
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -609,7 +600,6 @@ class ContactsRepository(
                     )
                 }
 
-                // Update Phone Numbers (Delete and Insert)
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -633,7 +623,6 @@ class ContactsRepository(
                     )
                 }
 
-                // Update Emails (Delete and Insert)
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -657,7 +646,6 @@ class ContactsRepository(
                     )
                 }
 
-                // Update Addresses (Delete and Insert)
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
@@ -758,7 +746,43 @@ class ContactsRepository(
 
     override fun getAvailableAccounts(): List<Account> {
         return try {
-            AccountManager.get(context).accounts.toList()
+            val allAccounts = AccountManager.get(context).accounts.toList()
+            val syncAdapters = ContentResolver.getSyncAdapterTypes()
+            val contactAccountTypes = syncAdapters
+                .filter { it.authority == ContactsContract.AUTHORITY }
+                .map { it.accountType }
+                .toSet()
+
+            val existingAccountKeys = mutableSetOf<String>()
+            try {
+                contentResolver.query(
+                    ContactsContract.RawContacts.CONTENT_URI,
+                    arrayOf(ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE),
+                    null,
+                    null,
+                    null
+                )?.use { cursor ->
+                    val nameCol = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                    val typeCol = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                    while (cursor.moveToNext()) {
+                        val name = if (nameCol != -1) cursor.getString(nameCol) else null
+                        val type = if (typeCol != -1) cursor.getString(typeCol) else null
+                        if (!name.isNullOrBlank() && !type.isNullOrBlank()) {
+                            existingAccountKeys.add("$name|$type")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+            }
+
+            val filtered = allAccounts.filter { account ->
+                val isSyncable = try { ContentResolver.getIsSyncable(account, ContactsContract.AUTHORITY) > 0 } catch (e: Exception) { false }
+                val matchesType = account.type in contactAccountTypes
+                val hasRawContacts = existingAccountKeys.contains("${account.name}|${account.type}")
+                (matchesType && isSyncable) || hasRawContacts
+            }
+
+            if (filtered.isNotEmpty()) filtered else allAccounts
         } catch (e: SecurityException) {
             e.printStackTrace()
             emptyList()
@@ -766,7 +790,15 @@ class ContactsRepository(
     }
 
     override fun getContactByNumber(number: String): Contact? {
-        // Check private contacts first
+        if (com.grinch.rivo4.controller.util.isVoicemailNumber(context, number)) {
+            return Contact(
+                id = "voicemail",
+                name = context.getString(R.string.settings_voicemail_title),
+                photoUri = "voicemail://icon",
+                phoneNumbers = listOf(number)
+            )
+        }
+
         privateContactDao.getAll().forEach {
             val contact = it.toContact()
             if (contact.phoneNumbers.any { num -> areNumbersEqual(num, number) }) {
@@ -824,11 +856,9 @@ class ContactsRepository(
         val allContacts = getContacts()
         val duplicates = mutableListOf<List<Contact>>()
 
-        // Group by name (exact match, case-insensitive)
         val byName = allContacts.groupBy { it.name.lowercase().trim() }
             .filter { it.value.size > 1 }
 
-        // Group by phone number (normalized)
         val byNumber = mutableMapOf<String, MutableSet<Contact>>()
         allContacts.forEach { contact ->
             contact.phoneNumbers.forEach { number ->
@@ -865,7 +895,6 @@ class ContactsRepository(
             if (sourceId == targetContactId) return@forEach
             val sourceContact = getContactById(sourceId) ?: return@forEach
 
-            // Add all phone numbers, emails, addresses, events from source to target
             sourceContact.phoneNumbers.forEach { number ->
                 if (!targetContact.phoneNumbers.contains(number)) {
                     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -876,7 +905,6 @@ class ContactsRepository(
                         .build())
                 }
             }
-            // ... similar for other data types if needed ...
 
             CallBackgroundStore.clearBlocking(context, sourceId, emptyList())
 

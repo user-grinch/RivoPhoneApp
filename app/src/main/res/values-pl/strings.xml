@@ -78,11 +78,23 @@
     <string name="onboarding_page3_title">Stworzone dla Ciebie</string>
     <string name="onboarding_page3_description">W pełni otwartoźródłowe narzędzie do dzwonienia, zaprojektowane z myślą o wydajności i komforcie użytkowania.</string>
 
+    <!-- Permission Popup -->
+    <string name="permission_popup_title">Wymagane uprawnienia</string>
+    <string name="permission_popup_body">Aby zapewnić poprawne działanie wszystkich funkcji na Twoim urządzeniu, udziel niezbędnych uprawnień. Niektórzy producenci, jak Xiaomi czy Oppo, mogą wymagać dodatkowej ręcznej konfiguracji w ustawieniach systemowych.</string>
+    <string name="permission_popup_grant">Udziel uprawnień</string>
+    <string name="permission_popup_settings">Otwórz ustawienia</string>
+
     <!-- Patreon support prompt (MainActivity) -->
     <string name="patreon_prompt_title">Wesprzyj Rivo</string>
     <string name="patreon_prompt_confirm">Wesprzyj na Patreonie</string>
     <string name="patreon_prompt_dismiss">Może później</string>
     <string name="patreon_prompt_body">Rivo jest darmową aplikacją otwartoźródłową. Jeśli Ci się podoba, rozważ wsparcie jej rozwoju na Patreonie!</string>
+
+    <!-- Disable ads warning dialog -->
+    <string name="ads_disable_dialog_title">Wesprzyj rozwój otwartoźródłowy</string>
+    <string name="ads_disable_dialog_body">Wyświetlanie reklam pomaga utrzymać Rivo darmowym i otwartoźródłowym. Bez przychodów z reklam i wsparcia społeczności dalszy rozwój i aktualizacje mogą ustać. Czy na pewno chcesz wyłączyć reklamy?</string>
+    <string name="ads_disable_dialog_confirm">Wyłącz reklamy</string>
+    <string name="ads_disable_dialog_keep">Zostaw reklamy</string>
 
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Ustaw Rivo jako oficjalną aplikację do dzwonienia</string>
@@ -303,18 +315,29 @@
 
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Dźwięk i wibracje</string>
-    <string name="settings_sound_dtmf_tone">Sygnały DTMF</string>
-    <string name="settings_sound_dtmf_tone_supporting">Dźwięk klawiatury odtwarzany podczas naciskania klawiszy</string>
+    <string name="settings_sound_dtmf_tone">Tony DTMF</string>
+    <string name="settings_sound_dtmf_tone_supporting">Dźwięki klawiatury podczas wybierania numeru</string>
     <string name="settings_sound_dialpad_vibration">Wibracje klawiatury</string>
-    <string name="settings_sound_dialpad_vibration_supporting">Wibracje odczuwane podczas naciskania klawiszy</string>
+    <string name="settings_sound_dialpad_vibration_supporting">Wibracja klawiatury podczas wybierania numeru</string>
     <string name="settings_sound_vibrate_on_answer">Wibracja przy odebraniu</string>
-    <string name="settings_sound_vibrate_on_answer_supporting">Wibruj, gdy druga strona odbierze połączenie</string>
+    <string name="settings_sound_vibrate_on_answer_supporting">Wibruj, gdy rozmówca odbierze</string>
     <string name="settings_sound_vibrate_on_hangup">Wibracja przy rozłączeniu</string>
-    <string name="settings_sound_vibrate_on_hangup_supporting">Wibruj, gdy połączenie zostanie zakończone</string>
-    <string name="settings_sound_haptic_scroll">Haptyczne przewijanie</string>
-    <string name="settings_sound_haptic_scroll_supporting">Subtelne wibracje podczas przewijania list</string>
+    <string name="settings_sound_vibrate_on_hangup_supporting">Wibruj po zakończeniu połączenia</string>
+    <string name="settings_sound_haptic_scroll">Wibracje przy przewijaniu</string>
+    <string name="settings_sound_haptic_scroll_supporting">Subtelna wibracja podczas przewijania list</string>
+    <string name="settings_sound_missed_call_notifications">Powiadomienia o nieodebranych połączeniach</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Pokazuj powiadomienia o nieodebranych połączeniach</string>
     <string name="settings_sound_ringtone_settings">Ustawienia dzwonka</string>
     <string name="settings_sound_ringtone_settings_supporting">Otwórz systemowe ustawienia dźwięku</string>
+
+    <string name="call_failed_airplane_mode">Nie można nawiązać połączenia w trybie samolotowym</string>
+    <string name="call_failed_no_network">Błąd połączenia: brak sieci komórkowej</string>
+    <string name="call_failed_restricted">Błąd połączenia: połączenie zablokowane</string>
+    <string name="call_failed_generic">Nie udało się zrealizować połączenia</string>
+    <string name="settings_manage_standardize_confirm_message">Spowoduje to usunięcie spacji i znaków formatowania ze wszystkich numerów kontaktów. Czy chcesz kontynuować?</string>
+    <string name="settings_manage_standardize_completed">Znormalizowano numery telefonów</string>
+    <string name="action_copy_number">Kopiuj numer</string>
+    <string name="number_copied_toast">Skopiowano numer do schowka</string>
 
     <!-- Settings > Call accounts -->
     <string name="settings_call_title">Ustawienia połączeń</string>

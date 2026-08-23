@@ -78,11 +78,23 @@
     <string name="onboarding_page3_title">Built for You</string>
     <string name="onboarding_page3_description">A fully open-source, proximity-aware calling experience designed for efficiency.</string>
 
+    <!-- Permission Popup -->
+    <string name="permission_popup_title">Permissions Required</string>
+    <string name="permission_popup_body">To ensure all features work correctly on your device, please grant the necessary permissions. Some manufacturers like Xiaomi or Oppo may require additional manual configuration in system settings.</string>
+    <string name="permission_popup_grant">Grant Permissions</string>
+    <string name="permission_popup_settings">Open Settings</string>
+
     <!-- Patreon support prompt (MainActivity) -->
     <string name="patreon_prompt_title">Support Rivo</string>
     <string name="patreon_prompt_confirm">Support Us</string>
     <string name="patreon_prompt_dismiss">Maybe later</string>
     <string name="patreon_prompt_body">Rivo is free and open source. If you like the app, please consider supporting its development on Patreon!</string>
+
+    <!-- Disable ads warning dialog -->
+    <string name="ads_disable_dialog_title">Support Open-Source Development</string>
+    <string name="ads_disable_dialog_body">Displaying ads helps keep Rivo free and open-source. Without ad revenue or community donations, ongoing maintenance, bug fixes, and development may die out. Are you sure you want to disable ads?</string>
+    <string name="ads_disable_dialog_confirm">Disable Ads</string>
+    <string name="ads_disable_dialog_keep">Keep Ads Enabled</string>
 
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Make Rivo your official dialer</string>
@@ -329,8 +341,19 @@
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibrate when the call ends</string>
     <string name="settings_sound_haptic_scroll">Haptic Scrolling feedback</string>
     <string name="settings_sound_haptic_scroll_supporting">Vibrate subtly when scrolling lists</string>
+    <string name="settings_sound_missed_call_notifications">Missed call notifications</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Show notifications for missed calls</string>
     <string name="settings_sound_ringtone_settings">Ringtone Settings</string>
     <string name="settings_sound_ringtone_settings_supporting">Open system sound settings</string>
+
+    <string name="call_failed_airplane_mode">Cannot place call while Airplane mode is on</string>
+    <string name="call_failed_no_network">Call failed: Cellular network unavailable</string>
+    <string name="call_failed_restricted">Call failed: Call is restricted</string>
+    <string name="call_failed_generic">Call could not be completed</string>
+    <string name="settings_manage_standardize_confirm_message">This will remove spaces and special characters from all contact numbers in your device storage. Do you want to continue?</string>
+    <string name="settings_manage_standardize_completed">Phone numbers standardized</string>
+    <string name="action_copy_number">Copy number</string>
+    <string name="number_copied_toast">Number copied to clipboard</string>
 
     <!-- Settings > Call accounts -->
     <string name="settings_call_title">Call Settings</string>

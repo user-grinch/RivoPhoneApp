@@ -195,11 +195,11 @@ fun BatchCallLogActionBar(
     selectedCount: Int,
     onClearSelection: () -> Unit,
     onDelete: () -> Unit,
-    onClearAll: () -> Unit,
-    onBlock: () -> Unit
+    onBlock: () -> Unit,
+    onAddContact: (() -> Unit)? = null,
+    onCopy: (() -> Unit)? = null
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    var showClearAllConfirm by remember { mutableStateOf(false) }
     var showBlockConfirm by remember { mutableStateOf(false) }
 
     Surface(
@@ -226,11 +226,18 @@ fun BatchCallLogActionBar(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
+            if (onAddContact != null) {
+                IconButton(onClick = onAddContact) {
+                    Icon(Icons.Default.PersonAdd, stringResource(R.string.contact_add_to_contacts))
+                }
+            }
+            if (onCopy != null) {
+                IconButton(onClick = onCopy) {
+                    Icon(Icons.Default.ContentCopy, stringResource(R.string.action_copy_number))
+                }
+            }
             IconButton(onClick = { showBlockConfirm = true }) {
                 Icon(Icons.Default.Block, stringResource(R.string.action_block_number))
-            }
-            IconButton(onClick = { showClearAllConfirm = true }) {
-                Icon(Icons.Default.DeleteSweep, stringResource(R.string.content_desc_clear_all_logs))
             }
             IconButton(onClick = { showDeleteConfirm = true }) {
                 Icon(Icons.Default.Delete, stringResource(R.string.content_desc_delete_selected))
@@ -260,19 +267,6 @@ fun BatchCallLogActionBar(
             confirmLabel = stringResource(R.string.action_block),
             dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Default.Block,
-            isDestructive = true
-        )
-    }
-
-    if (showClearAllConfirm) {
-        RivoConfirmationDialog(
-            onDismissRequest = { showClearAllConfirm = false },
-            onConfirm = onClearAll,
-            title = stringResource(R.string.call_log_clear_all_title),
-            message = stringResource(R.string.call_log_clear_all_message),
-            confirmLabel = stringResource(R.string.call_log_clear_all_confirm),
-            dismissLabel = stringResource(R.string.action_cancel),
-            icon = Icons.Default.DeleteSweep,
             isDestructive = true
         )
     }

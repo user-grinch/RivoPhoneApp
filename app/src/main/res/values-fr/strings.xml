@@ -78,11 +78,23 @@
     <string name="onboarding_page3_title">Conçu pour vous</string>
     <string name="onboarding_page3_description">Une expérience d’appel entièrement open source, avec détection de proximité, pensée pour l’efficacité.</string>
 
+    <!-- Permission Popup -->
+    <string name="permission_popup_title">Autorisations requises</string>
+    <string name="permission_popup_body">Pour garantir le bon fonctionnement de toutes les fonctionnalités sur votre appareil, veuillez accorder les autorisations nécessaires. Certains fabricants comme Xiaomi ou Oppo peuvent nécessiter une configuration manuelle supplémentaire dans les paramètres du système.</string>
+    <string name="permission_popup_grant">Accorder les autorisations</string>
+    <string name="permission_popup_settings">Ouvrir les paramètres</string>
+
     <!-- Patreon support prompt (MainActivity) -->
     <string name="patreon_prompt_title">Soutenir Rivo</string>
     <string name="patreon_prompt_confirm">Soutenir sur Patreon</string>
     <string name="patreon_prompt_dismiss">Plus tard</string>
     <string name="patreon_prompt_body">Rivo est gratuite et open source. Si vous aimez l’application, pensez à soutenir son développement sur Patreon !</string>
+
+    <!-- Disable ads warning dialog -->
+    <string name="ads_disable_dialog_title">Soutenir le développement open source</string>
+    <string name="ads_disable_dialog_body">L’affichage des publicités permet de maintenir Rivo gratuite et open source. Sans revenus publicitaires ni dons de la communauté, le développement continu et la maintenance risquent de s’éteindre. Voulez-vous vraiment désactiver les publicités ?</string>
+    <string name="ads_disable_dialog_confirm">Désactiver les publicités</string>
+    <string name="ads_disable_dialog_keep">Garder les publicités</string>
 
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Faites de Rivo votre application d’appel officielle</string>
@@ -303,17 +315,28 @@
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Son et vibration</string>
     <string name="settings_sound_dtmf_tone">Tonalité DTMF</string>
-    <string name="settings_sound_dtmf_tone_supporting">Tonalité du clavier jouée lors de l’appui sur une touche</string>
+    <string name="settings_sound_dtmf_tone_supporting">Tonalité du clavier lors de la saisie</string>
     <string name="settings_sound_dialpad_vibration">Vibration du clavier</string>
-    <string name="settings_sound_dialpad_vibration_supporting">Vibration du clavier lors de l’appui sur une touche</string>
-    <string name="settings_sound_vibrate_on_answer">Vibrer à la réponse</string>
-    <string name="settings_sound_vibrate_on_answer_supporting">Vibrer lorsque l’interlocuteur répond</string>
+    <string name="settings_sound_dialpad_vibration_supporting">Vibration du clavier lors de la saisie</string>
+    <string name="settings_sound_vibrate_on_answer">Vibrer au décrochage</string>
+    <string name="settings_sound_vibrate_on_answer_supporting">Vibrer lorsque le correspondant répond</string>
     <string name="settings_sound_vibrate_on_hangup">Vibrer au raccrochage</string>
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibrer lorsque l’appel se termine</string>
     <string name="settings_sound_haptic_scroll">Retour haptique au défilement</string>
-    <string name="settings_sound_haptic_scroll_supporting">Vibre légèrement lors du défilement des listes</string>
+    <string name="settings_sound_haptic_scroll_supporting">Vibrer discrètement lors du défilement des listes</string>
+    <string name="settings_sound_missed_call_notifications">Notifications d’appels manqués</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Afficher une notification pour les appels manqués</string>
     <string name="settings_sound_ringtone_settings">Paramètres de sonnerie</string>
-    <string name="settings_sound_ringtone_settings_supporting">Ouvrir les paramètres sonores du système</string>
+    <string name="settings_sound_ringtone_settings_supporting">Ouvrir les paramètres audio du système</string>
+
+    <string name="call_failed_airplane_mode">Impossible de passer un appel en mode avion</string>
+    <string name="call_failed_no_network">Échec de l’appel : réseau cellulaire indisponible</string>
+    <string name="call_failed_restricted">Échec de l’appel : appel restreint</string>
+    <string name="call_failed_generic">Impossible d’effectuer l’appel</string>
+    <string name="settings_manage_standardize_confirm_message">Cette action supprimera les espaces et caractères spéciaux de tous vos contacts. Voulez-vous continuer ?</string>
+    <string name="settings_manage_standardize_completed">Numéros de téléphone normalisés</string>
+    <string name="action_copy_number">Copier le numéro</string>
+    <string name="number_copied_toast">Numéro copié dans le presse-papiers</string>
 
     <!-- Settings > Call accounts -->
     <string name="settings_call_title">Paramètres d’appel</string>

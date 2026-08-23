@@ -69,7 +69,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // ---- Brand Hero Card Section ----
             RivoExpressiveCard(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
@@ -118,7 +117,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            // ---- App Mission & Philosophy Card ----
             RivoExpressiveCard {
                 Column(
                     modifier = Modifier.padding(4.dp),
@@ -146,7 +144,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            // ---- Interactive Community Action Row Buttons ----
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -192,7 +189,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            // ---- Community & Source Links Card ----
             RivoExpressiveCard {
                 RivoListItem(
                     headline = stringResource(R.string.about_discord),

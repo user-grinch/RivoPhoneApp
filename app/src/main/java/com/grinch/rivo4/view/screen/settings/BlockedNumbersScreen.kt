@@ -37,7 +37,7 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.OpenResultRecipient
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -46,7 +46,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Composable
 fun BlockedNumbersScreen(
     navigator: DestinationsNavigator,
-    resultRecipient: OpenResultRecipient<String>
+    resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
 ) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
@@ -114,7 +114,6 @@ fun BlockedNumbersScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header Info Card
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -170,7 +169,6 @@ fun BlockedNumbersScreen(
                 }
             }
 
-            // In-Page Search Field
             if (blockedNumbers.isNotEmpty()) {
                 item {
                     OutlinedTextField(
@@ -192,7 +190,6 @@ fun BlockedNumbersScreen(
                 }
             }
 
-            // Blocked List
             item {
                 RivoExpressiveCard(
                     title = stringResource(R.string.blocked_list_title),
@@ -275,7 +272,6 @@ fun BlockedNumbersScreen(
                 }
             }
 
-            // Blocking Settings Section
             item {
                 RivoExpressiveCard {
                     RivoSelectListItem(
@@ -310,7 +306,6 @@ fun BlockedNumbersScreen(
                 }
             }
 
-            // Notifications Section
             item {
                 RivoExpressiveCard {
                     RivoSwitchListItem(
@@ -326,7 +321,6 @@ fun BlockedNumbersScreen(
                 }
             }
 
-            // System Blocked Numbers Button
             item {
                 OutlinedButton(
                     onClick = {

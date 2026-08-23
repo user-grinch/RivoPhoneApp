@@ -32,8 +32,12 @@ import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -96,6 +100,10 @@ fun RecentScreenContent(
     val selectedFilter by viewModel.selectedFilter.collectAsState()
 
     val isSelecting = selectedEntries.isNotEmpty()
+    val clipboardManager = LocalClipboardManager.current
+    val singleSelected = if (selectedEntries.size == 1) selectedEntries.first() else null
+    val isUnsaved = singleSelected != null && (singleSelected.contactId == null || singleSelected.name == null || singleSelected.name == singleSelected.number)
+
     val batchActionBar: @Composable () -> Unit = {
         BatchCallLogActionBar(
             selectedCount = selectedEntries.size,
@@ -105,16 +113,29 @@ fun RecentScreenContent(
                 viewModel.deleteCallLogsByIds(allIdsToDelete)
                 selectedEntries = emptySet()
             },
-            onClearAll = {
-                viewModel.clearCallLogs()
-                selectedEntries = emptySet()
-            },
             onBlock = {
                 selectedEntries.forEach { entry ->
                     com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)
                 }
                 selectedEntries = emptySet()
-            }
+            },
+            onAddContact = if (isUnsaved && singleSelected != null) {
+                {
+                    navigator.navigate(
+                        ContactEditScreenDestination(
+                            initialPhone = singleSelected.number
+                        )
+                    )
+                    selectedEntries = emptySet()
+                }
+            } else null,
+            onCopy = if (singleSelected != null) {
+                {
+                    clipboardManager.setText(AnnotatedString(singleSelected.number))
+                    Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                    selectedEntries = emptySet()
+                }
+            } else null
         )
     }
 
@@ -126,7 +147,7 @@ fun RecentScreenContent(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 2.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -143,6 +164,7 @@ fun RecentScreenContent(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             if (onSelectionStateChange != null) {
                 if (!isSelecting) {
@@ -180,8 +202,7 @@ fun RecentScreenContent(
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.surface,
-        contentWindowInsets = WindowInsets(0)
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         Box(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -622,7 +643,7 @@ fun CallLogFullContent(
                             }
                         }
 
-                        groupedLogs.forEach { (header, logsInGroup) ->
+                        groupedLogs.entries.forEachIndexed { groupIndex, (header, logsInGroup) ->
                             item {
                                 RivoSectionHeader(title = header)
                                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -659,6 +680,12 @@ fun CallLogFullContent(
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
+                            }
+                            if (groupIndex % 3 == 0) {
+                                item {
+                                    com.grinch.rivo4.view.components.ad.BannerAd()
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                }
                             }
                         }
                     }

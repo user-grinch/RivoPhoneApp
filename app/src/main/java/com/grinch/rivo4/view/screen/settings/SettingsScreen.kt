@@ -62,7 +62,6 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             
-            // ---- MD3 Expressive Settings Header Card ----
             item {
                 RivoExpressiveCard(
                     modifier = Modifier.clickable { navigator.navigate(AboutScreenDestination) },
@@ -114,7 +113,6 @@ fun SettingsScreen(
                 }
             }
 
-
             item {
                 RivoExpressiveCard {
                     RivoListItem(
@@ -131,7 +129,6 @@ fun SettingsScreen(
                     )
                 }
             }
-
 
             item {
                 RivoExpressiveCard {
@@ -171,6 +168,10 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                     )
                 }
+            }
+
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
             }
 
             item {

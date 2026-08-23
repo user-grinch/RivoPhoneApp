@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Voicemail
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -290,7 +291,7 @@ fun RivoAvatar(
                 .clip(avatarShape),
             contentAlignment = Alignment.Center
         ) {
-            if (style.showPicture && !photoUri.isNullOrEmpty()) {
+            if (style.showPicture && !photoUri.isNullOrEmpty() && photoUri != "voicemail://icon") {
                 AsyncImage(
                     model = photoUri,
                     contentDescription = null,
@@ -300,6 +301,13 @@ fun RivoAvatar(
             } else if (icon != null) {
                 Icon(
                     imageVector = icon,
+                    contentDescription = null,
+                    tint = colors.content,
+                    modifier = Modifier.size(RivoAvatarDefaults.IconSize)
+                )
+            } else if (photoUri == "voicemail://icon" || name.equals("Voicemail", ignoreCase = true) || name.equals("Messagerie vocale", ignoreCase = true) || name.equals("Poczta głosowa", ignoreCase = true)) {
+                Icon(
+                    imageVector = Icons.Outlined.Voicemail,
                     contentDescription = null,
                     tint = colors.content,
                     modifier = Modifier.size(RivoAvatarDefaults.IconSize)

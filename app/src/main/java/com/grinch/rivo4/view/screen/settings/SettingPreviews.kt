@@ -41,11 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.view.theme.callColors
 
-/**
- * Animated micro-illustrations used as option previews inside settings selectors,
- * so users can visually experience each style dynamically.
- */
-
 @Composable
 fun IncomingCallUiPreview(mode: Int) {
     val scheme = MaterialTheme.colorScheme
@@ -67,7 +62,6 @@ fun IncomingCallUiPreview(mode: Int) {
     )
 
     when (mode) {
-        // Horizontal swipe: track with animated sliding knob
         0 -> Box(
             modifier = Modifier
                 .width(52.dp)
@@ -91,7 +85,6 @@ fun IncomingCallUiPreview(mode: Int) {
                 modifier = Modifier.size(14.dp).align(Alignment.CenterEnd)
             )
         }
-        // Buttons: accept + decline circles with pulsing animation
         1 -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Box(modifier = Modifier.size(20.dp).background(decline, CircleShape), contentAlignment = Alignment.Center) {
                 Icon(Icons.Filled.CallEnd, contentDescription = null, tint = scheme.surface, modifier = Modifier.size(11.dp))
@@ -106,7 +99,6 @@ fun IncomingCallUiPreview(mode: Int) {
                 Icon(Icons.Filled.Phone, contentDescription = null, tint = scheme.surface, modifier = Modifier.size(11.dp))
             }
         }
-        // Slide (iOS-style): track with sliding knob
         2 -> Box(
             modifier = Modifier
                 .width(52.dp)
@@ -128,7 +120,6 @@ fun IncomingCallUiPreview(mode: Int) {
                 modifier = Modifier.size(12.dp).align(Alignment.CenterEnd)
             )
         }
-        // Vertical swipe: vertical track with animated vertical sliding knob
         else -> Column(
             modifier = Modifier
                 .width(22.dp)

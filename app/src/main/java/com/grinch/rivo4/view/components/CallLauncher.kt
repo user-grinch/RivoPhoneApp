@@ -57,7 +57,6 @@ fun rememberCallLauncher(): CallLauncher {
                 makeCall(context, number, preferredHandle, contactId = contactId)
             } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
                 pendingNumber = number
-                // Keep pendingContact as is
                 showSimPicker = true
             } else {
                 makeCall(context, number, contactId = contactId)

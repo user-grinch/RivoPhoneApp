@@ -128,7 +128,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
         color = MaterialTheme.colorScheme.surfaceContainerLow
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Background expressive morphing shapes
             Box(
                 modifier = Modifier
                     .size(220.dp)
@@ -148,7 +147,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                     .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f))
             )
 
-            // Skip button
             TextButton(
                 onClick = onFinished,
                 modifier = Modifier
@@ -172,7 +170,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Main morphing shape with icon
                 Surface(
                     modifier = Modifier
                         .size(shapeSize)
@@ -196,7 +193,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(48.dp))
 
-                // Title & Description with MD3 Expressive animated text
                 AnimatedContent(
                     targetState = currentPage,
                     transitionSpec = {
@@ -230,7 +226,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Expressive fluid page indicators
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -260,7 +255,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(36.dp))
 
-                // Navigation controls
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

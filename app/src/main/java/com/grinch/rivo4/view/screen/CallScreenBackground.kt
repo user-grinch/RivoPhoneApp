@@ -88,7 +88,6 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
     }
 
     Box(modifier = Modifier.fillMaxSize().background(surface)) {
-        // Animated Ambient Morphing Gradient Orbs
         if (!customVisible) {
             Box(
                 modifier = Modifier

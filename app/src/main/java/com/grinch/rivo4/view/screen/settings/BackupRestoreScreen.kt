@@ -22,6 +22,9 @@ import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,9 +34,12 @@ fun BackupRestoreScreen(
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val viewModel: BackupViewModel = koinActivityViewModel()
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
     val status by viewModel.status.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showStandardizeConfirm by remember { mutableStateOf(false) }
 
     LaunchedEffect(status) {
         status?.let {
@@ -136,6 +142,43 @@ fun BackupRestoreScreen(
                     )
                 }
             }
+
+            item {
+                Text(
+                    stringResource(R.string.settings_manage_contacts_headline),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+                RivoExpressiveCard {
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_manage_standardize_numbers),
+                        supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
+                        leadingIcon = Icons.Outlined.Numbers,
+                        onClick = { showStandardizeConfirm = true }
+                    )
+                }
+            }
         }
+    }
+
+    if (showStandardizeConfirm) {
+        val completedMessage = stringResource(R.string.settings_manage_standardize_completed)
+        RivoConfirmationDialog(
+            onDismissRequest = { showStandardizeConfirm = false },
+            onConfirm = {
+                showStandardizeConfirm = false
+                contactsVM.formatAllPhoneNumbers()
+                scope.launch {
+                    snackbarHostState.showSnackbar(completedMessage)
+                }
+            },
+            title = stringResource(R.string.settings_manage_standardize_numbers),
+            message = stringResource(R.string.settings_manage_standardize_confirm_message),
+            confirmLabel = stringResource(R.string.action_confirm),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.Numbers
+        )
     }
 }

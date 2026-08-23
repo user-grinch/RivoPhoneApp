@@ -41,7 +41,7 @@ fun rememberVideoLauncher(): VideoLauncher {
         val uri = Uri.parse("tel:$number")
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
             setPackage(pkg)
-            if (pkg == "com.google.android.apps.meetings") { // Google Meet
+            if (pkg == "com.google.android.apps.meetings") {
                 data = Uri.parse("https://meet.google.com/")
             }
         }

@@ -144,10 +144,6 @@ fun CallLogFullScreen(
                             viewModel.deleteCallLogsByIds(allIdsToDelete)
                             selectedEntries = emptySet()
                         },
-                        onClearAll = {
-                            viewModel.clearCallLogs()
-                            selectedEntries = emptySet()
-                        },
                         onBlock = {
                             selectedEntries.forEach { entry ->
                                 com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)

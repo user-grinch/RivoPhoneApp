@@ -276,6 +276,7 @@ class PreferenceManager(context: Context) {
         const val KEY_DIALPAD_VIBRATION_STRENGTH = "dialpad_vibration_strength"
         const val KEY_DTMF_TONE_VOLUME = "dtmf_tone_volume"
         const val KEY_HAPTIC_LIST_SCROLL = "haptic_list_scroll"
+        const val KEY_MISSED_CALL_NOTIFICATIONS = "missed_call_notifications"
         const val KEY_SHOW_SIM_ICON_HISTORY = "show_sim_icon_history"
         const val KEY_SEARCH_MATCH_MODE = "search_match_mode"
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
@@ -284,6 +285,7 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
         const val KEY_CARD_ROUNDNESS = "card_roundness"
         const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
+        const val KEY_PERMISSION_POPUP_SHOWN = "permission_popup_shown"
         const val KEY_LAST_USED_ACCOUNT_NAME = "last_used_account_name"
         const val KEY_LAST_USED_ACCOUNT_TYPE = "last_used_account_type"
         const val KEY_FAVORITES_ORDER = "favorites_order"
@@ -297,6 +299,7 @@ class PreferenceManager(context: Context) {
         const val KEY_BOTTOM_NAV_HIDDEN = "bottom_nav_hidden"
         const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"
         const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
+        const val KEY_ENABLE_ADS = "enable_ads"
 
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1

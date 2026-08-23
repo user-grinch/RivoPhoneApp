@@ -793,9 +793,9 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
 
-    val trackHeight = 96.dp // Increased from 88.dp
+    val trackHeight = 96.dp
     val maxHandleWidth = 110.dp
-    val handleHeight = 72.dp // Increased from 64.dp
+    val handleHeight = 72.dp
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
     val trackWidth = with(density) { trackWidthPx.toDp() }
     val handleWidth = if (trackWidthPx > 0f) (trackWidth * 0.32f).coerceAtMost(maxHandleWidth) else maxHandleWidth
@@ -901,7 +901,6 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             )
         }
 
-        // drag handle
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -1016,7 +1015,6 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .height(trackHeight + 32.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Vertical Capsule Track
         Box(
             modifier = Modifier
                 .width(trackWidth)
@@ -1026,7 +1024,6 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f), RoundedCornerShape(42.dp)),
             contentAlignment = Alignment.Center
         ) {
-            // Top Answer Hint Target
             Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -1048,7 +1045,6 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 )
             }
 
-            // Bottom Decline Hint Target
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -1070,7 +1066,6 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 )
             }
 
-            // Draggable Action Handle
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -1355,8 +1350,6 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val onDeclineColor = MaterialTheme.callColors.onDecline
     val onAnswerColor = MaterialTheme.callColors.onAnswer
 
-    // Only the answer control pulses so it clearly draws the eye, matching the
-    // calm-but-inviting feel of the Google Dialer incoming screen.
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -1411,7 +1404,6 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
-                // Expanding ripple halo
                 Box(
                     modifier = Modifier
                         .size(buttonSize)

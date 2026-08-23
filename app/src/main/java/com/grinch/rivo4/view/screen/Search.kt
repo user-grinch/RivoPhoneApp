@@ -244,6 +244,11 @@ fun ContactSearchContent(
                                 RivoSectionHeader(title = stringResource(R.string.search_results_header), modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                             }
 
+                            item {
+                                com.grinch.rivo4.view.components.ad.BannerAd()
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+
                             itemsIndexed(filteredContacts) { index, contact ->
                                 val isFirst = index == 0
                                 val isLast = index == filteredContacts.size - 1

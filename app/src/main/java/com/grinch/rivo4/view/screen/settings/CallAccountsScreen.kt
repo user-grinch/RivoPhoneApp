@@ -286,7 +286,6 @@ fun CallAccountsScreen(
                 }
             }
 
-            // Work In Progress Section
             item {
                 RivoSectionHeader(
                     title = "Work in Progress",

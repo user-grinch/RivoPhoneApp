@@ -84,7 +84,6 @@ fun deduplicateNumbers(numbers: List<String>): List<String> {
         if (existingIndex == -1) {
             unique.add(number)
         } else {
-            // Prefer the number with a '+' or the longer one (usually more complete)
             val existing = unique[existingIndex]
             if (number.contains("+") && !existing.contains("+")) {
                 unique[existingIndex] = number
@@ -94,6 +93,37 @@ fun deduplicateNumbers(numbers: List<String>): List<String> {
         }
     }
     return unique
+}
+
+fun isAirplaneModeOn(context: Context): Boolean {
+    return try {
+        android.provider.Settings.Global.getInt(context.contentResolver, android.provider.Settings.Global.AIRPLANE_MODE_ON, 0) != 0
+    } catch (e: Exception) {
+        false
+    }
+}
+
+fun isVoicemailNumber(context: Context, number: String?): Boolean {
+    if (number.isNullOrBlank()) return false
+    val clean = number.trim()
+    if (clean.equals("voicemail", ignoreCase = true) || clean.startsWith("voicemail:", ignoreCase = true)) {
+        return true
+    }
+    val prefs = PreferenceManager(context)
+    val configuredVm = prefs.getString(PreferenceManager.KEY_VOICEMAIL_NUMBER, null)
+    if (!configuredVm.isNullOrBlank() && areNumbersEqual(clean, configuredVm)) {
+        return true
+    }
+    val sysVm = getSystemVoicemailNumber(context)
+    if (!sysVm.isNullOrBlank() && areNumbersEqual(clean, sysVm)) {
+        return true
+    }
+    return try {
+        @Suppress("DEPRECATION")
+        PhoneNumberUtils.isVoiceMailNumber(clean)
+    } catch (e: Exception) {
+        false
+    }
 }
 
 fun getSystemVoicemailNumber(context: Context): String? {
@@ -124,9 +154,13 @@ fun getSystemVoicemailNumber(context: Context): String? {
 }
 
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
+    if (isAirplaneModeOn(context)) {
+        android.widget.Toast.makeText(context, context.getString(R.string.call_failed_airplane_mode), android.widget.Toast.LENGTH_LONG).show()
+        return
+    }
+
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     
-    // For MMI/USSD codes, we need to use Uri.parse with encoded # to tel:%23
     val uri = if (number.startsWith("voicemail:")) {
         Uri.parse(number)
     } else if (number.contains("#")) {
@@ -198,7 +232,6 @@ fun openLink(context: Context, link: String) {
     }
 }
 
-
 fun getAppVersion(context: Context): Pair<String, Long> {
     return try {
         val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -212,7 +245,6 @@ fun getAppVersion(context: Context): Pair<String, Long> {
         }
 
         val versionName = packageInfo.versionName ?: context.getString(R.string.label_unknown)
-        // PackageInfoCompat handles retrieving long version codes safely across old/new API levels
         val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
 
         Pair(versionName, versionCode)
@@ -302,7 +334,6 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
 
     var handled = false
 
-    // 1. Send system special code event via TelephonyManager (Android 8.0+ API for default dialers)
     try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
@@ -313,7 +344,6 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
         e.printStackTrace()
     }
 
-    // 2. Broadcast TelephonyManager.ACTION_SECRET_CODE (android.telephony.action.SECRET_CODE / android.provider.Telephony.SECRET_CODE)
     try {
         val actionSecretCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             TelephonyManager.ACTION_SECRET_CODE
@@ -329,7 +359,6 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
         e.printStackTrace()
     }
 
-    // 3. Broadcast legacy android.provider.Telephony.SECRET_CODE for older Android receivers
     try {
         val intent2 = Intent("android.provider.Telephony.SECRET_CODE").apply {
             data = Uri.parse("android_secret_code://$code")
@@ -340,9 +369,8 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
         e.printStackTrace()
     }
 
-    // 4. Comprehensive Activity Fallbacks for major OEM secret codes
     when (code) {
-        "4636" -> { // Testing Menu / RadioInfo
+        "4636" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.android.settings", "com.android.settings.Settings\$TestingSettingsActivity"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.android.settings", "com.android.settings.RadioInfo"),
@@ -357,7 +385,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "07" -> { // Regulatory Information & SAR levels
+        "07" -> {
             val targets = listOf(
                 Intent("android.settings.REGULATORY_INFO"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.android.settings", "com.android.settings.Settings\$RegulatoryInfoActivity")
@@ -371,7 +399,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "0", "0*" -> { // Samsung Hardware Module / Factory Test Mode (*#0*#)
+        "0", "0*" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.hwmoduletest", "com.sec.android.app.hwmoduletest.HwModuleTest"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.factory", "com.sec.factory.main"),
@@ -386,7 +414,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "0228" -> { // Samsung Battery Status & Calibration (*#0228#)
+        "0228" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.servicemodeapp", "com.sec.android.app.servicemodeapp.BatteryStatus"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.servicemodeapp", "com.sec.android.app.servicemodeapp.ServiceModeApp")
@@ -400,7 +428,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "9900" -> { // Samsung SysDump (*#9900#)
+        "9900" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.SysDump", "com.sec.android.SysDump.SysDump")
             )
@@ -413,7 +441,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "1234" -> { // Samsung Firmware Version (*#1234#)
+        "1234" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.servicemodeapp", "com.sec.android.app.servicemodeapp.VersionInfo")
             )
@@ -426,7 +454,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "0808" -> { // Samsung USB Settings (*#0808#)
+        "0808" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.parser", "com.sec.android.app.parser.UsbSettings"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.sec.android.app.servicemodeapp", "com.sec.android.app.servicemodeapp.UsbSettings")
@@ -440,7 +468,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "800", "808", "888", "899", "6776" -> { // OnePlus / Oppo / Realme Engineer Mode & LogKit (*#800#, *#888#, etc.)
+        "800", "808", "888", "899", "6776" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.oplus.logkit", "com.oplus.logkit.LogKitMainActivity"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.oplus.engineermode", "com.oplus.engineermode.Engineermode"),
@@ -455,7 +483,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "2846579", "0000" -> { // Huawei / Honor Project Menu (*#*#2846579#*#*)
+        "2846579", "0000" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.huawei.projectmenu", "com.huawei.projectmenu.ProjectMenu"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.huawei.settings.projectmenu", "com.huawei.settings.projectmenu.ProjectMenu")
@@ -469,7 +497,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "2486" -> { // Motorola CQATest (*#*#2486#*#*)
+        "2486" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.motorola.cqatest", "com.motorola.cqatest.CQATest")
             )
@@ -482,7 +510,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "7378423" -> { // Sony Service Menu (*#*#7378423#*#*)
+        "7378423" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.sonyericsson.android.servicemenu", "com.sonyericsson.android.servicemenu.ServiceMenu")
             )
@@ -495,7 +523,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "3646633" -> { // MediaTek Engineer Mode (*#*#3646633#*#*)
+        "3646633" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.mediatek.engineermode", "com.mediatek.engineermode.EngineerMode")
             )
@@ -508,7 +536,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "6484", "64663" -> { // Xiaomi CIT Hardware Diagnostic Test Menu (*#*#6484#*#*)
+        "6484", "64663" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.miui.cit", "com.miui.cit.CitLauncherActivity"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.miui.cit", "com.miui.cit.CitTestActivity")
@@ -522,7 +550,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "225" -> { // Calendar Storage Info
+        "225" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.android.providers.calendar", "com.android.providers.calendar.CalendarDebugActivity")
             )
@@ -535,7 +563,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "426" -> { // FCM Diagnostics
+        "426" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.google.android.gms", "com.google.android.gms.gcm.GcmDiagnostics"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.google.android.gms", "com.google.android.gms.cloudmessaging.CloudMessagingDiagnostics")
@@ -549,7 +577,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
                 } catch (e: Exception) {}
             }
         }
-        "759" -> { // RLZ Debug UI
+        "759" -> {
             val targets = listOf(
                 Intent(Intent.ACTION_MAIN).setClassName("com.google.android.apps.rlz", "com.google.android.apps.rlz.DebugActivity"),
                 Intent(Intent.ACTION_MAIN).setClassName("com.google.android.partnersetup", "com.google.android.partnersetup.RlzDebugActivity")
@@ -566,4 +594,15 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
     }
 
     return handled
+}
+
+fun isCustomPermissionDevice(): Boolean {
+    val manufacturer = Build.MANUFACTURER.lowercase()
+    return manufacturer.contains("xiaomi") ||
+            manufacturer.contains("oppo") ||
+            manufacturer.contains("vivo") ||
+            manufacturer.contains("realme") ||
+            manufacturer.contains("huawei") ||
+            manufacturer.contains("meizu") ||
+            manufacturer.contains("oneplus")
 }

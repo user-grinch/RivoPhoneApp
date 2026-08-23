@@ -13,12 +13,12 @@ def baseVersionName = "2.0"
 
 android {
     namespace = 'com.grinch.rivo4'
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.grinch.rivo4"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 37
         versionCode = baseVersionCode + buildNumber
         versionName = isPreviewBuild ? "${baseVersionName}.${buildNumber}-preview" : baseVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -71,34 +71,44 @@ android {
     splits {
         abi {
             enable = false
-        //     reset()
-        //     include("armeabi-v7a", "arm64-v8a", "x86_64")
-        //     // CRITICAL: Set to true so GitHub Action finds at least one "universal" APK
-        //     universalApk = true
+        }
+    }
+
+    flavorDimensions "distribution"
+    productFlavors {
+        play {
+            dimension "distribution"
+            isDefault = true
+        }
+        foss {
+            dimension "distribution"
         }
     }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = "RivoPhone-${variant.versionName}.apk"
+            outputFileName = "RivoPhone-${variant.versionName}-${variant.flavorName}.apk"
         }
     }
 }
 
 afterEvaluate {
-    tasks.named("bundleRelease").configure {
-        doLast {
-            def outDir = layout.buildDirectory.dir("outputs/bundle/release").get().asFile
-            def original = new File(outDir, "app-release.aab")
-            if (original.exists()) {
-                original.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}.aab"))
+    tasks.matching { it.name.startsWith("bundle") && it.name.endsWith("Release") }.configureEach { task ->
+        task.doLast {
+            def outDir = layout.buildDirectory.dir("outputs/bundle/${task.name.replace('bundle', '').uncapitalize()}").get().asFile
+            if (outDir.exists()) {
+                outDir.listFiles()?.each { file ->
+                    if (file.name.endsWith(".aab") && !file.name.contains("RivoPhone")) {
+                        file.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}-${task.name.replace('bundle', '').replace('Release', '').uncapitalize()}.aab"))
+                    }
+                }
             }
         }
     }
 }
 
 dependencies {
-    // UI Stack managed by BOM
+    playImplementation 'com.google.android.gms:play-services-ads:23.6.0'
     implementation platform('androidx.compose:compose-bom:2025.12.01')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.material3:material3:1.5.0-alpha18'
@@ -108,39 +118,31 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.material:material-icons-extended'
 
-    // Core Android / Kotlin
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.core:core-splashscreen:1.2.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
 
-    // Navigation & Serialization
     implementation 'androidx.navigation:navigation-compose:2.8.5'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
 
-    // Compose Destinations
     implementation 'io.github.raamcosta.compose-destinations:core:2.1.0'
     ksp 'io.github.raamcosta.compose-destinations:ksp:2.1.0'
 
-    // Accompanist
     implementation "com.google.accompanist:accompanist-permissions:0.37.3"
 
-    // DI: Koin
     implementation platform("io.insert-koin:koin-bom:4.1.1")
     implementation "io.insert-koin:koin-android"
     implementation "io.insert-koin:koin-androidx-compose"
 
-    // Room
     def room_version = "2.6.1"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
-    // Image & Utility
     implementation "io.coil-kt:coil-compose:2.7.0"
     implementation 'com.google.zxing:core:3.5.4'
 
-    // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'

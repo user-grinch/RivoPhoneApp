@@ -19,7 +19,6 @@ interface IContactsRepository {
     fun setCustomRingtone(contactId: String, ringtoneUri: String?)
     fun formatAllPhoneNumbers(onProgress: ((current: Int, total: Int) -> Unit)? = null)
 
-    // Private Contacts
     fun makeContactPrivate(contactId: String)
     fun makeContactPublic(contactId: String)
     fun exportPrivateContacts(uri: Uri)

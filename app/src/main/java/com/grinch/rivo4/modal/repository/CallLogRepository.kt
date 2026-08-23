@@ -29,13 +29,11 @@ class CallLogRepository(
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
 
-        // Optimization: Fetch all contacts once for quick lookup
         val allContacts = try { contactsRepo.getContacts() } catch (e: Exception) { emptyList() }
         val contactMap = mutableMapOf<String, Contact>()
         allContacts.forEach { contact ->
             contact.phoneNumbers.forEach { number ->
                 val normalized = normalizePhoneNumber(number)
-                // Use last 10 digits as key for flexible matching (local vs international)
                 val key = if (normalized.length >= 10) normalized.takeLast(10) else normalized
                 contactMap[key] = contact
             }
@@ -67,7 +65,6 @@ class CallLogRepository(
 
             cursor?.use { parseCursor(it, callLogs, contactMap) }
         } catch (e: Exception) {
-            // If the above fails due to "phone_account_label" or other columns, try a safer subset
             try {
                 val safeProjection = arrayOf(
                     CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
@@ -144,7 +141,6 @@ class CallLogRepository(
             
             val isBlocked = type == CallLog.Calls.BLOCKED_TYPE || type == CallLog.Calls.REJECTED_TYPE
             
-            // If label is missing, try to resolve it from account ID
             if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
                 val accountId = cursor.getString(accountIdIdx)
                 val componentStr = cursor.getString(componentNameIdx)
@@ -164,7 +160,6 @@ class CallLogRepository(
 
             if (simLabel?.isEmpty() == true) simLabel = null
 
-            // Enrich with contact data
             val normalizedNum = normalizePhoneNumber(number)
             val lookupKey = if (normalizedNum.length >= 10) normalizedNum.takeLast(10) else normalizedNum
             val matchedContact = contactMap[lookupKey]

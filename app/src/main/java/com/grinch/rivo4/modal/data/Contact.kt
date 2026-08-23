@@ -12,14 +12,14 @@ data class ContactEvent(
 @Serializable
 data class PhoneNumberEntry(
     val number: String,
-    val type: Int = 2, // Phone.TYPE_MOBILE
+    val type: Int = 2,
     val label: String? = null
 )
 
 @Serializable
 data class EmailEntry(
     val address: String,
-    val type: Int = 1, // Email.TYPE_HOME
+    val type: Int = 1,
     val label: String? = null
 )
 

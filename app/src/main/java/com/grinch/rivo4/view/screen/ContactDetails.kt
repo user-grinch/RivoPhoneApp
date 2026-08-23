@@ -541,24 +541,55 @@ fun ContactDetailsScreen(
                                 },
                                 modifier = Modifier.weight(1f)
                             )
-                            RivoExpressiveButton(
-                                icon = Icons.Default.VideoCall,
-                                label = stringResource(R.string.contact_details_video),
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                onClick = {
-                                    videoLauncher.startVideoCall(displayPhone, fullContact)
-                                },
-                                modifier = Modifier.weight(1f)
-                            )
-                            val hasEmails = fullContact?.emails?.isNotEmpty() == true
-                            RivoExpressiveButton(
-                                icon = Icons.Default.Email,
-                                label = stringResource(R.string.label_email),
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                enabled = hasEmails,
-                                onClick = { emailLauncher.sendEmail("", fullContact) },
-                                modifier = Modifier.weight(1f)
-                            )
+                            if (fullContact == null) {
+                                RivoExpressiveButton(
+                                    icon = Icons.Default.PersonAdd,
+                                    label = stringResource(R.string.contact_add_to_contacts),
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    onClick = {
+                                        navigator.navigate(
+                                            ContactEditScreenDestination(
+                                                initialPhone = displayPhone
+                                            )
+                                        )
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                val numberBlocked = isNumberBlocked(displayPhone)
+                                RivoExpressiveButton(
+                                    icon = if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block,
+                                    label = if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number),
+                                    containerColor = if (numberBlocked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
+                                    onClick = {
+                                        if (numberBlocked) {
+                                            BlockedNumbersManager.unblock(context, displayPhone)
+                                        } else {
+                                            BlockedNumbersManager.block(context, displayPhone)
+                                        }
+                                        blockedVersion++
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                RivoExpressiveButton(
+                                    icon = Icons.Default.VideoCall,
+                                    label = stringResource(R.string.contact_details_video),
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    onClick = {
+                                        videoLauncher.startVideoCall(displayPhone, fullContact)
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                val hasEmails = fullContact?.emails?.isNotEmpty() == true
+                                RivoExpressiveButton(
+                                    icon = Icons.Default.Email,
+                                    label = stringResource(R.string.label_email),
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    enabled = hasEmails,
+                                    onClick = { emailLauncher.sendEmail("", fullContact) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         }
                     }
 
@@ -570,7 +601,7 @@ fun ContactDetailsScreen(
                         RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info) {
                             if (fullContact != null) {
                                 val phoneEntries = remember(fullContact) {
-                                    val fc = fullContact!!
+                                    val fc = fullContact ?: return@remember emptyList()
                                     if (fc.phones.isNotEmpty()) fc.phones
                                     else deduplicateNumbers(fc.phoneNumbers).map { PhoneNumberEntry(it) }
                                 }
@@ -604,13 +635,15 @@ fun ContactDetailsScreen(
                                                 text = { Text(if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(R.string.contact_set_as_favorite)) },
                                                 onClick = {
                                                     showMenu = false
-                                                    if (isFav) {
-                                                        prefs.setFavoriteNumber(fullContact!!.id, null)
-                                                        prefs.setFavoriteSim(fullContact!!.id, null)
-                                                        favoriteNumber = null
-                                                    } else {
-                                                        prefs.setFavoriteNumber(fullContact!!.id, number)
-                                                        favoriteNumber = number
+                                                    fullContact?.id?.let { cid ->
+                                                        if (isFav) {
+                                                            prefs.setFavoriteNumber(cid, null)
+                                                            prefs.setFavoriteSim(cid, null)
+                                                            favoriteNumber = null
+                                                        } else {
+                                                            prefs.setFavoriteNumber(cid, number)
+                                                            favoriteNumber = number
+                                                        }
                                                     }
                                                 },
                                                 leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
@@ -639,12 +672,12 @@ fun ContactDetailsScreen(
                                             )
                                         }
                                     }
-                                    if (index < phoneEntries.size - 1 || fullContact!!.emails.isNotEmpty()) {
+                                    if (index < phoneEntries.size - 1 || fullContact?.emails?.isNotEmpty() == true) {
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 val emailEntries = remember(fullContact) {
-                                    val fc = fullContact!!
+                                    val fc = fullContact ?: return@remember emptyList()
                                     if (fc.emailEntries.isNotEmpty()) fc.emailEntries
                                     else fc.emails.map { EmailEntry(it) }
                                 }
@@ -905,13 +938,14 @@ fun ContactDetailsScreen(
                         }
                     }
 
-                    if (fullContact != null) {
+                    val fc = fullContact
+                    if (fc != null) {
                         item {
                             val defaultRingtoneLabel = stringResource(R.string.ringtone_default)
                             val customRingtoneLabel = stringResource(R.string.ringtone_custom)
                             val selectRingtoneLabel = stringResource(R.string.contact_select_ringtone)
                             RivoExpressiveCard(title = stringResource(R.string.contact_settings_title), icon = Icons.Default.Settings) {
-                                val currentRingtone = fullContact!!.customRingtone?.let { uriStr ->
+                                val currentRingtone = fc.customRingtone?.let { uriStr ->
                                     runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
                                 } ?: defaultRingtoneLabel
 
@@ -923,7 +957,7 @@ fun ContactDetailsScreen(
                                         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
                                             putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
-                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fullContact!!.customRingtone?.let { Uri.parse(it) })
+                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
                                         }
                                         ringtonePickerLauncher.launch(intent)
                                     }
@@ -935,7 +969,7 @@ fun ContactDetailsScreen(
                                     onClick = onBackgroundClick
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                val contactNumbers = fullContact!!.phoneNumbers
+                                val contactNumbers = fc.phoneNumbers
                                 val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
                                 RivoListItem(
                                     headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
@@ -968,14 +1002,14 @@ fun ContactDetailsScreen(
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
-                                    headline = if (fullContact!!.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
-                                    supporting = if (fullContact!!.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
-                                    leadingIcon = if (fullContact!!.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
+                                    headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
+                                    supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
+                                    leadingIcon = if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
                                     onClick = {
-                                        if (fullContact!!.isPrivate) {
-                                            contactsViewModel.makeContactPublic(fullContact!!.id)
+                                        if (fc.isPrivate) {
+                                            contactsViewModel.makeContactPublic(fc.id)
                                         } else {
-                                            contactsViewModel.makeContactPrivate(fullContact!!.id)
+                                            contactsViewModel.makeContactPrivate(fc.id)
                                         }
                                         navigator.navigateUp()
                                     }

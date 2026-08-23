@@ -12,12 +12,6 @@ import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 
-/**
- * Lightweight long-press drag-and-drop reordering for a [LazyGridState], following the
- * canonical Compose reorderable-grid pattern. Hit-testing is done against the grid's own
- * visible-item layout info, so it works for any fixed-column grid whose items map 1:1 to
- * the backing list (no headers).
- */
 @Composable
 fun rememberGridDragDropState(
     gridState: LazyGridState,

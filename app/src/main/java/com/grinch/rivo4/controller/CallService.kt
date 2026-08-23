@@ -256,6 +256,24 @@ class CallService : InCallService() {
 
         val wasNeverConnected = call.details.connectTimeMillis == 0L
         val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        val isOutgoing = call.details.callDirection == Call.Details.DIRECTION_OUTGOING
+
+        if (isOutgoing && wasNeverConnected) {
+            val failMessage = when {
+                com.grinch.rivo4.controller.util.isAirplaneModeOn(this) ->
+                    getString(R.string.call_failed_airplane_mode)
+                cause?.code == DisconnectCause.RESTRICTED ->
+                    getString(R.string.call_failed_restricted)
+                cause?.code == DisconnectCause.ERROR ->
+                    cause.description?.toString()?.takeIf { it.isNotBlank() } ?: getString(R.string.call_failed_generic)
+                else -> null
+            }
+            if (failMessage != null) {
+                serviceScope.launch(Dispatchers.Main) {
+                    android.widget.Toast.makeText(applicationContext, failMessage, android.widget.Toast.LENGTH_LONG).show()
+                }
+            }
+        }
         
         if (isIncoming && wasNeverConnected && (cause?.code == DisconnectCause.MISSED || cause?.code == DisconnectCause.REMOTE || cause?.code == DisconnectCause.REJECTED)) {
             if (!isNumberBlocked(number) || preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 1) {
@@ -299,6 +317,10 @@ class CallService : InCallService() {
     }
 
     private fun showMissedCallNotification(call: Call) {
+        if (!preferenceManager.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) {
+            return
+        }
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val channel = NotificationChannel(

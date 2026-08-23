@@ -42,6 +42,8 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
+import com.grinch.rivo4.view.components.PermissionPopup
+import com.grinch.rivo4.controller.util.isCustomPermissionDevice
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
 import com.grinch.rivo4.view.screen.transitions.getAppTransition
 import com.grinch.rivo4.view.theme.Rivo4Theme
@@ -86,14 +88,26 @@ class MainActivity : ComponentActivity() {
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
                 val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, false) }
+                val permissionPopupShown = remember { prefs.getBoolean(PreferenceManager.KEY_PERMISSION_POPUP_SHOWN, false) }
 
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
+                var showPermissionPopup by remember { mutableStateOf(onboardingShown && !permissionPopupShown && isCustomPermissionDevice()) }
 
                 if (showOnboarding) {
                     MorphingOnboardingScreen(
                         onFinished = {
                             prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
                             showOnboarding = false
+                            if (!permissionPopupShown && isCustomPermissionDevice()) {
+                                showPermissionPopup = true
+                            }
+                        }
+                    )
+                } else if (showPermissionPopup) {
+                    PermissionPopup(
+                        onDismiss = {
+                            prefs.setBoolean(PreferenceManager.KEY_PERMISSION_POPUP_SHOWN, true)
+                            showPermissionPopup = false
                         }
                     )
                 } else {

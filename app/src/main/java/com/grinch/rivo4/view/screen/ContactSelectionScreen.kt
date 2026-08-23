@@ -62,7 +62,7 @@ fun ContactSelectionScreen(
     val roundness = LocalCardRoundness.current
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedFilterTab by remember { mutableIntStateOf(0) } // 0: All, 1: Favorites, 2: Private
+    var selectedFilterTab by remember { mutableIntStateOf(0) }
     var selectedContactIds by remember { mutableStateOf(setOf<String>()) }
     var selectedPhoneNumbers by remember { mutableStateOf(setOf<String>()) }
     var pendingMultiNumberContact by remember { mutableStateOf<Contact?>(null) }
@@ -90,7 +90,6 @@ fun ContactSelectionScreen(
         list.sortedBy { it.name.lowercase() }
     }
 
-    // Group contacts by initial letter for Material 3 Expressive section grouping
     val groupedContacts = remember(filteredContacts) {
         filteredContacts.groupBy { contact ->
             val first = contact.name.trim().firstOrNull()?.uppercaseChar() ?: '#'
@@ -162,7 +161,6 @@ fun ContactSelectionScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // ---- MD3 Expressive Hero Header Banner ----
                 item {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -220,7 +218,6 @@ fun ContactSelectionScreen(
                     }
                 }
 
-                // ---- MD3 Expressive Floating Search Field ----
                 item {
                     OutlinedTextField(
                         value = searchQuery,
@@ -244,7 +241,6 @@ fun ContactSelectionScreen(
                     )
                 }
 
-                // ---- Filter Chips Row ----
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -271,7 +267,6 @@ fun ContactSelectionScreen(
                     }
                 }
 
-                // ---- Custom Typed Phone Number Option Card ----
                 val cleanQuery = searchQuery.trim()
                 val isPhoneQuery = cleanQuery.any { it.isDigit() } || cleanQuery.startsWith("+")
 
@@ -390,7 +385,6 @@ fun ContactSelectionScreen(
                         }
                     }
                 } else {
-                    // ---- Grouped Contacts Sections ----
                     groupedContacts.forEach { (initial, contactsInGroup) ->
                         item(key = "header_$initial") {
                             Text(

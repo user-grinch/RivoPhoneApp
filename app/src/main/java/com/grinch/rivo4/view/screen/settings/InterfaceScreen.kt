@@ -31,6 +31,11 @@ import com.grinch.rivo4.view.components.RivoOptionRow
 import com.grinch.rivo4.view.components.RivoSliderListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ScrollToTopButton
+import com.grinch.rivo4.PATREON_URL
+import com.grinch.rivo4.controller.util.openLink
+import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
+import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
@@ -111,7 +116,6 @@ fun InterfaceScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // ---- Colour ----
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_color)) {
                         RivoSwitchListItem(
@@ -154,7 +158,6 @@ fun InterfaceScreen(
                     }
                 }
 
-                // ---- Avatars ----
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_avatars)) {
                         RivoAvatarShapeSelectorRow(
@@ -262,7 +265,6 @@ fun InterfaceScreen(
                     }
                 }
 
-                // ---- Navigation ----
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_navigation)) {
                         RivoVisualOptionSelectorRow(
@@ -317,6 +319,70 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
                             }
                         )
+                    }
+                }
+
+                if (IS_ADS_SUPPORTED) {
+                    item {
+                        var enableAds by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
+                        var showDisableAdsDialog by remember { mutableStateOf(false) }
+
+                        RivoExpressiveCard(title = "Monetization") {
+                            RivoSwitchListItem(
+                                headline = "Display Banner Ads",
+                                supporting = "Show non-intrusive banner ads inside lists to support open-source development.",
+                                leadingIcon = Icons.Outlined.AdUnits,
+                                checked = enableAds,
+                                onCheckedChange = { checked ->
+                                    if (!checked) {
+                                        showDisableAdsDialog = true
+                                    } else {
+                                        enableAds = true
+                                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
+                                    }
+                                }
+                            )
+                        }
+
+                        if (showDisableAdsDialog) {
+                            val context = LocalContext.current
+                            RivoDialog(
+                                onDismissRequest = { showDisableAdsDialog = false },
+                                title = stringResource(R.string.ads_disable_dialog_title),
+                                icon = Icons.Outlined.Favorite,
+                                confirmAction = RivoDialogAction(
+                                    label = stringResource(R.string.ads_disable_dialog_confirm),
+                                    onClick = {
+                                        enableAds = false
+                                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, false)
+                                        showDisableAdsDialog = false
+                                    }
+                                ),
+                                dismissAction = RivoDialogAction(
+                                    label = stringResource(R.string.ads_disable_dialog_keep),
+                                    onClick = { showDisableAdsDialog = false }
+                                )
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = stringResource(R.string.ads_disable_dialog_body),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    TextButton(
+                                        onClick = {
+                                            openLink(context, PATREON_URL)
+                                            showDisableAdsDialog = false
+                                        }
+                                    ) {
+                                        Icon(Icons.Outlined.VolunteerActivism, contentDescription = null)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(stringResource(R.string.patreon_prompt_confirm))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 

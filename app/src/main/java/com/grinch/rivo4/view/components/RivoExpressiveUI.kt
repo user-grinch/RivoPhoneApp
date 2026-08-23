@@ -224,7 +224,6 @@ fun RivoDivider(
     color: Color = MaterialTheme.colorScheme.outlineVariant,
     visible: Boolean? = null
 ) {
-    // Separator lines removed per user design request
 }
 
 @Composable

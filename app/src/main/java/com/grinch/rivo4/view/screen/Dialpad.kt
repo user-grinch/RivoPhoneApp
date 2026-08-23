@@ -124,7 +124,6 @@ fun DialPadScreen(
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
     }
 
-    // Handle Secret Codes & System Codes across all OEMs
     val isKnownSecretCode = remember {
         { input: String ->
             val knownExact = setOf(
@@ -181,11 +180,9 @@ fun DialPadScreen(
                 callLauncher.dial(targetNumber, contact)
             }
         } else {
-            // For USSD (*123#) or MMI (*#21#) or standard phone calls
             val contact = allContacts.find { it.id == contactId }
             callLauncher.dial(targetNumber, contact)
             
-            // Clear dialpad if it looks like a command (e.g. USSD or MMI)
             if (cleanNumber.startsWith("*") && cleanNumber.endsWith("#")) {
                 textFieldValue = TextFieldValue("")
             }
@@ -436,7 +433,6 @@ fun DialPadScreen(
                                 .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            // Left side actions
                             Row(
                                 modifier = Modifier.align(Alignment.CenterStart),
                                 verticalAlignment = Alignment.CenterVertically
@@ -465,7 +461,6 @@ fun DialPadScreen(
                                 isLarge = true
                             )
 
-                            // Right side actions
                             Row(
                                 modifier = Modifier.align(Alignment.CenterEnd),
                                 verticalAlignment = Alignment.CenterVertically

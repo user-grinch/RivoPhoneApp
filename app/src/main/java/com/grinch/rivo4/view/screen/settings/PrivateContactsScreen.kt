@@ -45,7 +45,7 @@ import com.ramcosta.composedestinations.generated.destinations.ContactEditScreen
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.OpenResultRecipient
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +53,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 @Composable
 fun PrivateContactsScreen(
     navigator: DestinationsNavigator,
-    resultRecipient: OpenResultRecipient<String>
+    resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
 ) {
     val context = LocalContext.current
     val viewModel: ContactsViewModel = koinActivityViewModel()
@@ -94,8 +94,8 @@ fun PrivateContactsScreen(
             privateContacts
         } else {
             privateContacts.filter {
-                it.name.contains(searchQuery, ignoreCase = true) ||
-                it.phoneNumbers.any { num -> num.contains(searchQuery) }
+                (it.name ?: "").contains(searchQuery, ignoreCase = true) ||
+                (it.phoneNumbers ?: emptyList()).any { num -> num.contains(searchQuery) }
             }
         }
     }
@@ -183,7 +183,6 @@ fun PrivateContactsScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Security Info Header Card
                 item {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -266,7 +265,6 @@ fun PrivateContactsScreen(
                     }
                 }
 
-                // Search Bar Field
                 if (privateContacts.isNotEmpty()) {
                     item {
                         OutlinedTextField(
@@ -345,7 +343,7 @@ fun PrivateContactsScreen(
                         }
                     }
                 } else {
-                    items(filteredPrivateContacts, key = { it.id }) { contact ->
+                    items(filteredPrivateContacts, key = { "private_${it.id}_${it.name.hashCode()}" }) { contact ->
                         val isSelected = selectedContactIds.contains(contact.id)
                         PrivateContactCard(
                             contact = contact,

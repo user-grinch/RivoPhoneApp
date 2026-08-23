@@ -64,7 +64,6 @@ class CallActivity : ComponentActivity() {
     private val preferenceManager: PreferenceManager by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
     private var isFinishingCall = false
-    private var keyguardDismissRequested = false
     private val identityCache = mutableMapOf<String, CachedCallIdentity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -375,11 +374,6 @@ class CallActivity : ComponentActivity() {
     private fun turnScreenOnAndShowWhileLocked() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
-        if (!keyguardDismissRequested) {
-            keyguardDismissRequested = true
-            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            keyguardManager.requestDismissKeyguard(this, null)
-        }
         window.addFlags(WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
     }
 
