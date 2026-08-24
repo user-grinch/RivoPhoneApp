@@ -1,15 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">RivoPhone</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_confirm">Bestätigen</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_back">Zurück</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_done">Fertig</string>
+    <string name="action_clear">Entfernen</string>
+    <string name="action_call">Anruf</string>
+    <string name="action_message">Nachricht</string>
+    <string name="action_add_contact">Kontakt hinzufügen</string>
+    <string name="action_grant_permission">Berechtigung erteilen</string>
+    <string name="action_grant_permission_lower">Berechtigung erteilen</string>
+    <string name="action_answer">Annehmen</string>
+    <string name="action_decline">Ablehnen</string>
+    <string name="action_end">Beenden</string>
+    <string name="action_mute">Stumm</string>
+    <string name="action_add_call">Anruf hinzufügen</string>
+    <string name="action_hold">Halten</string>
+    <string name="action_resume">Fortsetzen</string>
+    <string name="action_end_call">Anruf beenden</string>
+    <string name="content_desc_selected_item">Ausgewählt</string>
+    <string name="select_number_title">Nummer auswählen</string>
+    <string name="select_email_title">E-Mail auswählen</string>
+    <string name="content_desc_remove_favorite">Favorit entfernen</string>
+    <string name="content_desc_select_option">Option auswählen</string>
+    <string name="sim_picker_title">SIM-Karte auswählen</string>
+    <string name="sim_picker_unknown_sim">Unbekannte SIM-Karte</string>
+    <string name="label_unknown">Unbekannt</string>
+    <string name="label_unknown_number">Unbekannte Nummer</string>
+    <string name="label_email">E-Mail</string>
+    <string name="label_address">Adresse</string>
+    <string name="label_notes">Notizen</string>
+    <string name="label_social_apps">Social Apps</string>
+    <string name="label_local_memory">Lokaler Speicher</string>
+    <string name="option_standard">Standard</string>
+    <string name="ringtone_default">Standard</string>
+    <string name="ringtone_custom">Individuell</string>
+    <string name="empty_state_try_clearing_filters">Versuch deine Filter zu entfernen oder füge einen neuen Kontakt hinzu.</string>
+    <string name="date_today">Heute</string>
+    <string name="date_yesterday">Gestern</string>
+    <string name="nav_contacts">Kontakte</string>
+    <string name="nav_recents">Zuletzt</string>
+    <string name="call_type_incoming">Eingehend</string>
+    <string name="call_type_outgoing">Ausgehend</string>
+    <string name="call_type_missed">Verpasst</string>
+    <string name="filter_all">Alle</string>
+    <string name="sim_ask_every_time">Jedes Mal fragen</string>
+    <string name="sim_slot_1">SIM 1</string>
+    <string name="sim_slot_2">SIM 2</string>
+    <string name="brand_whatsapp">WhatsApp</string>
+    <string name="brand_telegram">Telegram</string>
+    <string name="brand_signal">Signal</string>
+    <string name="brand_google_meet">Google Meet</string>
+    <string name="brand_zoom">Zoom</string>
+    <string name="account_mi_account">Mi Account</string>
+    <string name="account_sim_card">SIM-Karte</string>
     <!-- Onboarding -->
+    <string name="onboarding_skip">Überspringen</string>
+    <string name="onboarding_next">Nächstes</string>
+    <string name="onboarding_get_started">Beginnen wir</string>
+    <string name="onboarding_page1_title">Expressive Design</string>
+    <string name="onboarding_page1_description">Erlebe ein modernes Erscheinungsbild von Material 3 und flüssige Jetpack Compose Animationen.</string>
+    <string name="onboarding_page2_title">Blitz-schnelles Wählen</string>
+    <string name="onboarding_page2_description">Finde Kontakte sofort mit unserer intelligenten T9-Suche und organisiere die Anruf-Historie.</string>
+    <string name="onboarding_page3_title">Für Dich erstellt</string>
     <!-- Permission Popup -->
+    <string name="permission_popup_title">Berechtigungen erforderlich</string>
+    <string name="permission_popup_grant">Berechtigungen gewähren</string>
+    <string name="permission_popup_settings">Einstellungen öffnen</string>
     <!-- Patreon support prompt (MainActivity) -->
+    <string name="patreon_prompt_title">Rivo unterstützen</string>
+    <string name="patreon_prompt_confirm">Unterstütze uns</string>
+    <string name="patreon_prompt_dismiss">Vielleicht später</string>
+    <string name="patreon_prompt_body">Rivo ist kostenlos und quelloffen. Wenn Du die App magst, bitte denk darüber nach, unsere Entwicklung auf Patreon zu unterstützen!</string>
     <!-- Disable ads warning dialog -->
+    <string name="ads_disable_dialog_confirm">Werbung deaktivieren</string>
+    <string name="ads_disable_dialog_keep">Werbung aktiviert lassen</string>
     <!-- Default dialer prompt -->
+    <string name="default_dialer_set_as_default">Als Standard festlegen</string>
     <!-- Top bar / bottom navigation -->
+    <string name="top_bar_search_placeholder">In Rivo suchen</string>
+    <string name="content_desc_search">Suchen</string>
     <!-- Recents / Call log -->
+    <string name="call_history_title">Anrufhistorie</string>
+    <string name="call_log_no_history_found">Keine Anrufhistorie gefunden</string>
+    <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
+    <string name="call_log_delete_title">Anrufverzeichnis löschen</string>
+    <string name="recents_favorites">Favoriten</string>
     <!-- Contacts list -->
+    <string name="contact_filter_private">Privat</string>
+    <string name="content_desc_move">Bewegen</string>
+    <string name="contacts_empty_title">Keine Kontakte gefunden</string>
     <!-- Contact details -->
+    <string name="contact_details_qr_content_desc">QR-Code</string>
+    <string name="contact_details_call">Anruf</string>
+    <string name="contact_details_video">Video</string>
+    <string name="contact_details_info_title">Kontakt-Informationen</string>
+    <string name="content_desc_favorite">Favorit</string>
+    <string name="contact_set_as_default">Als Standard festlegen</string>
     <!-- Contact edit -->
     <!-- Dialpad -->
     <!-- Search -->
