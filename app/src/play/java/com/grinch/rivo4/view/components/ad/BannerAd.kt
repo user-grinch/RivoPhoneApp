@@ -42,10 +42,14 @@ fun BannerAd(
     val adsEnabled = remember(settingsState) {
         prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
     }
+    
+    val context = LocalContext.current
+    val isDebug = remember {
+        (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    }
+    val effectiveAdUnitId = if (isDebug) "ca-app-pub-3940256099942544/6300978111" else adUnitId
 
     if (!adsEnabled) return
-
-    val context = LocalContext.current
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         MobileAds.initialize(context) {}
@@ -89,7 +93,7 @@ fun BannerAd(
                 factory = { ctx ->
                     AdView(ctx).apply {
                         setAdSize(AdSize.BANNER)
-                        this.adUnitId = adUnitId
+                        this.adUnitId = effectiveAdUnitId
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
