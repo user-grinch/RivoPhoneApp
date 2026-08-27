@@ -9,7 +9,7 @@ plugins {
 def baseVersionCode = 2026081400
 def buildNumber = (System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "0") as int
 def isPreviewBuild = System.getenv("PREVIEW_BUILD") == "true"
-def baseVersionName = "2.0"
+def baseVersionName = "2.1"
 
 android {
     namespace = 'com.grinch.rivo4'
