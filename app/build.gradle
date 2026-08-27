@@ -74,6 +74,18 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
     flavorDimensions "distribution"
     productFlavors {
         play {
