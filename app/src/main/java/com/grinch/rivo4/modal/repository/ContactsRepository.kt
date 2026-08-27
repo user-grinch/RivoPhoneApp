@@ -50,9 +50,7 @@ class ContactsRepository(
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
-            ContactsContract.CommonDataKinds.Phone.STARRED,
-            ContactsContract.RawContacts.ACCOUNT_NAME,
-            ContactsContract.RawContacts.ACCOUNT_TYPE
+            ContactsContract.CommonDataKinds.Phone.STARRED
         )
 
         try {
@@ -68,8 +66,6 @@ class ContactsRepository(
                 val photoIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
                 val numberIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                 val starredIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.STARRED)
-                val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
-                val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idIdx) ?: continue
@@ -88,14 +84,12 @@ class ContactsRepository(
                             name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
-                            accountName = cursor.getString(accountNameIdx),
-                            accountType = cursor.getString(accountTypeIdx),
                             phoneNumbers = mutableListOf(number)
                         )
                     }
                 }
             }
-        } catch (e: SecurityException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         val list = contactsMap.values.toList()
@@ -193,9 +187,7 @@ class ContactsRepository(
             ContactsContract.Data.DATA2,
             ContactsContract.Data.DATA3,
             ContactsContract.Data.STARRED,
-            ContactsContract.Data.CUSTOM_RINGTONE,
-            ContactsContract.RawContacts.ACCOUNT_NAME,
-            ContactsContract.RawContacts.ACCOUNT_TYPE
+            ContactsContract.Data.CUSTOM_RINGTONE
         )
 
         var contact: Contact? = null
@@ -218,27 +210,25 @@ class ContactsRepository(
                 val starredIdx = cursor.getColumnIndex(ContactsContract.Data.STARRED)
                 val ringtoneIdx = cursor.getColumnIndex(ContactsContract.Data.CUSTOM_RINGTONE)
 
-                val accountNameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
-                val accountTypeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
-
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idIdx) ?: continue
                     val mimeType = cursor.getString(mimeIdx)
                     val data1 = cursor.getString(data1Idx) ?: continue
                     val isStarred = cursor.getInt(starredIdx) == 1
                     val ringtone = cursor.getString(ringtoneIdx)
-                    val accountName = cursor.getString(accountNameIdx)
-                    val accountType = cursor.getString(accountTypeIdx)
 
-                    val currentContact = contact ?: Contact(
-                        id = id,
-                        name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
-                        photoUri = cursor.getString(photoIdx),
-                        isFavorite = isStarred,
-                        customRingtone = ringtone,
-                        accountName = accountName,
-                        accountType = accountType
-                    )
+                    val currentContact = contact ?: run {
+                        val (accName, accType) = getAccountInfo(resolvedId)
+                        Contact(
+                            id = id,
+                            name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
+                            photoUri = cursor.getString(photoIdx),
+                            isFavorite = isStarred,
+                            customRingtone = ringtone,
+                            accountName = accName,
+                            accountType = accType
+                        )
+                    }
 
                     contact = when (mimeType) {
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE -> {
@@ -377,6 +367,29 @@ class ContactsRepository(
 
     private fun getRawContactId(contactId: String): String? {
         return getRawContactIds(contactId).firstOrNull()
+    }
+
+    private fun getAccountInfo(contactId: String): Pair<String?, String?> {
+        try {
+            contentResolver.query(
+                ContactsContract.RawContacts.CONTENT_URI,
+                arrayOf(ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE),
+                "${ContactsContract.RawContacts.CONTACT_ID} = ?",
+                arrayOf(contactId),
+                null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val nameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                    val typeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else null
+                    val type = if (typeIdx != -1) cursor.getString(typeIdx) else null
+                    return Pair(name, type)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return Pair(null, null)
     }
 
     override fun saveContact(contact: Contact) {
