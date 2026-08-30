@@ -11,6 +11,7 @@
     <string name="action_edit">Bearbeiten</string>
     <string name="action_done">Fertig</string>
     <string name="action_clear">Entfernen</string>
+    <string name="action_clear_selection">Auswahl leeren</string>
     <string name="action_call">Anruf</string>
     <string name="action_message">Nachricht</string>
     <string name="action_add_contact">Kontakt hinzufügen</string>
@@ -91,6 +92,7 @@
     <string name="call_log_no_history_found">Keine Anrufhistorie gefunden</string>
     <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
     <string name="call_log_delete_title">Anrufverzeichnis löschen</string>
+    <string name="recents_permission_title">Anrufliste</string>
     <string name="recents_favorites">Favoriten</string>
     <!-- Contacts list -->
     <string name="contact_filter_private">Privat</string>
@@ -103,33 +105,50 @@
     <string name="contact_details_info_title">Kontakt-Informationen</string>
     <string name="content_desc_favorite">Favorit</string>
     <string name="contact_set_as_default">Als Standard festlegen</string>
+    <string name="contact_event_birthday">Geburtstag</string>
+    <string name="contact_move_to_private_storage">In privaten Speicher verschieben</string>
     <!-- Contact edit -->
     <!-- Dialpad -->
     <!-- Search -->
+    <string name="search_no_results_title">Keine Ergebnisse</string>
+    <string name="search_contacts_permission_description">Rivo benötigt Zugang zu Ihren Kontakten, um diese zu durchsuchen und eingehende Anrufe zu identifizieren.</string>
     <!-- Call screen -->
+    <string name="call_screen_sim_label">SIM %1$s</string>
+    <string name="audio_output_title">Audio-Ausgabe</string>
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
     <!-- Settings > root -->
     <!-- Settings > Interface -->
+    <string name="settings_interface_colorful_avatars">Farbige Avatare verwenden</string>
+    <string name="settings_interface_avatar_shape_circle">Kreis</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="call_failed_generic">Anruf konnte nicht ausgeführt werden</string>
     <!-- Settings > Call accounts -->
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_manage_no_duplicates">Keine Duplikate gefunden.</string>
     <!-- Settings > Contact visibility -->
+    <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
     <!-- Settings > Private contacts -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
     <!-- Settings > Contributors -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
+    <string name="settings_bottom_nav_supporting">Navigations Schaltflächen neu anordnen, anzeigen oder verbergen</string>
     <!-- Blocking -->
     <!-- Contact call screen background -->
+    <string name="contact_call_background_preview">Vorschau des Hintergrunds des Anrufbildschirms</string>
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="settings_call_recording_notice">Die Aufnahme von Anrufen könnte von Ihrem Gerät oder aufgrund von Gesetzen eingeschränkt sein. Stellen Sie sicher, dass die Aufnahme erlaubt ist, bevor Sie diese Funktion nutzen.</string>
+    <string name="settings_call_default_background_supporting">Wird bei jedem eingehenden und ausgehenden Anruf gezeigt, es sei denn, ein Kontakt hat seinen eigenen Hintergrund.</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
+    <string name="serial_label">Seriennummer</string>
 </resources>
