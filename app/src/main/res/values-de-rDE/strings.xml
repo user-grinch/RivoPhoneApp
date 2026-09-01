@@ -74,7 +74,7 @@
     <string name="onboarding_page2_title">Blitzschnelles Wählen</string>
     <string name="onboarding_page2_description">Finden Sie Kontakte sofort mit unserer intelligenten T9-Suche und einer strukturierten Anrufliste.</string>
     <string name="onboarding_page3_title">Für Sie entwickelt</string>
-    <string name="onboarding_page3_description">Eine Telefon-App, die vollständig Open Source ist und für Effizienz entwickelt wurde.</string>
+    <string name="onboarding_page3_description">Eine Telefon-App, die vollständig quelloffen ist und für Effizienz entwickelt wurde.</string>
     <!-- Permission Popup -->
     <string name="permission_popup_title">Berechtigungen erforderlich</string>
     <string name="permission_popup_body">Um die ordnungsgemäße Funktion der App zu gewährleisten, gewähren Sie bitte die erforderlichen Berechtigungen. Manche Hersteller wie Xiaomi oder Oppo könnten eine zusätzliche manuelle Konfiguration in den Systemeinstellungen erfordern.</string>
@@ -84,7 +84,7 @@
     <string name="patreon_prompt_title">Rivo unterstützen</string>
     <string name="patreon_prompt_confirm">Unterstützen Sie uns</string>
     <string name="patreon_prompt_dismiss">Vielleicht später</string>
-    <string name="patreon_prompt_body">Rivo ist kostenlos und Open Source. Wenn Sie die App mögen, erwägen Sie bitte, unsere Entwicklung auf Patreon zu unterstützen!</string>
+    <string name="patreon_prompt_body">Rivo ist kostenlos und quelloffen. Wenn Sie die App mögen, erwägen Sie bitte, unsere Entwicklung auf Patreon zu unterstützen!</string>
     <!-- Disable ads warning dialog -->
     <string name="ads_disable_dialog_title">Unterstützen Sie die Open-Source-Entwicklung</string>
     <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und Open Source bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass sie die Werbung ausschalten wollen?</string>
@@ -92,7 +92,7 @@
     <string name="ads_disable_dialog_keep">Werbung aktiviert lassen</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Machen Sie Rivo zu Ihrer Standard-Telefon-App</string>
-    <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und um vor Spam-Anrufen geschützt zu werden, muss Rivo als Standard-Telefon-App eingestellt werden.</string>
+    <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und um vor Spam-Anrufen geschützt zu werden, muss Rivo zur Standard-Telefon-App gemacht werden.</string>
     <string name="default_dialer_denied_message">Rivo funktioniert nicht ohne diese Berechtigung. Bitte versuchen Sie es erneut.</string>
     <string name="default_dialer_set_as_default">Als Standard festlegen</string>
     <!-- Top bar / bottom navigation -->
@@ -130,8 +130,8 @@
     <string name="contact_details_call">Anruf</string>
     <string name="contact_details_video">Video</string>
     <string name="contact_details_info_title">Kontakt-Informationen</string>
-    <string name="contact_bullet_favorite">"Favorit"</string>
-    <string name="contact_bullet_recent">"Zuletzt"</string>
+    <string name="contact_bullet_favorite">" Favorit"</string>
+    <string name="contact_bullet_recent">" Zuletzt"</string>
     <string name="content_desc_favorite">Favorit</string>
     <string name="contact_clear_favorite">Favoriten leeren</string>
     <string name="contact_set_as_favorite">Als Favorit setzen</string>
@@ -148,7 +148,7 @@
     <string name="contact_custom_ringtone">Individueller Klingelton</string>
     <string name="contact_select_ringtone">Klingelton auswählen</string>
     <string name="contact_share">Kontaktdaten teilen</string>
-    <string name="contact_share_description">Kontaktdaten teilen</string>
+    <string name="contact_share_description">Kontaktdaten versenden</string>
     <string name="contact_share_text">Name: %1$s\nTelefon: %2$s</string>
     <string name="contact_qr_code">QR-Code</string>
     <string name="contact_qr_code_description">Kontakt-QR-Code anzeigen</string>
@@ -183,9 +183,9 @@
     <!-- Dialpad -->
     <string name="dialpad_title">Tastenfeld</string>
     <string name="dialpad_start_dialing">Wahlvorgang beginnen</string>
-    <string name="dialpad_start_hint">Zum Beginnen Name oder Telefonnummer eingegeben</string>
+    <string name="dialpad_start_hint">Zum Beginnen Name oder Nummer eingegeben</string>
     <string name="content_desc_call_named">Anruf %1$s</string>
-    <string name="content_desc_backspace">Backspace</string>
+    <string name="content_desc_backspace">Rücktaste</string>
     <string name="dialpad_connect_via_social">Über Social verbinden</string>
     <!-- Search -->
     <string name="search_contacts_placeholder">In Kontakten suchen</string>
@@ -242,7 +242,7 @@
     <string name="settings_call_settings_supporting">SIMs verwalten, wählen und Wahlwiederholung</string>
     <string name="settings_blocked_numbers_headline">Blockierte Nummern</string>
     <string name="settings_blocked_numbers_supporting">Blockierte Anrufe und Spam verwalten</string>
-    <string name="settings_backup_restore_headline">Sicherung &amp; Wiederherstellung</string>
+    <string name="settings_backup_restore_headline">Sichern &amp; Wiederherstellen</string>
     <string name="settings_backup_restore_supporting">Kontakte und Listen importieren und exportieren</string>
     <string name="settings_manage_contacts_headline">Kontakte verwalten</string>
     <string name="settings_manage_contacts_supporting">Doppelte Einträge zusammenführen und Liste bereinigen</string>
@@ -307,12 +307,12 @@
     <string name="settings_interface_default_bottom_bar">Untere Leiste: Standard setzen</string>
     <string name="settings_interface_default_bottom_bar_supporting">Auswahl des Start-Tabs</string>
     <string name="settings_interface_flip_bottom_bar">Untere Leiste: Tabs tauschen</string>
-    <string name="settings_interface_flip_bottom_bar_supporting">Position der Kontakte tauschen &amp; Zuletzt-Tab</string>
+    <string name="settings_interface_flip_bottom_bar_supporting">Tauscht die Tab-Position von Kontakte &amp; Zuletzt</string>
     <string name="settings_interface_icon_only_bar">Untere Leiste: nur Icons</string>
-    <string name="settings_interface_icon_only_bar_supporting">Entfernt Text-Labels von Navigation</string>
+    <string name="settings_interface_icon_only_bar_supporting">Entfernt Text-Labels</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Töne &amp; Vibration</string>
-    <string name="settings_sound_dtmf_tone">DTMF Ton</string>
+    <string name="settings_sound_dtmf_tone">DTMF-Ton</string>
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
     <string name="settings_sound_dialpad_vibration_supporting">Tastenfeld: Vibration bei Tastendruck</string>
@@ -430,7 +430,7 @@
     <string name="settings_manage_merge_duplicates">Duplikate zusammenführen</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Kontakt-Sichtbarkeit</string>
-    <string name="settings_visibility_description">Auswählen, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos wird dessen Kontakte verbergen, sie aber nicht löschen.</string>
+    <string name="settings_visibility_description">Auswählen, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
     <string name="settings_visibility_accounts_header">Konten</string>
     <string name="settings_visibility_local_memory_supporting">Auf dem Gerät gespeicherte Kontakte</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
@@ -478,7 +478,7 @@
     <string name="about_patreon_supporting">Helfen Sie, das Projekt am Leben zu erhalten</string>
     <string name="about_discord">Discord Server</string>
     <string name="about_discord_supporting">Treten Sie der Community bei</string>
-    <string name="about_source_code">Source Code</string>
+    <string name="about_source_code">Quellcode</string>
     <string name="about_source_code_supporting">Den Source Code bei Github ansehen</string>
     <string name="about_check_updates">Auf Updates überprüfen</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
@@ -500,9 +500,9 @@
     <string name="blocked_select_contact">Favorit auswählen</string>
     <string name="blocked_search_contact_hint">Kontaktname oder Nummer suchen</string>
     <!-- Bottom navigation layout -->
-    <string name="settings_bottom_nav_title">Navigation unten</string>
-    <string name="settings_bottom_nav_supporting">Navigations-Schaltflächen neu anordnen, anzeigen oder verbergen</string>
-    <string name="settings_bottom_nav_description">Anordnung und Sichtbarkeit der Schaltflächen im unteren Bereich der App. Zumindest eine Schaltfläche muss sichtbar bleiben.</string>
+    <string name="settings_bottom_nav_title">Untere Leiste: Tabs anordnen</string>
+    <string name="settings_bottom_nav_supporting">Schaltflächen anordnen, anzeigen oder verbergen</string>
+    <string name="settings_bottom_nav_description">Anordnung und Sichtbarkeit der Schaltflächen der unteren Leiste. Zumindest eine Schaltfläche muss sichtbar bleiben.</string>
     <string name="settings_bottom_nav_preview">Vorschau</string>
     <string name="settings_bottom_nav_buttons">Schaltflächen</string>
     <string name="settings_bottom_nav_position">Position %1$d</string>
@@ -542,7 +542,7 @@
     <!-- Call waiting -->
     <string name="settings_call_waiting">Anklopfen</string>
     <string name="settings_call_waiting_supporting">Einen zweiten Anruf empfangen, während Sie bereits telefonieren</string>
-    <string name="settings_call_waiting_description">Anklopfen ist ein Dienst des Netzbetreibers. Die Auswahl einer der unten stehenden Optionen wählt den Standard-Code auf Ihrer SIM.</string>
+    <string name="settings_call_waiting_description">Anklopfen ist ein Dienst des Netzbetreibers. Die Auswahl einer der unten stehenden Optionen wählt den Standard-Code auf Ihrer SIM-Karte.</string>
     <string name="settings_call_waiting_enable">Anklopfen aktivieren</string>
     <string name="settings_call_waiting_disable">Anklopfen deaktivieren</string>
     <string name="settings_call_waiting_check">Aktuellen Status prüfen</string>
@@ -581,14 +581,14 @@
     <!-- Incoming call controls and in-call keypad -->
     <string name="callin_handle_horizontal_desc">Eingehender Anruf. Zur Annahme nach rechts wischen, zum Ablehnen nach links.</string>
     <string name="callin_handle_vertical_desc">Eingehender Anruf. Zur Annahme nach oben wischen, zum Ablehnen nach unten.</string>
-    <string name="callin_handle_slide_desc">Eingehender Anruf. Zur Annahme nach rechts schieben.</string>
+    <string name="callin_handle_slide_desc">Eingehender Anruf. Zur Annahme nach rechts streichen.</string>
     <string name="callin_action_answer">Anruf annehmen</string>
     <string name="callin_action_decline">Anruf ablehnen</string>
     <string name="callin_action_message">Mit Nachricht antworten</string>
     <string name="callin_waiting_actions">Anklopfen-Optionen</string>
     <string name="callkp_digit_desc">Wählen %1$s</string>
-    <string name="callkp_entered_desc">Stellen eingegeben: %1$s</string>
-    <string name="callkp_entered_empty">Keine Stellen eingegeben</string>
+    <string name="callkp_entered_desc">Ziffern eingegeben: %1$s</string>
+    <string name="callkp_entered_empty">Keine Ziffer eingegeben</string>
     <!-- IMEI / Secret codes -->
     <string name="imei_dialog_title">Geräte Info (IMEI)</string>
     <string name="imei_label">IMEI %1$d</string>
