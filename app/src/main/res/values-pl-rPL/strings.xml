@@ -169,6 +169,8 @@
     <string name="contact_edit_private_storage_description">Niewidoczne dla innych aplikacji</string>
     <string name="contact_edit_identity_header">Tożsamość</string>
     <string name="contact_edit_full_name">Imię i nazwisko</string>
+    <string name="contact_edit_first_name">Imię</string>
+    <string name="contact_edit_last_name">Nazwisko</string>
     <string name="contact_edit_nickname">Pseudonim</string>
     <string name="contact_edit_phone_numbers_header">Numery telefonu</string>
     <string name="contact_edit_phone_field_label">Telefon</string>
@@ -248,6 +250,10 @@
     <string name="settings_about_supporting">Wersja, licencje i polityka prywatności</string>
     <!-- Settings > Interface -->
     <string name="settings_interface_title">Interfejs użytkownika</string>
+    <string name="settings_group_color">Kolor</string>
+    <string name="settings_group_avatars">Awatary</string>
+    <string name="settings_group_shape_motion">Kształt i ruch</string>
+    <string name="settings_group_navigation">Nawigacja</string>
     <string name="settings_interface_restart_required">Pełne zastosowanie zmian motywu wymaga ponownego uruchomienia aplikacji.</string>
     <string name="settings_interface_restart_action">Uruchom ponownie</string>
     <string name="settings_interface_material_you">Motyw Material You</string>
@@ -259,6 +265,8 @@
     <string name="settings_interface_show_first_letter_supporting">Wyświetla literę, gdy brakuje zdjęcia</string>
     <string name="settings_interface_colorful_avatars">Używaj kolorowych awatarów</string>
     <string name="settings_interface_colorful_avatars_supporting">Losowe kolory na podstawie nazwy kontaktu</string>
+    <string name="settings_interface_gradient_avatars">Awatary kontaktów z gradientem</string>
+    <string name="settings_interface_gradient_avatars_supporting">Używaj wielokolorowych teł gradientowych</string>
     <string name="settings_interface_show_picture">Pokaż zdjęcie na awatarze</string>
     <string name="settings_interface_show_picture_supporting">Wyświetla zdjęcie kontaktu, jeśli jest dostępne</string>
     <string name="settings_interface_avatar_shape">Kształt awatara</string>
@@ -266,6 +274,14 @@
     <string name="settings_interface_avatar_shape_squircle">Zaokrąglony kwadrat (Squircle)</string>
     <string name="settings_interface_avatar_shape_circle">Koło</string>
     <string name="settings_interface_avatar_shape_square">Kwadrat</string>
+    <string name="settings_interface_avatar_shape_cookie">Ciasteczko</string>
+    <string name="settings_interface_avatar_shape_clover">Koniczyna</string>
+    <string name="settings_interface_avatar_shape_arch">Łuk</string>
+    <string name="settings_interface_avatar_shape_pill">Kapsułka</string>
+    <string name="settings_interface_avatar_shape_gem">Klejnot</string>
+    <string name="settings_interface_avatar_shape_sunny">Słońce</string>
+    <string name="settings_interface_avatar_shape_heart">Serce</string>
+    <string name="settings_interface_avatar_shape_burst">Łagodna gwiazda</string>
     <string name="settings_interface_call_screen_avatar">Awatar na ekranie rozmowy</string>
     <string name="settings_interface_call_screen_avatar_supporting">Pokaż zdjęcie kontaktu na ekranie połączenia</string>
     <string name="settings_interface_show_dividers">Pokaż linie podziału</string>
@@ -334,6 +350,15 @@
     <string name="settings_call_incoming_ui_supporting">Wybierz sposób odbierania połączeń przychodzących</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Przesunięcie poziome</string>
     <string name="settings_call_incoming_ui_buttons">Przyciski</string>
+    <string name="settings_call_incoming_ui_slide_ios">Przesuń, aby odebrać (iOS)</string>
+    <string name="settings_call_incoming_ui_vertical_swipe">Przesunięcie pionowe</string>
+    <string name="settings_call_dialpad_style">Styl klawiatury numerycznej</string>
+    <string name="settings_call_dialpad_style_supporting">Wygląd klawiatury telefonu</string>
+    <string name="settings_call_dialpad_style_modern">Nowoczesny</string>
+    <string name="settings_call_dialpad_style_classic">Klasyczny</string>
+    <string name="settings_call_dialpad_style_minimal">Minimalny</string>
+    <string name="settings_call_dialpad_layout">Układ klawiatury numerycznej</string>
+    <string name="settings_call_dialpad_layout_supporting">Wyrównanie do obsługi jedną ręką</string>
     <!-- Settings > Blocked numbers -->
     <string name="settings_blocked_title">Zablokowane numery</string>
     <string name="settings_blocked_method">Metoda blokowania</string>
