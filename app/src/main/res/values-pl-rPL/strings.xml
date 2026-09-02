@@ -359,6 +359,26 @@
     <string name="settings_call_dialpad_style_minimal">Minimalny</string>
     <string name="settings_call_dialpad_layout">Układ klawiatury numerycznej</string>
     <string name="settings_call_dialpad_layout_supporting">Wyrównanie do obsługi jedną ręką</string>
+    <string name="settings_call_dialpad_layout_left">Po lewej stronie</string>
+    <string name="settings_call_dialpad_layout_right">Po prawej stronie</string>
+    <string name="settings_call_auto_redial">Automatyczne ponowne wybieranie</string>
+    <string name="settings_call_auto_redial_supporting">Automatycznie ponów wybieranie, jeśli linia jest zajęta</string>
+    <string name="settings_call_redial_attempts">Próby ponownego wybierania numeru</string>
+    <string name="settings_call_redial_attempts_supporting">Maksymalna liczba prób połączeń</string>
+    <string name="settings_call_redial_attempts_1">1 próba</string>
+    <string name="settings_call_redial_attempts_2">2 próby</string>
+    <string name="settings_call_redial_attempts_3">3 próby</string>
+    <string name="settings_call_redial_attempts_5">5 prób</string>
+    <string name="settings_call_redial_attempts_10">10 prób</string>
+    <string name="settings_call_redial_delay">Opóźnienie ponownego wybierania</string>
+    <string name="settings_call_redial_delay_supporting">Opóźnienie między próbami ponownego wybierania numeru</string>
+    <string name="settings_call_redial_delay_1s">1 sekunda</string>
+    <string name="settings_call_redial_delay_2s">2 sekundy</string>
+    <string name="settings_call_redial_delay_3s">3 sekundy</string>
+    <string name="settings_call_redial_delay_5s">5 sekund</string>
+    <string name="settings_call_redial_delay_10s">10 sekund</string>
+    <string name="settings_call_voicemail">Poczta głosowa</string>
+    <string name="settings_call_voicemail_supporting">Skonfiguruj skrzynkę poczty głosowej</string>
     <!-- Settings > Blocked numbers -->
     <string name="settings_blocked_title">Zablokowane numery</string>
     <string name="settings_blocked_method">Metoda blokowania</string>
@@ -467,16 +487,113 @@
     <string name="contributor_role_lead_developer">Główny programista</string>
     <string name="contributor_role_developer">Programista</string>
     <!-- Favorites -->
+    <string name="nav_favorites">Ulubione</string>
+    <string name="favorites_permission_title">Wymagane uprawnienie do kontaktów</string>
+    <string name="favorites_permission_description">Zezwalaj na dostęp do Twoich kontaktów, aby pokazać tutaj swoje ulubione.</string>
+    <string name="favorites_empty_title">Nie ma jeszcze ulubionych</string>
+    <string name="favorites_empty_description">Zaznacz kontakt jako ulubiony, aby zobaczyć go w tej siatce.</string>
+    <string name="favorites_drag_to_reorder">Przeciągnij, aby zmienić kolejność</string>
+    <string name="favorites_add_title">Dodaj ulubiony kontakt</string>
+    <string name="favorites_add_button">Dodaj do ulubionych</string>
+    <string name="favorites_collapse">Zwiń ulubione</string>
+    <string name="favorites_expand">Rozwiń ulubione</string>
+    <string name="blocked_select_contact">Wybierz kontakt</string>
+    <string name="blocked_search_contact_hint">Szukaj nazwy lub numeru kontaktu...</string>
     <!-- Bottom navigation layout -->
+    <string name="settings_bottom_nav_title">Dolna część paska nawigacyjnego</string>
+    <string name="settings_bottom_nav_supporting">Zmień kolejność, pokaż lub ukryj przyciski nawigacji</string>
+    <string name="settings_bottom_nav_description">Przeciągnij kolejność i widoczność przycisków na dole aplikacji. Przynajmniej jeden przycisk musi pozostać widoczny.</string>
+    <string name="settings_bottom_nav_preview">Podgląd</string>
+    <string name="settings_bottom_nav_buttons">Przyciski</string>
+    <string name="settings_bottom_nav_position">Pozycja %1$d</string>
+    <string name="settings_bottom_nav_hidden">Ukryte</string>
+    <string name="settings_bottom_nav_move_up">Przesuń w górę</string>
+    <string name="settings_bottom_nav_move_down">Przesuń w dół</string>
+    <string name="settings_bottom_nav_reset">Przywróć domyślne</string>
+    <string name="settings_interface_merge_favorites">Pokaż ulubione w ostatnich</string>
+    <string name="settings_interface_merge_favorites_supporting">Pozostaw wiersz ulubionych na górze listy ostatnich połączeń</string>
     <!-- Blocking -->
+    <string name="action_block">Zablokuj</string>
+    <string name="action_unblock">Odblokuj</string>
+    <string name="action_block_number">Zablokuj numer</string>
+    <string name="action_unblock_number">Odblokuj numer</string>
+    <string name="blocked_list_title">Zablokowane numery</string>
+    <string name="blocked_list_empty">Nie zablokowano jeszcze żadnego numeru.</string>
+    <string name="blocked_list_item_supporting">Połączenia z tego numeru są zablokowane</string>
+    <string name="blocked_add_number">Zablokuj numer</string>
+    <string name="blocked_add_number_hint">Numer telefonu</string>
+    <string name="contact_block">Zablokuj kontakt</string>
+    <string name="contact_block_supporting">Przestań odbierać połączenia od tego kontaktu</string>
+    <string name="contact_unblock">Odblokuj kontakt</string>
+    <string name="contact_unblock_supporting">Zezwalaj ponownie na połączenia z tego kontaktu</string>
+    <string name="call_log_block_title">Zablokować numery?</string>
+    <string name="call_log_block_message">Połączenia z %1$d zaznaczonych wpisów zostaną zablokowane.</string>
     <!-- Contact call screen background -->
+    <string name="contact_call_background">Tło ekranu połączenia</string>
+    <string name="contact_call_background_set">Wybrano niestandardowe zdjęcie</string>
+    <string name="contact_call_background_none">Użyj domyślnego tła</string>
+    <string name="contact_call_background_choose">Wybierz obraz</string>
+    <string name="contact_call_background_change">Zmień obraz</string>
+    <string name="contact_call_background_remove">Usuń tło</string>
+    <string name="contact_call_background_saving">Zapisywanie obrazu…</string>
+    <string name="contact_call_background_error">Nie można zapisać tego obrazu</string>
+    <string name="contact_call_background_no_target">Zapisz najpierw numer jako kontakt</string>
+    <string name="contact_call_background_preview">Podgląd tła ekranu połączenia</string>
     <!-- Call waiting -->
+    <string name="settings_call_waiting">Połączenie oczekujące</string>
+    <string name="settings_call_waiting_supporting">Odbierz drugie połączenie, gdy jesteś już w trakcie rozmowy</string>
+    <string name="settings_call_waiting_description">Usługa połączeń oczekujących jest dostarczana przez operatora. Wybranie poniższej opcji spowoduje wybranie standardowego kodu na Twojej karcie SIM.</string>
+    <string name="settings_call_waiting_enable">Włącz połączenia oczekujące</string>
+    <string name="settings_call_waiting_disable">Wyłącz połączenia oczekujące</string>
+    <string name="settings_call_waiting_check">Sprawdź bieżący status</string>
+    <string name="call_waiting_answer_hold">Odbierz i zawieś</string>
+    <string name="call_waiting_end_and_answer">Zakończ i odbierz</string>
     <!-- Call recording -->
+    <string name="settings_call_recording">Nagrywanie połączeń</string>
+    <string name="settings_call_recording_supporting">Pokaż przycisk nagrywania podczas połączenia</string>
+    <string name="settings_call_recording_auto">Nagrywaj każde połączenie</string>
+    <string name="settings_call_recording_auto_supporting">Rozpocznij nagrywanie automatycznie po nawiązaniu połączenia</string>
+    <string name="settings_call_recording_notice">Nagrywanie połączeń może być ograniczone przez twoje urządzenie lub ustawowo w danym regionie. Upewnij się, że masz możliwość nagrywania przed użyciem tej funkcji.</string>
+    <string name="settings_call_default_background">Domyślne tło połączenia</string>
+    <string name="settings_call_default_background_set">Niestandardowy obraz jest wyświetlany przy każdym połączeniu</string>
+    <string name="settings_call_default_background_none">Nie ustawione — połączenia używają motywu aplikacji</string>
+    <string name="settings_call_default_background_choose">Wybierz obraz</string>
+    <string name="settings_call_default_background_change">Zmień</string>
+    <string name="settings_call_default_background_supporting">Pokazuj na każdym połączeniu przychodzącym i wychodzącym, chyba że kontakt ma własne tło.</string>
+    <string name="action_remove">Usuń</string>
+    <string name="action_record">Nagraj</string>
+    <string name="action_stop_recording">Zatrzymaj</string>
+    <string name="call_recording_in_progress">Nagrywanie</string>
+    <string name="call_recordings_title">Nagrania</string>
+    <string name="call_recordings_supporting">Odtwórz, udostępnij lub usuń zapisane nagrania</string>
+    <string name="call_recordings_empty">Brak nagrań</string>
+    <string name="call_recordings_empty_description">Tutaj pojawią się nagrania wykonywane podczas połączeń.</string>
+    <string name="call_recordings_play">Odtwórz</string>
+    <string name="call_recordings_share">Udostępnij nagranie</string>
+    <string name="call_recordings_delete_title">Usunąć nagranie?</string>
+    <string name="call_recordings_delete_message">To nagranie zostanie trwale usunięte z Twojego urządzenia.</string>
     <!-- Video calling app picker -->
     <string name="video_call_title">Wideorozmowa</string>
     <string name="video_call_chooser_with">Wideorozmowa z użytkownikiem</string>
     <string name="video_call_system">Systemowa wideorozmowa</string>
     <!-- Call screen background and active controls -->
+    <string name="callbg_image_unavailable">Nie można załadować obrazu tła połączenia</string>
     <!-- Incoming call controls and in-call keypad -->
+    <string name="callin_handle_horizontal_desc">Połączenie przychodzące. Przesuń w prawo, aby odebrać, lewo, aby odrzucić.</string>
+    <string name="callin_handle_vertical_desc">Połączenie przychodzące. Przesuń w górę, aby odebrać, w dół, aby odrzucić.</string>
+    <string name="callin_handle_slide_desc">Połączenie przychodzące. Przesuń w prawo, aby odebrać.</string>
+    <string name="callin_action_answer">Odbierz połączenie</string>
+    <string name="callin_action_decline">Odrzuć połączenie</string>
+    <string name="callin_action_message">Odpowiedz wysyłając wiadomość</string>
+    <string name="callin_waiting_actions">Opcje połączeń oczekujących</string>
+    <string name="callkp_digit_desc">Zadzwoń pod %1$s</string>
+    <string name="callkp_entered_desc">Wprowadzono cyfry: %1$s</string>
+    <string name="callkp_entered_empty">Nie wprowadzono cyfr</string>
     <!-- IMEI / Secret codes -->
+    <string name="imei_dialog_title">Informacje o urządzeniu (IMEI)</string>
+    <string name="imei_label">IMEI %1$d</string>
+    <string name="meid_label">MEID</string>
+    <string name="serial_label">Numer seryjny</string>
+    <string name="imei_copied">Skopiowano do schowka</string>
+    <string name="imei_not_available">Niedostępne na tym urządzeniu</string>
 </resources>
