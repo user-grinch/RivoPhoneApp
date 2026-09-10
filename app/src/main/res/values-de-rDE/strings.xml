@@ -46,7 +46,7 @@
     <string name="option_standard">Standard</string>
     <string name="ringtone_default">Standard</string>
     <string name="ringtone_custom">Individuell</string>
-    <string name="empty_state_try_clearing_filters">Versuchen Sie, Ihre Filter zu entfernen oder einen neuen Kontakt hinzuzufügen.</string>
+    <string name="empty_state_try_clearing_filters">Versuchen Sie, Ihre Filter zu entfernen, oder fügen Sie einen neuen Kontakt hinzu.</string>
     <string name="date_today">Heute</string>
     <string name="date_yesterday">Gestern</string>
     <string name="nav_contacts">Kontakte</string>
@@ -87,7 +87,7 @@
     <string name="patreon_prompt_body">Rivo ist kostenlos und quelloffen. Wenn Sie die App mögen, erwägen Sie bitte, unsere Entwicklung auf Patreon zu unterstützen!</string>
     <!-- Disable ads warning dialog -->
     <string name="ads_disable_dialog_title">Unterstützen Sie die Open-Source-Entwicklung</string>
-    <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und Open Source bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass sie die Werbung ausschalten wollen?</string>
+    <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und quelloffen bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass sie die Werbung ausschalten wollen?</string>
     <string name="ads_disable_dialog_confirm">Werbung deaktivieren</string>
     <string name="ads_disable_dialog_keep">Werbung aktiviert lassen</string>
     <!-- Default dialer prompt -->
@@ -232,7 +232,7 @@
     <!-- Settings > root -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_support_rivo_title">Rivo unterstützen</string>
-    <string name="settings_support_rivo_description">Helfen Sie uns, damit Rivo kostenlos und Open Source bleibt</string>
+    <string name="settings_support_rivo_description">Helfen Sie uns, damit Rivo kostenlos und quelloffen bleibt</string>
     <string name="settings_donate">Spenden</string>
     <string name="settings_interface_headline">Benutzeroberfläche</string>
     <string name="settings_interface_supporting">Designthema, Farben und Bedienung</string>
@@ -319,7 +319,7 @@
     <string name="settings_sound_vibrate_on_answer">Vibration bei Anrufannahme</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Vibration bei Abnahme des Angerufenen</string>
     <string name="settings_sound_vibrate_on_hangup">Vibration beim Beenden des Anrufs</string>
-    <string name="settings_sound_vibrate_on_hangup_supporting">Vibration bei Ende des Anrufs</string>
+    <string name="settings_sound_vibrate_on_hangup_supporting">Vibration bei Anrufende</string>
     <string name="settings_sound_haptic_scroll">Haptisches Feedback beim Scrollen</string>
     <string name="settings_sound_haptic_scroll_supporting">Leichte Vibration beim Scrollen</string>
     <string name="settings_sound_missed_call_notifications">Benachrichtigung über verpasste Anrufe</string>
@@ -339,7 +339,7 @@
     <string name="settings_call_speed_dial">Schnellwahl</string>
     <string name="settings_call_enabled">Aktiviert</string>
     <string name="settings_call_disabled">Deaktiviert</string>
-    <string name="settings_call_default_sim">Standard SIM</string>
+    <string name="settings_call_default_sim">Standard-SIM</string>
     <string name="settings_call_calling_accounts">Anruf-Konten</string>
     <string name="settings_call_calling_accounts_supporting">Netzbetreiber-Einstellungen (Anklopfen, Weiterleitung etc.)</string>
     <string name="settings_call_t9_dialing">T9-Wählen</string>
@@ -347,10 +347,10 @@
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Bildschirm bei Anrufen abschalten, wenn Gerät nahe Ohr</string>
     <string name="settings_call_incoming_ui">Bildschirm bei eingehendem Anruf</string>
-    <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeform bei Anrufen</string>
+    <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
     <string name="settings_call_incoming_ui_buttons">Schaltflächen</string>
-    <string name="settings_call_incoming_ui_slide_ios">Wischen zur Annahme (iOS)</string>
+    <string name="settings_call_incoming_ui_slide_ios">Streichen zur Annahme (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertikales Wischen</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
     <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Telefonwahl</string>
@@ -393,7 +393,7 @@
     <string name="settings_blocked_notifications_supporting">Eine niedrig-priorisierte Nachricht für blockierte Anrufe anzeigen</string>
     <string name="settings_blocked_system_button">Systemweit blockierte Nummern</string>
     <!-- Settings > Backup & Restore -->
-    <string name="settings_backup_title">Sicherung &amp; Wiederherstellung</string>
+    <string name="settings_backup_title">Sichern &amp; Wiederherstellen</string>
     <string name="settings_backup_contacts_header">Kontakte</string>
     <string name="settings_backup_export_contacts">Kontakte exportieren</string>
     <string name="settings_backup_export_contacts_supporting">Kontakte in eine VCF-Datei speichern</string>
@@ -479,7 +479,7 @@
     <string name="about_discord">Discord Server</string>
     <string name="about_discord_supporting">Treten Sie der Community bei</string>
     <string name="about_source_code">Quellcode</string>
-    <string name="about_source_code_supporting">Den Source Code bei Github ansehen</string>
+    <string name="about_source_code_supporting">Den Quellcode bei Github ansehen</string>
     <string name="about_check_updates">Auf Updates überprüfen</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
@@ -588,7 +588,7 @@
     <string name="callin_waiting_actions">Anklopfen-Optionen</string>
     <string name="callkp_digit_desc">Wählen %1$s</string>
     <string name="callkp_entered_desc">Ziffern eingegeben: %1$s</string>
-    <string name="callkp_entered_empty">Keine Ziffer eingegeben</string>
+    <string name="callkp_entered_empty">Keine Ziffern eingegeben</string>
     <!-- IMEI / Secret codes -->
     <string name="imei_dialog_title">Geräte Info (IMEI)</string>
     <string name="imei_label">IMEI %1$d</string>

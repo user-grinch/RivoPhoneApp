@@ -1,20 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_cancel">取消</string>
+    <string name="action_confirm">确认</string>
+    <string name="action_delete">删除</string>
+    <string name="action_save">保存</string>
+    <string name="action_close">关闭</string>
+    <string name="action_back">返回</string>
+    <string name="action_edit">编辑</string>
+    <string name="action_done">完成</string>
+    <string name="action_clear">清除</string>
+    <string name="action_clear_selection">清除所选</string>
+    <string name="action_call">呼叫</string>
+    <string name="action_message">信息</string>
+    <string name="action_add_contact">添加联系人</string>
+    <string name="action_grant_permission">授予权限</string>
+    <string name="action_grant_permission_lower">授予权限</string>
+    <string name="action_answer">接听</string>
+    <string name="action_decline">拒绝</string>
+    <string name="action_end">结束</string>
+    <string name="action_mute">静音</string>
+    <string name="action_keypad">键盘</string>
+    <string name="action_add_call">添加通话</string>
+    <string name="action_hold">挂起</string>
+    <string name="action_resume">恢复</string>
+    <string name="action_end_call">结束通话</string>
+    <string name="content_desc_selected_item">已选中</string>
+    <string name="select_number_title">选择数字</string>
+    <string name="select_email_title">选择邮件</string>
+    <string name="content_desc_remove_favorite">移除收藏</string>
+    <string name="content_desc_select_option">选择选项</string>
+    <string name="content_desc_scroll_to_top">滚动至顶部</string>
+    <string name="sim_picker_title">选择 SIM 卡</string>
+    <string name="sim_picker_unknown_sim">未知SIM 卡</string>
+    <string name="selection_count_selected">已选中 %1$d 项</string>
+    <string name="label_unknown">未知</string>
+    <string name="label_unknown_number">未知号码</string>
+    <string name="label_mobile">手机</string>
+    <string name="label_email">电子邮件</string>
+    <string name="label_address">地址</string>
+    <string name="label_notes">备注</string>
+    <string name="label_social_apps">社交网络</string>
+    <string name="label_local_memory">本机存储</string>
+    <string name="ringtone_default">默认</string>
+    <string name="ringtone_custom">自定义</string>
+    <string name="empty_state_try_clearing_filters">尝试清除筛选或添加一个新的联系人。</string>
+    <string name="date_today">今天</string>
+    <string name="date_yesterday">昨天</string>
+    <string name="nav_contacts">联系人</string>
+    <string name="nav_recents">最近通话</string>
+    <string name="call_type_incoming">来电</string>
+    <string name="call_type_outgoing">拨出</string>
+    <string name="call_type_missed">未接</string>
+    <string name="filter_all">全部</string>
+    <string name="sim_ask_every_time">每次询问</string>
+    <string name="sim_slot_1">SIM 卡 1</string>
+    <string name="sim_slot_2">SIM 卡 2</string>
     <!-- Onboarding -->
+    <string name="onboarding_get_started">快速上手</string>
+    <string name="onboarding_page1_title">富有表现力的设计</string>
+    <string name="onboarding_page1_description">体验来自 Material 3 和 Jetpack Compose 丝滑动画提供的现代界面。</string>
+    <string name="onboarding_page2_title">闪电般快速拨号</string>
+    <string name="onboarding_page2_description">通过我们智能的 T9 搜索和有序的通话记录，瞬间找到联系人。</string>
+    <string name="onboarding_page3_title">为你打造</string>
+    <string name="onboarding_page3_description">一款完全开源、具备邻近感知能力的通话体验，专为高效而设计。</string>
     <!-- Permission Popup -->
+    <string name="permission_popup_title">需要权限</string>
+    <string name="permission_popup_body">为确保所有功能在您的设备上正常工作，请授予必要的权限。 某些制造商，如小米或OPPO，可能需要在系统设置中进行额外的手动配置。</string>
+    <string name="permission_popup_grant">授予权限</string>
+    <string name="permission_popup_settings">打开设置</string>
     <!-- Patreon support prompt (MainActivity) -->
+    <string name="patreon_prompt_title">支持 Rivo</string>
+    <string name="patreon_prompt_confirm">支持我们</string>
+    <string name="patreon_prompt_dismiss">稍后再说</string>
+    <string name="patreon_prompt_body">Rivo是免费和开源的。如果你喜欢这个应用，请考虑支持它在Patreon上的开发！</string>
     <!-- Disable ads warning dialog -->
+    <string name="ads_disable_dialog_title">支持开源开发</string>
+    <string name="ads_disable_dialog_body">显示广告有助于保持Rivo的自由和开放源码。 没有广告收入或社区捐款，正在进行的维护、错误修复和开发可能会死亡。您确定要禁用广告吗？</string>
+    <string name="ads_disable_dialog_confirm">关闭广告</string>
+    <string name="ads_disable_dialog_keep">保持广告启用</string>
     <!-- Default dialer prompt -->
+    <string name="default_dialer_headline">将 Rivo 设为您的官方拨号器</string>
+    <string name="default_dialer_description">若要拨打电话、接听来电、管理通话记录并体验垃圾电话防护功能，需将 Rivo 设置为您的默认电话应用。</string>
+    <string name="default_dialer_denied_message">如果没有此权限，Rivo无法正常工作。请重试。</string>
+    <string name="default_dialer_set_as_default">设为默认</string>
     <!-- Top bar / bottom navigation -->
+    <string name="top_bar_search_placeholder">在 Rivo 搜索</string>
+    <string name="content_desc_search">搜索</string>
     <!-- Recents / Call log -->
+    <string name="call_history_title">通话记录</string>
+    <string name="call_log_delete_confirm">您确定要删除 %1$d 个选定的通话记录吗？</string>
+    <string name="call_log_delete_title">删除通话记录</string>
+    <string name="call_log_clear_all_title">清除所有记录</string>
+    <string name="call_log_clear_all_confirm">全部清空</string>
+    <string name="call_log_clear_all_message">这将删除您的整个通话记录。此操作无法撤消。</string>
+    <string name="content_desc_clear_all_logs">清除所有记录</string>
+    <string name="content_desc_delete_selected">删除所选</string>
+    <string name="recents_permission_title">通话记录</string>
+    <string name="recents_permission_description">Rivo 需要访问您的通话记录以显示您最近的活动和未接来电。</string>
+    <string name="recents_favorites">收藏夹</string>
+    <string name="recents_empty_call_log">您的通话记录为空</string>
+    <string name="content_desc_dialpad">拨号盘</string>
     <!-- Contacts list -->
+    <string name="contact_filter_private">私有的</string>
+    <string name="contact_move_to_storage">移动到存储</string>
+    <string name="contact_move_private_storage_title">私有存储</string>
+    <string name="contact_move_private_storage_supporting">仅限应用程序存储</string>
+    <string name="contact_move_local_memory_supporting">仅设备</string>
+    <string name="content_desc_move">移动</string>
+    <string name="contacts_empty_title">未找到联系人</string>
+    <string name="contacts_permission_rationale">若要显示您的联系人列表并识别来电，Rivo需要权限才能访问您的联系人。</string>
     <!-- Contact details -->
+    <string name="contact_details_qr_title">二维码名片</string>
+    <string name="contact_details_qr_content_desc">二维码</string>
+    <string name="contact_details_call">呼叫</string>
+    <string name="contact_details_video">视频通话</string>
+    <string name="contact_details_info_title">联系人信息</string>
+    <string name="contact_bullet_favorite">" • 收藏"</string>
+    <string name="contact_bullet_recent">" • 最近通话"</string>
+    <string name="content_desc_favorite">收藏</string>
+    <string name="contact_clear_favorite">清除收藏</string>
+    <string name="contact_set_as_favorite">设为收藏</string>
+    <string name="contact_copy_to_clipboard">复制到剪贴板</string>
+    <string name="contact_clear_default">清除默认值</string>
+    <string name="contact_set_as_default">设置为默认</string>
+    <string name="contact_add_to_contacts">添加到联系人</string>
+    <string name="contact_event_birthday">生日</string>
+    <string name="contact_event_generic">事件</string>
+    <string name="contact_recent_activity_title">近期活动</string>
+    <string name="contact_show_full_history">显示完整历史</string>
+    <string name="contact_settings_title">联系人设置</string>
+    <string name="contact_custom_ringtone">自定义铃声</string>
+    <string name="contact_select_ringtone">选择铃声</string>
+    <string name="contact_share">分享联系人</string>
+    <string name="contact_share_description">向其他人发送联系信息</string>
+    <string name="contact_share_text">名称: %1$s\n电话: %2$s</string>
+    <string name="contact_qr_code">二维码</string>
+    <string name="contact_qr_code_description">显示二维码名片</string>
+    <string name="contact_move_to_public_storage">移动到公共存储</string>
+    <string name="contact_move_to_private_storage">移动到私有存储</string>
+    <string name="contact_visible_to_other_apps">让其他应用可见</string>
+    <string name="contact_hidden_from_other_apps">从其他应用隐藏</string>
+    <string name="contact_remove_from_device">从设备中删除此联系人</string>
+    <string name="contact_delete_dialog_title">删除联系人</string>
+    <string name="contact_delete_dialog_message">您确定要删除此联系人吗？此操作无法撤销。</string>
     <!-- Contact edit -->
+    <string name="contact_create_title">新建联系人</string>
+    <string name="contact_edit_title">编辑联系人</string>
+    <string name="contact_edit_account_header">账户</string>
+    <string name="contact_edit_save_to_account">保存到账户</string>
+    <string name="contact_edit_private_storage">私有存储 (仅应用)</string>
+    <string name="contact_edit_select_account_title">选择账户</string>
+    <string name="contact_edit_private_storage_description">其他应用不可见</string>
+    <string name="contact_edit_full_name">全名</string>
+    <string name="contact_edit_first_name">名</string>
+    <string name="contact_edit_last_name">姓</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
+    <string name="audio_route_bluetooth_short">蓝牙</string>
+    <string name="audio_output_title">音频输出</string>
+    <string name="swipe_up_to_answer">向上滑动来接听</string>
+    <string name="swipe_down_to_reject">向下滑动以拒接</string>
+    <string name="slide_to_answer">滑动以应答</string>
     <!-- Call notifications (CallService) -->
+    <string name="notif_channel_calls">通话</string>
+    <string name="notif_channel_missed_calls">未接来电</string>
+    <string name="notif_blocked_call_title">屏蔽的来电</string>
+    <string name="notif_blocked_call_text">来自 %1$s 的屏蔽来电</string>
+    <string name="notif_missed_call_title">未接来电</string>
+    <string name="notif_missed_call_text">%1$s 的 %2$s 未接来电</string>
+    <string name="notif_via_sim">通过 %1$s</string>
+    <string name="notif_active_call">通话中</string>
     <!-- Backup & restore (status messages) -->
     <!-- Settings > root -->
     <!-- Settings > Interface -->
