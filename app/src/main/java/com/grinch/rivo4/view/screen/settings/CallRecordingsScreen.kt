@@ -32,11 +32,22 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
 fun CallRecordingsScreen(
     navigator: DestinationsNavigator
+) {
+    CallRecordingsContent(
+        showTopBar = true,
+        onBack = { navigator.navigateUp() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CallRecordingsContent(
+    showTopBar: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
@@ -50,15 +61,20 @@ fun CallRecordingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.call_recordings_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+            if (showTopBar) {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.call_recordings_title), fontWeight = FontWeight.Bold) },
+                    navigationIcon = {
+                        if (onBack != null) {
+                            IconButton(onClick = onBack) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                            }
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         if (recordings.isEmpty()) {
             Column(
@@ -89,7 +105,7 @@ fun CallRecordingsScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(bottom = 100.dp, start = 16.dp, end = 16.dp, top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(recordings, key = { it.absolutePath }) { file ->

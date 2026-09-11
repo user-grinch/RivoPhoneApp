@@ -115,26 +115,19 @@ fun CallAccountsScreen(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            ScrollToTopButton(
-                visible = showButton,
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                    }
-                }
-            )
         }
     ) { padding ->
-        LazyColumn(
-            state = listState,
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(padding)
         ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 80.dp, start = 16.dp, end = 16.dp, top = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
             item {
                 val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)
                 RivoExpressiveCard {
@@ -438,7 +431,17 @@ fun CallAccountsScreen(
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
+
+        ScrollToTopButton(
+            visible = showButton,
+            onClick = {
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                }
+            }
+        )
     }
+}
 
     if (showCallWaitingDialog) {
         val callWaitingOptions = listOf(

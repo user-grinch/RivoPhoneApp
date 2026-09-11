@@ -35,7 +35,10 @@
     <string name="content_desc_scroll_to_top">Scroll to top</string>
     <string name="sim_picker_title">Select SIM Card</string>
     <string name="sim_picker_unknown_sim">Unknown SIM</string>
-    <string name="selection_count_selected">%1$d Selected</string>
+    <plurals name="selection_count_selected">
+        <item quantity="one">%1$d Selected</item>
+        <item quantity="other">%1$d Selected</item>
+    </plurals>
     <string name="label_unknown">Unknown</string>
     <string name="label_unknown_number">Unknown Number</string>
     <string name="label_mobile">Mobile</string>
@@ -52,6 +55,7 @@
     <string name="date_yesterday">Yesterday</string>
     <string name="nav_contacts">Contacts</string>
     <string name="nav_recents">Recents</string>
+    <string name="nav_call_recordings">Recordings</string>
     <string name="call_type_incoming">Incoming</string>
     <string name="call_type_outgoing">Outgoing</string>
     <string name="call_type_missed">Missed</string>
@@ -111,7 +115,10 @@
     <string name="call_history_with_contact">History with %1$s</string>
     <string name="call_log_no_history_found">No call history found</string>
     <string name="call_log_no_filter_match">No calls match this filter</string>
-    <string name="call_log_delete_confirm">Are you sure you want to delete %1$d selected call logs?</string>
+    <plurals name="call_log_delete_confirm">
+        <item quantity="one">Are you sure you want to delete %1$d selected call log?</item>
+        <item quantity="other">Are you sure you want to delete %1$d selected call logs?</item>
+    </plurals>
     <string name="call_log_delete_title">Delete Call Logs</string>
     <string name="call_log_clear_all_title">Clear All Logs</string>
     <string name="call_log_clear_all_confirm">Clear All</string>
@@ -560,10 +567,17 @@
     <string name="contact_unblock">Unblock contact</string>
     <string name="contact_unblock_supporting">Allow calls from this contact again</string>
     <string name="call_log_block_title">Block numbers?</string>
-    <string name="call_log_block_message">Calls from the %1$d selected entries will be blocked.</string>
+    <plurals name="call_log_block_message">
+        <item quantity="one">Calls from the %1$d selected entry will be blocked.</item>
+        <item quantity="other">Calls from the %1$d selected entries will be blocked.</item>
+    </plurals>
 
     <!-- Contact call screen background -->
     <string name="contact_call_background">Call screen background</string>
+    <string name="settings_interface_hide_avatar_with_bg">Hide profile picture when background is available</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Hide caller avatar on call screen when a call background image is active</string>
+    <string name="settings_interface_use_cards">Use expressive cards</string>
+    <string name="settings_interface_use_cards_supporting">Group items into expressive cards in recents and contact lists</string>
     <string name="contact_call_background_set">Custom image selected</string>
     <string name="contact_call_background_none">Use the default background</string>
     <string name="contact_call_background_choose">Choose an image</string>

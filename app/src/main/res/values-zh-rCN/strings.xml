@@ -49,6 +49,7 @@
     <string name="date_yesterday">昨天</string>
     <string name="nav_contacts">联系人</string>
     <string name="nav_recents">最近通话</string>
+    <string name="nav_call_recordings">录音</string>
     <string name="call_type_incoming">来电</string>
     <string name="call_type_outgoing">拨出</string>
     <string name="call_type_missed">未接</string>
@@ -190,6 +191,10 @@
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
+    <string name="settings_interface_hide_avatar_with_bg">有背景时隐藏头像</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">当通话背景有效时，在通话界面隐藏联系人头像</string>
+    <string name="settings_interface_use_cards">使用表现力卡片</string>
+    <string name="settings_interface_use_cards_supporting">在通话记录和联系人列表中将项目组合为卡片</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Video calling app picker -->

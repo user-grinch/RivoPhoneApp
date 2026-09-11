@@ -3,9 +3,11 @@ package com.grinch.rivo4.view.components
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.MicNone
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
@@ -27,6 +29,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.ramcosta.composedestinations.generated.destinations.CallRecordingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.FavoritesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
@@ -45,24 +48,28 @@ data class NavigationTab(
 fun navigationTabLabel(tabId: Int): String = when (tabId) {
     PreferenceManager.TAB_FAVORITES -> stringResource(R.string.nav_favorites)
     PreferenceManager.TAB_CONTACTS -> stringResource(R.string.nav_contacts)
+    PreferenceManager.TAB_RECORDINGS -> stringResource(R.string.nav_call_recordings)
     else -> stringResource(R.string.nav_recents)
 }
 
 fun navigationTabIcon(tabId: Int): ImageVector = when (tabId) {
     PreferenceManager.TAB_FAVORITES -> Icons.Filled.Star
     PreferenceManager.TAB_CONTACTS -> Icons.Filled.Person
+    PreferenceManager.TAB_RECORDINGS -> Icons.Filled.Mic
     else -> Icons.Filled.History
 }
 
 fun navigationTabRoute(tabId: Int): String = when (tabId) {
     PreferenceManager.TAB_FAVORITES -> FavoritesScreenDestination.route
     PreferenceManager.TAB_CONTACTS -> ContactScreenDestination.route
+    PreferenceManager.TAB_RECORDINGS -> CallRecordingsScreenDestination.route
     else -> RecentScreenDestination.route
 }
 
 private fun navigationTabUnselectedIcon(tabId: Int): ImageVector = when (tabId) {
     PreferenceManager.TAB_FAVORITES -> Icons.Outlined.Star
     PreferenceManager.TAB_CONTACTS -> Icons.Outlined.Person
+    PreferenceManager.TAB_RECORDINGS -> Icons.Outlined.MicNone
     else -> Icons.Outlined.History
 }
 

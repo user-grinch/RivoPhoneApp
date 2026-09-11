@@ -45,6 +45,30 @@ class ContactsRepository(
             }
         }
 
+        val accountMap = mutableMapOf<String, Pair<String?, String?>>()
+        try {
+            contentResolver.query(
+                ContactsContract.RawContacts.CONTENT_URI,
+                arrayOf(ContactsContract.RawContacts.CONTACT_ID, ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE),
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                val idCol = cursor.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID)
+                val nameCol = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                val typeCol = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                while (cursor.moveToNext()) {
+                    val contactId = if (idCol != -1) cursor.getString(idCol) else null
+                    val name = if (nameCol != -1) cursor.getString(nameCol) else null
+                    val type = if (typeCol != -1) cursor.getString(typeCol) else null
+                    if (!contactId.isNullOrBlank()) {
+                        accountMap[contactId] = Pair(name, type)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+        }
+
         val projection = arrayOf(
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY,
@@ -79,12 +103,15 @@ class ContactsRepository(
                             contactsMap[id] = existingContact.copy(phoneNumbers = numbers)
                         }
                     } else {
+                        val accInfo = accountMap[id]
                         contactsMap[id] = Contact(
                             id = id,
                             name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
-                            phoneNumbers = mutableListOf(number)
+                            phoneNumbers = mutableListOf(number),
+                            accountName = accInfo?.first,
+                            accountType = accInfo?.second
                         )
                     }
                 }
@@ -872,28 +899,34 @@ class ContactsRepository(
         val byName = allContacts.groupBy { it.name.lowercase().trim() }
             .filter { it.value.size > 1 }
 
-        val byNumber = mutableMapOf<String, MutableSet<Contact>>()
+        byName.values.forEach { group ->
+            duplicates.add(group)
+        }
+
+        val numberGroups = mutableListOf<MutableSet<Contact>>()
         allContacts.forEach { contact ->
-            contact.phoneNumbers.forEach { number ->
-                val normalized = number.replace(Regex("[^0-9+]"), "")
-                if (normalized.length >= 7) {
-                    byNumber.getOrPut(normalized) { mutableSetOf() }.add(contact)
+            contact.phoneNumbers.forEach { num ->
+                if (num.isNotBlank()) {
+                    var foundGroup = numberGroups.find { group ->
+                        group.any { existing ->
+                            existing.phoneNumbers.any { existingNum -> areNumbersEqual(existingNum, num) }
+                        }
+                    }
+                    if (foundGroup == null) {
+                        foundGroup = mutableSetOf()
+                        numberGroups.add(foundGroup)
+                    }
+                    foundGroup.add(contact)
                 }
             }
         }
-        val byNumberFiltered = byNumber.filter { it.value.size > 1 }
 
-        val processedIds = mutableSetOf<String>()
-
-        byName.values.forEach { group ->
-            duplicates.add(group)
-            processedIds.addAll(group.map { it.id })
-        }
-
-        byNumberFiltered.values.forEach { group ->
-            val uniqueGroup = group.filter { it.id !in processedIds }
-            if (uniqueGroup.size > 1) {
-                duplicates.add(uniqueGroup)
+        numberGroups.forEach { group ->
+            if (group.size > 1) {
+                val groupList = group.toList()
+                if (duplicates.none { d -> d.map { it.id }.toSet() == groupList.map { it.id }.toSet() }) {
+                    duplicates.add(groupList)
+                }
             }
         }
 
@@ -902,6 +935,7 @@ class ContactsRepository(
 
     override fun mergeContacts(targetContactId: String, sourceContactIds: List<String>) {
         val targetContact = getContactById(targetContactId) ?: return
+        val targetRawId = getRawContactId(targetContactId)
         val ops = ArrayList<ContentProviderOperation>()
 
         sourceContactIds.forEach { sourceId ->
@@ -909,24 +943,26 @@ class ContactsRepository(
             val sourceContact = getContactById(sourceId) ?: return@forEach
 
             sourceContact.phoneNumbers.forEach { number ->
-                if (!targetContact.phoneNumbers.contains(number)) {
-                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, getRawContactId(targetContactId))
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
-                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
-                        .build())
+                if (targetContact.phoneNumbers.none { areNumbersEqual(it, number) }) {
+                    if (targetRawId != null) {
+                        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, targetRawId)
+                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                            .build())
+                    }
                 }
             }
 
-            CallBackgroundStore.clearBlocking(context, sourceId, emptyList())
-
-            ops.add(ContentProviderOperation.newDelete(Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, sourceId))
-                .build())
+            CallBackgroundStore.clearBlocking(context, sourceId, sourceContact.phoneNumbers)
+            deleteContactInternal(sourceId, false)
         }
 
         try {
-            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+            if (ops.isNotEmpty()) {
+                contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

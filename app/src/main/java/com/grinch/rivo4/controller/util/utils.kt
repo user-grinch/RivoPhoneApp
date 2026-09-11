@@ -154,11 +154,6 @@ fun getSystemVoicemailNumber(context: Context): String? {
 }
 
 fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle? = null, contactId: String? = null) {
-    if (isAirplaneModeOn(context)) {
-        android.widget.Toast.makeText(context, context.getString(R.string.call_failed_airplane_mode), android.widget.Toast.LENGTH_LONG).show()
-        return
-    }
-
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
     
     val uri = if (number.startsWith("voicemail:")) {

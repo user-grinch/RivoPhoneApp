@@ -74,7 +74,10 @@ class CallActivity : ComponentActivity() {
         if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
             CallService.currentCallSession.value == null
         ) {
-            finish()
+            setShowWhenLocked(false)
+            setTurnScreenOn(false)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            finishAndRemoveTask()
             return
         }
 

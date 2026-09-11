@@ -7,8 +7,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.outlined.Badge
+import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -17,8 +20,10 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoSwitchListItem
+import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -33,6 +38,8 @@ fun ContactVisibilityScreen(
     val viewModel: ContactsViewModel = koinActivityViewModel()
     val accounts by viewModel.availableAccounts.collectAsState()
     val visibleAccounts by viewModel.visibleAccountsFlow.collectAsState()
+    val sortOrderState by viewModel.sortOrder.collectAsState()
+    val displayOrderState by viewModel.displayOrder.collectAsState()
 
     val currentVisible = remember(visibleAccounts, accounts) {
         visibleAccounts ?: (accounts.map { "${it.type}|${it.name}" } + "local|local").toSet()
@@ -69,6 +76,54 @@ fun ContactVisibilityScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
+            }
+
+            item {
+                RivoExpressiveCard(
+                    title = stringResource(R.string.settings_manage_display_sorting)
+                ) {
+                    RivoVisualOptionSelectorRow(
+                        headline = stringResource(R.string.settings_manage_sort_by),
+                        supporting = stringResource(R.string.settings_manage_sort_by_supporting),
+                        leadingIcon = Icons.Outlined.SortByAlpha,
+                        options = listOf(
+                            stringResource(R.string.settings_manage_sort_first_name) to 0,
+                            stringResource(R.string.settings_manage_sort_last_name) to 1
+                        ),
+                        selectedValue = sortOrderState,
+                        onValueChange = {
+                            viewModel.setSortOrder(it)
+                        }
+                    ) { _, selected ->
+                        Icon(
+                            imageVector = Icons.Outlined.SortByAlpha,
+                            contentDescription = null,
+                            modifier = Modifier.size(28.dp),
+                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoVisualOptionSelectorRow(
+                        headline = stringResource(R.string.settings_manage_name_format),
+                        supporting = stringResource(R.string.settings_manage_name_format_supporting),
+                        leadingIcon = Icons.Outlined.Badge,
+                        options = listOf(
+                            stringResource(R.string.settings_manage_name_format_first_first) to 0,
+                            stringResource(R.string.settings_manage_name_format_last_first) to 1
+                        ),
+                        selectedValue = displayOrderState,
+                        onValueChange = {
+                            viewModel.setDisplayOrder(it)
+                        }
+                    ) { _, selected ->
+                        Icon(
+                            imageVector = Icons.Outlined.Badge,
+                            contentDescription = null,
+                            modifier = Modifier.size(28.dp),
+                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
 
             item {

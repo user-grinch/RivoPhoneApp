@@ -51,6 +51,7 @@
     <string name="date_yesterday">Hier</string>
     <string name="nav_contacts">Contacts</string>
     <string name="nav_recents">Récents</string>
+    <string name="nav_call_recordings">Enregistrements</string>
     <string name="call_type_incoming">Entrant</string>
     <string name="call_type_outgoing">Sortant</string>
     <string name="call_type_missed">Manqué</string>
@@ -480,6 +481,10 @@
     <string name="video_call_chooser_with">Appel vidéo avec</string>
     <string name="video_call_system">Appel vidéo du système</string>
     <!-- Call screen background and active controls -->
+    <string name="settings_interface_hide_avatar_with_bg">Masquer la photo si un arrière-plan est disponible</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Masquer la photo sur l’écran d’appel lorsqu’un arrière-plan d’appel est actif</string>
+    <string name="settings_interface_use_cards">Utiliser des cartes expressives</string>
+    <string name="settings_interface_use_cards_supporting">Regrouper les éléments sous forme de cartes dans les listes</string>
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
 </resources>

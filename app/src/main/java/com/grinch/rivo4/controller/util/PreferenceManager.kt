@@ -283,6 +283,7 @@ class PreferenceManager(context: Context) {
         const val KEY_INCOMING_CALL_UI_MODE = "incoming_call_ui_mode"
         const val KEY_SHOW_CARDS = "show_cards"
         const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
+        const val KEY_HIDE_AVATAR_WITH_BACKGROUND = "hide_avatar_with_background"
         const val KEY_CARD_ROUNDNESS = "card_roundness"
         const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
         const val KEY_PERMISSION_POPUP_SHOWN = "permission_popup_shown"
@@ -304,7 +305,8 @@ class PreferenceManager(context: Context) {
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
         const val TAB_CONTACTS = 2
+        const val TAB_RECORDINGS = 3
 
-        val DEFAULT_BOTTOM_NAV_ORDER = listOf(TAB_RECENTS, TAB_CONTACTS, TAB_FAVORITES)
+        val DEFAULT_BOTTOM_NAV_ORDER = listOf(TAB_RECENTS, TAB_CONTACTS, TAB_FAVORITES, TAB_RECORDINGS)
     }
 }

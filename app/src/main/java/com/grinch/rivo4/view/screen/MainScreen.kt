@@ -138,6 +138,9 @@ fun MainScreen(
                             contactsActionBar = actionBar
                         }
                     )
+                    PreferenceManager.TAB_RECORDINGS -> com.grinch.rivo4.view.screen.settings.CallRecordingsContent(
+                        showTopBar = false
+                    )
                 }
             }
         }

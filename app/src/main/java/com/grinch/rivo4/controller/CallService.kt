@@ -574,6 +574,10 @@ class CallService : InCallService() {
             }
         }
 
+        val connectTime = callStartTimes[call]
+            ?: call.details.connectTimeMillis.takeIf { it > 0 }
+            ?: System.currentTimeMillis()
+
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(if (call.state == Call.STATE_RINGING) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
             .setContentTitle(contactName)
@@ -594,6 +598,11 @@ class CallService : InCallService() {
                     NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
                 }
             )
+
+        if (call.state == Call.STATE_ACTIVE) {
+            builder.setWhen(connectTime)
+            builder.setUsesChronometer(true)
+        }
 
         if (call.state == Call.STATE_RINGING) {
             builder.setFullScreenIntent(fullScreenPendingIntent, true)

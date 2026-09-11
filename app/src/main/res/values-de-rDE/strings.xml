@@ -51,6 +51,7 @@
     <string name="date_yesterday">Gestern</string>
     <string name="nav_contacts">Kontakte</string>
     <string name="nav_recents">Zuletzt</string>
+    <string name="nav_call_recordings">Aufnahmen</string>
     <string name="call_type_incoming">Eingehend</string>
     <string name="call_type_outgoing">Ausgehend</string>
     <string name="call_type_missed">Verpasst</string>
@@ -530,6 +531,10 @@
     <string name="call_log_block_message">Anrufe der %1$d ausgewählten Einträge werden blockiert.</string>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Hintergrund des Anrufbildschirms</string>
+    <string name="settings_interface_hide_avatar_with_bg">Profilbild ausblenden, wenn Hintergrund verfügbar ist</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Anruferfoto ausblenden, wenn ein Anrufhintergrund aktiv ist</string>
+    <string name="settings_interface_use_cards">Expressive-Karten verwenden</string>
+    <string name="settings_interface_use_cards_supporting">Elemente in Anruf- und Kontaktlisten in Karten gruppieren</string>
     <string name="contact_call_background_set">Ausgewähltes individuelles Bild</string>
     <string name="contact_call_background_none">Standard-Hintergrund verwenden</string>
     <string name="contact_call_background_choose">Bild auswählen</string>

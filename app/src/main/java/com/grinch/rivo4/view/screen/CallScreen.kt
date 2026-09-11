@@ -85,7 +85,14 @@ private fun audioRouteLabel(audioRoute: Int, audioState: CallAudioState?): Strin
     val bluetoothShortLabel = stringResource(R.string.audio_route_bluetooth_short)
     return when (audioRoute) {
         CallAudioState.ROUTE_SPEAKER -> stringResource(R.string.audio_route_speaker)
-        CallAudioState.ROUTE_BLUETOOTH -> try { audioState?.activeBluetoothDevice?.name ?: bluetoothShortLabel } catch (e: Exception) { bluetoothShortLabel }
+        CallAudioState.ROUTE_BLUETOOTH -> try {
+            @Suppress("MissingPermission")
+            audioState?.activeBluetoothDevice?.name ?: bluetoothShortLabel
+        } catch (e: SecurityException) {
+            bluetoothShortLabel
+        } catch (e: Exception) {
+            bluetoothShortLabel
+        }
         CallAudioState.ROUTE_WIRED_HEADSET -> stringResource(R.string.audio_route_headset)
         else -> stringResource(R.string.audio_route_handset)
     }
@@ -152,6 +159,11 @@ fun ExpressiveCallScreen(
     val showCallScreenAvatar = remember(settingsState) {
         preferenceManager.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)
     }
+    val hideAvatarWithBg = remember(settingsState) {
+        preferenceManager.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false)
+    }
+    val hasBackground = !backgroundUri.isNullOrEmpty()
+    val shouldShowAvatar = showCallScreenAvatar && !(hideAvatarWithBg && hasBackground)
     
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -324,7 +336,7 @@ fun ExpressiveCallScreen(
         ) {
             if (!showKeypad) {
                 AnimatedVisibility(
-                    visible = showCallScreenAvatar,
+                    visible = shouldShowAvatar,
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {

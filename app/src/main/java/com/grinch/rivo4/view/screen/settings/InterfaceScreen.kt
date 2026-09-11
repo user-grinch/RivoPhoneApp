@@ -72,6 +72,8 @@ fun InterfaceScreen(
     var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
     var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
     var showCallScreenAvatar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)) }
+    var hideAvatarWithBg by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false)) }
+    var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
     var cardRoundness by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28)) }
 
     val presetColors = listOf(
@@ -215,11 +217,33 @@ fun InterfaceScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, it)
                             }
                         )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_hide_avatar_with_bg),
+                            supporting = stringResource(R.string.settings_interface_hide_avatar_with_bg_supporting),
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            checked = hideAvatarWithBg,
+                            onCheckedChange = {
+                                hideAvatarWithBg = it
+                                prefs.setBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, it)
+                            }
+                        )
                     }
                 }
 
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_shape_motion)) {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_use_cards),
+                            supporting = stringResource(R.string.settings_interface_use_cards_supporting),
+                            leadingIcon = Icons.Outlined.ViewAgenda,
+                            checked = showCards,
+                            onCheckedChange = {
+                                showCards = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_CARDS, it)
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoInteractiveRoundnessSlider(
                             headline = stringResource(R.string.settings_interface_card_roundness),
                             supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
