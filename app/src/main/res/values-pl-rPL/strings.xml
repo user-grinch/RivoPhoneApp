@@ -34,7 +34,6 @@
     <string name="content_desc_scroll_to_top">Przewiń na górę</string>
     <string name="sim_picker_title">Wybierz kartę SIM</string>
     <string name="sim_picker_unknown_sim">Nieznana karta SIM</string>
-    <string name="selection_count_selected">Zaznaczono: %1$d</string>
     <string name="label_unknown">Nieznany</string>
     <string name="label_unknown_number">Nieznany numer</string>
     <string name="label_mobile">Komórkowy</string>
@@ -51,7 +50,6 @@
     <string name="date_yesterday">Wczoraj</string>
     <string name="nav_contacts">Kontakty</string>
     <string name="nav_recents">Ostatnie</string>
-    <string name="nav_call_recordings">Nagrania</string>
     <string name="call_type_incoming">Przychodzące</string>
     <string name="call_type_outgoing">Wychodzące</string>
     <string name="call_type_missed">Nieodebrane</string>
@@ -104,7 +102,6 @@
     <string name="call_history_with_contact">Historia z: %1$s</string>
     <string name="call_log_no_history_found">Nie znaleziono historii połączeń</string>
     <string name="call_log_no_filter_match">Brak połączeń pasujących do tego filtra</string>
-    <string name="call_log_delete_confirm">Czy na pewno chcesz usunąć %1$d zaznaczone wpisy z rejestru połączeń?</string>
     <string name="call_log_delete_title">Usuń rejestr połączeń</string>
     <string name="call_log_clear_all_title">Wyczyść cały rejestr</string>
     <string name="call_log_clear_all_confirm">Wyczyść wszystko</string>
@@ -528,13 +525,8 @@
     <string name="contact_unblock">Odblokuj kontakt</string>
     <string name="contact_unblock_supporting">Zezwalaj ponownie na połączenia z tego kontaktu</string>
     <string name="call_log_block_title">Zablokować numery?</string>
-    <string name="call_log_block_message">Połączenia z %1$d zaznaczonych wpisów zostaną zablokowane.</string>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Tło ekranu połączenia</string>
-    <string name="settings_interface_hide_avatar_with_bg">Ukryj zdjęcie profilowe, gdy dostępne jest tło</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Ukrywaj zdjęcie rozmówcy na ekranie połączenia, gdy aktywne jest tło połączenia</string>
-    <string name="settings_interface_use_cards">Używaj ekspresyjnych kart</string>
-    <string name="settings_interface_use_cards_supporting">Grupuj elementy w karty na listach połączeń i kontaktów</string>
     <string name="contact_call_background_set">Wybrano niestandardowe zdjęcie</string>
     <string name="contact_call_background_none">Użyj domyślnego tła</string>
     <string name="contact_call_background_choose">Wybierz obraz</string>

@@ -34,7 +34,6 @@
     <string name="content_desc_scroll_to_top">Volver arriba</string>
     <string name="sim_picker_title">Seleccionar tarjeta SIM</string>
     <string name="sim_picker_unknown_sim">SIM desconocida</string>
-    <string name="selection_count_selected">%1$d seleccionado(s)</string>
     <string name="label_unknown">Desconocido</string>
     <string name="label_unknown_number">Número desconocido</string>
     <string name="label_mobile">Móvil</string>
@@ -51,7 +50,6 @@
     <string name="date_yesterday">Ayer</string>
     <string name="nav_contacts">Contactos</string>
     <string name="nav_recents">Recientes</string>
-    <string name="nav_call_recordings">Grabaciones</string>
     <string name="call_type_incoming">Entrante</string>
     <string name="call_type_outgoing">Saliente</string>
     <string name="call_type_missed">Perdida</string>
@@ -103,7 +101,6 @@
     <string name="call_history_with_contact">Historial con %1$s</string>
     <string name="call_log_no_history_found">No se encontró historial de llamadas</string>
     <string name="call_log_no_filter_match">Ninguna llamada coincide con este filtro</string>
-    <string name="call_log_delete_confirm">¿Está seguro que deseas eliminar %1$d registros de llamadas seleccionados?</string>
     <string name="call_log_delete_title">Borrar registros de llamadas</string>
     <string name="call_log_clear_all_title">Borrar todos los registros</string>
     <string name="call_log_clear_all_confirm">Borrar todo</string>
@@ -483,8 +480,10 @@
     <string name="blocked_list_title">Números bloqueados</string>
     <string name="blocked_list_empty">Aún no has bloqueado ningún número.</string>
     <!-- Contact call screen background -->
-    <string name="settings_interface_hide_avatar_with_bg">Ocultar imagen si hay fondo disponible</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Ocultar la foto del contacto en la pantalla de llamada cuando haya un fondo activo</string>
-    <string name="settings_interface_use_cards">Usar tarjetas expresivas</string>
-    <string name="settings_interface_use_cards_supporting">Agrupar elementos en tarjetas en las listas de llamadas y contactos</string>
+    <!-- Call waiting -->
+    <!-- Call recording -->
+    <!-- Video calling app picker -->
+    <!-- Call screen background and active controls -->
+    <!-- Incoming call controls and in-call keypad -->
+    <!-- IMEI / Secret codes -->
 </resources>

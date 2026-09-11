@@ -34,7 +34,6 @@
     <string name="content_desc_scroll_to_top">Nach oben scrollen</string>
     <string name="sim_picker_title">SIM-Karte auswählen</string>
     <string name="sim_picker_unknown_sim">Unbekannte SIM-Karte</string>
-    <string name="selection_count_selected">%1$d Ausgewählt</string>
     <string name="label_unknown">Unbekannt</string>
     <string name="label_unknown_number">Unbekannte Nummer</string>
     <string name="label_mobile">Mobil</string>
@@ -51,7 +50,6 @@
     <string name="date_yesterday">Gestern</string>
     <string name="nav_contacts">Kontakte</string>
     <string name="nav_recents">Zuletzt</string>
-    <string name="nav_call_recordings">Aufnahmen</string>
     <string name="call_type_incoming">Eingehend</string>
     <string name="call_type_outgoing">Ausgehend</string>
     <string name="call_type_missed">Verpasst</string>
@@ -104,7 +102,6 @@
     <string name="call_history_with_contact">Verlauf mit %1$s</string>
     <string name="call_log_no_history_found">Keine Anrufliste gefunden</string>
     <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
-    <string name="call_log_delete_confirm">Sind Sie sicher, dass sie die ausgewählten %1$d Anruf-Einträge löschen wollen?</string>
     <string name="call_log_delete_title">Anrufliste löschen</string>
     <string name="call_log_clear_all_title">Alle Listen leeren</string>
     <string name="call_log_clear_all_confirm">Alles leeren</string>
@@ -528,13 +525,8 @@
     <string name="contact_unblock">Kontakt  nicht mehr blockieren</string>
     <string name="contact_unblock_supporting">Anrufe von diesem Kontakt wieder zulassen</string>
     <string name="call_log_block_title">Nummer blockieren?</string>
-    <string name="call_log_block_message">Anrufe der %1$d ausgewählten Einträge werden blockiert.</string>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Hintergrund des Anrufbildschirms</string>
-    <string name="settings_interface_hide_avatar_with_bg">Profilbild ausblenden, wenn Hintergrund verfügbar ist</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Anruferfoto ausblenden, wenn ein Anrufhintergrund aktiv ist</string>
-    <string name="settings_interface_use_cards">Expressive-Karten verwenden</string>
-    <string name="settings_interface_use_cards_supporting">Elemente in Anruf- und Kontaktlisten in Karten gruppieren</string>
     <string name="contact_call_background_set">Ausgewähltes individuelles Bild</string>
     <string name="contact_call_background_none">Standard-Hintergrund verwenden</string>
     <string name="contact_call_background_choose">Bild auswählen</string>
