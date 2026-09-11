@@ -33,7 +33,6 @@
     <string name="content_desc_scroll_to_top">滚动至顶部</string>
     <string name="sim_picker_title">选择 SIM 卡</string>
     <string name="sim_picker_unknown_sim">未知SIM 卡</string>
-    <string name="selection_count_selected">已选中 %1$d 项</string>
     <string name="label_unknown">未知</string>
     <string name="label_unknown_number">未知号码</string>
     <string name="label_mobile">手机</string>
@@ -49,7 +48,6 @@
     <string name="date_yesterday">昨天</string>
     <string name="nav_contacts">联系人</string>
     <string name="nav_recents">最近通话</string>
-    <string name="nav_call_recordings">录音</string>
     <string name="call_type_incoming">来电</string>
     <string name="call_type_outgoing">拨出</string>
     <string name="call_type_missed">未接</string>
@@ -90,7 +88,6 @@
     <string name="content_desc_search">搜索</string>
     <!-- Recents / Call log -->
     <string name="call_history_title">通话记录</string>
-    <string name="call_log_delete_confirm">您确定要删除 %1$d 个选定的通话记录吗？</string>
     <string name="call_log_delete_title">删除通话记录</string>
     <string name="call_log_clear_all_title">清除所有记录</string>
     <string name="call_log_clear_all_confirm">全部清空</string>
@@ -191,10 +188,6 @@
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
-    <string name="settings_interface_hide_avatar_with_bg">有背景时隐藏头像</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">当通话背景有效时，在通话界面隐藏联系人头像</string>
-    <string name="settings_interface_use_cards">使用表现力卡片</string>
-    <string name="settings_interface_use_cards_supporting">在通话记录和联系人列表中将项目组合为卡片</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Video calling app picker -->

@@ -34,12 +34,6 @@
     <string name="content_desc_scroll_to_top">Прокрутить вверх</string>
     <string name="sim_picker_title">Выберите SIM-карту</string>
     <string name="sim_picker_unknown_sim">Неизвестная SIM-карта</string>
-    <plurals name="selection_count_selected">
-        <item quantity="one">Выбран %1$d</item>
-        <item quantity="few">Выбрано %1$d</item>
-        <item quantity="many">Выбрано %1$d</item>
-        <item quantity="other">Выбрано %1$d</item>
-    </plurals>
     <string name="label_unknown">Неизвестно</string>
     <string name="label_unknown_number">Неизвестный номер</string>
     <string name="label_mobile">Мобильный</string>
@@ -56,7 +50,6 @@
     <string name="date_yesterday">Вчера</string>
     <string name="nav_contacts">Контакты</string>
     <string name="nav_recents">Недавние</string>
-    <string name="nav_call_recordings">Записи</string>
     <string name="call_type_incoming">Входящий</string>
     <string name="call_type_outgoing">Исходящий</string>
     <string name="call_type_missed">Пропущенный</string>
@@ -109,12 +102,6 @@
     <string name="call_history_with_contact">История с %1$s</string>
     <string name="call_log_no_history_found">История вызовов не найдена</string>
     <string name="call_log_no_filter_match">Нет звонков, соответствующих этому фильтру</string>
-    <plurals name="call_log_delete_confirm">
-        <item quantity="one">Вы уверены, что хотите удалить %1$d выбранную запись?</item>
-        <item quantity="few">Вы уверены, что хотите удалить %1$d выбранные записи?</item>
-        <item quantity="many">Вы уверены, что хотите удалить %1$d выбранных записей?</item>
-        <item quantity="other">Вы уверены, что хотите удалить %1$d выбранных записей?</item>
-    </plurals>
     <string name="call_log_delete_title">Удалить журнал вызовов</string>
     <string name="call_log_clear_all_title">Очистить все журналы</string>
     <string name="call_log_clear_all_confirm">Очистить всё</string>
@@ -540,18 +527,8 @@
     <string name="contact_unblock">Разблокировать контакт</string>
     <string name="contact_unblock_supporting">Разрешить вызовы от этого контакта</string>
     <string name="call_log_block_title">Заблокировать номер?</string>
-    <plurals name="call_log_block_message">
-        <item quantity="one">Вызовы из %1$d выбранной записи будут заблокированы.</item>
-        <item quantity="few">Вызовы из %1$d выбранных записей будут заблокированы.</item>
-        <item quantity="many">Вызовы из %1$d выбранных записей будут заблокированы.</item>
-        <item quantity="other">Вызовы из %1$d выбранных записей будут заблокированы.</item>
-    </plurals>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Фон экрана вызова</string>
-    <string name="settings_interface_hide_avatar_with_bg">Скрывать фото при наличии фона</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Скрывать фото контакта на экране вызова, когда активен фон вызова</string>
-    <string name="settings_interface_use_cards">Использовать выразительные карточки</string>
-    <string name="settings_interface_use_cards_supporting">Группировать элементы в карточки в списках вызовов и контактов</string>
     <string name="contact_call_background_set">Выбрано пользовательское изображение</string>
     <string name="contact_call_background_none">Использовать фон по умолчанию</string>
     <string name="contact_call_background_choose">Выберите изображение</string>

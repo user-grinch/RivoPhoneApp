@@ -34,7 +34,6 @@
     <string name="content_desc_scroll_to_top">Retour en haut</string>
     <string name="sim_picker_title">Choisir la carte SIM</string>
     <string name="sim_picker_unknown_sim">SIM inconnue</string>
-    <string name="selection_count_selected">%1$d sélectionné(s)</string>
     <string name="label_unknown">Inconnu</string>
     <string name="label_unknown_number">Numéro inconnu</string>
     <string name="label_mobile">Mobile</string>
@@ -51,7 +50,6 @@
     <string name="date_yesterday">Hier</string>
     <string name="nav_contacts">Contacts</string>
     <string name="nav_recents">Récents</string>
-    <string name="nav_call_recordings">Enregistrements</string>
     <string name="call_type_incoming">Entrant</string>
     <string name="call_type_outgoing">Sortant</string>
     <string name="call_type_missed">Manqué</string>
@@ -104,7 +102,6 @@
     <string name="call_history_with_contact">Historique avec %1$s</string>
     <string name="call_log_no_history_found">Aucun historique d’appels trouvé</string>
     <string name="call_log_no_filter_match">Aucun appel ne correspond à ce filtre</string>
-    <string name="call_log_delete_confirm">Voulez-vous vraiment supprimer les %1$d journaux d’appels sélectionnés ?</string>
     <string name="call_log_delete_title">Supprimer les journaux d’appels</string>
     <string name="call_log_clear_all_title">Effacer tous les journaux</string>
     <string name="call_log_clear_all_confirm">Tout effacer</string>
@@ -481,10 +478,6 @@
     <string name="video_call_chooser_with">Appel vidéo avec</string>
     <string name="video_call_system">Appel vidéo du système</string>
     <!-- Call screen background and active controls -->
-    <string name="settings_interface_hide_avatar_with_bg">Masquer la photo si un arrière-plan est disponible</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Masquer la photo sur l’écran d’appel lorsqu’un arrière-plan d’appel est actif</string>
-    <string name="settings_interface_use_cards">Utiliser des cartes expressives</string>
-    <string name="settings_interface_use_cards_supporting">Regrouper les éléments sous forme de cartes dans les listes</string>
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
 </resources>
