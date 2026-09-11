@@ -182,7 +182,7 @@
     <string name="contact_edit_notes_header">Notatki</string>
     <!-- Dialpad -->
     <string name="dialpad_title">Klawiatura</string>
-    <string name="dialpad_start_dialing">Zacznij wpisywać</string>
+    <string name="dialpad_start_dialing">Wprowadź numer</string>
     <string name="dialpad_start_hint">Wpisz nazwę lub numer, aby rozpocząć</string>
     <string name="content_desc_call_named">Zadzwoń do: %1$s</string>
     <string name="content_desc_backspace">Usuń znak</string>
@@ -271,7 +271,7 @@
     <string name="settings_interface_show_picture_supporting">Wyświetla zdjęcie kontaktu, jeśli jest dostępne</string>
     <string name="settings_interface_avatar_shape">Kształt awatara</string>
     <string name="settings_interface_avatar_shape_supporting">Wybierz kształt awatarów kontaktów</string>
-    <string name="settings_interface_avatar_shape_squircle">Zaokrąglony kwadrat (Squircle)</string>
+    <string name="settings_interface_avatar_shape_squircle">Zaokrąglony kwadrat</string>
     <string name="settings_interface_avatar_shape_circle">Koło</string>
     <string name="settings_interface_avatar_shape_square">Kwadrat</string>
     <string name="settings_interface_avatar_shape_cookie">Ciasteczko</string>
@@ -290,8 +290,8 @@
     <string name="settings_interface_expressive_cards_supporting">Zamyka elementy listy w stylizowanych kartach</string>
     <string name="settings_interface_transition_animation">Animacja przejścia</string>
     <string name="settings_interface_transition_animation_supporting">Styl animacji między ekranami</string>
-    <string name="settings_interface_transition_slide">Przesunięcie (Slide)</string>
-    <string name="settings_interface_transition_fade">Przenikanie (Fade)</string>
+    <string name="settings_interface_transition_slide">Przesunięcie</string>
+    <string name="settings_interface_transition_fade">Przenikanie</string>
     <string name="settings_interface_transition_none">Brak</string>
     <string name="settings_interface_search_matching_mode">Tryb dopasowania wyszukiwania</string>
     <string name="settings_interface_search_matching_mode_supporting">Zachowanie algorytmu filtrowania kontaktów</string>
