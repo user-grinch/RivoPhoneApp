@@ -1,3 +1,4 @@
+
 <div align="center">
 
 <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/app/src/main/res/drawable/logo.png" width="120" height="120" alt="Rivo Logo">
@@ -11,7 +12,7 @@
 [![Jetpack Compose](https://img.shields.io/badge/Built_with-Jetpack_Compose-4285F4.svg?style=flat-square&logo=android)](https://developer.android.com/jetpack/compose)
 [![Translate on Crowdin](https://img.shields.io/badge/Translate-on%20Crowdin-1A56D0?logo=crowdin&style=flat-square)](https://crowdin.com/project/rivophone)
 
-The goal is simple: provide a clean, modern phone app without unnecessary clutter while keeping the core calling experience fast and reliable.
+The goal is simple: provide a clean, modern phone app without unnecessary clutter while keeping the core calling experience fast, reliable, and packed with modern utility.
 
 <br>
 
@@ -43,16 +44,19 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 
 ---
 
-## ✨ Features
+## ✨ Highlights
 
-- 🎨 **Modern Design:** Material 3 Expressive interface for a beautiful, cohesive look.
-- ⚡ **Lightning Fast:** Optimized dialing and rapid contact lookup.
-- 🔍 **Smart Search:** Built-in T9 search for quickly finding the right contacts.
-- 📞 **Native Experience:** Custom in-call screen and controls with automatic proximity sensor handling.
-- 🗂️ **Organized:** A clean, easy-to-read call history log.
-- 🔒 **Privacy Focused:** Keep specific contacts secure with the Private Contacts feature.
-- 🛠️ **Cutting Edge:** Smooth performance powered entirely by Jetpack Compose.
-- 🔓 **Fully Open Source:** Transparent, community-driven.
+- 🎙️ **Call Recording via Shizuku:** Seamless, elevated call recording support powered by [Shizuku](https://shizuku.rikka.app/)—no root required, bypassing modern Android accessibility restrictions.
+- 🎭 **Fake Incoming Call:** Schedule or instantly trigger simulated incoming calls with custom caller ID, ringtone, and delay to escape awkward situations.
+- 🎨 **Material 3 Expressive:** A clean, fluid interface with Dynamic Color (Material You) theming that matches your system palette.
+- 🔒 **Private Contacts & Vault:** Lock sensitive contacts and keep their history out of regular view for total privacy.
+- ⚡ **Lightning Fast:** Optimized keypad response, instantaneous contact lookup, and silky 120Hz scrolling.
+- 🔍 **Smart T9 Search:** Quickly find contacts by typing names or phone numbers directly from the dial pad.
+- 📞 **Custom In-Call UI:** Clean in-call experience with automatic proximity detection, audio routing, and speaker controls.
+- 🗂️ **Detailed Call Logs:** Comprehensive, categorized call history with quick-action shortcuts (Call, Message, Info).
+- 🚫 **Spam & Number Blocking:** Easily block unwanted numbers directly from call details or logs.
+- 🛠️ **Built with Jetpack Compose:** 100% modern, declarative Android UI stack for smooth performance and low memory overhead.
+- 🔓 **Fully Open Source** Zero trackers, zero ads, fully transparent code under GPL v3.
 
 ## 📸 Screenshots
 
@@ -72,6 +76,7 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 ```text
 com.grinch.rivo4
 AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11:89:F4:56:50:C5
+
 ```
 
 ## 🌍 Translations
@@ -82,14 +87,12 @@ Help us make Rivo accessible to everyone! You can contribute to translating Rivo
 
 We welcome issues, feature requests, and pull requests from the community!
 
-Code & Bugs: Feel free to open an issue or submit a pull request directly on GitHub.
-
-Translations: Help localize Rivo on Crowdin.
-
-Discussion: Join our Discord server to discuss ideas, report bugs, or just hang out with the community.
+* **Code & Bugs:** Feel free to open an issue or submit a pull request directly on GitHub.
+* **Translations:** Help localize Rivo on Crowdin.
+* **Discussion:** Join our Discord server to discuss ideas, report bugs, or just hang out with the community.
 
 ## 📄 License
 
 This project is licensed under the GNU GPL v3.0.
 
-See the LICENSE file for more details.
+See the [LICENSE](https://www.google.com/search?q=LICENSE) file for more details.
