@@ -53,7 +53,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallRecorder
@@ -1314,33 +1313,4 @@ private fun formatTimeMs(ms: Int): String {
     val min = totalSec / 60
     val sec = totalSec % 60
     return String.format(Locale.US, "%d:%02d", min, sec)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CallRecordEntryCardPreview() {
-    CompositionLocalProvider(
-        LocalRivoSurfaceStyle provides RivoSurfaceStyle(showCards = true, showDividers = true)
-    ) {
-        MaterialTheme {
-            Box(modifier = Modifier.padding(16.dp)) {
-                CallRecordEntryCard(
-                    file = File("Call_John_Doe_2026.m4a"),
-                    isCurrentActive = true,
-                    isPlaying = true,
-                    currentPositionMs = 45000,
-                    durationMs = 180000,
-                    playbackSpeed = 1.0f,
-                    onCardClick = {},
-                    onPlayPauseClick = {},
-                    onSeekTo = {},
-                    onRewind10 = {},
-                    onForward10 = {},
-                    onSpeedChange = {},
-                    onShareClick = {},
-                    onDeleteClick = {}
-                )
-            }
-        }
-    }
 }
