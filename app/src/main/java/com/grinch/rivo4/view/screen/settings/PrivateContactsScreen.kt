@@ -56,6 +56,7 @@ fun PrivateContactsScreen(
     resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
 ) {
     val context = LocalContext.current
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val viewModel: ContactsViewModel = koinActivityViewModel()
     val allContacts by viewModel.allContacts.collectAsState()
     val privateContacts = remember(allContacts) { allContacts.filter { it.isPrivate } }
@@ -66,6 +67,9 @@ fun PrivateContactsScreen(
     var selectedContactIds by remember { mutableStateOf(setOf<String>()) }
     var showMoveAccountDialog by remember { mutableStateOf(false) }
     var targetContactsToMove by remember { mutableStateOf<List<Contact>>(emptyList()) }
+    var showSecurityDialog by remember { mutableStateOf(false) }
+    var secretCodeInput by remember { mutableStateOf(prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) }
+    var hideFromSettings by remember { mutableStateOf(prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, false)) }
 
     val isSelecting = selectedContactIds.isNotEmpty()
 
@@ -167,6 +171,11 @@ fun PrivateContactsScreen(
                     navigationIcon = {
                         IconButton(onClick = { navigator.navigateUp() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { showSecurityDialog = true }) {
+                            Icon(Icons.Outlined.Password, contentDescription = "Secret Dialpad Code")
                         }
                     }
                 )
@@ -420,6 +429,68 @@ fun PrivateContactsScreen(
                 targetContactsToMove = emptyList()
             }
         )
+    }
+
+    if (showSecurityDialog) {
+        RivoDialog(
+            onDismissRequest = { showSecurityDialog = false },
+            title = "Secret Dialpad Code",
+            icon = Icons.Outlined.Password,
+            confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                label = stringResource(R.string.action_save),
+                onClick = {
+                    val trimmed = secretCodeInput.trim()
+                    if (trimmed.isNotEmpty()) {
+                        prefs.setString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, trimmed)
+                    }
+                    prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, hideFromSettings)
+                    showSecurityDialog = false
+                    android.widget.Toast.makeText(context, "Secret code settings updated", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            ),
+            dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                label = stringResource(R.string.action_cancel),
+                onClick = { showSecurityDialog = false }
+            )
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = "Type this secret code on the dialpad to immediately open hidden contacts.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                OutlinedTextField(
+                    value = secretCodeInput,
+                    onValueChange = { secretCodeInput = it },
+                    label = { Text("Secret Code") },
+                    placeholder = { Text("*#0000#") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Hide from Settings",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "Only the secret dialpad code will access hidden contacts",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = hideFromSettings,
+                        onCheckedChange = { hideFromSettings = it }
+                    )
+                }
+            }
+        }
     }
 }
 

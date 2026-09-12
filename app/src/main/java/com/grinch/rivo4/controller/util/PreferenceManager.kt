@@ -307,6 +307,21 @@ class PreferenceManager(context: Context) {
         const val NAV_BAR_STYLE_STANDARD = 0
         const val NAV_BAR_STYLE_TOOLBAR = 1
 
+        const val KEY_START_LOCATION = "start_location"
+        const val START_LOCATION_NORMAL = 0
+        const val START_LOCATION_DIALPAD_RECENTS = 1
+        const val START_LOCATION_DIALPAD_CONTACTS = 2
+
+        const val KEY_SECRET_DIALPAD_CODE = "secret_dialpad_code"
+        const val DEFAULT_SECRET_DIALPAD_CODE = "*#0000#"
+        const val KEY_HIDE_PRIVATE_SETTINGS_ENTRY = "hide_private_settings_entry"
+
+        const val KEY_LOG_FAKE_CALLS = "log_fake_calls"
+
+        const val KEY_APP_USAGE_SECONDS = "app_usage_seconds"
+        const val KEY_RATE_APP_SHOWN = "rate_app_shown"
+        const val KEY_RATE_APP_SNOOZED_TIME = "rate_app_snoozed_time"
+
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
         const val TAB_CONTACTS = 2

@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.sensor.FlipToSilenceManager
 import com.grinch.rivo4.controller.util.CallUiHelper
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
@@ -44,6 +45,7 @@ class CallService : InCallService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var redialCount = 0
     private val callStartTimes = mutableMapOf<Call, Long>()
+    private var flipToSilenceManager: FlipToSilenceManager? = null
 
     private fun getContactBitmap(photoUri: String?): Bitmap? {
         if (photoUri == null) return null
@@ -182,6 +184,7 @@ class CallService : InCallService() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        flipToSilenceManager = FlipToSilenceManager(this)
         serviceScope.launch {
             isActivityVisible.collect {
                 _currentCallSession.value?.call?.let { currentCall ->
@@ -196,6 +199,13 @@ class CallService : InCallService() {
             super.onStateChanged(call, state)
             updateCallState()
             
+            if (state != Call.STATE_RINGING) {
+                val hasRinging = getCalls()?.any { it.state == Call.STATE_RINGING } == true
+                if (!hasRinging) {
+                    flipToSilenceManager?.stopListening()
+                }
+            }
+
             if (state == Call.STATE_ACTIVE) {
                 redialCount = 0
                 startAutoRecordingIfEnabled(call)
@@ -443,6 +453,10 @@ class CallService : InCallService() {
         updateCallState()
 
         val isIncoming = call.state == Call.STATE_RINGING
+        if (isIncoming && preferenceManager.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) {
+            flipToSilenceManager?.startListening()
+        }
+
         val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
         if (showFullScreen) {
@@ -466,6 +480,10 @@ class CallService : InCallService() {
         call.unregisterCallback(callCallback)
         updateCallState()
         val calls = getCalls() ?: emptyList()
+        val hasRinging = calls.any { it.state == Call.STATE_RINGING }
+        if (!hasRinging) {
+            flipToSilenceManager?.stopListening()
+        }
         if (calls.isEmpty()) {
             if (CallRecorder.isRecording.value) CallRecorder.stop()
             removeForeground()
@@ -691,6 +709,7 @@ class CallService : InCallService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        flipToSilenceManager?.stopListening()
         if (CallRecorder.isRecording.value) CallRecorder.stop()
         if (instance == this) instance = null
         serviceScope.cancel()

@@ -35,14 +35,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.PersonSearch
-import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.outlined.Vibration
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -151,6 +144,7 @@ fun FakeCallSchedulerScreen(
     var newPhoneNumber by remember { mutableStateOf("+1 (555) 019-2834") }
     var newPhotoUri by remember { mutableStateOf<String?>(null) }
     var newVibrate by remember { mutableStateOf(FakeCallManager.shouldVibrateOnRing(context)) }
+    var logFakeCalls by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_LOG_FAKE_CALLS, true)) }
     var targetTimestamp by remember {
         mutableLongStateOf(Calendar.getInstance().apply { add(Calendar.MINUTE, 5) }.timeInMillis)
     }
@@ -568,6 +562,24 @@ fun FakeCallSchedulerScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 // Next upcoming hero banner
+                item {
+                    RivoExpressiveCard(
+                        title = "Call History Settings",
+                        icon = Icons.Outlined.History
+                    ) {
+                        RivoSwitchListItem(
+                            headline = "Save to Call History",
+                            supporting = "Answered and missed fake calls will show up in Recents",
+                            leadingIcon = Icons.Outlined.History,
+                            checked = logFakeCalls,
+                            onCheckedChange = {
+                                logFakeCalls = it
+                                prefs.setBoolean(PreferenceManager.KEY_LOG_FAKE_CALLS, it)
+                            }
+                        )
+                    }
+                }
+
                 val nextSchedule = schedules.firstOrNull()
                 if (nextSchedule != null) {
                     val remainingSeconds = ((nextSchedule.triggerTimestampMillis - currentTimeMillis) / 1000L).coerceAtLeast(0L)

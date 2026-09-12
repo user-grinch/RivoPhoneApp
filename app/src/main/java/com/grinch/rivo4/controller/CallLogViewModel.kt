@@ -17,6 +17,12 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.CallLog
 
+data class TodayCallStats(
+    val totalCalls: Int = 0,
+    val missedCalls: Int = 0,
+    val totalDurationSeconds: Long = 0L
+)
+
 class CallLogViewModel(
     private val callLogRepo: ICallLogRepository,
     private val contentResolver: ContentResolver
@@ -24,6 +30,9 @@ class CallLogViewModel(
 
     private val _allCallLogs = MutableStateFlow<List<CallLogEntry>>(emptyList())
     val allCallLogs: StateFlow<List<CallLogEntry>> = _allCallLogs.asStateFlow()
+
+    private val _todayStats = MutableStateFlow(TodayCallStats())
+    val todayStats: StateFlow<TodayCallStats> = _todayStats.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -65,8 +74,32 @@ class CallLogViewModel(
             }
             val result = callLogRepo.getCallLogs()
             _allCallLogs.value = result
+            _todayStats.value = calculateTodayStats(result)
             _isLoading.value = false
         }
+    }
+
+    private fun calculateTodayStats(logs: List<CallLogEntry>): TodayCallStats {
+        val cal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val startOfDay = cal.timeInMillis
+        val todayLogs = logs.filter { it.date >= startOfDay }
+        val totalCalls = todayLogs.sumOf { it.count }
+        val missedCalls = todayLogs.sumOf { entry ->
+            if (entry.types.isNotEmpty()) entry.types.count { it == CallLog.Calls.MISSED_TYPE }
+            else if (entry.type == CallLog.Calls.MISSED_TYPE) entry.count
+            else 0
+        }
+        val totalDuration = todayLogs.sumOf { it.duration }
+        return TodayCallStats(
+            totalCalls = totalCalls,
+            missedCalls = missedCalls,
+            totalDurationSeconds = totalDuration
+        )
     }
 
     fun deleteCallLog(number: String) {

@@ -139,6 +139,12 @@ fun DialPadScreen(
 
     LaunchedEffect(number) {
         val cleanNumber = number.replace(" ", "")
+        val secretDialpadCode = prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+        if (cleanNumber.isNotEmpty() && cleanNumber == secretDialpadCode.replace(" ", "")) {
+            textFieldValue = TextFieldValue("")
+            navigator.navigate(com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination())
+            return@LaunchedEffect
+        }
         if (isKnownSecretCode(cleanNumber)) {
             val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
             if (handled) {

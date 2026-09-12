@@ -19,8 +19,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
+import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
@@ -29,6 +36,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -37,6 +45,11 @@ fun SettingsScreen(
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val hidePrivateContacts = remember(settingsState) {
+        prefs.getBoolean(PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, false)
+    }
     val listState = rememberLazyListState()
     val appInfo = getAppVersion(context)
     val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.2f }
@@ -157,6 +170,12 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.PhoneCallback,
                         onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
                     )
+                    RivoListItem(
+                        headline = "Call Analytics & Insights",
+                        supporting = "Talk time leaderboard, peak hours & distribution",
+                        leadingIcon = Icons.Outlined.Analytics,
+                        onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
+                    )
                 }
             }
 
@@ -168,17 +187,25 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_manage_private_contacts),
-                        supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
-                        leadingIcon = Icons.Outlined.Lock,
-                        onClick = { navigator.navigate(PrivateContactsScreenDestination) }
-                    )
+                    if (!hidePrivateContacts) {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_manage_private_contacts),
+                            supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
+                            leadingIcon = Icons.Outlined.Lock,
+                            onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                        )
+                    }
                     RivoListItem(
                         headline = stringResource(R.string.settings_manage_visibility),
                         supporting = stringResource(R.string.settings_manage_visibility_supporting),
                         leadingIcon = Icons.Outlined.Visibility,
                         onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
+                    )
+                    RivoListItem(
+                        headline = "Rate on Google Play",
+                        supporting = "Support Rivo with a 5-star rating on the Play Store",
+                        leadingIcon = Icons.Default.Star,
+                        onClick = { openLink(context, PLAY_STORE_URL) }
                     )
                 }
             }

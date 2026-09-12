@@ -51,7 +51,12 @@ fun MainScreen(
 
     val visibleTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
     val defaultTab = remember(settingsState) {
-        prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)
+        val startLoc = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
+        when (startLoc) {
+            PreferenceManager.START_LOCATION_DIALPAD_RECENTS -> PreferenceManager.TAB_RECENTS
+            PreferenceManager.START_LOCATION_DIALPAD_CONTACTS -> PreferenceManager.TAB_CONTACTS
+            else -> prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)
+        }
     }
 
     val requestedTab = initialTab ?: defaultTab

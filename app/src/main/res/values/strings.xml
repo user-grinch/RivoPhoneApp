@@ -714,4 +714,14 @@
     <string name="settings_nav_bar_toolbar">Floating Toolbar</string>
     <string name="fake_call_incoming_channel_title">Fake Incoming Calls</string>
     <string name="fake_call_incoming_channel_desc">Notifications for simulated incoming and active calls</string>
+    <string name="settings_sound_flip_to_silence">Flip to Silence</string>
+    <string name="settings_sound_flip_to_silence_supporting">Silence incoming call ringer by placing phone face down</string>
+    <string name="settings_blocked_export_csv">Export Blocklist (CSV)</string>
+    <string name="settings_blocked_export_csv_desc">Save your blocked numbers to a CSV file</string>
+    <string name="settings_blocked_import_csv">Import Blocklist (CSV)</string>
+    <string name="settings_blocked_import_csv_desc">Import numbers to block from a CSV file</string>
+    <string name="settings_blocked_export_success">Exported %1$d numbers to CSV</string>
+    <string name="settings_blocked_import_success">Imported %1$d new numbers (%2$d already blocked)</string>
+    <string name="settings_blocked_csv_empty">No valid phone numbers found in file</string>
+    <string name="settings_blocked_file_error">Failed to process file</string>
 </resources>

@@ -32,12 +32,17 @@ import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -62,6 +67,77 @@ fun BlockedNumbersScreen(
     var refreshKey by remember { mutableIntStateOf(0) }
     var searchQuery by remember { mutableStateOf("") }
     var numberToUnblock by remember { mutableStateOf<BlockedNumber?>(null) }
+
+    val scope = rememberCoroutineScope()
+    var importStatusMessage by remember { mutableStateOf<String?>(null) }
+    var isProcessingFile by remember { mutableStateOf(false) }
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { os ->
+                        val result = BlockedNumbersManager.exportToCsv(context, os, allContacts)
+                        result.onSuccess { count ->
+                            withContext(Dispatchers.Main) {
+                                importStatusMessage = context.getString(R.string.settings_blocked_export_success, count)
+                            }
+                        }.onFailure {
+                            withContext(Dispatchers.Main) {
+                                importStatusMessage = context.getString(R.string.settings_blocked_file_error)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        importStatusMessage = context.getString(R.string.settings_blocked_file_error)
+                    }
+                }
+            }
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            isProcessingFile = true
+            scope.launch(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                        val result = BlockedNumbersManager.importFromCsv(context, inputStream)
+                        result.onSuccess { res ->
+                            withContext(Dispatchers.Main) {
+                                isProcessingFile = false
+                                refreshKey++
+                                if (res.totalParsed == 0) {
+                                    importStatusMessage = context.getString(R.string.settings_blocked_csv_empty)
+                                } else {
+                                    importStatusMessage = context.getString(
+                                        R.string.settings_blocked_import_success,
+                                        res.newlyBlocked,
+                                        res.alreadyBlocked
+                                    )
+                                }
+                            }
+                        }.onFailure {
+                            withContext(Dispatchers.Main) {
+                                isProcessingFile = false
+                                importStatusMessage = context.getString(R.string.settings_blocked_file_error)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        isProcessingFile = false
+                        importStatusMessage = context.getString(R.string.settings_blocked_file_error)
+                    }
+                }
+            }
+        }
+    }
 
     resultRecipient.onNavResult { result ->
         when (result) {
@@ -102,6 +178,23 @@ fun BlockedNumbersScreen(
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            importLauncher.launch(arrayOf("text/csv", "text/comma-separated-values", "text/plain", "*/*"))
+                        }
+                    ) {
+                        Icon(Icons.Outlined.FileUpload, contentDescription = stringResource(R.string.settings_blocked_import_csv))
+                    }
+                    IconButton(
+                        onClick = {
+                            exportLauncher.launch("rivo_blocked_numbers_${System.currentTimeMillis()}.csv")
+                        },
+                        enabled = blockedNumbers.isNotEmpty()
+                    ) {
+                        Icon(Icons.Outlined.FileDownload, contentDescription = stringResource(R.string.settings_blocked_export_csv))
                     }
                 }
             )
@@ -164,6 +257,35 @@ fun BlockedNumbersScreen(
                             Icon(Icons.Outlined.PersonSearch, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
                             Text("Select Contacts or Enter Number")
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    importLauncher.launch(arrayOf("text/csv", "text/comma-separated-values", "text/plain", "*/*"))
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Icon(Icons.Outlined.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Import CSV")
+                            }
+                            OutlinedButton(
+                                onClick = {
+                                    exportLauncher.launch("rivo_blocked_numbers_${System.currentTimeMillis()}.csv")
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = MaterialTheme.shapes.medium,
+                                enabled = blockedNumbers.isNotEmpty()
+                            ) {
+                                Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Export CSV")
+                            }
                         }
                     }
                 }
@@ -369,6 +491,44 @@ fun BlockedNumbersScreen(
         ) {
             Text(
                 text = "Unblock ${formatPhoneNumber(target.originalNumber)}?",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+
+    if (isProcessingFile) {
+        RivoDialog(
+            onDismissRequest = { },
+            title = "Processing...",
+            confirmButton = { }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(28.dp))
+                Spacer(Modifier.width(16.dp))
+                Text("Processing CSV file...")
+            }
+        }
+    }
+
+    if (importStatusMessage != null) {
+        RivoDialog(
+            onDismissRequest = { importStatusMessage = null },
+            title = "Blocklist CSV",
+            icon = Icons.Outlined.Info,
+            confirmButton = {
+                TextButton(onClick = { importStatusMessage = null }) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            }
+        ) {
+            Text(
+                text = importStatusMessage ?: "",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

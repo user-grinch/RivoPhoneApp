@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -126,7 +127,65 @@ class MainActivity : ComponentActivity() {
                             mutableStateOf(!prefs.getBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, false)) 
                         }
 
-                        if (showPatreonPrompt) {
+                        var showRatePrompt by remember { mutableStateOf(false) }
+                        val rateShown = remember { prefs.getBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, false) }
+
+                        LaunchedEffect(rateShown) {
+                            if (!rateShown) {
+                                var currentUsage = prefs.getInt(PreferenceManager.KEY_APP_USAGE_SECONDS, 0)
+                                val snoozeTime = prefs.getString(PreferenceManager.KEY_RATE_APP_SNOOZED_TIME, null)?.toLongOrNull() ?: 0L
+                                val isSnoozed = System.currentTimeMillis() < snoozeTime
+
+                                while (!rateShown && !isSnoozed) {
+                                    kotlinx.coroutines.delay(1000L)
+                                    currentUsage++
+                                    if (currentUsage % 15 == 0) {
+                                        prefs.setInt(PreferenceManager.KEY_APP_USAGE_SECONDS, currentUsage)
+                                    }
+                                    if (currentUsage >= 300) {
+                                        showRatePrompt = true
+                                        break
+                                    }
+                                }
+                            }
+                        }
+
+                        if (showRatePrompt) {
+                            val context = LocalContext.current
+                            RivoDialog(
+                                onDismissRequest = {
+                                    prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
+                                    showRatePrompt = false
+                                },
+                                title = "Enjoying Rivo Phone?",
+                                icon = Icons.Default.Star,
+                                confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                                    label = "Rate on Google Play ★★★★★",
+                                    onClick = {
+                                        openLink(context, PLAY_STORE_URL)
+                                        prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
+                                        showRatePrompt = false
+                                    }
+                                ),
+                                dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
+                                    label = "Remind Me Later",
+                                    onClick = {
+                                        val threeDaysLater = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000L)
+                                        prefs.setString(PreferenceManager.KEY_RATE_APP_SNOOZED_TIME, threeDaysLater.toString())
+                                        showRatePrompt = false
+                                    }
+                                )
+                            ) {
+                                Text(
+                                    text = "If Rivo has made managing your calls better, please consider leaving a 5-star rating on Google Play. Your support helps us keep the app free and independent!",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        if (showPatreonPrompt && !showRatePrompt) {
                             val context = LocalContext.current
                             RivoDialog(
                                 onDismissRequest = { 
@@ -167,6 +226,11 @@ class MainActivity : ComponentActivity() {
                                 popUpTo(MainScreenDestination.route) {
                                     inclusive = true
                                 }
+                            }
+                        } else if (intentState?.action == null || intentState?.action == Intent.ACTION_MAIN) {
+                            val startLocation = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
+                            if (startLocation == PreferenceManager.START_LOCATION_DIALPAD_RECENTS || startLocation == PreferenceManager.START_LOCATION_DIALPAD_CONTACTS) {
+                                navController.navigate(DialPadScreenDestination().route)
                             }
                         }
                     }

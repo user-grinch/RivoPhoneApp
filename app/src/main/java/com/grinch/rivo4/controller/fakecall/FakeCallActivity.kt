@@ -397,6 +397,38 @@ class FakeCallActivity : ComponentActivity() {
         stopRingtoneAndVibration()
         releaseProximityLock()
         FakeCallNotificationManager.cancelNotification(this)
+
+        val shouldLog = preferenceManager.getBoolean(PreferenceManager.KEY_LOG_FAKE_CALLS, true)
+        if (shouldLog) {
+            val callerName = intent.getStringExtra(FakeCallManager.EXTRA_NAME) ?: "Mom"
+            val phoneNumber = intent.getStringExtra(FakeCallManager.EXTRA_NUMBER) ?: "+1 (555) 019-2834"
+            val wasAnswered = currentConnectTime > 0L
+            val durationSec = if (wasAnswered) {
+                ((System.currentTimeMillis() - currentConnectTime) / 1000).coerceAtLeast(1)
+            } else 0L
+            val callType = if (wasAnswered) {
+                android.provider.CallLog.Calls.INCOMING_TYPE
+            } else {
+                android.provider.CallLog.Calls.MISSED_TYPE
+            }
+
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val values = android.content.ContentValues().apply {
+                        put(android.provider.CallLog.Calls.NUMBER, phoneNumber)
+                        put(android.provider.CallLog.Calls.CACHED_NAME, callerName)
+                        put(android.provider.CallLog.Calls.TYPE, callType)
+                        put(android.provider.CallLog.Calls.DATE, if (wasAnswered) currentConnectTime else System.currentTimeMillis())
+                        put(android.provider.CallLog.Calls.DURATION, durationSec)
+                        put(android.provider.CallLog.Calls.NEW, 1)
+                    }
+                    contentResolver.insert(android.provider.CallLog.Calls.CONTENT_URI, values)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to insert fake call to CallLog: ${e.message}")
+                }
+            }
+        }
+
         lifecycleScope.launch {
             delay(1200)
             finishAndRemoveTask()

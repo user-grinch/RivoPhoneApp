@@ -44,6 +44,7 @@ fun SoundVibrationScreen(
 
     var hapticListScroll by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)) }
     var missedCallNotifications by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) }
+    var flipToSilence by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) }
 
     Scaffold(
         topBar = {
@@ -122,6 +123,21 @@ fun SoundVibrationScreen(
                         onCheckedChange = {
                             hapticListScroll = it
                             prefs.setBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, it)
+                        }
+                    )
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_sound_flip_to_silence),
+                        supporting = stringResource(R.string.settings_sound_flip_to_silence_supporting),
+                        leadingIcon = Icons.Outlined.ScreenRotation,
+                        checked = flipToSilence,
+                        onCheckedChange = {
+                            flipToSilence = it
+                            prefs.setBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, it)
                         }
                     )
                 }

@@ -76,6 +76,7 @@ fun InterfaceScreen(
     var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
     var cardRoundness by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5)) }
     var navBarStyle by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_NAV_BAR_STYLE, PreferenceManager.NAV_BAR_STYLE_STANDARD)) }
+    var startLocation by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)) }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60),
@@ -331,6 +332,34 @@ fun InterfaceScreen(
                             }
                         ) { value, selected ->
                             val icon = defaultTabIcon(value) ?: Icons.Outlined.SpaceDashboard
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoVisualOptionSelectorRow(
+                            headline = "Default Start Screen",
+                            supporting = "Screen to display when opening the app",
+                            leadingIcon = Icons.Outlined.Home,
+                            options = listOf(
+                                "Default Tab" to PreferenceManager.START_LOCATION_NORMAL,
+                                "Dialpad (Recents)" to PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
+                                "Dialpad (Contacts)" to PreferenceManager.START_LOCATION_DIALPAD_CONTACTS
+                            ),
+                            selectedValue = startLocation,
+                            onValueChange = {
+                                startLocation = it
+                                prefs.setInt(PreferenceManager.KEY_START_LOCATION, it)
+                            }
+                        ) { value, selected ->
+                            val icon = when (value) {
+                                PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
+                                PreferenceManager.START_LOCATION_DIALPAD_CONTACTS -> Icons.Outlined.Dialpad
+                                else -> Icons.Outlined.Home
+                            }
                             Icon(
                                 imageVector = icon,
                                 contentDescription = null,
