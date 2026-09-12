@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bluetooth
@@ -221,6 +222,7 @@ fun ActiveCallControls(
     onMessage: () -> Unit,
     onToggleRecording: () -> Unit,
     onEndCall: () -> Unit,
+    onNotesClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
@@ -228,7 +230,7 @@ fun ActiveCallControls(
         audioRoute == CallAudioState.ROUTE_BLUETOOTH
     val isHolding = callState == Call.STATE_HOLDING
 
-    val cellSpacing = if (compact) 8.dp else 12.dp
+    val cellSpacing = if (compact) 6.dp else 8.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -264,6 +266,14 @@ fun ActiveCallControls(
                 modifier = Modifier.weight(1f),
                 onClick = onAudioClick
             )
+            CallActionButton(
+                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
+                isActive = isHolding,
+                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleHold
+            )
         }
 
         Spacer(modifier = Modifier.height(cellSpacing))
@@ -274,6 +284,24 @@ fun ActiveCallControls(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CallActionButton(
+                icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
+                isActive = isRecording,
+                isDanger = isRecording,
+                enabled = recordingEnabled,
+                label = if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleRecording
+            )
+            CallActionButton(
+                icon = Icons.AutoMirrored.Filled.Notes,
+                isActive = false,
+                label = "Notes",
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onNotesClick
+            )
+            CallActionButton(
                 icon = Icons.Default.Add,
                 isActive = false,
                 label = stringResource(R.string.action_add_call),
@@ -282,33 +310,13 @@ fun ActiveCallControls(
                 onClick = onAddCall
             )
             CallActionButton(
-                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
-                isActive = isHolding,
-                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                icon = Icons.AutoMirrored.Filled.Message,
+                isActive = false,
+                label = stringResource(R.string.action_message),
                 compact = compact,
                 modifier = Modifier.weight(1f),
-                onClick = onToggleHold
+                onClick = onMessage
             )
-            if (recordingEnabled) {
-                CallActionButton(
-                    icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
-                    isActive = isRecording,
-                    isDanger = isRecording,
-                    label = if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onToggleRecording
-                )
-            } else {
-                CallActionButton(
-                    icon = Icons.AutoMirrored.Filled.Message,
-                    isActive = false,
-                    label = stringResource(R.string.action_message),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onMessage
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(if (compact) 16.dp else 24.dp))

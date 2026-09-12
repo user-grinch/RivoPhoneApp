@@ -32,6 +32,11 @@ import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.QrCode2
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.EditNote
+import com.grinch.rivo4.modal.db.CallNoteDao
+import com.grinch.rivo4.view.components.AddCallNoteDialog
+import com.grinch.rivo4.view.components.CallbackReminderDialog
 import com.grinch.rivo4.controller.CallRecorder
 import com.ramcosta.composedestinations.generated.destinations.CallRecordingsScreenDestination
 import androidx.compose.material3.*
@@ -127,6 +132,9 @@ fun ContactDetailsScreen(
 
     var fullContact by remember { mutableStateOf<Contact?>(null) }
     var isFullLoading by remember { mutableStateOf(true) }
+    val callNoteDao = org.koin.compose.koinInject<CallNoteDao>()
+    var showReminderDialog by remember { mutableStateOf(false) }
+    var showAddNoteDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     suspend fun loadContact(): Contact? {
@@ -322,6 +330,22 @@ fun ContactDetailsScreen(
         } else {
             action(displayPhone)
         }
+    }
+
+    if (showReminderDialog) {
+        CallbackReminderDialog(
+            phoneNumber = displayPhone,
+            contactName = displayName,
+            onDismissRequest = { showReminderDialog = false }
+        )
+    }
+
+    if (showAddNoteDialog) {
+        AddCallNoteDialog(
+            phoneNumber = displayPhone,
+            contactName = displayName,
+            onDismissRequest = { showAddNoteDialog = false }
+        )
     }
 
     if (showDeleteDialog) {
@@ -875,6 +899,60 @@ fun ContactDetailsScreen(
                         }
                     }
 
+                    item {
+                        val callNotes by callNoteDao.getNotesForNumber(displayPhone).collectAsState(initial = emptyList())
+                        val dateFormat = remember { SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault()) }
+                        RivoExpressiveCard(
+                            title = "Call Notes (${callNotes.size})",
+                            icon = Icons.Outlined.EditNote
+                        ) {
+                            Column(modifier = Modifier.animateContentSize()) {
+                                if (callNotes.isEmpty()) {
+                                    Text(
+                                        text = "No call notes for this contact",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                } else {
+                                    callNotes.forEachIndexed { index, noteItem ->
+                                        RivoListItem(
+                                            headline = noteItem.note,
+                                            supporting = dateFormat.format(Date(noteItem.timestamp)),
+                                            leadingIcon = Icons.AutoMirrored.Filled.Notes,
+                                            onClick = {},
+                                            trailingContent = {
+                                                IconButton(
+                                                    onClick = {
+                                                        scope.launch { callNoteDao.deleteNote(noteItem) }
+                                                    }
+                                                ) {
+                                                    Icon(
+                                                        Icons.Default.Delete,
+                                                        contentDescription = "Delete",
+                                                        tint = MaterialTheme.colorScheme.error,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                            }
+                                        )
+                                        if (index < callNotes.size - 1) {
+                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                        }
+                                    }
+                                }
+                                TextButton(
+                                    onClick = { showAddNoteDialog = true },
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("Add Call Note")
+                                }
+                            }
+                        }
+                    }
+
                     if (contactLogs.isNotEmpty()) {
                         item {
                             RivoExpressiveCard(title = stringResource(R.string.contact_recent_activity_title), icon = Icons.Default.History) {
@@ -981,17 +1059,26 @@ fun ContactDetailsScreen(
                         }
                     }
 
-                    if (fullContact == null && backgroundAvailable) {
+                    if (fullContact == null) {
                         item {
                             RivoExpressiveCard(
                                 title = stringResource(R.string.contact_settings_title),
                                 icon = Icons.Default.Settings
                             ) {
-                                CallBackgroundRow(
-                                    background = callBackground,
-                                    saving = backgroundSaving,
-                                    onClick = onBackgroundClick
+                                RivoListItem(
+                                    headline = "Callback Reminder",
+                                    supporting = "Schedule an alert to call back this number",
+                                    leadingIcon = Icons.Outlined.Alarm,
+                                    onClick = { showReminderDialog = true }
                                 )
+                                if (backgroundAvailable) {
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                    CallBackgroundRow(
+                                        background = callBackground,
+                                        saving = backgroundSaving,
+                                        onClick = onBackgroundClick
+                                    )
+                                }
                             }
                         }
                     }
@@ -1025,6 +1112,13 @@ fun ContactDetailsScreen(
                                     background = callBackground,
                                     saving = backgroundSaving,
                                     onClick = onBackgroundClick
+                                )
+                                RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                RivoListItem(
+                                    headline = "Callback Reminder",
+                                    supporting = "Schedule an alert to call back this contact",
+                                    leadingIcon = Icons.Outlined.Alarm,
+                                    onClick = { showReminderDialog = true }
                                 )
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 val contactNumbers = fc.phoneNumbers

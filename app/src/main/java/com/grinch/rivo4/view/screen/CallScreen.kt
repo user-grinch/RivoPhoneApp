@@ -12,6 +12,10 @@ import android.telecom.TelecomManager
 import android.telecom.CallAudioState
 import android.telecom.VideoProfile
 import android.view.HapticFeedbackConstants
+import android.widget.Toast
+import java.util.Calendar
+import com.grinch.rivo4.controller.reminder.CallbackReminderManager
+import com.grinch.rivo4.view.components.CallNotesSheet
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -269,8 +273,10 @@ fun ExpressiveCallScreen(
     }
     val audioLabel = audioRouteLabel(audioRoute, audioState)
     val hasBluetooth = ((audioState?.supportedRouteMask ?: 0) and CallAudioState.ROUTE_BLUETOOTH) != 0
-
     var showQuickResponsesSheet by remember { mutableStateOf(false) }
+    var showCallNotesSheet by remember { mutableStateOf(false) }
+    val reminderManager = org.koin.compose.koinInject<CallbackReminderManager>()
+    val scope = rememberCoroutineScope()
 
     val pocketModeEnabled = remember(settingsState) {
         preferenceManager.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)
@@ -547,7 +553,8 @@ fun ExpressiveCallScreen(
                     }
                 }
             },
-            onEndCall = { try { call.disconnect() } catch (e: Exception) {} }
+            onEndCall = { try { call.disconnect() } catch (e: Exception) {} },
+            onNotesClick = { showCallNotesSheet = true }
         )
     }
 
@@ -739,7 +746,34 @@ fun ExpressiveCallScreen(
                     }
                     context.startActivity(intent)
                     showQuickResponsesSheet = false
+                },
+                onScheduleReminder = { delayMinutes, label ->
+                    scope.launch {
+                        reminderManager.scheduleReminder(
+                            phoneNumber = phoneNumber,
+                            contactName = contactName.ifBlank { null },
+                            delayMinutes = delayMinutes,
+                            note = "Callback reminder from incoming call"
+                        )
+                        Toast.makeText(context, "Reminder set for $label", Toast.LENGTH_SHORT).show()
+                    }
+                    try {
+                        if (call.state == Call.STATE_RINGING) {
+                            call.reject(Call.REJECT_REASON_DECLINED)
+                        } else {
+                            call.disconnect()
+                        }
+                    } catch (_: Exception) {}
+                    showQuickResponsesSheet = false
                 }
+            )
+        }
+
+        if (showCallNotesSheet) {
+            CallNotesSheet(
+                phoneNumber = phoneNumber,
+                contactName = contactName,
+                onDismiss = { showCallNotesSheet = false }
             )
         }
     }
@@ -810,12 +844,26 @@ fun QuickResponsesBottomSheet(
     contactName: String,
     onDismiss: () -> Unit,
     onSend: (String) -> Unit,
-    onOpenSmsApp: () -> Unit
+    onOpenSmsApp: () -> Unit,
+    onScheduleReminder: (Long, String) -> Unit
 ) {
     val prefs = org.koin.compose.koinInject<PreferenceManager>()
     val responses = remember { prefs.getQuickResponses() }
     var customText by remember { mutableStateOf("") }
     var isCustomVisible by remember { mutableStateOf(false) }
+
+    val tomorrowMorningMinutes = remember {
+        val now = Calendar.getInstance()
+        val tomorrow = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 9)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val diff = tomorrow.timeInMillis - now.timeInMillis
+        (diff / (1000 * 60)).coerceAtLeast(15)
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -923,6 +971,39 @@ fun QuickResponsesBottomSheet(
                             contentDescription = "Send",
                             tint = if (customText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                         )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Remind Me to Call Back",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(
+                    "In 15m" to 15L,
+                    "In 1h" to 60L,
+                    "Tomorrow 9 AM" to tomorrowMorningMinutes
+                ).forEach { (label, minutes) ->
+                    FilledTonalButton(
+                        onClick = { onScheduleReminder(minutes, label) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp)
+                    ) {
+                        Icon(Icons.Outlined.Alarm, contentDescription = null, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1)
                     }
                 }
             }

@@ -186,6 +186,10 @@
             android:name=".controller.CallRecordingService"
             android:foregroundServiceType="microphone"
             android:exported="false" />
+
+        <receiver
+            android:name=".controller.reminder.CallbackReminderReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

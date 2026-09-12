@@ -26,6 +26,8 @@ val appModule = module {
             .build()
     }
     single { get<RivoDatabase>().privateContactDao() }
+    single { get<RivoDatabase>().callNoteDao() }
+    single { get<RivoDatabase>().callbackReminderDao() }
 
     single<IContactsRepository> {
         ContactsRepository(androidContext(), get())
@@ -35,6 +37,9 @@ val appModule = module {
     }
     single {
         PreferenceManager(androidContext())
+    }
+    single {
+        com.grinch.rivo4.controller.reminder.CallbackReminderManager(androidContext(), get())
     }
     viewModel { ContactsViewModel(get(), get()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
