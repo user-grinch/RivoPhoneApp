@@ -25,6 +25,9 @@ class ContactsViewModel(
     private val _allContacts = MutableStateFlow<List<Contact>>(emptyList())
     val allContacts: StateFlow<List<Contact>> = _allContacts.asStateFlow()
 
+    private val _hiddenContactsVisible = MutableStateFlow(preferenceManager.isHiddenContactsVisible())
+    val hiddenContactsVisible: StateFlow<Boolean> = _hiddenContactsVisible.asStateFlow()
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -119,7 +122,7 @@ class ContactsViewModel(
             if (_allContacts.value.isEmpty()) {
                 _isLoading.value = true
             }
-            val result = contactsRepo.getContacts()
+            val result = contactsRepo.getContacts(includePrivate = true, includeHidden = preferenceManager.isHiddenContactsVisible())
             _allContacts.value = result
             _isLoading.value = false
         }
@@ -326,6 +329,25 @@ class ContactsViewModel(
     fun importPrivateContacts(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             contactsRepo.importPrivateContacts(uri)
+            fetchContacts()
+        }
+    }
+
+    fun toggleHiddenContactsVisible(): Boolean {
+        val newState = !preferenceManager.isHiddenContactsVisible()
+        preferenceManager.setHiddenContactsVisible(newState)
+        _hiddenContactsVisible.value = newState
+        fetchContacts()
+        return newState
+    }
+
+    fun isNumberHidden(number: String): Boolean {
+        return contactsRepo.isNumberHidden(number)
+    }
+
+    fun setContactHidden(contactId: String, isHidden: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.setContactHidden(contactId, isHidden)
             fetchContacts()
         }
     }

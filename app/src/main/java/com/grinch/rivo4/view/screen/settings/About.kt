@@ -160,7 +160,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(22.dp), tint = Color(0xFFFFB300))
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Rate on Google Play ★★★★★",
+                    text = "Rate on Google Play",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.labelLarge
                 )

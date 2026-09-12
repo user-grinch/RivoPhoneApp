@@ -35,13 +35,15 @@ class ContactsRepository(
         return rawName
     }
 
-    override fun getContacts(includePrivate: Boolean): List<Contact> {
+    override fun getContacts(includePrivate: Boolean, includeHidden: Boolean): List<Contact> {
         val contactsMap = LinkedHashMap<String, Contact>()
         
         if (includePrivate) {
             privateContactDao.getAll().forEach {
                 val contact = it.toContact()
-                contactsMap[contact.id] = contact
+                if (!contact.isHidden || includeHidden) {
+                    contactsMap[contact.id] = contact
+                }
             }
         }
 
@@ -1113,6 +1115,21 @@ class ContactsRepository(
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    override fun setContactHidden(contactId: String, isHidden: Boolean) {
+        if (contactId.startsWith("p")) {
+            val id = contactId.substring(1).toLongOrNull() ?: return
+            privateContactDao.setHidden(id, isHidden)
+        }
+    }
+
+    override fun isNumberHidden(number: String): Boolean {
+        if (number.isBlank()) return false
+        val clean = number.replace(" ", "")
+        return privateContactDao.getAll().any { entity ->
+            entity.isHidden && runCatching { Json.decodeFromString<List<String>>(entity.phoneNumbersJson) }.getOrDefault(emptyList()).any { areNumbersEqual(it, clean) }
         }
     }
 }

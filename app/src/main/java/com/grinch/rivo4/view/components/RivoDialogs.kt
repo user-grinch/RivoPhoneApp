@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -259,26 +260,54 @@ fun RivoDialog(
                     )
 
                     if (confirmAction != null || dismissAction != null) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (dismissAction != null) {
-                                RivoDialogActionButton(
-                                    action = dismissAction,
-                                    prominent = false,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        val shouldStackButtons = (confirmAction?.label?.length ?: 0) > 12 ||
+                            (dismissAction?.label?.length ?: 0) > 12
+
+                        if (shouldStackButtons) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 4.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                if (confirmAction != null) {
+                                    RivoDialogActionButton(
+                                        action = confirmAction,
+                                        prominent = true,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                if (dismissAction != null) {
+                                    RivoDialogActionButton(
+                                        action = dismissAction,
+                                        prominent = false,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
                             }
-                            if (confirmAction != null) {
-                                RivoDialogActionButton(
-                                    action = confirmAction,
-                                    prominent = true,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (dismissAction != null) {
+                                    RivoDialogActionButton(
+                                        action = dismissAction,
+                                        prominent = false,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                if (confirmAction != null) {
+                                    RivoDialogActionButton(
+                                        action = confirmAction,
+                                        prominent = true,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
                             }
                         }
                     } else if (confirmButton != null || dismissButton != null) {
@@ -327,7 +356,7 @@ private fun RivoDialogActionButton(
         Button(
             onClick = action.onClick,
             shapes = buttonShapes,
-            modifier = modifier.height(DialogActionHeight),
+            modifier = modifier.heightIn(min = DialogActionHeight),
             enabled = action.enabled,
             colors = if (action.destructive) {
                 ButtonDefaults.buttonColors(
@@ -341,22 +370,24 @@ private fun RivoDialogActionButton(
             Text(
                 text = action.label,
                 style = MaterialTheme.typography.labelLargeEmphasized,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
         }
     } else {
         FilledTonalButton(
             onClick = action.onClick,
             shapes = buttonShapes,
-            modifier = modifier.height(DialogActionHeight),
+            modifier = modifier.heightIn(min = DialogActionHeight),
             enabled = action.enabled
         ) {
             Text(
                 text = action.label,
                 style = MaterialTheme.typography.labelLargeEmphasized,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
         }
     }

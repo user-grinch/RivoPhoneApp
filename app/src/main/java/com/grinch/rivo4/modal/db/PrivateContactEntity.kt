@@ -20,6 +20,7 @@ data class PrivateContactEntity(
     val photoUri: String? = null,
     val isFavorite: Boolean = false,
     val customRingtone: String? = null,
+    val isHidden: Boolean = false,
     val notes: String? = null
 ) {
     fun toContact(): Contact {
@@ -35,6 +36,7 @@ data class PrivateContactEntity(
             isFavorite = isFavorite,
             customRingtone = customRingtone,
             isPrivate = true,
+            isHidden = isHidden,
             notes = notes
         )
     }
@@ -52,6 +54,7 @@ data class PrivateContactEntity(
                 photoUri = contact.photoUri,
                 isFavorite = contact.isFavorite,
                 customRingtone = contact.customRingtone,
+                isHidden = contact.isHidden,
                 notes = contact.notes
             )
         }

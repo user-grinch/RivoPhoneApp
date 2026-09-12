@@ -42,5 +42,6 @@ data class Contact(
     val accountName: String? = null,
     val accountType: String? = null,
     val isPrivate: Boolean = false,
+    val isHidden: Boolean = false,
     val notes: String? = null
 )

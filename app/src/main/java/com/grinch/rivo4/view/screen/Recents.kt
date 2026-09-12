@@ -394,7 +394,8 @@ fun CallLogFullContent(
             }
         }
 
-        LaunchedEffect(Unit) {
+        val hiddenContactsVisible by contactsVM.hiddenContactsVisible.collectAsState()
+        LaunchedEffect(hiddenContactsVisible) {
             viewModel.fetchLogs()
             contactsVM.fetchContacts()
         }
@@ -423,6 +424,9 @@ fun CallLogFullContent(
             mutableStateOf(prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_RECENTS_FAVORITES_COLLAPSED, false))
         }
         var showAddFavoriteDialog by remember { mutableStateOf(false) }
+        val showRecentsStats = remember(settingsState) {
+            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, true)
+        }
 
         val favRowState = rememberLazyListState()
         val favItems = remember { mutableStateListOf<Contact>() }
@@ -512,7 +516,7 @@ fun CallLogFullContent(
                         contentPadding = PaddingValues(bottom = 100.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        if (selectedFilter == CallLogFilter.All && logs.isNotEmpty()) {
+                        if (showRecentsStats && selectedFilter == CallLogFilter.All && logs.isNotEmpty()) {
                             item {
                                 RecentsDailyStatusHeader(
                                     totalCalls = todayStats.totalCalls,
@@ -520,6 +524,9 @@ fun CallLogFullContent(
                                     totalDurationSeconds = todayStats.totalDurationSeconds,
                                     onOpenAnalytics = {
                                         navigator.navigate(com.ramcosta.composedestinations.generated.destinations.CallAnalyticsScreenDestination())
+                                    },
+                                    onHideStats = {
+                                        prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, false)
                                     },
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                                 )
@@ -761,7 +768,8 @@ fun RecentsDailyStatusHeader(
     missedCalls: Int,
     totalDurationSeconds: Long,
     onOpenAnalytics: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onHideStats: (() -> Unit)? = null
 ) {
     Surface(
         modifier = modifier
@@ -803,6 +811,20 @@ fun RecentsDailyStatusHeader(
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
+                    if (onHideStats != null) {
+                        Spacer(Modifier.width(8.dp))
+                        IconButton(
+                            onClick = onHideStats,
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = "Hide Stats",
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
 

@@ -921,9 +921,9 @@ fun RivoPreviewTile(
         Text(
             text = label,
             style = if (selected) {
-                MaterialTheme.typography.labelMediumEmphasized
+                MaterialTheme.typography.labelSmall
             } else {
-                MaterialTheme.typography.labelMedium
+                MaterialTheme.typography.labelSmall
             },
             color = if (selected) {
                 MaterialTheme.colorScheme.primary
@@ -1052,8 +1052,8 @@ fun RivoVisualOptionSelectorRow(
     modifier: Modifier = Modifier,
     supporting: String? = null,
     leadingIcon: ImageVector? = null,
-    tileWidth: Dp = 100.dp,
-    tileHeight: Dp = 72.dp,
+    tileWidth: Dp = 72.dp,
+    tileHeight: Dp = 56.dp,
     optionContent: @Composable BoxScope.(Int, Boolean) -> Unit
 ) {
     Column(
@@ -1093,7 +1093,7 @@ fun RivoVisualOptionSelectorRow(
 
         LazyRow(
             contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(options) { (label, value) ->
                 val selected = value == selectedValue

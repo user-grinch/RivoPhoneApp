@@ -142,7 +142,9 @@ fun DialPadScreen(
         val secretDialpadCode = prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
         if (cleanNumber.isNotEmpty() && cleanNumber == secretDialpadCode.replace(" ", "")) {
             textFieldValue = TextFieldValue("")
-            navigator.navigate(com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination())
+            val visible = contactsVM.toggleHiddenContactsVisible()
+            val msg = if (visible) "Private Storage visible" else "Private Storage hidden"
+            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
             return@LaunchedEffect
         }
         if (isKnownSecretCode(cleanNumber)) {

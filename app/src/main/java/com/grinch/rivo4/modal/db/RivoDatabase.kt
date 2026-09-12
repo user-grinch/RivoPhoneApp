@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
         CallNoteEntity::class,
         CallbackReminderEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class RivoDatabase : RoomDatabase() {

@@ -131,9 +131,9 @@ class FloatingCallService : Service() {
         // Pill shape background
         val pillBg = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 28 * density
-            setColor(Color.parseColor("#EE1E2124"))
-            setStroke((1.5f * density).toInt(), Color.parseColor("#44FFFFFF"))
+            cornerRadius = 24 * density
+            setColor(Color.parseColor("#F51E2228"))
+            setStroke((1.5f * density).toInt(), Color.parseColor("#33FFFFFF"))
         }
 
         val container = LinearLayout(this).apply {
@@ -141,10 +141,10 @@ class FloatingCallService : Service() {
             gravity = Gravity.CENTER_VERTICAL
             background = pillBg
             setPadding(
-                (10 * density).toInt(),
                 (8 * density).toInt(),
-                (12 * density).toInt(),
-                (8 * density).toInt()
+                (6 * density).toInt(),
+                (8 * density).toInt(),
+                (6 * density).toInt()
             )
             elevation = 16 * density
         }
@@ -158,11 +158,11 @@ class FloatingCallService : Service() {
             setImageResource(R.drawable.ic_call_ongoing)
             setColorFilter(Color.WHITE)
             background = avatarBg
-            val size = (36 * density).toInt()
+            val size = (32 * density).toInt()
             layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                rightMargin = (10 * density).toInt()
+                rightMargin = (6 * density).toInt()
             }
-            setPadding((8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt())
+            setPadding((7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt())
         }
         container.addView(avatarIcon)
 
@@ -174,7 +174,7 @@ class FloatingCallService : Service() {
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT
             ).apply {
-                rightMargin = (14 * density).toInt()
+                rightMargin = (8 * density).toInt()
             }
         }
 
@@ -184,9 +184,9 @@ class FloatingCallService : Service() {
         callerNameView = TextView(this).apply {
             text = displayName
             setTextColor(Color.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             maxLines = 1
-            maxWidth = (110 * density).toInt()
+            maxWidth = (75 * density).toInt()
             ellipsize = android.text.TextUtils.TruncateAt.END
             typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
         }
@@ -195,7 +195,7 @@ class FloatingCallService : Service() {
         timerView = TextView(this).apply {
             text = "00:00"
             setTextColor(Color.parseColor("#80D651"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 10.5f)
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
         textCol.addView(timerView)
@@ -212,19 +212,20 @@ class FloatingCallService : Service() {
         val buttonBg = {
             GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#33FFFFFF"))
+                setColor(Color.parseColor("#2BFFFFFF"))
             }
         }
 
+        val actionBtnSize = (38 * density).toInt()
+
         muteButton = ImageView(this).apply {
             setImageResource(if (isMuted) R.drawable.ic_floating_mic_off else R.drawable.ic_floating_mic)
-            setColorFilter(Color.WHITE)
+            setColorFilter(if (isMuted) Color.parseColor("#FFB4AB") else Color.WHITE)
             background = buttonBg()
-            val size = (34 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                rightMargin = (8 * density).toInt()
+            layoutParams = LinearLayout.LayoutParams(actionBtnSize, actionBtnSize).apply {
+                rightMargin = (6 * density).toInt()
             }
-            setPadding((7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt())
+            setPadding((8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt())
             setOnClickListener {
                 val currentMute = CallService.audioState.value?.isMuted == true
                 CallService.mute(!currentMute)
@@ -234,15 +235,15 @@ class FloatingCallService : Service() {
         actionsRow.addView(muteButton)
 
         // Speaker Button
+        val isSpeaker = CallService.audioState.value?.route == CallAudioState.ROUTE_SPEAKER
         speakerButton = ImageView(this).apply {
             setImageResource(R.drawable.ic_floating_speaker)
-            setColorFilter(Color.WHITE)
+            setColorFilter(if (isSpeaker) Color.parseColor("#80D651") else Color.WHITE)
             background = buttonBg()
-            val size = (34 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                rightMargin = (8 * density).toInt()
+            layoutParams = LinearLayout.LayoutParams(actionBtnSize, actionBtnSize).apply {
+                rightMargin = (6 * density).toInt()
             }
-            setPadding((7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt())
+            setPadding((8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt())
             setOnClickListener {
                 CallService.cycleAudioRoute()
                 updateAudioIcons()
@@ -259,9 +260,8 @@ class FloatingCallService : Service() {
             setImageResource(R.drawable.ic_floating_end_call)
             setColorFilter(Color.WHITE)
             background = endCallBg
-            val size = (34 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(size, size)
-            setPadding((7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt(), (7 * density).toInt())
+            layoutParams = LinearLayout.LayoutParams(actionBtnSize, actionBtnSize)
+            setPadding((8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt(), (8 * density).toInt())
             setOnClickListener {
                 try {
                     CallService.allCalls.value.firstOrNull { it.state != Call.STATE_DISCONNECTED }?.disconnect()
@@ -276,7 +276,7 @@ class FloatingCallService : Service() {
 
         rootLayout.addView(container)
 
-        // Touch listener for dragging and click detection
+        // Touch listener for dragging with edge-snapping and click-to-return
         var initialX = 0
         var initialY = 0
         var initialTouchX = 0f
@@ -299,16 +299,36 @@ class FloatingCallService : Service() {
                     val dy = (event.rawY - initialTouchY).toInt()
                     if (abs(dx) > 10 || abs(dy) > 10) {
                         isDragging = true
+                        val screenHeight = resources.displayMetrics.heightPixels
                         params.x = initialX + dx
-                        params.y = initialY + dy
+                        params.y = (initialY + dy).coerceIn(40, (screenHeight - 140 * density).toInt())
                         windowManager?.updateViewLayout(rootLayout, params)
                     }
                     true
                 }
                 MotionEvent.ACTION_UP -> {
                     if (!isDragging) {
-                        // Clicked -> return to full-screen CallActivity
                         returnToCallActivity()
+                    } else {
+                        // Smooth edge-snapping to left or right screen edge
+                        val screenWidth = resources.displayMetrics.widthPixels
+                        val currentMidX = params.x + (rootLayout.width / 2)
+                        val targetX = if (currentMidX < screenWidth / 2) {
+                            (12 * density).toInt()
+                        } else {
+                            (screenWidth - rootLayout.width - (12 * density).toInt()).coerceAtLeast(0)
+                        }
+
+                        val animator = android.animation.ValueAnimator.ofInt(params.x, targetX).apply {
+                            duration = 200
+                            addUpdateListener { animation ->
+                                params.x = animation.animatedValue as Int
+                                try {
+                                    windowManager?.updateViewLayout(rootLayout, params)
+                                } catch (e: Exception) {}
+                            }
+                        }
+                        animator.start()
                     }
                     true
                 }

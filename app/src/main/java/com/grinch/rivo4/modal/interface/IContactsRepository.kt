@@ -5,7 +5,7 @@ import android.net.Uri
 import com.grinch.rivo4.modal.data.Contact
 
 interface IContactsRepository {
-    fun getContacts(includePrivate: Boolean = true): List<Contact>
+    fun getContacts(includePrivate: Boolean = true, includeHidden: Boolean = false): List<Contact>
     fun getContactById(contactId: String): Contact?
     fun getContactByNumber(number: String): Contact?
     fun toggleFavorite(contactId: String, isFavorite: Boolean)
@@ -21,6 +21,8 @@ interface IContactsRepository {
 
     fun makeContactPrivate(contactId: String)
     fun makeContactPublic(contactId: String)
+    fun setContactHidden(contactId: String, isHidden: Boolean)
     fun exportPrivateContacts(uri: Uri)
     fun importPrivateContacts(uri: Uri)
+    fun isNumberHidden(number: String): Boolean
 }

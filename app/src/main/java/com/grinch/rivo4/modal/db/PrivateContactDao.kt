@@ -21,4 +21,7 @@ interface PrivateContactDao {
 
     @Query("DELETE FROM private_contacts WHERE localId = :id")
     fun deleteById(id: Long)
+
+    @Query("UPDATE private_contacts SET isHidden = :isHidden WHERE localId = :id")
+    fun setHidden(id: Long, isHidden: Boolean)
 }

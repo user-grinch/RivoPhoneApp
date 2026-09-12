@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -138,6 +140,23 @@ fun AZListScroll(
                                     supporting = null,
                                     avatarName = contact.name,
                                     photoUri = contact.photoUri,
+                                    trailingContent = {
+                                        if (contact.isHidden) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.VisibilityOff,
+                                                contentDescription = "Private Storage (Hidden)",
+                                                tint = MaterialTheme.colorScheme.tertiary,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        } else if (contact.isPrivate) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Lock,
+                                                contentDescription = "Private Storage",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    },
                                     onClick = {
                                         if (selectedIds.isNotEmpty()) {
                                             onToggleSelection(contact.id)

@@ -161,7 +161,7 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 title = "Enjoying Rivo Phone?",
                                 icon = Icons.Default.Star,
                                 confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = "Rate on Google Play ★★★★★",
+                                    label = "Rate on Google Play",
                                     onClick = {
                                         openLink(context, PLAY_STORE_URL)
                                         prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)

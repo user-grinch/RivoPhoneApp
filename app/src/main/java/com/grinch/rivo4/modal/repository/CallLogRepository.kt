@@ -133,6 +133,9 @@ class CallLogRepository(
         while (cursor.moveToNext()) {
             val callId = cursor.getLong(idIdx)
             val number = cursor.getString(numberIdx) ?: unknownLabel
+            if (!preferenceManager.isHiddenContactsVisible() && contactsRepo.isNumberHidden(number)) {
+                continue
+            }
             val type = cursor.getInt(typeIdx)
             val date = cursor.getLong(dateIdx)
             val duration = cursor.getLong(durationIdx)

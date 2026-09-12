@@ -343,8 +343,10 @@ class PreferenceManager(context: Context) {
         const val KEY_SECRET_DIALPAD_CODE = "secret_dialpad_code"
         const val DEFAULT_SECRET_DIALPAD_CODE = "*#0000#"
         const val KEY_HIDE_PRIVATE_SETTINGS_ENTRY = "hide_private_settings_entry"
+        const val KEY_HIDDEN_CONTACTS_VISIBLE = "hidden_contacts_visible"
 
         const val KEY_LOG_FAKE_CALLS = "log_fake_calls"
+        const val KEY_SHOW_RECENTS_STATS = "show_recents_stats"
 
         const val KEY_APP_USAGE_SECONDS = "app_usage_seconds"
         const val KEY_RATE_APP_SHOWN = "rate_app_shown"
@@ -380,4 +382,6 @@ class PreferenceManager(context: Context) {
     fun setAppLockTimeout(timeout: Int) = setInt(KEY_APP_LOCK_TIMEOUT, timeout)
     fun isFloatingCallBubbleEnabled(): Boolean = getBoolean(KEY_FLOATING_CALL_BUBBLE, true)
     fun setFloatingCallBubbleEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_CALL_BUBBLE, enabled)
+    fun isHiddenContactsVisible(): Boolean = getBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, false)
+    fun setHiddenContactsVisible(visible: Boolean) = setBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, visible)
 }

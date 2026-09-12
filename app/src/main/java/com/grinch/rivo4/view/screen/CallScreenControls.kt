@@ -173,12 +173,12 @@ private fun EndCallButton(compact: Boolean, onEndCall: () -> Unit) {
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val buttonScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.96f else 1f,
+        targetValue = if (isPressed) 0.94f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "endCallScale"
     )
 
-    val barHeight = if (compact) 58.dp else 68.dp
+    val fabSize = if (compact) 62.dp else 72.dp
 
     Surface(
         onClick = {
@@ -186,20 +186,19 @@ private fun EndCallButton(compact: Boolean, onEndCall: () -> Unit) {
             onEndCall()
         },
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = if (compact) 24.dp else 48.dp)
-            .height(barHeight)
+            .size(fabSize)
             .scale(buttonScale),
         shape = CircleShape,
         color = MaterialTheme.callColors.decline,
         contentColor = MaterialTheme.callColors.onDecline,
+        shadowElevation = 6.dp,
         interactionSource = interactionSource
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = Icons.Default.CallEnd,
                 contentDescription = stringResource(R.string.action_end_call),
-                modifier = Modifier.size(if (compact) 28.dp else 32.dp)
+                modifier = Modifier.size(if (compact) 28.dp else 34.dp)
             )
         }
     }
@@ -230,13 +229,14 @@ fun ActiveCallControls(
         audioRoute == CallAudioState.ROUTE_BLUETOOTH
     val isHolding = callState == Call.STATE_HOLDING
 
-    val cellSpacing = if (compact) 6.dp else 8.dp
+    val cellSpacing = if (compact) 8.dp else 12.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
+        // Row 1: Mute, Keypad, Audio/Speaker
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(cellSpacing),
@@ -266,18 +266,11 @@ fun ActiveCallControls(
                 modifier = Modifier.weight(1f),
                 onClick = onAudioClick
             )
-            CallActionButton(
-                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
-                isActive = isHolding,
-                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onToggleHold
-            )
         }
 
         Spacer(modifier = Modifier.height(cellSpacing))
 
+        // Row 2: Record, Hold, Notes
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(cellSpacing),
@@ -294,6 +287,14 @@ fun ActiveCallControls(
                 onClick = onToggleRecording
             )
             CallActionButton(
+                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
+                isActive = isHolding,
+                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleHold
+            )
+            CallActionButton(
                 icon = Icons.AutoMirrored.Filled.Notes,
                 isActive = false,
                 label = "Notes",
@@ -301,6 +302,16 @@ fun ActiveCallControls(
                 modifier = Modifier.weight(1f),
                 onClick = onNotesClick
             )
+        }
+
+        Spacer(modifier = Modifier.height(cellSpacing))
+
+        // Row 3: Add Call, Message
+        Row(
+            modifier = Modifier.fillMaxWidth(if (compact) 0.9f else 0.72f),
+            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             CallActionButton(
                 icon = Icons.Default.Add,
                 isActive = false,
@@ -320,6 +331,8 @@ fun ActiveCallControls(
         }
 
         Spacer(modifier = Modifier.height(if (compact) 16.dp else 24.dp))
+
+        // Centered red circular End Call FAB
         EndCallButton(compact = compact, onEndCall = onEndCall)
     }
 }

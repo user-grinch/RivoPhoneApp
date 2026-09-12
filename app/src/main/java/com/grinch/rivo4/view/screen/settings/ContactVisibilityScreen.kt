@@ -98,7 +98,7 @@ fun ContactVisibilityScreen(
                         Icon(
                             imageVector = Icons.Outlined.SortByAlpha,
                             contentDescription = null,
-                            modifier = Modifier.size(28.dp),
+                            modifier = Modifier.size(20.dp),
                             tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -119,7 +119,7 @@ fun ContactVisibilityScreen(
                         Icon(
                             imageVector = Icons.Outlined.Badge,
                             contentDescription = null,
-                            modifier = Modifier.size(28.dp),
+                            modifier = Modifier.size(20.dp),
                             tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }

@@ -127,8 +127,12 @@ fun SettingsScreen(
                 }
             }
 
+            // 1. Personalization & Display
             item {
-                RivoExpressiveCard {
+                RivoExpressiveCard(
+                    title = "Personalization & Display",
+                    icon = Icons.Outlined.Palette
+                ) {
                     RivoListItem(
                         headline = stringResource(R.string.settings_interface_headline),
                         supporting = stringResource(R.string.settings_interface_supporting),
@@ -144,8 +148,12 @@ fun SettingsScreen(
                 }
             }
 
+            // 2. Calling & Behavior
             item {
-                RivoExpressiveCard {
+                RivoExpressiveCard(
+                    title = "Calling & Behavior",
+                    icon = Icons.Outlined.Phone
+                ) {
                     RivoListItem(
                         headline = stringResource(R.string.settings_call_settings_headline),
                         supporting = stringResource(R.string.settings_call_settings_supporting),
@@ -159,6 +167,21 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(CallRecordingsScreenDestination()) }
                     )
                     RivoListItem(
+                        headline = "Call Analytics & Insights",
+                        supporting = "Talk time leaderboard, peak hours & distribution",
+                        leadingIcon = Icons.Outlined.Analytics,
+                        onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
+                    )
+                }
+            }
+
+            // 3. Call Protection & Security
+            item {
+                RivoExpressiveCard(
+                    title = "Call Protection & Security",
+                    icon = Icons.Outlined.Security
+                ) {
+                    RivoListItem(
                         headline = stringResource(R.string.settings_blocked_numbers_headline),
                         supporting = stringResource(R.string.settings_blocked_numbers_supporting),
                         leadingIcon = Icons.Outlined.Block,
@@ -170,44 +193,31 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.PhoneCallback,
                         onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
                     )
-                    RivoListItem(
-                        headline = "Call Analytics & Insights",
-                        supporting = "Talk time leaderboard, peak hours & distribution",
-                        leadingIcon = Icons.Outlined.Analytics,
-                        onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
-                    )
-                }
-            }
-
-            item {
-                RivoExpressiveCard {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_backup_restore_headline),
-                        supporting = stringResource(R.string.settings_backup_restore_supporting),
-                        leadingIcon = Icons.Outlined.Backup,
-                        onClick = { navigator.navigate(BackupRestoreScreenDestination) }
-                    )
-                    RivoListItem(
-                        headline = "Permissions & App Setup",
-                        supporting = "Review granted permissions and system capabilities",
-                        leadingIcon = Icons.Outlined.VerifiedUser,
-                        onClick = { navigator.navigate(PermissionsChecklistScreenDestination) }
-                    )
                     val appLockEnabled = remember(settingsState) { prefs.isAppLockEnabled() }
                     RivoListItem(
                         headline = "App Lock",
                         supporting = if (appLockEnabled) "Enabled (Face, Fingerprint, PIN)" else "Protect app with biometrics or PIN",
-                        leadingIcon = Icons.Outlined.Security,
+                        leadingIcon = Icons.Outlined.Lock,
                         onClick = { navigator.navigate(AppLockScreenDestination) }
                     )
-                    if (!hidePrivateContacts) {
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_manage_private_contacts),
-                            supporting = stringResource(R.string.settings_manage_private_contacts_supporting),
-                            leadingIcon = Icons.Outlined.Lock,
-                            onClick = { navigator.navigate(PrivateContactsScreenDestination) }
-                        )
-                    }
+                }
+            }
+
+            // 4. Privacy & Private Storage
+            item {
+                val secretCode = remember(settingsState) {
+                    prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                }
+                RivoExpressiveCard(
+                    title = "Privacy & Private Storage",
+                    icon = Icons.Outlined.Lock
+                ) {
+                    RivoListItem(
+                        headline = "Private Storage",
+                        supporting = "Secret dialpad vault ($secretCode) • Stored only in app memory",
+                        leadingIcon = Icons.Outlined.Lock,
+                        onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                    )
                     RivoListItem(
                         headline = stringResource(R.string.settings_manage_visibility),
                         supporting = stringResource(R.string.settings_manage_visibility_supporting),
@@ -215,8 +225,29 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                     )
                     RivoListItem(
+                        headline = "Permissions & App Setup",
+                        supporting = "Review granted permissions and system capabilities",
+                        leadingIcon = Icons.Outlined.VerifiedUser,
+                        onClick = { navigator.navigate(PermissionsChecklistScreenDestination) }
+                    )
+                }
+            }
+
+            // 5. Data & Support
+            item {
+                RivoExpressiveCard(
+                    title = "Data & Support",
+                    icon = Icons.Outlined.HelpOutline
+                ) {
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_backup_restore_headline),
+                        supporting = stringResource(R.string.settings_backup_restore_supporting),
+                        leadingIcon = Icons.Outlined.Backup,
+                        onClick = { navigator.navigate(BackupRestoreScreenDestination) }
+                    )
+                    RivoListItem(
                         headline = "Rate on Google Play",
-                        supporting = "Support Rivo with a 5-star rating on the Play Store",
+                        supporting = "Support Rivo on Google Play Store",
                         leadingIcon = Icons.Default.Star,
                         onClick = { openLink(context, PLAY_STORE_URL) }
                     )

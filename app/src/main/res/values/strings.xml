@@ -452,8 +452,8 @@
     <string name="settings_manage_name_format_first_first">First Name First</string>
     <string name="settings_manage_name_format_last_first">Last Name First</string>
     <string name="settings_manage_storage">Storage</string>
-    <string name="settings_manage_private_contacts">Private Contacts</string>
-    <string name="settings_manage_private_contacts_supporting">Manage contacts stored only in this app</string>
+    <string name="settings_manage_private_contacts">Private Storage</string>
+    <string name="settings_manage_private_contacts_supporting">Manage contacts stored in private app storage</string>
     <string name="settings_manage_visibility">Contact Visibility</string>
     <string name="settings_manage_visibility_supporting">Choose which accounts to show in your list</string>
     <string name="settings_manage_quick_fixes">Quick Fixes</string>
@@ -470,12 +470,12 @@
     <string name="settings_visibility_local_memory_supporting">Contacts stored on device</string>
     <string name="settings_visibility_reset_all">Reset to Show All</string>
 
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Private Contacts</string>
+    <!-- Settings > Private storage -->
+    <string name="settings_private_title">Private Storage</string>
     <string name="content_desc_import">Import</string>
     <string name="content_desc_export">Export</string>
-    <string name="settings_private_empty">No private contacts found</string>
-    <string name="settings_private_manage_hint">Manage your encrypted local contacts</string>
+    <string name="settings_private_empty">No contacts in private storage found</string>
+    <string name="settings_private_manage_hint">Manage contacts stored in private storage</string>
 
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Speed Dial</string>

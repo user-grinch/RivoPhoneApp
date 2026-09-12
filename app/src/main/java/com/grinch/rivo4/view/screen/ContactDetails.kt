@@ -34,6 +34,8 @@ import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.view.components.AddCallNoteDialog
 import com.grinch.rivo4.view.components.CallbackReminderDialog
@@ -1166,6 +1168,19 @@ fun ContactDetailsScreen(
                                         navigator.navigateUp()
                                     }
                                 )
+                                if (fc.isPrivate) {
+                                    val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                    RivoListItem(
+                                        headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
+                                        supporting = if (fc.isHidden) "Make visible in contacts and recents" else "Hide from contacts and recents (unlock by dialing $secretCode)",
+                                        leadingIcon = if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                        onClick = {
+                                            contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
+                                            navigator.navigateUp()
+                                        }
+                                    )
+                                }
                                 RivoDivider(Modifier.padding(horizontal = 16.dp))
                                 RivoListItem(
                                     headline = stringResource(R.string.action_delete),
