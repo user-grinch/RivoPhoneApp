@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RivoPhone</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Abbrechen</string>
     <string name="action_confirm">Bestätigen</string>
@@ -34,6 +33,10 @@
     <string name="content_desc_scroll_to_top">Nach oben scrollen</string>
     <string name="sim_picker_title">SIM-Karte auswählen</string>
     <string name="sim_picker_unknown_sim">Unbekannte SIM-Karte</string>
+    <plurals name="selection_count_selected">
+        <item quantity="one">%1$d Ausgewählt</item>
+        <item quantity="other">%1$d Ausgewählt</item>
+    </plurals>
     <string name="label_unknown">Unbekannt</string>
     <string name="label_unknown_number">Unbekannte Nummer</string>
     <string name="label_mobile">Mobil</string>
@@ -50,6 +53,7 @@
     <string name="date_yesterday">Gestern</string>
     <string name="nav_contacts">Kontakte</string>
     <string name="nav_recents">Zuletzt</string>
+    <string name="nav_call_recordings">Aufnahmen</string>
     <string name="call_type_incoming">Eingehend</string>
     <string name="call_type_outgoing">Ausgehend</string>
     <string name="call_type_missed">Verpasst</string>
@@ -102,6 +106,10 @@
     <string name="call_history_with_contact">Verlauf mit %1$s</string>
     <string name="call_log_no_history_found">Keine Anrufliste gefunden</string>
     <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
+    <plurals name="call_log_delete_confirm">
+        <item quantity="one">Sind Sie sicher, dass sie den ausgewählten %1$d Anruflisteneintrag löschen wollen?</item>
+        <item quantity="other">Sind Sie sicher, dass sie die ausgewählten %1$d Anruflisteneinträge löschen wollen?</item>
+    </plurals>
     <string name="call_log_delete_title">Anrufliste löschen</string>
     <string name="call_log_clear_all_title">Alle Listen leeren</string>
     <string name="call_log_clear_all_confirm">Alles leeren</string>
@@ -484,6 +492,7 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Leitender Entwickler</string>
     <string name="contributor_role_developer">Entwickler</string>
+    <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <string name="nav_favorites">Favoriten</string>
     <string name="favorites_permission_title">Kontakt-Berechtigung erforderlich</string>
@@ -525,8 +534,16 @@
     <string name="contact_unblock">Kontakt  nicht mehr blockieren</string>
     <string name="contact_unblock_supporting">Anrufe von diesem Kontakt wieder zulassen</string>
     <string name="call_log_block_title">Nummer blockieren?</string>
+    <plurals name="call_log_block_message">
+        <item quantity="one">Anrufe von dem %1$d ausgewählten Eintrag werden künftig blockiert.</item>
+        <item quantity="other">Anrufe von den %1$d ausgewählten Einträgen werden künftig blockiert.</item>
+    </plurals>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Hintergrund des Anrufbildschirms</string>
+    <string name="settings_interface_hide_avatar_with_bg">Profilbild verbergen, wenn Hintergrund verfügbar ist</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Anrufer-Avatar auf dem Anrufbildschirm verbergen, wenn ein Anrufhintergrund aktiviert ist</string>
+    <string name="settings_interface_use_cards">Expressive Cards benutzen</string>
+    <string name="settings_interface_use_cards_supporting">Einträge unter \"Zuletzt\" und \"Kontakte\" als Expressive Cards darstellen</string>
     <string name="contact_call_background_set">Ausgewähltes individuelles Bild</string>
     <string name="contact_call_background_none">Standard-Hintergrund verwenden</string>
     <string name="contact_call_background_choose">Bild auswählen</string>
@@ -593,4 +610,6 @@
     <string name="serial_label">Seriennummer</string>
     <string name="imei_copied">In Zwischenablage kopiert</string>
     <string name="imei_not_available">Nicht verfügbar auf diesem Gerät</string>
+    <!-- Fake Call feature -->
+    <!-- Navigation Bar Style -->
 </resources>

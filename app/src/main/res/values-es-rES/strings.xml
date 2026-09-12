@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RivoPhone</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Cancelar</string>
     <string name="action_confirm">Confirmar</string>
@@ -449,6 +448,7 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Director de desarrollo</string>
     <string name="contributor_role_developer">Desarrollador</string>
+    <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <string name="nav_favorites">Favoritos</string>
     <string name="favorites_permission_title">Se necesita permiso de contactos</string>
@@ -486,4 +486,6 @@
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
+    <!-- Fake Call feature -->
+    <!-- Navigation Bar Style -->
 </resources>
