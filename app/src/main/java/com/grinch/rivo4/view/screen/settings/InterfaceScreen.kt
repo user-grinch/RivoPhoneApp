@@ -74,7 +74,8 @@ fun InterfaceScreen(
     var showCallScreenAvatar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)) }
     var hideAvatarWithBg by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false)) }
     var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
-    var cardRoundness by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28)) }
+    var cardRoundness by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5)) }
+    var navBarStyle by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_NAV_BAR_STYLE, PreferenceManager.NAV_BAR_STYLE_STANDARD)) }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60),
@@ -247,12 +248,12 @@ fun InterfaceScreen(
                         RivoInteractiveRoundnessSlider(
                             headline = stringResource(R.string.settings_interface_card_roundness),
                             supporting = stringResource(R.string.settings_interface_card_roundness_supporting),
-                            value = cardRoundness.toFloat().coerceAtLeast(1f),
-                            valueRange = 1f..32f,
-                            steps = 7,
-                            onValueChange = { cardRoundness = it.roundToInt() },
+                            value = cardRoundness.toFloat().coerceIn(5f, 32f),
+                            valueRange = 5f..32f,
+                            steps = 26,
+                            onValueChange = { cardRoundness = it.roundToInt().coerceAtLeast(5) },
                             onValueChangeFinished = {
-                                prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, cardRoundness)
+                                prefs.setInt(PreferenceManager.KEY_CARD_ROUNDNESS, cardRoundness.coerceAtLeast(5))
                             }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
@@ -291,6 +292,29 @@ fun InterfaceScreen(
 
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_navigation)) {
+                        RivoVisualOptionSelectorRow(
+                            headline = stringResource(R.string.settings_interface_nav_bar_style),
+                            supporting = stringResource(R.string.settings_interface_nav_bar_style_supporting),
+                            leadingIcon = Icons.Outlined.Dock,
+                            options = listOf(
+                                stringResource(R.string.settings_nav_bar_standard) to PreferenceManager.NAV_BAR_STYLE_STANDARD,
+                                stringResource(R.string.settings_nav_bar_toolbar) to PreferenceManager.NAV_BAR_STYLE_TOOLBAR
+                            ),
+                            selectedValue = navBarStyle,
+                            onValueChange = {
+                                navBarStyle = it
+                                prefs.setInt(PreferenceManager.KEY_NAV_BAR_STYLE, it)
+                            }
+                        ) { value, selected ->
+                            val icon = if (value == PreferenceManager.NAV_BAR_STYLE_TOOLBAR) Icons.Outlined.DashboardCustomize else Icons.Outlined.ViewStream
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoVisualOptionSelectorRow(
                             headline = stringResource(R.string.settings_interface_default_bottom_bar),
                             supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),

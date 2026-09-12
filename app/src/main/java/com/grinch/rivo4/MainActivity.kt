@@ -114,7 +114,7 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Black)
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,

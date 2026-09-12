@@ -9,9 +9,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,12 +23,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.BottomBar
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
+import com.grinch.rivo4.view.theme.LocalNavBarStyle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -75,8 +81,12 @@ fun MainScreen(
         }
     }
 
+    val navBarStyle = LocalNavBarStyle.current
+    val isToolbar = navBarStyle == PreferenceManager.NAV_BAR_STYLE_TOOLBAR
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
+        containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             AnimatedContent(
                 targetState = isSelecting,
@@ -97,20 +107,29 @@ fun MainScreen(
             }
         },
         bottomBar = {
-            BottomBar(
-                navController = navController,
-                navigator = navigator,
-                pagerState = pagerState,
-                visibleTabs = visibleTabs,
-                onPageSelected = { page ->
-                    scope.launch {
-                        pagerState.animateScrollToPage(page)
+            if (!isToolbar) {
+                BottomBar(
+                    navController = navController,
+                    navigator = navigator,
+                    pagerState = pagerState,
+                    visibleTabs = visibleTabs,
+                    onPageSelected = { page ->
+                        scope.launch {
+                            pagerState.animateScrollToPage(page)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = if (isToolbar) 0.dp else innerPadding.calculateBottomPadding()
+                )
+        ) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
@@ -139,7 +158,29 @@ fun MainScreen(
                         }
                     )
                     PreferenceManager.TAB_RECORDINGS -> com.grinch.rivo4.view.screen.settings.CallRecordingsContent(
-                        showTopBar = false
+                        showTopBar = false,
+                        initialShowList = true
+                    )
+                }
+            }
+
+            if (isToolbar) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    BottomBar(
+                        navController = navController,
+                        navigator = navigator,
+                        pagerState = pagerState,
+                        visibleTabs = visibleTabs,
+                        onPageSelected = { page ->
+                            scope.launch {
+                                pagerState.animateScrollToPage(page)
+                            }
+                        }
                     )
                 }
             }

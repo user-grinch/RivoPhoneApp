@@ -148,6 +148,7 @@ fun ContactEditScreen(
     )
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             TopAppBar(
                 title = {
@@ -215,11 +216,7 @@ fun ContactEditScreen(
                             Text(stringResource(R.string.action_save))
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                }
             )
         }
     ) { innerPadding ->

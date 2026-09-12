@@ -104,7 +104,7 @@ fun ContactSearchContent(
     val prefs = koinInject<PreferenceManager>()
     val callLauncher = rememberCallLauncher()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28) }
+    val roundness = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(1) }
 
     var query by remember { mutableStateOf("") }
 

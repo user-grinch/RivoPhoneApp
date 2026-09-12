@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.provider.BlockedNumberContract
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -17,9 +18,11 @@ import android.telecom.DisconnectCause
 import android.telecom.InCallService
 import android.telecom.TelecomManager
 import android.telecom.VideoProfile
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.CallUiHelper
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import kotlinx.coroutines.*
@@ -55,6 +58,7 @@ class CallService : InCallService() {
 
     companion object {
         private const val CHANNEL_ID = "call_channel"
+        private const val SILENT_CHANNEL_ID = "call_silent_channel"
         private const val MISSED_CHANNEL_ID = "missed_call_channel"
         private const val NOTIFICATION_ID = 101
 
@@ -213,7 +217,7 @@ class CallService : InCallService() {
     }
 
     private fun startAutoRecordingIfEnabled(call: Call) {
-        if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, false)) return
+        if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true)) return
         if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)) return
         if (CallRecorder.isRecording.value) return
 
@@ -437,15 +441,24 @@ class CallService : InCallService() {
         }
 
         updateCallState()
-        updateNotification(call)
 
-        val intent = Intent(this, CallActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val isIncoming = call.state == Call.STATE_RINGING
+        val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
+
+        if (showFullScreen) {
+            val intent = Intent(this, CallActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            }
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("CallService", "Failed to start CallActivity: ${e.message}", e)
+            }
+        } else {
+            Log.i("CallService", "User is actively in another app; presenting heads-up incoming call notification only.")
         }
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-        }
+
+        updateNotification(call)
     }
 
     override fun onCallRemoved(call: Call) {
@@ -498,6 +511,17 @@ class CallService : InCallService() {
         }
         notificationManager.createNotificationChannel(channel)
 
+        val silentChannel = NotificationChannel(
+            SILENT_CHANNEL_ID,
+            getString(R.string.notif_channel_calls),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            enableVibration(false)
+            setSound(null, null)
+        }
+        notificationManager.createNotificationChannel(silentChannel)
+
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
 
@@ -539,6 +563,9 @@ class CallService : InCallService() {
         val declineIntent = Intent(this, CallService::class.java).apply { action = "DECLINE_CALL" }
         val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val muteIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_MUTE" }
+        val mutePendingIntent = PendingIntent.getService(this, 3, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         val speakerIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_SPEAKER" }
         val speakerPendingIntent = PendingIntent.getService(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -578,35 +605,64 @@ class CallService : InCallService() {
             ?: call.details.connectTimeMillis.takeIf { it > 0 }
             ?: System.currentTimeMillis()
 
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(if (call.state == Call.STATE_RINGING) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
+        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
+        val powerManager = getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
+        val isLocked = keyguardManager?.isKeyguardLocked == true || powerManager?.isInteractive == false
+        val alwaysFullScreen = preferenceManager.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)
+        val isFullScreenShowing = isActivityVisible.value || alwaysFullScreen || isLocked || CallUiHelper.isHomeScreenForeground(this) || com.grinch.rivo4.RivoApp.isAppInForeground
+
+        val isRinging = call.state == Call.STATE_RINGING
+        val useSilentChannel = (!isRinging && isActivityVisible.value) || (isRinging && isFullScreenShowing)
+
+        val targetChannel = if (useSilentChannel) SILENT_CHANNEL_ID else CHANNEL_ID
+        val builder = NotificationCompat.Builder(this, targetChannel)
+            .setSmallIcon(if (isRinging) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
             .setContentTitle(contactName)
             .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
-            .setSilent(call.state != Call.STATE_RINGING)
-            .setOnlyAlertOnce(call.state != Call.STATE_RINGING)
-            .setDefaults(if (call.state == Call.STATE_RINGING) NotificationCompat.DEFAULT_ALL else 0)
             .setStyle(
-                if (call.state == Call.STATE_RINGING) {
+                if (isRinging) {
                     NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent)
                 } else {
                     NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
                 }
             )
 
+        if (useSilentChannel) {
+            // Full-screen is active: keep notification quiet in the background so it does not obstruct the call UI
+            builder.setPriority(NotificationCompat.PRIORITY_LOW)
+            builder.setSilent(true)
+            builder.setOnlyAlertOnce(true)
+            // If screen is locked, we still set fullScreenIntent to show over lockscreen
+            if (isLocked && isRinging) {
+                builder.setFullScreenIntent(fullScreenPendingIntent, true)
+            }
+        } else {
+            // Heads-Up Mode: show prominent floating notification banner with answer and decline actions
+            builder.setPriority(NotificationCompat.PRIORITY_MAX)
+            builder.setSilent(false)
+            builder.setDefaults(if (isRinging) NotificationCompat.DEFAULT_ALL else 0)
+            // DO NOT set fullScreenIntent with true here to prevent the system from taking over full screen
+        }
+
         if (call.state == Call.STATE_ACTIVE) {
             builder.setWhen(connectTime)
             builder.setUsesChronometer(true)
         }
 
-        if (call.state == Call.STATE_RINGING) {
-            builder.setFullScreenIntent(fullScreenPendingIntent, true)
-        } else {
+        if (!isRinging) {
+            val isMuted = audioState?.isMuted ?: false
+            builder.addAction(
+                NotificationCompat.Action.Builder(
+                    android.R.drawable.stat_notify_call_mute,
+                    if (isMuted) getString(R.string.action_unmute) else getString(R.string.action_mute),
+                    mutePendingIntent
+                ).build()
+            )
             builder.addAction(
                 NotificationCompat.Action.Builder(
                     android.R.drawable.stat_sys_speakerphone,
@@ -617,7 +673,15 @@ class CallService : InCallService() {
         }
 
         val notification = builder.build()
-        startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            var fgsType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && CallRecorder.hasAudioPermission(this)) {
+                fgsType = fgsType or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            }
+            startForeground(NOTIFICATION_ID, notification, fgsType)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
     }
 
     private fun cancelNotification() {

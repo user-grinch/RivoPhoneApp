@@ -52,7 +52,7 @@ The goal is simple: provide a clean, modern phone app without unnecessary clutte
 - 🗂️ **Organized:** A clean, easy-to-read call history log.
 - 🔒 **Privacy Focused:** Keep specific contacts secure with the Private Contacts feature.
 - 🛠️ **Cutting Edge:** Smooth performance powered entirely by Jetpack Compose.
-- 🔓 **Fully Open Source:** Transparent, community-driven, and ad-free.
+- 🔓 **Fully Open Source:** Transparent, community-driven.
 
 ## 📸 Screenshots
 

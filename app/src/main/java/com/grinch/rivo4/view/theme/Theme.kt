@@ -7,15 +7,19 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
 
 const val KEY_CUSTOM_PRIMARY_COLOR: String = "custom_primary_color"
 const val CUSTOM_PRIMARY_COLOR_UNSET: Int = -1
+
+val LocalNavBarStyle: ProvidableCompositionLocal<Int> = staticCompositionLocalOf { PreferenceManager.NAV_BAR_STYLE_STANDARD }
 
 @Composable
 fun Rivo4Theme(
@@ -36,7 +40,7 @@ fun Rivo4Theme(
         prefs.getInt(KEY_CUSTOM_PRIMARY_COLOR, CUSTOM_PRIMARY_COLOR_UNSET)
     }
     val cardRoundness = remember(settingsVersion) {
-        prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, RivoShapeDefaults.DefaultRoundness)
+        prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, RivoShapeDefaults.DefaultRoundness).coerceAtLeast(5)
     }
 
     val colorScheme = remember(darkTheme, dynamicColor, amoledMode, customPrimaryInt) {
@@ -52,12 +56,16 @@ fun Rivo4Theme(
     }
 
     val shapes = remember(cardRoundness) { rivoShapes(cardRoundness) }
-
     val callColors = remember(colorScheme, darkTheme) { rivoCallColors(colorScheme, darkTheme) }
+
+    val navBarStyle = remember(settingsVersion) {
+        prefs.getInt(PreferenceManager.KEY_NAV_BAR_STYLE, PreferenceManager.NAV_BAR_STYLE_STANDARD)
+    }
 
     CompositionLocalProvider(
         LocalCallColors provides callColors,
-        LocalCardRoundness provides cardRoundness
+        LocalCardRoundness provides cardRoundness,
+        LocalNavBarStyle provides navBarStyle
     ) {
         MaterialExpressiveTheme(
             colorScheme = colorScheme,

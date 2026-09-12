@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -139,10 +140,22 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(CallAccountsScreenDestination) }
                     )
                     RivoListItem(
+                        headline = stringResource(R.string.call_recordings_title),
+                        supporting = "Auto-recording, Shizuku internal audio & saved recordings",
+                        leadingIcon = Icons.Outlined.FiberManualRecord,
+                        onClick = { navigator.navigate(CallRecordingsScreenDestination()) }
+                    )
+                    RivoListItem(
                         headline = stringResource(R.string.settings_blocked_numbers_headline),
                         supporting = stringResource(R.string.settings_blocked_numbers_supporting),
                         leadingIcon = Icons.Outlined.Block,
                         onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
+                    )
+                    RivoListItem(
+                        headline = stringResource(R.string.fake_call_title),
+                        supporting = stringResource(R.string.fake_call_subtitle),
+                        leadingIcon = Icons.Outlined.PhoneCallback,
+                        onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
                     )
                 }
             }

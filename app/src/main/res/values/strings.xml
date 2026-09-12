@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RivoPhone</string>
+    <string name="app_name">Rivo</string>
 
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Cancel</string>
@@ -22,6 +22,7 @@
     <string name="action_decline">Decline</string>
     <string name="action_end">End</string>
     <string name="action_mute">Mute</string>
+    <string name="action_unmute">Unmute</string>
     <string name="action_keypad">Keypad</string>
     <string name="action_add_call">Add call</string>
     <string name="action_hold">Hold</string>
@@ -380,6 +381,8 @@
     <string name="settings_call_incoming_ui_buttons">Buttons</string>
     <string name="settings_call_incoming_ui_slide_ios">Slide to Answer (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertical Swipe</string>
+    <string name="settings_call_always_fullscreen">Always Jump to Full Screen</string>
+    <string name="settings_call_always_fullscreen_supporting">Open incoming calls directly in full screen. When disabled, calls show as a heads-up banner when using other apps.</string>
     <string name="settings_call_dialpad_style">Dialpad Style</string>
     <string name="settings_call_dialpad_style_supporting">Visual appearance of the phone dialer</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
@@ -523,6 +526,24 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Lead Developer</string>
     <string name="contributor_role_developer">Developer</string>
+    <string name="contributor_role_localization">Localization &amp; Translations</string>
+    <string name="contributor_role_contributor">Contributor</string>
+    <string name="contributor_commits">%1$d commits</string>
+
+    <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_recording_guide_title">Device Optimization for Recording</string>
+    <string name="oem_recording_guide_subtitle">Xiaomi MIUI/HyperOS and other OEMs require special background permissions to save call recordings without interruption.</string>
+    <string name="oem_perm_bg_recording">Background Audio</string>
+    <string name="oem_perm_bg_recording_desc">Allow recording audio while running in the background in OEM Security settings.</string>
+    <string name="oem_perm_autostart">Autostart</string>
+    <string name="oem_perm_autostart_desc">Enable Autostart to prevent the system from killing the recorder during calls.</string>
+    <string name="oem_perm_battery">Battery Saver: No Restrictions</string>
+    <string name="oem_perm_battery_desc">Exclude Rivo from aggressive battery killer policies.</string>
+    <string name="oem_btn_open_perms">Open OEM Permissions</string>
+    <string name="oem_btn_open_autostart">Open Autostart</string>
+    <string name="oem_btn_open_battery">Battery Settings</string>
+    <string name="call_recording_notification_title">Recording Call</string>
+    <string name="call_recording_notification_text">Audio is being captured and saved</string>
 
     <!-- Favorites -->
     <string name="nav_favorites">Favorites</string>
@@ -649,4 +670,48 @@
     <string name="serial_label">Serial Number</string>
     <string name="imei_copied">Copied to clipboard</string>
     <string name="imei_not_available">Not available on this device</string>
+    <!-- Fake Call feature -->
+    <string name="fake_call_title">Fake Call</string>
+    <string name="fake_call_subtitle">Schedule incoming simulated calls</string>
+    <string name="fake_call_channel_title">Fake Call Schedule</string>
+    <string name="fake_call_channel_desc">Notifications for scheduled fake calls</string>
+    <string name="fake_call_notif_title">Fake Call Scheduled</string>
+    <string name="fake_call_notif_content">Fake call from %1$s at %2$s</string>
+    <string name="fake_call_caller_details">Caller Information</string>
+    <string name="fake_call_name">Caller Name</string>
+    <string name="fake_call_number">Phone Number</string>
+    <string name="fake_call_pick_contact">Choose from Contacts</string>
+    <string name="fake_call_schedule_time">Date &amp; Time</string>
+    <string name="fake_call_now">Call Now</string>
+    <string name="fake_call_schedule_btn">Schedule Call</string>
+    <string name="fake_call_cancel_btn">Cancel</string>
+    <string name="fake_call_scheduled_banner">Upcoming Fake Call</string>
+    <string name="fake_call_scheduled_desc">Incoming fake call from %1$s in %2$s</string>
+    <string name="fake_call_success_scheduled">Fake call scheduled for %1$s</string>
+    <string name="fake_call_cancelled">Scheduled fake call cancelled</string>
+    <string name="fake_call_select_date">Select Date</string>
+    <string name="fake_call_select_time">Select Time</string>
+    <string name="fake_call_screen_incoming">Incoming Call</string>
+    <string name="fake_call_screen_ended">Call Ended</string>
+    <string name="fake_call_new_schedule">New Fake Call</string>
+    <string name="fake_call_schedules_title">Scheduled Calls</string>
+    <string name="fake_call_no_schedules_title">No Scheduled Calls</string>
+    <string name="fake_call_no_schedules_desc">Schedule simulated incoming calls for any date and time. They look and behave like real phone calls.</string>
+    <string name="fake_call_clear_all">Clear All</string>
+    <string name="fake_call_clear_all_confirm">Are you sure you want to cancel all scheduled fake calls?</string>
+    <string name="fake_call_delete_schedule">Delete Schedule</string>
+    <string name="fake_call_deleted">Scheduled call removed</string>
+    <string name="fake_call_time_calling_in">Calling in %1$s</string>
+    <string name="fake_call_vibrate">Vibrate on ring</string>
+    <string name="fake_call_vibrate_desc">Vibrate device when simulated call rings</string>
+    <string name="fake_call_test_now">Test Call Now</string>
+    <string name="fake_call_options">Call Options</string>
+
+    <!-- Navigation Bar Style -->
+    <string name="settings_interface_nav_bar_style">Navigation Bar Style</string>
+    <string name="settings_interface_nav_bar_style_supporting">Choose between standard bottom bar or floating expressive toolbar</string>
+    <string name="settings_nav_bar_standard">Standard Bar</string>
+    <string name="settings_nav_bar_toolbar">Floating Toolbar</string>
+    <string name="fake_call_incoming_channel_title">Fake Incoming Calls</string>
+    <string name="fake_call_incoming_channel_desc">Notifications for simulated incoming and active calls</string>
 </resources>

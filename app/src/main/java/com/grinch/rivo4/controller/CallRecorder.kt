@@ -5,13 +5,31 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.grinch.rivo4.IShellService
+import com.grinch.rivo4.controller.shizuku.ScrcpyAudioCodec
+import com.grinch.rivo4.controller.shizuku.ScrcpyAudioMuxer
+import com.grinch.rivo4.controller.shizuku.ScrcpyClient
+import com.grinch.rivo4.controller.shizuku.ScrcpyConfig
+import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -19,122 +37,787 @@ import java.util.Locale
 
 object CallRecorder {
 
+    private const val TAG = "CallRecorder"
+
+    private val recorderScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var startJob: Job? = null
+    private var activeContext: Context? = null
+
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.asStateFlow()
+
+    private val _durationSeconds = MutableStateFlow(0L)
+    val durationSeconds = _durationSeconds.asStateFlow()
 
     private var recorder: MediaRecorder? = null
     private var currentFile: File? = null
 
+    // Shizuku recording pipeline components
+    private var shizukuManager: ShizukuConnectionManager? = null
+    private var shellService: IShellService? = null
+    private var scrcpyClient: ScrcpyClient? = null
+    private var scrcpyMuxer: ScrcpyAudioMuxer? = null
+    private var recordingScope: CoroutineScope? = null
+    private var durationJob: Job? = null
+    private var clientJob: Job? = null
+    private var isUsingShizuku = false
+
+    const val DIRECTORY_NAME = "Rivo Recordings"
+
     private val audioSources = listOf(
-        MediaRecorder.AudioSource.VOICE_CALL,
+        MediaRecorder.AudioSource.MIC,
         MediaRecorder.AudioSource.VOICE_COMMUNICATION,
         MediaRecorder.AudioSource.VOICE_RECOGNITION,
-        MediaRecorder.AudioSource.MIC
+        MediaRecorder.AudioSource.DEFAULT,
+        MediaRecorder.AudioSource.CAMCORDER,
+        MediaRecorder.AudioSource.VOICE_CALL
     )
 
-    fun getRecordingsDirectory(context: Context): File {
-        val base = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC) ?: context.filesDir
-        val dir = File(base, "CallRecordings")
-        if (!dir.exists()) dir.mkdirs()
-        return dir
+    fun hasStoragePermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
-    fun hasPermission(context: Context): Boolean {
+    fun isWritableDirectory(dir: File): Boolean {
+        return runCatching {
+            if (!dir.exists() && !dir.mkdirs()) return false
+            val testFile = File(dir, ".probe_${System.currentTimeMillis()}")
+            val created = testFile.createNewFile()
+            if (created) {
+                testFile.delete()
+                true
+            } else {
+                false
+            }
+        }.getOrDefault(false)
+    }
+
+    fun getRecordingsDirectory(context: Context): File {
+        // If All Files Access / MANAGE_EXTERNAL_STORAGE is granted, verify root directory is writable
+        if (hasStoragePermission(context)) {
+            val directInternal = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
+            if (isWritableDirectory(directInternal)) {
+                return directInternal
+            }
+        }
+
+        // 1. Direct root internal storage: /storage/emulated/0/Rivo Recordings
+        val directInternal = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
+        if (isWritableDirectory(directInternal)) {
+            return directInternal
+        }
+
+        // 2. Standard public Recordings folder: /storage/emulated/0/Recordings/Rivo Recordings
+        val pubRecordings = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS),
+            DIRECTORY_NAME
+        )
+        if (isWritableDirectory(pubRecordings)) {
+            return pubRecordings
+        }
+
+        // 3. Standard public Music folder: /storage/emulated/0/Music/Rivo Recordings
+        val pubMusic = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+            DIRECTORY_NAME
+        )
+        if (isWritableDirectory(pubMusic)) {
+            return pubMusic
+        }
+
+        // 4. Fallback to app-specific external storage (guaranteed writable without permissions)
+        val extDir = context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)
+            ?: context.getExternalFilesDir(null)
+        if (extDir != null) {
+            val dir = File(extDir, DIRECTORY_NAME)
+            if (isWritableDirectory(dir)) {
+                return dir
+            }
+        }
+
+        // 5. Ultimate fallback: internal app files
+        val internalDir = File(context.filesDir, DIRECTORY_NAME)
+        if (!internalDir.exists()) internalDir.mkdirs()
+        return internalDir
+    }
+
+    fun getAllRecordingDirectories(context: Context): List<File> {
+        val dirs = mutableListOf<File>()
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), DIRECTORY_NAME)
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), DIRECTORY_NAME)
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        // Known OEM call recording directories
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "MIUI/sound_recorder/call_rec")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "Sounds/CallRecord")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), "Voice Recorder")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "Record/Call")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "Recordings/Call Recordings")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "Recordings/Phone")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStorageDirectory(), "Audio/CallRecordings")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        // Legacy CallRecordings paths
+        runCatching {
+            val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), "CallRecordings")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "CallRecordings")
+            if (d.exists() && d.isDirectory) dirs.add(d)
+        }
+        runCatching {
+            context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)?.let {
+                val d = File(it, DIRECTORY_NAME)
+                if (d.exists() && d.isDirectory) dirs.add(d)
+                val dLegacy = File(it, "CallRecordings")
+                if (dLegacy.exists() && dLegacy.isDirectory) dirs.add(dLegacy)
+            }
+        }
+        runCatching {
+            context.getExternalFilesDir(null)?.let {
+                val d = File(it, DIRECTORY_NAME)
+                if (d.exists() && d.isDirectory) dirs.add(d)
+            }
+        }
+        runCatching {
+            val d = File(context.filesDir, DIRECTORY_NAME)
+            if (d.exists() && d.isDirectory) dirs.add(d)
+            val dLegacy = File(context.filesDir, "CallRecordings")
+            if (dLegacy.exists() && dLegacy.isDirectory) dirs.add(dLegacy)
+        }
+        return dirs.distinctBy { it.absolutePath }
+    }
+
+    fun hasAudioPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun start(context: Context, label: String): Boolean {
+    fun start(context: Context, label: String) {
+        if (_isRecording.value) return
+        val appContext = context.applicationContext
+        activeContext = appContext
+        startJob?.cancel()
+        startJob = recorderScope.launch {
+            startInternal(appContext, label)
+        }
+    }
+
+    private suspend fun startInternal(context: Context, label: String): Boolean {
         if (_isRecording.value) return true
-        if (!hasPermission(context)) return false
+        activeContext = context
 
         val safeLabel = label
             .replace(Regex("[^\\p{L}\\p{N}+_-]"), "_")
             .take(40)
             .ifBlank { "call" }
         val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val file = File(getRecordingsDirectory(context), "${safeLabel}_$stamp.m4a")
+        val targetFile = File(getRecordingsDirectory(context), "${safeLabel}_$stamp.m4a")
 
-        for (source in audioSources) {
-            val instance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                MediaRecorder(context)
-            } else {
-                @Suppress("DEPRECATION")
-                MediaRecorder()
-            }
-            try {
-                instance.setAudioSource(source)
-                instance.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                instance.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                instance.setAudioEncodingBitRate(128000)
-                instance.setAudioSamplingRate(44100)
-                instance.setOutputFile(file.absolutePath)
-                instance.prepare()
-                instance.start()
-
-                recorder = instance
-                currentFile = file
-                _isRecording.value = true
+        // Priority 1: Use Shizuku + scrcpy-server for genuine two-way internal call audio capture
+        if (ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
+            val shizukuSuccess = startShizukuRecording(context, targetFile)
+            if (shizukuSuccess) {
                 return true
-            } catch (e: Exception) {
-                try { instance.reset() } catch (ignored: Exception) {}
-                try { instance.release() } catch (ignored: Exception) {}
-                if (file.exists()) file.delete()
             }
         }
+
+        // Priority 2: Fallback to standard MediaRecorder
+        return startMediaRecorder(context, targetFile)
+    }
+
+    private suspend fun startShizukuRecording(context: Context, targetFile: File): Boolean {
+        return try {
+            val serverPath = ScrcpyConfig.ensureServerJar(context) ?: run {
+                Log.w(TAG, "scrcpy-server JAR not found or invalid hash")
+                return false
+            }
+
+            val mgr = ShizukuConnectionManager(context.applicationContext)
+            shizukuManager = mgr
+
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            recordingScope = scope
+
+            val service = withTimeoutOrNull(10000L) {
+                mgr.getShellService()
+            } ?: run {
+                Log.w(TAG, "Timed out waiting for Shizuku shell service")
+                mgr.unbind()
+                return false
+            }
+            shellService = service
+
+            // Attempt voice-call first (captures both uplink and downlink)
+            var pipePfd = service.startCapture(
+                "voice-call",
+                "aac",
+                ScrcpyConfig.DEFAULT_AUDIO_BIT_RATE,
+                serverPath,
+                false
+            )
+
+            // Fallback to mic-voice-communication if voice-call not supported on device
+            if (pipePfd == null) {
+                pipePfd = service.startCapture(
+                    "mic-voice-communication",
+                    "aac",
+                    ScrcpyConfig.DEFAULT_AUDIO_BIT_RATE,
+                    serverPath,
+                    false
+                )
+            }
+
+            val pfd = pipePfd ?: run {
+                Log.e(TAG, "Shell service returned null audio pipe")
+                mgr.unbind()
+                return false
+            }
+
+            val recordFile = try {
+                targetFile.parentFile?.mkdirs()
+                if (!targetFile.exists()) targetFile.createNewFile()
+                targetFile
+            } catch (e: Exception) {
+                File(context.cacheDir, "staging_${targetFile.name}").apply {
+                    createNewFile()
+                }
+            }
+
+            val muxer = ScrcpyAudioMuxer(recordFile)
+            muxer.initialize(ScrcpyAudioCodec.AAC)
+            scrcpyMuxer = muxer
+
+            val client = ScrcpyClient(
+                inputPfd = pfd,
+                expectedCodec = ScrcpyAudioCodec.AAC,
+                listener = object : ScrcpyClient.AudioPacketListener {
+                    override fun onMetadataReceived(codec: ScrcpyAudioCodec) {
+                        muxer.initialize(codec)
+                    }
+
+                    override fun onAudioPacket(packet: ScrcpyClient.AudioPacket) {
+                        muxer.writePacket(packet, ScrcpyAudioCodec.AAC)
+                    }
+
+                    override fun onStreamEnd(error: String?) {
+                        Log.d(TAG, "ScrcpyClient stream ended: $error")
+                    }
+                }
+            )
+            scrcpyClient = client
+
+            clientJob = scope.launch(Dispatchers.IO) {
+                client.start()
+            }
+
+            currentFile = recordFile
+            isUsingShizuku = true
+            _isRecording.value = true
+            CallRecordingService.start(context)
+            startDurationTimer()
+
+            Log.i(TAG, "Shizuku call recording started successfully: ${recordFile.name}")
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start Shizuku recording: ${e.message}", e)
+            cleanupShizuku()
+            if (targetFile.exists()) targetFile.delete()
+            false
+        }
+    }
+
+    data class RecordingFormatProfile(
+        val outputFormat: Int,
+        val audioEncoder: Int,
+        val sampleRate: Int,
+        val bitRate: Int,
+        val extension: String
+    )
+
+    private fun getFormatProfiles(targetBitrate: Int): List<RecordingFormatProfile> = listOf(
+        // Profile 1: AAC High Quality (44.1kHz)
+        RecordingFormatProfile(
+            outputFormat = MediaRecorder.OutputFormat.MPEG_4,
+            audioEncoder = MediaRecorder.AudioEncoder.AAC,
+            sampleRate = 44100,
+            bitRate = targetBitrate,
+            extension = "m4a"
+        ),
+        // Profile 2: AAC Voice Wideband (16kHz) - needed for Xiaomi / MTK / Qualcomm during active cellular calls
+        RecordingFormatProfile(
+            outputFormat = MediaRecorder.OutputFormat.MPEG_4,
+            audioEncoder = MediaRecorder.AudioEncoder.AAC,
+            sampleRate = 16000,
+            bitRate = targetBitrate.coerceAtMost(64000),
+            extension = "m4a"
+        ),
+        // Profile 3: AMR Wideband (16kHz) - native telephony voice standard on all modern Android HALs
+        RecordingFormatProfile(
+            outputFormat = MediaRecorder.OutputFormat.THREE_GPP,
+            audioEncoder = MediaRecorder.AudioEncoder.AMR_WB,
+            sampleRate = 16000,
+            bitRate = 23850,
+            extension = "3gp"
+        ),
+        // Profile 4: AMR Narrowband (8kHz) - universal cellular fallback supported by 100% of Android chipsets
+        RecordingFormatProfile(
+            outputFormat = MediaRecorder.OutputFormat.THREE_GPP,
+            audioEncoder = MediaRecorder.AudioEncoder.AMR_NB,
+            sampleRate = 8000,
+            bitRate = 12200,
+            extension = "3gp"
+        )
+    )
+
+    private fun startMediaRecorder(context: Context, targetFile: File): Boolean {
+        if (!hasAudioPermission(context)) {
+            Log.w(TAG, "Cannot start MediaRecorder: RECORD_AUDIO permission not granted")
+            return false
+        }
+
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (e: Exception) { null }
+        val targetBitrate = prefs?.getInt("call_recording_bitrate", 128000) ?: 128000
+        val profiles = getFormatProfiles(targetBitrate)
+
+        for (source in audioSources) {
+            for (profile in profiles) {
+                val stagingName = "staging_${targetFile.nameWithoutExtension}.${profile.extension}"
+                val stagingFile = File(context.cacheDir, stagingName)
+                try {
+                    if (stagingFile.exists()) stagingFile.delete()
+                    stagingFile.createNewFile()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not prepare staging file: ${e.message}")
+                }
+
+                val instance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    MediaRecorder(context)
+                } else {
+                    @Suppress("DEPRECATION")
+                    MediaRecorder()
+                }
+                try {
+                    instance.setAudioSource(source)
+                    instance.setOutputFormat(profile.outputFormat)
+                    instance.setAudioEncoder(profile.audioEncoder)
+                    instance.setAudioEncodingBitRate(profile.bitRate)
+                    instance.setAudioSamplingRate(profile.sampleRate)
+                    instance.setOutputFile(stagingFile.absolutePath)
+                    instance.prepare()
+                    instance.start()
+
+                    recorder = instance
+                    currentFile = stagingFile
+                    isUsingShizuku = false
+                    _isRecording.value = true
+                    CallRecordingService.start(context)
+                    startDurationTimer()
+                    Log.i(TAG, "MediaRecorder started successfully with source $source, profile ${profile.extension} (${profile.sampleRate}Hz)")
+                    return true
+                } catch (e: Exception) {
+                    Log.w(TAG, "MediaRecorder source $source with profile ${profile.extension} (${profile.sampleRate}Hz) failed: ${e.message}")
+                    try { instance.reset() } catch (ignored: Exception) {}
+                    try { instance.release() } catch (ignored: Exception) {}
+                    if (stagingFile.exists()) stagingFile.delete()
+                }
+            }
+        }
+        Log.e(TAG, "All audio sources and format profiles failed for MediaRecorder")
         return false
     }
 
+    private fun startDurationTimer() {
+        durationJob?.cancel()
+        _durationSeconds.value = 0L
+        val start = System.currentTimeMillis()
+        durationJob = CoroutineScope(Dispatchers.Default).launch {
+            while (isActive && _isRecording.value) {
+                _durationSeconds.value = (System.currentTimeMillis() - start) / 1000
+                delay(1000)
+            }
+        }
+    }
+
     fun stop(): File? {
-        val instance = recorder ?: run {
+        startJob?.cancel()
+        startJob = null
+
+        if (!_isRecording.value && recorder == null && scrcpyMuxer == null) {
             _isRecording.value = false
             return null
         }
-        var saved = currentFile
-        try {
-            instance.stop()
-        } catch (e: Exception) {
-            saved?.delete()
-            saved = null
-        } finally {
-            try { instance.reset() } catch (ignored: Exception) {}
-            try { instance.release() } catch (ignored: Exception) {}
-            recorder = null
-            currentFile = null
-            _isRecording.value = false
+
+        val duration = _durationSeconds.value
+        durationJob?.cancel()
+        durationJob = null
+
+        val saved = currentFile
+        val ctx = activeContext
+
+        if (isUsingShizuku) {
+            // CRITICAL: Stop order matters! Must match ShizuCallRecorder's proven sequence.
+            // 1. Stop the shell service FIRST — this destroys scrcpy-server with a 2s grace
+            //    period to flush its final audio bytes through the socket→pipe relay.
+            try {
+                shellService?.stopCapture()
+            } catch (e: Exception) {
+                Log.w(TAG, "Error stopping shell capture: ${e.message}")
+            }
+
+            // 2. Wait for the pipe reader coroutine to drain any remaining buffered bytes.
+            //    The shell-side relay may have written final bytes before the pipe was closed.
+            try {
+                kotlinx.coroutines.runBlocking {
+                    kotlinx.coroutines.withTimeoutOrNull(2000L) {
+                        clientJob?.join()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Error waiting for client job drain: ${e.message}")
+            }
+
+            // 3. NOW stop and close the client (closes the pipe read-end).
+            //    Only safe after all buffered data has been read.
+            try {
+                scrcpyClient?.stop()
+                scrcpyClient?.close()
+            } catch (e: Exception) {
+                Log.w(TAG, "Error closing scrcpy client: ${e.message}")
+            }
+
+            // 4. Close muxer LAST — finalizes the container header with all data intact.
+            try {
+                scrcpyMuxer?.close()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error finalizing muxer: ${e.message}")
+            }
+            cleanupShizuku()
+        } else {
+            val instance = recorder
+            try {
+                if (duration < 1) {
+                    try { Thread.sleep(600) } catch (ignored: Exception) {}
+                }
+                instance?.stop()
+            } catch (e: Exception) {
+                Log.w(TAG, "MediaRecorder.stop() exception: ${e.message}")
+            } finally {
+                try { instance?.reset() } catch (ignored: Exception) {}
+                try { instance?.release() } catch (ignored: Exception) {}
+                recorder = null
+            }
         }
+
+        _isRecording.value = false
+        currentFile = null
+        isUsingShizuku = false
+        activeContext = null
+
+        val c = ctx
+        if (c != null) {
+            CallRecordingService.stop(c)
+        }
+
         if (saved != null && (!saved.exists() || saved.length() == 0L)) {
+            Log.w(TAG, "Recording file empty or missing, discarding: ${saved.absolutePath}")
             saved.delete()
             return null
+        }
+
+        if (saved != null && saved.exists() && saved.length() > 0L) {
+            if (c == null) return saved
+
+            // Check minimum duration filter setting
+            val prefs = try {
+                val deviceContext = c.createDeviceProtectedStorageContext()
+                deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+            } catch (e: Exception) { null }
+            val minDuration = prefs?.getInt("call_recording_min_duration", 0) ?: 0
+            if (minDuration > 0 && duration < minDuration) {
+                Log.i(TAG, "Call duration ($duration s) was below filter ($minDuration s), discarding recording.")
+                saved.delete()
+                return null
+            }
+
+            val cleanName = saved.name.removePrefix("staging_")
+            var finalSavedFile: File? = null
+
+            // 1. Try Primary Destination Directory
+            val destinationDir = getRecordingsDirectory(c)
+            val candidatePrimary = File(destinationDir, cleanName)
+            if (saved.absolutePath != candidatePrimary.absolutePath) {
+                try {
+                    destinationDir.mkdirs()
+                    saved.copyTo(candidatePrimary, overwrite = true)
+                    finalSavedFile = candidatePrimary
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not move recording to $candidatePrimary: ${e.message}", e)
+                }
+            } else {
+                finalSavedFile = saved
+            }
+
+            // 2. Also copy to root direct internal storage (/storage/emulated/0/Rivo Recordings) if accessible & writable
+            if (hasStoragePermission(c)) {
+                runCatching {
+                    val directInternalDir = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
+                    if (isWritableDirectory(directInternalDir)) {
+                        val directFile = File(directInternalDir, cleanName)
+                        if (directFile.absolutePath != saved.absolutePath) {
+                            saved.copyTo(directFile, overwrite = true)
+                            if (finalSavedFile == null) finalSavedFile = directFile
+                        }
+                    }
+                }
+            }
+
+            // 3. Also copy to public Recordings directory (/storage/emulated/0/Recordings/Rivo Recordings) if accessible & writable
+            runCatching {
+                val pubDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), DIRECTORY_NAME)
+                if (isWritableDirectory(pubDir)) {
+                    val pubFile = File(pubDir, cleanName)
+                    if (pubFile.absolutePath != saved.absolutePath) {
+                        saved.copyTo(pubFile, overwrite = true)
+                        if (finalSavedFile == null) finalSavedFile = pubFile
+                    }
+                }
+            }
+
+            // 4. Fallback to app-specific external storage if not yet saved outside cache
+            if (finalSavedFile == null) {
+                runCatching {
+                    val extDir = c.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS) ?: c.getExternalFilesDir(null)
+                    if (extDir != null) {
+                        val dir = File(extDir, DIRECTORY_NAME)
+                        if (dir.exists() || dir.mkdirs()) {
+                            val f = File(dir, cleanName)
+                            saved.copyTo(f, overwrite = true)
+                            finalSavedFile = f
+                        }
+                    }
+                }
+            }
+
+            // 5. Ultimate fallback to internal app storage
+            if (finalSavedFile == null) {
+                runCatching {
+                    val internalDir = File(c.filesDir, DIRECTORY_NAME)
+                    if (internalDir.exists() || internalDir.mkdirs()) {
+                        val f = File(internalDir, cleanName)
+                        saved.copyTo(f, overwrite = true)
+                        finalSavedFile = f
+                    }
+                }
+            }
+
+            val effectiveFile = finalSavedFile ?: saved
+            if (effectiveFile.absolutePath != saved.absolutePath) {
+                saved.delete()
+            }
+
+            // Publish to MediaStore so all system apps, file managers, and gallery see it under Recordings/Rivo Recordings
+            publishToMediaStore(c, effectiveFile)
+            try {
+                MediaScannerConnection.scanFile(
+                    c,
+                    arrayOf(effectiveFile.absolutePath),
+                    arrayOf("audio/*"),
+                    null
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "MediaScanner error: ${e.message}")
+            }
+            recorderScope.launch(Dispatchers.Main) {
+                try {
+                    Toast.makeText(c, "Call recorded: ${effectiveFile.name}", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {}
+            }
+            return effectiveFile
         }
         return saved
     }
 
+    fun publishToMediaStore(context: Context, audioFile: File): Uri? {
+        return try {
+            val mime = when {
+                audioFile.name.endsWith(".3gp", true) -> "audio/3gpp"
+                audioFile.name.endsWith(".aac", true) -> "audio/aac"
+                audioFile.name.endsWith(".mp3", true) -> "audio/mpeg"
+                audioFile.name.endsWith(".wav", true) -> "audio/wav"
+                else -> "audio/mp4"
+            }
+            val values = android.content.ContentValues().apply {
+                put(android.provider.MediaStore.Audio.Media.DISPLAY_NAME, audioFile.name)
+                put(android.provider.MediaStore.Audio.Media.TITLE, audioFile.nameWithoutExtension)
+                put(android.provider.MediaStore.Audio.Media.MIME_TYPE, mime)
+                put(android.provider.MediaStore.Audio.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+                put(android.provider.MediaStore.Audio.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(android.provider.MediaStore.Audio.Media.RELATIVE_PATH, "Recordings/$DIRECTORY_NAME")
+                    put(android.provider.MediaStore.Audio.Media.IS_PENDING, 1)
+                }
+            }
+            val uri = context.contentResolver.insert(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                context.contentResolver.openOutputStream(uri)?.use { outStream ->
+                    audioFile.inputStream().use { inStream ->
+                        inStream.copyTo(outStream)
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.clear()
+                    values.put(android.provider.MediaStore.Audio.Media.IS_PENDING, 0)
+                    context.contentResolver.update(uri, values, null, null)
+                }
+            }
+            uri
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to publish to MediaStore: ${e.message}")
+            null
+        }
+    }
+
+    private fun cleanupShizuku() {
+        scrcpyClient = null
+        scrcpyMuxer = null
+        shellService = null
+        runCatching { shizukuManager?.unbind() }
+        shizukuManager = null
+        runCatching { clientJob?.cancel() }
+        clientJob = null
+        recordingScope = null
+    }
+
     fun listRecordings(context: Context): List<File> {
-        val dir = getRecordingsDirectory(context)
-        return dir.listFiles()
-            ?.filter { it.isFile && it.length() > 0 }
-            ?.sortedByDescending { it.lastModified() }
-            ?: emptyList()
+        val destinationDir = getRecordingsDirectory(context)
+
+        // 1. Recover any unmigrated staging files from cacheDir
+        runCatching {
+            context.cacheDir.listFiles()
+                ?.filter { it.isFile && it.name.startsWith("staging_") && it.length() > 0 }
+                ?.forEach { staging ->
+                    try {
+                        val recoveredName = staging.name.removePrefix("staging_")
+                        val recoveredFile = File(destinationDir, recoveredName)
+                        staging.copyTo(recoveredFile, overwrite = true)
+                        staging.delete()
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
+                    }
+                }
+        }
+
+        // 2. If storage permission is granted, mirror/migrate files from app storage to direct internal storage
+        if (hasStoragePermission(context)) {
+            runCatching {
+                val directDir = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
+                if (isWritableDirectory(directDir)) {
+                    val appExtDir = context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)?.let { File(it, DIRECTORY_NAME) }
+                    appExtDir?.listFiles()?.forEach { f ->
+                        if (f.isFile && f.length() > 0) {
+                            val target = File(directDir, f.name)
+                            if (!target.exists()) {
+                                f.copyTo(target, overwrite = true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Scan all recording directories
+        val dirs = getAllRecordingDirectories(context)
+        val files = mutableListOf<File>()
+        val supportedExts = listOf(".m4a", ".mp3", ".aac", ".3gp", ".wav")
+        for (dir in dirs) {
+            dir.listFiles()
+                ?.filter { file -> file.isFile && file.length() > 0 && supportedExts.any { ext -> file.name.endsWith(ext, ignoreCase = true) } }
+                ?.let { files.addAll(it) }
+        }
+
+        // 4. Also scan cacheDir for any other audio files
+        runCatching {
+            context.cacheDir.listFiles()
+                ?.filter { file -> file.isFile && file.length() > 0 && supportedExts.any { ext -> file.name.endsWith(ext, ignoreCase = true) } }
+                ?.let { files.addAll(it) }
+        }
+
+        // 5. Query MediaStore for recordings
+        runCatching {
+            val projection = arrayOf(
+                android.provider.MediaStore.Audio.Media.DATA
+            )
+            val selection = "${android.provider.MediaStore.Audio.Media.DATA} LIKE ?"
+            val selectionArgs = arrayOf("%$DIRECTORY_NAME%")
+            context.contentResolver.query(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null
+            )?.use { cursor ->
+                val dataCol = cursor.getColumnIndexOrThrow(android.provider.MediaStore.Audio.Media.DATA)
+                while (cursor.moveToNext()) {
+                    val path = cursor.getString(dataCol)
+                    if (!path.isNullOrBlank()) {
+                        val f = File(path)
+                        if (f.exists() && f.isFile && f.length() > 0) {
+                            files.add(f)
+                        }
+                    }
+                }
+            }
+        }
+
+        return files
+            .distinctBy { it.name }
+            .sortedByDescending { it.lastModified() }
     }
 
     fun delete(file: File): Boolean = file.delete()
 
     fun uriFor(context: Context, file: File): Uri {
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-    }
-
-    fun play(context: Context, file: File) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uriFor(context, file), "audio/*")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        try {
-            context.startActivity(intent)
-        } catch (e: Exception) {
-        }
     }
 
     fun share(context: Context, file: File, chooserTitle: String) {

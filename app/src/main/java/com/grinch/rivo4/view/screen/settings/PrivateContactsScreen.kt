@@ -171,7 +171,8 @@ fun PrivateContactsScreen(
                     }
                 )
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         if (isLoading) {
             RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())

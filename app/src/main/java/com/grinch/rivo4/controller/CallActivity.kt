@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.PowerManager
 import android.telecom.Call
+import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -392,11 +393,23 @@ class CallActivity : ComponentActivity() {
 
     private fun acquireProximityLock() {
         if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
-            proximityWakeLock?.let { if (!it.isHeld) it.acquire() }
+            try {
+                proximityWakeLock?.let {
+                    if (!it.isHeld) it.acquire(10 * 60 * 1000L) // 10 min safety timeout
+                }
+            } catch (e: Exception) {
+                Log.e("CallActivity", "Failed to acquire proximity lock", e)
+            }
         }
     }
 
     private fun releaseProximityLock() {
-        proximityWakeLock?.let { if (it.isHeld) it.release() }
+        try {
+            proximityWakeLock?.let {
+                if (it.isHeld) it.release()
+            }
+        } catch (e: Exception) {
+            Log.e("CallActivity", "Failed to release proximity lock", e)
+        }
     }
 }

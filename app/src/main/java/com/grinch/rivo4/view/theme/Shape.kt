@@ -27,7 +27,7 @@ import androidx.graphics.shapes.RoundedPolygon
 
 object RivoShapeDefaults {
     const val DefaultRoundness: Int = 28
-    val RoundnessOptions: List<Int> = listOf(32, 28, 20, 12, 0)
+    val RoundnessOptions: List<Int> = listOf(32, 28, 20, 12, 5)
 
     const val BaseExtraSmall: Int = 4
     const val BaseSmall: Int = 8
@@ -43,7 +43,7 @@ object RivoShapeDefaults {
 }
 
 fun rivoRoundnessScale(roundness: Int): Float =
-    roundness.coerceIn(1, RivoShapeDefaults.BaseExtraExtraLarge) /
+    roundness.coerceIn(5, RivoShapeDefaults.BaseExtraExtraLarge) /
         RivoShapeDefaults.DefaultRoundness.toFloat()
 
 fun rivoCornerDp(baseDp: Int, roundness: Int): Dp =

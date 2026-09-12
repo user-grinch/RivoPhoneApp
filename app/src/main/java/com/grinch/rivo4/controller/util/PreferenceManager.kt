@@ -125,7 +125,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun getHiddenBottomNavTabs(): Set<Int> {
-        val stored = getString(KEY_BOTTOM_NAV_HIDDEN, null) ?: return emptySet()
+        val stored = getString(KEY_BOTTOM_NAV_HIDDEN, null) ?: return setOf(TAB_RECORDINGS)
         return stored.split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
     }
 
@@ -246,6 +246,7 @@ class PreferenceManager(context: Context) {
         const val KEY_T9_DIALING = "t9_dialing"
         const val KEY_PROXIMITY_SENSOR = "proximity_sensor"
         const val KEY_INCOMING_CALL_POPUP = "incoming_call_popup"
+        const val KEY_ALWAYS_FULL_SCREEN_CALLS = "always_full_screen_calls"
         const val KEY_AUTO_REDIAL_BUSY = "auto_redial_busy"
         const val KEY_REDIAL_ATTEMPTS = "redial_attempts"
         const val KEY_REDIAL_DELAY = "redial_delay"
@@ -296,11 +297,15 @@ class PreferenceManager(context: Context) {
         const val KEY_PATREON_PROMPT_SHOWN = "patreon_prompt_shown"
         const val KEY_CALL_RECORDING = "call_recording"
         const val KEY_CALL_RECORDING_AUTO = "call_recording_auto"
+        const val KEY_CALL_RECORDING_SHIZUKU = "call_recording_shizuku"
         const val KEY_BOTTOM_NAV_ORDER = "bottom_nav_order"
         const val KEY_BOTTOM_NAV_HIDDEN = "bottom_nav_hidden"
         const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"
         const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
         const val KEY_ENABLE_ADS = "enable_ads"
+        const val KEY_NAV_BAR_STYLE = "nav_bar_style"
+        const val NAV_BAR_STYLE_STANDARD = 0
+        const val NAV_BAR_STYLE_TOOLBAR = 1
 
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1

@@ -8,6 +8,9 @@ import android.media.RingtoneManager
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import android.telecom.VideoProfile
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -24,9 +27,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.AudioFile
 import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.QrCode2
+import com.grinch.rivo4.controller.CallRecorder
+import com.ramcosta.composedestinations.generated.destinations.CallRecordingsScreenDestination
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -241,6 +248,22 @@ fun ContactDetailsScreen(
         }
     }
 
+    val contactRecordings = remember(fullContact, displayName, phoneNumber) {
+        val all = CallRecorder.listRecordings(context)
+        all.filter { file ->
+            val name = file.name
+            val cleanDisplay = displayName.replace(Regex("[^\\p{L}\\p{N}]"), "_").trim('_')
+            val matchesName = cleanDisplay.length >= 3 && name.contains(cleanDisplay, ignoreCase = true)
+            val cleanPhone = phoneNumber?.replace(Regex("[^0-9]"), "")
+            val matchesPhone = cleanPhone != null && cleanPhone.length >= 6 && name.contains(cleanPhone)
+            val matchesContactPhones = fullContact?.phoneNumbers?.any { num ->
+                val digits = num.replace(Regex("[^0-9]"), "")
+                digits.length >= 6 && name.contains(digits)
+            } == true
+            matchesName || matchesPhone || matchesContactPhones
+        }
+    }
+
     val onBackgroundClick: () -> Unit = {
         when {
             !backgroundAvailable -> {
@@ -436,6 +459,7 @@ fun ContactDetailsScreen(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -879,6 +903,40 @@ fun ContactDetailsScreen(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(stringResource(R.string.contact_show_full_history))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (contactRecordings.isNotEmpty()) {
+                        item {
+                            RivoExpressiveCard(
+                                title = "Call Recordings (${contactRecordings.size})",
+                                icon = Icons.Outlined.Mic
+                            ) {
+                                Column(modifier = Modifier.animateContentSize()) {
+                                    contactRecordings.take(3).forEachIndexed { index, file ->
+                                        RivoListItem(
+                                            headline = file.nameWithoutExtension,
+                                            supporting = SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault()).format(Date(file.lastModified())),
+                                            leadingIcon = Icons.Outlined.AudioFile,
+                                            trailingIcon = Icons.Default.Share,
+                                            onClick = {
+                                                CallRecorder.share(context, file, "Share Recording")
+                                            }
+                                        )
+                                        if (index < contactRecordings.size - 1 && index < 2) {
+                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                        }
+                                    }
+                                    if (contactRecordings.size > 3) {
+                                        TextButton(
+                                            onClick = { navigator.navigate(CallRecordingsScreenDestination(initialShowList = true)) },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text("View All Recordings (${contactRecordings.size})")
                                         }
                                     }
                                 }

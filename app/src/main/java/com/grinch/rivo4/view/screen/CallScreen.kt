@@ -1,5 +1,6 @@
 package com.grinch.rivo4.view.screen
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -12,6 +13,8 @@ import android.telecom.CallAudioState
 import android.telecom.VideoProfile
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -231,9 +234,18 @@ fun ExpressiveCallScreen(
     }
 
     val recordingEnabled = remember(settingsState) {
-        preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, false)
+        preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true)
     }
     val isRecording by CallRecorder.isRecording.collectAsState()
+
+    val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            if (granted) {
+                CallRecorder.start(context, contactName.ifBlank { phoneNumber })
+            }
+        }
+    )
 
     val statusText = when (callState) {
         Call.STATE_DISCONNECTED -> stringResource(R.string.call_status_ended)
@@ -478,7 +490,11 @@ fun ExpressiveCallScreen(
                 if (isRecording) {
                     CallRecorder.stop()
                 } else {
-                    CallRecorder.start(context, contactName.ifBlank { phoneNumber })
+                    if (CallRecorder.hasAudioPermission(context)) {
+                        CallRecorder.start(context, contactName.ifBlank { phoneNumber })
+                    } else {
+                        recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
                 }
             },
             onEndCall = { try { call.disconnect() } catch (e: Exception) {} }

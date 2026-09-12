@@ -18,3 +18,5 @@ upload-keystore.jks
 base64.txt
 app/keystore.jks
 app/base64.txt
+.kotlin
+.idea/

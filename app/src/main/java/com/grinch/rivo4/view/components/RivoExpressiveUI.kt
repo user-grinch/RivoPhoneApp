@@ -837,6 +837,7 @@ fun RivoPreviewTile(
     previewHeight: Dp = RivoPreviewTileDefaults.PreviewHeight,
     enabled: Boolean = true,
     previewContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    showCheckmark: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
     val roundness = LocalCardRoundness.current
@@ -896,7 +897,7 @@ fun RivoPreviewTile(
                     content = content
                 )
             }
-            if (badgeScale > 0f) {
+            if (showCheckmark && badgeScale > 0f) {
                 Surface(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -1153,7 +1154,7 @@ fun RivoInteractiveRoundnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),
-            shape = RoundedCornerShape(value.coerceAtLeast(1f).dp),
+            shape = RoundedCornerShape(value.coerceAtLeast(5f).dp),
             color = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
