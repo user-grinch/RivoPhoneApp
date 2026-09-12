@@ -9,6 +9,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -41,10 +42,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallActivity
 import com.grinch.rivo4.controller.CallService
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import org.koin.core.component.KoinComponent
@@ -54,24 +55,35 @@ import kotlin.math.abs
 class FloatingCallService : Service(), KoinComponent {
 
     private val contactsRepository: IContactsRepository by inject()
+    private val preferenceManager: PreferenceManager by inject()
 
     private var windowManager: WindowManager? = null
     private var rootLayout: FrameLayout? = null
     private var layoutParams: WindowManager.LayoutParams? = null
 
     private var bubbleContainer: FrameLayout? = null
+    private var avatarCircle: FrameLayout? = null
     private var avatarImageView: ImageView? = null
-    private var avatarInitialView: TextView? = null
+    private var badgeContainer: FrameLayout? = null
 
     private var dropdownLayout: LinearLayout? = null
     private var topNotchView: NotchView? = null
     private var bottomNotchView: NotchView? = null
     private var cardLayout: LinearLayout? = null
 
+    private var backToCallRow: LinearLayout? = null
+    private var backToCallIcon: ImageView? = null
+    private var backToCallText: TextView? = null
+
+    private var muteRow: LinearLayout? = null
     private var muteIconView: ImageView? = null
     private var muteTextView: TextView? = null
+
+    private var speakerRow: LinearLayout? = null
     private var speakerIconView: ImageView? = null
     private var speakerTextView: TextView? = null
+
+    private var endCallRow: LinearLayout? = null
 
     private var bubbleX = 0
     private var bubbleY = 0
@@ -92,6 +104,15 @@ class FloatingCallService : Service(), KoinComponent {
         startForegroundServiceNotification()
         createFloatingBubble()
         startCallStateObserver()
+    }
+
+    private fun isDarkTheme(): Boolean {
+        val uiMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return uiMode == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun isAmoled(): Boolean {
+        return preferenceManager.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false)
     }
 
     private fun startForegroundServiceNotification() {
@@ -208,57 +229,55 @@ class FloatingCallService : Service(), KoinComponent {
             layoutParams = FrameLayout.LayoutParams(bubbleSize, bubbleSize)
         }
 
-        // Circular avatar container
-        val avatarSize = (54 * density).toInt()
-        val avatarCircle = FrameLayout(this).apply {
-            layoutParams = FrameLayout.LayoutParams(avatarSize, avatarSize, Gravity.TOP or Gravity.START)
+        // Circular avatar container: entire bubble is the profile picture
+        val isDark = isDarkTheme()
+        avatarCircle = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(bubbleSize, bubbleSize)
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#9AA0A6")) // Google contact avatar slate grey
+                setColor(if (isDark) Color.parseColor("#374151") else Color.parseColor("#9AA0A6"))
             }
-            elevation = 6 * density
+            outlineProvider = ViewOutlineProvider.BACKGROUND
+            clipToOutline = true
+            elevation = 8 * density
         }
 
         avatarImageView = ImageView(this).apply {
             setImageResource(R.drawable.ic_floating_person)
             setColorFilter(Color.WHITE)
             scaleType = ImageView.ScaleType.CENTER_INSIDE
-            val iconSize = (32 * density).toInt()
-            layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
         }
-        avatarCircle.addView(avatarImageView)
-
-        avatarInitialView = TextView(this).apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-            setTextColor(Color.WHITE)
-            typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
-            gravity = Gravity.CENTER
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-            visibility = View.GONE
-        }
-        avatarCircle.addView(avatarInitialView)
-
+        avatarCircle?.addView(avatarImageView)
         bubbleContainer?.addView(avatarCircle)
 
-        // Blue Call Badge in bottom-right corner
+        // Rivo App Icon Badge in bottom-right corner
         val badgeSize = (22 * density).toInt()
-        val badgeContainer = FrameLayout(this).apply {
+        val badgeBgColor = if (isDark) Color.parseColor("#111827") else Color.WHITE
+        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.parseColor("#E5E7EB")
+
+        badgeContainer = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(badgeSize, badgeSize, Gravity.BOTTOM or Gravity.END)
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#1A73E8")) // Google Phone Blue
-                setStroke((2 * density).toInt(), Color.WHITE)
+                setColor(badgeBgColor)
+                setStroke((1.5f * density).toInt(), badgeBorderColor)
             }
-            elevation = 8 * density
+            outlineProvider = ViewOutlineProvider.BACKGROUND
+            clipToOutline = true
+            elevation = 10 * density
         }
 
         val badgeIcon = ImageView(this).apply {
-            setImageResource(R.drawable.ic_call_ongoing)
-            setColorFilter(Color.WHITE)
-            val iconSize = (11 * density).toInt()
+            setImageResource(R.drawable.logo)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            val iconSize = (15 * density).toInt()
             layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
         }
-        badgeContainer.addView(badgeIcon)
+        badgeContainer?.addView(badgeIcon)
 
         bubbleContainer?.addView(badgeContainer)
 
@@ -360,18 +379,13 @@ class FloatingCallService : Service(), KoinComponent {
         cardLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(dropdownWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
-            background = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = 18 * density
-                setColor(Color.WHITE)
-            }
             outlineProvider = ViewOutlineProvider.BACKGROUND
             clipToOutline = true
             elevation = 14 * density
         }
 
         // 1. Back to call
-        val backToCallRow = createMenuItem(
+        val (backRow, backIcon, backText) = createRow(
             iconRes = R.drawable.ic_floating_back_to_call,
             label = "Back to call",
             density = density,
@@ -380,10 +394,13 @@ class FloatingCallService : Service(), KoinComponent {
                 returnToCallActivity()
             }
         )
-        cardLayout?.addView(backToCallRow)
+        backToCallRow = backRow
+        backToCallIcon = backIcon
+        backToCallText = backText
+        cardLayout?.addView(backRow)
 
         // 2. Mute
-        val (muteRow, muteIcon, muteText) = createToggleMenuItem(
+        val (mRow, mIcon, mText) = createRow(
             iconRes = R.drawable.ic_floating_mic_off,
             label = "Mute",
             density = density,
@@ -394,12 +411,13 @@ class FloatingCallService : Service(), KoinComponent {
                 updateDropdownAudioState()
             }
         )
-        muteIconView = muteIcon
-        muteTextView = muteText
-        cardLayout?.addView(muteRow)
+        muteRow = mRow
+        muteIconView = mIcon
+        muteTextView = mText
+        cardLayout?.addView(mRow)
 
         // 3. Speaker
-        val (speakerRow, speakerIcon, speakerText) = createToggleMenuItem(
+        val (sRow, sIcon, sText) = createRow(
             iconRes = R.drawable.ic_floating_speaker,
             label = "Speaker",
             density = density,
@@ -409,12 +427,13 @@ class FloatingCallService : Service(), KoinComponent {
                 updateDropdownAudioState()
             }
         )
-        speakerIconView = speakerIcon
-        speakerTextView = speakerText
-        cardLayout?.addView(speakerRow)
+        speakerRow = sRow
+        speakerIconView = sIcon
+        speakerTextView = sText
+        cardLayout?.addView(sRow)
 
         // 4. End call
-        val endCallRow = LinearLayout(this).apply {
+        endCallRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             layoutParams = LinearLayout.LayoutParams(
@@ -422,20 +441,6 @@ class FloatingCallService : Service(), KoinComponent {
                 (50 * density).toInt()
             )
             setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
-            val normalRed = Color.parseColor("#C5221F")
-            val rippleColor = Color.parseColor("#40FFFFFF")
-            val cornerRadius = 18 * density
-            val bg = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-                setColor(normalRed)
-            }
-            val mask = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-                setColor(Color.WHITE)
-            }
-            background = RippleDrawable(ColorStateList.valueOf(rippleColor), bg, mask)
             setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                 try {
@@ -455,7 +460,7 @@ class FloatingCallService : Service(), KoinComponent {
                 rightMargin = (16 * density).toInt()
             }
         }
-        endCallRow.addView(endCallIcon)
+        endCallRow?.addView(endCallIcon)
 
         val endCallText = TextView(this).apply {
             text = "End call"
@@ -463,7 +468,7 @@ class FloatingCallService : Service(), KoinComponent {
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
         }
-        endCallRow.addView(endCallText)
+        endCallRow?.addView(endCallText)
 
         cardLayout?.addView(endCallRow)
         dropdownLayout?.addView(cardLayout)
@@ -474,50 +479,7 @@ class FloatingCallService : Service(), KoinComponent {
         dropdownLayout?.addView(bottomNotchView)
     }
 
-    private fun createMenuItem(
-        iconRes: Int,
-        label: String,
-        density: Float,
-        onClick: (View) -> Unit
-    ): LinearLayout {
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (48 * density).toInt()
-            )
-            setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
-            background = RippleDrawable(
-                ColorStateList.valueOf(Color.parseColor("#1F000000")),
-                ColorDrawable(Color.WHITE),
-                ColorDrawable(Color.WHITE)
-            )
-            setOnClickListener(onClick)
-        }
-
-        val icon = ImageView(this).apply {
-            setImageResource(iconRes)
-            setColorFilter(Color.parseColor("#5F6368"))
-            val iconSize = (22 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
-                rightMargin = (16 * density).toInt()
-            }
-        }
-        row.addView(icon)
-
-        val text = TextView(this).apply {
-            this.text = label
-            setTextColor(Color.parseColor("#202124"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
-        }
-        row.addView(text)
-
-        return row
-    }
-
-    private fun createToggleMenuItem(
+    private fun createRow(
         iconRes: Int,
         label: String,
         density: Float,
@@ -531,17 +493,11 @@ class FloatingCallService : Service(), KoinComponent {
                 (48 * density).toInt()
             )
             setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
-            background = RippleDrawable(
-                ColorStateList.valueOf(Color.parseColor("#1F000000")),
-                ColorDrawable(Color.WHITE),
-                ColorDrawable(Color.WHITE)
-            )
             setOnClickListener(onClick)
         }
 
         val icon = ImageView(this).apply {
             setImageResource(iconRes)
-            setColorFilter(Color.parseColor("#5F6368"))
             val iconSize = (22 * density).toInt()
             layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
                 rightMargin = (16 * density).toInt()
@@ -551,13 +507,86 @@ class FloatingCallService : Service(), KoinComponent {
 
         val text = TextView(this).apply {
             this.text = label
-            setTextColor(Color.parseColor("#202124"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
         row.addView(text)
 
         return Triple(row, icon, text)
+    }
+
+    private fun createRowRipple(normalColor: Int, rippleColor: Int): RippleDrawable {
+        return RippleDrawable(
+            ColorStateList.valueOf(rippleColor),
+            ColorDrawable(normalColor),
+            ColorDrawable(Color.WHITE)
+        )
+    }
+
+    private fun createEndCallRipple(normalColor: Int, rippleColor: Int, cornerRadius: Float): RippleDrawable {
+        val bg = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+            setColor(normalColor)
+        }
+        val mask = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+            setColor(Color.WHITE)
+        }
+        return RippleDrawable(ColorStateList.valueOf(rippleColor), bg, mask)
+    }
+
+    private fun applyPopupTheme() {
+        val density = resources.displayMetrics.density
+        val isDark = isDarkTheme()
+        val isAmoled = isDark && isAmoled()
+
+        val cardBgColor = when {
+            isAmoled -> Color.parseColor("#000000")
+            isDark -> Color.parseColor("#1E1F22")
+            else -> Color.WHITE
+        }
+        val cardBorderColor = when {
+            isAmoled -> Color.parseColor("#262626")
+            isDark -> Color.parseColor("#374151")
+            else -> Color.parseColor("#E5E7EB")
+        }
+        val primaryTextColor = if (isDark) Color.parseColor("#F3F4F6") else Color.parseColor("#202124")
+        val secondaryColor = if (isDark) Color.parseColor("#9CA3AF") else Color.parseColor("#5F6368")
+        val rowRippleColor = if (isDark) Color.parseColor("#26FFFFFF") else Color.parseColor("#1F000000")
+        val endCallBgColor = if (isDark) Color.parseColor("#DC2626") else Color.parseColor("#C5221F")
+
+        cardLayout?.background = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = 18 * density
+            setColor(cardBgColor)
+            setStroke((1 * density).toInt(), cardBorderColor)
+        }
+
+        topNotchView?.setColor(cardBgColor)
+        bottomNotchView?.setColor(cardBgColor)
+
+        // Back to call
+        backToCallRow?.background = createRowRipple(cardBgColor, rowRippleColor)
+        backToCallIcon?.setColorFilter(secondaryColor)
+        backToCallText?.setTextColor(primaryTextColor)
+
+        // Mute & Speaker backgrounds
+        muteRow?.background = createRowRipple(cardBgColor, rowRippleColor)
+        speakerRow?.background = createRowRipple(cardBgColor, rowRippleColor)
+
+        // End call
+        endCallRow?.background = createEndCallRipple(endCallBgColor, Color.parseColor("#40FFFFFF"), 18 * density)
+
+        // Also refresh badge container colors
+        val badgeBgColor = if (isDark) Color.parseColor("#111827") else Color.WHITE
+        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.parseColor("#E5E7EB")
+        badgeContainer?.background = GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(badgeBgColor)
+            setStroke((1.5f * density).toInt(), badgeBorderColor)
+        }
     }
 
     private fun openDropdown() {
@@ -578,6 +607,8 @@ class FloatingCallService : Service(), KoinComponent {
 
         topNotchView?.visibility = if (isBelow) View.VISIBLE else View.GONE
         bottomNotchView?.visibility = if (isBelow) View.GONE else View.VISIBLE
+
+        applyPopupTheme()
 
         val bubbleCenterX = bubbleX + (bubbleSize / 2)
         val minMargin = (12 * density).toInt()
@@ -677,29 +708,34 @@ class FloatingCallService : Service(), KoinComponent {
     }
 
     private fun updateDropdownAudioState() {
+        val isDark = isDarkTheme()
+        val primaryTextColor = if (isDark) Color.parseColor("#F3F4F6") else Color.parseColor("#202124")
+        val secondaryColor = if (isDark) Color.parseColor("#9CA3AF") else Color.parseColor("#5F6368")
+        val activeHighlightColor = if (isDark) Color.parseColor("#60A5FA") else Color.parseColor("#1A73E8")
+
         val audioState = CallService.audioState.value
         val isMuted = audioState?.isMuted == true
         val isSpeaker = audioState?.route == CallAudioState.ROUTE_SPEAKER
 
         muteIconView?.setImageResource(if (isMuted) R.drawable.ic_floating_mic_off else R.drawable.ic_floating_mic)
         if (isMuted) {
-            muteIconView?.setColorFilter(Color.parseColor("#1A73E8"))
-            muteTextView?.setTextColor(Color.parseColor("#1A73E8"))
+            muteIconView?.setColorFilter(activeHighlightColor)
+            muteTextView?.setTextColor(activeHighlightColor)
             muteTextView?.typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
         } else {
-            muteIconView?.setColorFilter(Color.parseColor("#5F6368"))
-            muteTextView?.setTextColor(Color.parseColor("#202124"))
+            muteIconView?.setColorFilter(secondaryColor)
+            muteTextView?.setTextColor(primaryTextColor)
             muteTextView?.typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
 
         speakerIconView?.setImageResource(R.drawable.ic_floating_speaker)
         if (isSpeaker) {
-            speakerIconView?.setColorFilter(Color.parseColor("#1A73E8"))
-            speakerTextView?.setTextColor(Color.parseColor("#1A73E8"))
+            speakerIconView?.setColorFilter(activeHighlightColor)
+            speakerTextView?.setTextColor(activeHighlightColor)
             speakerTextView?.typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
         } else {
-            speakerIconView?.setColorFilter(Color.parseColor("#5F6368"))
-            speakerTextView?.setTextColor(Color.parseColor("#202124"))
+            speakerIconView?.setColorFilter(secondaryColor)
+            speakerTextView?.setTextColor(primaryTextColor)
             speakerTextView?.typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
     }
@@ -733,20 +769,22 @@ class FloatingCallService : Service(), KoinComponent {
 
         val photo = cachedPhotoBitmap
         if (photo != null) {
-            val rounded = RoundedBitmapDrawableFactory.create(resources, photo).apply {
-                isCircular = true
-            }
-            avatarImageView?.setImageDrawable(rounded)
+            avatarImageView?.setImageBitmap(photo)
             avatarImageView?.colorFilter = null
             avatarImageView?.scaleType = ImageView.ScaleType.CENTER_CROP
-            avatarInitialView?.visibility = View.GONE
-            avatarImageView?.visibility = View.VISIBLE
+            avatarImageView?.setPadding(0, 0, 0, 0)
         } else {
+            val isDark = isDarkTheme()
+            avatarCircle?.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(if (isDark) Color.parseColor("#374151") else Color.parseColor("#9AA0A6"))
+            }
             avatarImageView?.setImageResource(R.drawable.ic_floating_person)
             avatarImageView?.setColorFilter(Color.WHITE)
             avatarImageView?.scaleType = ImageView.ScaleType.CENTER_INSIDE
-            avatarImageView?.visibility = View.VISIBLE
-            avatarInitialView?.visibility = View.GONE
+            val density = resources.displayMetrics.density
+            val pad = (10 * density).toInt()
+            avatarImageView?.setPadding(pad, pad, pad, pad)
         }
     }
 
@@ -785,10 +823,14 @@ class FloatingCallService : Service(), KoinComponent {
 
     class NotchView(context: Context, var pointingUp: Boolean = true) : View(context) {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
             style = Paint.Style.FILL
         }
         private val path = Path()
+
+        fun setColor(color: Int) {
+            paint.color = color
+            invalidate()
+        }
 
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
