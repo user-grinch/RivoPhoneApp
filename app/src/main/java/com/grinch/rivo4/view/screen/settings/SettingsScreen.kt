@@ -187,6 +187,12 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
+                    RivoListItem(
+                        headline = "Permissions & App Setup",
+                        supporting = "Review granted permissions and system capabilities",
+                        leadingIcon = Icons.Outlined.VerifiedUser,
+                        onClick = { navigator.navigate(PermissionsChecklistScreenDestination) }
+                    )
                     val appLockEnabled = remember(settingsState) { prefs.isAppLockEnabled() }
                     RivoListItem(
                         headline = "App Lock",

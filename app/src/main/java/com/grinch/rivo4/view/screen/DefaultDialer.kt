@@ -168,6 +168,20 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                         fontWeight = FontWeight.SemiBold
                     )
                 }
+
+                TextButton(
+                    onClick = {
+                        navigator.navigate(MainScreenDestination(initialTab = defBar)) {
+                            popUpTo(DefaultDialerScreenDestination) { inclusive = true }
+                        }
+                    }
+                ) {
+                    Text(
+                        text = "Continue anyway",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
