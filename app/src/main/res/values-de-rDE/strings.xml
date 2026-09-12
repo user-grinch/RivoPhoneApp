@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Abbrechen</string>
     <string name="action_confirm">Bestätigen</string>
@@ -20,6 +21,7 @@
     <string name="action_decline">Ablehnen</string>
     <string name="action_end">Beenden</string>
     <string name="action_mute">Stumm</string>
+    <string name="action_unmute">Stumm deaktivieren</string>
     <string name="action_keypad">Tastenfeld</string>
     <string name="action_add_call">Anruf hinzufügen</string>
     <string name="action_hold">Halten</string>
@@ -358,6 +360,8 @@
     <string name="settings_call_incoming_ui_buttons">Schaltflächen</string>
     <string name="settings_call_incoming_ui_slide_ios">Streichen zur Annahme (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertikales Wischen</string>
+    <string name="settings_call_always_fullscreen">Immer zu Vollbild springen</string>
+    <string name="settings_call_always_fullscreen_supporting">Anrufe immer direkt im Vollbildmodus öffnen. Falls deaktiviert werden Anrufe als oberes Banner angezeigt, während andere Apps benutzt werden.</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
     <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Telefonwahl</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
@@ -424,8 +428,6 @@
     <string name="settings_manage_name_format_first_first">Vorname zuerst</string>
     <string name="settings_manage_name_format_last_first">Nachname zuerst</string>
     <string name="settings_manage_storage">Speicher</string>
-    <string name="settings_manage_private_contacts">Private Kontakte</string>
-    <string name="settings_manage_private_contacts_supporting">Kontakte verwalten, die nur in dieser App gespeichert sind</string>
     <string name="settings_manage_visibility">Kontakt-Sichtbarkeit</string>
     <string name="settings_manage_visibility_supporting">Auswählen, welche Konten in Ihrer Liste angezeigt werden</string>
     <string name="settings_manage_quick_fixes">Schnelle Korrekturen</string>
@@ -440,12 +442,9 @@
     <string name="settings_visibility_accounts_header">Konten</string>
     <string name="settings_visibility_local_memory_supporting">Auf dem Gerät gespeicherte Kontakte</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Private Kontakte</string>
+    <!-- Settings > Private storage -->
     <string name="content_desc_import">Importieren</string>
     <string name="content_desc_export">Exportieren</string>
-    <string name="settings_private_empty">Keine privaten Kontakte gefunden</string>
-    <string name="settings_private_manage_hint">Ihre verschlüsselten lokalen Kontakte verwalten</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Schnellwahl</string>
     <string name="settings_speed_dial_enable">Schnellwahl aktivieren</string>
@@ -492,7 +491,23 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Leitender Entwickler</string>
     <string name="contributor_role_developer">Entwickler</string>
+    <string name="contributor_role_localization">Lokalisierung &amp; Übersetzungen</string>
+    <string name="contributor_role_contributor">Mitwirkende/r</string>
+    <string name="contributor_commits">%1$d trägt bei</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_recording_guide_title">Geräte-Optimierung für Aufnahme</string>
+    <string name="oem_recording_guide_subtitle">Xiaomi MIUI/HyperOS und andere OEMs verlangen besondere Hintergrundberechtigungen, um Anruf-Aufnahmen ohne Unterbrechung zu speichern.</string>
+    <string name="oem_perm_bg_recording">Hintergrund-Audio</string>
+    <string name="oem_perm_bg_recording_desc">Aufnahmen erlauben während Hintergrundnutzung in OEM-Sicherheitseinstellungen</string>
+    <string name="oem_perm_autostart">Autostart</string>
+    <string name="oem_perm_autostart_desc">Autostart aktivieren, um zu verhindern, dass das System die Aufnahme während Anrufen stoppt.</string>
+    <string name="oem_perm_battery">Energiesparen: keine Beschränkungen</string>
+    <string name="oem_perm_battery_desc">Rivo von aggressiven Energiesparfunktionen ausnehmen.</string>
+    <string name="oem_btn_open_perms">OEM-Berechtigungen öffnen</string>
+    <string name="oem_btn_open_autostart">Autostart öffnen</string>
+    <string name="oem_btn_open_battery">Akku-Einstellungen</string>
+    <string name="call_recording_notification_title">Anruf-Aufnahme...</string>
+    <string name="call_recording_notification_text">Audio wird aufgenommen und gespeichert</string>
     <!-- Favorites -->
     <string name="nav_favorites">Favoriten</string>
     <string name="favorites_permission_title">Kontakt-Berechtigung erforderlich</string>
@@ -611,5 +626,46 @@
     <string name="imei_copied">In Zwischenablage kopiert</string>
     <string name="imei_not_available">Nicht verfügbar auf diesem Gerät</string>
     <!-- Fake Call feature -->
+    <string name="fake_call_title">Simulierter Anruf</string>
+    <string name="fake_call_subtitle">Simulierten eingehenden Anruf planen</string>
+    <string name="fake_call_channel_title">Geplante simulierte Anrufe</string>
+    <string name="fake_call_channel_desc">Benachrichtigungen für geplante simulierte Anrufe</string>
+    <string name="fake_call_notif_title">Simulierter Anruf geplant</string>
+    <string name="fake_call_notif_content">Simulierter Anruf von %1$s um %2$s</string>
+    <string name="fake_call_caller_details">Anrufer-Informationen</string>
+    <string name="fake_call_name">Anrufer-Name</string>
+    <string name="fake_call_number">Telefonnummer</string>
+    <string name="fake_call_pick_contact">Aus Kontakten auswählen</string>
+    <string name="fake_call_schedule_time">Datum &amp; Zeit</string>
+    <string name="fake_call_now">Jetzt anrufen</string>
+    <string name="fake_call_schedule_btn">Anruf planen</string>
+    <string name="fake_call_cancel_btn">Abbrechen</string>
+    <string name="fake_call_scheduled_banner">Bevorstehender simulierter Anruf</string>
+    <string name="fake_call_scheduled_desc">Eingehender simulierter Anruf von %1$s in %2$s</string>
+    <string name="fake_call_success_scheduled">Simulierter Anruf geplant für %1$s</string>
+    <string name="fake_call_cancelled">Geplanter simulierter Anruf abgebrochen</string>
+    <string name="fake_call_select_date">Datum auswählen</string>
+    <string name="fake_call_select_time">Uhrzeit auswählen</string>
+    <string name="fake_call_screen_incoming">Eingehender Anruf</string>
+    <string name="fake_call_screen_ended">Anruf beendet</string>
+    <string name="fake_call_new_schedule">Neuer simulierter Anruf</string>
+    <string name="fake_call_schedules_title">Geplante Anrufe</string>
+    <string name="fake_call_no_schedules_title">Keine geplanten Anrufe</string>
+    <string name="fake_call_no_schedules_desc">Planen Sie simulierte eingehende Anrufe für jedes Datum und jede Uhrzeit. Sie gleichen in Aussehen und Verhalten echten Anrufen.</string>
+    <string name="fake_call_clear_all">Alles leeren</string>
+    <string name="fake_call_clear_all_confirm">Sind Sie sicher, dass Sie alle geplante simulierten Anrufe abbrechen wollen?</string>
+    <string name="fake_call_delete_schedule">Planung löschen</string>
+    <string name="fake_call_deleted">Geplanter Anruf entfernt</string>
+    <string name="fake_call_time_calling_in">Anruf in %1$s</string>
+    <string name="fake_call_vibrate">Vibration beim Klingeln</string>
+    <string name="fake_call_vibrate_desc">Vibration wenn simulierter Anruf klingelt</string>
+    <string name="fake_call_test_now">Test-Anruf jetzt</string>
+    <string name="fake_call_options">Anruf-Optionen</string>
     <!-- Navigation Bar Style -->
+    <string name="settings_interface_nav_bar_style">Stil der Navigationsleiste</string>
+    <string name="settings_interface_nav_bar_style_supporting">Auswahl zwischen unterer Standard-Leiste oder schwebender expressiver Leiste</string>
+    <string name="settings_nav_bar_standard">Standard-Leiste</string>
+    <string name="settings_nav_bar_toolbar">Schwebende Leiste</string>
+    <string name="fake_call_incoming_channel_title">Simulierte eingehende Anrufe</string>
+    <string name="fake_call_incoming_channel_desc">Benachrichtigungen für simulierte eingehende und aktive Anrufe</string>
 </resources>

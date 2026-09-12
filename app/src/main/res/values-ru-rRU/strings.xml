@@ -417,8 +417,6 @@
     <string name="settings_manage_name_format_first_first">Сначала имя, потом фамилия</string>
     <string name="settings_manage_name_format_last_first">Сначала фамилия, потом имя</string>
     <string name="settings_manage_storage">Хранилище</string>
-    <string name="settings_manage_private_contacts">Личные контакты</string>
-    <string name="settings_manage_private_contacts_supporting">Локальные контакты приложения</string>
     <string name="settings_manage_visibility">Отображение контакта</string>
     <string name="settings_manage_visibility_supporting">Выберите, какие учетные записи будут отображаться в списке</string>
     <string name="settings_manage_quick_fixes">Быстрые исправления</string>
@@ -433,12 +431,9 @@
     <string name="settings_visibility_accounts_header">Учётные записи</string>
     <string name="settings_visibility_local_memory_supporting">Контакты, сохранённые на устройстве</string>
     <string name="settings_visibility_reset_all">Сброс отображения всех</string>
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Личные контакты</string>
+    <!-- Settings > Private storage -->
     <string name="content_desc_import">Импорт</string>
     <string name="content_desc_export">Экспорт</string>
-    <string name="settings_private_empty">Личные контакты не найдены</string>
-    <string name="settings_private_manage_hint">Управление зашифрованными локальными контактами</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Быстрый набор</string>
     <string name="settings_speed_dial_enable">Включить быстрый набор</string>
