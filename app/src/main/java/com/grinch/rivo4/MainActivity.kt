@@ -58,16 +58,19 @@ import com.ramcosta.composedestinations.generated.destinations.ContactEditScreen
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import com.grinch.rivo4.controller.lock.AppLockManager
+import com.grinch.rivo4.view.screen.settings.AppLockOverlay
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 
-class MainActivity : ComponentActivity() {
+class MainActivity : androidx.fragment.app.FragmentActivity() {
     private val preferenceManager: PreferenceManager by inject()
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
     private var intentState by mutableStateOf<Intent?>(null)
+    private var isAppLocked by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -75,6 +78,10 @@ class MainActivity : ComponentActivity() {
         intentState = intent
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        if (AppLockManager.isLocked(preferenceManager)) {
+            isAppLocked = true
+        }
 
         if (GlobalContext.getOrNull() == null) {
             startKoin {
@@ -96,7 +103,13 @@ class MainActivity : ComponentActivity() {
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
                 var showPermissionPopup by remember { mutableStateOf(onboardingShown && !permissionPopupShown && isCustomPermissionDevice()) }
 
-                if (showOnboarding) {
+                if (isAppLocked && prefs.isAppLockEnabled()) {
+                    AppLockOverlay(
+                        onUnlocked = {
+                            isAppLocked = false
+                        }
+                    )
+                } else if (showOnboarding) {
                     MorphingOnboardingScreen(
                         onFinished = {
                             prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
@@ -243,6 +256,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppLockManager.onAppForegrounded(preferenceManager)
+        if (AppLockManager.isLocked(preferenceManager)) {
+            isAppLocked = true
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        AppLockManager.onAppBackgrounded()
     }
 
     override fun onNewIntent(intent: Intent) {

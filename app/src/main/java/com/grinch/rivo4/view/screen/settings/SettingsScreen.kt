@@ -187,6 +187,13 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
+                    val appLockEnabled = remember(settingsState) { prefs.isAppLockEnabled() }
+                    RivoListItem(
+                        headline = "App Lock",
+                        supporting = if (appLockEnabled) "Enabled (Face, Fingerprint, PIN)" else "Protect app with biometrics or PIN",
+                        leadingIcon = Icons.Outlined.Security,
+                        onClick = { navigator.navigate(AppLockScreenDestination) }
+                    )
                     if (!hidePrivateContacts) {
                         RivoListItem(
                             headline = stringResource(R.string.settings_manage_private_contacts),

@@ -33,6 +33,7 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:node="remove"/>
@@ -185,6 +186,11 @@
         <service
             android:name=".controller.CallRecordingService"
             android:foregroundServiceType="microphone"
+            android:exported="false" />
+
+        <service
+            android:name=".controller.floating.FloatingCallService"
+            android:foregroundServiceType="phoneCall"
             android:exported="false" />
 
         <receiver

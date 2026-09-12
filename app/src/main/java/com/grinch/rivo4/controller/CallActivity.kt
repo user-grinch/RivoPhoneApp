@@ -386,9 +386,35 @@ class CallActivity : ComponentActivity() {
         CallService.isActivityVisible.value = true
     }
 
+    override fun onResume() {
+        super.onResume()
+        com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        checkAndStartFloatingBubble()
+    }
+
     override fun onStop() {
         super.onStop()
         CallService.isActivityVisible.value = false
+        if (!isFinishing && !isDestroyed) {
+            checkAndStartFloatingBubble()
+        }
+    }
+
+    private fun checkAndStartFloatingBubble() {
+        if (preferenceManager.isFloatingCallBubbleEnabled() &&
+            android.provider.Settings.canDrawOverlays(this)
+        ) {
+            val hasOngoingCall = CallService.allCalls.value.any {
+                it.state == Call.STATE_ACTIVE || it.state == Call.STATE_HOLDING || it.state == Call.STATE_DIALING
+            }
+            if (hasOngoingCall) {
+                com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
+            }
+        }
     }
 
     private fun acquireProximityLock() {

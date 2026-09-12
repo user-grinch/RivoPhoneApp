@@ -38,6 +38,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
+import android.net.Uri
+import androidx.compose.material.icons.outlined.PictureInPicture
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
@@ -65,6 +68,7 @@ fun CallAccountsScreen(
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     var alwaysFullScreenCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) }
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
+    var floatingBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var savingCallBg by remember { mutableStateOf(false) }
@@ -237,6 +241,24 @@ fun CallAccountsScreen(
                             leadingIcon = Icons.Outlined.Quickreply,
                             onClick = {
                                 navigator.navigate(QuickResponsesScreenDestination())
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Floating Ongoing Calls",
+                            supporting = "Show a movable bubble with call timer and quick controls when leaving call",
+                            leadingIcon = Icons.Outlined.PictureInPicture,
+                            checked = floatingBubble,
+                            onCheckedChange = { enable ->
+                                if (enable && !android.provider.Settings.canDrawOverlays(context)) {
+                                    val intent = Intent(
+                                        android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:${context.packageName}")
+                                    )
+                                    context.startActivity(intent)
+                                }
+                                floatingBubble = enable
+                                prefs.setFloatingCallBubbleEnabled(enable)
                             }
                         )
                     }

@@ -350,6 +350,18 @@ class PreferenceManager(context: Context) {
         const val KEY_RATE_APP_SHOWN = "rate_app_shown"
         const val KEY_RATE_APP_SNOOZED_TIME = "rate_app_snoozed_time"
 
+        const val KEY_APP_LOCK_ENABLED = "app_lock_enabled"
+        const val KEY_APP_LOCK_BIOMETRIC = "app_lock_biometric"
+        const val KEY_APP_LOCK_PIN = "app_lock_pin"
+        const val KEY_APP_LOCK_TIMEOUT = "app_lock_timeout"
+        const val APP_LOCK_TIMEOUT_IMMEDIATELY = 0
+        const val APP_LOCK_TIMEOUT_1_MIN = 1
+        const val APP_LOCK_TIMEOUT_5_MIN = 5
+        const val APP_LOCK_TIMEOUT_15_MIN = 15
+        const val APP_LOCK_TIMEOUT_30_MIN = 30
+
+        const val KEY_FLOATING_CALL_BUBBLE = "floating_call_bubble"
+
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
         const val TAB_CONTACTS = 2
@@ -357,4 +369,15 @@ class PreferenceManager(context: Context) {
 
         val DEFAULT_BOTTOM_NAV_ORDER = listOf(TAB_RECENTS, TAB_CONTACTS, TAB_FAVORITES, TAB_RECORDINGS)
     }
+
+    fun isAppLockEnabled(): Boolean = getBoolean(KEY_APP_LOCK_ENABLED, false)
+    fun setAppLockEnabled(enabled: Boolean) = setBoolean(KEY_APP_LOCK_ENABLED, enabled)
+    fun isBiometricLockEnabled(): Boolean = getBoolean(KEY_APP_LOCK_BIOMETRIC, true)
+    fun setBiometricLockEnabled(enabled: Boolean) = setBoolean(KEY_APP_LOCK_BIOMETRIC, enabled)
+    fun getAppLockPin(): String = getString(KEY_APP_LOCK_PIN, "") ?: ""
+    fun setAppLockPin(pin: String) = setString(KEY_APP_LOCK_PIN, pin)
+    fun getAppLockTimeout(): Int = getInt(KEY_APP_LOCK_TIMEOUT, APP_LOCK_TIMEOUT_IMMEDIATELY)
+    fun setAppLockTimeout(timeout: Int) = setInt(KEY_APP_LOCK_TIMEOUT, timeout)
+    fun isFloatingCallBubbleEnabled(): Boolean = getBoolean(KEY_FLOATING_CALL_BUBBLE, true)
+    fun setFloatingCallBubbleEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_CALL_BUBBLE, enabled)
 }
