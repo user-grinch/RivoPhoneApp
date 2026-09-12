@@ -101,6 +101,17 @@ class PreferenceManager(context: Context) {
         setString(KEY_FAVORITES_ORDER, order.joinToString(","))
     }
 
+    fun getQuickResponses(): List<String> {
+        val stored = getString(KEY_QUICK_RESPONSES, null)
+        if (stored.isNullOrBlank()) return DEFAULT_QUICK_RESPONSES
+        val list = stored.split("|||").map { it.trim() }.filter { it.isNotEmpty() }
+        return if (list.isNotEmpty()) list else DEFAULT_QUICK_RESPONSES
+    }
+
+    fun setQuickResponses(responses: List<String>) {
+        setString(KEY_QUICK_RESPONSES, responses.filter { it.isNotBlank() }.joinToString("|||"))
+    }
+
     fun getBottomNavOrder(): List<Int> {
         val stored = getString(KEY_BOTTOM_NAV_ORDER, null)
         val parsed = stored
@@ -298,6 +309,23 @@ class PreferenceManager(context: Context) {
         const val KEY_CALL_RECORDING = "call_recording"
         const val KEY_CALL_RECORDING_AUTO = "call_recording_auto"
         const val KEY_CALL_RECORDING_SHIZUKU = "call_recording_shizuku"
+        const val KEY_CALL_RECORDING_FILTER = "call_recording_filter"
+        const val RECORD_FILTER_ALL = 0
+        const val RECORD_FILTER_INCOMING_ONLY = 1
+        const val RECORD_FILTER_OUTGOING_ONLY = 2
+        const val RECORD_FILTER_UNKNOWN_ONLY = 3
+        const val RECORD_FILTER_CONTACTS_ONLY = 4
+
+        const val KEY_POCKET_MODE = "pocket_mode"
+        const val KEY_VOLUME_SQUEEZE_DND = "volume_squeeze_dnd"
+        const val KEY_QUICK_RESPONSES = "custom_quick_responses"
+        val DEFAULT_QUICK_RESPONSES = listOf(
+            "Can't talk now. What's up?",
+            "I'll call you right back.",
+            "I'll call you later.",
+            "Can't talk now. Call me later?",
+            "I'm in a meeting. Will message you soon."
+        )
         const val KEY_BOTTOM_NAV_ORDER = "bottom_nav_order"
         const val KEY_BOTTOM_NAV_HIDDEN = "bottom_nav_hidden"
         const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"

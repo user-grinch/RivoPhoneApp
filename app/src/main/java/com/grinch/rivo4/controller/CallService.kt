@@ -231,13 +231,24 @@ class CallService : InCallService() {
         if (!preferenceManager.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false)) return
         if (CallRecorder.isRecording.value) return
 
+        val filter = preferenceManager.getInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, PreferenceManager.RECORD_FILTER_ALL)
+        val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        val isOutgoing = call.details.callDirection == Call.Details.DIRECTION_OUTGOING
+
+        if (filter == PreferenceManager.RECORD_FILTER_INCOMING_ONLY && !isIncoming) return
+        if (filter == PreferenceManager.RECORD_FILTER_OUTGOING_ONLY && !isOutgoing) return
+
         val number = call.details.handle?.schemeSpecificPart ?: ""
         serviceScope.launch(Dispatchers.IO) {
-            val name = if (number.isNotEmpty()) {
-                try { contactsRepository.getContactByNumber(number)?.name } catch (e: Exception) { null } ?: number
-            } else {
-                getString(R.string.label_unknown_number)
-            }
+            val contact = if (number.isNotEmpty()) {
+                try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
+            } else null
+            val isKnownContact = contact != null
+
+            if (filter == PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY && isKnownContact) return@launch
+            if (filter == PreferenceManager.RECORD_FILTER_CONTACTS_ONLY && !isKnownContact) return@launch
+
+            val name = contact?.name ?: number.ifEmpty { getString(R.string.label_unknown_number) }
             CallRecorder.start(this@CallService, name)
         }
     }

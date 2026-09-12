@@ -19,6 +19,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -267,6 +269,54 @@ fun ExpressiveCallScreen(
     }
     val audioLabel = audioRouteLabel(audioRoute, audioState)
     val hasBluetooth = ((audioState?.supportedRouteMask ?: 0) and CallAudioState.ROUTE_BLUETOOTH) != 0
+
+    var showQuickResponsesSheet by remember { mutableStateOf(false) }
+
+    val pocketModeEnabled = remember(settingsState) {
+        preferenceManager.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)
+    }
+    var isPocketModeCovered by remember { mutableStateOf(false) }
+    var pocketModeDismissedManually by remember { mutableStateOf(false) }
+
+    DisposableEffect(callState, pocketModeEnabled) {
+        if (pocketModeEnabled && callState == Call.STATE_RINGING) {
+            val manager = com.grinch.rivo4.controller.sensor.PocketModeManager(context)
+            manager.startListening { isNear ->
+                isPocketModeCovered = isNear
+            }
+            onDispose {
+                manager.stopListening()
+            }
+        } else {
+            isPocketModeCovered = false
+            onDispose { }
+        }
+    }
+
+    val onSendQuickResponse: (String) -> Unit = { message ->
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                call.reject(true, message)
+            } else {
+                call.reject(Call.REJECT_REASON_DECLINED)
+                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber")).apply {
+                    putExtra("sms_body", message)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+            }
+        } catch (e: Exception) {
+            try { call.reject(Call.REJECT_REASON_DECLINED) } catch (_: Exception) {}
+            try {
+                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber")).apply {
+                    putExtra("sms_body", message)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+            } catch (_: Exception) {}
+        }
+        showQuickResponsesSheet = false
+    }
 
     val otherCallCard: @Composable () -> Unit = {
         AnimatedVisibility(
@@ -550,11 +600,7 @@ fun ExpressiveCallScreen(
                             modifier = Modifier.width(if (compact) 108.dp else 132.dp)
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            onDeclineCallAction()
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("smsto:$phoneNumber")
-                            }
-                            context.startActivity(intent)
+                            showQuickResponsesSheet = true
                         }
                     }
                 }
@@ -569,11 +615,7 @@ fun ExpressiveCallScreen(
                         onDecline = onDeclineCallAction,
                         onMessage = {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            onDeclineCallAction()
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("smsto:$phoneNumber")
-                            }
-                            context.startActivity(intent)
+                            showQuickResponsesSheet = true
                         }
                     )
                     3 -> VerticalSwipeToAnswer(
@@ -670,6 +712,222 @@ fun ExpressiveCallScreen(
                     }
                 }
             }
+        }
+
+        if (isPocketModeCovered && !pocketModeDismissedManually && callState == Call.STATE_RINGING) {
+            PocketModeOverlay(
+                onDismiss = { pocketModeDismissedManually = true }
+            )
+        }
+
+        if (showQuickResponsesSheet) {
+            QuickResponsesBottomSheet(
+                phoneNumber = phoneNumber,
+                contactName = contactName,
+                onDismiss = { showQuickResponsesSheet = false },
+                onSend = onSendQuickResponse,
+                onOpenSmsApp = {
+                    try {
+                        if (call.state == Call.STATE_RINGING) {
+                            call.reject(Call.REJECT_REASON_DECLINED)
+                        } else {
+                            call.disconnect()
+                        }
+                    } catch (_: Exception) {}
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("smsto:$phoneNumber")
+                    }
+                    context.startActivity(intent)
+                    showQuickResponsesSheet = false
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun PocketModeOverlay(
+    onDismiss: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.95f))
+            .clickable(enabled = false) {},
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Surface(
+                modifier = Modifier.size(80.dp),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f),
+                contentColor = MaterialTheme.colorScheme.primary
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        Icons.Outlined.ScreenLockPortrait,
+                        contentDescription = null,
+                        modifier = Modifier.size(42.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "Pocket Mode Active",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Screen touches are locked to prevent accidental touches in your pocket.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.7f),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            Spacer(Modifier.height(32.dp))
+            FilledTonalButton(
+                onClick = onDismiss,
+                shape = CircleShape
+            ) {
+                Icon(Icons.Outlined.LockOpen, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Dismiss Touch Guard")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QuickResponsesBottomSheet(
+    phoneNumber: String,
+    contactName: String,
+    onDismiss: () -> Unit,
+    onSend: (String) -> Unit,
+    onOpenSmsApp: () -> Unit
+) {
+    val prefs = org.koin.compose.koinInject<PreferenceManager>()
+    val responses = remember { prefs.getQuickResponses() }
+    var customText by remember { mutableStateOf("") }
+    var isCustomVisible by remember { mutableStateOf(false) }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Quick Response",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Decline call and reply to ${contactName.ifBlank { phoneNumber }}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                IconButton(onClick = onOpenSmsApp) {
+                    Icon(
+                        Icons.Outlined.OpenInNew,
+                        contentDescription = "Open SMS app",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            responses.forEach { responseText ->
+                Surface(
+                    onClick = { onSend(responseText) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Outlined.Send,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = responseText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            if (!isCustomVisible) {
+                OutlinedButton(
+                    onClick = { isCustomVisible = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Write a custom message...")
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = customText,
+                        onValueChange = { customText = it },
+                        placeholder = { Text("Type custom message...") },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(14.dp),
+                        singleLine = true
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    IconButton(
+                        onClick = {
+                            if (customText.isNotBlank()) {
+                                onSend(customText.trim())
+                            }
+                        },
+                        enabled = customText.isNotBlank()
+                    ) {
+                        Icon(
+                            Icons.Outlined.Send,
+                            contentDescription = "Send",
+                            tint = if (customText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

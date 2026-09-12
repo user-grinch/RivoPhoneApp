@@ -31,6 +31,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.QuickResponsesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -63,6 +64,7 @@ fun CallAccountsScreen(
     var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     var alwaysFullScreenCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) }
+    var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var savingCallBg by remember { mutableStateOf(false) }
@@ -215,6 +217,26 @@ fun CallAccountsScreen(
                             onCheckedChange = {
                                 alwaysFullScreenCalls = it
                                 prefs.setBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Pocket Mode",
+                            supporting = "Prevent accidental touches during incoming calls when phone is in pocket",
+                            leadingIcon = Icons.Outlined.ScreenLockPortrait,
+                            checked = pocketMode,
+                            onCheckedChange = {
+                                pocketMode = it
+                                prefs.setBoolean(PreferenceManager.KEY_POCKET_MODE, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoListItem(
+                            headline = "Quick Responses",
+                            supporting = "Manage canned SMS decline responses for incoming calls",
+                            leadingIcon = Icons.Outlined.Quickreply,
+                            onClick = {
+                                navigator.navigate(QuickResponsesScreenDestination())
                             }
                         )
                     }

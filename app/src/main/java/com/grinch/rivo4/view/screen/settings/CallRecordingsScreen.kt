@@ -141,6 +141,9 @@ fun CallRecordingsContent(
     var autoRecordEnabled by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false))
     }
+    var autoRecordFilter by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, PreferenceManager.RECORD_FILTER_ALL))
+    }
     var minDurationFilter by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_min_duration", 0)) }
     var bitrate by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_bitrate", 128000)) }
 
@@ -761,7 +764,7 @@ fun CallRecordingsContent(
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                         RivoSwitchListItem(
                             headline = "Auto-Record Calls",
-                            supporting = "Automatically record every call as soon as it connects",
+                            supporting = "Automatically record calls as soon as they connect",
                             leadingIcon = Icons.Outlined.PlayCircleOutline,
                             checked = autoRecordEnabled,
                             onCheckedChange = {
@@ -769,6 +772,32 @@ fun CallRecordingsContent(
                                 prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, it)
                             }
                         )
+                        if (autoRecordEnabled) {
+                            RivoDivider(Modifier.padding(horizontal = 16.dp))
+                            RivoSelectListItem(
+                                headline = "Auto-Record Filter",
+                                supporting = when (autoRecordFilter) {
+                                    PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> "Recording incoming calls only"
+                                    PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> "Recording outgoing calls only"
+                                    PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY -> "Recording unknown numbers only"
+                                    PreferenceManager.RECORD_FILTER_CONTACTS_ONLY -> "Recording saved contacts only"
+                                    else -> "Recording all calls"
+                                },
+                                leadingIcon = Icons.Outlined.FilterList,
+                                options = listOf(
+                                    "All Calls" to PreferenceManager.RECORD_FILTER_ALL,
+                                    "Incoming Calls Only" to PreferenceManager.RECORD_FILTER_INCOMING_ONLY,
+                                    "Outgoing Calls Only" to PreferenceManager.RECORD_FILTER_OUTGOING_ONLY,
+                                    "Unknown Numbers Only" to PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY,
+                                    "Saved Contacts Only" to PreferenceManager.RECORD_FILTER_CONTACTS_ONLY
+                                ),
+                                selectedValue = autoRecordFilter,
+                                onValueChange = {
+                                    autoRecordFilter = it
+                                    prefs.setInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, it)
+                                }
+                            )
+                        }
                     }
                 }
 

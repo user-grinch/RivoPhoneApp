@@ -412,4 +412,13 @@ class CallActivity : ComponentActivity() {
             Log.e("CallActivity", "Failed to release proximity lock", e)
         }
     }
+
+    private val volumeSqueezeHelper by lazy { com.grinch.rivo4.controller.util.VolumeSqueezeHelper(this, preferenceManager) }
+
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (volumeSqueezeHelper.handleKeyEvent(event)) {
+            return true
+        }
+        return super.dispatchKeyEvent(event)
+    }
 }

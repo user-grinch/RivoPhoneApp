@@ -58,12 +58,14 @@ import com.ramcosta.composedestinations.generated.destinations.ContactEditScreen
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
+    private val preferenceManager: PreferenceManager by inject()
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
     private var intentState by mutableStateOf<Intent?>(null)
 
@@ -291,5 +293,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private val volumeSqueezeHelper by lazy { com.grinch.rivo4.controller.util.VolumeSqueezeHelper(this, preferenceManager) }
+
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (volumeSqueezeHelper.handleKeyEvent(event)) {
+            return true
+        }
+        return super.dispatchKeyEvent(event)
     }
 }
