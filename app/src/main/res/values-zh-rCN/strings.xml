@@ -184,6 +184,7 @@
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
     <!-- Settings > Contributors -->
+    <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
@@ -194,4 +195,6 @@
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
+    <!-- Fake Call feature -->
+    <!-- Navigation Bar Style -->
 </resources>
