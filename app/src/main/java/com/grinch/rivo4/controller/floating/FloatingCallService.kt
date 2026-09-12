@@ -9,10 +9,17 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PixelFormat
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -26,6 +33,7 @@ import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewOutlineProvider
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
@@ -33,6 +41,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallActivity
 import com.grinch.rivo4.controller.CallService
@@ -47,23 +56,34 @@ class FloatingCallService : Service(), KoinComponent {
     private val contactsRepository: IContactsRepository by inject()
 
     private var windowManager: WindowManager? = null
-    private var bubbleView: View? = null
+    private var rootLayout: FrameLayout? = null
     private var layoutParams: WindowManager.LayoutParams? = null
+
+    private var bubbleContainer: FrameLayout? = null
+    private var avatarImageView: ImageView? = null
+    private var avatarInitialView: TextView? = null
+
+    private var dropdownLayout: LinearLayout? = null
+    private var topNotchView: NotchView? = null
+    private var bottomNotchView: NotchView? = null
+    private var cardLayout: LinearLayout? = null
+
+    private var muteIconView: ImageView? = null
+    private var muteTextView: TextView? = null
+    private var speakerIconView: ImageView? = null
+    private var speakerTextView: TextView? = null
+
+    private var bubbleX = 0
+    private var bubbleY = 0
+    private var isDropdownOpen = false
 
     private val handler = Handler(Looper.getMainLooper())
     private var updateTimerRunnable: Runnable? = null
 
-    private var avatarInitialView: TextView? = null
-    private var avatarIconView: ImageView? = null
-    private var callerNameView: TextView? = null
-    private var statusDot: View? = null
-    private var timerView: TextView? = null
-    private var muteButton: ImageView? = null
-    private var speakerButton: ImageView? = null
-
     private var cachedNumber: String? = null
     private var cachedDisplayName: String? = null
-    private var cachedInitial: String? = null
+    private var cachedPhotoUri: String? = null
+    private var cachedPhotoBitmap: Bitmap? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -128,255 +148,182 @@ class FloatingCallService : Service(), KoinComponent {
             WindowManager.LayoutParams.TYPE_PHONE
         }
 
+        val bubbleSize = (60 * density).toInt()
+        val screenWidth = resources.displayMetrics.widthPixels
+        val screenHeight = resources.displayMetrics.heightPixels
+
+        bubbleX = (screenWidth - bubbleSize - (16 * density).toInt()).coerceAtLeast(20)
+        bubbleY = (screenHeight * 0.22f).toInt()
+
         layoutParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            bubbleSize,
+            bubbleSize,
             type,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            x = (resources.displayMetrics.widthPixels - (270 * density).toInt()).coerceAtLeast(20)
-            y = (resources.displayMetrics.heightPixels * 0.22f).toInt()
+            x = bubbleX
+            y = bubbleY
         }
 
-        val rootLayout = FrameLayout(this)
+        rootLayout = FrameLayout(this)
 
-        // Pill shape background with deep obsidian frosted container & luminous highlight border
-        val pillBg = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 27 * density
-            setColor(Color.parseColor("#F412151B")) // Deep dark obsidian surface, 96% opacity
-            setStroke((1.2f * density).toInt(), Color.parseColor("#334155")) // Sleek slate border
-        }
-
-        val container = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            background = pillBg
-            setPadding(
-                (9 * density).toInt(),
-                (5 * density).toInt(),
-                (8 * density).toInt(),
-                (5 * density).toInt()
-            )
-            elevation = 16 * density
-        }
-
-        // Left: Avatar / Active Beacon Container
-        val avatarSize = (34 * density).toInt()
-        val avatarContainer = FrameLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(avatarSize, avatarSize).apply {
-                rightMargin = (8 * density).toInt()
+        // Dismiss dropdown if tapped outside window
+        rootLayout?.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_OUTSIDE) {
+                if (isDropdownOpen) {
+                    collapseDropdown()
+                }
+                return@setOnTouchListener true
             }
+            false
+        }
+
+        buildBubbleView(density, bubbleSize)
+        buildDropdownView(density)
+
+        rootLayout?.addView(dropdownLayout)
+        rootLayout?.addView(bubbleContainer)
+
+        dropdownLayout?.visibility = View.GONE
+
+        val activeCall = CallService.allCalls.value.firstOrNull { it.state != Call.STATE_DISCONNECTED }
+        if (activeCall != null) {
+            updateCallerAvatar(activeCall)
+        }
+
+        try {
+            windowManager?.addView(rootLayout, layoutParams)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to add floating bubble to WindowManager: ${e.message}", e)
+            stopSelf()
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun buildBubbleView(density: Float, bubbleSize: Int) {
+        bubbleContainer = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(bubbleSize, bubbleSize)
+        }
+
+        // Circular avatar container
+        val avatarSize = (54 * density).toInt()
+        val avatarCircle = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(avatarSize, avatarSize, Gravity.TOP or Gravity.START)
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#143525"))
-                setStroke((1.5f * density).toInt(), Color.parseColor("#22C55E"))
+                setColor(Color.parseColor("#9AA0A6")) // Google contact avatar slate grey
             }
+            elevation = 6 * density
         }
 
+        avatarImageView = ImageView(this).apply {
+            setImageResource(R.drawable.ic_floating_person)
+            setColorFilter(Color.WHITE)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            val iconSize = (32 * density).toInt()
+            layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
+        }
+        avatarCircle.addView(avatarImageView)
+
         avatarInitialView = TextView(this).apply {
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            setTextColor(Color.parseColor("#4ADE80"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+            setTextColor(Color.WHITE)
             typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
             gravity = Gravity.CENTER
             layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
             visibility = View.GONE
         }
-        avatarContainer.addView(avatarInitialView)
+        avatarCircle.addView(avatarInitialView)
 
-        avatarIconView = ImageView(this).apply {
-            setImageResource(R.drawable.ic_call_ongoing)
-            setColorFilter(Color.parseColor("#4ADE80"))
-            val iconSize = (17 * density).toInt()
-            layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
-            visibility = View.VISIBLE
-        }
-        avatarContainer.addView(avatarIconView)
-        container.addView(avatarContainer)
+        bubbleContainer?.addView(avatarCircle)
 
-        // Middle: Caller Name and Status / Timer Column
-        val textCol = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_VERTICAL
-            layoutParams = LinearLayout.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-            ).apply {
-                rightMargin = (10 * density).toInt()
-            }
-        }
-
-        callerNameView = TextView(this).apply {
-            text = "Active Call"
-            setTextColor(Color.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f)
-            maxLines = 1
-            maxWidth = (85 * density).toInt()
-            ellipsize = android.text.TextUtils.TruncateAt.END
-            typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-        }
-        textCol.addView(callerNameView)
-
-        val statusRow = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = (2 * density).toInt()
-            }
-        }
-
-        statusDot = View(this).apply {
-            val dotSize = (5 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(dotSize, dotSize).apply {
-                rightMargin = (4 * density).toInt()
-            }
+        // Blue Call Badge in bottom-right corner
+        val badgeSize = (22 * density).toInt()
+        val badgeContainer = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(badgeSize, badgeSize, Gravity.BOTTOM or Gravity.END)
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#4ADE80"))
+                setColor(Color.parseColor("#1A73E8")) // Google Phone Blue
+                setStroke((2 * density).toInt(), Color.WHITE)
             }
-        }
-        statusRow.addView(statusDot)
-
-        timerView = TextView(this).apply {
-            text = "00:00"
-            setTextColor(Color.parseColor("#86EFAC"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-            typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
-        }
-        statusRow.addView(timerView)
-        textCol.addView(statusRow)
-        container.addView(textCol)
-
-        // Right: Action Buttons Group
-        val actionsRow = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
+            elevation = 8 * density
         }
 
-        val actionBtnSize = (32 * density).toInt()
-        val endCallBtnSize = (35 * density).toInt()
-
-        // Mute Button
-        muteButton = ImageView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(actionBtnSize, actionBtnSize).apply {
-                rightMargin = (6 * density).toInt()
-            }
-            val pad = (7 * density).toInt()
-            setPadding(pad, pad, pad, pad)
-            setOnClickListener {
-                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                val currentMute = CallService.audioState.value?.isMuted == true
-                CallService.mute(!currentMute)
-                updateAudioIcons()
-            }
-        }
-        actionsRow.addView(muteButton)
-
-        // Speaker Button
-        speakerButton = ImageView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(actionBtnSize, actionBtnSize).apply {
-                rightMargin = (6 * density).toInt()
-            }
-            val pad = (7 * density).toInt()
-            setPadding(pad, pad, pad, pad)
-            setOnClickListener {
-                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                CallService.cycleAudioRoute()
-                updateAudioIcons()
-            }
-        }
-        actionsRow.addView(speakerButton)
-
-        // End Call Button
-        val endCallBg = GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(Color.parseColor("#DC2626"))
-            setStroke((1.2f * density).toInt(), Color.parseColor("#EF4444"))
-        }
-        val endCallButton = ImageView(this).apply {
-            setImageResource(R.drawable.ic_floating_end_call)
+        val badgeIcon = ImageView(this).apply {
+            setImageResource(R.drawable.ic_call_ongoing)
             setColorFilter(Color.WHITE)
-            background = RippleDrawable(ColorStateList.valueOf(Color.parseColor("#40FFFFFF")), endCallBg, null)
-            layoutParams = LinearLayout.LayoutParams(endCallBtnSize, endCallBtnSize)
-            val pad = (7.5f * density).toInt()
-            setPadding(pad, pad, pad, pad)
-            setOnClickListener {
-                it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                try {
-                    CallService.allCalls.value.firstOrNull { c -> c.state != Call.STATE_DISCONNECTED }?.disconnect()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to disconnect call: ${e.message}")
-                }
-                stopSelf()
-            }
+            val iconSize = (11 * density).toInt()
+            layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
         }
-        actionsRow.addView(endCallButton)
-        container.addView(actionsRow)
+        badgeContainer.addView(badgeIcon)
 
-        rootLayout.addView(container)
+        bubbleContainer?.addView(badgeContainer)
 
-        // Initial appearance
-        updateAudioIcons()
-        val activeCall = CallService.allCalls.value.firstOrNull { it.state != Call.STATE_DISCONNECTED }
-        if (activeCall != null) {
-            updateCallerInfo(activeCall)
-        }
-
-        // Dragging & Edge-snapping gesture controller
+        // Drag & Tap Controller on Bubble
         var initialX = 0
         var initialY = 0
         var initialTouchX = 0f
         var initialTouchY = 0f
         var isDragging = false
 
-        rootLayout.setOnTouchListener { _, event ->
-            val params = layoutParams ?: return@setOnTouchListener false
+        bubbleContainer?.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    initialX = params.x
-                    initialY = params.y
+                    initialX = bubbleX
+                    initialY = bubbleY
                     initialTouchX = event.rawX
                     initialTouchY = event.rawY
                     isDragging = false
-                    rootLayout.animate().scaleX(0.96f).scaleY(0.96f).alpha(0.92f).setDuration(120).start()
+                    bubbleContainer?.animate()?.scaleX(0.94f)?.scaleY(0.94f)?.setDuration(100)?.start()
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
                     val dx = (event.rawX - initialTouchX).toInt()
                     val dy = (event.rawY - initialTouchY).toInt()
                     if (abs(dx) > 10 || abs(dy) > 10) {
+                        if (isDropdownOpen) {
+                            collapseDropdown()
+                        }
                         isDragging = true
                         val screenHeight = resources.displayMetrics.heightPixels
-                        params.x = initialX + dx
-                        params.y = (initialY + dy).coerceIn(40, (screenHeight - (120 * density).toInt()))
+                        bubbleX = initialX + dx
+                        bubbleY = (initialY + dy).coerceIn(30, screenHeight - bubbleSize - 30)
+
+                        val params = layoutParams ?: return@setOnTouchListener true
+                        params.x = bubbleX
+                        params.y = bubbleY
                         windowManager?.updateViewLayout(rootLayout, params)
                     }
                     true
                 }
                 MotionEvent.ACTION_UP -> {
-                    rootLayout.animate().scaleX(1.0f).scaleY(1.0f).alpha(1.0f).setDuration(150).start()
+                    bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     if (!isDragging) {
-                        returnToCallActivity()
+                        bubbleContainer?.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        if (isDropdownOpen) {
+                            collapseDropdown()
+                        } else {
+                            openDropdown()
+                        }
                     } else {
                         val screenWidth = resources.displayMetrics.widthPixels
-                        val currentMidX = params.x + (rootLayout.width / 2)
+                        val currentMidX = bubbleX + (bubbleSize / 2)
                         val targetX = if (currentMidX < screenWidth / 2) {
                             (12 * density).toInt()
                         } else {
-                            (screenWidth - rootLayout.width - (12 * density).toInt()).coerceAtLeast(0)
+                            (screenWidth - bubbleSize - (12 * density).toInt()).coerceAtLeast(0)
                         }
 
-                        val animator = android.animation.ValueAnimator.ofInt(params.x, targetX).apply {
-                            duration = 220
+                        val animator = android.animation.ValueAnimator.ofInt(bubbleX, targetX).apply {
+                            duration = 200
                             interpolator = DecelerateInterpolator()
                             addUpdateListener { animation ->
-                                params.x = animation.animatedValue as Int
+                                bubbleX = animation.animatedValue as Int
+                                val params = layoutParams ?: return@addUpdateListener
+                                params.x = bubbleX
                                 try {
                                     windowManager?.updateViewLayout(rootLayout, params)
                                 } catch (_: Exception) {}
@@ -387,24 +334,341 @@ class FloatingCallService : Service(), KoinComponent {
                     true
                 }
                 MotionEvent.ACTION_CANCEL -> {
-                    rootLayout.animate().scaleX(1.0f).scaleY(1.0f).alpha(1.0f).setDuration(150).start()
+                    bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     false
                 }
                 else -> false
             }
         }
+    }
 
-        bubbleView = rootLayout
+    private fun buildDropdownView(density: Float) {
+        val dropdownWidth = (195 * density).toInt()
+        val notchHeight = (8 * density).toInt()
+        val notchWidth = (16 * density).toInt()
 
-        try {
-            windowManager?.addView(bubbleView, layoutParams)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to add floating bubble to WindowManager: ${e.message}", e)
-            stopSelf()
+        dropdownLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = FrameLayout.LayoutParams(dropdownWidth, FrameLayout.LayoutParams.WRAP_CONTENT)
         }
+
+        topNotchView = NotchView(this, pointingUp = true).apply {
+            layoutParams = LinearLayout.LayoutParams(notchWidth, notchHeight)
+        }
+        dropdownLayout?.addView(topNotchView)
+
+        cardLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(dropdownWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 18 * density
+                setColor(Color.WHITE)
+            }
+            outlineProvider = ViewOutlineProvider.BACKGROUND
+            clipToOutline = true
+            elevation = 14 * density
+        }
+
+        // 1. Back to call
+        val backToCallRow = createMenuItem(
+            iconRes = R.drawable.ic_floating_back_to_call,
+            label = "Back to call",
+            density = density,
+            onClick = {
+                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                returnToCallActivity()
+            }
+        )
+        cardLayout?.addView(backToCallRow)
+
+        // 2. Mute
+        val (muteRow, muteIcon, muteText) = createToggleMenuItem(
+            iconRes = R.drawable.ic_floating_mic_off,
+            label = "Mute",
+            density = density,
+            onClick = {
+                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                val currentMute = CallService.audioState.value?.isMuted == true
+                CallService.mute(!currentMute)
+                updateDropdownAudioState()
+            }
+        )
+        muteIconView = muteIcon
+        muteTextView = muteText
+        cardLayout?.addView(muteRow)
+
+        // 3. Speaker
+        val (speakerRow, speakerIcon, speakerText) = createToggleMenuItem(
+            iconRes = R.drawable.ic_floating_speaker,
+            label = "Speaker",
+            density = density,
+            onClick = {
+                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                CallService.cycleAudioRoute()
+                updateDropdownAudioState()
+            }
+        )
+        speakerIconView = speakerIcon
+        speakerTextView = speakerText
+        cardLayout?.addView(speakerRow)
+
+        // 4. End call
+        val endCallRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (50 * density).toInt()
+            )
+            setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
+            val normalRed = Color.parseColor("#C5221F")
+            val rippleColor = Color.parseColor("#40FFFFFF")
+            val cornerRadius = 18 * density
+            val bg = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+                setColor(normalRed)
+            }
+            val mask = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+                setColor(Color.WHITE)
+            }
+            background = RippleDrawable(ColorStateList.valueOf(rippleColor), bg, mask)
+            setOnClickListener {
+                it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                try {
+                    CallService.allCalls.value.firstOrNull { c -> c.state != Call.STATE_DISCONNECTED }?.disconnect()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to disconnect call: ${e.message}")
+                }
+                stopSelf()
+            }
+        }
+
+        val endCallIcon = ImageView(this).apply {
+            setImageResource(R.drawable.ic_floating_end_call)
+            setColorFilter(Color.WHITE)
+            val iconSize = (22 * density).toInt()
+            layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
+                rightMargin = (16 * density).toInt()
+            }
+        }
+        endCallRow.addView(endCallIcon)
+
+        val endCallText = TextView(this).apply {
+            text = "End call"
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
+        }
+        endCallRow.addView(endCallText)
+
+        cardLayout?.addView(endCallRow)
+        dropdownLayout?.addView(cardLayout)
+
+        bottomNotchView = NotchView(this, pointingUp = false).apply {
+            layoutParams = LinearLayout.LayoutParams(notchWidth, notchHeight)
+        }
+        dropdownLayout?.addView(bottomNotchView)
+    }
+
+    private fun createMenuItem(
+        iconRes: Int,
+        label: String,
+        density: Float,
+        onClick: (View) -> Unit
+    ): LinearLayout {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (48 * density).toInt()
+            )
+            setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
+            background = RippleDrawable(
+                ColorStateList.valueOf(Color.parseColor("#1F000000")),
+                ColorDrawable(Color.WHITE),
+                ColorDrawable(Color.WHITE)
+            )
+            setOnClickListener(onClick)
+        }
+
+        val icon = ImageView(this).apply {
+            setImageResource(iconRes)
+            setColorFilter(Color.parseColor("#5F6368"))
+            val iconSize = (22 * density).toInt()
+            layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
+                rightMargin = (16 * density).toInt()
+            }
+        }
+        row.addView(icon)
+
+        val text = TextView(this).apply {
+            this.text = label
+            setTextColor(Color.parseColor("#202124"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
+        }
+        row.addView(text)
+
+        return row
+    }
+
+    private fun createToggleMenuItem(
+        iconRes: Int,
+        label: String,
+        density: Float,
+        onClick: (View) -> Unit
+    ): Triple<LinearLayout, ImageView, TextView> {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (48 * density).toInt()
+            )
+            setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
+            background = RippleDrawable(
+                ColorStateList.valueOf(Color.parseColor("#1F000000")),
+                ColorDrawable(Color.WHITE),
+                ColorDrawable(Color.WHITE)
+            )
+            setOnClickListener(onClick)
+        }
+
+        val icon = ImageView(this).apply {
+            setImageResource(iconRes)
+            setColorFilter(Color.parseColor("#5F6368"))
+            val iconSize = (22 * density).toInt()
+            layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
+                rightMargin = (16 * density).toInt()
+            }
+        }
+        row.addView(icon)
+
+        val text = TextView(this).apply {
+            this.text = label
+            setTextColor(Color.parseColor("#202124"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
+        }
+        row.addView(text)
+
+        return Triple(row, icon, text)
+    }
+
+    private fun openDropdown() {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+        val density = displayMetrics.density
+
+        val bubbleSize = (60 * density).toInt()
+        val dropdownWidth = (195 * density).toInt()
+        val cardHeight = (194 * density).toInt()
+        val notchHeight = (8 * density).toInt()
+        val notchWidth = (16 * density).toInt()
+        val totalDropdownHeight = cardHeight + notchHeight
+        val margin = (4 * density).toInt()
+
+        val isBelow = (bubbleY + bubbleSize + totalDropdownHeight + (40 * density).toInt()) < screenHeight
+
+        topNotchView?.visibility = if (isBelow) View.VISIBLE else View.GONE
+        bottomNotchView?.visibility = if (isBelow) View.GONE else View.VISIBLE
+
+        val bubbleCenterX = bubbleX + (bubbleSize / 2)
+        val minMargin = (12 * density).toInt()
+        val maxDropdownX = screenWidth - dropdownWidth - minMargin
+        val targetDropdownX = (bubbleCenterX - (dropdownWidth / 2)).coerceIn(minMargin, maxDropdownX)
+
+        val windowLeft = minOf(bubbleX, targetDropdownX)
+        val windowRight = maxOf(bubbleX + bubbleSize, targetDropdownX + dropdownWidth)
+        val windowWidth = windowRight - windowLeft
+
+        val windowTop: Int
+        val windowHeight: Int
+        val bubbleRelY: Float
+        val dropdownRelY: Float
+
+        if (isBelow) {
+            windowTop = bubbleY
+            windowHeight = bubbleSize + margin + totalDropdownHeight
+            bubbleRelY = 0f
+            dropdownRelY = (bubbleSize + margin).toFloat()
+        } else {
+            windowTop = (bubbleY - margin - totalDropdownHeight).coerceAtLeast(0)
+            windowHeight = bubbleY + bubbleSize - windowTop
+            dropdownRelY = 0f
+            bubbleRelY = (totalDropdownHeight + margin).toFloat()
+        }
+
+        bubbleContainer?.translationX = (bubbleX - windowLeft).toFloat()
+        bubbleContainer?.translationY = bubbleRelY
+
+        dropdownLayout?.translationX = (targetDropdownX - windowLeft).toFloat()
+        dropdownLayout?.translationY = dropdownRelY
+
+        val notchTargetX = (bubbleCenterX - targetDropdownX - (notchWidth / 2))
+            .coerceIn((18 * density).toInt(), dropdownWidth - notchWidth - (18 * density).toInt())
+
+        topNotchView?.translationX = notchTargetX.toFloat()
+        bottomNotchView?.translationX = notchTargetX.toFloat()
+
+        val params = layoutParams ?: return
+        params.x = windowLeft
+        params.y = windowTop
+        params.width = windowWidth
+        params.height = windowHeight
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+
+        windowManager?.updateViewLayout(rootLayout, params)
+
+        updateDropdownAudioState()
+
+        dropdownLayout?.alpha = 0f
+        dropdownLayout?.scaleX = 0.88f
+        dropdownLayout?.scaleY = 0.88f
+        dropdownLayout?.visibility = View.VISIBLE
+        dropdownLayout?.animate()
+            ?.alpha(1f)
+            ?.scaleX(1f)
+            ?.scaleY(1f)
+            ?.setDuration(160)
+            ?.setInterpolator(DecelerateInterpolator())
+            ?.start()
+
+        isDropdownOpen = true
+    }
+
+    private fun collapseDropdown() {
+        if (!isDropdownOpen) return
+        isDropdownOpen = false
+
+        val density = resources.displayMetrics.density
+        val bubbleSize = (60 * density).toInt()
+
+        dropdownLayout?.visibility = View.GONE
+        bubbleContainer?.translationX = 0f
+        bubbleContainer?.translationY = 0f
+
+        val params = layoutParams ?: return
+        params.x = bubbleX
+        params.y = bubbleY
+        params.width = bubbleSize
+        params.height = bubbleSize
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+
+        windowManager?.updateViewLayout(rootLayout, params)
     }
 
     private fun returnToCallActivity() {
+        collapseDropdown()
         val intent = Intent(this, CallActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
@@ -412,48 +676,35 @@ class FloatingCallService : Service(), KoinComponent {
         stopSelf()
     }
 
-    private fun updateAudioIcons() {
+    private fun updateDropdownAudioState() {
         val audioState = CallService.audioState.value
         val isMuted = audioState?.isMuted == true
         val isSpeaker = audioState?.route == CallAudioState.ROUTE_SPEAKER
-        val density = resources.displayMetrics.density
 
-        muteButton?.apply {
-            setImageResource(if (isMuted) R.drawable.ic_floating_mic_off else R.drawable.ic_floating_mic)
-            val iconColor = if (isMuted) Color.parseColor("#FCA5A5") else Color.parseColor("#E2E8F0")
-            setColorFilter(iconColor)
-            val baseBg = GradientDrawable().apply {
-                shape = GradientDrawable.OVAL
-                if (isMuted) {
-                    setColor(Color.parseColor("#451A20"))
-                    setStroke((1f * density).toInt(), Color.parseColor("#991B1B"))
-                } else {
-                    setColor(Color.parseColor("#222834"))
-                    setStroke((1f * density).toInt(), Color.parseColor("#374151"))
-                }
-            }
-            background = RippleDrawable(ColorStateList.valueOf(Color.parseColor("#33FFFFFF")), baseBg, null)
+        muteIconView?.setImageResource(if (isMuted) R.drawable.ic_floating_mic_off else R.drawable.ic_floating_mic)
+        if (isMuted) {
+            muteIconView?.setColorFilter(Color.parseColor("#1A73E8"))
+            muteTextView?.setTextColor(Color.parseColor("#1A73E8"))
+            muteTextView?.typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
+        } else {
+            muteIconView?.setColorFilter(Color.parseColor("#5F6368"))
+            muteTextView?.setTextColor(Color.parseColor("#202124"))
+            muteTextView?.typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
 
-        speakerButton?.apply {
-            setImageResource(R.drawable.ic_floating_speaker)
-            val iconColor = if (isSpeaker) Color.parseColor("#4ADE80") else Color.parseColor("#E2E8F0")
-            setColorFilter(iconColor)
-            val baseBg = GradientDrawable().apply {
-                shape = GradientDrawable.OVAL
-                if (isSpeaker) {
-                    setColor(Color.parseColor("#123826"))
-                    setStroke((1f * density).toInt(), Color.parseColor("#16A34A"))
-                } else {
-                    setColor(Color.parseColor("#222834"))
-                    setStroke((1f * density).toInt(), Color.parseColor("#374151"))
-                }
-            }
-            background = RippleDrawable(ColorStateList.valueOf(Color.parseColor("#33FFFFFF")), baseBg, null)
+        speakerIconView?.setImageResource(R.drawable.ic_floating_speaker)
+        if (isSpeaker) {
+            speakerIconView?.setColorFilter(Color.parseColor("#1A73E8"))
+            speakerTextView?.setTextColor(Color.parseColor("#1A73E8"))
+            speakerTextView?.typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD)
+        } else {
+            speakerIconView?.setColorFilter(Color.parseColor("#5F6368"))
+            speakerTextView?.setTextColor(Color.parseColor("#202124"))
+            speakerTextView?.typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
     }
 
-    private fun updateCallerInfo(activeCall: Call) {
+    private fun updateCallerAvatar(activeCall: Call) {
         val number = activeCall.details.handle?.schemeSpecificPart ?: ""
         if (number != cachedNumber) {
             cachedNumber = number
@@ -465,34 +716,37 @@ class FloatingCallService : Service(), KoinComponent {
                 }
             } else null
 
-            val name = contact?.name ?: if (number.isNotEmpty()) formatPhoneNumber(number) else "Active Call"
-            cachedDisplayName = name
-            cachedInitial = if (contact != null && contact.name.isNotBlank()) {
-                contact.name.trim().take(1).uppercase()
-            } else null
+            cachedDisplayName = contact?.name ?: if (number.isNotEmpty()) formatPhoneNumber(number) else "Active Call"
+            cachedPhotoUri = contact?.photoUri
+
+            cachedPhotoBitmap = try {
+                if (!cachedPhotoUri.isNullOrEmpty()) {
+                    val uri = Uri.parse(cachedPhotoUri)
+                    contentResolver.openInputStream(uri)?.use { stream ->
+                        BitmapFactory.decodeStream(stream)
+                    }
+                } else null
+            } catch (_: Exception) {
+                null
+            }
         }
 
-        callerNameView?.text = cachedDisplayName ?: "Active Call"
-        if (cachedInitial != null) {
-            avatarInitialView?.text = cachedInitial
-            avatarInitialView?.visibility = View.VISIBLE
-            avatarIconView?.visibility = View.GONE
-        } else {
+        val photo = cachedPhotoBitmap
+        if (photo != null) {
+            val rounded = RoundedBitmapDrawableFactory.create(resources, photo).apply {
+                isCircular = true
+            }
+            avatarImageView?.setImageDrawable(rounded)
+            avatarImageView?.colorFilter = null
+            avatarImageView?.scaleType = ImageView.ScaleType.CENTER_CROP
             avatarInitialView?.visibility = View.GONE
-            avatarIconView?.visibility = View.VISIBLE
-        }
-    }
-
-    private fun updateStatusDot(callState: Int) {
-        val isMuted = CallService.audioState.value?.isMuted == true
-        val dotColor = when {
-            isMuted -> Color.parseColor("#F87171")
-            callState == Call.STATE_HOLDING -> Color.parseColor("#FBBF24")
-            else -> Color.parseColor("#4ADE80")
-        }
-        statusDot?.background = GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(dotColor)
+            avatarImageView?.visibility = View.VISIBLE
+        } else {
+            avatarImageView?.setImageResource(R.drawable.ic_floating_person)
+            avatarImageView?.setColorFilter(Color.WHITE)
+            avatarImageView?.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            avatarImageView?.visibility = View.VISIBLE
+            avatarInitialView?.visibility = View.GONE
         }
     }
 
@@ -505,24 +759,11 @@ class FloatingCallService : Service(), KoinComponent {
                     return
                 }
 
-                updateCallerInfo(activeCall)
-
-                val session = CallService.currentCallSession.value
-                val connectTime = session?.connectTimeMillis ?: activeCall.details.connectTimeMillis
-                if (connectTime > 0) {
-                    val durationSec = ((System.currentTimeMillis() - connectTime) / 1000).coerceAtLeast(0)
-                    val minutes = durationSec / 60
-                    val seconds = durationSec % 60
-                    timerView?.text = String.format("%02d:%02d", minutes, seconds)
-                    timerView?.setTextColor(Color.parseColor("#86EFAC"))
-                } else {
-                    val isHolding = activeCall.state == Call.STATE_HOLDING
-                    timerView?.text = if (isHolding) "On Hold" else "Connecting..."
-                    timerView?.setTextColor(if (isHolding) Color.parseColor("#FBBF24") else Color.parseColor("#94A3B8"))
+                updateCallerAvatar(activeCall)
+                if (isDropdownOpen) {
+                    updateDropdownAudioState()
                 }
 
-                updateAudioIcons()
-                updateStatusDot(activeCall.state)
                 handler.postDelayed(this, 1000)
             }
         }
@@ -532,14 +773,40 @@ class FloatingCallService : Service(), KoinComponent {
     override fun onDestroy() {
         super.onDestroy()
         updateTimerRunnable?.let { handler.removeCallbacks(it) }
-        bubbleView?.let {
+        rootLayout?.let {
             try {
                 windowManager?.removeView(it)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to remove floating bubble view: ${e.message}")
             }
         }
-        bubbleView = null
+        rootLayout = null
+    }
+
+    class NotchView(context: Context, var pointingUp: Boolean = true) : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            style = Paint.Style.FILL
+        }
+        private val path = Path()
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            path.reset()
+            val w = width.toFloat()
+            val h = height.toFloat()
+            if (pointingUp) {
+                path.moveTo(w / 2f, 0f)
+                path.lineTo(w, h)
+                path.lineTo(0f, h)
+            } else {
+                path.moveTo(0f, 0f)
+                path.lineTo(w, 0f)
+                path.lineTo(w / 2f, h)
+            }
+            path.close()
+            canvas.drawPath(path, paint)
+        }
     }
 
     companion object {
