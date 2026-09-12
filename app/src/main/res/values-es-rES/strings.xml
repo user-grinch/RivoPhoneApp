@@ -394,7 +394,6 @@
     <string name="settings_manage_name_format_first_first">Nombre primero</string>
     <string name="settings_manage_name_format_last_first">Apellido primero</string>
     <string name="settings_manage_storage">Almacenamiento</string>
-    <string name="settings_manage_private_contacts">Contactos privados</string>
     <string name="settings_manage_quick_fixes">Correcciones rápidas</string>
     <string name="settings_manage_standardize_numbers_supporting">Remueve espacios y caracteres especiales de todos los números</string>
     <string name="settings_manage_no_duplicates">No se han encontrado duplicados</string>
@@ -404,11 +403,9 @@
     <string name="settings_visibility_accounts_header">Cuentas</string>
     <string name="settings_visibility_local_memory_supporting">Contactos almacenados en el dispositivo</string>
     <string name="settings_visibility_reset_all">Restablecer para mostrar todo</string>
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Contactos privados</string>
+    <!-- Settings > Private storage -->
     <string name="content_desc_import">Importar</string>
     <string name="content_desc_export">Exportar</string>
-    <string name="settings_private_empty">No se encontraron contactos privados</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Marcado rápido</string>
     <string name="settings_speed_dial_enable">Activar marcado rápido</string>

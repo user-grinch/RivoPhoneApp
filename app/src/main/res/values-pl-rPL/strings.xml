@@ -428,8 +428,6 @@
     <string name="settings_manage_name_format_first_first">Najpierw imię</string>
     <string name="settings_manage_name_format_last_first">Najpierw nazwisko</string>
     <string name="settings_manage_storage">Pamięć</string>
-    <string name="settings_manage_private_contacts">Prywatne kontakty</string>
-    <string name="settings_manage_private_contacts_supporting">Zarządzaj kontaktami zapisanymi tylko w tej aplikacji</string>
     <string name="settings_manage_visibility">Widoczność</string>
     <string name="settings_manage_visibility_supporting">Wybierz konta do wyświetlenia na liście</string>
     <string name="settings_manage_quick_fixes">Szybkie poprawki</string>
@@ -444,12 +442,9 @@
     <string name="settings_visibility_accounts_header">Konta</string>
     <string name="settings_visibility_local_memory_supporting">Kontakty zapisane na urządzeniu</string>
     <string name="settings_visibility_reset_all">Zresetuj, aby pokazać wszystko</string>
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Prywatne kontakty</string>
+    <!-- Settings > Private storage -->
     <string name="content_desc_import">Importuj</string>
     <string name="content_desc_export">Eksportuj</string>
-    <string name="settings_private_empty">Nie znaleziono prywatnych kontaktów</string>
-    <string name="settings_private_manage_hint">Zarządzaj swoimi szyfrowanymi kontaktami lokalnymi</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Szybkie wybieranie</string>
     <string name="settings_speed_dial_enable">Włącz szybkie wybieranie</string>

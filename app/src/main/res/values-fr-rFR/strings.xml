@@ -398,8 +398,6 @@
     <string name="settings_manage_name_format_first_first">Prénom en premier</string>
     <string name="settings_manage_name_format_last_first">Nom en premier</string>
     <string name="settings_manage_storage">Stockage</string>
-    <string name="settings_manage_private_contacts">Contacts privés</string>
-    <string name="settings_manage_private_contacts_supporting">Gérer les contacts stockés uniquement dans cette application</string>
     <string name="settings_manage_visibility">Visibilité</string>
     <string name="settings_manage_visibility_supporting">Choisissez les comptes à afficher dans votre liste</string>
     <string name="settings_manage_quick_fixes">Corrections rapides</string>
@@ -414,12 +412,9 @@
     <string name="settings_visibility_accounts_header">Comptes</string>
     <string name="settings_visibility_local_memory_supporting">Contacts stockés sur l’appareil</string>
     <string name="settings_visibility_reset_all">Réinitialiser pour tout afficher</string>
-    <!-- Settings > Private contacts -->
-    <string name="settings_private_title">Contacts privés</string>
+    <!-- Settings > Private storage -->
     <string name="content_desc_import">Importer</string>
     <string name="content_desc_export">Exporter</string>
-    <string name="settings_private_empty">Aucun contact privé trouvé</string>
-    <string name="settings_private_manage_hint">Gérez vos contacts locaux chiffrés</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Numérotation rapide</string>
     <string name="settings_speed_dial_enable">Activer la numérotation rapide</string>
