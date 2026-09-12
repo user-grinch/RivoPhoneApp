@@ -255,16 +255,15 @@ class FloatingCallService : Service(), KoinComponent {
         bubbleContainer?.addView(avatarCircle)
 
         // Rivo App Icon Badge in bottom-right corner
-        val badgeSize = (22 * density).toInt()
-        val badgeBgColor = if (isDark) Color.parseColor("#111827") else Color.WHITE
-        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.parseColor("#E5E7EB")
+        val badgeSize = (23 * density).toInt()
+        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.WHITE
 
         badgeContainer = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(badgeSize, badgeSize, Gravity.BOTTOM or Gravity.END)
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(badgeBgColor)
-                setStroke((1.5f * density).toInt(), badgeBorderColor)
+                setColor(Color.WHITE)
+                setStroke((2 * density).toInt(), badgeBorderColor)
             }
             outlineProvider = ViewOutlineProvider.BACKGROUND
             clipToOutline = true
@@ -272,10 +271,12 @@ class FloatingCallService : Service(), KoinComponent {
         }
 
         val badgeIcon = ImageView(this).apply {
-            setImageResource(R.drawable.logo)
+            setImageResource(R.drawable.ic_rivo_badge)
             scaleType = ImageView.ScaleType.FIT_CENTER
-            val iconSize = (15 * density).toInt()
-            layoutParams = FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER)
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
         }
         badgeContainer?.addView(badgeIcon)
 
@@ -580,12 +581,11 @@ class FloatingCallService : Service(), KoinComponent {
         endCallRow?.background = createEndCallRipple(endCallBgColor, Color.parseColor("#40FFFFFF"), 18 * density)
 
         // Also refresh badge container colors
-        val badgeBgColor = if (isDark) Color.parseColor("#111827") else Color.WHITE
-        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.parseColor("#E5E7EB")
+        val badgeBorderColor = if (isDark) Color.parseColor("#374151") else Color.WHITE
         badgeContainer?.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
-            setColor(badgeBgColor)
-            setStroke((1.5f * density).toInt(), badgeBorderColor)
+            setColor(Color.WHITE)
+            setStroke((2 * density).toInt(), badgeBorderColor)
         }
     }
 
