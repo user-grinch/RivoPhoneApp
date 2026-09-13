@@ -35,8 +35,13 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.view.VelocityTracker
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -282,44 +287,64 @@ class FloatingCallService : Service(), KoinComponent {
 
         bubbleContainer?.addView(badgeContainer)
 
-        // Drag & Tap Controller on Bubble
+        // Drag & Tap Controller on Bubble with Velocity, Throw & Bouncy Physics (Messenger style)
         var initialX = 0
         var initialY = 0
         var initialTouchX = 0f
         var initialTouchY = 0f
         var isDragging = false
+        var velocityTracker: VelocityTracker? = null
 
         bubbleContainer?.setOnTouchListener { _, event ->
-            when (event.action) {
+            when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
+                    flingAnimator?.cancel()
+                    flingAnimator = null
+
+                    velocityTracker?.recycle()
+                    velocityTracker = VelocityTracker.obtain()
+                    velocityTracker?.addMovement(event)
+
                     initialX = bubbleX
                     initialY = bubbleY
                     initialTouchX = event.rawX
                     initialTouchY = event.rawY
                     isDragging = false
-                    bubbleContainer?.animate()?.scaleX(0.94f)?.scaleY(0.94f)?.setDuration(100)?.start()
+                    bubbleContainer?.animate()?.scaleX(0.92f)?.scaleY(0.92f)?.setDuration(100)?.start()
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    velocityTracker?.addMovement(event)
+
                     val dx = (event.rawX - initialTouchX).toInt()
                     val dy = (event.rawY - initialTouchY).toInt()
-                    if (abs(dx) > 10 || abs(dy) > 10) {
+                    if (abs(dx) > 8 || abs(dy) > 8) {
                         if (isDropdownOpen) {
                             collapseDropdown()
                         }
                         isDragging = true
                         val screenHeight = resources.displayMetrics.heightPixels
-                        bubbleX = initialX + dx
-                        bubbleY = (initialY + dy).coerceIn(30, screenHeight - bubbleSize - 30)
+                        val screenWidth = resources.displayMetrics.widthPixels
+                        bubbleX = (initialX + dx).coerceIn(-bubbleSize / 4, screenWidth - (bubbleSize * 3 / 4))
+                        bubbleY = (initialY + dy).coerceIn(20, screenHeight - bubbleSize - 20)
 
                         val params = layoutParams ?: return@setOnTouchListener true
                         params.x = bubbleX
                         params.y = bubbleY
-                        windowManager?.updateViewLayout(rootLayout, params)
+                        try {
+                            windowManager?.updateViewLayout(rootLayout, params)
+                        } catch (_: Exception) {}
                     }
                     true
                 }
                 MotionEvent.ACTION_UP -> {
+                    velocityTracker?.addMovement(event)
+                    velocityTracker?.computeCurrentVelocity(1000)
+                    val vx = velocityTracker?.xVelocity ?: 0f
+                    val vy = velocityTracker?.yVelocity ?: 0f
+                    velocityTracker?.recycle()
+                    velocityTracker = null
+
                     bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     if (!isDragging) {
                         bubbleContainer?.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -329,37 +354,137 @@ class FloatingCallService : Service(), KoinComponent {
                             openDropdown()
                         }
                     } else {
-                        val screenWidth = resources.displayMetrics.widthPixels
-                        val currentMidX = bubbleX + (bubbleSize / 2)
-                        val targetX = if (currentMidX < screenWidth / 2) {
-                            (12 * density).toInt()
-                        } else {
-                            (screenWidth - bubbleSize - (12 * density).toInt()).coerceAtLeast(0)
-                        }
-
-                        val animator = android.animation.ValueAnimator.ofInt(bubbleX, targetX).apply {
-                            duration = 200
-                            interpolator = DecelerateInterpolator()
-                            addUpdateListener { animation ->
-                                bubbleX = animation.animatedValue as Int
-                                val params = layoutParams ?: return@addUpdateListener
-                                params.x = bubbleX
-                                try {
-                                    windowManager?.updateViewLayout(rootLayout, params)
-                                } catch (_: Exception) {}
-                            }
-                        }
-                        animator.start()
+                        animateFlingToEdgeWithBounce(vx, vy, bubbleSize, density)
                     }
                     true
                 }
                 MotionEvent.ACTION_CANCEL -> {
+                    velocityTracker?.recycle()
+                    velocityTracker = null
                     bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     false
                 }
                 else -> false
             }
         }
+    }
+
+    private var flingAnimator: ValueAnimator? = null
+
+    private fun animateFlingToEdgeWithBounce(
+        vx: Float,
+        vy: Float,
+        bubbleSize: Int,
+        density: Float
+    ) {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        val edgeMargin = (12 * density).toInt()
+        val minX = edgeMargin
+        val maxX = (screenWidth - bubbleSize - edgeMargin).coerceAtLeast(0)
+
+        val minY = (40 * density).toInt()
+        val maxY = (screenHeight - bubbleSize - (60 * density).toInt()).coerceAtLeast(minY)
+
+        // 1. Determine target X based on velocity (throw direction)
+        val flingThresholdX = 400 * density
+        val currentMidX = bubbleX + (bubbleSize / 2)
+        val targetX = when {
+            vx > flingThresholdX -> maxX // Thrown to the right
+            vx < -flingThresholdX -> minX // Thrown to the left
+            else -> if (currentMidX < screenWidth / 2) minX else maxX // Snap to closer edge
+        }
+
+        // 2. Determine target Y with momentum projection (corner throwing like Messenger)
+        val momentumFactor = 0.18f
+        val projectedY = bubbleY + (vy * momentumFactor).toInt()
+        val targetY = projectedY.coerceIn(minY, maxY)
+
+        // 3. Dynamic timing & physics calculation
+        val startX = bubbleX
+        val startY = bubbleY
+        val dxDist = abs(targetX - startX)
+        val dyDist = abs(targetY - startY)
+        val totalDist = kotlin.math.hypot(dxDist.toDouble(), dyDist.toDouble()).toFloat()
+        val totalSpeed = kotlin.math.hypot(vx.toDouble(), vy.toDouble()).toFloat()
+
+        val isFastThrow = totalSpeed > flingThresholdX
+        val duration = if (isFastThrow) {
+            val calculated = (totalDist / (totalSpeed + 900f) * 1000).toLong()
+            calculated.coerceIn(240L, 420L)
+        } else {
+            val calculated = (totalDist / (screenWidth * 0.75f) * 360).toLong()
+            calculated.coerceIn(220L, 380L)
+        }
+
+        // Tension: scales with throw velocity for extra bouncy feel on throws
+        val overshootTension = if (isFastThrow) {
+            (1.25f + (totalSpeed / 3000f).coerceAtMost(0.75f))
+        } else {
+            1.2f
+        }
+
+        flingAnimator?.cancel()
+        flingAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            this.duration = duration
+            interpolator = OvershootInterpolator(overshootTension)
+
+            addUpdateListener { animation ->
+                val fraction = animation.animatedValue as Float
+                val newX = (startX + (targetX - startX) * fraction).toInt()
+                val newY = (startY + (targetY - startY) * fraction).toInt()
+
+                val bounceMargin = (16 * density).toInt()
+                bubbleX = newX.coerceIn(minX - bounceMargin, maxX + bounceMargin)
+                bubbleY = newY.coerceIn(minY - bounceMargin, maxY + bounceMargin)
+
+                val params = layoutParams ?: return@addUpdateListener
+                params.x = bubbleX
+                params.y = bubbleY
+                try {
+                    windowManager?.updateViewLayout(rootLayout, params)
+                } catch (_: Exception) {}
+            }
+
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    bubbleX = targetX
+                    bubbleY = targetY
+                    val params = layoutParams
+                    if (params != null) {
+                        params.x = bubbleX
+                        params.y = bubbleY
+                        try {
+                            windowManager?.updateViewLayout(rootLayout, params)
+                        } catch (_: Exception) {}
+                    }
+
+                    if (isFastThrow) {
+                        try {
+                            bubbleContainer?.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                        } catch (_: Exception) {}
+
+                        val squishX = if (targetX == maxX) 0.88f else 0.90f
+                        bubbleContainer?.animate()
+                            ?.scaleX(squishX)
+                            ?.scaleY(1.10f)
+                            ?.setDuration(80)
+                            ?.withEndAction {
+                                bubbleContainer?.animate()
+                                    ?.scaleX(1.0f)
+                                    ?.scaleY(1.0f)
+                                    ?.setInterpolator(OvershootInterpolator(2.0f))
+                                    ?.setDuration(160)
+                                    ?.start()
+                            }
+                            ?.start()
+                    }
+                }
+            })
+        }
+        flingAnimator?.start()
     }
 
     private fun buildDropdownView(density: Float) {
@@ -810,6 +935,8 @@ class FloatingCallService : Service(), KoinComponent {
 
     override fun onDestroy() {
         super.onDestroy()
+        flingAnimator?.cancel()
+        flingAnimator = null
         updateTimerRunnable?.let { handler.removeCallbacks(it) }
         rootLayout?.let {
             try {

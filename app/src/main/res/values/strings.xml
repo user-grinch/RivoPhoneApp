@@ -522,6 +522,9 @@
     <string name="about_check_updates">Check for Updates</string>
     <string name="about_current_version">Current version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
+    <string name="settings_top_card_subtext">Check updates • Contributors • Donate</string>
+    <string name="settings_top_card_updates">Updates</string>
+    <string name="settings_top_card_donate">Donate</string>
 
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Lead Developer</string>
