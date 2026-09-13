@@ -77,9 +77,19 @@ import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.sin
+
+enum class DateFilterPreset {
+    ALL,
+    TODAY,
+    LAST_7_DAYS,
+    THIS_MONTH,
+    CUSTOM
+}
 
 @Destination<RootGraph>
 @Composable
@@ -106,7 +116,11 @@ fun CallRecordingsContent(
     val settingsState by prefs.settingsChanged.collectAsState()
 
     var showingRecordingsList by remember { mutableStateOf(initialShowList) }
-    var searchQuery by remember { mutableStateOf("") }
+    var fromDateMillis by remember { mutableStateOf<Long?>(null) }
+    var toDateMillis by remember { mutableStateOf<Long?>(null) }
+    var datePreset by remember { mutableStateOf(DateFilterPreset.ALL) }
+    var showFromDatePicker by remember { mutableStateOf(false) }
+    var showToDatePicker by remember { mutableStateOf(false) }
     var refreshKey by remember { mutableIntStateOf(0) }
     var recordings by remember { mutableStateOf<List<File>>(emptyList()) }
     var pendingDelete by remember { mutableStateOf<File?>(null) }
@@ -203,14 +217,23 @@ fun CallRecordingsContent(
         recordings = CallRecorder.listRecordings(context)
     }
 
-    val filteredRecordings = remember(recordings, searchQuery, selectedFilterNumber) {
+    val effectiveFrom = remember(fromDateMillis, toDateMillis) {
+        if (fromDateMillis != null && toDateMillis != null && fromDateMillis!! > toDateMillis!!) toDateMillis else fromDateMillis
+    }
+    val effectiveTo = remember(fromDateMillis, toDateMillis) {
+        if (fromDateMillis != null && toDateMillis != null && fromDateMillis!! > toDateMillis!!) fromDateMillis else toDateMillis
+    }
+
+    val filteredRecordings = remember(recordings, effectiveFrom, effectiveTo, selectedFilterNumber) {
         recordings.filter { file ->
-            val matchesSearch = searchQuery.isBlank() || file.name.contains(searchQuery, ignoreCase = true)
+            val timestamp = file.lastModified()
+            val matchesFrom = effectiveFrom == null || timestamp >= effectiveFrom
+            val matchesTo = effectiveTo == null || timestamp <= effectiveTo
             val callerLabel = file.nameWithoutExtension
                 .substringBeforeLast('_')
                 .substringBeforeLast('_')
             val matchesFilter = selectedFilterNumber == null || callerLabel.equals(selectedFilterNumber, ignoreCase = true)
-            matchesSearch && matchesFilter
+            matchesFrom && matchesTo && matchesFilter
         }
     }
 
@@ -280,61 +303,328 @@ fun CallRecordingsContent(
         ) {
             // View Mode 1: Saved Call Recordings List
             if (showingRecordingsList) {
+                // Filter Card (From -> To Date Range, Date Presets, Contacts)
                 item {
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Search recordings...") },
-                        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                        trailingIcon = {
-                            if (searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Outlined.Clear, contentDescription = null)
+                    RivoExpressiveCard(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp, vertical = 2.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Header Row: Filter title, count badge, and (if active) Reset button
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.FilterList,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = "Filter Recordings",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    if (recordings.isNotEmpty()) {
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.secondaryContainer,
+                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        ) {
+                                            Text(
+                                                text = "${filteredRecordings.size}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+                                }
+
+                                val hasActiveFilter = fromDateMillis != null || toDateMillis != null || selectedFilterNumber != null
+                                if (hasActiveFilter) {
+                                    TextButton(
+                                        onClick = {
+                                            fromDateMillis = null
+                                            toDateMillis = null
+                                            datePreset = DateFilterPreset.ALL
+                                            selectedFilterNumber = null
+                                        },
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.RestartAlt,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(Modifier.width(4.dp))
+                                        Text("Reset", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                    }
                                 }
                             }
-                        },
-                        singleLine = true,
-                        shape = CircleShape,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = MaterialTheme.colorScheme.primary
-                        )
-                    )
-                }
 
-                // Filter Chips Row
-                if (uniqueCallerLabels.size > 1) {
-                    item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(horizontal = 4.dp)
-                        ) {
-                            item {
-                                FilterChip(
-                                    selected = selectedFilterNumber == null,
-                                    onClick = { selectedFilterNumber = null },
-                                    label = { Text("All") },
-                                    leadingIcon = if (selectedFilterNumber == null) {
-                                        { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                    } else null,
-                                    shape = CircleShape
+                            // Interactive "From -> To" Date Range Selectors
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                // FROM Pill Button
+                                Surface(
+                                    onClick = { showFromDatePicker = true },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = if (fromDateMillis != null) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    border = BorderStroke(
+                                        1.dp,
+                                        if (fromDateMillis != null) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.CalendarToday,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                            tint = if (fromDateMillis != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "From",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = if (fromDateMillis != null) formatDateHeader(context, fromDateMillis!!) else "Start date",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontWeight = if (fromDateMillis != null) FontWeight.SemiBold else FontWeight.Normal,
+                                                color = if (fromDateMillis != null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.outline,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                 )
+
+                                // TO Pill Button
+                                Surface(
+                                    onClick = { showToDatePicker = true },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = if (toDateMillis != null) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    border = BorderStroke(
+                                        1.dp,
+                                        if (toDateMillis != null) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Event,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                            tint = if (toDateMillis != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "To",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = if (toDateMillis != null) formatDateHeader(context, toDateMillis!!) else "End date",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontWeight = if (toDateMillis != null) FontWeight.SemiBold else FontWeight.Normal,
+                                                color = if (toDateMillis != null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.outline,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                            items(uniqueCallerLabels) { label ->
-                                FilterChip(
-                                    selected = selectedFilterNumber == label,
-                                    onClick = {
-                                        selectedFilterNumber = if (selectedFilterNumber == label) null else label
-                                    },
-                                    label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                                    leadingIcon = if (selectedFilterNumber == label) {
-                                        { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                    } else null,
-                                    shape = CircleShape
-                                )
+
+                            // Quick Date Presets Row
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                item {
+                                    FilterChip(
+                                        selected = datePreset == DateFilterPreset.ALL,
+                                        onClick = {
+                                            fromDateMillis = null
+                                            toDateMillis = null
+                                            datePreset = DateFilterPreset.ALL
+                                        },
+                                        label = { Text("All Dates") },
+                                        leadingIcon = if (datePreset == DateFilterPreset.ALL) {
+                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                        } else null,
+                                        shape = CircleShape
+                                    )
+                                }
+                                item {
+                                    FilterChip(
+                                        selected = datePreset == DateFilterPreset.TODAY,
+                                        onClick = {
+                                            val start = Calendar.getInstance().apply {
+                                                set(Calendar.HOUR_OF_DAY, 0)
+                                                set(Calendar.MINUTE, 0)
+                                                set(Calendar.SECOND, 0)
+                                                set(Calendar.MILLISECOND, 0)
+                                            }.timeInMillis
+                                            val end = Calendar.getInstance().apply {
+                                                set(Calendar.HOUR_OF_DAY, 23)
+                                                set(Calendar.MINUTE, 59)
+                                                set(Calendar.SECOND, 59)
+                                                set(Calendar.MILLISECOND, 999)
+                                            }.timeInMillis
+                                            fromDateMillis = start
+                                            toDateMillis = end
+                                            datePreset = DateFilterPreset.TODAY
+                                        },
+                                        label = { Text("Today") },
+                                        leadingIcon = if (datePreset == DateFilterPreset.TODAY) {
+                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                        } else null,
+                                        shape = CircleShape
+                                    )
+                                }
+                                item {
+                                    FilterChip(
+                                        selected = datePreset == DateFilterPreset.LAST_7_DAYS,
+                                        onClick = {
+                                            val start = Calendar.getInstance().apply {
+                                                add(Calendar.DAY_OF_YEAR, -6)
+                                                set(Calendar.HOUR_OF_DAY, 0)
+                                                set(Calendar.MINUTE, 0)
+                                                set(Calendar.SECOND, 0)
+                                                set(Calendar.MILLISECOND, 0)
+                                            }.timeInMillis
+                                            val end = Calendar.getInstance().apply {
+                                                set(Calendar.HOUR_OF_DAY, 23)
+                                                set(Calendar.MINUTE, 59)
+                                                set(Calendar.SECOND, 59)
+                                                set(Calendar.MILLISECOND, 999)
+                                            }.timeInMillis
+                                            fromDateMillis = start
+                                            toDateMillis = end
+                                            datePreset = DateFilterPreset.LAST_7_DAYS
+                                        },
+                                        label = { Text("Last 7 Days") },
+                                        leadingIcon = if (datePreset == DateFilterPreset.LAST_7_DAYS) {
+                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                        } else null,
+                                        shape = CircleShape
+                                    )
+                                }
+                                item {
+                                    FilterChip(
+                                        selected = datePreset == DateFilterPreset.THIS_MONTH,
+                                        onClick = {
+                                            val start = Calendar.getInstance().apply {
+                                                set(Calendar.DAY_OF_MONTH, 1)
+                                                set(Calendar.HOUR_OF_DAY, 0)
+                                                set(Calendar.MINUTE, 0)
+                                                set(Calendar.SECOND, 0)
+                                                set(Calendar.MILLISECOND, 0)
+                                            }.timeInMillis
+                                            val end = Calendar.getInstance().apply {
+                                                set(Calendar.HOUR_OF_DAY, 23)
+                                                set(Calendar.MINUTE, 59)
+                                                set(Calendar.SECOND, 59)
+                                                set(Calendar.MILLISECOND, 999)
+                                            }.timeInMillis
+                                            fromDateMillis = start
+                                            toDateMillis = end
+                                            datePreset = DateFilterPreset.THIS_MONTH
+                                        },
+                                        label = { Text("This Month") },
+                                        leadingIcon = if (datePreset == DateFilterPreset.THIS_MONTH) {
+                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                        } else null,
+                                        shape = CircleShape
+                                    )
+                                }
+                                if (datePreset == DateFilterPreset.CUSTOM) {
+                                    item {
+                                        FilterChip(
+                                            selected = true,
+                                            onClick = {},
+                                            label = { Text("Custom Range") },
+                                            leadingIcon = { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                                            shape = CircleShape
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Caller / Contact Filter Chips Row
+                            if (uniqueCallerLabels.size > 1) {
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Text(
+                                        text = "Contact",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    LazyRow(
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        item {
+                                            FilterChip(
+                                                selected = selectedFilterNumber == null,
+                                                onClick = { selectedFilterNumber = null },
+                                                label = { Text("All Contacts") },
+                                                leadingIcon = if (selectedFilterNumber == null) {
+                                                    { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                                } else null,
+                                                shape = CircleShape
+                                            )
+                                        }
+                                        items(uniqueCallerLabels) { label ->
+                                            FilterChip(
+                                                selected = selectedFilterNumber == label,
+                                                onClick = {
+                                                    selectedFilterNumber = if (selectedFilterNumber == label) null else label
+                                                },
+                                                label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                                                leadingIcon = if (selectedFilterNumber == label) {
+                                                    { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                                } else null,
+                                                shape = CircleShape
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -345,36 +635,53 @@ fun CallRecordingsContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 48.dp, horizontal = 16.dp),
+                                .padding(vertical = 36.dp, horizontal = 16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Surface(
                                 shape = RoundedCornerShape(24.dp),
                                 color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                modifier = Modifier.size(72.dp)
+                                modifier = Modifier.size(64.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
-                                        Icons.Outlined.MicNone,
+                                        imageVector = Icons.Outlined.MicNone,
                                         contentDescription = null,
-                                        modifier = Modifier.size(36.dp),
+                                        modifier = Modifier.size(32.dp),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(Modifier.height(14.dp))
                             Text(
-                                stringResource(R.string.call_recordings_empty),
+                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty) else "No matching recordings",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(Modifier.height(6.dp))
                             Text(
-                                stringResource(R.string.call_recordings_empty_description),
+                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty_description)
+                                else "No recordings match your selected date or contact filter.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
                             )
+                            if (recordings.isNotEmpty() && (fromDateMillis != null || toDateMillis != null || selectedFilterNumber != null)) {
+                                Spacer(Modifier.height(14.dp))
+                                Button(
+                                    onClick = {
+                                        fromDateMillis = null
+                                        toDateMillis = null
+                                        datePreset = DateFilterPreset.ALL
+                                        selectedFilterNumber = null
+                                    },
+                                    shape = CircleShape
+                                ) {
+                                    Icon(Icons.Outlined.RestartAlt, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("Reset Filters")
+                                }
+                            }
                         }
                     }
                 } else {
@@ -886,6 +1193,106 @@ fun CallRecordingsContent(
             icon = Icons.Outlined.DeleteSweep,
             isDestructive = true
         )
+    }
+
+    if (showFromDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = fromDateMillis ?: System.currentTimeMillis()
+        )
+        DatePickerDialog(
+            onDismissRequest = { showFromDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { utcMillis ->
+                            val utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                                timeInMillis = utcMillis
+                            }
+                            val localCal = Calendar.getInstance().apply {
+                                set(Calendar.YEAR, utcCal.get(Calendar.YEAR))
+                                set(Calendar.MONTH, utcCal.get(Calendar.MONTH))
+                                set(Calendar.DAY_OF_MONTH, utcCal.get(Calendar.DAY_OF_MONTH))
+                                set(Calendar.HOUR_OF_DAY, 0)
+                                set(Calendar.MINUTE, 0)
+                                set(Calendar.SECOND, 0)
+                                set(Calendar.MILLISECOND, 0)
+                            }
+                            fromDateMillis = localCal.timeInMillis
+                            datePreset = DateFilterPreset.CUSTOM
+                        }
+                        showFromDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_done))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showFromDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = {
+                    Text(
+                        text = "Select Start Date (From)",
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                    )
+                }
+            )
+        }
+    }
+
+    if (showToDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = toDateMillis ?: System.currentTimeMillis()
+        )
+        DatePickerDialog(
+            onDismissRequest = { showToDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { utcMillis ->
+                            val utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                                timeInMillis = utcMillis
+                            }
+                            val localCal = Calendar.getInstance().apply {
+                                set(Calendar.YEAR, utcCal.get(Calendar.YEAR))
+                                set(Calendar.MONTH, utcCal.get(Calendar.MONTH))
+                                set(Calendar.DAY_OF_MONTH, utcCal.get(Calendar.DAY_OF_MONTH))
+                                set(Calendar.HOUR_OF_DAY, 23)
+                                set(Calendar.MINUTE, 59)
+                                set(Calendar.SECOND, 59)
+                                set(Calendar.MILLISECOND, 999)
+                            }
+                            toDateMillis = localCal.timeInMillis
+                            datePreset = DateFilterPreset.CUSTOM
+                        }
+                        showToDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_done))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showToDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = {
+                    Text(
+                        text = "Select End Date (To)",
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                    )
+                }
+            )
+        }
     }
 }
 
