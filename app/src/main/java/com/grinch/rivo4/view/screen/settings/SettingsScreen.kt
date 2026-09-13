@@ -112,7 +112,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "v${appInfo.first} • Preferences & Customization",
+                                text = "v${appInfo.first}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
@@ -203,7 +203,28 @@ fun SettingsScreen(
                 }
             }
 
-            // 4. Privacy & Private Storage
+            // 4. Contacts & Storage
+            item {
+                RivoExpressiveCard(
+                    title = stringResource(R.string.settings_contacts_management_title),
+                    icon = Icons.Outlined.ManageAccounts
+                ) {
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_contact_management_headline),
+                        supporting = stringResource(R.string.settings_contact_management_supporting),
+                        leadingIcon = Icons.Outlined.CallMerge,
+                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
+                    )
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_manage_visibility),
+                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
+                        leadingIcon = Icons.Outlined.Visibility,
+                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
+                    )
+                }
+            }
+
+            // 5. Privacy & Private Storage
             item {
                 val secretCode = remember(settingsState) {
                     prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
@@ -217,12 +238,6 @@ fun SettingsScreen(
                         supporting = "Secret dialpad vault ($secretCode) • Stored only in app memory",
                         leadingIcon = Icons.Outlined.Lock,
                         onClick = { navigator.navigate(PrivateContactsScreenDestination) }
-                    )
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_manage_visibility),
-                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
-                        leadingIcon = Icons.Outlined.Visibility,
-                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                     )
                     RivoListItem(
                         headline = "Permissions & App Setup",

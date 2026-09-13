@@ -42,7 +42,8 @@ fun AZListScroll(
     listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState(),
     selectedIds: Set<String> = emptySet(),
     onToggleSelection: (String) -> Unit = {},
-    grouped: Map<Char, List<Contact>>? = null
+    grouped: Map<Char, List<Contact>>? = null,
+    header: (@Composable () -> Unit)? = null
 ) {
     val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -77,9 +78,9 @@ fun AZListScroll(
         finalMap
     }
 
-    val alphabetIndices = remember(finalGrouped) {
+    val alphabetIndices = remember(finalGrouped, header != null) {
         val map = mutableMapOf<Char, Int>()
-        var currentIndex = 0
+        var currentIndex = if (header != null) 1 else 0
         finalGrouped.forEach { (char, _) ->
             map[char] = currentIndex
             currentIndex += 2 
@@ -106,6 +107,12 @@ fun AZListScroll(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
+            if (header != null) {
+                item {
+                    header()
+                }
+            }
+
             finalGrouped.entries.forEachIndexed { groupIndex, (initial, contactsForChar) ->
                 stickyHeader {
                     Box(

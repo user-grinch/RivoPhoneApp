@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import com.grinch.rivo4.modal.data.Contact
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -51,7 +53,7 @@ import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -424,6 +426,10 @@ fun ContactContent(
     val isLoading by contactsVM.isLoading.collectAsState()
     val contacts by contactsVM.filteredContacts.collectAsState()
     val groupedContacts by contactsVM.groupedContacts.collectAsState()
+    val duplicateGroups by contactsVM.duplicateGroups.collectAsState()
+
+    var isCardDismissed by remember { mutableStateOf(false) }
+    var showMergeAllDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isGranted) {
         if (isGranted) {
@@ -432,6 +438,24 @@ fun ContactContent(
     }
 
     val pullToRefreshState = rememberPullToRefreshState()
+
+    val showTopCard = selectedIds.isEmpty() && !isCardDismissed
+    val topCardHeader: (@Composable () -> Unit)? = if (showTopCard) {
+        {
+            ContactManagementTopCard(
+                duplicateGroups = duplicateGroups,
+                onOpenManagement = {
+                    navigator.navigate(ContactManagementScreenDestination)
+                },
+                onMergeAll = {
+                    showMergeAllDialog = true
+                },
+                onHideCard = {
+                    isCardDismissed = true
+                }
+            )
+        }
+    } else null
 
     PullToRefreshBox(
         isRefreshing = isLoading && contacts.isNotEmpty(),
@@ -458,12 +482,43 @@ fun ContactContent(
                         listState = listState,
                         selectedIds = selectedIds,
                         onToggleSelection = onToggleSelection,
-                        grouped = groupedContacts
+                        grouped = groupedContacts,
+                        header = topCardHeader
                     )
                 }
             } else {
                 PermissionRequiredState(onRequestPermission)
             }
+        }
+    }
+
+    if (showMergeAllDialog) {
+        RivoDialog(
+            onDismissRequest = { showMergeAllDialog = false },
+            title = stringResource(R.string.contact_management_merge_all_confirm_title),
+            icon = Icons.Outlined.CallMerge,
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showMergeAllDialog = false
+                        contactsVM.mergeAllDuplicates()
+                    },
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(stringResource(R.string.contact_management_merge_all))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMergeAllDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            Text(
+                text = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -542,6 +597,156 @@ fun PermissionRequiredState(onRequestPermission: () -> Unit) {
             elevation = ButtonDefaults.buttonElevation(0.dp)
         ) {
             Text(stringResource(R.string.action_grant_permission_lower))
+        }
+    }
+}
+
+@Composable
+fun ContactManagementTopCard(
+    duplicateGroups: List<List<Contact>>,
+    onOpenManagement: () -> Unit,
+    onMergeAll: () -> Unit,
+    modifier: Modifier = Modifier,
+    onHideCard: (() -> Unit)? = null
+) {
+    val totalDuplicates = duplicateGroups.sumOf { it.size }
+    val totalSets = duplicateGroups.size
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable(onClick = onOpenManagement),
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        if (duplicateGroups.isNotEmpty()) Icons.Outlined.CallMerge else Icons.Outlined.CheckCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = if (duplicateGroups.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = if (duplicateGroups.isNotEmpty()) stringResource(R.string.contact_management_duplicates_title)
+                               else stringResource(R.string.contact_management_card_clean),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = if (duplicateGroups.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = if (duplicateGroups.isNotEmpty()) stringResource(R.string.contact_management_card_review) else "Manage",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Icon(
+                        Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    if (onHideCard != null) {
+                        Spacer(Modifier.width(8.dp))
+                        IconButton(
+                            onClick = onHideCard,
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = "Hide",
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            if (duplicateGroups.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ContactStatChip(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Outlined.ContentCopy,
+                        value = "$totalDuplicates",
+                        label = "Duplicates",
+                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    ContactStatChip(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Outlined.CallMerge,
+                        value = "$totalSets",
+                        label = "Sets",
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Button(
+                        onClick = onMergeAll,
+                        shape = RoundedCornerShape(14.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        modifier = Modifier.height(42.dp)
+                    ) {
+                        Icon(Icons.Outlined.CallMerge, contentDescription = null, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text(stringResource(R.string.contact_management_merge_all), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            } else {
+                Text(
+                    text = stringResource(R.string.contact_management_card_clean_sub),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContactStatChip(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    value: String,
+    label: String,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        color = containerColor,
+        contentColor = contentColor
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall
+            )
         }
     }
 }

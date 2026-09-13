@@ -724,4 +724,37 @@
     <string name="settings_blocked_import_success">Imported %1$d new numbers (%2$d already blocked)</string>
     <string name="settings_blocked_csv_empty">No valid phone numbers found in file</string>
     <string name="settings_blocked_file_error">Failed to process file</string>
+
+    <!-- Contact Management & Duplicates -->
+    <string name="settings_contacts_management_title">Contacts &amp; Storage</string>
+    <string name="settings_contact_management_headline">Contact Management</string>
+    <string name="settings_contact_management_supporting">Merge duplicates, transfer contacts between SIM, Device &amp; Accounts</string>
+    <string name="contact_management_title">Contact Management</string>
+    <string name="contact_management_storage_overview">Storage Breakdown</string>
+    <string name="contact_management_duplicates_title">Duplicate Contacts</string>
+    <string name="contact_management_duplicates_found">%1$d duplicate contacts found in %2$d sets</string>
+    <string name="contact_management_no_duplicates">Address book is clean. No duplicates found.</string>
+    <string name="contact_management_merge_all">Merge All</string>
+    <string name="contact_management_merge_all_confirm_title">Merge All Duplicates?</string>
+    <string name="contact_management_merge_all_confirm_msg">This will combine phone numbers, emails, addresses, and notes for all %1$d duplicate sets and remove redundant contacts.</string>
+    <string name="contact_management_merge_success">Successfully merged %1$d duplicate sets</string>
+    <string name="contact_management_merge_group_btn">Merge</string>
+    <string name="contact_management_ignore_btn">Dismiss</string>
+    <string name="contact_management_move_title">Transfer Contacts</string>
+    <string name="contact_management_move_supporting">Move contacts between SIM, Local Memory, Accounts, and Private Storage</string>
+    <string name="contact_management_move_from">From</string>
+    <string name="contact_management_move_to">To</string>
+    <string name="contact_management_select_to_move">Select Contacts to Move</string>
+    <string name="contact_management_move_all">Move All (%1$d)</string>
+    <string name="contact_management_move_confirm_title">Move Contacts?</string>
+    <string name="contact_management_move_confirm_msg">Are you sure you want to move %1$d contacts from %2$s to %3$s?</string>
+    <string name="contact_management_move_success">Moved %1$d contacts to %2$s</string>
+    <string name="contact_management_same_source_dest">Source and destination storage must be different</string>
+    <string name="contact_management_tools_title">Address Book Tools</string>
+    <string name="contact_management_standardize_numbers">Standardize Phone Numbers</string>
+    <string name="contact_management_standardize_supporting">Remove unnecessary formatting spaces and normalize international format</string>
+    <string name="contact_management_card_review">Review &amp; Merge</string>
+    <string name="contact_management_card_clean">Address Book Clean</string>
+    <string name="contact_management_card_clean_sub">All contacts are unique • Tap to manage storage</string>
+    <string name="contact_management_card_dup_sub">Tap to review and combine numbers, emails &amp; info</string>
 </resources>

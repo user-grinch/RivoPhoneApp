@@ -284,13 +284,20 @@ class CallService : InCallService() {
         val isOutgoing = call.details.callDirection == Call.Details.DIRECTION_OUTGOING
 
         if (isOutgoing && wasNeverConnected) {
+            val isAirplane = com.grinch.rivo4.controller.util.isAirplaneModeOn(this)
+            val isWifi = com.grinch.rivo4.controller.util.isWifiConnected(this)
             val failMessage = when {
-                com.grinch.rivo4.controller.util.isAirplaneModeOn(this) ->
+                cause?.code == DisconnectCause.RESTRICTED -> {
+                    if (isAirplane && !isWifi) getString(R.string.call_failed_airplane_mode)
+                    else getString(R.string.call_failed_restricted)
+                }
+                cause?.code == DisconnectCause.ERROR -> {
+                    if (isAirplane && !isWifi) getString(R.string.call_failed_airplane_mode)
+                    else cause.description?.toString()?.takeIf { it.isNotBlank() } ?: getString(R.string.call_failed_generic)
+                }
+                isAirplane && !isWifi && cause?.code != DisconnectCause.LOCAL && cause?.code != DisconnectCause.CANCELED -> {
                     getString(R.string.call_failed_airplane_mode)
-                cause?.code == DisconnectCause.RESTRICTED ->
-                    getString(R.string.call_failed_restricted)
-                cause?.code == DisconnectCause.ERROR ->
-                    cause.description?.toString()?.takeIf { it.isNotBlank() } ?: getString(R.string.call_failed_generic)
+                }
                 else -> null
             }
             if (failMessage != null) {

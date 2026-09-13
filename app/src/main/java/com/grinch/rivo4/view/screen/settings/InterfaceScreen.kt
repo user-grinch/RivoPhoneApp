@@ -83,20 +83,8 @@ fun InterfaceScreen(
         Color(0xFF436916), Color(0xFF984061), Color(0xFF808080)
     )
 
-    val restartRequiredMessage = stringResource(R.string.settings_interface_restart_required)
-    val restartActionLabel = stringResource(R.string.settings_interface_restart_action)
-
-    fun showRestartPrompt() {
-        scope.launch {
-            val result = snackbarHostState.showSnackbar(
-                message = restartRequiredMessage,
-                actionLabel = restartActionLabel,
-                duration = SnackbarDuration.Short
-            )
-            if (result == SnackbarResult.ActionPerformed) {
-                (context as? Activity)?.recreate()
-            }
-        }
+    fun triggerThemeRestart() {
+        (context as? Activity)?.recreate()
     }
 
     Scaffold(
@@ -130,7 +118,7 @@ fun InterfaceScreen(
                             onCheckedChange = {
                                 dynamicColors = it
                                 prefs.setBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, it)
-                                showRestartPrompt()
+                                triggerThemeRestart()
                             }
                         )
 
@@ -142,7 +130,7 @@ fun InterfaceScreen(
                                 onColorSelected = { color ->
                                     customPrimaryColor = color.toArgb()
                                     prefs.setInt("custom_primary_color", color.toArgb())
-                                    showRestartPrompt()
+                                    triggerThemeRestart()
                                 }
                             )
                         }
@@ -156,7 +144,7 @@ fun InterfaceScreen(
                             onCheckedChange = {
                                 amoledMode = it
                                 prefs.setBoolean(PreferenceManager.KEY_AMOLED_MODE, it)
-                                showRestartPrompt()
+                                triggerThemeRestart()
                             }
                         )
                     }
@@ -272,7 +260,7 @@ fun InterfaceScreen(
                             onValueChange = {
                                 transitionStyle = it
                                 prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
-                                showRestartPrompt()
+                                triggerThemeRestart()
                             }
                         ) { value, selected ->
                             val icon = when (value) {
@@ -321,14 +309,21 @@ fun InterfaceScreen(
                             supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
                             leadingIcon = Icons.Outlined.SpaceDashboard,
                             options = listOf(
-                                stringResource(R.string.nav_recents) to 0,
-                                stringResource(R.string.nav_favorites) to 1,
-                                stringResource(R.string.nav_contacts) to 2
+                                stringResource(R.string.nav_recents) to PreferenceManager.TAB_RECENTS,
+                                stringResource(R.string.nav_favorites) to PreferenceManager.TAB_FAVORITES,
+                                stringResource(R.string.nav_contacts) to PreferenceManager.TAB_CONTACTS,
+                                stringResource(R.string.nav_call_recordings) to PreferenceManager.TAB_RECORDINGS
                             ),
                             selectedValue = defaultBottomBar,
                             onValueChange = {
                                 defaultBottomBar = it
                                 prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, it)
+                                if (it == PreferenceManager.TAB_RECORDINGS) {
+                                    val hidden = prefs.getHiddenBottomNavTabs().toMutableSet()
+                                    if (hidden.remove(PreferenceManager.TAB_RECORDINGS)) {
+                                        prefs.setHiddenBottomNavTabs(hidden)
+                                    }
+                                }
                             }
                         ) { value, selected ->
                             val icon = defaultTabIcon(value) ?: Icons.Outlined.SpaceDashboard
@@ -479,5 +474,6 @@ fun InterfaceScreen(
 private fun defaultTabIcon(tab: Int): ImageVector = when (tab) {
     PreferenceManager.TAB_FAVORITES -> Icons.Outlined.Star
     PreferenceManager.TAB_CONTACTS -> Icons.Outlined.Person
+    PreferenceManager.TAB_RECORDINGS -> Icons.Outlined.Mic
     else -> Icons.Outlined.History
 }
