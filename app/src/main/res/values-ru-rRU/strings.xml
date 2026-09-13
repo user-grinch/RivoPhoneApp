@@ -592,4 +592,5 @@
     <string name="imei_not_available">Недоступно на этом устройстве</string>
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
+    <!-- Contact Management & Duplicates -->
 </resources>

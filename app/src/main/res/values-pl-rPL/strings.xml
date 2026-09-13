@@ -689,4 +689,5 @@
     <string name="settings_blocked_import_success">Zaimportowano %1$d nowych numerów (%2$d było już zablokowanych)</string>
     <string name="settings_blocked_csv_empty">Nie znaleziono prawidłowych numerów telefonów w pliku</string>
     <string name="settings_blocked_file_error">Błąd przetwarzania pliku</string>
+    <!-- Contact Management & Duplicates -->
 </resources>
