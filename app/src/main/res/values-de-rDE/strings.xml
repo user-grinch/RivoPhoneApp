@@ -428,6 +428,8 @@
     <string name="settings_manage_name_format_first_first">Vorname zuerst</string>
     <string name="settings_manage_name_format_last_first">Nachname zuerst</string>
     <string name="settings_manage_storage">Speicher</string>
+    <string name="settings_manage_private_contacts">Privater Speicher</string>
+    <string name="settings_manage_private_contacts_supporting">Kontakte im privaten App-Speicher verwalten</string>
     <string name="settings_manage_visibility">Kontakt-Sichtbarkeit</string>
     <string name="settings_manage_visibility_supporting">Auswählen, welche Konten in Ihrer Liste angezeigt werden</string>
     <string name="settings_manage_quick_fixes">Schnelle Korrekturen</string>
@@ -443,8 +445,11 @@
     <string name="settings_visibility_local_memory_supporting">Auf dem Gerät gespeicherte Kontakte</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
     <!-- Settings > Private storage -->
+    <string name="settings_private_title">Privater Speicher</string>
     <string name="content_desc_import">Importieren</string>
     <string name="content_desc_export">Exportieren</string>
+    <string name="settings_private_empty">Keine Kontakte im privaten Speicher gefunden</string>
+    <string name="settings_private_manage_hint">Kontakte im privaten Speicher verwalten</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Schnellwahl</string>
     <string name="settings_speed_dial_enable">Schnellwahl aktivieren</string>
@@ -668,4 +673,14 @@
     <string name="settings_nav_bar_toolbar">Schwebende Leiste</string>
     <string name="fake_call_incoming_channel_title">Simulierte eingehende Anrufe</string>
     <string name="fake_call_incoming_channel_desc">Benachrichtigungen für simulierte eingehende und aktive Anrufe</string>
+    <string name="settings_sound_flip_to_silence">Umdrehen, um Klingeln stummzuschalten</string>
+    <string name="settings_sound_flip_to_silence_supporting">Klingeln eines Anrufs stummschalten, indem das Telefon mit dem Display nach unten hingelegt wird</string>
+    <string name="settings_blocked_export_csv">Blockliste exportieren (CSV)</string>
+    <string name="settings_blocked_export_csv_desc">Speichern Sie die blockierten Nummern in eine CSV-Datei</string>
+    <string name="settings_blocked_import_csv">Blockliste importieren (CSV)</string>
+    <string name="settings_blocked_import_csv_desc">Zu blockierende Nummern aus einer CSV-Datei importieren</string>
+    <string name="settings_blocked_export_success">%1$d Nummern in CSV-Datei exportiert</string>
+    <string name="settings_blocked_import_success">%1$d neue Nummern importiert (%2$d schon blockiert)</string>
+    <string name="settings_blocked_csv_empty">Keine gültigen Telefonnummern in der Datei gefunden</string>
+    <string name="settings_blocked_file_error">Dateiverarbeitung fehlgeschlagen</string>
 </resources>

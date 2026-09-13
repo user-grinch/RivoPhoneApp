@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Anuluj</string>
     <string name="action_confirm">Potwierdź</string>
@@ -20,6 +21,7 @@
     <string name="action_decline">Odrzuć</string>
     <string name="action_end">Zakończ</string>
     <string name="action_mute">Wycisz</string>
+    <string name="action_unmute">Włącz dźwięk</string>
     <string name="action_keypad">Klawiatura</string>
     <string name="action_add_call">Dodaj połączenie</string>
     <string name="action_hold">Zawieś</string>
@@ -362,6 +364,8 @@
     <string name="settings_call_incoming_ui_buttons">Przyciski</string>
     <string name="settings_call_incoming_ui_slide_ios">Przesuń, aby odebrać (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Przesunięcie pionowe</string>
+    <string name="settings_call_always_fullscreen">Zawsze przechodź do trybu pełnoekranowego</string>
+    <string name="settings_call_always_fullscreen_supporting">Otwórz połączenia przychodzące bezpośrednio na pełnym ekranie. Gdy wyłączone, połączenia wyświetlają się jako wyskakujący baner podczas korzystania z innych aplikacji.</string>
     <string name="settings_call_dialpad_style">Styl klawiatury numerycznej</string>
     <string name="settings_call_dialpad_style_supporting">Wygląd klawiatury telefonu</string>
     <string name="settings_call_dialpad_style_modern">Nowoczesny</string>
@@ -428,6 +432,8 @@
     <string name="settings_manage_name_format_first_first">Najpierw imię</string>
     <string name="settings_manage_name_format_last_first">Najpierw nazwisko</string>
     <string name="settings_manage_storage">Pamięć</string>
+    <string name="settings_manage_private_contacts">Pamięć prywatna</string>
+    <string name="settings_manage_private_contacts_supporting">Zarządzaj kontaktami przechowywanymi w pamięci prywatnej aplikacji</string>
     <string name="settings_manage_visibility">Widoczność</string>
     <string name="settings_manage_visibility_supporting">Wybierz konta do wyświetlenia na liście</string>
     <string name="settings_manage_quick_fixes">Szybkie poprawki</string>
@@ -443,8 +449,11 @@
     <string name="settings_visibility_local_memory_supporting">Kontakty zapisane na urządzeniu</string>
     <string name="settings_visibility_reset_all">Zresetuj, aby pokazać wszystko</string>
     <!-- Settings > Private storage -->
+    <string name="settings_private_title">Pamięć prywatna</string>
     <string name="content_desc_import">Importuj</string>
     <string name="content_desc_export">Eksportuj</string>
+    <string name="settings_private_empty">Nie znaleziono kontaktów w pamięci prywatnej</string>
+    <string name="settings_private_manage_hint">Zarządzaj kontaktami przechowywanymi w pamięci prywatnej</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Szybkie wybieranie</string>
     <string name="settings_speed_dial_enable">Włącz szybkie wybieranie</string>
@@ -491,7 +500,23 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Główny programista</string>
     <string name="contributor_role_developer">Programista</string>
+    <string name="contributor_role_localization">Lokalizacja i tłumaczenia</string>
+    <string name="contributor_role_contributor">Współtwórca</string>
+    <string name="contributor_commits">%1$d zatwierdzeń</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_recording_guide_title">Optymalizacja urządzenia do nagrywania</string>
+    <string name="oem_recording_guide_subtitle">Xiaomi MIUI/HyperOS i inne OEM wymagają specjalnych uprawnień w tle, aby zapisywać nagrania połączeń bez przerwy.</string>
+    <string name="oem_perm_bg_recording">Dźwięk w tle</string>
+    <string name="oem_perm_bg_recording_desc">Zezwól na nagrywanie dźwięku podczas pracy w tle w ustawieniach OEM Security.</string>
+    <string name="oem_perm_autostart">Autostart</string>
+    <string name="oem_perm_autostart_desc">Włącz automatyczne uruchamianie, aby system nie wyłączał nagrywania podczas rozmów.</string>
+    <string name="oem_perm_battery">Oszczędzanie baterii: brak ograniczeń</string>
+    <string name="oem_perm_battery_desc">Wyklucz aplikację Rivo z agresywnego zarządzania baterią.</string>
+    <string name="oem_btn_open_perms">Otwórz uprawnienia OEM</string>
+    <string name="oem_btn_open_autostart">Otwórz automatyczne uruchamianie</string>
+    <string name="oem_btn_open_battery">Ustawienia baterii</string>
+    <string name="call_recording_notification_title">Nagrywanie połączeń</string>
+    <string name="call_recording_notification_text">Dźwięk jest przechwytywany i zapisywany</string>
     <!-- Favorites -->
     <string name="nav_favorites">Ulubione</string>
     <string name="favorites_permission_title">Wymagane uprawnienie do kontaktów</string>
@@ -612,5 +637,56 @@
     <string name="imei_copied">Skopiowano do schowka</string>
     <string name="imei_not_available">Niedostępne na tym urządzeniu</string>
     <!-- Fake Call feature -->
+    <string name="fake_call_title">Fałszywe połączenie</string>
+    <string name="fake_call_subtitle">Zaplanuj symulowane połączenia przychodzące</string>
+    <string name="fake_call_channel_title">Harmonogram fałszywych połączeń</string>
+    <string name="fake_call_channel_desc">Powiadomienia o zaplanowanych fałszywych połączeniach</string>
+    <string name="fake_call_notif_title">Zaplanowano fałszywe połączenie</string>
+    <string name="fake_call_notif_content">Fałszywe połączenie od %1$s o %2$s</string>
+    <string name="fake_call_caller_details">Informacje o rozmówcy</string>
+    <string name="fake_call_name">Nazwa rozmówcy</string>
+    <string name="fake_call_number">Numer telefonu</string>
+    <string name="fake_call_pick_contact">Wybierz z kontaktów</string>
+    <string name="fake_call_schedule_time">Data i czas</string>
+    <string name="fake_call_now">Zadzwoń teraz</string>
+    <string name="fake_call_schedule_btn">Zaplanuj połączenie</string>
+    <string name="fake_call_cancel_btn">Anuluj</string>
+    <string name="fake_call_scheduled_banner">Nadchodzące fałszywe połączenie</string>
+    <string name="fake_call_scheduled_desc">Przychodzące fałszywe połączenie od %1$s w %2$s</string>
+    <string name="fake_call_success_scheduled">Zaplanowano fałszywe połączenie dla %1$s</string>
+    <string name="fake_call_cancelled">Zaplanowane fałszywe połączenie anulowane</string>
+    <string name="fake_call_select_date">Wybierz datę</string>
+    <string name="fake_call_select_time">Wybierz czas</string>
+    <string name="fake_call_screen_incoming">Połączenie przychodzące</string>
+    <string name="fake_call_screen_ended">Połączenie zakończone</string>
+    <string name="fake_call_new_schedule">Nowe fałszywe połączenie</string>
+    <string name="fake_call_schedules_title">Zaplanowane połączenia</string>
+    <string name="fake_call_no_schedules_title">Brak zaplanowanych połączeń</string>
+    <string name="fake_call_no_schedules_desc">Zaplanuj symulowane połączenia przychodzące na dowolną datę i godzinę. Wyglądają i zachowują się jak prawdziwe połączenia telefoniczne.</string>
+    <string name="fake_call_clear_all">Wyczyść wszystko</string>
+    <string name="fake_call_clear_all_confirm">Czy na pewno chcesz anulować wszystkie zaplanowane fałszywe połączenia?</string>
+    <string name="fake_call_delete_schedule">Usuń harmonogram</string>
+    <string name="fake_call_deleted">Zaplanowane połączenie usunięte</string>
+    <string name="fake_call_time_calling_in">Połączenie za %1$s</string>
+    <string name="fake_call_vibrate">Wibracje przy dzwonieniu</string>
+    <string name="fake_call_vibrate_desc">Wibracje przy symulowanym połączeniu</string>
+    <string name="fake_call_test_now">Testuj połączenie teraz</string>
+    <string name="fake_call_options">Opcje połączenia</string>
     <!-- Navigation Bar Style -->
+    <string name="settings_interface_nav_bar_style">Styl paska nawigacji</string>
+    <string name="settings_interface_nav_bar_style_supporting">Wybierz między standardowym dolnym paskiem lub pływającymi paskami narzędzi</string>
+    <string name="settings_nav_bar_standard">Pasek standardowy</string>
+    <string name="settings_nav_bar_toolbar">Pływający pasek narzędzi</string>
+    <string name="fake_call_incoming_channel_title">Fałszywe połączenia przychodzące</string>
+    <string name="fake_call_incoming_channel_desc">Powiadomienia o symulowanych połączeniach przychodzących i aktywnych</string>
+    <string name="settings_sound_flip_to_silence">Odwróć, aby wyciszyć</string>
+    <string name="settings_sound_flip_to_silence_supporting">Wyciszaj dzwonek połączenia przychodzącego przez odwrócenie telefonu ekranem do dołu</string>
+    <string name="settings_blocked_export_csv">Eksportuj listę zablokowanych (CSV)</string>
+    <string name="settings_blocked_export_csv_desc">Zapisz zablokowane numery w pliku CSV</string>
+    <string name="settings_blocked_import_csv">Importuj listę zablokowanych (CSV)</string>
+    <string name="settings_blocked_import_csv_desc">Importuj zablokowane numery z pliku CSV</string>
+    <string name="settings_blocked_export_success">Wyeksportowano %1$d numerów do CSV</string>
+    <string name="settings_blocked_import_success">Zaimportowano %1$d nowych numerów (%2$d było już zablokowanych)</string>
+    <string name="settings_blocked_csv_empty">Nie znaleziono prawidłowych numerów telefonów w pliku</string>
+    <string name="settings_blocked_file_error">Błąd przetwarzania pliku</string>
 </resources>
