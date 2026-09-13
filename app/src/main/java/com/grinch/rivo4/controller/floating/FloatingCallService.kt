@@ -31,7 +31,6 @@ import android.telecom.CallAudioState
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -347,7 +346,6 @@ class FloatingCallService : Service(), KoinComponent {
 
                     bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     if (!isDragging) {
-                        bubbleContainer?.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         if (isDropdownOpen) {
                             collapseDropdown()
                         } else {
@@ -462,10 +460,6 @@ class FloatingCallService : Service(), KoinComponent {
                     }
 
                     if (isFastThrow) {
-                        try {
-                            bubbleContainer?.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-                        } catch (_: Exception) {}
-
                         val squishX = if (targetX == maxX) 0.88f else 0.90f
                         bubbleContainer?.animate()
                             ?.scaleX(squishX)
@@ -516,7 +510,6 @@ class FloatingCallService : Service(), KoinComponent {
             label = "Back to call",
             density = density,
             onClick = {
-                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 returnToCallActivity()
             }
         )
@@ -531,7 +524,6 @@ class FloatingCallService : Service(), KoinComponent {
             label = "Mute",
             density = density,
             onClick = {
-                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 val currentMute = CallService.audioState.value?.isMuted == true
                 CallService.mute(!currentMute)
                 updateDropdownAudioState()
@@ -548,7 +540,6 @@ class FloatingCallService : Service(), KoinComponent {
             label = "Speaker",
             density = density,
             onClick = {
-                it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 CallService.cycleAudioRoute()
                 updateDropdownAudioState()
             }
@@ -568,7 +559,6 @@ class FloatingCallService : Service(), KoinComponent {
             )
             setPadding((18 * density).toInt(), 0, (18 * density).toInt(), 0)
             setOnClickListener {
-                it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                 try {
                     CallService.allCalls.value.firstOrNull { c -> c.state != Call.STATE_DISCONNECTED }?.disconnect()
                 } catch (e: Exception) {

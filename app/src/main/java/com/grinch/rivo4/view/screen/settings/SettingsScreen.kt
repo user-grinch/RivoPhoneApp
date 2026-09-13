@@ -19,16 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Code
-import androidx.compose.material.icons.outlined.Groups
-import androidx.compose.material.icons.outlined.SystemUpdate
-import androidx.compose.ui.graphics.vector.ImageVector
-import com.grinch.rivo4.GITHUB_URL
-import com.grinch.rivo4.PATREON_URL
-import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -88,111 +80,68 @@ fun SettingsScreen(
             
             item {
                 RivoExpressiveCard(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .clickable { navigator.navigate(AboutScreenDestination) },
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { navigator.navigate(AboutScreenDestination) }
-                                .padding(vertical = 2.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Surface(
+                            modifier = Modifier.size(56.dp),
+                            shape = logoMorph,
+                            color = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            shadowElevation = 3.dp
                         ) {
-                            Surface(
-                                modifier = Modifier.size(56.dp),
-                                shape = logoMorph,
-                                color = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                                shadowElevation = 3.dp
-                            ) {
-                                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(11.dp)) {
-                                    Image(
-                                        painter = painterResource(R.drawable.logo),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(14.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = stringResource(R.string.about_app_display_name),
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Surface(
-                                        shape = RoundedCornerShape(8.dp),
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    ) {
-                                        Text(
-                                            text = "v${appInfo.first}",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = stringResource(R.string.settings_top_card_subtext),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(11.dp)) {
+                                Image(
+                                    painter = painterResource(R.drawable.logo),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             }
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                                modifier = Modifier.size(16.dp)
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = stringResource(R.string.about_app_display_name),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ) {
+                                    Text(
+                                        text = "v${appInfo.first}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(R.string.settings_top_card_subtext),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
                         }
-
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f),
-                            thickness = 1.dp
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
                         )
-
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            item {
-                                TopCardActionChip(
-                                    icon = Icons.Outlined.SystemUpdate,
-                                    label = stringResource(R.string.settings_top_card_updates),
-                                    onClick = { openLink(context, "$GITHUB_URL/releases") }
-                                )
-                            }
-                            item {
-                                TopCardActionChip(
-                                    icon = Icons.Outlined.Groups,
-                                    label = stringResource(R.string.contributors_title),
-                                    onClick = { navigator.navigate(ContributorsScreenDestination) }
-                                )
-                            }
-                            item {
-                                TopCardActionChip(
-                                    icon = Icons.Default.Favorite,
-                                    label = stringResource(R.string.settings_top_card_donate),
-                                    iconTint = Color(0xFFE91E63),
-                                    onClick = { openLink(context, PATREON_URL) }
-                                )
-                            }
-                            item {
-                                TopCardActionChip(
-                                    icon = Icons.Outlined.Code,
-                                    label = "GitHub",
-                                    onClick = { openLink(context, GITHUB_URL) }
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -354,41 +303,6 @@ fun SettingsScreen(
                         .padding(vertical = 16.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun TopCardActionChip(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    iconTint: Color = MaterialTheme.colorScheme.primary,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(15.dp)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold
-            )
         }
     }
 }
