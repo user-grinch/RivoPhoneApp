@@ -44,6 +44,8 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactVisibilityScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.grinch.rivo4.view.theme.RivoMaterialShapes
+import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -112,6 +114,15 @@ fun ContactManagementScreen(
             is StorageTarget.PrivateStorage -> allContacts.filter { it.isPrivate }
             is StorageTarget.SimCard -> allContacts.filter { !it.isPrivate && it.accountName == src.account.name && it.accountType == src.account.type }
             is StorageTarget.CloudAccount -> allContacts.filter { !it.isPrivate && it.accountName == src.account.name && it.accountType == src.account.type }
+        }
+    }
+
+    val destContactsCount = remember(allContacts, selectedDestStorage) {
+        when (val dst = selectedDestStorage) {
+            is StorageTarget.LocalMemory -> allContacts.count { !it.isPrivate && it.accountName == null && it.accountType == null }
+            is StorageTarget.PrivateStorage -> allContacts.count { it.isPrivate }
+            is StorageTarget.SimCard -> allContacts.count { !it.isPrivate && it.accountName == dst.account.name && it.accountType == dst.account.type }
+            is StorageTarget.CloudAccount -> allContacts.count { !it.isPrivate && it.accountName == dst.account.name && it.accountType == dst.account.type }
         }
     }
 
@@ -334,49 +345,71 @@ fun ContactManagementScreen(
 
                     Spacer(Modifier.height(14.dp))
 
-                    // Modern Interactive Source -> Swap -> Destination Rail
-                    Row(
+                    // Connected Vertical Flow: FROM -> Swap -> TO
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         StorageTargetCard(
                             roleLabel = stringResource(R.string.contact_management_move_from),
                             target = selectedSourceStorage,
                             badgeCount = sourceContacts.size,
+                            isSource = true,
                             options = storageTargets,
-                            onSelect = { selectedSourceStorage = it },
-                            modifier = Modifier.weight(1f)
+                            onSelect = { selectedSourceStorage = it }
                         )
 
-                        // Interactive Swap Button
-                        Surface(
-                            onClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                val temp = selectedSourceStorage
-                                selectedSourceStorage = selectedDestStorage
-                                selectedDestStorage = temp
-                            },
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(40.dp)
+                        // Centered Swap Divider & Action
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Default.SwapHoriz,
-                                    contentDescription = "Swap Source & Destination",
-                                    modifier = Modifier.size(22.dp)
-                                )
+                            HorizontalDivider(
+                                modifier = Modifier.weight(1f),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            )
+                            Surface(
+                                onClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    val temp = selectedSourceStorage
+                                    selectedSourceStorage = selectedDestStorage
+                                    selectedDestStorage = temp
+                                },
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.SwapVert,
+                                        contentDescription = "Swap Source & Destination",
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(
+                                        text = "Swap",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
+                            HorizontalDivider(
+                                modifier = Modifier.weight(1f),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            )
                         }
 
                         StorageTargetCard(
                             roleLabel = stringResource(R.string.contact_management_move_to),
                             target = selectedDestStorage,
+                            badgeCount = destContactsCount,
+                            isSource = false,
                             options = storageTargets,
-                            onSelect = { selectedDestStorage = it },
-                            modifier = Modifier.weight(1f)
+                            onSelect = { selectedDestStorage = it }
                         )
                     }
 
@@ -386,23 +419,24 @@ fun ContactManagementScreen(
                     if (selectedSourceStorage == selectedDestStorage) {
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     Icons.Outlined.Info,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(18.dp)
                                 )
-                                Spacer(Modifier.width(8.dp))
+                                Spacer(Modifier.width(10.dp))
                                 Text(
                                     text = stringResource(R.string.contact_management_same_source_dest),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onErrorContainer
                                 )
                             }
@@ -410,24 +444,25 @@ fun ContactManagementScreen(
                     } else if (sourceContacts.isNotEmpty()) {
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(16.dp),
                             color = MaterialTheme.colorScheme.surfaceContainerHigh
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     Icons.Outlined.CheckCircle,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(18.dp)
                                 )
-                                Spacer(Modifier.width(8.dp))
+                                Spacer(Modifier.width(10.dp))
                                 Text(
-                                    text = "${sourceContacts.size} contacts available to move to ${selectedDestStorage.displayName}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = "${sourceContacts.size} contacts ready to move to ${selectedDestStorage.displayName}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -437,7 +472,7 @@ fun ContactManagementScreen(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         OutlinedButton(
                             onClick = {
@@ -815,7 +850,8 @@ fun DuplicateGroupItem(
 fun StorageTargetCard(
     roleLabel: String,
     target: StorageTarget,
-    badgeCount: Int? = null,
+    badgeCount: Int,
+    isSource: Boolean,
     options: List<StorageTarget>,
     onSelect: (StorageTarget) -> Unit,
     modifier: Modifier = Modifier
@@ -828,71 +864,97 @@ fun StorageTargetCard(
         is StorageTarget.CloudAccount -> Icons.Outlined.Cloud
     }
 
-    Box(modifier = modifier) {
+    val morph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.35f }
+
+    Box(modifier = modifier.fillMaxWidth()) {
         Surface(
             onClick = { expanded = true },
-            shape = RoundedCornerShape(18.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                // Leading morph shape tile
+                Surface(
+                    modifier = Modifier.size(44.dp),
+                    shape = morph,
+                    color = if (isSource) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.secondaryContainer
+                    },
+                    contentColor = if (isSource) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    }
                 ) {
-                    Text(
-                        text = roleLabel.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 10.sp
-                    )
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(icon, contentDescription = null, modifier = Modifier.size(22.dp))
+                    }
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Surface(
-                        modifier = Modifier.size(28.dp),
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSource) {
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                            } else {
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f)
+                            }
+                        ) {
+                            Text(
+                                text = roleLabel.uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSource) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
                         }
+                        Text(
+                            text = "$badgeCount contacts",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                    Spacer(Modifier.width(8.dp))
+
+                    Spacer(Modifier.height(3.dp))
+
                     Text(
                         text = target.displayName,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                if (badgeCount != null) {
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surfaceContainerLow
-                    ) {
-                        Text(
-                            text = "$badgeCount contacts",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                Spacer(Modifier.width(8.dp))
+
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.ArrowDropDown,
+                            contentDescription = "Select Storage",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -905,7 +967,9 @@ fun StorageTargetCard(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option.displayName, style = MaterialTheme.typography.bodyMedium) },
+                    text = {
+                        Text(option.displayName, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                    },
                     onClick = {
                         onSelect(option)
                         expanded = false
