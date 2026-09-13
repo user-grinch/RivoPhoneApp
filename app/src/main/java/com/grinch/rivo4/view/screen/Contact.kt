@@ -4,6 +4,8 @@ import android.Manifest
 import android.accounts.Account
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -611,142 +613,179 @@ fun ContactManagementTopCard(
 ) {
     val totalDuplicates = duplicateGroups.sumOf { it.size }
     val totalSets = duplicateGroups.size
+    val hasDuplicates = duplicateGroups.isNotEmpty()
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .clickable(onClick = onOpenManagement),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(22.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        border = BorderStroke(
+            1.dp,
+            if (hasDuplicates) MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
+            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        )
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
+        Column(
+            modifier = Modifier
+                .clickable(onClick = onOpenManagement)
+                .padding(14.dp)
+        ) {
+            // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            color = if (hasDuplicates) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f)
+                            else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(
-                        if (duplicateGroups.isNotEmpty()) Icons.Outlined.CallMerge else Icons.Outlined.CheckCircle,
+                        imageVector = if (hasDuplicates) Icons.Outlined.CallMerge else Icons.Outlined.CheckCircle,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (duplicateGroups.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = if (duplicateGroups.isNotEmpty()) stringResource(R.string.contact_management_duplicates_title)
-                               else stringResource(R.string.contact_management_card_clean),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = if (duplicateGroups.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        modifier = Modifier.size(20.dp),
+                        tint = if (hasDuplicates) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.primary
                     )
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = if (hasDuplicates) stringResource(R.string.contact_management_duplicates_title)
+                            else stringResource(R.string.contact_management_card_clean),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (hasDuplicates) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurface
+                        )
+                        if (hasDuplicates) {
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ) {
+                                Text(
+                                    text = "$totalDuplicates",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = if (duplicateGroups.isNotEmpty()) stringResource(R.string.contact_management_card_review) else "Manage",
+                        text = if (hasDuplicates) {
+                            stringResource(R.string.contact_management_duplicates_found, totalDuplicates, totalSets)
+                        } else {
+                            stringResource(R.string.contact_management_card_clean_sub)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (onHideCard != null) {
+                    IconButton(
+                        onClick = onHideCard,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Outlined.Close,
+                            contentDescription = "Dismiss",
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            if (hasDuplicates) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = onOpenManagement,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(38.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            Icons.Outlined.Visibility,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.contact_management_card_review),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Button(
+                        onClick = onMergeAll,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(38.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        )
+                    ) {
+                        Icon(
+                            Icons.Outlined.CallMerge,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.contact_management_merge_all),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            } else {
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Manage storage & tools",
                         style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         Icons.Default.ChevronRight,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
-                    if (onHideCard != null) {
-                        Spacer(Modifier.width(8.dp))
-                        IconButton(
-                            onClick = onHideCard,
-                            modifier = Modifier.size(24.dp)
-                        ) {
-                            Icon(
-                                Icons.Outlined.Close,
-                                contentDescription = "Hide",
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
                 }
             }
-
-            Spacer(Modifier.height(10.dp))
-
-            if (duplicateGroups.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ContactStatChip(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Outlined.ContentCopy,
-                        value = "$totalDuplicates",
-                        label = "Duplicates",
-                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                    ContactStatChip(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Outlined.CallMerge,
-                        value = "$totalSets",
-                        label = "Sets",
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Button(
-                        onClick = onMergeAll,
-                        shape = RoundedCornerShape(14.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        modifier = Modifier.height(42.dp)
-                    ) {
-                        Icon(Icons.Outlined.CallMerge, contentDescription = null, modifier = Modifier.size(14.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text(stringResource(R.string.contact_management_merge_all), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            } else {
-                Text(
-                    text = stringResource(R.string.contact_management_card_clean_sub),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ContactStatChip(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    value: String,
-    label: String,
-    containerColor: androidx.compose.ui.graphics.Color,
-    contentColor: androidx.compose.ui.graphics.Color,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        color = containerColor,
-        contentColor = contentColor
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall
-            )
         }
     }
 }

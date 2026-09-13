@@ -17,10 +17,14 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -55,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
@@ -311,6 +316,7 @@ fun ContactDetailsScreen(
         }
     }
 
+    val installedSocialApps = remember(context) { SocialUtils.getInstalledSocialApps(context) }
     val openWhatsApp = { num: String -> SocialUtils.openWhatsApp(context, num) }
     val openTelegram = { num: String -> SocialUtils.openTelegram(context, num) }
     val openSignal = { num: String -> SocialUtils.openSignal(context, num) }
@@ -1024,39 +1030,34 @@ fun ContactDetailsScreen(
                         }
                     }
 
-                    item {
-                        val whatsAppLabel = stringResource(R.string.brand_whatsapp)
-                        val telegramLabel = stringResource(R.string.brand_telegram)
-                        val signalLabel = stringResource(R.string.brand_signal)
-                        RivoExpressiveCard(title = stringResource(R.string.label_social_apps), icon = Icons.AutoMirrored.Filled.Chat) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                    if (installedSocialApps.isNotEmpty()) {
+                        item {
+                            RivoExpressiveCard(
+                                title = stringResource(R.string.label_social_apps),
+                                icon = Icons.AutoMirrored.Filled.Chat
                             ) {
-                                RivoExpressiveButton(
-                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/whatsapp.png"),
-                                    label = whatsAppLabel,
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    size = 52.dp,
-                                    iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openWhatsApp, whatsAppLabel) }
-                                )
-                                RivoExpressiveButton(
-                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/telegram.png"),
-                                    label = telegramLabel,
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    size = 52.dp,
-                                    iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openTelegram, telegramLabel) }
-                                )
-                                RivoExpressiveButton(
-                                    painter = rememberAsyncImagePainter("file:///android_asset/icons/signal.png"),
-                                    label = signalLabel,
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    size = 52.dp,
-                                    iconSize = 32.dp,
-                                    onClick = { onNumberActionClick(openSignal, signalLabel) }
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState())
+                                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    installedSocialApps.forEach { app ->
+                                        val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
+                                        RivoExpressiveButton(
+                                            painter = painter,
+                                            label = app.name,
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            size = 52.dp,
+                                            iconSize = 32.dp,
+                                            onClick = {
+                                                onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -1067,19 +1068,25 @@ fun ContactDetailsScreen(
                                 title = stringResource(R.string.contact_settings_title),
                                 icon = Icons.Default.Settings
                             ) {
-                                RivoListItem(
-                                    headline = "Callback Reminder",
-                                    supporting = "Schedule an alert to call back this number",
-                                    leadingIcon = Icons.Outlined.Alarm,
-                                    onClick = { showReminderDialog = true }
-                                )
-                                if (backgroundAvailable) {
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    CallBackgroundRow(
-                                        background = callBackground,
-                                        saving = backgroundSaving,
-                                        onClick = onBackgroundClick
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    CompactSettingActionTile(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        icon = Icons.Outlined.Alarm,
+                                        label = "Callback Reminder",
+                                        onClick = { showReminderDialog = true }
                                     )
+                                    if (backgroundAvailable) {
+                                        CallBackgroundRow(
+                                            background = callBackground,
+                                            saving = backgroundSaving,
+                                            onClick = onBackgroundClick
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1091,103 +1098,271 @@ fun ContactDetailsScreen(
                             val defaultRingtoneLabel = stringResource(R.string.ringtone_default)
                             val customRingtoneLabel = stringResource(R.string.ringtone_custom)
                             val selectRingtoneLabel = stringResource(R.string.contact_select_ringtone)
-                            RivoExpressiveCard(title = stringResource(R.string.contact_settings_title), icon = Icons.Default.Settings) {
-                                val currentRingtone = fc.customRingtone?.let { uriStr ->
-                                    runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
-                                } ?: defaultRingtoneLabel
 
-                                RivoListItem(
-                                    headline = stringResource(R.string.contact_custom_ringtone),
-                                    supporting = currentRingtone,
-                                    leadingIcon = Icons.Default.MusicNote,
-                                    onClick = {
-                                        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
-                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
-                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
-                                        }
-                                        ringtonePickerLauncher.launch(intent)
+                            val currentRingtone = fc.customRingtone?.let { uriStr ->
+                                runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
+                            } ?: defaultRingtoneLabel
+
+                            val contactNumbers = fc.phoneNumbers
+                            val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
+
+                            RivoExpressiveCard(
+                                title = stringResource(R.string.contact_settings_title),
+                                icon = Icons.Default.Settings
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    // 1. Quick Actions Row (Share, QR Code, Reminder)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        CompactSettingActionTile(
+                                            modifier = Modifier.weight(1f),
+                                            icon = Icons.Default.Share,
+                                            label = shareContactLabel,
+                                            onClick = shareContact
+                                        )
+                                        CompactSettingActionTile(
+                                            modifier = Modifier.weight(1f),
+                                            icon = Icons.Outlined.QrCode2,
+                                            label = stringResource(R.string.contact_qr_code),
+                                            onClick = { showQrDialog = true }
+                                        )
+                                        CompactSettingActionTile(
+                                            modifier = Modifier.weight(1f),
+                                            icon = Icons.Outlined.Alarm,
+                                            label = "Reminder",
+                                            onClick = { showReminderDialog = true }
+                                        )
                                     }
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                CallBackgroundRow(
-                                    background = callBackground,
-                                    saving = backgroundSaving,
-                                    onClick = onBackgroundClick
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = "Callback Reminder",
-                                    supporting = "Schedule an alert to call back this contact",
-                                    leadingIcon = Icons.Outlined.Alarm,
-                                    onClick = { showReminderDialog = true }
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                val contactNumbers = fc.phoneNumbers
-                                val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
-                                RivoListItem(
-                                    headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
-                                    supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
-                                    leadingIcon = if (contactBlocked) Icons.Default.LockOpen else Icons.Default.Block,
-                                    onClick = {
-                                        contactNumbers.forEach { number ->
-                                            if (contactBlocked) {
-                                                BlockedNumbersManager.unblock(context, number)
-                                            } else {
-                                                BlockedNumbersManager.block(context, number)
+
+                                    // 2. Personalization Group: Custom Ringtone & Call Background
+                                    Surface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
+                                    ) {
+                                        Column {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
+                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
+                                                        }
+                                                        ringtonePickerLauncher.launch(intent)
+                                                    }
+                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.MusicNote,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                                Spacer(Modifier.width(12.dp))
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(
+                                                        text = stringResource(R.string.contact_custom_ringtone),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        fontWeight = FontWeight.SemiBold
+                                                    )
+                                                    Text(
+                                                        text = currentRingtone,
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                }
+                                                Icon(
+                                                    Icons.Default.ChevronRight,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+
+                                            if (backgroundAvailable) {
+                                                RivoDivider(Modifier.padding(horizontal = 14.dp))
+                                                CallBackgroundRow(
+                                                    background = callBackground,
+                                                    saving = backgroundSaving,
+                                                    onClick = onBackgroundClick
+                                                )
                                             }
                                         }
-                                        blockedVersion++
                                     }
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = shareContactLabel,
-                                    supporting = stringResource(R.string.contact_share_description),
-                                    leadingIcon = Icons.Default.Share,
-                                    onClick = shareContact
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = stringResource(R.string.contact_qr_code),
-                                    supporting = stringResource(R.string.contact_qr_code_description),
-                                    leadingIcon = Icons.Outlined.QrCode2,
-                                    onClick = { showQrDialog = true }
-                                )
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
-                                    supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
-                                    leadingIcon = if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
-                                    onClick = {
-                                        if (fc.isPrivate) {
-                                            contactsViewModel.makeContactPublic(fc.id)
-                                        } else {
-                                            contactsViewModel.makeContactPrivate(fc.id)
+
+                                    // 3. Privacy & Security Group: Storage, Hide, and Block
+                                    Surface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
+                                    ) {
+                                        Column {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        if (fc.isPrivate) {
+                                                            contactsViewModel.makeContactPublic(fc.id)
+                                                        } else {
+                                                            contactsViewModel.makeContactPrivate(fc.id)
+                                                        }
+                                                        navigator.navigateUp()
+                                                    }
+                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
+                                                    contentDescription = null,
+                                                    tint = if (fc.isPrivate) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                                Spacer(Modifier.width(12.dp))
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(
+                                                        text = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        fontWeight = FontWeight.SemiBold
+                                                    )
+                                                    Text(
+                                                        text = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                                Icon(
+                                                    Icons.Default.ChevronRight,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+
+                                            if (fc.isPrivate) {
+                                                val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                                                RivoDivider(Modifier.padding(horizontal = 14.dp))
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
+                                                            navigator.navigateUp()
+                                                        }
+                                                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.secondary,
+                                                        modifier = Modifier.size(20.dp)
+                                                    )
+                                                    Spacer(Modifier.width(12.dp))
+                                                    Column(modifier = Modifier.weight(1f)) {
+                                                        Text(
+                                                            text = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
+                                                            style = MaterialTheme.typography.bodyMedium,
+                                                            fontWeight = FontWeight.SemiBold
+                                                        )
+                                                        Text(
+                                                            text = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial $secretCode to unlock)",
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+                                                    Icon(
+                                                        Icons.Default.ChevronRight,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            RivoDivider(Modifier.padding(horizontal = 14.dp))
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        contactNumbers.forEach { number ->
+                                                            if (contactBlocked) {
+                                                                BlockedNumbersManager.unblock(context, number)
+                                                            } else {
+                                                                BlockedNumbersManager.block(context, number)
+                                                            }
+                                                        }
+                                                        blockedVersion++
+                                                    }
+                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    if (contactBlocked) Icons.Default.LockOpen else Icons.Default.Block,
+                                                    contentDescription = null,
+                                                    tint = if (contactBlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                                Spacer(Modifier.width(12.dp))
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(
+                                                        text = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        fontWeight = FontWeight.SemiBold
+                                                    )
+                                                    Text(
+                                                        text = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
                                         }
-                                        navigator.navigateUp()
                                     }
-                                )
-                                if (fc.isPrivate) {
-                                    val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    RivoListItem(
-                                        headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
-                                        supporting = if (fc.isHidden) "Make visible in contacts and recents" else "Hide from contacts and recents (unlock by dialing $secretCode)",
-                                        leadingIcon = if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                                        onClick = {
-                                            contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
-                                            navigator.navigateUp()
+
+                                    // 4. Delete Action - Clean Red Tonal Pill
+                                    Surface(
+                                        onClick = { showDeleteDialog = true },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.25f))
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(Modifier.width(8.dp))
+                                            Text(
+                                                text = stringResource(R.string.action_delete),
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.error
+                                            )
                                         }
-                                    )
+                                    }
                                 }
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                RivoListItem(
-                                    headline = stringResource(R.string.action_delete),
-                                    supporting = stringResource(R.string.contact_remove_from_device),
-                                    leadingIcon = Icons.Default.Delete,
-                                    onClick = { showDeleteDialog = true }
-                                )
                             }
                         }
                     }
@@ -1207,3 +1382,44 @@ fun ContactDetailsScreen(
         }
     }
 }
+
+@Composable
+private fun CompactSettingActionTile(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.height(60.dp),
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 6.dp, vertical = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+

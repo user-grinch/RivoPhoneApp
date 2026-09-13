@@ -1,7 +1,9 @@
 package com.grinch.rivo4.view.screen.settings
 
 import android.accounts.Account
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -58,6 +62,7 @@ fun ContactManagementScreen(
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
+    val view = LocalView.current
     val scope = rememberCoroutineScope()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val prefs = koinInject<PreferenceManager>()
@@ -323,45 +328,112 @@ fun ContactManagementScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.contact_management_move_supporting),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(Modifier.height(14.dp))
 
-                    // Source & Destination Selector Rows
+                    // Modern Interactive Source -> Swap -> Destination Rail
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Source
-                        StorageDropdownSelector(
-                            modifier = Modifier.weight(1f),
-                            label = stringResource(R.string.contact_management_move_from),
-                            selected = selectedSourceStorage,
+                        StorageTargetCard(
+                            roleLabel = stringResource(R.string.contact_management_move_from),
+                            target = selectedSourceStorage,
+                            badgeCount = sourceContacts.size,
                             options = storageTargets,
-                            onSelect = { selectedSourceStorage = it }
+                            onSelect = { selectedSourceStorage = it },
+                            modifier = Modifier.weight(1f)
                         )
 
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        // Interactive Swap Button
+                        Surface(
+                            onClick = {
+                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                val temp = selectedSourceStorage
+                                selectedSourceStorage = selectedDestStorage
+                                selectedDestStorage = temp
+                            },
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Default.SwapHoriz,
+                                    contentDescription = "Swap Source & Destination",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
 
-                        // Destination
-                        StorageDropdownSelector(
-                            modifier = Modifier.weight(1f),
-                            label = stringResource(R.string.contact_management_move_to),
-                            selected = selectedDestStorage,
+                        StorageTargetCard(
+                            roleLabel = stringResource(R.string.contact_management_move_to),
+                            target = selectedDestStorage,
                             options = storageTargets,
-                            onSelect = { selectedDestStorage = it }
+                            onSelect = { selectedDestStorage = it },
+                            modifier = Modifier.weight(1f)
                         )
                     }
 
                     Spacer(Modifier.height(12.dp))
+
+                    // Dynamic Status Note
+                    if (selectedSourceStorage == selectedDestStorage) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Outlined.Info,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_management_same_source_dest),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        }
+                    } else if (sourceContacts.isNotEmpty()) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = "${sourceContacts.size} contacts available to move to ${selectedDestStorage.displayName}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(14.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -378,11 +450,12 @@ fun ContactManagementScreen(
                                 }
                             },
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = CircleShape,
+                            enabled = sourceContacts.isNotEmpty() && selectedSourceStorage != selectedDestStorage
                         ) {
                             Icon(Icons.Outlined.Checklist, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text(stringResource(R.string.contact_management_select_to_move))
+                            Text(stringResource(R.string.contact_management_select_to_move), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
 
                         Button(
@@ -396,16 +469,17 @@ fun ContactManagementScreen(
                                 }
                             },
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(16.dp),
-                            enabled = sourceContacts.isNotEmpty()
+                            shape = CircleShape,
+                            enabled = sourceContacts.isNotEmpty() && selectedSourceStorage != selectedDestStorage
                         ) {
                             Icon(Icons.AutoMirrored.Filled.DriveFileMove, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text(stringResource(R.string.contact_management_move_all, sourceContacts.size))
+                            Text(stringResource(R.string.contact_management_move_all, sourceContacts.size), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
             }
+
 
             // 4. Address Book Tools
             item {
@@ -737,60 +811,120 @@ fun DuplicateGroupItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StorageDropdownSelector(
-    label: String,
-    selected: StorageTarget,
+fun StorageTargetCard(
+    roleLabel: String,
+    target: StorageTarget,
+    badgeCount: Int? = null,
     options: List<StorageTarget>,
     onSelect: (StorageTarget) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val icon = when (target) {
+        is StorageTarget.LocalMemory -> Icons.Outlined.PhoneAndroid
+        is StorageTarget.PrivateStorage -> Icons.Outlined.Lock
+        is StorageTarget.SimCard -> Icons.Outlined.SimCard
+        is StorageTarget.CloudAccount -> Icons.Outlined.Cloud
+    }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = selected.displayName,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(label, style = MaterialTheme.typography.labelSmall) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier
-                .menuAnchor()
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            textStyle = MaterialTheme.typography.bodySmall,
-            singleLine = true
-        )
-        ExposedDropdownMenu(
+    Box(modifier = modifier) {
+        Surface(
+            onClick = { expanded = true },
+            shape = RoundedCornerShape(18.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = roleLabel.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 10.sp
+                    )
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier.size(28.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
+                        }
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = target.displayName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (badgeCount != null) {
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow
+                    ) {
+                        Text(
+                            text = "$badgeCount contacts",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            options.forEach { target ->
+            options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(target.displayName, style = MaterialTheme.typography.bodyMedium) },
+                    text = { Text(option.displayName, style = MaterialTheme.typography.bodyMedium) },
                     onClick = {
-                        onSelect(target)
+                        onSelect(option)
                         expanded = false
                     },
                     leadingIcon = {
-                        val icon = when (target) {
+                        val optIcon = when (option) {
                             is StorageTarget.LocalMemory -> Icons.Outlined.PhoneAndroid
                             is StorageTarget.PrivateStorage -> Icons.Outlined.Lock
                             is StorageTarget.SimCard -> Icons.Outlined.SimCard
                             is StorageTarget.CloudAccount -> Icons.Outlined.Cloud
                         }
-                        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Icon(optIcon, contentDescription = null, modifier = Modifier.size(18.dp))
                     }
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun MoveContactsSelectionDialog(

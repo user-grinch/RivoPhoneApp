@@ -25,14 +25,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.EventRepeat
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,6 +60,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -62,6 +70,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.modal.db.CallNoteEntity
@@ -70,6 +79,12 @@ import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private data class NoteTagItem(
+    val label: String,
+    val textToInsert: String,
+    val icon: ImageVector
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,18 +104,19 @@ fun CallNotesSheet(
 
     val quickTags = remember {
         listOf(
-            "📞 Call back",
-            "📅 Follow-up",
-            "⏰ Meeting",
-            "📍 Address",
-            "⭐ Important",
-            "✅ Done"
+            NoteTagItem("Call back", "Call back", Icons.AutoMirrored.Outlined.PhoneCallback),
+            NoteTagItem("Follow-up", "Follow-up", Icons.Outlined.EventRepeat),
+            NoteTagItem("Meeting", "Meeting", Icons.Outlined.Schedule),
+            NoteTagItem("Important", "Important", Icons.Outlined.Star),
+            NoteTagItem("Address", "Address", Icons.Outlined.LocationOn),
+            NoteTagItem("Done", "Done", Icons.Outlined.CheckCircle)
         )
     }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         dragHandle = { BottomSheetDefaults.DragHandle() },
         modifier = Modifier.imePadding()
     ) {
@@ -108,9 +124,9 @@ fun CallNotesSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 4.dp)
+                .padding(horizontal = 20.dp, vertical = 6.dp)
         ) {
-            // Header
+            // Header: Avatar, Name/Number, Notes Count & Close Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -147,8 +163,8 @@ fun CallNotesSheet(
                                 Spacer(Modifier.width(8.dp))
                                 Surface(
                                     shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                    contentColor = MaterialTheme.colorScheme.primary
                                 ) {
                                     Text(
                                         text = "${notes.size}",
@@ -168,23 +184,31 @@ fun CallNotesSheet(
                         )
                     }
                 }
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Surface(
+                    onClick = onDismiss,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Add Note Input Card
+            // Modern Note Composer Card
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
             ) {
                 Column(
                     modifier = Modifier
@@ -196,14 +220,19 @@ fun CallNotesSheet(
                         onValueChange = { noteInput = it },
                         placeholder = {
                             Text(
-                                "Jot down note, callback, or details...",
-                                style = MaterialTheme.typography.bodyMedium
+                                "Add note, callback, or reminder...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         minLines = 2,
                         maxLines = 4,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                        ),
                         trailingIcon = {
                             if (noteInput.isNotBlank()) {
                                 IconButton(onClick = { noteInput = "" }) {
@@ -220,12 +249,12 @@ fun CallNotesSheet(
 
                     Spacer(Modifier.height(10.dp))
 
-                    // Quick suggestion tags
+                    // Quick suggestion tags with icons
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         quickTags.forEach { tag ->
@@ -233,33 +262,51 @@ fun CallNotesSheet(
                                 onClick = {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                     noteInput = if (noteInput.isBlank()) {
-                                        tag
+                                        tag.textToInsert
                                     } else {
-                                        "$noteInput · $tag"
+                                        "$noteInput · ${tag.textToInsert}"
                                     }
                                 },
                                 shape = CircleShape,
-                                color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
                             ) {
-                                Text(
-                                    text = tag,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                                )
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = tag.icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(14.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(
+                                        text = tag.label,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
                     }
 
                     Spacer(Modifier.height(12.dp))
 
+                    // Inline Action Bar (Character count & Save button)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            text = if (noteInput.isNotBlank()) "${noteInput.length} chars" else "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
                         Button(
                             onClick = {
                                 val text = noteInput.trim()
@@ -278,45 +325,53 @@ fun CallNotesSheet(
                                 }
                             },
                             enabled = noteInput.isNotBlank(),
-                            shape = RoundedCornerShape(12.dp),
-                            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
                         ) {
                             Icon(
                                 Icons.Default.Add,
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(16.dp)
                             )
                             Spacer(Modifier.width(6.dp))
-                            Text("Save Note", fontWeight = FontWeight.SemiBold)
+                            Text("Save Note", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(16.dp))
 
             // Notes History Section
             if (notes.isEmpty()) {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .padding(vertical = 6.dp),
+                    shape = RoundedCornerShape(18.dp),
                     color = MaterialTheme.colorScheme.surfaceContainerLowest,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(28.dp),
+                            .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            Icons.Outlined.EditNote,
-                            contentDescription = null,
-                            modifier = Modifier.size(44.dp),
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                        )
+                        Surface(
+                            modifier = Modifier.size(48.dp),
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Outlined.EditNote,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
                         Spacer(Modifier.height(10.dp))
                         Text(
                             text = "No notes recorded yet",
@@ -326,7 +381,7 @@ fun CallNotesSheet(
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "Jot down reminders or key takeaways from this call.",
+                            text = "Jot down reminders, callback tasks, or takeaways from this call.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -337,14 +392,14 @@ fun CallNotesSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 2.dp, vertical = 4.dp),
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Saved Notes",
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
@@ -365,7 +420,7 @@ fun CallNotesSheet(
                     items(notes, key = { it.id }) { item ->
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(16.dp),
                             color = MaterialTheme.colorScheme.surfaceContainerLowest,
                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
                         ) {
@@ -379,6 +434,7 @@ fun CallNotesSheet(
                                     Text(
                                         text = item.note,
                                         style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Spacer(Modifier.height(6.dp))
@@ -436,7 +492,7 @@ fun CallNotesSheet(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
         }
     }
 }
@@ -454,11 +510,11 @@ fun AddCallNoteDialog(
 
     val quickTags = remember {
         listOf(
-            "📞 Call back",
-            "📅 Follow-up",
-            "⭐ Important",
-            "📍 Address",
-            "⏰ Meeting"
+            NoteTagItem("Call back", "Call back", Icons.AutoMirrored.Outlined.PhoneCallback),
+            NoteTagItem("Follow-up", "Follow-up", Icons.Outlined.EventRepeat),
+            NoteTagItem("Meeting", "Meeting", Icons.Outlined.Schedule),
+            NoteTagItem("Important", "Important", Icons.Outlined.Star),
+            NoteTagItem("Address", "Address", Icons.Outlined.LocationOn)
         )
     }
 
@@ -469,7 +525,7 @@ fun AddCallNoteDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest,
-                shape = RoundedCornerShape(12.dp)
+                shape = CircleShape
             ) {
                 Text(stringResource(R.string.action_cancel))
             }
@@ -493,11 +549,11 @@ fun AddCallNoteDialog(
                     }
                 },
                 enabled = noteText.isNotBlank(),
-                shape = RoundedCornerShape(12.dp)
+                shape = CircleShape
             ) {
                 Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Save Note")
+                Text("Save Note", fontWeight = FontWeight.Bold)
             }
         }
     ) {
@@ -506,29 +562,34 @@ fun AddCallNoteDialog(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            // Contact indicator pill
+            // Contact Header Card
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(36.dp),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                text = (contactName.ifBlank { phoneNumber }).take(1).uppercase(),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
-                            )
+                            val initial = (contactName.ifBlank { phoneNumber }).take(1).uppercase()
+                            if (initial.isNotBlank()) {
+                                Text(
+                                    text = initial,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(18.dp))
+                            }
                         }
                     }
                     Spacer(Modifier.width(10.dp))
@@ -556,7 +617,7 @@ fun AddCallNoteDialog(
 
             Spacer(Modifier.height(12.dp))
 
-            // Quick suggestion chips
+            // Quick suggestion tags with icons
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -569,22 +630,33 @@ fun AddCallNoteDialog(
                         onClick = {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             noteText = if (noteText.isBlank()) {
-                                tag
+                                tag.textToInsert
                             } else {
-                                "$noteText · $tag"
+                                "$noteText · ${tag.textToInsert}"
                             }
                         },
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
                     ) {
-                        Text(
-                            text = tag,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = tag.icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = tag.label,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }
@@ -595,11 +667,15 @@ fun AddCallNoteDialog(
             OutlinedTextField(
                 value = noteText,
                 onValueChange = { noteText = it },
-                placeholder = { Text("Enter your note or reminder...") },
+                placeholder = { Text("Enter your note or callback reminder...") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 6,
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                ),
                 trailingIcon = {
                     if (noteText.isNotBlank()) {
                         IconButton(onClick = { noteText = "" }) {
@@ -626,3 +702,4 @@ fun AddCallNoteDialog(
         }
     }
 }
+
