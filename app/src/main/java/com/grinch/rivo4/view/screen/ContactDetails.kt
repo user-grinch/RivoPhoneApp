@@ -1068,19 +1068,16 @@ fun ContactDetailsScreen(
                                 title = stringResource(R.string.contact_settings_title),
                                 icon = Icons.Default.Settings
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    CompactSettingActionTile(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        icon = Icons.Outlined.Alarm,
-                                        label = "Callback Reminder",
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    RivoListItem(
+                                        headline = "Callback Reminder",
+                                        supporting = "Schedule a reminder to call back",
+                                        leadingIcon = Icons.Outlined.Alarm,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = { showReminderDialog = true }
                                     )
                                     if (backgroundAvailable) {
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                         CallBackgroundRow(
                                             background = callBackground,
                                             saving = backgroundSaving,
@@ -1110,258 +1107,131 @@ fun ContactDetailsScreen(
                                 title = stringResource(R.string.contact_settings_title),
                                 icon = Icons.Default.Settings
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    // 1. Quick Actions Row (Share, QR Code, Reminder)
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        CompactSettingActionTile(
-                                            modifier = Modifier.weight(1f),
-                                            icon = Icons.Default.Share,
-                                            label = shareContactLabel,
-                                            onClick = shareContact
-                                        )
-                                        CompactSettingActionTile(
-                                            modifier = Modifier.weight(1f),
-                                            icon = Icons.Outlined.QrCode2,
-                                            label = stringResource(R.string.contact_qr_code),
-                                            onClick = { showQrDialog = true }
-                                        )
-                                        CompactSettingActionTile(
-                                            modifier = Modifier.weight(1f),
-                                            icon = Icons.Outlined.Alarm,
-                                            label = "Reminder",
-                                            onClick = { showReminderDialog = true }
-                                        )
-                                    }
-
-                                    // 2. Personalization Group: Custom Ringtone & Call Background
-                                    Surface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
-                                    ) {
-                                        Column {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
-                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
-                                                            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
-                                                        }
-                                                        ringtonePickerLauncher.launch(intent)
-                                                    }
-                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.MusicNote,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                                Spacer(Modifier.width(12.dp))
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        text = stringResource(R.string.contact_custom_ringtone),
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    )
-                                                    Text(
-                                                        text = currentRingtone,
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis
-                                                    )
-                                                }
-                                                Icon(
-                                                    Icons.Default.ChevronRight,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    // 1. Custom Ringtone
+                                    RivoListItem(
+                                        headline = stringResource(R.string.contact_custom_ringtone),
+                                        supporting = currentRingtone,
+                                        leadingIcon = Icons.Default.MusicNote,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = {
+                                            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
+                                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
                                             }
-
-                                            if (backgroundAvailable) {
-                                                RivoDivider(Modifier.padding(horizontal = 14.dp))
-                                                CallBackgroundRow(
-                                                    background = callBackground,
-                                                    saving = backgroundSaving,
-                                                    onClick = onBackgroundClick
-                                                )
-                                            }
+                                            ringtonePickerLauncher.launch(intent)
                                         }
+                                    )
+
+                                    // 2. Call Background (if available)
+                                    if (backgroundAvailable) {
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                        CallBackgroundRow(
+                                            background = callBackground,
+                                            saving = backgroundSaving,
+                                            onClick = onBackgroundClick
+                                        )
                                     }
 
-                                    // 3. Privacy & Security Group: Storage, Hide, and Block
-                                    Surface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
-                                    ) {
-                                        Column {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        if (fc.isPrivate) {
-                                                            contactsViewModel.makeContactPublic(fc.id)
-                                                        } else {
-                                                            contactsViewModel.makeContactPrivate(fc.id)
-                                                        }
-                                                        navigator.navigateUp()
-                                                    }
-                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
-                                                    contentDescription = null,
-                                                    tint = if (fc.isPrivate) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                                Spacer(Modifier.width(12.dp))
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        text = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    )
-                                                    Text(
-                                                        text = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                                Icon(
-                                                    Icons.Default.ChevronRight,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                            }
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
 
+                                    // 3. Callback Reminder
+                                    RivoListItem(
+                                        headline = "Callback Reminder",
+                                        supporting = "Schedule a reminder to call back",
+                                        leadingIcon = Icons.Outlined.Alarm,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = { showReminderDialog = true }
+                                    )
+
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+
+                                    // 4. Share Contact
+                                    RivoListItem(
+                                        headline = shareContactLabel,
+                                        supporting = "Share vCard contact file",
+                                        leadingIcon = Icons.Default.Share,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = shareContact
+                                    )
+
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+
+                                    // 5. Contact QR Code
+                                    RivoListItem(
+                                        headline = stringResource(R.string.contact_qr_code),
+                                        supporting = "Display contact QR code",
+                                        leadingIcon = Icons.Outlined.QrCode2,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = { showQrDialog = true }
+                                    )
+
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+
+                                    // 6. Storage Location
+                                    RivoListItem(
+                                        headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
+                                        supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
+                                        leadingIcon = if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = {
                                             if (fc.isPrivate) {
-                                                val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
-                                                RivoDivider(Modifier.padding(horizontal = 14.dp))
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
-                                                            navigator.navigateUp()
-                                                        }
-                                                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.secondary,
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
-                                                    Spacer(Modifier.width(12.dp))
-                                                    Column(modifier = Modifier.weight(1f)) {
-                                                        Text(
-                                                            text = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
-                                                            style = MaterialTheme.typography.bodyMedium,
-                                                            fontWeight = FontWeight.SemiBold
-                                                        )
-                                                        Text(
-                                                            text = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial $secretCode to unlock)",
-                                                            style = MaterialTheme.typography.labelSmall,
-                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                        )
-                                                    }
-                                                    Icon(
-                                                        Icons.Default.ChevronRight,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        modifier = Modifier.size(18.dp)
-                                                    )
-                                                }
+                                                contactsViewModel.makeContactPublic(fc.id)
+                                            } else {
+                                                contactsViewModel.makeContactPrivate(fc.id)
                                             }
-
-                                            RivoDivider(Modifier.padding(horizontal = 14.dp))
-
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        contactNumbers.forEach { number ->
-                                                            if (contactBlocked) {
-                                                                BlockedNumbersManager.unblock(context, number)
-                                                            } else {
-                                                                BlockedNumbersManager.block(context, number)
-                                                            }
-                                                        }
-                                                        blockedVersion++
-                                                    }
-                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    if (contactBlocked) Icons.Default.LockOpen else Icons.Default.Block,
-                                                    contentDescription = null,
-                                                    tint = if (contactBlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                                Spacer(Modifier.width(12.dp))
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        text = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    )
-                                                    Text(
-                                                        text = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
+                                            navigator.navigateUp()
                                         }
+                                    )
+
+                                    // 7. Hide Completely (if private)
+                                    if (fc.isPrivate) {
+                                        val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                        RivoListItem(
+                                            headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
+                                            supporting = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial $secretCode to unlock)",
+                                            leadingIcon = if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                            onClick = {
+                                                contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
+                                                navigator.navigateUp()
+                                            }
+                                        )
                                     }
 
-                                    // 4. Delete Action - Clean Red Tonal Pill
-                                    Surface(
-                                        onClick = { showDeleteDialog = true },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.25f))
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Delete,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                            Spacer(Modifier.width(8.dp))
-                                            Text(
-                                                text = stringResource(R.string.action_delete),
-                                                style = MaterialTheme.typography.labelLarge,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.error
-                                            )
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+
+                                    // 8. Block / Unblock Number
+                                    RivoListItem(
+                                        headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
+                                        supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
+                                        leadingIcon = if (contactBlocked) Icons.Default.CheckCircle else Icons.Default.Block,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = {
+                                            contactNumbers.forEach { number ->
+                                                if (contactBlocked) {
+                                                    BlockedNumbersManager.unblock(context, number)
+                                                } else {
+                                                    BlockedNumbersManager.block(context, number)
+                                                }
+                                            }
+                                            blockedVersion++
                                         }
-                                    }
+                                    )
+
+                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+
+                                    // 9. Delete Contact
+                                    RivoListItem(
+                                        headline = stringResource(R.string.action_delete),
+                                        supporting = "Remove contact from device",
+                                        leadingIcon = Icons.Default.Delete,
+                                        headlineColor = MaterialTheme.colorScheme.error,
+                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        onClick = { showDeleteDialog = true }
+                                    )
                                 }
                             }
                         }
@@ -1378,46 +1248,6 @@ fun ContactDetailsScreen(
                         listState.animateScrollToItem(0)
                     }
                 }
-            )
-        }
-    }
-}
-
-@Composable
-private fun CompactSettingActionTile(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.height(60.dp),
-        shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center
             )
         }
     }

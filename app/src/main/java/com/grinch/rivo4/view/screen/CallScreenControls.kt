@@ -197,9 +197,8 @@ fun AuxiliaryPillButton(
             .height(if (compact) 32.dp else 36.dp)
             .scale(scale),
         shape = CircleShape,
-        color = scheme.surfaceContainerHigh.copy(alpha = 0.85f),
+        color = scheme.surfaceContainerHighest.copy(alpha = 0.9f),
         contentColor = scheme.onSurface,
-        border = BorderStroke(1.dp, scheme.outlineVariant.copy(alpha = 0.35f)),
         interactionSource = interactionSource
     ) {
         Row(
