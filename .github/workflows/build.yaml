@@ -53,6 +53,7 @@ jobs:
           KEYSTORE_PATH: ../app/keystore.jks # Adjusted path for gradle context
           BUILD_NUMBER: ${{ github.run_number }}
           PREVIEW_BUILD: ${{ github.ref == 'refs/heads/main' }}
+          GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
         run: |
           ./gradlew assembleFossRelease assemblePlayRelease bundlePlayRelease bundleFossRelease
 
