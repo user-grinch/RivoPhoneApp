@@ -96,7 +96,6 @@
     <string name="ads_disable_dialog_title">Поддержка Open-Source разработки</string>
     <string name="ads_disable_dialog_body">Отображение рекламы помогает поддерживать Rivo бесплатным проектом с открытым исходным кодом. Без доходов от рекламы или пожертвований сообщества дальнейшая поддержка, исправление ошибок и разработка могут прекратиться. Вы действительно хотите отключить рекламу?</string>
     <string name="ads_disable_dialog_confirm">Отключить рекламу</string>
-    <string name="ads_disable_dialog_keep">Реклама включена</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Сделать Rivo приложением для звонков по умолчанию</string>
     <string name="default_dialer_description">Для совершения и приема вызовов, управления историей звонков и защиты от спама Rivo нужно назначить приложением для звонков по умолчанию.</string>
@@ -725,5 +724,6 @@
     <string name="contact_management_card_clean_sub">Все контакты уникальны • Нажмите для управления памятью</string>
     <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты &amp; данных</string>
     <!-- Floating Bar Customization & Blur -->
+    <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>

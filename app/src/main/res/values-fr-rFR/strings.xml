@@ -87,7 +87,6 @@
     <string name="ads_disable_dialog_title">Soutenir le développement open source</string>
     <string name="ads_disable_dialog_body">L’affichage des publicités permet de maintenir Rivo gratuite et open source. Sans revenus publicitaires ni dons de la communauté, le développement continu et la maintenance risquent de s’éteindre. Voulez-vous vraiment désactiver les publicités ?</string>
     <string name="ads_disable_dialog_confirm">Désactiver les publicités</string>
-    <string name="ads_disable_dialog_keep">Garder les publicités</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Faites de Rivo votre application d’appel officielle</string>
     <string name="default_dialer_description">Pour passer et recevoir des appels, gérer votre historique d’appels et bénéficier de la protection anti-spam, Rivo doit être définie comme application téléphone par défaut.</string>
@@ -479,5 +478,6 @@
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
     <!-- Floating Bar Customization & Blur -->
+    <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>

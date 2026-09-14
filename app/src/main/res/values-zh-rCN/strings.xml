@@ -77,7 +77,6 @@
     <string name="ads_disable_dialog_title">支持开源开发</string>
     <string name="ads_disable_dialog_body">显示广告有助于保持Rivo的自由和开放源码。 没有广告收入或社区捐款，正在进行的维护、错误修复和开发可能会死亡。您确定要禁用广告吗？</string>
     <string name="ads_disable_dialog_confirm">关闭广告</string>
-    <string name="ads_disable_dialog_keep">保持广告启用</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">将 Rivo 设为您的官方拨号器</string>
     <string name="default_dialer_description">若要拨打电话、接听来电、管理通话记录并体验垃圾电话防护功能，需将 Rivo 设置为您的默认电话应用。</string>
@@ -199,5 +198,6 @@
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
     <!-- Floating Bar Customization & Blur -->
+    <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>

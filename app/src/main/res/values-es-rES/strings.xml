@@ -86,7 +86,6 @@
     <string name="ads_disable_dialog_title">Apoya el desarrollo de código abierto</string>
     <string name="ads_disable_dialog_body">Mostrar anuncios ayuda a mantener Rivo libre y de código abierto. Sin ingresos de anuncios o donaciones comunitarias, mantenimiento continuo, corrección de errores y desarrollo pueden desaparecer. ¿Estás seguro de que quieres desactivar los anuncios?</string>
     <string name="ads_disable_dialog_confirm">Quitar anuncios</string>
-    <string name="ads_disable_dialog_keep">Mantener anuncios habilitados</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Haz de Rivo tu marcador oficial</string>
     <string name="default_dialer_description">Para hacer y recibir llamadas, administrar tu historial de llamadas y protegerte contra el spam, Rivo necesita ser configurada como tu aplicación de teléfono predeterminada.</string>
@@ -487,5 +486,6 @@
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
     <!-- Floating Bar Customization & Blur -->
+    <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>

@@ -94,7 +94,6 @@
     <string name="ads_disable_dialog_title">Unterstützen Sie die Open-Source-Entwicklung</string>
     <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und quelloffen bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass sie die Werbung ausschalten wollen?</string>
     <string name="ads_disable_dialog_confirm">Werbung deaktivieren</string>
-    <string name="ads_disable_dialog_keep">Werbung aktiviert lassen</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Machen Sie Rivo zu Ihrer Standard-Telefon-App</string>
     <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und um vor Spam-Anrufen geschützt zu werden, muss Rivo zur Standard-Telefon-App gemacht werden.</string>
@@ -109,10 +108,10 @@
     <string name="call_log_no_history_found">Keine Anrufliste gefunden</string>
     <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
     <plurals name="call_log_delete_confirm">
-        <item quantity="one">Sind Sie sicher, dass sie den ausgewählten %1$d Anruflisteneintrag löschen wollen?</item>
-        <item quantity="other">Sind Sie sicher, dass sie die ausgewählten %1$d Anruflisteneinträge löschen wollen?</item>
+        <item quantity="one">Sind Sie sicher, dass Sie den ausgewählten %1$d Anruflisteneintrag löschen wollen?</item>
+        <item quantity="other">Sind Sie sicher, dass Sie die ausgewählten %1$d Anruflisteneinträge löschen wollen?</item>
     </plurals>
-    <string name="call_log_delete_title">Anrufliste löschen</string>
+    <string name="call_log_delete_title">Anruflisteneinträge löschen</string>
     <string name="call_log_clear_all_title">Alle Listen leeren</string>
     <string name="call_log_clear_all_confirm">Alles leeren</string>
     <string name="call_log_clear_all_message">Dies wird die gesamte Anrufliste löschen. Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
@@ -719,5 +718,30 @@
     <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen um Speicher zu verwalten</string>
     <string name="contact_management_card_dup_sub">Tippen um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
     <!-- Floating Bar Customization & Blur -->
+    <string name="settings_floating_bar_roundness">Eckenradius der schwebenden Leiste</string>
+    <string name="settings_floating_bar_roundness_supporting">Die Eckenrundung und die Form der schwebende Leiste anpassen</string>
+    <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="settings_swipe_actions_title">Wischgesten</string>
+    <string name="settings_swipe_actions_supporting">Wischgesten bei Kontakten und Anrufliste konfigurieren</string>
+    <string name="settings_swipe_actions_enable">Wischgesten aktivieren</string>
+    <string name="settings_swipe_actions_enable_supporting">Kontakt- und Anrufeinträge nach links oder rechts wischen, um Aktionen mit Feedback auszulösen</string>
+    <string name="settings_swipe_right_action">Wischgeste nach rechts</string>
+    <string name="settings_swipe_left_action">Wischgeste nach links</string>
+    <string name="settings_swipe_right_action_supporting">Ausgelöste Aktion bei Wischen von links nach rechts</string>
+    <string name="settings_swipe_left_action_supporting">Ausgelöste Aktion bei Wischen von rechts nach links</string>
+    <string name="swipe_action_none">Keine</string>
+    <string name="swipe_action_call">Anruf</string>
+    <string name="swipe_action_message">Nachricht</string>
+    <string name="swipe_action_video_call">Video-Anruf</string>
+    <string name="swipe_action_whatsapp">WhatsApp</string>
+    <string name="swipe_action_copy_number">Nummer kopieren</string>
+    <string name="swipe_action_delete">Löschen</string>
+    <string name="swipe_action_preview_title">Interaktive Gesten-Vorschau</string>
+    <string name="swipe_action_preview_supporting">Ziehen Sie diese Karte nach links oder rechts, um Material 3 expressive Springeffekte zu erleben.</string>
+    <string name="swipe_action_test_contact_name">Alex Rivera</string>
+    <string name="swipe_action_test_contact_number">+1 (555) 019-2834</string>
+    <string name="swipe_action_triggered_toast">Ausgelöste Geste: %1$s</string>
+    <string name="settings_swipe_actions_reset">Wischaktionen zurücksetzen</string>
+    <string name="settings_swipe_actions_tab_warning">Die Wisch-Navigation zwischen Tabs ist deaktiviert, während Wisch-Aktionen aktiviert sind, um Gestenkonflikte zu vermeiden.</string>
 </resources>
