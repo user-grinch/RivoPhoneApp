@@ -724,4 +724,6 @@
     <string name="contact_management_card_clean">Oczyszczenie książki adresowej</string>
     <string name="contact_management_card_clean_sub">Wszystkie kontakty są unikalne • Dotknij, aby zarządzać pamięcią</string>
     <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i połączyć numery, e-maile i informacje</string>
+    <!-- Floating Bar Customization & Blur -->
+    <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>
