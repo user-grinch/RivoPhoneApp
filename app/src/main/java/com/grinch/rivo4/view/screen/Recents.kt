@@ -271,10 +271,8 @@ fun FavoriteCircleItem(
                     .size(64.dp)
                     .graphicsLayer { if (isEditing && !isDragging) rotationZ = wiggle }
                     .combinedClickable(
-                        enabled = true,
-                        onClick = {
-                            if (!isEditing) onClick()
-                        },
+                        enabled = !isEditing,
+                        onClick = onClick,
                         onLongClick = onLongClick
                     )
             )
@@ -282,11 +280,11 @@ fun FavoriteCircleItem(
             if (isEditing) {
                 Surface(
                     onClick = onUnfavorite,
-                    modifier = Modifier.size(22.dp).offset(x = 4.dp, y = (-4).dp),
+                    modifier = Modifier.size(24.dp).offset(x = 4.dp, y = (-4).dp),
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
-                    shadowElevation = 2.dp
+                    shadowElevation = 3.dp
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(Icons.Default.Remove, stringResource(R.string.content_desc_remove_favorite), modifier = Modifier.size(14.dp))
@@ -430,6 +428,9 @@ fun CallLogFullContent(
 
         val favRowState = rememberLazyListState()
         val favItems = remember { mutableStateListOf<Contact>() }
+        LaunchedEffect(favItems.isEmpty()) {
+            if (favItems.isEmpty()) isEditingFavorites = false
+        }
         LaunchedEffect(favorites) {
             if (favItems.map { it.id }.toSet() != favorites.map { it.id }.toSet()) {
                 favItems.clear()
@@ -545,29 +546,38 @@ fun CallLogFullContent(
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.clickable {
-                                            val newCollapsed = !isFavoritesCollapsed
-                                            isFavoritesCollapsed = newCollapsed
-                                            prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_RECENTS_FAVORITES_COLLAPSED, newCollapsed)
+                                            if (!isEditingFavorites) {
+                                                val newCollapsed = !isFavoritesCollapsed
+                                                isFavoritesCollapsed = newCollapsed
+                                                prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_RECENTS_FAVORITES_COLLAPSED, newCollapsed)
+                                            }
                                         }
                                     ) {
                                         Text(
-                                            text = stringResource(R.string.recents_favorites),
+                                            text = if (isEditingFavorites) stringResource(R.string.favorites_drag_to_reorder) else stringResource(R.string.recents_favorites),
                                             style = MaterialTheme.typography.labelLargeEmphasized,
                                             color = MaterialTheme.colorScheme.primary
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Icon(
-                                            imageVector = if (isFavoritesCollapsed) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                                            contentDescription = stringResource(if (isFavoritesCollapsed) R.string.favorites_expand else R.string.favorites_collapse),
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(20.dp)
-                                        )
+                                        if (!isEditingFavorites) {
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Icon(
+                                                imageVector = if (isFavoritesCollapsed) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                                                contentDescription = stringResource(if (isFavoritesCollapsed) R.string.favorites_expand else R.string.favorites_collapse),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
                                     }
 
-                                    if (isEditingFavorites) {
-                                        TextButton(onClick = { isEditingFavorites = false }) {
+                                    if (!isFavoritesCollapsed || isEditingFavorites) {
+                                        TextButton(onClick = {
+                                            if (isEditingFavorites) {
+                                                prefs.setFavoritesOrder(favItems.map { it.id })
+                                            }
+                                            isEditingFavorites = !isEditingFavorites
+                                        }) {
                                             Text(
-                                                text = stringResource(R.string.action_done),
+                                                text = if (isEditingFavorites) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -607,7 +617,7 @@ fun CallLogFullContent(
                                         itemsIndexed(favItems, key = { _, c -> c.id }) { index, contact ->
                                             val dragging = index == rowDragDropState.draggingItemIndex
                                             val itemModifier = if (dragging) {
-                                                Modifier
+                                                 Modifier
                                                     .zIndex(1f)
                                                     .graphicsLayer {
                                                         translationX = rowDragDropState.draggingItemOffset.x
@@ -623,7 +633,11 @@ fun CallLogFullContent(
                                                 isEditing = isEditingFavorites,
                                                 isDragging = dragging,
                                                 displayOrder = displayOrder,
-                                                onUnfavorite = { contactsVM.toggleFavorite(contact) },
+                                                onUnfavorite = {
+                                                    favItems.remove(contact)
+                                                    prefs.setFavoritesOrder(favItems.map { it.id })
+                                                    contactsVM.toggleFavorite(contact)
+                                                },
                                                 onLongClick = { isEditingFavorites = true },
                                                 onClick = {
                                                     callLauncher.dial(contact.phoneNumbers.firstOrNull() ?: "", contact)

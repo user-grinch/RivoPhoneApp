@@ -40,7 +40,6 @@ import android.animation.ValueAnimator
 import android.view.VelocityTracker
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -352,7 +351,7 @@ class FloatingCallService : Service(), KoinComponent {
                             openDropdown()
                         }
                     } else {
-                        animateFlingToEdgeWithBounce(vx, vy, bubbleSize, density)
+                        animateFlingToEdge(vx, vy, bubbleSize, density)
                     }
                     true
                 }
@@ -369,7 +368,7 @@ class FloatingCallService : Service(), KoinComponent {
 
     private var flingAnimator: ValueAnimator? = null
 
-    private fun animateFlingToEdgeWithBounce(
+    private fun animateFlingToEdge(
         vx: Float,
         vy: Float,
         bubbleSize: Int,
@@ -395,12 +394,12 @@ class FloatingCallService : Service(), KoinComponent {
             else -> if (currentMidX < screenWidth / 2) minX else maxX // Snap to closer edge
         }
 
-        // 2. Determine target Y with momentum projection (corner throwing like Messenger)
+        // 2. Determine target Y with momentum projection
         val momentumFactor = 0.18f
         val projectedY = bubbleY + (vy * momentumFactor).toInt()
         val targetY = projectedY.coerceIn(minY, maxY)
 
-        // 3. Dynamic timing & physics calculation
+        // 3. Dynamic timing calculation
         val startX = bubbleX
         val startY = bubbleY
         val dxDist = abs(targetX - startX)
@@ -411,32 +410,24 @@ class FloatingCallService : Service(), KoinComponent {
         val isFastThrow = totalSpeed > flingThresholdX
         val duration = if (isFastThrow) {
             val calculated = (totalDist / (totalSpeed + 900f) * 1000).toLong()
-            calculated.coerceIn(240L, 420L)
+            calculated.coerceIn(200L, 360L)
         } else {
-            val calculated = (totalDist / (screenWidth * 0.75f) * 360).toLong()
-            calculated.coerceIn(220L, 380L)
-        }
-
-        // Tension: scales with throw velocity for extra bouncy feel on throws
-        val overshootTension = if (isFastThrow) {
-            (1.25f + (totalSpeed / 3000f).coerceAtMost(0.75f))
-        } else {
-            1.2f
+            val calculated = (totalDist / (screenWidth * 0.75f) * 320).toLong()
+            calculated.coerceIn(180L, 300L)
         }
 
         flingAnimator?.cancel()
         flingAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
             this.duration = duration
-            interpolator = OvershootInterpolator(overshootTension)
+            interpolator = DecelerateInterpolator()
 
             addUpdateListener { animation ->
                 val fraction = animation.animatedValue as Float
                 val newX = (startX + (targetX - startX) * fraction).toInt()
                 val newY = (startY + (targetY - startY) * fraction).toInt()
 
-                val bounceMargin = (16 * density).toInt()
-                bubbleX = newX.coerceIn(minX - bounceMargin, maxX + bounceMargin)
-                bubbleY = newY.coerceIn(minY - bounceMargin, maxY + bounceMargin)
+                bubbleX = newX.coerceIn(minX, maxX)
+                bubbleY = newY.coerceIn(minY, maxY)
 
                 val params = layoutParams ?: return@addUpdateListener
                 params.x = bubbleX
@@ -457,23 +448,6 @@ class FloatingCallService : Service(), KoinComponent {
                         try {
                             windowManager?.updateViewLayout(rootLayout, params)
                         } catch (_: Exception) {}
-                    }
-
-                    if (isFastThrow) {
-                        val squishX = if (targetX == maxX) 0.88f else 0.90f
-                        bubbleContainer?.animate()
-                            ?.scaleX(squishX)
-                            ?.scaleY(1.10f)
-                            ?.setDuration(80)
-                            ?.withEndAction {
-                                bubbleContainer?.animate()
-                                    ?.scaleX(1.0f)
-                                    ?.scaleY(1.0f)
-                                    ?.setInterpolator(OvershootInterpolator(2.0f))
-                                    ?.setDuration(160)
-                                    ?.start()
-                            }
-                            ?.start()
                     }
                 }
             })

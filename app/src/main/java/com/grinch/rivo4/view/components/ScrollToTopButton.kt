@@ -16,21 +16,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.view.theme.RivoMotion
 
 private val ScrollToTopSize = 56.dp
 
+val LocalScrollToTopBottomPadding: ProvidableCompositionLocal<Dp> = compositionLocalOf { 0.dp }
+val LocalShowFloatingNavBar: ProvidableCompositionLocal<(() -> Unit)?> = compositionLocalOf { null }
+
 @Composable
 fun ScrollToTopButton(
     visible: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    bottomPadding: Dp? = null
 ) {
+    val extraPadding = bottomPadding ?: LocalScrollToTopBottomPadding.current
+    val showNavBar = LocalShowFloatingNavBar.current
+
     Box(modifier = Modifier.fillMaxSize()) {
         AnimatedVisibility(
             visible = visible,
@@ -44,10 +54,13 @@ fun ScrollToTopButton(
             ) + fadeOut(animationSpec = RivoMotion.effectsFast()),
             modifier = modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp + extraPadding)
         ) {
             FilledTonalIconButton(
-                onClick = onClick,
+                onClick = {
+                    showNavBar?.invoke()
+                    onClick()
+                },
                 shapes = IconButtonDefaults.shapes(
                     shape = MaterialTheme.shapes.extraLarge,
                     pressedShape = MaterialTheme.shapes.medium

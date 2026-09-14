@@ -621,11 +621,9 @@ fun ContactManagementTopCard(
             .padding(horizontal = 16.dp, vertical = 6.dp),
         shape = RoundedCornerShape(22.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        border = BorderStroke(
-            1.dp,
-            if (hasDuplicates) MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
-            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-        )
+        border = if (hasDuplicates) {
+            BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.35f))
+        } else null
     ) {
         Column(
             modifier = Modifier
