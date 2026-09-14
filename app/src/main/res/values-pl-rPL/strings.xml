@@ -497,6 +497,9 @@
     <string name="about_check_updates">Sprawdź aktualizacje</string>
     <string name="about_current_version">Aktualna wersja: %1$s</string>
     <string name="about_copyright">© 2025-2026 Projekt RivoPhone</string>
+    <string name="settings_top_card_subtext">Sprawdź aktualizacje • Współtwórcy • Darowizna</string>
+    <string name="settings_top_card_updates">Aktualizacje</string>
+    <string name="settings_top_card_donate">Darowizna</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Główny programista</string>
     <string name="contributor_role_developer">Programista</string>
@@ -690,4 +693,35 @@
     <string name="settings_blocked_csv_empty">Nie znaleziono prawidłowych numerów telefonów w pliku</string>
     <string name="settings_blocked_file_error">Błąd przetwarzania pliku</string>
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contacts_management_title">Kontakty i pamięć</string>
+    <string name="settings_contact_management_headline">Zarządzanie kontaktami</string>
+    <string name="settings_contact_management_supporting">Scal duplikaty, przenieś kontakty między kartą SIM, urządzeniem a kontami</string>
+    <string name="contact_management_title">Zarządzanie kontaktami</string>
+    <string name="contact_management_storage_overview">Podział pamięci</string>
+    <string name="contact_management_duplicates_title">Zduplikowane kontakty</string>
+    <string name="contact_management_duplicates_found">Znaleziono %1$d zduplikowanych kontaktów w %2$d grupach</string>
+    <string name="contact_management_no_duplicates">Książka adresowa jest pusta. Nie znaleziono duplikatów.</string>
+    <string name="contact_management_merge_all">Scal wszystkie</string>
+    <string name="contact_management_merge_all_confirm_title">Scalić wszystkie duplikaty?</string>
+    <string name="contact_management_merge_all_confirm_msg">Spowoduje to połączenie numerów telefonów, adresów e-mail, adresów i notatek dla wszystkich %1$d grup duplikatów oraz usunięcie powtarzających się kontaktów.</string>
+    <string name="contact_management_merge_success">Pomyślnie scalono %1$d grup duplikatów</string>
+    <string name="contact_management_merge_group_btn">Scal</string>
+    <string name="contact_management_ignore_btn">Odrzuć</string>
+    <string name="contact_management_move_title">Przenieś kontakty</string>
+    <string name="contact_management_move_supporting">Przenoszenie kontaktów między kartą SIM, pamięcią lokalną, kontami i pamięcią prywatną</string>
+    <string name="contact_management_move_from">Z</string>
+    <string name="contact_management_move_to">Do</string>
+    <string name="contact_management_select_to_move">Wybierz kontakty do przeniesienia</string>
+    <string name="contact_management_move_all">Przenieś wszystko (%1$d)</string>
+    <string name="contact_management_move_confirm_title">Przenieść kontakty?</string>
+    <string name="contact_management_move_confirm_msg">Czy na pewno chcesz przenieść %1$d kontaktów z %2$s do %3$s?</string>
+    <string name="contact_management_move_success">Przeniesiono %1$d kontaktów do %2$s</string>
+    <string name="contact_management_same_source_dest">Pamięć źródłowa i docelowa muszą być różne</string>
+    <string name="contact_management_tools_title">Narzędzia książki adresowej</string>
+    <string name="contact_management_standardize_numbers">Standaryzuj numery telefonów</string>
+    <string name="contact_management_standardize_supporting">Usuń niepotrzebne spacje formatowania i znormalizuj międzynarodowy format</string>
+    <string name="contact_management_card_review">Przejrzyj i scal</string>
+    <string name="contact_management_card_clean">Oczyszczenie książki adresowej</string>
+    <string name="contact_management_card_clean_sub">Wszystkie kontakty są unikalne • Dotknij, aby zarządzać pamięcią</string>
+    <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i połączyć numery, e-maile i informacje</string>
 </resources>

@@ -119,7 +119,7 @@
     <string name="content_desc_clear_all_logs">Alle Listen löschen</string>
     <string name="content_desc_delete_selected">Auswahl löschen</string>
     <string name="recents_permission_title">Anrufliste</string>
-    <string name="recents_permission_description">Rivo benötigt Zugang zu Ihrer Anrufliste, um die letzten Aktivitäten und die verpassten Anrufe anzuzeigen.</string>
+    <string name="recents_permission_description">Rivo benötigt Zugriff auf Ihre Anrufliste, um die letzten Aktivitäten und die verpassten Anrufe anzuzeigen.</string>
     <string name="recents_favorites">Favoriten</string>
     <string name="recents_empty_call_log">Ihre Anrufliste ist leer</string>
     <string name="content_desc_dialpad">Tastenfeld</string>
@@ -493,6 +493,9 @@
     <string name="about_check_updates">Auf Updates überprüfen</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
+    <string name="settings_top_card_subtext">Auf Updates überprüfen • Mitwirkende • Spenden</string>
+    <string name="settings_top_card_updates">Updates</string>
+    <string name="settings_top_card_donate">Spenden</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Leitender Entwickler</string>
     <string name="contributor_role_developer">Entwickler</string>
@@ -684,4 +687,35 @@
     <string name="settings_blocked_csv_empty">Keine gültigen Telefonnummern in der Datei gefunden</string>
     <string name="settings_blocked_file_error">Dateiverarbeitung fehlgeschlagen</string>
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contacts_management_title">Kontakte &amp; Speicher</string>
+    <string name="settings_contact_management_headline">Kontakt-Verwaltung</string>
+    <string name="settings_contact_management_supporting">Duplikate zusammenführen, Kontakte zwischen SIM-Karten, Gerät &amp; Konten transferieren</string>
+    <string name="contact_management_title">Kontakt-Verwaltung</string>
+    <string name="contact_management_storage_overview">Speicher-Übersicht</string>
+    <string name="contact_management_duplicates_title">Doppelte Kontakte</string>
+    <string name="contact_management_duplicates_found">%1$d doppelte Kontakte in %2$d Datensätzen gefunden</string>
+    <string name="contact_management_no_duplicates">Adressbuch ist bereinigt. Keine Duplikate gefunden.</string>
+    <string name="contact_management_merge_all">Alle zusammenführen</string>
+    <string name="contact_management_merge_all_confirm_title">Alle Duplikate zusammenführen?</string>
+    <string name="contact_management_merge_all_confirm_msg">Dies wird alle Telefonnummern, E-Mails, Adressen und Notizen für alle %1$d Duplikat-Datensätze zusammenführen und redundante Kontakte entfernen.</string>
+    <string name="contact_management_merge_success">Erfolgreich %1$d Duplikat-Datensätze zusammengeführt</string>
+    <string name="contact_management_merge_group_btn">Zusammenführen</string>
+    <string name="contact_management_ignore_btn">Verwerfen</string>
+    <string name="contact_management_move_title">Kontakte transferieren</string>
+    <string name="contact_management_move_supporting">Kontakte zwischen SIM-Karten, Gerätespeicher, Konten und privatem Speicher verschieben</string>
+    <string name="contact_management_move_from">Von</string>
+    <string name="contact_management_move_to">Nach</string>
+    <string name="contact_management_select_to_move">Zu verschiebende Kontakte auswählen</string>
+    <string name="contact_management_move_all">Alle (%1$d) verschieben</string>
+    <string name="contact_management_move_confirm_title">Kontakte verschieben?</string>
+    <string name="contact_management_move_confirm_msg">Sind Sie sicher, dass Sie %1$d Kontakte von %2$s nach %3$s verschieben wollen?</string>
+    <string name="contact_management_move_success">%1$d Kontakte nach %2$s verschoben</string>
+    <string name="contact_management_same_source_dest">Ursprung und Zielspeicher müssen unterschiedlich sein</string>
+    <string name="contact_management_tools_title">Adressbuch-Werkzeuge</string>
+    <string name="contact_management_standardize_numbers">Telefonnummern standardisieren</string>
+    <string name="contact_management_standardize_supporting">Überflüssige Leerzeichen entfernen und auf internationales Format setzen</string>
+    <string name="contact_management_card_review">Prüfen &amp; Zusammenführen</string>
+    <string name="contact_management_card_clean">Adressbuch bereinigen</string>
+    <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen um Speicher zu verwalten</string>
+    <string name="contact_management_card_dup_sub">Tippen um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
 </resources>
