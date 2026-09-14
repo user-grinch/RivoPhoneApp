@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.ramcosta.composedestinations.annotation.Destination
@@ -185,6 +187,10 @@ fun QuickResponsesScreen(
                     }
                 }
             }
+
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
+            }
         }
     }
 
@@ -193,34 +199,26 @@ fun QuickResponsesScreen(
             onDismissRequest = { isAddingNew = false },
             title = "New Quick Response",
             icon = Icons.Outlined.AddComment,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val trimmed = editingText.trim()
-                        if (trimmed.isNotEmpty()) {
-                            val updated = responses.toMutableList()
-                            updated.add(trimmed)
-                            save(updated)
-                        }
-                        isAddingNew = false
-                    },
-                    enabled = editingText.isNotBlank()
-                ) {
-                    Text("Add")
+            confirmAction = RivoDialogAction(
+                label = "Add",
+                enabled = editingText.isNotBlank(),
+                onClick = {
+                    val trimmed = editingText.trim()
+                    if (trimmed.isNotEmpty()) {
+                        val updated = responses.toMutableList()
+                        updated.add(trimmed)
+                        save(updated)
+                    }
+                    isAddingNew = false
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { isAddingNew = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
+            )
         ) {
             OutlinedTextField(
                 value = editingText,
                 onValueChange = { editingText = it },
                 label = { Text("Message text") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(14.dp),
                 maxLines = 3
             )
         }
@@ -232,64 +230,44 @@ fun QuickResponsesScreen(
             onDismissRequest = { editingIndex = null },
             title = "Edit Quick Response",
             icon = Icons.Outlined.Edit,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val trimmed = editingText.trim()
-                        if (trimmed.isNotEmpty()) {
-                            val updated = responses.toMutableList()
-                            updated[index] = trimmed
-                            save(updated)
-                        }
-                        editingIndex = null
-                    },
-                    enabled = editingText.isNotBlank()
-                ) {
-                    Text("Save")
+            confirmAction = RivoDialogAction(
+                label = "Save",
+                enabled = editingText.isNotBlank(),
+                onClick = {
+                    val trimmed = editingText.trim()
+                    if (trimmed.isNotEmpty()) {
+                        val updated = responses.toMutableList()
+                        updated[index] = trimmed
+                        save(updated)
+                    }
+                    editingIndex = null
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { editingIndex = null }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
+            )
         ) {
             OutlinedTextField(
                 value = editingText,
                 onValueChange = { editingText = it },
                 label = { Text("Message text") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(14.dp),
                 maxLines = 3
             )
         }
     }
 
     if (showResetConfirm) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showResetConfirm = false },
-            title = "Reset to Defaults",
-            icon = Icons.Outlined.RestartAlt,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        save(PreferenceManager.DEFAULT_QUICK_RESPONSES)
-                        showResetConfirm = false
-                    }
-                ) {
-                    Text("Reset")
-                }
+            onConfirm = {
+                save(PreferenceManager.DEFAULT_QUICK_RESPONSES)
+                showResetConfirm = false
             },
-            dismissButton = {
-                TextButton(onClick = { showResetConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = "Restore original preset quick responses?",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+            title = "Reset to Defaults",
+            message = "Restore original preset quick responses?",
+            confirmLabel = "Reset",
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.RestartAlt,
+            isDestructive = true
+        )
     }
 }

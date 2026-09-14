@@ -41,6 +41,9 @@ val appModule = module {
     single {
         com.grinch.rivo4.controller.reminder.CallbackReminderManager(androidContext(), get())
     }
+    single {
+        com.grinch.rivo4.controller.billing.BillingManager(androidContext(), get())
+    }
     viewModel { ContactsViewModel(get(), get()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
     viewModel { BackupViewModel(get(), get()) }

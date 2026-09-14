@@ -149,6 +149,10 @@ fun SpeedDialScreen(
                     }
                 }
             }
+
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
+            }
         }
     }
 
@@ -186,11 +190,7 @@ fun ContactPickerDialog(
     RivoDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.settings_speed_dial_search_contact),
-        icon = Icons.Outlined.Speed,
-        dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
-            label = stringResource(R.string.action_cancel),
-            onClick = onDismissRequest
-        )
+        icon = Icons.Outlined.Speed
     ) {
         OutlinedTextField(
             value = searchQuery,

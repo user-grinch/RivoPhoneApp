@@ -8,9 +8,13 @@ import android.media.RingtoneManager
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import android.telecom.VideoProfile
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.media.MediaPlayer
+import com.grinch.rivo4.view.screen.settings.CallRecordEntryCard
+import kotlinx.coroutines.delay
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -100,6 +104,7 @@ private fun CallBackgroundRow(
             headline = headline,
             supporting = supporting,
             leadingIcon = Icons.Default.Wallpaper,
+            isCompact = true,
             onClick = onClick
         )
     } else {
@@ -107,6 +112,7 @@ private fun CallBackgroundRow(
             headline = headline,
             supporting = supporting,
             leadingIcon = Icons.Default.Wallpaper,
+            isCompact = true,
             onClick = onClick,
             trailingContent = {
                 AsyncImage(
@@ -114,7 +120,7 @@ private fun CallBackgroundRow(
                     contentDescription = previewDescription,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(width = 56.dp, height = 40.dp)
+                        .size(width = 44.dp, height = 32.dp)
                         .clip(MaterialTheme.shapes.small)
                 )
             }
@@ -263,7 +269,57 @@ fun ContactDetailsScreen(
         }
     }
 
-    val contactRecordings = remember(fullContact, displayName, phoneNumber) {
+    var activePlayingFile by remember { mutableStateOf<File?>(null) }
+    var isRecordingPlaying by remember { mutableStateOf(false) }
+    var currentPositionMs by remember { mutableIntStateOf(0) }
+    var recordingDurationMs by remember { mutableIntStateOf(0) }
+    var playbackSpeed by remember { mutableFloatStateOf(1.0f) }
+    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    var pendingDeleteRecording by remember { mutableStateOf<File?>(null) }
+    var recordingsRefreshKey by remember { mutableIntStateOf(0) }
+
+    DisposableEffect(activePlayingFile) {
+        if (activePlayingFile != null) {
+            val mp = MediaPlayer().apply {
+                try {
+                    setDataSource(context, Uri.fromFile(activePlayingFile))
+                    prepare()
+                    start()
+                    this@apply.playbackParams = this@apply.playbackParams.setSpeed(playbackSpeed)
+                } catch (_: Exception) {}
+            }
+            mediaPlayer = mp
+            isRecordingPlaying = mp.isPlaying
+            recordingDurationMs = runCatching { mp.duration }.getOrDefault(0)
+
+            onDispose {
+                runCatching {
+                    mp.stop()
+                    mp.release()
+                }
+                mediaPlayer = null
+                isRecordingPlaying = false
+            }
+        } else {
+            onDispose { }
+        }
+    }
+
+    LaunchedEffect(isRecordingPlaying, activePlayingFile) {
+        while (isRecordingPlaying && activePlayingFile != null) {
+            mediaPlayer?.let { mp ->
+                if (mp.isPlaying) {
+                    currentPositionMs = mp.currentPosition
+                    recordingDurationMs = mp.duration
+                } else {
+                    isRecordingPlaying = false
+                }
+            }
+            delay(250)
+        }
+    }
+
+    val contactRecordings = remember(fullContact, displayName, phoneNumber, recordingsRefreshKey) {
         val all = CallRecorder.listRecordings(context)
         all.filter { file ->
             val name = file.name
@@ -393,12 +449,7 @@ fun ContactDetailsScreen(
         RivoDialog(
             onDismissRequest = { showBackgroundDialog = false },
             title = stringResource(R.string.contact_call_background),
-            icon = Icons.Default.Wallpaper,
-            dismissButton = {
-                TextButton(onClick = { showBackgroundDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
+            icon = Icons.Default.Wallpaper
         ) {
             callBackground?.let { current ->
                 AsyncImage(
@@ -444,15 +495,7 @@ fun ContactDetailsScreen(
         RivoDialog(
             onDismissRequest = { showQrDialog = false },
             title = stringResource(R.string.contact_details_qr_title),
-            icon = Icons.Default.QrCode,
-            confirmButton = {
-                Button(
-                    onClick = { showQrDialog = false },
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(stringResource(R.string.action_close))
-                }
-            }
+            icon = Icons.Default.QrCode
         ) {
             val vCard = remember(displayName, displayPhone, fullContact?.emails?.firstOrNull()) {
                 QrCodeUtils.generateVCard(displayName, displayPhone, fullContact?.emails?.firstOrNull())
@@ -490,6 +533,26 @@ fun ContactDetailsScreen(
         }
     }
 
+    if (pendingDeleteRecording != null) {
+        val fileToDelete = pendingDeleteRecording!!
+        RivoConfirmationDialog(
+            onDismissRequest = { pendingDeleteRecording = null },
+            onConfirm = {
+                if (activePlayingFile?.absolutePath == fileToDelete.absolutePath) {
+                    activePlayingFile = null
+                }
+                fileToDelete.delete()
+                recordingsRefreshKey++
+                pendingDeleteRecording = null
+            },
+            title = "Delete Recording",
+            message = "Delete ${fileToDelete.nameWithoutExtension}?",
+            confirmLabel = stringResource(R.string.action_delete),
+            isDestructive = true,
+            icon = Icons.Default.Delete
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -503,6 +566,18 @@ fun ContactDetailsScreen(
                 },
                 actions = {
                     if (fullContact != null) {
+                        IconButton(onClick = { showQrDialog = true }) {
+                            Icon(
+                                Icons.Outlined.QrCode2,
+                                contentDescription = stringResource(R.string.contact_qr_code)
+                            )
+                        }
+                        IconButton(onClick = shareContact) {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = shareContactLabel
+                            )
+                        }
                         IconButton(onClick = {
                             fullContact?.let { contact ->
                                 val newFavorite = !contact.isFavorite
@@ -524,6 +599,12 @@ fun ContactDetailsScreen(
                             Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
                         }
                     } else if (phoneNumber != null && phoneNumber != unknownLabel) {
+                        IconButton(onClick = shareContact) {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = shareContactLabel
+                            )
+                        }
                         IconButton(onClick = {
                             navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
                         }) {
@@ -541,33 +622,34 @@ fun ContactDetailsScreen(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     item {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
+                                .padding(vertical = 6.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             RivoAvatar(
                                 name = displayName,
                                 photoUri = fullContact?.photoUri,
-                                modifier = Modifier.size(140.dp),
-                                textStyle = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
+                                modifier = Modifier.size(92.dp),
+                                textStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                             Text(
                                 text = displayName,
-                                style = MaterialTheme.typography.headlineLarge,
+                                style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             fullContact?.nickname?.let { nickname ->
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = nickname,
-                                    style = MaterialTheme.typography.titleMedium,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -583,6 +665,8 @@ fun ContactDetailsScreen(
                                 icon = Icons.Default.Call,
                                 label = stringResource(R.string.contact_details_call),
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                size = 52.dp,
+                                iconSize = 22.dp,
                                 onClick = {
                                     callLauncher.dial(if (fullContact == null) displayPhone else "", fullContact)
                                 },
@@ -592,6 +676,8 @@ fun ContactDetailsScreen(
                                 icon = Icons.AutoMirrored.Filled.Message,
                                 label = stringResource(R.string.action_message),
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                size = 52.dp,
+                                iconSize = 22.dp,
                                 onClick = {
                                     messageLauncher.sendMessage(if (fullContact == null) displayPhone else "", fullContact)
                                 },
@@ -602,6 +688,8 @@ fun ContactDetailsScreen(
                                     icon = Icons.Default.PersonAdd,
                                     label = stringResource(R.string.contact_add_to_contacts),
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    size = 52.dp,
+                                    iconSize = 22.dp,
                                     onClick = {
                                         navigator.navigate(
                                             ContactEditScreenDestination(
@@ -616,6 +704,8 @@ fun ContactDetailsScreen(
                                     icon = if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block,
                                     label = if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number),
                                     containerColor = if (numberBlocked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
+                                    size = 52.dp,
+                                    iconSize = 22.dp,
                                     onClick = {
                                         if (numberBlocked) {
                                             BlockedNumbersManager.unblock(context, displayPhone)
@@ -631,6 +721,8 @@ fun ContactDetailsScreen(
                                     icon = Icons.Default.VideoCall,
                                     label = stringResource(R.string.contact_details_video),
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    size = 52.dp,
+                                    iconSize = 22.dp,
                                     onClick = {
                                         videoLauncher.startVideoCall(displayPhone, fullContact)
                                     },
@@ -641,6 +733,8 @@ fun ContactDetailsScreen(
                                     icon = Icons.Default.Email,
                                     label = stringResource(R.string.label_email),
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    size = 52.dp,
+                                    iconSize = 22.dp,
                                     enabled = hasEmails,
                                     onClick = { emailLauncher.sendEmail("", fullContact) },
                                     modifier = Modifier.weight(1f)
@@ -654,7 +748,7 @@ fun ContactDetailsScreen(
                         val mobileLabel = stringResource(R.string.label_mobile)
                         val bulletFavorite = stringResource(R.string.contact_bullet_favorite)
                         val bulletRecent = stringResource(R.string.contact_bullet_recent)
-                        RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info) {
+                        RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info, isCompact = true) {
                             if (fullContact != null) {
                                 val phoneEntries = remember(fullContact) {
                                     val fc = fullContact ?: return@remember emptyList()
@@ -679,6 +773,7 @@ fun ContactDetailsScreen(
                                             },
                                             leadingIcon = Icons.Default.Phone,
                                             trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
+                                            isCompact = true,
                                             onClick = { callLauncher.dial(number, fullContact) },
                                             onLongClick = { showMenu = true }
                                         )
@@ -748,6 +843,7 @@ fun ContactDetailsScreen(
                                             headline = email,
                                             supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) stringResource(R.string.contact_bullet_favorite) else "",
                                             leadingIcon = Icons.Default.Email,
+                                            isCompact = true,
                                             onClick = { emailLauncher.sendEmail(email, fullContact) },
                                             onLongClick = { showMenu = true }
                                         )
@@ -791,6 +887,7 @@ fun ContactDetailsScreen(
                                         headline = formatPhoneNumber(phoneNumber),
                                         supporting = stringResource(R.string.label_unknown_number),
                                         leadingIcon = Icons.Default.Phone,
+                                        isCompact = true,
                                         onClick = { callLauncher.dial(phoneNumber, null) },
                                         onLongClick = { showMenu = true }
                                     )
@@ -841,13 +938,14 @@ fun ContactDetailsScreen(
 
                     if (fullContact != null && (fullContact!!.events.isNotEmpty() || fullContact!!.addresses.isNotEmpty())) {
                         item {
-                            RivoExpressiveCard(title = stringResource(R.string.contact_events_title), icon = Icons.Default.Event) {
+                            RivoExpressiveCard(title = stringResource(R.string.contact_events_title), icon = Icons.Default.Event, isCompact = true) {
                                 fullContact!!.events.forEachIndexed { index, event ->
                                     val isBirthday = event.type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
                                     RivoListItem(
                                         headline = event.date,
                                         supporting = event.label ?: if (isBirthday) stringResource(R.string.contact_event_birthday) else stringResource(R.string.contact_event_generic),
                                         leadingIcon = if (isBirthday) Icons.Outlined.Cake else Icons.Outlined.Event,
+                                        isCompact = true,
                                         onClick = { clipboardManager.setText(AnnotatedString(event.date)) }
                                     )
                                     if (index < fullContact!!.events.size - 1 || fullContact!!.addresses.isNotEmpty()) {
@@ -859,6 +957,7 @@ fun ContactDetailsScreen(
                                         headline = address,
                                         supporting = stringResource(R.string.label_address),
                                         leadingIcon = Icons.Default.LocationOn,
+                                        isCompact = true,
                                         onClick = {
                                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$address"))
                                             context.startActivity(intent)
@@ -875,7 +974,7 @@ fun ContactDetailsScreen(
                     if (fullContact?.notes?.isNotBlank() == true) {
                         item {
                             var showNotesMenu by remember { mutableStateOf(false) }
-                            RivoExpressiveCard(title = stringResource(R.string.label_notes), icon = Icons.AutoMirrored.Filled.Notes) {
+                            RivoExpressiveCard(title = stringResource(R.string.label_notes), icon = Icons.AutoMirrored.Filled.Notes, isCompact = true) {
                                 Box {
                                     Text(
                                         text = fullContact!!.notes!!,
@@ -885,8 +984,8 @@ fun ContactDetailsScreen(
                                                 onClick = { showNotesMenu = true },
                                                 onLongClick = { showNotesMenu = true }
                                             )
-                                            .padding(16.dp),
-                                        style = MaterialTheme.typography.bodyLarge
+                                            .padding(12.dp),
+                                        style = MaterialTheme.typography.bodyMedium
                                     )
 
                                     DropdownMenu(
@@ -912,7 +1011,8 @@ fun ContactDetailsScreen(
                         val dateFormat = remember { SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault()) }
                         RivoExpressiveCard(
                             title = "Call Notes (${callNotes.size})",
-                            icon = Icons.Outlined.EditNote
+                            icon = Icons.Outlined.EditNote,
+                            isCompact = true
                         ) {
                             Column(modifier = Modifier.animateContentSize()) {
                                 if (callNotes.isEmpty()) {
@@ -920,7 +1020,7 @@ fun ContactDetailsScreen(
                                         text = "No call notes for this contact",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(16.dp)
+                                        modifier = Modifier.padding(12.dp)
                                     )
                                 } else {
                                     callNotes.forEachIndexed { index, noteItem ->
@@ -928,6 +1028,7 @@ fun ContactDetailsScreen(
                                             headline = noteItem.note,
                                             supporting = dateFormat.format(Date(noteItem.timestamp)),
                                             leadingIcon = Icons.AutoMirrored.Filled.Notes,
+                                            isCompact = true,
                                             onClick = {},
                                             trailingContent = {
                                                 IconButton(
@@ -963,7 +1064,7 @@ fun ContactDetailsScreen(
 
                     if (contactLogs.isNotEmpty()) {
                         item {
-                            RivoExpressiveCard(title = stringResource(R.string.contact_recent_activity_title), icon = Icons.Default.History) {
+                            RivoExpressiveCard(title = stringResource(R.string.contact_recent_activity_title), icon = Icons.Default.History, isCompact = true) {
                                 Column(modifier = Modifier.animateContentSize()) {
                                     contactLogs.take(3).forEachIndexed { index, log ->
                                         CallLogTileSimple(
@@ -996,26 +1097,92 @@ fun ContactDetailsScreen(
                         }
                     }
 
+                    item {
+                        com.grinch.rivo4.view.components.ad.BannerAd()
+                    }
+
                     if (contactRecordings.isNotEmpty()) {
                         item {
                             RivoExpressiveCard(
                                 title = "Call Recordings (${contactRecordings.size})",
-                                icon = Icons.Outlined.Mic
+                                icon = Icons.Outlined.Mic,
+                                isCompact = true
                             ) {
-                                Column(modifier = Modifier.animateContentSize()) {
-                                    contactRecordings.take(3).forEachIndexed { index, file ->
-                                        RivoListItem(
-                                            headline = file.nameWithoutExtension,
-                                            supporting = SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault()).format(Date(file.lastModified())),
-                                            leadingIcon = Icons.Outlined.AudioFile,
-                                            trailingIcon = Icons.Default.Share,
-                                            onClick = {
-                                                CallRecorder.share(context, file, "Share Recording")
-                                            }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .animateContentSize()
+                                        .padding(vertical = 4.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    contactRecordings.take(3).forEach { file ->
+                                        val isCurrentActive = activePlayingFile?.absolutePath == file.absolutePath
+                                        CallRecordEntryCard(
+                                            file = file,
+                                            isCurrentActive = isCurrentActive,
+                                            isPlaying = isCurrentActive && isRecordingPlaying,
+                                            currentPositionMs = if (isCurrentActive) currentPositionMs else 0,
+                                            durationMs = if (isCurrentActive) recordingDurationMs else 0,
+                                            playbackSpeed = playbackSpeed,
+                                            onCardClick = {
+                                                if (isCurrentActive) {
+                                                    mediaPlayer?.let { mp ->
+                                                        if (mp.isPlaying) {
+                                                            mp.pause()
+                                                            isRecordingPlaying = false
+                                                        } else {
+                                                            mp.start()
+                                                            isRecordingPlaying = true
+                                                        }
+                                                    }
+                                                } else {
+                                                    activePlayingFile = file
+                                                }
+                                            },
+                                            onPlayPauseClick = {
+                                                if (isCurrentActive) {
+                                                    mediaPlayer?.let { mp ->
+                                                        if (mp.isPlaying) {
+                                                            mp.pause()
+                                                            isRecordingPlaying = false
+                                                        } else {
+                                                            mp.start()
+                                                            isRecordingPlaying = true
+                                                        }
+                                                    }
+                                                } else {
+                                                    activePlayingFile = file
+                                                }
+                                            },
+                                            onSeekTo = { posMs ->
+                                                if (isCurrentActive) {
+                                                    currentPositionMs = posMs
+                                                    mediaPlayer?.seekTo(posMs)
+                                                }
+                                            },
+                                            onRewind10 = {
+                                                if (isCurrentActive) {
+                                                    val newPos = (currentPositionMs - 10000).coerceAtLeast(0)
+                                                    currentPositionMs = newPos
+                                                    mediaPlayer?.seekTo(newPos)
+                                                }
+                                            },
+                                            onForward10 = {
+                                                if (isCurrentActive) {
+                                                    val newPos = (currentPositionMs + 10000).coerceAtMost(recordingDurationMs)
+                                                    currentPositionMs = newPos
+                                                    mediaPlayer?.seekTo(newPos)
+                                                }
+                                            },
+                                            onSpeedChange = { newSpeed ->
+                                                playbackSpeed = newSpeed
+                                                mediaPlayer?.let { mp ->
+                                                    runCatching { mp.playbackParams = mp.playbackParams.setSpeed(newSpeed) }
+                                                }
+                                            },
+                                            onShareClick = { CallRecorder.share(context, file, "Share Recording") },
+                                            onDeleteClick = { pendingDeleteRecording = file }
                                         )
-                                        if (index < contactRecordings.size - 1 && index < 2) {
-                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                        }
                                     }
                                     if (contactRecordings.size > 3) {
                                         TextButton(
@@ -1034,7 +1201,8 @@ fun ContactDetailsScreen(
                         item {
                             RivoExpressiveCard(
                                 title = stringResource(R.string.label_social_apps),
-                                icon = Icons.AutoMirrored.Filled.Chat
+                                icon = Icons.AutoMirrored.Filled.Chat,
+                                isCompact = true
                             ) {
                                 Row(
                                     modifier = Modifier
@@ -1065,14 +1233,16 @@ fun ContactDetailsScreen(
                     if (fullContact == null) {
                         item {
                             RivoExpressiveCard(
-                                title = stringResource(R.string.contact_settings_title),
-                                icon = Icons.Default.Settings
+                                title = stringResource(R.string.contact_personalization_title),
+                                icon = Icons.Default.Tune,
+                                isCompact = true
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     RivoListItem(
                                         headline = "Callback Reminder",
                                         supporting = "Schedule a reminder to call back",
                                         leadingIcon = Icons.Outlined.Alarm,
+                                        isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = { showReminderDialog = true }
                                     )
@@ -1100,12 +1270,10 @@ fun ContactDetailsScreen(
                                 runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
                             } ?: defaultRingtoneLabel
 
-                            val contactNumbers = fc.phoneNumbers
-                            val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
-
                             RivoExpressiveCard(
-                                title = stringResource(R.string.contact_settings_title),
-                                icon = Icons.Default.Settings
+                                title = stringResource(R.string.contact_personalization_title),
+                                icon = Icons.Default.Tune,
+                                isCompact = true
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     // 1. Custom Ringtone
@@ -1113,6 +1281,7 @@ fun ContactDetailsScreen(
                                         headline = stringResource(R.string.contact_custom_ringtone),
                                         supporting = currentRingtone,
                                         leadingIcon = Icons.Default.MusicNote,
+                                        isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = {
                                             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
@@ -1141,39 +1310,30 @@ fun ContactDetailsScreen(
                                         headline = "Callback Reminder",
                                         supporting = "Schedule a reminder to call back",
                                         leadingIcon = Icons.Outlined.Alarm,
+                                        isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = { showReminderDialog = true }
                                     )
+                                }
+                            }
+                        }
 
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        item {
+                            val contactNumbers = fc.phoneNumbers
+                            val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
 
-                                    // 4. Share Contact
-                                    RivoListItem(
-                                        headline = shareContactLabel,
-                                        supporting = "Share vCard contact file",
-                                        leadingIcon = Icons.Default.Share,
-                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        onClick = shareContact
-                                    )
-
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-
-                                    // 5. Contact QR Code
-                                    RivoListItem(
-                                        headline = stringResource(R.string.contact_qr_code),
-                                        supporting = "Display contact QR code",
-                                        leadingIcon = Icons.Outlined.QrCode2,
-                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        onClick = { showQrDialog = true }
-                                    )
-
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-
-                                    // 6. Storage Location
+                            RivoExpressiveCard(
+                                title = stringResource(R.string.contact_privacy_title),
+                                icon = Icons.Default.Security,
+                                isCompact = true
+                            ) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    // 1. Storage Location
                                     RivoListItem(
                                         headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
                                         supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
                                         leadingIcon = if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
+                                        isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = {
                                             if (fc.isPrivate) {
@@ -1185,7 +1345,7 @@ fun ContactDetailsScreen(
                                         }
                                     )
 
-                                    // 7. Hide Completely (if private)
+                                    // 2. Hide Completely (if private)
                                     if (fc.isPrivate) {
                                         val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
@@ -1193,6 +1353,7 @@ fun ContactDetailsScreen(
                                             headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
                                             supporting = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial $secretCode to unlock)",
                                             leadingIcon = if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                            isCompact = true,
                                             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                             onClick = {
                                                 contactsViewModel.setContactHidden(fc.id, !fc.isHidden)
@@ -1203,11 +1364,12 @@ fun ContactDetailsScreen(
 
                                     RivoDivider(Modifier.padding(horizontal = 16.dp))
 
-                                    // 8. Block / Unblock Number
+                                    // 3. Block / Unblock Number
                                     RivoListItem(
                                         headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
                                         supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
                                         leadingIcon = if (contactBlocked) Icons.Default.CheckCircle else Icons.Default.Block,
+                                        isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = {
                                             contactNumbers.forEach { number ->
@@ -1220,24 +1382,38 @@ fun ContactDetailsScreen(
                                             blockedVersion++
                                         }
                                     )
-
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-
-                                    // 9. Delete Contact
-                                    RivoListItem(
-                                        headline = stringResource(R.string.action_delete),
-                                        supporting = "Remove contact from device",
-                                        leadingIcon = Icons.Default.Delete,
-                                        headlineColor = MaterialTheme.colorScheme.error,
-                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        onClick = { showDeleteDialog = true }
-                                    )
                                 }
+                            }
+                        }
+
+                        item {
+                            OutlinedButton(
+                                onClick = { showDeleteDialog = true },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 4.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
+                                shape = MaterialTheme.shapes.large
+                            ) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.action_delete),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                         }
                     }
 
-                    item { Spacer(modifier = Modifier.height(100.dp)) }
+                    item { Spacer(modifier = Modifier.height(48.dp)) }
                 }
             }
 

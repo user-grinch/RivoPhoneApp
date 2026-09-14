@@ -509,15 +509,10 @@ fun DialPadScreen(
             onDismissRequest = { showSocialDialog = false },
             title = stringResource(R.string.dialpad_connect_via_social),
             icon = Icons.AutoMirrored.Filled.Chat,
-            dismissButton = {
-                TextButton(
-                    onClick = { showSocialDialog = false },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Text(stringResource(R.string.action_close))
-                }
-            }
+            dismissAction = RivoDialogAction(
+                label = stringResource(R.string.action_close),
+                onClick = { showSocialDialog = false }
+            )
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

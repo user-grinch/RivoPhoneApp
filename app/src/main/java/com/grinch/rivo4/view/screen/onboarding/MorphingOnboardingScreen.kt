@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Dialpad
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.outlined.CheckCircleOutline
@@ -50,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,6 +76,7 @@ import com.grinch.rivo4.controller.permission.PermissionActionType
 import com.grinch.rivo4.controller.permission.PermissionCheckItem
 import com.grinch.rivo4.controller.permission.PermissionChecklistHelper
 import com.grinch.rivo4.controller.util.getDefaultDialerIntent
+import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.RivoMorphShape
@@ -762,19 +766,25 @@ private fun SetupCompleteStage(
     val roundness = LocalCardRoundness.current
     val totalGranted = essentialItems.count { it.isGranted } + recommendedItems.count { it.isGranted }
     val totalItems = essentialItems.size + recommendedItems.size
+    var showTipJarDialog by remember { mutableStateOf(false) }
+
+    if (showTipJarDialog) {
+        TipJarDialog(onDismissRequest = { showTipJarDialog = false })
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
-            .padding(24.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f, fill = false).heightIn(min = 16.dp))
 
         Surface(
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(88.dp),
             shape = CircleShape,
             color = Color(0xFF386A20),
             shadowElevation = 4.dp
@@ -783,13 +793,13 @@ private fun SetupCompleteStage(
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
+                    modifier = Modifier.size(48.dp),
                     tint = Color.White
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "You're All Set!",
@@ -799,17 +809,81 @@ private fun SetupCompleteStage(
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Rivo Phone is ready. You have configured $totalGranted of $totalItems features. You can always review or update permissions anytime in Settings.",
-            style = MaterialTheme.typography.bodyLarge,
+            text = "Rivo Phone is ready ($totalGranted of $totalItems features configured). You can adjust any permission anytime in Settings.",
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Open Source & Privacy Card
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(rivoCornerDp(20, roundness)),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 2.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "100% Free & Open Source",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Rivo is built with zero trackers, zero telemetry, and complete privacy. Your calls and contacts strictly stay on your device.\n\nWe depend entirely on community tips and donations to keep development independent and free for everyone!",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 18.sp
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                OutlinedButton(
+                    onClick = { showTipJarDialog = true },
+                    shape = RoundedCornerShape(rivoCornerDp(16, roundness)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Support Rivo (Tip Jar)",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f, fill = false).heightIn(min = 20.dp))
 
         Button(
             onClick = onFinish,

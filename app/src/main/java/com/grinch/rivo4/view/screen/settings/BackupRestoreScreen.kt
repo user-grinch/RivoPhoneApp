@@ -161,6 +161,10 @@ fun BackupRestoreScreen(
                     )
                 }
             }
+
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
+            }
         }
     }
 
@@ -178,7 +182,6 @@ fun BackupRestoreScreen(
             title = stringResource(R.string.settings_manage_standardize_numbers),
             message = stringResource(R.string.settings_manage_standardize_confirm_message),
             confirmLabel = stringResource(R.string.action_confirm),
-            dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Outlined.Numbers
         )
     }

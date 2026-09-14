@@ -69,6 +69,7 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.lock.AppLockManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
@@ -233,6 +234,8 @@ fun AppLockScreen(
                     )
                 }
             }
+
+            com.grinch.rivo4.view.components.ad.BannerAd()
         }
     }
 
@@ -246,39 +249,31 @@ fun AppLockScreen(
             onDismissRequest = { showPinDialog = false },
             title = if (!isConfirming) "Set 4-Digit App PIN" else "Confirm Your PIN",
             icon = Icons.Default.Pin,
-            dismissButton = {
-                TextButton(onClick = { showPinDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        if (!isConfirming) {
-                            if (newPin.length == 4) {
-                                isConfirming = true
-                                errorMessage = ""
-                            } else {
-                                errorMessage = "PIN must be 4 digits"
-                            }
+            confirmAction = RivoDialogAction(
+                label = if (!isConfirming) "Next" else "Save PIN",
+                enabled = if (!isConfirming) newPin.length == 4 else confirmPin.length == 4,
+                dismissOnClick = isConfirming,
+                onClick = {
+                    if (!isConfirming) {
+                        if (newPin.length == 4) {
+                            isConfirming = true
+                            errorMessage = ""
                         } else {
-                            if (confirmPin == newPin) {
-                                prefs.setAppLockPin(newPin)
-                                prefs.setAppLockEnabled(true)
-                                Toast.makeText(context, "App PIN saved", Toast.LENGTH_SHORT).show()
-                                showPinDialog = false
-                            } else {
-                                errorMessage = "PINs do not match. Try again."
-                                confirmPin = ""
-                            }
+                            errorMessage = "PIN must be 4 digits"
                         }
-                    },
-                    enabled = if (!isConfirming) newPin.length == 4 else confirmPin.length == 4,
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(if (!isConfirming) "Next" else "Save PIN")
+                    } else {
+                        if (confirmPin == newPin) {
+                            prefs.setAppLockPin(newPin)
+                            prefs.setAppLockEnabled(true)
+                            Toast.makeText(context, "App PIN saved", Toast.LENGTH_SHORT).show()
+                            showPinDialog = false
+                        } else {
+                            errorMessage = "PINs do not match. Try again."
+                            confirmPin = ""
+                        }
+                    }
                 }
-            }
+            )
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                 Text(

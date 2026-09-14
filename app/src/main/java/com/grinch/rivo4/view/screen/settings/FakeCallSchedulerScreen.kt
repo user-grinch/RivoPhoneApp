@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.outlined.Vibration
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -470,6 +469,10 @@ fun FakeCallSchedulerScreen(
                         }
                     }
                 }
+
+                item {
+                    com.grinch.rivo4.view.components.ad.BannerAd()
+                }
             }
         } else if (schedules.isEmpty()) {
             // Empty State (Expressive MD3)
@@ -550,6 +553,8 @@ fun FakeCallSchedulerScreen(
                             Text(stringResource(R.string.fake_call_test_now))
                         }
                     }
+
+                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
             }
         } else {
@@ -872,6 +877,10 @@ fun FakeCallSchedulerScreen(
                         }
                     }
                 }
+
+                item {
+                    com.grinch.rivo4.view.components.ad.BannerAd()
+                }
             }
         }
     }
@@ -929,45 +938,31 @@ fun FakeCallSchedulerScreen(
             is24Hour = DateFormat.is24HourFormat(context)
         )
 
-        AlertDialog(
+        RivoDialog(
             onDismissRequest = { showTimePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val cal = Calendar.getInstance().apply {
-                            timeInMillis = targetTimestamp
-                            set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-                            set(Calendar.MINUTE, timePickerState.minute)
-                            set(Calendar.SECOND, 0)
-                        }
-                        targetTimestamp = cal.timeInMillis
-                        showTimePicker = false
+            title = stringResource(R.string.fake_call_select_time),
+            icon = Icons.Outlined.Schedule,
+            confirmAction = RivoDialogAction(
+                label = stringResource(R.string.action_done),
+                onClick = {
+                    val cal = Calendar.getInstance().apply {
+                        timeInMillis = targetTimestamp
+                        set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+                        set(Calendar.MINUTE, timePickerState.minute)
+                        set(Calendar.SECOND, 0)
                     }
-                ) {
-                    Text(stringResource(R.string.action_done))
+                    targetTimestamp = cal.timeInMillis
+                    showTimePicker = false
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showTimePicker = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            },
-            title = {
-                Text(
-                    text = stringResource(R.string.fake_call_select_time),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            text = {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    TimePicker(state = timePickerState)
-                }
+            )
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                TimePicker(state = timePickerState)
             }
-        )
+        }
     }
 
     // Contact Picker Dialog
@@ -1004,10 +999,6 @@ fun FakeCallSchedulerScreen(
                         snackbarHostState.showSnackbar(context.getString(R.string.fake_call_cancelled))
                     }
                 }
-            ),
-            dismissAction = RivoDialogAction(
-                label = stringResource(R.string.action_cancel),
-                onClick = { showClearAllConfirm = false }
             )
         ) {}
     }

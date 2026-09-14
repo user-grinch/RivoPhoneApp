@@ -210,6 +210,9 @@ fun CallLogFullScreen(
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
+                            item {
+                                com.grinch.rivo4.view.components.ad.BannerAd()
+                            }
                             groupedLogs.forEach { (header, logsInGroup) ->
                                 item {
                                     RivoSectionHeader(title = header)

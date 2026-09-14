@@ -49,7 +49,7 @@ fun BottomNavScreen(
         mutableIntStateOf(prefs.getFloatingBarRoundness())
     }
     var isBlurEnabled by remember(settingsState) {
-        mutableStateOf(prefs.isFloatingBarBlurEnabled())
+        mutableStateOf(prefs.isUiBlurEnabled())
     }
     var iconOnly by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false))
@@ -134,7 +134,6 @@ fun BottomNavScreen(
                             headline = stringResource(R.string.settings_floating_bar_roundness),
                             supporting = stringResource(R.string.settings_floating_bar_roundness_supporting),
                             value = floatingBarRoundness.toFloat(),
-                            isBlurEnabled = isBlurEnabled,
                             iconOnly = iconOnly,
                             onValueChange = { floatingBarRoundness = it.roundToInt() },
                             onValueChangeFinished = {
@@ -149,7 +148,7 @@ fun BottomNavScreen(
                             checked = isBlurEnabled,
                             onCheckedChange = {
                                 isBlurEnabled = it
-                                prefs.setFloatingBarBlurEnabled(it)
+                                prefs.setUiBlurEnabled(it)
                             }
                         )
                         Surface(
@@ -371,6 +370,10 @@ fun BottomNavScreen(
                         }
                     )
                 }
+            }
+
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
             }
 
             item {

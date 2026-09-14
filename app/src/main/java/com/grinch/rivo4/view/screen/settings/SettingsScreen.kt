@@ -32,6 +32,7 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
+import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
@@ -62,6 +63,8 @@ fun SettingsScreen(
 
     var enableAds by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
     var showDisableAdsDialog by remember { mutableStateOf(false) }
+    var showTipJarDialog by remember { mutableStateOf(false) }
+    val isSupporter = remember(settingsState) { prefs.isSupporter() }
 
     Scaffold(
         topBar = {
@@ -325,6 +328,13 @@ fun SettingsScreen(
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                     }
                     RivoListItem(
+                        headline = if (isSupporter) "Rivo Supporter ⭐" else "Support Us",
+                        supporting = if (isSupporter) "Thank you for supporting Rivo!" else "Support development via Tip Jar or Patreon",
+                        leadingIcon = if (isSupporter) Icons.Outlined.Star else Icons.Outlined.Favorite,
+                        onClick = { showTipJarDialog = true }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
                         headline = "Rate on Google Play",
                         supporting = "Support Rivo on Google Play Store",
                         leadingIcon = Icons.Default.Star,
@@ -394,6 +404,10 @@ fun SettingsScreen(
                     }
                 }
             }
+        }
+
+        if (showTipJarDialog) {
+            TipJarDialog(onDismissRequest = { showTipJarDialog = false })
         }
     }
 }

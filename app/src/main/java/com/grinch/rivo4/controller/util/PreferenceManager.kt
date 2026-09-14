@@ -331,6 +331,8 @@ class PreferenceManager(context: Context) {
         const val KEY_MERGE_FAVORITES_RECENTS = "merge_favorites_recents"
         const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
         const val KEY_ENABLE_ADS = "enable_ads"
+        const val KEY_IS_SUPPORTER = "is_supporter"
+        const val KEY_POST_CALL_SCREEN = "post_call_screen"
         const val KEY_NAV_BAR_STYLE = "nav_bar_style"
         const val NAV_BAR_STYLE_STANDARD = 0
         const val NAV_BAR_STYLE_TOOLBAR = 1
@@ -367,6 +369,7 @@ class PreferenceManager(context: Context) {
         const val KEY_FLOATING_BAR_ROUNDNESS = "floating_bar_roundness"
         const val DEFAULT_FLOATING_BAR_ROUNDNESS = 32
         const val KEY_FLOATING_BAR_BLUR = "floating_bar_blur"
+        const val KEY_UI_BLUR = "ui_blur"
 
         const val KEY_SWIPE_ACTIONS_ENABLED = "swipe_actions_enabled"
         const val KEY_SWIPE_RIGHT_ACTION = "swipe_right_action"
@@ -404,10 +407,15 @@ class PreferenceManager(context: Context) {
     fun getFloatingBarRoundness(): Int = getInt(KEY_FLOATING_BAR_ROUNDNESS, DEFAULT_FLOATING_BAR_ROUNDNESS)
     fun setFloatingBarRoundness(roundness: Int) = setInt(KEY_FLOATING_BAR_ROUNDNESS, roundness)
 
-    fun isFloatingBarBlurEnabled(): Boolean = getBoolean(KEY_FLOATING_BAR_BLUR, false)
-    fun setFloatingBarBlurEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_BAR_BLUR, enabled)
+    fun isFloatingBarBlurEnabled(): Boolean = isUiBlurEnabled()
+    fun setFloatingBarBlurEnabled(enabled: Boolean) = setUiBlurEnabled(enabled)
+    fun isUiBlurEnabled(): Boolean = getBoolean(KEY_UI_BLUR, getBoolean(KEY_FLOATING_BAR_BLUR, false))
+    fun setUiBlurEnabled(enabled: Boolean) {
+        setBoolean(KEY_UI_BLUR, enabled)
+        setBoolean(KEY_FLOATING_BAR_BLUR, enabled)
+    }
 
-    fun isSwipeActionsEnabled(): Boolean = getBoolean(KEY_SWIPE_ACTIONS_ENABLED, true)
+    fun isSwipeActionsEnabled(): Boolean = getBoolean(KEY_SWIPE_ACTIONS_ENABLED, false)
     fun setSwipeActionsEnabled(enabled: Boolean) = setBoolean(KEY_SWIPE_ACTIONS_ENABLED, enabled)
 
     fun getSwipeRightAction(): Int = getInt(KEY_SWIPE_RIGHT_ACTION, SWIPE_ACTION_CALL)
@@ -416,8 +424,14 @@ class PreferenceManager(context: Context) {
     fun getSwipeLeftAction(): Int = getInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     fun setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, action)
 
+    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, false)
+    fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
+
+    fun isPostCallScreenEnabled(): Boolean = getBoolean(KEY_POST_CALL_SCREEN, true)
+    fun setPostCallScreenEnabled(enabled: Boolean) = setBoolean(KEY_POST_CALL_SCREEN, enabled)
+
     fun resetSwipeActions() {
-        setBoolean(KEY_SWIPE_ACTIONS_ENABLED, true)
+        setBoolean(KEY_SWIPE_ACTIONS_ENABLED, false)
         setInt(KEY_SWIPE_RIGHT_ACTION, SWIPE_ACTION_CALL)
         setInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     }

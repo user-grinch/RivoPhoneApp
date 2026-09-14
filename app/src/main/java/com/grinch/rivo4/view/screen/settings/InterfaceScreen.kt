@@ -2,6 +2,8 @@ package com.grinch.rivo4.view.screen.settings
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -68,6 +70,9 @@ fun InterfaceScreen(
     }
     var cardRoundness by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5))
+    }
+    var uiBlurEnabled by remember(settingsState) {
+        mutableStateOf(prefs.isUiBlurEnabled())
     }
 
     val presetColors = listOf(
@@ -201,7 +206,52 @@ fun InterfaceScreen(
                     }
                 }
 
-                // 3. Related Styling Links
+                // 3. Visual Effects & Blur
+                item {
+                    RivoExpressiveCard(title = stringResource(R.string.settings_group_effects)) {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_ui_blur_title),
+                            supporting = stringResource(R.string.settings_ui_blur_supporting),
+                            leadingIcon = Icons.Outlined.BlurOn,
+                            checked = uiBlurEnabled,
+                            onCheckedChange = {
+                                uiBlurEnabled = it
+                                prefs.setUiBlurEnabled(it)
+                            }
+                        )
+                        if (uiBlurEnabled) {
+                            RivoDivider(Modifier.padding(horizontal = 16.dp))
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.AutoAwesome,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.settings_ui_blur_active_hint),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 4. Related Styling Links
                 item {
                     RivoExpressiveCard(title = "More Display Settings") {
                         RivoListItem(
@@ -218,6 +268,10 @@ fun InterfaceScreen(
                             onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
                         )
                     }
+                }
+
+                item {
+                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
 
                 item { Spacer(modifier = Modifier.height(32.dp)) }

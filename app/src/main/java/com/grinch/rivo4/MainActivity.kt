@@ -124,10 +124,6 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                             defaultTransitions = getAppTransition(transitionStyle)
                         )
 
-                        var showPatreonPrompt by remember { 
-                            mutableStateOf(!prefs.getBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, false)) 
-                        }
-
                         var showRatePrompt by remember { mutableStateOf(false) }
                         val rateShown = remember { prefs.getBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, false) }
 
@@ -179,40 +175,6 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                             ) {
                                 Text(
                                     text = "If Rivo has made managing your calls better, please consider leaving a 5-star rating on Google Play. Your support helps us keep the app free and independent!",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-                        if (showPatreonPrompt && !showRatePrompt) {
-                            val context = LocalContext.current
-                            RivoDialog(
-                                onDismissRequest = { 
-                                    prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
-                                    showPatreonPrompt = false 
-                                },
-                                title = stringResource(R.string.patreon_prompt_title),
-                                icon = Icons.Default.Favorite,
-                                confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = stringResource(R.string.patreon_prompt_confirm),
-                                    onClick = {
-                                        openLink(context, PATREON_URL)
-                                        prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
-                                        showPatreonPrompt = false
-                                    }
-                                ),
-                                dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = stringResource(R.string.patreon_prompt_dismiss),
-                                    onClick = {
-                                        prefs.setBoolean(PreferenceManager.KEY_PATREON_PROMPT_SHOWN, true)
-                                        showPatreonPrompt = false
-                                    }
-                                )
-                            ) {
-                                Text(
-                                    stringResource(R.string.patreon_prompt_body),
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant

@@ -45,7 +45,9 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.AZListScroll
 import com.grinch.rivo4.view.components.BottomBar
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
@@ -286,11 +288,10 @@ fun BatchActionBar(
             onDismissRequest = { showMoveDialog = false },
             title = stringResource(R.string.contact_move_to_storage),
             icon = Icons.AutoMirrored.Filled.DriveFileMove,
-            dismissButton = {
-                TextButton(onClick = { showMoveDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
+            dismissAction = RivoDialogAction(
+                label = stringResource(R.string.action_cancel),
+                onClick = { showMoveDialog = false }
+            )
         ) {
             Surface(
                 onClick = {
@@ -498,33 +499,15 @@ fun ContactContent(
     }
 
     if (showMergeAllDialog) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showMergeAllDialog = false },
+            onConfirm = { contactsVM.mergeAllDuplicates() },
             title = stringResource(R.string.contact_management_merge_all_confirm_title),
-            icon = Icons.Outlined.CallMerge,
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showMergeAllDialog = false
-                        contactsVM.mergeAllDuplicates()
-                    },
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(stringResource(R.string.contact_management_merge_all))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showMergeAllDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            message = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
+            confirmLabel = stringResource(R.string.contact_management_merge_all),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.CallMerge
+        )
     }
 }
 

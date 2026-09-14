@@ -70,6 +70,7 @@ fun CallAccountsScreen(
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
     var floatingBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
     var showRecentsStats by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, true)) }
+    var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var savingCallBg by remember { mutableStateOf(false) }
@@ -273,6 +274,17 @@ fun CallAccountsScreen(
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, it)
                             }
                         )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = "Post-Call Summary",
+                            supporting = "Show call duration and quick actions (call back, SMS, note) after ending a call",
+                            leadingIcon = Icons.Outlined.CallEnd,
+                            checked = postCallSummary,
+                            onCheckedChange = {
+                                postCallSummary = it
+                                prefs.setPostCallScreenEnabled(it)
+                            }
+                        )
                     }
                 }
 
@@ -434,6 +446,10 @@ fun CallAccountsScreen(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
+                }
+
+                item {
+                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
 
                 item {

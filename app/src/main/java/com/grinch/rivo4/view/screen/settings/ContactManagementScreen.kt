@@ -553,132 +553,88 @@ fun ContactManagementScreen(
                 }
             }
 
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
+            }
+
             item { Spacer(Modifier.height(40.dp)) }
         }
     }
 
     // Dialog: Merge All Confirmation
     if (showMergeAllDialog) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showMergeAllDialog = false },
-            title = stringResource(R.string.contact_management_merge_all_confirm_title),
-            icon = Icons.Outlined.CallMerge,
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showMergeAllDialog = false
-                        contactsVM.mergeAllDuplicates()
-                        scope.launch {
-                            snackbarHostState.showSnackbar(context.getString(R.string.contact_management_merge_success, duplicateGroups.size))
-                        }
-                    },
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(stringResource(R.string.contact_management_merge_all))
+            onConfirm = {
+                contactsVM.mergeAllDuplicates()
+                scope.launch {
+                    snackbarHostState.showSnackbar(context.getString(R.string.contact_management_merge_success, duplicateGroups.size))
                 }
             },
-            dismissButton = {
-                TextButton(onClick = { showMergeAllDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            title = stringResource(R.string.contact_management_merge_all_confirm_title),
+            message = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
+            confirmLabel = stringResource(R.string.contact_management_merge_all),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.CallMerge
+        )
     }
 
     // Dialog: Move All Confirmation
     if (showMoveAllConfirmDialog) {
-        RivoDialog(
+        val targetAccount = when (val dest = selectedDestStorage) {
+            is StorageTarget.LocalMemory -> Pair(null, null)
+            is StorageTarget.PrivateStorage -> Pair("private", "com.grinch.rivo4.private")
+            is StorageTarget.SimCard -> Pair(dest.account.name, dest.account.type)
+            is StorageTarget.CloudAccount -> Pair(dest.account.name, dest.account.type)
+        }
+        RivoConfirmationDialog(
             onDismissRequest = { showMoveAllConfirmDialog = false },
-            title = stringResource(R.string.contact_management_move_confirm_title),
-            icon = Icons.AutoMirrored.Filled.DriveFileMove,
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showMoveAllConfirmDialog = false
-                        val targetAccount = when (val dest = selectedDestStorage) {
-                            is StorageTarget.LocalMemory -> Pair(null, null)
-                            is StorageTarget.PrivateStorage -> Pair("private", "com.grinch.rivo4.private")
-                            is StorageTarget.SimCard -> Pair(dest.account.name, dest.account.type)
-                            is StorageTarget.CloudAccount -> Pair(dest.account.name, dest.account.type)
-                        }
-                        contactsVM.moveContactsToStorage(
-                            contactIds = sourceContacts.map { it.id },
-                            accountName = targetAccount.first,
-                            accountType = targetAccount.second
-                        ) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    context.getString(
-                                        R.string.contact_management_move_success,
-                                        sourceContacts.size,
-                                        selectedDestStorage.displayName
-                                    )
-                                )
-                            }
-                        }
-                    },
-                    shape = RoundedCornerShape(16.dp)
+            onConfirm = {
+                contactsVM.moveContactsToStorage(
+                    contactIds = sourceContacts.map { it.id },
+                    accountName = targetAccount.first,
+                    accountType = targetAccount.second
                 ) {
-                    Text("Move All")
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.contact_management_move_success,
+                                sourceContacts.size,
+                                selectedDestStorage.displayName
+                            )
+                        )
+                    }
                 }
             },
-            dismissButton = {
-                TextButton(onClick = { showMoveAllConfirmDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = stringResource(
-                    R.string.contact_management_move_confirm_msg,
-                    sourceContacts.size,
-                    selectedSourceStorage.displayName,
-                    selectedDestStorage.displayName
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            title = stringResource(R.string.contact_management_move_confirm_title),
+            message = stringResource(
+                R.string.contact_management_move_confirm_msg,
+                sourceContacts.size,
+                selectedSourceStorage.displayName,
+                selectedDestStorage.displayName
+            ),
+            confirmLabel = "Move All",
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.AutoMirrored.Filled.DriveFileMove
+        )
     }
 
     // Dialog: Standardize Phone Numbers Confirm
     if (showStandardizeConfirm) {
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { showStandardizeConfirm = false },
-            title = stringResource(R.string.contact_management_standardize_numbers),
-            icon = Icons.Outlined.FormatColorText,
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showStandardizeConfirm = false
-                        contactsVM.formatAllPhoneNumbers()
-                        scope.launch {
-                            snackbarHostState.showSnackbar(context.getString(R.string.settings_manage_standardize_completed))
-                        }
-                    },
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(stringResource(R.string.action_confirm))
+            onConfirm = {
+                contactsVM.formatAllPhoneNumbers()
+                scope.launch {
+                    snackbarHostState.showSnackbar(context.getString(R.string.settings_manage_standardize_completed))
                 }
             },
-            dismissButton = {
-                TextButton(onClick = { showStandardizeConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = stringResource(R.string.settings_manage_standardize_confirm_message),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            title = stringResource(R.string.contact_management_standardize_numbers),
+            message = stringResource(R.string.settings_manage_standardize_confirm_message),
+            confirmLabel = stringResource(R.string.action_confirm),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.FormatColorText
+        )
     }
 
     // Sheet / Dialog: Select specific contacts to move

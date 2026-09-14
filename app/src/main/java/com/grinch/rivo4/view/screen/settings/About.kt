@@ -25,27 +25,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.*
 import com.grinch.rivo4.DISCORD_URL
 import com.grinch.rivo4.GITHUB_URL
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
+import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
 fun AboutScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val isSupporter = remember(settingsState) { prefs.isSupporter() }
+    var showTipJarDialog by remember { mutableStateOf(false) }
     val appInfo = getAppVersion(context)
     val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.25f }
 
@@ -191,20 +199,24 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
 
                 Button(
-                    onClick = { openLink(context, PATREON_URL) },
+                    onClick = { showTipJarDialog = true },
                     modifier = Modifier
                         .weight(1f)
                         .height(52.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = if (isSupporter) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primary,
+                        contentColor = if (isSupporter) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Icon(Icons.Default.Favorite, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Icon(
+                        imageVector = if (isSupporter) Icons.Default.Star else Icons.Default.Favorite,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.about_patreon),
+                        text = if (isSupporter) "Supporter ⭐" else stringResource(R.string.about_patreon),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )
@@ -232,6 +244,8 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 )
             }
 
+            com.grinch.rivo4.view.components.ad.BannerAd()
+
             Text(
                 text = stringResource(R.string.about_copyright),
                 style = MaterialTheme.typography.labelMedium,
@@ -239,6 +253,10 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 12.dp)
             )
+        }
+
+        if (showTipJarDialog) {
+            TipJarDialog(onDismissRequest = { showTipJarDialog = false })
         }
     }
 }

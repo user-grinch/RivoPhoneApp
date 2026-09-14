@@ -177,6 +177,8 @@
     <string name="contact_remove_from_device">Remove this contact from device</string>
     <string name="contact_delete_dialog_title">Delete Contact?</string>
     <string name="contact_delete_dialog_message">Are you sure you want to delete this contact? This action cannot be undone.</string>
+    <string name="contact_personalization_title">Personalization</string>
+    <string name="contact_privacy_title">Privacy &amp; Security</string>
 
     <!-- Contact edit -->
     <string name="contact_create_title">Create Contact</string>
@@ -764,9 +766,16 @@
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Floating Bar Corner Radius</string>
     <string name="settings_floating_bar_roundness_supporting">Tweak the corner roundness and pill shape of the floating navigation bar</string>
-    <string name="settings_floating_bar_blur">Floating Bar Glass Blur</string>
-    <string name="settings_floating_bar_blur_supporting">Applies real-time frosted glass blur behind the floating navigation bar.</string>
-    <string name="settings_floating_bar_blur_warning">Resource intensive and experimental</string>
+    <string name="settings_floating_bar_blur">Translucent Glass Blur</string>
+    <string name="settings_floating_bar_blur_supporting">Applies real-time frosted glass blur across navigation and dialog popups (Global Setting)</string>
+    <string name="settings_floating_bar_blur_warning">Resource intensive on older devices (Android 12+ recommended)</string>
+
+    <!-- Global UI Blur Effects -->
+    <string name="settings_group_effects">Visual Effects</string>
+    <string name="settings_ui_blur_title">Frosted Glass &amp; Blur Effects</string>
+    <string name="settings_ui_blur_supporting">Applies real-time frosted glass blur behind dialog popups, bottom sheets, and the navigation bar (Android 12+)</string>
+    <string name="settings_ui_blur_active_hint">Active across all popups, sheets &amp; navigation bars</string>
+    <string name="settings_nav_blur_global_hint">Controlled by the global UI Blur setting</string>
 
     <!-- Swipe Actions on Contacts & Call Logs -->
     <string name="settings_swipe_actions_title">Swipe Actions</string>

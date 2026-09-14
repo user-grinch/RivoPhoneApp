@@ -32,11 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.CallBackgroundStore
+import com.grinch.rivo4.view.components.ad.AdPreloader
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.screen.ExpressiveCallScreen
@@ -71,6 +73,7 @@ class CallActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         CallBackgroundStore.attach(preferenceManager)
+        AdPreloader.preloadPostCallAd(this@CallActivity)
 
         if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
             CallService.currentCallSession.value == null
@@ -110,6 +113,22 @@ class CallActivity : ComponentActivity() {
                     rememberCallIdentity(displayCall, settingsState)
                 } else {
                     null
+                }
+
+                var lastKnownIdentity by remember { mutableStateOf<CallIdentity?>(null) }
+                var lastConnectTime by remember { mutableLongStateOf(0L) }
+
+                LaunchedEffect(identity) {
+                    if (identity != null) {
+                        lastKnownIdentity = identity
+                    }
+                }
+
+                LaunchedEffect(displaySession?.connectTimeMillis) {
+                    val ct = displaySession?.connectTimeMillis ?: 0L
+                    if (ct > 0) {
+                        lastConnectTime = ct
+                    }
                 }
 
                 val darkTheme = isSystemInDarkTheme()
@@ -175,7 +194,21 @@ class CallActivity : ComponentActivity() {
                                 )
                             }
                             releaseProximityLock()
-                            delay(1200)
+                            val isPostCallEnabled = preferenceManager.isPostCallScreenEnabled()
+                            val currentId = identity ?: lastKnownIdentity
+                            delay(350)
+                            if (isPostCallEnabled && currentId != null) {
+                                val duration = if (lastConnectTime > 0) {
+                                    (System.currentTimeMillis() - lastConnectTime) / 1000
+                                } else 0L
+                                PostCallActivity.start(
+                                    context = this@CallActivity,
+                                    contactName = currentId.name,
+                                    phoneNumber = currentId.number,
+                                    photoUri = currentId.photoUri,
+                                    durationSeconds = duration
+                                )
+                            }
                             dismissCallScreen()
                         }
 
@@ -183,7 +216,21 @@ class CallActivity : ComponentActivity() {
                     }
 
                     if (session == null) {
-                        delay(1200)
+                        val isPostCallEnabled = preferenceManager.isPostCallScreenEnabled()
+                        val currentId = lastKnownIdentity
+                        delay(350)
+                        if (isPostCallEnabled && currentId != null) {
+                            val duration = if (lastConnectTime > 0) {
+                                (System.currentTimeMillis() - lastConnectTime) / 1000
+                            } else 0L
+                            PostCallActivity.start(
+                                context = this@CallActivity,
+                                contactName = currentId.name,
+                                phoneNumber = currentId.number,
+                                photoUri = currentId.photoUri,
+                                durationSeconds = duration
+                            )
+                        }
                         if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED }) {
                             dismissCallScreen()
                         }

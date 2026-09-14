@@ -57,25 +57,22 @@ fun PermissionPopup(
                 permissionLauncher.launch(permissions)
             }
         ),
-        dismissOnBackPress = false,
-        dismissOnClickOutside = false,
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                    }
-                    context.startActivity(intent)
-                    onDismiss()
+        dismissAction = RivoDialogAction(
+            label = stringResource(R.string.permission_popup_settings),
+            onClick = {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
                 }
-            ) {
-                Text(stringResource(R.string.permission_popup_settings))
+                context.startActivity(intent)
+                onDismiss()
             }
-        }
+        ),
+        dismissOnBackPress = false,
+        dismissOnClickOutside = false
     ) {
         Text(
             stringResource(R.string.permission_popup_body),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

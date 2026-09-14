@@ -84,40 +84,32 @@ fun CallbackReminderDialog(
         onDismissRequest = onDismissRequest,
         title = "Callback Reminder",
         icon = Icons.Outlined.Alarm,
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(stringResource(R.string.action_cancel))
+        confirmAction = RivoDialogAction(
+            label = "Set Reminder",
+            onClick = {
+                scope.launch {
+                    reminderManager.scheduleReminder(
+                        phoneNumber = phoneNumber,
+                        contactName = contactName,
+                        delayMinutes = selectedMinutes,
+                        note = noteText.trim().ifEmpty { null }
+                    )
+                    Toast.makeText(
+                        context,
+                        "Reminder set for $selectedLabel",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onReminderScheduled?.invoke()
+                    onDismissRequest()
+                }
             }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    scope.launch {
-                        reminderManager.scheduleReminder(
-                            phoneNumber = phoneNumber,
-                            contactName = contactName,
-                            delayMinutes = selectedMinutes,
-                            note = noteText.trim().ifEmpty { null }
-                        )
-                        Toast.makeText(
-                            context,
-                            "Reminder set for $selectedLabel",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        onReminderScheduled?.invoke()
-                        onDismissRequest()
-                    }
-                },
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Set Reminder")
-            }
-        }
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 text = "Remind to call ${contactName?.ifBlank { null } ?: phoneNumber} in:",
@@ -125,12 +117,10 @@ fun CallbackReminderDialog(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(12.dp))
-
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 presets.forEach { (label, minutes) ->
                     val isSelected = selectedMinutes == minutes
@@ -140,7 +130,7 @@ fun CallbackReminderDialog(
                             selectedMinutes = minutes
                             selectedLabel = label
                         },
-                        label = { Text(label) },
+                        label = { Text(label, style = MaterialTheme.typography.labelMedium) },
                         leadingIcon = if (isSelected) {
                             {
                                 Icon(
@@ -153,12 +143,11 @@ fun CallbackReminderDialog(
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     )
                 }
             }
-
-            Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = noteText,
@@ -167,7 +156,7 @@ fun CallbackReminderDialog(
                 placeholder = { Text("e.g. Call about the proposal") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(14.dp)
             )
         }
     }

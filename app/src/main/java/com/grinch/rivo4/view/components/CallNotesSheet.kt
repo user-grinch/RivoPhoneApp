@@ -118,6 +118,7 @@ fun CallNotesSheet(
         dragHandle = { BottomSheetDefaults.DragHandle() },
         modifier = Modifier.imePadding()
     ) {
+        ApplyDialogBlurBehind()
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -26,7 +26,9 @@ import com.grinch.rivo4.controller.util.BlockedNumber
 import com.grinch.rivo4.controller.util.BlockedNumbersManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
@@ -462,56 +464,49 @@ fun BlockedNumbersScreen(
                 }
             }
 
+            item {
+                com.grinch.rivo4.view.components.ad.BannerAd()
+            }
+
             item { Spacer(Modifier.height(80.dp)) }
         }
     }
 
     if (numberToUnblock != null) {
         val target = numberToUnblock!!
-        RivoDialog(
+        RivoConfirmationDialog(
             onDismissRequest = { numberToUnblock = null },
-            title = stringResource(R.string.action_unblock),
-            icon = Icons.Outlined.LockOpen,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        BlockedNumbersManager.unblockById(context, target.id)
-                        numberToUnblock = null
-                        refreshKey++
-                    }
-                ) {
-                    Text(stringResource(R.string.action_unblock))
-                }
+            onConfirm = {
+                BlockedNumbersManager.unblockById(context, target.id)
+                numberToUnblock = null
+                refreshKey++
             },
-            dismissButton = {
-                TextButton(onClick = { numberToUnblock = null }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-        ) {
-            Text(
-                text = "Unblock ${formatPhoneNumber(target.originalNumber)}?",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+            title = stringResource(R.string.action_unblock),
+            message = "Unblock ${formatPhoneNumber(target.originalNumber)}?",
+            confirmLabel = stringResource(R.string.action_unblock),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.LockOpen
+        )
     }
 
     if (isProcessingFile) {
         RivoDialog(
             onDismissRequest = { },
             title = "Processing...",
-            confirmButton = { }
+            showCloseButton = false,
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(28.dp))
-                Spacer(Modifier.width(16.dp))
-                Text("Processing CSV file...")
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(14.dp))
+                Text("Processing CSV file...", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
@@ -521,15 +516,16 @@ fun BlockedNumbersScreen(
             onDismissRequest = { importStatusMessage = null },
             title = "Blocklist CSV",
             icon = Icons.Outlined.Info,
-            confirmButton = {
-                TextButton(onClick = { importStatusMessage = null }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            }
+            confirmAction = RivoDialogAction(
+                label = stringResource(android.R.string.ok),
+                onClick = { importStatusMessage = null }
+            )
         ) {
             Text(
                 text = importStatusMessage ?: "",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
             )
         }
     }
