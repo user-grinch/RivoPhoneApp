@@ -718,4 +718,6 @@
     <string name="contact_management_card_clean">Adressbuch bereinigen</string>
     <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen um Speicher zu verwalten</string>
     <string name="contact_management_card_dup_sub">Tippen um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
+    <!-- Floating Bar Customization & Blur -->
+    <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>

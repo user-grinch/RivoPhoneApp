@@ -724,4 +724,6 @@
     <string name="contact_management_card_clean">Очистить адресную книгу</string>
     <string name="contact_management_card_clean_sub">Все контакты уникальны • Нажмите для управления памятью</string>
     <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты &amp; данных</string>
+    <!-- Floating Bar Customization & Blur -->
+    <!-- Swipe Actions on Contacts & Call Logs -->
 </resources>
