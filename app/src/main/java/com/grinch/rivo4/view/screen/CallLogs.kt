@@ -207,8 +207,8 @@ fun CallLogFullScreen(
                         LazyColumn(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             item {
                                 com.grinch.rivo4.view.components.ad.BannerAd()
@@ -216,7 +216,6 @@ fun CallLogFullScreen(
                             groupedLogs.forEach { (header, logsInGroup) ->
                                 item {
                                     RivoSectionHeader(title = header)
-                                    Spacer(modifier = Modifier.height(8.dp))
                                     RivoExpressiveCard {
                                         logsInGroup.forEachIndexed { index, lg ->
                                             CallLogTileSimple(

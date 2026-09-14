@@ -44,12 +44,13 @@ fun TipJarDialog(
     val isPurchasing by billingManager.isPurchasing.collectAsState()
 
     var showSuccessBanner by remember { mutableStateOf(false) }
-    val isAlreadySupporter by remember { mutableStateOf(prefs.isSupporter()) }
+    var isAlreadySupporter by remember { mutableStateOf(prefs.isSupporter()) }
 
     LaunchedEffect(Unit) {
         billingManager.purchaseSuccessEvent.collect { success ->
             if (success) {
                 showSuccessBanner = true
+                isAlreadySupporter = true
             }
         }
     }
@@ -101,7 +102,7 @@ fun TipJarDialog(
                 }
             } else {
                 Text(
-                    text = "Rivo is independent and free of predatory data brokers. Your tip directly supports new features, updates, and maintenance.",
+                    text = "Rivo is independent, tracker-free, and open source. Your support directly fuels new features, updates, and maintenance.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -137,13 +138,51 @@ fun TipJarDialog(
                     }
                 )
             } else {
-                // FOSS flavor fallback
+                // FOSS flavor: Google Play single consumables disabled
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .fillMaxWidth(0.96f)
+                        .padding(bottom = 10.dp)
+                ) {
+                    Text(
+                        text = "Google Play in-app purchases are disabled in this FOSS build. You can support Rivo directly on Patreon!",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                    )
+                }
+
                 PatreonOptionCard(
                     onClick = {
                         openExternalLink(context, PATREON_URL)
                         onDismissRequest()
                     }
                 )
+
+                if (!isAlreadySupporter && !showSuccessBanner) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(
+                        onClick = {
+                            prefs.setSupporter(true)
+                            isAlreadySupporter = true
+                            showSuccessBanner = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Star,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Already a Patron? Activate Supporter Badge ⭐",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
             }
         }
     }

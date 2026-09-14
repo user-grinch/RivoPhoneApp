@@ -96,14 +96,14 @@ fun rivoSurfaceStyle(): RivoSurfaceStyle {
 object RivoListItemDefaults {
     val MinHeight: Dp = 48.dp
     val AvatarSize: Dp = 44.dp
-    val CompactAvatarSize: Dp = 42.dp
+    val CompactAvatarSize: Dp = 40.dp
     val HorizontalPadding: Dp = 12.dp
     val CompactHorizontalPadding: Dp = 10.dp
-    val VerticalPadding: Dp = 10.dp
+    val VerticalPadding: Dp = 8.dp
     val CompactVerticalPadding: Dp = 6.dp
-    val Spacing: Dp = 16.dp
-    val CompactSpacing: Dp = 14.dp
-    val TrailingSpacing: Dp = 8.dp
+    val Spacing: Dp = 14.dp
+    val CompactSpacing: Dp = 12.dp
+    val TrailingSpacing: Dp = 10.dp
     val TrailingIconSize: Dp = 20.dp
 
     @Composable
@@ -172,15 +172,15 @@ fun RivoExpressiveCard(
     icon: ImageVector? = null,
     shape: Shape? = null,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
-    isCompact: Boolean = false,
+    isCompact: Boolean = true,
     showCards: Boolean? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val cardsEnabled = showCards ?: rivoSurfaceStyle().showCards
     val resolvedShape = shape ?: MaterialTheme.shapes.extraLarge
 
-    val padding = if (isCompact) 12.dp else 16.dp
-    val spacing = if (isCompact) 8.dp else 12.dp
+    val padding = if (isCompact) 14.dp else 16.dp
+    val spacing = if (isCompact) 10.dp else 12.dp
 
     if (cardsEnabled) {
         Card(
@@ -197,7 +197,7 @@ fun RivoExpressiveCard(
                     RivoSectionHeader(
                         title = title.orEmpty(),
                         icon = icon,
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                     )
                 }
                 content()
@@ -208,7 +208,7 @@ fun RivoExpressiveCard(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(spacing)
         ) {
             if (title != null || icon != null) {
                 RivoSectionHeader(title = title.orEmpty(), icon = icon)
@@ -231,7 +231,7 @@ fun RivoSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
     trailingContent: @Composable (() -> Unit)? = null
 ) {
     Row(
@@ -363,7 +363,7 @@ fun RivoListItem(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
-    isCompact: Boolean = false,
+    isCompact: Boolean = true,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selectable: Boolean = false,

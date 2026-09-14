@@ -19,6 +19,8 @@ import android.provider.CallLog
 
 data class TodayCallStats(
     val totalCalls: Int = 0,
+    val incomingCalls: Int = 0,
+    val outgoingCalls: Int = 0,
     val missedCalls: Int = 0,
     val totalDurationSeconds: Long = 0L
 )
@@ -89,6 +91,16 @@ class CallLogViewModel(
         val startOfDay = cal.timeInMillis
         val todayLogs = logs.filter { it.date >= startOfDay }
         val totalCalls = todayLogs.sumOf { it.count }
+        val incomingCalls = todayLogs.sumOf { entry ->
+            if (entry.types.isNotEmpty()) entry.types.count { it == CallLog.Calls.INCOMING_TYPE }
+            else if (entry.type == CallLog.Calls.INCOMING_TYPE) entry.count
+            else 0
+        }
+        val outgoingCalls = todayLogs.sumOf { entry ->
+            if (entry.types.isNotEmpty()) entry.types.count { it == CallLog.Calls.OUTGOING_TYPE }
+            else if (entry.type == CallLog.Calls.OUTGOING_TYPE) entry.count
+            else 0
+        }
         val missedCalls = todayLogs.sumOf { entry ->
             if (entry.types.isNotEmpty()) entry.types.count { it == CallLog.Calls.MISSED_TYPE }
             else if (entry.type == CallLog.Calls.MISSED_TYPE) entry.count
@@ -97,6 +109,8 @@ class CallLogViewModel(
         val totalDuration = todayLogs.sumOf { it.duration }
         return TodayCallStats(
             totalCalls = totalCalls,
+            incomingCalls = incomingCalls,
+            outgoingCalls = outgoingCalls,
             missedCalls = missedCalls,
             totalDurationSeconds = totalDuration
         )

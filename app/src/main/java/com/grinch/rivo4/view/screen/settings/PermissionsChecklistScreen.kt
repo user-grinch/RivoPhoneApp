@@ -125,8 +125,8 @@ fun PermissionsChecklistScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             item {
                 RivoExpressiveCard {

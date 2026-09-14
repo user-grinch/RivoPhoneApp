@@ -12,13 +12,24 @@ object ServerExtractor {
     const val EXPECTED_SHA256 = "84924bd564a1eb6089c872c7521f968058977f91f5ff02514a8c74aff3210f3a"
     const val ASSET_NAME = "scrcpy-server"
 
+    @Volatile
+    private var isVerified = false
+
     @WorkerThread
     fun ensureServerFile(context: Context, serverPath: String): Boolean {
         val file = File(serverPath)
-        if (file.exists() && verifyServerHash(file)) {
+        if (isVerified && file.exists()) {
             return true
         }
-        return extractFromAssets(context, file)
+        if (file.exists() && verifyServerHash(file)) {
+            isVerified = true
+            return true
+        }
+        val extracted = extractFromAssets(context, file)
+        if (extracted) {
+            isVerified = true
+        }
+        return extracted
     }
 
     private fun extractFromAssets(context: Context, destFile: File): Boolean {

@@ -74,8 +74,8 @@ fun AvatarSettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
                 RivoExpressiveCard(title = stringResource(R.string.settings_interface_avatar_shape)) {

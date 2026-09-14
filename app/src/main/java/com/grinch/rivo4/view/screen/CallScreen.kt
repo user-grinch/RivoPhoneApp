@@ -612,13 +612,18 @@ fun ExpressiveCallScreen(
                     }
                 }
 
+                val onAnswerCallAction = {
+                    CallRecorder.prepare(context)
+                    try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {}
+                }
+
                 when (useCustomUI) {
                     1 -> IncomingCallButtons(
-                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onAnswer = onAnswerCallAction,
                         onDecline = onDeclineCallAction
                     )
                     2 -> IPhoneSwipeToAnswer(
-                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onAnswer = onAnswerCallAction,
                         onDecline = onDeclineCallAction,
                         onMessage = {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -626,11 +631,11 @@ fun ExpressiveCallScreen(
                         }
                     )
                     3 -> VerticalSwipeToAnswer(
-                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onAnswer = onAnswerCallAction,
                         onDecline = onDeclineCallAction
                     )
                     else -> HorizontalSwipeToAnswer(
-                        onAnswer = { try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {} },
+                        onAnswer = onAnswerCallAction,
                         onDecline = onDeclineCallAction
                     )
                 }

@@ -45,6 +45,7 @@ class CallService : InCallService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var redialCount = 0
     private val callStartTimes = mutableMapOf<Call, Long>()
+    private val cachedContactNames = java.util.concurrent.ConcurrentHashMap<String, String>()
     private var flipToSilenceManager: FlipToSilenceManager? = null
 
     private fun getContactBitmap(photoUri: String?): Bitmap? {
@@ -146,11 +147,14 @@ class CallService : InCallService() {
         }
 
         fun answerCall() {
+            instance?.let { CallRecorder.prepare(it) }
             _currentCallSession.value?.call?.answer(VideoProfile.STATE_AUDIO_ONLY)
         }
 
         fun answerRingingCall(endActive: Boolean) {
-            val calls = instance?.getCalls() ?: return
+            val inst = instance ?: return
+            CallRecorder.prepare(inst)
+            val calls = inst.getCalls() ?: return
             val ringing = calls.find { it.state == Call.STATE_RINGING } ?: return
             val others = calls.filter { it != ringing && it.state != Call.STATE_DISCONNECTED }
 
@@ -239,17 +243,35 @@ class CallService : InCallService() {
         if (filter == PreferenceManager.RECORD_FILTER_OUTGOING_ONLY && !isOutgoing) return
 
         val number = call.details.handle?.schemeSpecificPart ?: ""
-        serviceScope.launch(Dispatchers.IO) {
-            val contact = if (number.isNotEmpty()) {
-                try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
-            } else null
-            val isKnownContact = contact != null
+        val immediateName = call.details.callerDisplayName?.takeIf { it.isNotBlank() }
+            ?: cachedContactNames[number]
+            ?: number.ifEmpty { getString(R.string.label_unknown_number) }
 
-            if (filter == PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY && isKnownContact) return@launch
-            if (filter == PreferenceManager.RECORD_FILTER_CONTACTS_ONLY && !isKnownContact) return@launch
+        if (filter == PreferenceManager.RECORD_FILTER_ALL) {
+            // Start recording IMMEDIATELY with 0ms delay
+            CallRecorder.start(this@CallService, immediateName)
+        } else {
+            val cached = cachedContactNames[number]
+            if (cached != null) {
+                if (filter == PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY) return
+                CallRecorder.start(this@CallService, cached)
+            } else {
+                serviceScope.launch(Dispatchers.IO) {
+                    val contact = if (number.isNotEmpty()) {
+                        try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
+                    } else null
+                    val isKnownContact = contact != null
 
-            val name = contact?.name ?: number.ifEmpty { getString(R.string.label_unknown_number) }
-            CallRecorder.start(this@CallService, name)
+                    if (filter == PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY && isKnownContact) return@launch
+                    if (filter == PreferenceManager.RECORD_FILTER_CONTACTS_ONLY && !isKnownContact) return@launch
+
+                    val name = contact?.name ?: immediateName
+                    if (contact?.name != null) {
+                        cachedContactNames[number] = contact.name
+                    }
+                    CallRecorder.start(this@CallService, name)
+                }
+            }
         }
     }
 
@@ -466,6 +488,21 @@ class CallService : InCallService() {
         if (isNumberBlocked(number)) {
             handleBlockedCall(call, number)
             return
+        }
+
+        // Prime CallRecorder asynchronously so recording starts with zero delay when call answers
+        CallRecorder.prepare(this)
+        if (number.isNotEmpty()) {
+            serviceScope.launch(Dispatchers.IO) {
+                try {
+                    val contact = contactsRepository.getContactByNumber(number)
+                    if (contact != null) {
+                        cachedContactNames[number] = contact.name
+                    }
+                } catch (e: Exception) {
+                    Log.e("CallService", "Failed to pre-cache contact name: ${e.message}")
+                }
+            }
         }
 
         updateCallState()

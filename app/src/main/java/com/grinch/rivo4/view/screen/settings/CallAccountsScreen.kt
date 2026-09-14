@@ -116,8 +116,8 @@ fun CallAccountsScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp, start = 16.dp, end = 16.dp, top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                contentPadding = PaddingValues(bottom = 80.dp, start = 16.dp, end = 16.dp, top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 item {
                     val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)

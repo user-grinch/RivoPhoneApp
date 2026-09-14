@@ -65,9 +65,12 @@ object CallRecorder {
 
     const val DIRECTORY_NAME = "Rivo Recordings"
 
+    @Volatile
+    private var lastWorkingSource: Int = MediaRecorder.AudioSource.VOICE_COMMUNICATION
+
     private val audioSources = listOf(
-        MediaRecorder.AudioSource.MIC,
         MediaRecorder.AudioSource.VOICE_COMMUNICATION,
+        MediaRecorder.AudioSource.MIC,
         MediaRecorder.AudioSource.VOICE_RECOGNITION,
         MediaRecorder.AudioSource.DEFAULT,
         MediaRecorder.AudioSource.CAMCORDER,
@@ -220,6 +223,22 @@ object CallRecorder {
         }
     }
 
+    fun prepare(context: Context) {
+        recorderScope.launch {
+            try {
+                getRecordingsDirectory(context)
+                val prefs = try {
+                    val deviceContext = context.createDeviceProtectedStorageContext()
+                    deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+                } catch (e: Exception) { null }
+                val isShizukuEnabled = prefs?.getBoolean("call_recording_shizuku", false) ?: false
+                if (isShizukuEnabled && ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
+                    ScrcpyConfig.ensureServerJar(context)
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
     private suspend fun startInternal(context: Context, label: String): Boolean {
         if (_isRecording.value) return true
         activeContext = context
@@ -231,13 +250,19 @@ object CallRecorder {
         val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val targetFile = File(getRecordingsDirectory(context), "${safeLabel}_$stamp.m4a")
 
-        // Priority 1: Use Shizuku + scrcpy-server for 2-way call audio capture
-        if (ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (e: Exception) { null }
+        val isShizukuEnabled = prefs?.getBoolean("call_recording_shizuku", false) ?: false
+
+        // Priority 1: Use Shizuku + scrcpy-server ONLY if enabled and available
+        if (isShizukuEnabled && ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
             val shizukuSuccess = startShizukuRecording(context, targetFile)
             if (shizukuSuccess) return true
         }
 
-        // Priority 2: Fallback to standard MediaRecorder
+        // Priority 2: Standard MediaRecorder (immediate capture)
         return startMediaRecorder(context, targetFile)
     }
 
@@ -254,7 +279,7 @@ object CallRecorder {
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
             recordingScope = scope
 
-            val service = withTimeoutOrNull(10000L) {
+            val service = withTimeoutOrNull(2500L) {
                 mgr.getShellService()
             } ?: run {
                 Log.w(TAG, "Timed out waiting for Shizuku shell service")
@@ -394,7 +419,8 @@ object CallRecorder {
         val targetBitrate = prefs?.getInt("call_recording_bitrate", 128000) ?: 128000
         val profiles = getFormatProfiles(targetBitrate)
 
-        for (source in audioSources) {
+        val prioritizedSources = (listOf(lastWorkingSource) + audioSources).distinct()
+        for (source in prioritizedSources) {
             for (profile in profiles) {
                 val stagingName = "staging_${targetFile.nameWithoutExtension}.${profile.extension}"
                 val stagingFile = File(context.cacheDir, stagingName)
@@ -424,6 +450,7 @@ object CallRecorder {
                     recorder = instance
                     currentFile = stagingFile
                     isUsingShizuku = false
+                    lastWorkingSource = source
                     _isRecording.value = true
                     CallRecordingService.start(context)
                     startDurationTimer()

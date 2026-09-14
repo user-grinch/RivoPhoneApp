@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -263,16 +265,16 @@ fun FavoriteCircleItem(
     )
 
     Column(
-        modifier = modifier.width(76.dp),
+        modifier = modifier.width(72.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             RivoAvatar(
                 name = contact.name,
                 photoUri = contact.photoUri,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(62.dp)
                     .graphicsLayer { if (isEditing && !isDragging) rotationZ = wiggle }
                     .combinedClickable(
                         enabled = !isEditing,
@@ -284,14 +286,14 @@ fun FavoriteCircleItem(
             if (isEditing) {
                 Surface(
                     onClick = onUnfavorite,
-                    modifier = Modifier.size(24.dp).offset(x = 4.dp, y = (-4).dp),
+                    modifier = Modifier.size(22.dp).offset(x = 3.dp, y = (-3).dp),
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
                     shadowElevation = 3.dp
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(Icons.Default.Remove, stringResource(R.string.content_desc_remove_favorite), modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.Remove, stringResource(R.string.content_desc_remove_favorite), modifier = Modifier.size(13.dp))
                     }
                 }
             }
@@ -546,7 +548,7 @@ fun CallLogFullContent(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 20.dp, end = 8.dp, top = 8.dp, bottom = 4.dp),
+                                        .padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 2.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -597,7 +599,7 @@ fun CallLogFullContent(
                                         state = favRowState,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 8.dp)
+                                            .padding(vertical = 2.dp)
                                             .then(
                                                 if (isEditingFavorites) {
                                                     Modifier.pointerInput(rowDragDropState) {
@@ -606,7 +608,7 @@ fun CallLogFullContent(
                                                             onDrag = { change, offset ->
                                                                 change.consume()
                                                                 rowDragDropState.onDrag(offset)
-                                                            },
+                                                             },
                                                             onDragEnd = {
                                                                 rowDragDropState.onDragInterrupted()
                                                                 prefs.setFavoritesOrder(favItems.map { it.id })
@@ -619,7 +621,7 @@ fun CallLogFullContent(
                                                 }
                                             ),
                                         contentPadding = PaddingValues(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
                                         itemsIndexed(favItems, key = { _, c -> c.id }) { index, contact ->
                                             val dragging = index == rowDragDropState.draggingItemIndex
@@ -655,19 +657,19 @@ fun CallLogFullContent(
                                             item {
                                                 Column(
                                                     modifier = Modifier
-                                                        .width(76.dp)
+                                                        .width(72.dp)
                                                         .clickable { showAddFavoriteDialog = true },
                                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                                    verticalArrangement = Arrangement.spacedBy(6.dp)
                                                 ) {
                                                     Surface(
-                                                        modifier = Modifier.size(64.dp),
+                                                        modifier = Modifier.size(62.dp),
                                                         shape = CircleShape,
                                                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                                         contentColor = MaterialTheme.colorScheme.primary
                                                     ) {
                                                         Box(contentAlignment = Alignment.Center) {
-                                                            Icon(Icons.Default.Add, stringResource(R.string.favorites_add_button), modifier = Modifier.size(28.dp))
+                                                            Icon(Icons.Default.Add, stringResource(R.string.favorites_add_button), modifier = Modifier.size(26.dp))
                                                         }
                                                     }
                                                     Text(
@@ -683,7 +685,7 @@ fun CallLogFullContent(
                                         }
                                     }
                                 }
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
                             }
                         }
 
@@ -817,7 +819,7 @@ fun RecentsDailyStatusHeader(
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -867,7 +869,7 @@ fun RecentsDailyStatusHeader(
                 }
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -890,7 +892,7 @@ fun RecentsDailyStatusHeader(
                     contentColor = if (missedCalls > 0) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 DailyStatChip(
-                    modifier = Modifier.weight(1.1f),
+                    modifier = Modifier.weight(1.15f),
                     icon = Icons.Outlined.Schedule,
                     value = formatShortDuration(totalDurationSeconds),
                     label = "Talk Time",
@@ -918,11 +920,11 @@ private fun DailyStatChip(
         contentColor = contentColor
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(2.dp))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,

@@ -238,76 +238,51 @@ fun ContactSearchContent(
                         LazyColumn(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(bottom = 100.dp)
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             item {
-                                RivoSectionHeader(title = stringResource(R.string.search_results_header), modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+                                RivoSectionHeader(
+                                    title = stringResource(R.string.search_results_header),
+                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                )
                             }
 
                             item {
                                 com.grinch.rivo4.view.components.ad.BannerAd()
-                                Spacer(modifier = Modifier.height(8.dp))
                             }
 
-                            itemsIndexed(filteredContacts) { index, contact ->
-                                val isFirst = index == 0
-                                val isLast = index == filteredContacts.size - 1
-
-                                Surface(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    shape = when {
-                                        roundness <= 0 -> androidx.compose.ui.graphics.RectangleShape
-                                        isFirst && isLast -> RoundedCornerShape(roundness.dp)
-                                        isFirst -> RoundedCornerShape(topStart = roundness.dp, topEnd = roundness.dp)
-                                        isLast -> RoundedCornerShape(bottomStart = roundness.dp, bottomEnd = roundness.dp)
-                                        else -> androidx.compose.ui.graphics.RectangleShape
-                                    },
-                                    color = MaterialTheme.colorScheme.surfaceContainerLow
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(
-                                            top = if (isFirst) 8.dp else 0.dp,
-                                            bottom = if (isLast) 8.dp else 0.dp
-                                        )
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 16.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Box(modifier = Modifier.weight(1f)) {
-                                                RivoListItem(
-                                                    headline = contact.name,
-                                                    supporting = buildString {
-                                                        contact.nickname?.let { append("$it • ") }
-                                                        contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
-                                                    }.ifEmpty { null },
-                                                    avatarName = contact.name,
-                                                    photoUri = contact.photoUri,
-                                                    onClick = {
-                                                        navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                            item {
+                                RivoExpressiveCard {
+                                    filteredContacts.forEachIndexed { index, contact ->
+                                        RivoListItem(
+                                            headline = contact.name,
+                                            supporting = buildString {
+                                                contact.nickname?.let { append("$it • ") }
+                                                contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
+                                            }.ifEmpty { null },
+                                            avatarName = contact.name,
+                                            photoUri = contact.photoUri,
+                                            onClick = {
+                                                navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                            },
+                                            trailingContent = {
+                                                contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                    IconButton(
+                                                        onClick = { callLauncher.dial(num, contact) }
+                                                    ) {
+                                                        Icon(
+                                                            Icons.Rounded.Call,
+                                                            contentDescription = stringResource(R.string.action_call),
+                                                            tint = MaterialTheme.colorScheme.primary,
+                                                            modifier = Modifier.size(20.dp)
+                                                        )
                                                     }
-                                                )
-                                            }
-                                            contact.phoneNumbers.firstOrNull()?.let { num ->
-                                                IconButton(
-                                                    onClick = { 
-                                                        callLauncher.dial(num, contact)
-                                                    },
-                                                    modifier = Modifier.padding(end = 8.dp)
-                                                ) {
-                                                    Icon(
-                                                        Icons.Rounded.Call,
-                                                        null,
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
                                                 }
                                             }
-                                        }
-                                        if (!isLast) {
-                                            RivoDivider(
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-                                            )
+                                        )
+                                        if (index < filteredContacts.size - 1) {
+                                            RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                         }
                                     }
                                 }

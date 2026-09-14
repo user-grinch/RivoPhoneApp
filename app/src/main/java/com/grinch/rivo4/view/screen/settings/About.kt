@@ -75,9 +75,9 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             RivoExpressiveCard(
                 containerColor = MaterialTheme.colorScheme.primaryContainer

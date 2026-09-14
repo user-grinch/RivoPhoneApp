@@ -99,7 +99,7 @@
     <string name="ads_disable_dialog_title">Support Open-Source Development</string>
     <string name="ads_disable_dialog_body">Displaying ads helps keep Rivo free and open-source. Without ad revenue or community donations, ongoing maintenance, bug fixes, and development may die out. Are you sure you want to disable ads?</string>
     <string name="ads_disable_dialog_confirm">Disable Ads</string>
-    <string name="ads_disable_dialog_keep">Keep Ads Enabled</string>
+    <string name="ads_disable_dialog_keep">Keep Ads</string>
 
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Make Rivo your official dialer</string>
