@@ -40,6 +40,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.view.components.LocalScrollToTopBottomPadding
@@ -105,6 +113,8 @@ fun MainScreen(
 
     val navBarStyle = LocalNavBarStyle.current
     val isToolbar = navBarStyle == PreferenceManager.NAV_BAR_STYLE_TOOLBAR
+    val isSwipeActionsEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() }
+    val isBlurEnabled = remember(settingsState) { prefs.isFloatingBarBlurEnabled() }
 
     var isToolbarVisible by remember { mutableStateOf(true) }
 
@@ -172,7 +182,7 @@ fun MainScreen(
 
     val navBarsBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val targetScrollToTopPadding = if (isToolbar) {
-        if (isToolbarVisible) navBarsBottom + 68.dp else navBarsBottom
+        if (isToolbarVisible) navBarsBottom + 72.dp else navBarsBottom
     } else {
         0.dp
     }
@@ -239,7 +249,8 @@ fun MainScreen(
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
-                    beyondViewportPageCount = 1
+                    beyondViewportPageCount = 1,
+                    userScrollEnabled = !isSwipeActionsEnabled
                 ) { page ->
                     when (visibleTabs.getOrNull(page)) {
                         PreferenceManager.TAB_RECENTS -> RecentScreenContent(
@@ -268,6 +279,38 @@ fun MainScreen(
                             initialShowList = true
                         )
                     }
+                }
+            }
+
+            if (isToolbar && isBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                AnimatedVisibility(
+                    visible = isToolbarVisible,
+                    enter = fadeIn(animationSpec = tween(150)),
+                    exit = fadeOut(animationSpec = tween(150)),
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                ) {
+                    val blurRadiusPx = with(LocalDensity.current) { 44.dp.toPx() }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(navBarsBottom + 60.dp)
+                            .graphicsLayer {
+                                renderEffect = RenderEffect.createBlurEffect(
+                                    blurRadiusPx, blurRadiusPx,
+                                    Shader.TileMode.CLAMP
+                                ).asComposeRenderEffect()
+                            }
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.35f),
+                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.70f),
+                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.90f)
+                                    )
+                                )
+                            )
+                    )
                 }
             }
 

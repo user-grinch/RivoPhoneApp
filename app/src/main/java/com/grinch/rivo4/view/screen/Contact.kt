@@ -51,6 +51,7 @@ import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.grinch.rivo4.view.components.RivoPullToRefreshIndicator
 import com.grinch.rivo4.view.components.ScrollToTopButton
+import com.grinch.rivo4.view.components.LocalScrollToTopBottomPadding
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.ramcosta.composedestinations.annotation.Destination
@@ -148,6 +149,7 @@ fun ContactScreenContent(
         },
         floatingActionButton = {
             if (selectedIds.isEmpty()) {
+                val fabBottomPadding = LocalScrollToTopBottomPadding.current
                 FloatingActionButton(
                     onClick = {
                         navigator.navigate(ContactEditScreenDestination())
@@ -155,7 +157,8 @@ fun ContactScreenContent(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     shape = RoundedCornerShape(24.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp, pressedElevation = 6.dp),
+                    modifier = Modifier.padding(bottom = fabBottomPadding)
                 ) {
                     Icon(Icons.Default.PersonAdd, stringResource(R.string.action_add_contact))
                 }

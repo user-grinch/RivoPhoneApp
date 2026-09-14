@@ -364,6 +364,22 @@ class PreferenceManager(context: Context) {
 
         const val KEY_FLOATING_CALL_BUBBLE = "floating_call_bubble"
 
+        const val KEY_FLOATING_BAR_ROUNDNESS = "floating_bar_roundness"
+        const val DEFAULT_FLOATING_BAR_ROUNDNESS = 32
+        const val KEY_FLOATING_BAR_BLUR = "floating_bar_blur"
+
+        const val KEY_SWIPE_ACTIONS_ENABLED = "swipe_actions_enabled"
+        const val KEY_SWIPE_RIGHT_ACTION = "swipe_right_action"
+        const val KEY_SWIPE_LEFT_ACTION = "swipe_left_action"
+
+        const val SWIPE_ACTION_NONE = 0
+        const val SWIPE_ACTION_CALL = 1
+        const val SWIPE_ACTION_MESSAGE = 2
+        const val SWIPE_ACTION_VIDEO_CALL = 3
+        const val SWIPE_ACTION_WHATSAPP = 4
+        const val SWIPE_ACTION_COPY_NUMBER = 5
+        const val SWIPE_ACTION_DELETE = 6
+
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
         const val TAB_CONTACTS = 2
@@ -384,4 +400,25 @@ class PreferenceManager(context: Context) {
     fun setFloatingCallBubbleEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_CALL_BUBBLE, enabled)
     fun isHiddenContactsVisible(): Boolean = getBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, false)
     fun setHiddenContactsVisible(visible: Boolean) = setBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, visible)
+
+    fun getFloatingBarRoundness(): Int = getInt(KEY_FLOATING_BAR_ROUNDNESS, DEFAULT_FLOATING_BAR_ROUNDNESS)
+    fun setFloatingBarRoundness(roundness: Int) = setInt(KEY_FLOATING_BAR_ROUNDNESS, roundness)
+
+    fun isFloatingBarBlurEnabled(): Boolean = getBoolean(KEY_FLOATING_BAR_BLUR, false)
+    fun setFloatingBarBlurEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_BAR_BLUR, enabled)
+
+    fun isSwipeActionsEnabled(): Boolean = getBoolean(KEY_SWIPE_ACTIONS_ENABLED, true)
+    fun setSwipeActionsEnabled(enabled: Boolean) = setBoolean(KEY_SWIPE_ACTIONS_ENABLED, enabled)
+
+    fun getSwipeRightAction(): Int = getInt(KEY_SWIPE_RIGHT_ACTION, SWIPE_ACTION_CALL)
+    fun setSwipeRightAction(action: Int) = setInt(KEY_SWIPE_RIGHT_ACTION, action)
+
+    fun getSwipeLeftAction(): Int = getInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
+    fun setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, action)
+
+    fun resetSwipeActions() {
+        setBoolean(KEY_SWIPE_ACTIONS_ENABLED, true)
+        setInt(KEY_SWIPE_RIGHT_ACTION, SWIPE_ACTION_CALL)
+        setInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
+    }
 }

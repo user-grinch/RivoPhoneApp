@@ -760,4 +760,35 @@
     <string name="contact_management_card_clean">Address Book Clean</string>
     <string name="contact_management_card_clean_sub">All contacts are unique • Tap to manage storage</string>
     <string name="contact_management_card_dup_sub">Tap to review and combine numbers, emails &amp; info</string>
+
+    <!-- Floating Bar Customization & Blur -->
+    <string name="settings_floating_bar_roundness">Floating Bar Corner Radius</string>
+    <string name="settings_floating_bar_roundness_supporting">Tweak the corner roundness and pill shape of the floating navigation bar</string>
+    <string name="settings_floating_bar_blur">Floating Bar Glass Blur</string>
+    <string name="settings_floating_bar_blur_supporting">Applies real-time frosted glass blur behind the floating navigation bar.</string>
+    <string name="settings_floating_bar_blur_warning">Resource intensive and experimental</string>
+
+    <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="settings_swipe_actions_title">Swipe Actions</string>
+    <string name="settings_swipe_actions_supporting">Configure swipe gestures on contacts and call history</string>
+    <string name="settings_swipe_actions_enable">Enable Swipe Gestures</string>
+    <string name="settings_swipe_actions_enable_supporting">Swipe contact and call log items left or right to trigger actions with expressive spring feedback</string>
+    <string name="settings_swipe_right_action">Swipe Right Action</string>
+    <string name="settings_swipe_left_action">Swipe Left Action</string>
+    <string name="settings_swipe_right_action_supporting">Action triggered when swiping an item from left to right</string>
+    <string name="settings_swipe_left_action_supporting">Action triggered when swiping an item from right to left</string>
+    <string name="swipe_action_none">None</string>
+    <string name="swipe_action_call">Call</string>
+    <string name="swipe_action_message">Message</string>
+    <string name="swipe_action_video_call">Video Call</string>
+    <string name="swipe_action_whatsapp">WhatsApp</string>
+    <string name="swipe_action_copy_number">Copy Number</string>
+    <string name="swipe_action_delete">Delete</string>
+    <string name="swipe_action_preview_title">Interactive Gesture Preview</string>
+    <string name="swipe_action_preview_supporting">Drag this card left or right to experience the Material 3 Expressive spring physics</string>
+    <string name="swipe_action_test_contact_name">Alex Rivera</string>
+    <string name="swipe_action_test_contact_number">+1 (555) 019-2834</string>
+    <string name="swipe_action_triggered_toast">Gesture triggered: %1$s</string>
+    <string name="settings_swipe_actions_reset">Reset Swipe Actions</string>
+    <string name="settings_swipe_actions_tab_warning">Swipe navigation between tabs is disabled while swipe actions are enabled to prevent gesture conflicts.</string>
 </resources>

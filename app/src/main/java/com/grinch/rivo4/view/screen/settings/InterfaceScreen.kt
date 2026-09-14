@@ -9,35 +9,26 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.view.components.RivoAvatarShapeSelectorRow
-import com.grinch.rivo4.view.components.RivoInteractiveRoundnessSlider
-import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.RivoColorSwatchRow
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoInteractiveRoundnessSlider
 import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.RivoOptionRow
-import com.grinch.rivo4.view.components.RivoSliderListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
+import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.ScrollToTopButton
-import com.grinch.rivo4.PATREON_URL
-import com.grinch.rivo4.controller.util.openLink
-import com.grinch.rivo4.view.components.RivoDialog
-import com.grinch.rivo4.view.components.RivoDialogAction
-import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -54,29 +45,30 @@ fun InterfaceScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
+    val settingsState by prefs.settingsChanged.collectAsState()
 
     val showButton by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 1 }
     }
 
-    var dynamicColors by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)) }
-    var amoledMode by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false)) }
-    var defaultBottomBar by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)) }
-    var mergeFavorites by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true)) }
-    var colorfulAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, true)) }
-    var gradientAvatars by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, false)) }
-    var showPicture by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
-    var iconOnlyNav by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false)) }
-    var transitionStyle by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)) }
-    var customPrimaryColor by remember { mutableStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb())) }
-    var avatarShape by remember { mutableStateOf(prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, 0)) }
-    var showCallScreenAvatar by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)) }
-    var hideAvatarWithBg by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false)) }
-    var showCards by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true)) }
-    var cardRoundness by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5)) }
-    var navBarStyle by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_NAV_BAR_STYLE, PreferenceManager.NAV_BAR_STYLE_STANDARD)) }
-    var startLocation by remember { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)) }
+    var dynamicColors by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true))
+    }
+    var amoledMode by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AMOLED_MODE, false))
+    }
+    var transitionStyle by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0))
+    }
+    var customPrimaryColor by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb()))
+    }
+    var showCards by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true))
+    }
+    var cardRoundness by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5))
+    }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60),
@@ -90,7 +82,7 @@ fun InterfaceScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.settings_interface_title), fontWeight = FontWeight.Bold) },
+                title = { Text("Theme & Appearance", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
@@ -98,7 +90,6 @@ fun InterfaceScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
@@ -108,6 +99,7 @@ fun InterfaceScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+                // 1. Theme & Colors
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_color)) {
                         RivoSwitchListItem(
@@ -150,77 +142,7 @@ fun InterfaceScreen(
                     }
                 }
 
-                item {
-                    RivoExpressiveCard(title = stringResource(R.string.settings_group_avatars)) {
-                        RivoAvatarShapeSelectorRow(
-                            headline = stringResource(R.string.settings_interface_avatar_shape),
-                            supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
-                            options = listOf(
-                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
-                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
-                                stringResource(R.string.settings_interface_avatar_shape_square) to 2,
-                                stringResource(R.string.settings_interface_avatar_shape_cookie) to 3,
-                                stringResource(R.string.settings_interface_avatar_shape_clover) to 4,
-                                stringResource(R.string.settings_interface_avatar_shape_arch) to 5,
-                                stringResource(R.string.settings_interface_avatar_shape_pill) to 6,
-                                stringResource(R.string.settings_interface_avatar_shape_gem) to 7,
-                                stringResource(R.string.settings_interface_avatar_shape_sunny) to 8,
-                                stringResource(R.string.settings_interface_avatar_shape_heart) to 9,
-                                stringResource(R.string.settings_interface_avatar_shape_burst) to 10
-                            ),
-                            selectedValue = avatarShape,
-                            onValueChange = { selected ->
-                                avatarShape = selected
-                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, selected)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_show_picture),
-                            supporting = stringResource(R.string.settings_interface_show_picture_supporting),
-                            leadingIcon = Icons.Outlined.AccountCircle,
-                            checked = showPicture,
-                            onCheckedChange = {
-                                showPicture = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_PICTURE, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_colorful_avatars),
-                            supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
-                            leadingIcon = Icons.Outlined.Palette,
-                            checked = colorfulAvatars,
-                            onCheckedChange = {
-                                colorfulAvatars = it
-                                prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_gradient_avatars),
-                            supporting = stringResource(R.string.settings_interface_gradient_avatars_supporting),
-                            leadingIcon = Icons.Outlined.Gradient,
-                            checked = gradientAvatars,
-                            onCheckedChange = {
-                                gradientAvatars = it
-                                prefs.setBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_hide_avatar_with_bg),
-                            supporting = stringResource(R.string.settings_interface_hide_avatar_with_bg_supporting),
-                            leadingIcon = Icons.Outlined.AccountCircle,
-                            checked = hideAvatarWithBg,
-                            onCheckedChange = {
-                                hideAvatarWithBg = it
-                                prefs.setBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, it)
-                            }
-                        )
-                    }
-                }
-
+                // 2. Cards & Motion
                 item {
                     RivoExpressiveCard(title = stringResource(R.string.settings_group_shape_motion)) {
                         RivoSwitchListItem(
@@ -279,186 +201,26 @@ fun InterfaceScreen(
                     }
                 }
 
+                // 3. Related Styling Links
                 item {
-                    RivoExpressiveCard(title = stringResource(R.string.settings_group_navigation)) {
-                        RivoVisualOptionSelectorRow(
-                            headline = stringResource(R.string.settings_interface_nav_bar_style),
-                            supporting = stringResource(R.string.settings_interface_nav_bar_style_supporting),
-                            leadingIcon = Icons.Outlined.Dock,
-                            options = listOf(
-                                stringResource(R.string.settings_nav_bar_standard) to PreferenceManager.NAV_BAR_STYLE_STANDARD,
-                                stringResource(R.string.settings_nav_bar_toolbar) to PreferenceManager.NAV_BAR_STYLE_TOOLBAR
-                            ),
-                            selectedValue = navBarStyle,
-                            onValueChange = {
-                                navBarStyle = it
-                                prefs.setInt(PreferenceManager.KEY_NAV_BAR_STYLE, it)
-                            }
-                        ) { value, selected ->
-                            val icon = if (value == PreferenceManager.NAV_BAR_STYLE_TOOLBAR) Icons.Outlined.DashboardCustomize else Icons.Outlined.ViewStream
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoVisualOptionSelectorRow(
-                            headline = stringResource(R.string.settings_interface_default_bottom_bar),
-                            supporting = stringResource(R.string.settings_interface_default_bottom_bar_supporting),
-                            leadingIcon = Icons.Outlined.SpaceDashboard,
-                            options = listOf(
-                                stringResource(R.string.nav_recents) to PreferenceManager.TAB_RECENTS,
-                                stringResource(R.string.nav_favorites) to PreferenceManager.TAB_FAVORITES,
-                                stringResource(R.string.nav_contacts) to PreferenceManager.TAB_CONTACTS,
-                                stringResource(R.string.nav_call_recordings) to PreferenceManager.TAB_RECORDINGS
-                            ),
-                            selectedValue = defaultBottomBar,
-                            onValueChange = {
-                                defaultBottomBar = it
-                                prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, it)
-                                if (it == PreferenceManager.TAB_RECORDINGS) {
-                                    val hidden = prefs.getHiddenBottomNavTabs().toMutableSet()
-                                    if (hidden.remove(PreferenceManager.TAB_RECORDINGS)) {
-                                        prefs.setHiddenBottomNavTabs(hidden)
-                                    }
-                                }
-                            }
-                        ) { value, selected ->
-                            val icon = defaultTabIcon(value) ?: Icons.Outlined.SpaceDashboard
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoVisualOptionSelectorRow(
-                            headline = "Default Start Screen",
-                            supporting = "Screen to display when opening the app",
-                            leadingIcon = Icons.Outlined.Home,
-                            options = listOf(
-                                "Default Tab" to PreferenceManager.START_LOCATION_NORMAL,
-                                "Dialpad (Recents)" to PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
-                                "Dialpad (Contacts)" to PreferenceManager.START_LOCATION_DIALPAD_CONTACTS
-                            ),
-                            selectedValue = startLocation,
-                            onValueChange = {
-                                startLocation = it
-                                prefs.setInt(PreferenceManager.KEY_START_LOCATION, it)
-                            }
-                        ) { value, selected ->
-                            val icon = when (value) {
-                                PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
-                                PreferenceManager.START_LOCATION_DIALPAD_CONTACTS -> Icons.Outlined.Dialpad
-                                else -> Icons.Outlined.Home
-                            }
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoExpressiveCard(title = "More Display Settings") {
                         RivoListItem(
-                            headline = stringResource(R.string.settings_bottom_nav_title),
-                            supporting = stringResource(R.string.settings_bottom_nav_supporting),
-                            leadingIcon = Icons.Outlined.SwapHoriz,
+                            headline = "Navigation Bar",
+                            supporting = "Floating bar style, blur effect, roundness & tab layout",
+                            leadingIcon = Icons.Outlined.Dock,
                             onClick = { navigator.navigate(BottomNavScreenDestination) }
                         )
                         RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_icon_only_bar),
-                            supporting = stringResource(R.string.settings_interface_icon_only_bar_supporting),
-                            leadingIcon = Icons.Outlined.ViewStream,
-                            checked = iconOnlyNav,
-                            onCheckedChange = {
-                                iconOnlyNav = it
-                                prefs.setBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_merge_favorites),
-                            supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
-                            leadingIcon = Icons.Outlined.Star,
-                            checked = mergeFavorites,
-                            onCheckedChange = {
-                                mergeFavorites = it
-                                prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
-                            }
+                        RivoListItem(
+                            headline = "Avatars & Contact Cards",
+                            supporting = "11 avatar shapes, contact photos, initials & cards",
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
                         )
                     }
                 }
 
-                if (IS_ADS_SUPPORTED) {
-                    item {
-                        var enableAds by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
-                        var showDisableAdsDialog by remember { mutableStateOf(false) }
-
-                        RivoExpressiveCard(title = "Monetization") {
-                            RivoSwitchListItem(
-                                headline = "Display Banner Ads",
-                                supporting = "Show non-intrusive banner ads inside lists to support open-source development.",
-                                leadingIcon = Icons.Outlined.AdUnits,
-                                checked = enableAds,
-                                onCheckedChange = { checked ->
-                                    if (!checked) {
-                                        showDisableAdsDialog = true
-                                    } else {
-                                        enableAds = true
-                                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
-                                    }
-                                }
-                            )
-                        }
-
-                        if (showDisableAdsDialog) {
-                            val context = LocalContext.current
-                            RivoDialog(
-                                onDismissRequest = { showDisableAdsDialog = false },
-                                title = stringResource(R.string.ads_disable_dialog_title),
-                                icon = Icons.Outlined.Favorite,
-                                confirmAction = RivoDialogAction(
-                                    label = stringResource(R.string.ads_disable_dialog_confirm),
-                                    onClick = {
-                                        enableAds = false
-                                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, false)
-                                        showDisableAdsDialog = false
-                                    }
-                                ),
-                                dismissAction = RivoDialogAction(
-                                    label = stringResource(R.string.ads_disable_dialog_keep),
-                                    onClick = { showDisableAdsDialog = false }
-                                )
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = stringResource(R.string.ads_disable_dialog_body),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    TextButton(
-                                        onClick = {
-                                            openLink(context, PATREON_URL)
-                                            showDisableAdsDialog = false
-                                        }
-                                    ) {
-                                        Icon(Icons.Outlined.VolunteerActivism, contentDescription = null)
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(stringResource(R.string.patreon_prompt_confirm))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item { Spacer(modifier = Modifier.height(100.dp)) }
+                item { Spacer(modifier = Modifier.height(32.dp)) }
             }
 
             ScrollToTopButton(
@@ -469,11 +231,4 @@ fun InterfaceScreen(
             )
         }
     }
-}
-
-private fun defaultTabIcon(tab: Int): ImageVector = when (tab) {
-    PreferenceManager.TAB_FAVORITES -> Icons.Outlined.Star
-    PreferenceManager.TAB_CONTACTS -> Icons.Outlined.Person
-    PreferenceManager.TAB_RECORDINGS -> Icons.Outlined.Mic
-    else -> Icons.Outlined.History
 }

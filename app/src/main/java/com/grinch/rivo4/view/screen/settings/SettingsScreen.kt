@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,14 +23,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
+import com.grinch.rivo4.view.components.RivoDialog
+import com.grinch.rivo4.view.components.RivoDialogAction
+import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoListItem
+import com.grinch.rivo4.view.components.RivoSwitchListItem
+import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
@@ -49,12 +56,12 @@ fun SettingsScreen(
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val hidePrivateContacts = remember(settingsState) {
-        prefs.getBoolean(PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, false)
-    }
     val listState = rememberLazyListState()
     val appInfo = getAppVersion(context)
     val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.2f }
+
+    var enableAds by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
+    var showDisableAdsDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -77,7 +84,7 @@ fun SettingsScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            
+            // App Info Banner
             item {
                 RivoExpressiveCard(
                     modifier = Modifier
@@ -153,11 +160,26 @@ fun SettingsScreen(
                     icon = Icons.Outlined.Palette
                 ) {
                     RivoListItem(
-                        headline = stringResource(R.string.settings_interface_headline),
-                        supporting = stringResource(R.string.settings_interface_supporting),
+                        headline = "Theme & Appearance",
+                        supporting = "Material You, color palette, AMOLED dark mode & animations",
                         leadingIcon = Icons.Outlined.Palette,
                         onClick = { navigator.navigate(InterfaceScreenDestination) }
                     )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = "Navigation Bar",
+                        supporting = "Floating bar style, blur effect, roundness & tab layout",
+                        leadingIcon = Icons.Outlined.Dock,
+                        onClick = { navigator.navigate(BottomNavScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = "Avatars & Contact Cards",
+                        supporting = "11 avatar shapes, contact photos, initials & cards",
+                        leadingIcon = Icons.Outlined.AccountCircle,
+                        onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = stringResource(R.string.settings_sound_vibration_headline),
                         supporting = stringResource(R.string.settings_sound_vibration_supporting),
@@ -179,12 +201,21 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.SimCard,
                         onClick = { navigator.navigate(CallAccountsScreenDestination) }
                     )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_swipe_actions_title),
+                        supporting = stringResource(R.string.settings_swipe_actions_supporting),
+                        leadingIcon = Icons.Outlined.Swipe,
+                        onClick = { navigator.navigate(SwipeActionsScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = stringResource(R.string.call_recordings_title),
                         supporting = "Auto-recording, Shizuku internal audio & saved recordings",
                         leadingIcon = Icons.Outlined.FiberManualRecord,
                         onClick = { navigator.navigate(CallRecordingsScreenDestination()) }
                     )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = "Call Analytics & Insights",
                         supporting = "Talk time leaderboard, peak hours & distribution",
@@ -200,18 +231,6 @@ fun SettingsScreen(
                     title = "Call Protection & Security",
                     icon = Icons.Outlined.Security
                 ) {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_blocked_numbers_headline),
-                        supporting = stringResource(R.string.settings_blocked_numbers_supporting),
-                        leadingIcon = Icons.Outlined.Block,
-                        onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
-                    )
-                    RivoListItem(
-                        headline = stringResource(R.string.fake_call_title),
-                        supporting = stringResource(R.string.fake_call_subtitle),
-                        leadingIcon = Icons.Outlined.PhoneCallback,
-                        onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
-                    )
                     val appLockEnabled = remember(settingsState) { prefs.isAppLockEnabled() }
                     RivoListItem(
                         headline = "App Lock",
@@ -219,45 +238,31 @@ fun SettingsScreen(
                         leadingIcon = Icons.Outlined.Lock,
                         onClick = { navigator.navigate(AppLockScreenDestination) }
                     )
-                }
-            }
-
-            // 4. Contacts & Storage
-            item {
-                RivoExpressiveCard(
-                    title = stringResource(R.string.settings_contacts_management_title),
-                    icon = Icons.Outlined.ManageAccounts
-                ) {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_contact_management_headline),
-                        supporting = stringResource(R.string.settings_contact_management_supporting),
-                        leadingIcon = Icons.Outlined.CallMerge,
-                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
-                    )
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_manage_visibility),
-                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
-                        leadingIcon = Icons.Outlined.Visibility,
-                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
-                    )
-                }
-            }
-
-            // 5. Privacy & Private Storage
-            item {
-                val secretCode = remember(settingsState) {
-                    prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
-                }
-                RivoExpressiveCard(
-                    title = "Privacy & Private Storage",
-                    icon = Icons.Outlined.Lock
-                ) {
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    val secretCode = remember(settingsState) {
+                        prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                    }
                     RivoListItem(
                         headline = "Private Storage",
                         supporting = "Secret dialpad vault ($secretCode) • Stored only in app memory",
-                        leadingIcon = Icons.Outlined.Lock,
+                        leadingIcon = Icons.Outlined.FolderShared,
                         onClick = { navigator.navigate(PrivateContactsScreenDestination) }
                     )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_blocked_numbers_headline),
+                        supporting = stringResource(R.string.settings_blocked_numbers_supporting),
+                        leadingIcon = Icons.Outlined.Block,
+                        onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = stringResource(R.string.fake_call_title),
+                        supporting = stringResource(R.string.fake_call_subtitle),
+                        leadingIcon = Icons.Outlined.PhoneCallback,
+                        onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = "Permissions & App Setup",
                         supporting = "Review granted permissions and system capabilities",
@@ -267,23 +272,70 @@ fun SettingsScreen(
                 }
             }
 
-            // 5. Data & Support
+            // 4. Contacts & Data
             item {
                 RivoExpressiveCard(
-                    title = "Data & Support",
-                    icon = Icons.Outlined.HelpOutline
+                    title = stringResource(R.string.settings_contacts_management_title),
+                    icon = Icons.Outlined.ManageAccounts
                 ) {
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_contact_management_headline),
+                        supporting = stringResource(R.string.settings_contact_management_supporting),
+                        leadingIcon = Icons.Outlined.ManageAccounts,
+                        onClick = { navigator.navigate(ContactManagementScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = stringResource(R.string.settings_manage_visibility),
+                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
+                        leadingIcon = Icons.Outlined.Visibility,
+                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(
                         headline = stringResource(R.string.settings_backup_restore_headline),
                         supporting = stringResource(R.string.settings_backup_restore_supporting),
                         leadingIcon = Icons.Outlined.Backup,
                         onClick = { navigator.navigate(BackupRestoreScreenDestination) }
                     )
+                }
+            }
+
+            // 5. Support & About
+            item {
+                RivoExpressiveCard(
+                    title = "Support & About",
+                    icon = Icons.Outlined.HelpOutline
+                ) {
+                    if (IS_ADS_SUPPORTED) {
+                        RivoSwitchListItem(
+                            headline = "Display Banner Ads",
+                            supporting = "Show non-intrusive banner ads inside lists to support development",
+                            leadingIcon = Icons.Outlined.AdUnits,
+                            checked = enableAds,
+                            onCheckedChange = { checked ->
+                                if (!checked) {
+                                    showDisableAdsDialog = true
+                                } else {
+                                    enableAds = true
+                                    prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
+                                }
+                            }
+                        )
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    }
                     RivoListItem(
                         headline = "Rate on Google Play",
                         supporting = "Support Rivo on Google Play Store",
                         leadingIcon = Icons.Default.Star,
                         onClick = { openLink(context, PLAY_STORE_URL) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoListItem(
+                        headline = "About Rivo",
+                        supporting = "Version, open source licenses & contributors",
+                        leadingIcon = Icons.Outlined.Info,
+                        onClick = { navigator.navigate(AboutScreenDestination) }
                     )
                 }
             }
@@ -304,6 +356,44 @@ fun SettingsScreen(
                 )
             }
         }
+
+        if (showDisableAdsDialog) {
+            RivoDialog(
+                onDismissRequest = { showDisableAdsDialog = false },
+                title = stringResource(R.string.ads_disable_dialog_title),
+                icon = Icons.Outlined.Favorite,
+                confirmAction = RivoDialogAction(
+                    label = stringResource(R.string.ads_disable_dialog_confirm),
+                    onClick = {
+                        enableAds = false
+                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, false)
+                        showDisableAdsDialog = false
+                    }
+                ),
+                dismissAction = RivoDialogAction(
+                    label = stringResource(R.string.ads_disable_dialog_keep),
+                    onClick = { showDisableAdsDialog = false }
+                )
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(R.string.ads_disable_dialog_body),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextButton(
+                        onClick = {
+                            openLink(context, PATREON_URL)
+                            showDisableAdsDialog = false
+                        }
+                    ) {
+                        Icon(Icons.Outlined.VolunteerActivism, contentDescription = null)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.patreon_prompt_confirm))
+                    }
+                }
+            }
+        }
     }
 }
-

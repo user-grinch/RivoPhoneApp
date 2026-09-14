@@ -36,6 +36,7 @@ import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.modal.data.displayLabel
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -252,7 +253,12 @@ fun CallLogFullScreen(
                                                         makeCall(context, lg.number, contactId = targetContactId)
                                                     }
                                                 },
-                                                selected = selectedEntries.any { it.id == lg.id }
+                                                selected = selectedEntries.any { it.id == lg.id },
+                                                onSwipeAction = { action, log ->
+                                                    if (action == SwipeActionType.DELETE) {
+                                                        viewModel.deleteCallLogsByIds(log.ids)
+                                                    }
+                                                }
                                             )
                                             
                                             if (index < logsInGroup.size - 1) {

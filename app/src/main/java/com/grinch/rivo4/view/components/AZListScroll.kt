@@ -25,7 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
@@ -51,6 +57,15 @@ fun AZListScroll(
     val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
     val hapticScrollEnabled = prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)
     val displayOrder = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
+
+    val context = LocalContext.current
+    val callLauncher = rememberCallLauncher()
+    val messageLauncher = rememberMessageLauncher()
+    val videoLauncher = rememberVideoLauncher()
+    val clipboardManager = LocalClipboardManager.current
+    val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() } && selectedIds.isEmpty()
+    val swipeRightAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeRightAction()) }
+    val swipeLeftAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeLeftAction()) }
 
     if (hapticScrollEnabled) {
         LaunchedEffect(listState.firstVisibleItemIndex) {
@@ -142,41 +157,64 @@ fun AZListScroll(
                                     },
                                     displayOrder
                                 )
-                                RivoListItem(
-                                    headline = displayName,
-                                    supporting = null,
-                                    avatarName = contact.name,
-                                    photoUri = contact.photoUri,
-                                    trailingContent = {
-                                        if (contact.isHidden) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.VisibilityOff,
-                                                contentDescription = "Private Storage (Hidden)",
-                                                tint = MaterialTheme.colorScheme.tertiary,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                        } else if (contact.isPrivate) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Lock,
-                                                contentDescription = "Private Storage",
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(18.dp)
-                                            )
+                                RivoSwipeToActionBox(
+                                    enabled = swipeEnabled,
+                                    swipeRightAction = swipeRightAction,
+                                    swipeLeftAction = swipeLeftAction,
+                                    onTriggerAction = { action ->
+                                        val phone = contact.phoneNumbers.firstOrNull().orEmpty()
+                                        when (action) {
+                                            SwipeActionType.CALL -> callLauncher.dial(phone, contact)
+                                            SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, contact)
+                                            SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, contact)
+                                            SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
+                                            SwipeActionType.COPY_NUMBER -> {
+                                                if (phone.isNotBlank()) {
+                                                    clipboardManager.setText(AnnotatedString(phone))
+                                                    Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                            SwipeActionType.DELETE -> {}
+                                            SwipeActionType.NONE -> {}
                                         }
-                                    },
-                                    onClick = {
-                                        if (selectedIds.isNotEmpty()) {
+                                    }
+                                ) {
+                                    RivoListItem(
+                                        headline = displayName,
+                                        supporting = null,
+                                        avatarName = contact.name,
+                                        photoUri = contact.photoUri,
+                                        trailingContent = {
+                                            if (contact.isHidden) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.VisibilityOff,
+                                                    contentDescription = "Private Storage (Hidden)",
+                                                    tint = MaterialTheme.colorScheme.tertiary,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            } else if (contact.isPrivate) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Lock,
+                                                    contentDescription = "Private Storage",
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            if (selectedIds.isNotEmpty()) {
+                                                onToggleSelection(contact.id)
+                                            } else {
+                                                navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                            }
+                                        },
+                                        onLongClick = {
                                             onToggleSelection(contact.id)
-                                        } else {
-                                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                                        }
-                                    },
-                                    onLongClick = {
-                                        onToggleSelection(contact.id)
-                                    },
-                                    selected = selectedIds.contains(contact.id),
-                                    isCompact = true
-                                )
+                                        },
+                                        selected = selectedIds.contains(contact.id),
+                                        isCompact = true
+                                    )
+                                }
                                 if (index < contactsForChar.size - 1) {
                                     RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                 }

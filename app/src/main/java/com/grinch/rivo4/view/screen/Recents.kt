@@ -62,6 +62,8 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.data.CallLogFilter
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.SwipeActionType
+import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.modal.data.displayLabel
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
@@ -192,12 +194,14 @@ fun RecentScreenContent(
         },
         floatingActionButton = {
             if (selectedEntries.isEmpty()) {
+                val fabBottomPadding = LocalScrollToTopBottomPadding.current
                 FloatingActionButton(
                     onClick = { navigator.navigate(DialPadScreenDestination()) },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     shape = RoundedCornerShape(20.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp, pressedElevation = 6.dp),
+                    modifier = Modifier.padding(bottom = fabBottomPadding)
                 ) {
                     Icon(Icons.Default.Dialpad, stringResource(R.string.content_desc_dialpad))
                 }
@@ -457,7 +461,10 @@ fun CallLogFullContent(
             isEditingFavorites = false
         }
         val context = LocalContext.current
+        val clipboardManager = LocalClipboardManager.current
         val callLauncher = rememberCallLauncher()
+        val messageLauncher = rememberMessageLauncher()
+        val videoLauncher = rememberVideoLauncher()
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
         val displayOrder = remember(settingsState) { prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
 
@@ -708,7 +715,25 @@ fun CallLogFullContent(
                                                 onLongClick = { log ->
                                                     onToggleSelection(log)
                                                 },
-                                                selected = selectedEntries.any { it.id == lg.id }
+                                                selected = selectedEntries.any { it.id == lg.id },
+                                                onSwipeAction = { action, log ->
+                                                    if (action == SwipeActionType.DELETE) {
+                                                        viewModel.deleteCallLogsByIds(log.ids)
+                                                    } else {
+                                                        val contact = allContacts.find { it.id == log.contactId }
+                                                        when (action) {
+                                                            SwipeActionType.CALL -> callLauncher.dial(log.number, contact)
+                                                            SwipeActionType.MESSAGE -> messageLauncher.sendMessage(log.number, contact)
+                                                            SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(log.number, contact)
+                                                            SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, log.number)
+                                                            SwipeActionType.COPY_NUMBER -> {
+                                                                clipboardManager.setText(AnnotatedString(log.number))
+                                                                Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                            }
+                                                            SwipeActionType.NONE, SwipeActionType.DELETE -> {}
+                                                        }
+                                                    }
+                                                }
                                             )
                                             if (index < logsInGroup.size - 1) {
                                                 RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
