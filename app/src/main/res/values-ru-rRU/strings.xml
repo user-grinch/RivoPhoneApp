@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Закрыть</string>
     <string name="action_confirm">Подтвердить</string>
@@ -20,6 +21,7 @@
     <string name="action_decline">Отклонить</string>
     <string name="action_end">Завершить</string>
     <string name="action_mute">Без звука</string>
+    <string name="action_unmute">Вкл звук</string>
     <string name="action_keypad">Клавиатура</string>
     <string name="action_add_call">Добавить звонок</string>
     <string name="action_hold">Удержать</string>
@@ -28,11 +30,17 @@
     <string name="content_desc_selected_item">Выбрано</string>
     <string name="select_number_title">Выбрать номер</string>
     <string name="select_email_title">Выбрать Email</string>
-    <string name="content_desc_remove_favorite">Удалить избранное </string>
+    <string name="content_desc_remove_favorite">Удалить избранное</string>
     <string name="content_desc_select_option">Выбрать вариант</string>
     <string name="content_desc_scroll_to_top">Прокрутить вверх</string>
     <string name="sim_picker_title">Выберите SIM-карту</string>
     <string name="sim_picker_unknown_sim">Неизвестная SIM-карта</string>
+    <plurals name="selection_count_selected">
+        <item quantity="one">%1$d выбран</item>
+        <item quantity="few">%1$d выбрано</item>
+        <item quantity="many">%1$d выбрано</item>
+        <item quantity="other">%1$d выбрано</item>
+    </plurals>
     <string name="label_unknown">Неизвестно</string>
     <string name="label_unknown_number">Неизвестный номер</string>
     <string name="label_mobile">Мобильный</string>
@@ -49,6 +57,7 @@
     <string name="date_yesterday">Вчера</string>
     <string name="nav_contacts">Контакты</string>
     <string name="nav_recents">Недавние</string>
+    <string name="nav_call_recordings">Идет запись</string>
     <string name="call_type_incoming">Входящий</string>
     <string name="call_type_outgoing">Исходящий</string>
     <string name="call_type_missed">Пропущенный</string>
@@ -68,11 +77,11 @@
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_get_started">Начало работы</string>
     <string name="onboarding_page1_title">Expressive Design</string>
-    <string name="onboarding_page1_description">Оцените современный интерфейс на базе Material 3 и плавную анимацию Jetpack Compose</string>
+    <string name="onboarding_page1_description">Оцените современный интерфейс на базе Material 3 и плавную анимацию Jetpack Compose.</string>
     <string name="onboarding_page2_title">Быстрый набор</string>
-    <string name="onboarding_page2_description">Мгновенный поиск контактов благодаря интеллектуальному T9-поиску и упорядоченной истории вызовов</string>
+    <string name="onboarding_page2_description">Мгновенный поиск контактов благодаря интеллектуальному T9-поиску и упорядоченной истории вызовов.</string>
     <string name="onboarding_page3_title">Создано для вас</string>
-    <string name="onboarding_page3_description">Полностью открытый исходный проект с поддержкой датчика приближения для эффективных телефонных звонков</string>
+    <string name="onboarding_page3_description">Полностью открытый исходный проект с поддержкой датчика приближения для эффективных телефонных звонков.</string>
     <!-- Permission Popup -->
     <string name="permission_popup_title">Требуются разрешения</string>
     <string name="permission_popup_body">Чтобы убедиться, что все функции работают на вашем устройстве, пожалуйста, предоставьте необходимые разрешения. Некоторые производители, такие как Xiaomi или Oppo могут потребовать дополнительной настройки в настройках системы.</string>
@@ -90,7 +99,7 @@
     <string name="ads_disable_dialog_keep">Реклама включена</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Сделать Rivo приложением для звонков по умолчанию</string>
-    <string name="default_dialer_description">Для совершения и приема вызовов, управления историей звонков и защиты от спама Rivo нужно назначить приложением для звонков по умолчанию</string>
+    <string name="default_dialer_description">Для совершения и приема вызовов, управления историей звонков и защиты от спама Rivo нужно назначить приложением для звонков по умолчанию.</string>
     <string name="default_dialer_denied_message">Rivo не может работать без этого разрешения. Пожалуйста, попробуйте еще раз.</string>
     <string name="default_dialer_set_as_default">Назначить по умолчанию</string>
     <!-- Top bar / bottom navigation -->
@@ -101,14 +110,20 @@
     <string name="call_history_with_contact">История с %1$s</string>
     <string name="call_log_no_history_found">История вызовов не найдена</string>
     <string name="call_log_no_filter_match">Нет звонков, соответствующих этому фильтру</string>
+    <plurals name="call_log_delete_confirm">
+        <item quantity="one">Вы уверены, что хотите удалить %1$d выбранный вызов?</item>
+        <item quantity="few">Вы уверены, что хотите удалить %1$d выбранных вызова?</item>
+        <item quantity="many">Вы уверены, что хотите удалить %1$d выбранных вызовов?</item>
+        <item quantity="other">Вы уверены, что хотите удалить %1$d выбранных вызовов?</item>
+    </plurals>
     <string name="call_log_delete_title">Удалить журнал вызовов</string>
     <string name="call_log_clear_all_title">Очистить все журналы</string>
     <string name="call_log_clear_all_confirm">Очистить всё</string>
     <string name="call_log_clear_all_message">Это действие удалит всю историю вызовов. Это действие не может быть отменено.</string>
-    <string name="content_desc_clear_all_logs">Удалить все записи?</string>
+    <string name="content_desc_clear_all_logs">Удалить все записи</string>
     <string name="content_desc_delete_selected">Удалить выбранное</string>
     <string name="recents_permission_title">История вызовов</string>
-    <string name="recents_permission_description">Для отображения недавней активности и пропущенных вызовов Rivo необходим доступ к журналу вызовов</string>
+    <string name="recents_permission_description">Для отображения недавней активности и пропущенных вызовов Rivo необходим доступ к журналу вызовов.</string>
     <string name="recents_favorites">Избранные</string>
     <string name="recents_empty_call_log">Журнал вызовов пуст</string>
     <string name="content_desc_dialpad">Клавиатура</string>
@@ -137,7 +152,7 @@
     <string name="contact_set_as_default">Назначить по умолчанию</string>
     <string name="contact_add_to_contacts">Добавить в контакты</string>
     <string name="contact_events_title">События &amp; ещё</string>
-    <string name="contact_event_birthday">День рождения:</string>
+    <string name="contact_event_birthday">День рождения</string>
     <string name="contact_event_generic">Событие</string>
     <string name="contact_recent_activity_title">Недавние действия</string>
     <string name="contact_show_full_history">Показать всю историю</string>
@@ -169,7 +184,7 @@
     <string name="contact_edit_first_name">Имя</string>
     <string name="contact_edit_last_name">Фамилия</string>
     <string name="contact_edit_nickname">Никнейм</string>
-    <string name="contact_edit_phone_numbers_header">Номер телефона:</string>
+    <string name="contact_edit_phone_numbers_header">Номер телефона</string>
     <string name="contact_edit_phone_field_label">Телефон</string>
     <string name="contact_edit_add_phone">Добавить телефон</string>
     <string name="contact_edit_emails_header">Электронная почта</string>
@@ -199,7 +214,7 @@
     <string name="call_status_on_hold">На удержании</string>
     <string name="call_status_calling">Вызов...</string>
     <string name="call_status_incoming">Входящий вызов</string>
-    <string name="call_status_connecting">Подключение…</string>
+    <string name="call_status_connecting">Подключение...</string>
     <string name="call_status_disconnecting">Конец вызова...</string>
     <string name="audio_route_handset">Разговорный динамик</string>
     <string name="audio_route_speaker">Громкая связь</string>
@@ -239,8 +254,7 @@
     <string name="settings_call_settings_supporting">Управление SIM-картами, вызовы и автодозвон</string>
     <string name="settings_blocked_numbers_headline">Заблокированные номера</string>
     <string name="settings_blocked_numbers_supporting">Управление блокировками и спамом</string>
-    <string name="settings_backup_restore_headline">Резервное копирование и восстановление
-  </string>
+    <string name="settings_backup_restore_headline">Резервное копирование &amp; восстановление</string>
     <string name="settings_backup_restore_supporting">Импорт и экспорт контактов и журналов</string>
     <string name="settings_manage_contacts_headline">Управление контактами</string>
     <string name="settings_manage_contacts_supporting">Поиск дубликатов и очистка</string>
@@ -252,12 +266,12 @@
     <string name="settings_group_avatars">Аватары</string>
     <string name="settings_group_shape_motion">Форма &amp; движение</string>
     <string name="settings_group_navigation">Навигация</string>
-    <string name="settings_interface_restart_required">Для полного применения темы требуется перезапуск</string>
+    <string name="settings_interface_restart_required">Для полного применения темы требуется перезапуск.</string>
     <string name="settings_interface_restart_action">Перезапуск</string>
     <string name="settings_interface_material_you">Тема Material You</string>
-    <string name="settings_interface_material_you_supporting">Динамическая тема на основе обоев</string>
+    <string name="settings_interface_material_you_supporting">Динамическая тема на основе обоев.</string>
     <string name="settings_interface_primary_color">Основной цвет</string>
-    <string name="settings_interface_amoled">AMOLED тёмный режим</string>
+    <string name="settings_interface_amoled">Amoled тёмный режим</string>
     <string name="settings_interface_amoled_supporting">Использует чёрный тон для элементов интерфейса.</string>
     <string name="settings_interface_show_first_letter">Первая буква в качестве аватара</string>
     <string name="settings_interface_show_first_letter_supporting">Отображать букву, если нет фотографии</string>
@@ -269,7 +283,7 @@
     <string name="settings_interface_show_picture_supporting">Изображение контакта, если доступно</string>
     <string name="settings_interface_avatar_shape">Форма аватара</string>
     <string name="settings_interface_avatar_shape_supporting">Выберите форму аватара контакта</string>
-    <string name="settings_interface_avatar_shape_squircle">Квадрат с круглыми углами.</string>
+    <string name="settings_interface_avatar_shape_squircle">Квадрат с круглыми углами</string>
     <string name="settings_interface_avatar_shape_circle">Круг</string>
     <string name="settings_interface_avatar_shape_square">Квадратный</string>
     <string name="settings_interface_avatar_shape_cookie">Печенье</string>
@@ -348,8 +362,10 @@
     <string name="settings_call_incoming_ui_supporting">Выберите способ ответа на входящие вызовы</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Горизонтальный свайп</string>
     <string name="settings_call_incoming_ui_buttons">Кнопки</string>
-    <string name="settings_call_incoming_ui_slide_ios">Слайдер ответа в стиле iOS</string>
+    <string name="settings_call_incoming_ui_slide_ios">Слайдер ответа (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Вертикальный свайп</string>
+    <string name="settings_call_always_fullscreen">Всегда переходить на полный экран</string>
+    <string name="settings_call_always_fullscreen_supporting">Открывать входящие вызовы сразу на весь экран. Если функция отключена, во время работы в других приложениях вызовы будут отображаться в виде всплывающего баннера.</string>
     <string name="settings_call_dialpad_style">Стиль клавиатуры</string>
     <string name="settings_call_dialpad_style_supporting">Оформление экрана вызова</string>
     <string name="settings_call_dialpad_style_modern">Современный</string>
@@ -391,8 +407,7 @@
     <string name="settings_blocked_notifications_supporting">Показывать уведомление с низким приоритетом для заблокированных вызовов</string>
     <string name="settings_blocked_system_button">Системный список заблокированных номеров</string>
     <!-- Settings > Backup & Restore -->
-    <string name="settings_backup_title">Резервное копирование и восстановление
-  </string>
+    <string name="settings_backup_title">Резервное копирование &amp; восстановление</string>
     <string name="settings_backup_contacts_header">Контакты</string>
     <string name="settings_backup_export_contacts">Экспорт контактов</string>
     <string name="settings_backup_export_contacts_supporting">Сохранить контакты в файл VCF</string>
@@ -417,12 +432,14 @@
     <string name="settings_manage_name_format_first_first">Сначала имя, потом фамилия</string>
     <string name="settings_manage_name_format_last_first">Сначала фамилия, потом имя</string>
     <string name="settings_manage_storage">Хранилище</string>
+    <string name="settings_manage_private_contacts">Личное хранилище</string>
+    <string name="settings_manage_private_contacts_supporting">Управление контактами, хранящимися в личном хранилище приложений</string>
     <string name="settings_manage_visibility">Отображение контакта</string>
     <string name="settings_manage_visibility_supporting">Выберите, какие учетные записи будут отображаться в списке</string>
     <string name="settings_manage_quick_fixes">Быстрые исправления</string>
     <string name="settings_manage_standardize_numbers">Стандартизировать номера телефонов</string>
     <string name="settings_manage_standardize_numbers_supporting">Удалить пробелы и специальные символы со всех номеров</string>
-    <string name="settings_manage_no_duplicates">Дубликаты контактов не найдены</string>
+    <string name="settings_manage_no_duplicates">Дубликаты контактов не найдены.</string>
     <string name="settings_manage_found_duplicates">Найдено групп дубликатов %1$d</string>
     <string name="settings_manage_merge_duplicates">Объединить дубликаты</string>
     <!-- Settings > Contact visibility -->
@@ -432,8 +449,11 @@
     <string name="settings_visibility_local_memory_supporting">Контакты, сохранённые на устройстве</string>
     <string name="settings_visibility_reset_all">Сброс отображения всех</string>
     <!-- Settings > Private storage -->
+    <string name="settings_private_title">Личное хранилище</string>
     <string name="content_desc_import">Импорт</string>
     <string name="content_desc_export">Экспорт</string>
+    <string name="settings_private_empty">Контакты в личном хранилище не найдены</string>
+    <string name="settings_private_manage_hint">Управление контактами, сохраненными в личном хранилище</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Быстрый набор</string>
     <string name="settings_speed_dial_enable">Включить быстрый набор</string>
@@ -448,7 +468,7 @@
     <string name="settings_voicemail_carrier_settings">Настройки оператора</string>
     <string name="settings_voicemail_number">Номер голосовой почты</string>
     <string name="content_desc_auto_detect_sim">Автоопределение с SIM</string>
-    <string name="settings_voicemail_number_hint">Номер голосовой почты сотового оператора</string>
+    <string name="settings_voicemail_number_hint">Номер голосовой почты сотового оператора.</string>
     <string name="settings_voicemail_call_voicemail">Вызов голосовой почты</string>
     <string name="settings_voicemail_call_voicemail_supporting">Прямой набор голосовой почты</string>
     <string name="settings_voicemail_notifications_header">Уведомление</string>
@@ -473,20 +493,39 @@
     <string name="about_discord">Discord</string>
     <string name="about_discord_supporting">Присоединяйтесь к сообществу</string>
     <string name="about_source_code">Исходный код</string>
-    <string name="about_source_code_supporting">Ознакомьтесь с исходным кодом на GitHub.</string>
+    <string name="about_source_code_supporting">Ознакомьтесь с исходным кодом на GitHub</string>
     <string name="about_check_updates">Проверить наличие обновлений</string>
     <string name="about_current_version">Текущая версия: %1$s</string>
     <string name="about_copyright">©️ 2025-2026 RivoPhone Project</string>
+    <string name="settings_top_card_subtext">Проверка обновлений • Помощники • Пожертвовать</string>
+    <string name="settings_top_card_updates">Обновления</string>
+    <string name="settings_top_card_donate">Поддержать проект</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Ведущий разработчик</string>
     <string name="contributor_role_developer">Разработчик</string>
+    <string name="contributor_role_localization">Локализация &amp; Переводы</string>
+    <string name="contributor_role_contributor">Поддержавшие проект</string>
+    <string name="contributor_commits">%1$d коммитов</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_recording_guide_title">Оптимизация устройства для записи</string>
+    <string name="oem_recording_guide_subtitle">Для непрерывного сохранения записей звонков в Xiaomi MIUI/HyperOS и прошивках других производителей требуются специальные разрешения на работу в фоновом режиме.</string>
+    <string name="oem_perm_bg_recording">Звук в фоновом режиме</string>
+    <string name="oem_perm_bg_recording_desc">Разрешите запись аудио в фоновом режиме в настройках безопасности устройства.</string>
+    <string name="oem_perm_autostart">Автозапуск</string>
+    <string name="oem_perm_autostart_desc">Включите автозапуск, чтобы не допустить отключения системы записи во время звонков.</string>
+    <string name="oem_perm_battery">Экономия заряда батареи: без ограничений</string>
+    <string name="oem_perm_battery_desc">Отключите жесткое ограничение батареи для Rivo.</string>
+    <string name="oem_btn_open_perms">Открыть разрешения системы</string>
+    <string name="oem_btn_open_autostart">Открыть автозапуск</string>
+    <string name="oem_btn_open_battery">Параметры батареи</string>
+    <string name="call_recording_notification_title">Запись вызова</string>
+    <string name="call_recording_notification_text">Идет запись и сохранение аудио</string>
     <!-- Favorites -->
     <string name="nav_favorites">Избранные</string>
     <string name="favorites_permission_title">Требуется разрешение на доступ к контактам</string>
     <string name="favorites_permission_description">Разрешить доступ к вашим контактам для отображения избранного здесь.</string>
     <string name="favorites_empty_title">В избранных пока ничего нет</string>
-    <string name="favorites_empty_description">Пометьте контакт как избранный, чтобы он появился в этой сетке</string>
+    <string name="favorites_empty_description">Пометьте контакт как избранный, чтобы он появился в этой сетке.</string>
     <string name="favorites_drag_to_reorder">Сортировка перетаскиванием</string>
     <string name="favorites_add_title">Добавить избранный контакт</string>
     <string name="favorites_add_button">Добавить в избранное</string>
@@ -522,14 +561,24 @@
     <string name="contact_unblock">Разблокировать контакт</string>
     <string name="contact_unblock_supporting">Разрешить вызовы от этого контакта</string>
     <string name="call_log_block_title">Заблокировать номер?</string>
+    <plurals name="call_log_block_message">
+        <item quantity="one">Звонки с %1$d выбранной записи будут заблокированы.</item>
+        <item quantity="few">Звонки с %1$d выбранных записей будут заблокированы.</item>
+        <item quantity="many">Звонки с %1$d выбранных записей будут заблокированы.</item>
+        <item quantity="other">Звонки с %1$d выбранных записей будут заблокированы.</item>
+    </plurals>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Фон экрана вызова</string>
+    <string name="settings_interface_hide_avatar_with_bg">Скрыть изображение профиля при наличии фона</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Скрывать аватар вызывающего абонента на экране вызова, когда активен фон</string>
+    <string name="settings_interface_use_cards">Использовать выразительные карты</string>
+    <string name="settings_interface_use_cards_supporting">Группировать элементы в выразительные карточки в журналах и контактах</string>
     <string name="contact_call_background_set">Выбрано пользовательское изображение</string>
     <string name="contact_call_background_none">Использовать фон по умолчанию</string>
     <string name="contact_call_background_choose">Выберите изображение</string>
     <string name="contact_call_background_change">Изменить изображение</string>
     <string name="contact_call_background_remove">Убрать фон</string>
-    <string name="contact_call_background_saving">Сохранение изображения</string>
+    <string name="contact_call_background_saving">Сохранение изображения...</string>
     <string name="contact_call_background_error">Не удалось сохранить это изображение</string>
     <string name="contact_call_background_no_target">Сначала сохранить номер как контакт</string>
     <string name="contact_call_background_preview">Превью фона экрана вызова</string>
@@ -553,7 +602,7 @@
     <string name="settings_call_default_background_none">Не выбрано — звонки используют тему приложения</string>
     <string name="settings_call_default_background_choose">Выбрать изображение</string>
     <string name="settings_call_default_background_change">Изменить</string>
-    <string name="settings_call_default_background_supporting">Отображается при каждом входящем и исходящем вызове, если для контакта не задан собственный фон</string>
+    <string name="settings_call_default_background_supporting">Отображается при каждом входящем и исходящем вызове, если для контакта не задан собственный фон.</string>
     <string name="action_remove">Удалить</string>
     <string name="action_record">Запись</string>
     <string name="action_stop_recording">Стоп</string>
@@ -591,6 +640,88 @@
     <string name="imei_copied">Скопировано в буфер обмена</string>
     <string name="imei_not_available">Недоступно на этом устройстве</string>
     <!-- Fake Call feature -->
+    <string name="fake_call_title">Ложный вызов</string>
+    <string name="fake_call_subtitle">Планирование ложных входящих звонков</string>
+    <string name="fake_call_channel_title">Расписание ложных вызовов</string>
+    <string name="fake_call_channel_desc">Уведомления о запланированных ложных вызовах</string>
+    <string name="fake_call_notif_title">Ложный вызов запланирован</string>
+    <string name="fake_call_notif_content">Ложный вызов от %1$s в \%2$s</string>
+    <string name="fake_call_caller_details">Информация об абоненте</string>
+    <string name="fake_call_name">Имя абонента</string>
+    <string name="fake_call_number">Номер телефона</string>
+    <string name="fake_call_pick_contact">Выбрать из контактов</string>
+    <string name="fake_call_schedule_time">Дата &amp; время</string>
+    <string name="fake_call_now">Позвонить сейчас</string>
+    <string name="fake_call_schedule_btn">Запланировать вызов</string>
+    <string name="fake_call_cancel_btn">Закрыть</string>
+    <string name="fake_call_scheduled_banner">Предстоящий фальшивый звонок</string>
+    <string name="fake_call_scheduled_desc">Входящий ложный вызов от %1$s в %2$s</string>
+    <string name="fake_call_success_scheduled">Ложный вызов запланирован для %1$s</string>
+    <string name="fake_call_cancelled">Запланированный ложный вызов отменен</string>
+    <string name="fake_call_select_date">Выбрать дату</string>
+    <string name="fake_call_select_time">Выбрать время</string>
+    <string name="fake_call_screen_incoming">Входящий вызов</string>
+    <string name="fake_call_screen_ended">Вызов завершен</string>
+    <string name="fake_call_new_schedule">Новый ложный звонок</string>
+    <string name="fake_call_schedules_title">Запланированные ложные вызовы</string>
+    <string name="fake_call_no_schedules_title">Нет запланированных вызовов</string>
+    <string name="fake_call_no_schedules_desc">Планирование ложных вызовов на любую дату и время. Полная имитация реального звонка.</string>
+    <string name="fake_call_clear_all">Очистить всё</string>
+    <string name="fake_call_clear_all_confirm">Вы уверены, что хотите отменить все запланированные ложные вызовы?</string>
+    <string name="fake_call_delete_schedule">Удалить расписание</string>
+    <string name="fake_call_deleted">Запланированный вызов удален</string>
+    <string name="fake_call_time_calling_in">Вызов в %1$s</string>
+    <string name="fake_call_vibrate">Вибрация при звонке</string>
+    <string name="fake_call_vibrate_desc">Вибрировать устройство при имитации звонков</string>
+    <string name="fake_call_test_now">Тестовый вызов</string>
+    <string name="fake_call_options">Варианты вызова</string>
     <!-- Navigation Bar Style -->
+    <string name="settings_interface_nav_bar_style">Вид панели навигации</string>
+    <string name="settings_interface_nav_bar_style_supporting">Выберите между стандартной нижней панелью и плавающей выразительной панелью инструментов</string>
+    <string name="settings_nav_bar_standard">Стандартная панель</string>
+    <string name="settings_nav_bar_toolbar">Всплывающая панель</string>
+    <string name="fake_call_incoming_channel_title">Поддельный входящий вызов</string>
+    <string name="fake_call_incoming_channel_desc">Уведомления для имитируемых входящих и активных вызовов</string>
+    <string name="settings_sound_flip_to_silence">Экраном на стол для отключения звука</string>
+    <string name="settings_sound_flip_to_silence_supporting">Выключить звук входящего звонка, поместив телефон экраном вниз</string>
+    <string name="settings_blocked_export_csv">Экспортировать список заблокированных (CSV)</string>
+    <string name="settings_blocked_export_csv_desc">Сохраните заблокированные номера в CSV-файл</string>
+    <string name="settings_blocked_import_csv">Импортировать список заблокированных (CSV)</string>
+    <string name="settings_blocked_import_csv_desc">Импортировать номера для блокировки из CSV-файла</string>
+    <string name="settings_blocked_export_success">Экспортировано %1$d номеров в CSV</string>
+    <string name="settings_blocked_import_success">Импортировано %1$d новых номеров (%2$d уже заблокирован)</string>
+    <string name="settings_blocked_csv_empty">В файле не найдено допустимых телефонных номеров</string>
+    <string name="settings_blocked_file_error">Не удалось обработать файл</string>
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contacts_management_title">Контакты &amp; хранилище</string>
+    <string name="settings_contact_management_headline">Управление контактами</string>
+    <string name="settings_contact_management_supporting">Объединение дубликатов, перенос контактов между SIM-картой, устройством &amp; аккаунтами</string>
+    <string name="contact_management_title">Управление контактами</string>
+    <string name="contact_management_storage_overview">Обзор хранилища</string>
+    <string name="contact_management_duplicates_title">Дублирующиеся контакты</string>
+    <string name="contact_management_duplicates_found">Найдено дубликатов: %1$d (групп: \%2$d)</string>
+    <string name="contact_management_no_duplicates">Адресная книга очищена. Дубликатов не найдено.</string>
+    <string name="contact_management_merge_all">Объединить все</string>
+    <string name="contact_management_merge_all_confirm_title">Объединить дубликаты?</string>
+    <string name="contact_management_merge_all_confirm_msg">Это объединит номера телефонов, адреса эл. почты, адреса и заметки для всех групп дубликатов (%1$d) и удалит повторяющиеся контакты.</string>
+    <string name="contact_management_merge_success">Успешно объединено %1$d дубликатов</string>
+    <string name="contact_management_merge_group_btn">Объединить</string>
+    <string name="contact_management_ignore_btn">Отменить</string>
+    <string name="contact_management_move_title">Управление контактами</string>
+    <string name="contact_management_move_supporting">Перемещайте контакты между SIM-картой, локальной памятью, аккаунтами и личным хранилищем</string>
+    <string name="contact_management_move_from">От</string>
+    <string name="contact_management_move_to">В</string>
+    <string name="contact_management_select_to_move">Выберите контакты для перемещения</string>
+    <string name="contact_management_move_all">Переместить все (%1$d)</string>
+    <string name="contact_management_move_confirm_title">Переместить контакты?</string>
+    <string name="contact_management_move_confirm_msg">Вы уверены, что хотите переместить контакты %1$d из %2$s в %3$s?</string>
+    <string name="contact_management_move_success">%1$d контактов перемещено в %2$s</string>
+    <string name="contact_management_same_source_dest">Источник и место назначения должны отличаться</string>
+    <string name="contact_management_tools_title">Инструменты адресной книги</string>
+    <string name="contact_management_standardize_numbers">Стандартизация номеров</string>
+    <string name="contact_management_standardize_supporting">Удалить лишние пробелы и привести к международному формату</string>
+    <string name="contact_management_card_review">Проверить &amp; объединить</string>
+    <string name="contact_management_card_clean">Очистить адресную книгу</string>
+    <string name="contact_management_card_clean_sub">Все контакты уникальны • Нажмите для управления памятью</string>
+    <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты &amp; данных</string>
 </resources>
