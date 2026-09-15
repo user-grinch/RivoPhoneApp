@@ -1,8 +1,16 @@
 package com.grinch.rivo4.view.screen.onboarding
 
+import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material3.AlertDialog
+import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
+import rikka.shizuku.Shizuku
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -135,6 +143,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
     var currentStage by remember { mutableIntStateOf(STAGE_INTRO) }
     var currentIntroPage by remember { mutableIntStateOf(0) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
+    var showShizukuInstallDialog by remember { mutableStateOf(false) }
 
     // Observe lifecycle ON_RESUME to refresh permission checklist automatically
     DisposableEffect(lifecycleOwner) {
@@ -146,6 +155,21 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Observe Shizuku permission grant events in real-time
+    DisposableEffect(Unit) {
+        val listener = Shizuku.OnRequestPermissionResultListener { _, _ ->
+            refreshTrigger++
+        }
+        try {
+            Shizuku.addRequestPermissionResultListener(listener)
+        } catch (_: Exception) {}
+        onDispose {
+            try {
+                Shizuku.removeRequestPermissionResultListener(listener)
+            } catch (_: Exception) {}
         }
     }
 
@@ -186,6 +210,12 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
         refreshTrigger++
     }
 
+    val storageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        refreshTrigger++
+    }
+
     fun handlePermissionItemClick(item: PermissionCheckItem) {
         when (item.actionType) {
             PermissionActionType.ROLE_DIALER -> {
@@ -202,6 +232,31 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
             }
             PermissionActionType.RUNTIME -> {
                 singleRuntimeLauncher.launch(item.permissions.toTypedArray())
+            }
+            PermissionActionType.STORAGE -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    storageLauncher.launch(PermissionChecklistHelper.getStorageAccessIntent(context))
+                } else {
+                    singleRuntimeLauncher.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                }
+            }
+            PermissionActionType.SHIZUKU -> {
+                when {
+                    !PermissionChecklistHelper.isShizukuInstalled(context) -> {
+                        showShizukuInstallDialog = true
+                    }
+                    !PermissionChecklistHelper.isShizukuRunning() -> {
+                        val launchIntent = context.packageManager.getLaunchIntentForPackage(PermissionChecklistHelper.SHIZUKU_PACKAGE)
+                        if (launchIntent != null) {
+                            context.startActivity(launchIntent)
+                        } else {
+                            showShizukuInstallDialog = true
+                        }
+                    }
+                    else -> {
+                        ShizukuConnectionManager.requestPermission()
+                    }
+                }
             }
         }
     }
@@ -230,11 +285,93 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
         if (ungrantedRuntime.isNotEmpty()) {
             singleRuntimeLauncher.launch(ungrantedRuntime.toTypedArray())
+        } else if (!PermissionChecklistHelper.hasStoragePermission(context)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                storageLauncher.launch(PermissionChecklistHelper.getStorageAccessIntent(context))
+            } else {
+                singleRuntimeLauncher.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            }
         } else if (!PermissionChecklistHelper.hasOverlayPermission(context)) {
             settingsLauncher.launch(PermissionChecklistHelper.getOverlayIntent(context))
         } else if (!PermissionChecklistHelper.isBatteryOptimizationIgnored(context)) {
             settingsLauncher.launch(PermissionChecklistHelper.getBatteryOptimizationIntent(context))
+        } else if (PermissionChecklistHelper.isShizukuRunning() && !PermissionChecklistHelper.hasShizukuPermission(context)) {
+            ShizukuConnectionManager.requestPermission()
         }
+    }
+
+    if (showShizukuInstallDialog) {
+        AlertDialog(
+            onDismissRequest = { showShizukuInstallDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.GraphicEq,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            title = {
+                Text(
+                    text = "Install Shizuku",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Shizuku enables crystal-clear 2-way call audio capture directly from Android system audio without rooting your device.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Text(
+                        text = "Select an installation source:",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showShizukuInstallDialog = false
+                        try {
+                            val marketIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(marketIntent)
+                        } catch (e: Exception) {
+                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(webIntent)
+                        }
+                    }
+                ) {
+                    Text("Google Play")
+                }
+            },
+            dismissButton = {
+                Row {
+                    OutlinedButton(
+                        onClick = {
+                            showShizukuInstallDialog = false
+                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(webIntent)
+                        }
+                    ) {
+                        Text("Website / APK")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { showShizukuInstallDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        )
     }
 
     Surface(

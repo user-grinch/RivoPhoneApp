@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +90,8 @@ fun PermissionItemRow(
     val iconBgColor by animateColorAsState(
         targetValue = if (item.isGranted) {
             MaterialTheme.colorScheme.primaryContainer
+        } else if (!item.isEnabled) {
+            MaterialTheme.colorScheme.surfaceContainer
         } else {
             MaterialTheme.colorScheme.surfaceContainerHigh
         },
@@ -97,6 +100,8 @@ fun PermissionItemRow(
     val iconTintColor by animateColorAsState(
         targetValue = if (item.isGranted) {
             MaterialTheme.colorScheme.onPrimaryContainer
+        } else if (!item.isEnabled) {
+            MaterialTheme.colorScheme.outline
         } else {
             MaterialTheme.colorScheme.onSurfaceVariant
         },
@@ -107,7 +112,8 @@ fun PermissionItemRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .alpha(if (!item.isEnabled && !item.isGranted) 0.65f else 1f),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -130,12 +136,30 @@ fun PermissionItemRow(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(
-                text = item.title,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                if (item.statusNote != null && !item.isGranted) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Surface(
+                        shape = RoundedCornerShape(rivoCornerDp(6, roundness)),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.padding(vertical = 1.dp)
+                    ) {
+                        Text(
+                            text = item.statusNote,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = item.description,
@@ -168,10 +192,12 @@ fun PermissionItemRow(
                     }
                 }
             } else {
-                val label = when (item.actionType) {
+                val label = item.actionLabel ?: when (item.actionType) {
                     PermissionActionType.ROLE_DIALER -> "Set"
                     PermissionActionType.OVERLAY -> "Enable"
                     PermissionActionType.BATTERY_OPTIMIZATION -> "Allow"
+                    PermissionActionType.STORAGE -> "Allow"
+                    PermissionActionType.SHIZUKU -> "Grant"
                     else -> "Grant"
                 }
                 FilledTonalButton(
@@ -181,10 +207,17 @@ fun PermissionItemRow(
                         horizontal = 12.dp,
                         vertical = 6.dp
                     ),
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    colors = if (!item.isEnabled) {
+                        ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
                 ) {
                     Text(
                         text = label,

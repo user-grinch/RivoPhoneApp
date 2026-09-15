@@ -282,6 +282,9 @@ class CallService : InCallService() {
             (getCalls()?.none { it != call && it.state == Call.STATE_ACTIVE } != false)) {
             CallRecorder.stop()
         }
+        if (getCalls()?.none { it != call && it.state != Call.STATE_DISCONNECTED } != false) {
+            CallRecorder.releasePrewarm()
+        }
 
         if (cause?.code == DisconnectCause.BUSY &&
             preferenceManager.getBoolean(PreferenceManager.KEY_AUTO_REDIAL_BUSY, false)) {

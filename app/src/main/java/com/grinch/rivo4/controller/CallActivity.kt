@@ -74,6 +74,7 @@ class CallActivity : ComponentActivity() {
 
         CallBackgroundStore.attach(preferenceManager)
         AdPreloader.preloadPostCallAd(this@CallActivity)
+        CallRecorder.prepare(this)
 
         if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
             CallService.currentCallSession.value == null

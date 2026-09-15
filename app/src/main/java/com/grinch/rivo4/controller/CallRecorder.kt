@@ -20,9 +20,11 @@ import com.grinch.rivo4.controller.shizuku.ScrcpyClient
 import com.grinch.rivo4.controller.shizuku.ScrcpyConfig
 import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,6 +58,9 @@ object CallRecorder {
     // Shizuku recording pipeline components
     private var shizukuManager: ShizukuConnectionManager? = null
     private var shellService: IShellService? = null
+    private var prewarmedShizukuManager: ShizukuConnectionManager? = null
+    private var prewarmedShellService: IShellService? = null
+    private var prewarmJob: Deferred<IShellService?>? = null
     private var scrcpyClient: ScrcpyClient? = null
     private var scrcpyMuxer: ScrcpyAudioMuxer? = null
     private var recordingScope: CoroutineScope? = null
@@ -66,11 +71,14 @@ object CallRecorder {
     const val DIRECTORY_NAME = "Rivo Recordings"
 
     @Volatile
-    private var lastWorkingSource: Int = MediaRecorder.AudioSource.VOICE_COMMUNICATION
+    private var recordingStartTimeMillis: Long = 0L
+
+    @Volatile
+    private var lastWorkingSource: Int = MediaRecorder.AudioSource.MIC
 
     private val audioSources = listOf(
-        MediaRecorder.AudioSource.VOICE_COMMUNICATION,
         MediaRecorder.AudioSource.MIC,
+        MediaRecorder.AudioSource.VOICE_COMMUNICATION,
         MediaRecorder.AudioSource.VOICE_RECOGNITION,
         MediaRecorder.AudioSource.DEFAULT,
         MediaRecorder.AudioSource.CAMCORDER,
@@ -213,10 +221,30 @@ object CallRecorder {
 
         val appContext = context.applicationContext
         activeContext = appContext
+
+        // Instant UI reaction: start duration timer and mark recording active immediately
+        _isRecording.value = true
+        recordingStartTimeMillis = System.currentTimeMillis()
+        startDurationTimer()
+        CallRecordingService.start(appContext)
+
         startJob?.cancel()
         startJob = recorderScope.launch {
             try {
-                startInternal(appContext, label)
+                val success = startInternal(appContext, label)
+                if (!success) {
+                    Log.w(TAG, "Recording start failed; rolling back recording state")
+                    _isRecording.value = false
+                    recordingStartTimeMillis = 0L
+                    durationJob?.cancel()
+                    CallRecordingService.stop(appContext)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception starting recording: ${e.message}", e)
+                _isRecording.value = false
+                recordingStartTimeMillis = 0L
+                durationJob?.cancel()
+                CallRecordingService.stop(appContext)
             } finally {
                 isStarting.set(false)
             }
@@ -224,23 +252,72 @@ object CallRecorder {
     }
 
     fun prepare(context: Context) {
-        recorderScope.launch {
+        val appContext = context.applicationContext
+        recorderScope.launch(Dispatchers.IO) {
             try {
-                getRecordingsDirectory(context)
+                getRecordingsDirectory(appContext)
                 val prefs = try {
-                    val deviceContext = context.createDeviceProtectedStorageContext()
+                    val deviceContext = appContext.createDeviceProtectedStorageContext()
                     deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
                 } catch (e: Exception) { null }
-                val isShizukuEnabled = prefs?.getBoolean("call_recording_shizuku", false) ?: false
-                if (isShizukuEnabled && ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
-                    ScrcpyConfig.ensureServerJar(context)
+                val isShizukuEnabled = prefs?.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, true) ?: true
+                if (isShizukuEnabled && ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(appContext)) {
+                    val serverPath = ScrcpyConfig.ensureServerJar(appContext)
+                    if (serverPath != null) {
+                        prewarmShizuku(appContext)
+                    }
                 }
             } catch (_: Exception) {}
         }
     }
 
+    private fun prewarmShizuku(context: Context) {
+        synchronized(this) {
+            if (prewarmedShellService?.asBinder()?.isBinderAlive == true) {
+                return
+            }
+            if (prewarmJob?.isActive == true) {
+                return
+            }
+            val mgr = prewarmedShizukuManager ?: ShizukuConnectionManager(context.applicationContext) {
+                synchronized(this@CallRecorder) {
+                    prewarmedShellService = null
+                    prewarmedShizukuManager = null
+                }
+            }
+            prewarmedShizukuManager = mgr
+            prewarmJob = recorderScope.async(Dispatchers.IO) {
+                try {
+                    val service = withTimeoutOrNull(7000L) {
+                        mgr.getShellService()
+                    }
+                    synchronized(this@CallRecorder) {
+                        prewarmedShellService = service
+                    }
+                    if (service != null) {
+                        Log.i(TAG, "Shizuku ShellService pre-warmed and ready for 0ms recording")
+                    }
+                    service
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to pre-warm Shizuku service: ${e.message}")
+                    null
+                }
+            }
+        }
+    }
+
+    fun releasePrewarm() {
+        synchronized(this) {
+            prewarmJob?.cancel()
+            prewarmJob = null
+            prewarmedShellService = null
+            runCatching { prewarmedShizukuManager?.unbind() }
+            prewarmedShizukuManager = null
+        }
+    }
+
     private suspend fun startInternal(context: Context, label: String): Boolean {
-        if (_isRecording.value) return true
+        if (!isStarting.get() && _isRecording.value) return true
         activeContext = context
 
         val safeLabel = label
@@ -254,7 +331,7 @@ object CallRecorder {
             val deviceContext = context.createDeviceProtectedStorageContext()
             deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
         } catch (e: Exception) { null }
-        val isShizukuEnabled = prefs?.getBoolean("call_recording_shizuku", false) ?: false
+        val isShizukuEnabled = prefs?.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, true) ?: true
 
         // Priority 1: Use Shizuku + scrcpy-server ONLY if enabled and available
         if (isShizukuEnabled && ShizukuConnectionManager.isAvailable() && ShizukuConnectionManager.hasPermission(context)) {
@@ -273,20 +350,53 @@ object CallRecorder {
                 return false
             }
 
-            val mgr = ShizukuConnectionManager(context.applicationContext)
+            var mgr: ShizukuConnectionManager? = null
+            var service: IShellService? = null
+
+            synchronized(this) {
+                if (prewarmedShellService?.asBinder()?.isBinderAlive == true && prewarmedShizukuManager != null) {
+                    mgr = prewarmedShizukuManager
+                    service = prewarmedShellService
+                    prewarmedShellService = null
+                    prewarmedShizukuManager = null
+                    prewarmJob = null
+                }
+            }
+
+            if (service == null) {
+                val pendingJob = prewarmJob
+                if (pendingJob != null && pendingJob.isActive) {
+                    service = withTimeoutOrNull(5000L) { pendingJob.await() }
+                    if (service != null && service.asBinder().isBinderAlive) {
+                        mgr = prewarmedShizukuManager
+                        synchronized(this) {
+                            prewarmedShellService = null
+                            prewarmedShizukuManager = null
+                            prewarmJob = null
+                        }
+                    }
+                }
+            }
+
+            if (service == null || mgr == null || !service.asBinder().isBinderAlive) {
+                Log.d(TAG, "No valid pre-warmed service; establishing fresh Shizuku connection")
+                val freshMgr = ShizukuConnectionManager(context.applicationContext)
+                val freshService = withTimeoutOrNull(8000L) {
+                    freshMgr.getShellService()
+                } ?: run {
+                    Log.w(TAG, "Timed out waiting for Shizuku shell service")
+                    freshMgr.unbind()
+                    return false
+                }
+                mgr = freshMgr
+                service = freshService
+            }
+
             shizukuManager = mgr
+            shellService = service
 
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
             recordingScope = scope
-
-            val service = withTimeoutOrNull(2500L) {
-                mgr.getShellService()
-            } ?: run {
-                Log.w(TAG, "Timed out waiting for Shizuku shell service")
-                mgr.unbind()
-                return false
-            }
-            shellService = service
 
             // Attempt voice-call first (captures uplink and downlink)
             var pipePfd = service.startCapture(
@@ -354,6 +464,7 @@ object CallRecorder {
             currentFile = recordFile
             isUsingShizuku = true
             _isRecording.value = true
+            recordingStartTimeMillis = System.currentTimeMillis()
             CallRecordingService.start(context)
             startDurationTimer()
 
@@ -452,6 +563,7 @@ object CallRecorder {
                     isUsingShizuku = false
                     lastWorkingSource = source
                     _isRecording.value = true
+                    recordingStartTimeMillis = System.currentTimeMillis()
                     CallRecordingService.start(context)
                     startDurationTimer()
                     Log.i(TAG, "MediaRecorder started: source $source, profile ${profile.extension}")
@@ -472,6 +584,9 @@ object CallRecorder {
         durationJob?.cancel()
         _durationSeconds.value = 0L
         val start = System.currentTimeMillis()
+        if (recordingStartTimeMillis == 0L) {
+            recordingStartTimeMillis = start
+        }
         durationJob = CoroutineScope(Dispatchers.Default).launch {
             while (isActive && _isRecording.value) {
                 _durationSeconds.value = (System.currentTimeMillis() - start) / 1000
@@ -490,7 +605,12 @@ object CallRecorder {
             return null
         }
 
-        val duration = _durationSeconds.value
+        val actualDuration = if (recordingStartTimeMillis > 0L) {
+            (System.currentTimeMillis() - recordingStartTimeMillis) / 1000
+        } else {
+            _durationSeconds.value
+        }
+        recordingStartTimeMillis = 0L
         durationJob?.cancel()
         durationJob = null
 
@@ -531,7 +651,7 @@ object CallRecorder {
         } else {
             val instance = recorder
             try {
-                if (duration < 1) {
+                if (actualDuration < 1) {
                     try { Thread.sleep(600) } catch (ignored: Exception) {}
                 }
                 instance?.stop()
@@ -567,8 +687,8 @@ object CallRecorder {
             deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
         } catch (e: Exception) { null }
         val minDuration = prefs?.getInt("call_recording_min_duration", 0) ?: 0
-        if (minDuration > 0 && duration < minDuration) {
-            Log.i(TAG, "Call duration ($duration s) was below filter ($minDuration s), discarding.")
+        if (minDuration > 0 && actualDuration < minDuration) {
+            Log.i(TAG, "Call duration ($actualDuration s) was below filter ($minDuration s), discarding.")
             saved.delete()
             return null
         }

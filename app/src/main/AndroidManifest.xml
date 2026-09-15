@@ -41,6 +41,9 @@
         tools:node="remove"/>
 
     <queries>
+        <!-- Shizuku Privileged API -->
+        <package android:name="moe.shizuku.privileged.api" />
+
         <!-- Messaging & Social Apps -->
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />

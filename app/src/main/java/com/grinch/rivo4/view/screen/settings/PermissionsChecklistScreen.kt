@@ -1,8 +1,15 @@
 package com.grinch.rivo4.view.screen.settings
 
+import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.outlined.GraphicEq
+import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
+import rikka.shizuku.Shizuku
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -41,6 +48,7 @@ fun PermissionsChecklistScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var refreshTrigger by remember { mutableIntStateOf(0) }
+    var showShizukuInstallDialog by remember { mutableStateOf(false) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -51,6 +59,20 @@ fun PermissionsChecklistScreen(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        val listener = Shizuku.OnRequestPermissionResultListener { _, _ ->
+            refreshTrigger++
+        }
+        try {
+            Shizuku.addRequestPermissionResultListener(listener)
+        } catch (_: Exception) {}
+        onDispose {
+            try {
+                Shizuku.removeRequestPermissionResultListener(listener)
+            } catch (_: Exception) {}
         }
     }
 
@@ -79,6 +101,12 @@ fun PermissionsChecklistScreen(
         refreshTrigger++
     }
 
+    val storageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        refreshTrigger++
+    }
+
     fun handlePermissionItemClick(item: PermissionCheckItem) {
         when (item.actionType) {
             PermissionActionType.ROLE_DIALER -> {
@@ -96,7 +124,106 @@ fun PermissionsChecklistScreen(
             PermissionActionType.RUNTIME -> {
                 runtimeLauncher.launch(item.permissions.toTypedArray())
             }
+            PermissionActionType.STORAGE -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    storageLauncher.launch(PermissionChecklistHelper.getStorageAccessIntent(context))
+                } else {
+                    runtimeLauncher.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                }
+            }
+            PermissionActionType.SHIZUKU -> {
+                when {
+                    !PermissionChecklistHelper.isShizukuInstalled(context) -> {
+                        showShizukuInstallDialog = true
+                    }
+                    !PermissionChecklistHelper.isShizukuRunning() -> {
+                        val launchIntent = context.packageManager.getLaunchIntentForPackage(PermissionChecklistHelper.SHIZUKU_PACKAGE)
+                        if (launchIntent != null) {
+                            context.startActivity(launchIntent)
+                        } else {
+                            showShizukuInstallDialog = true
+                        }
+                    }
+                    else -> {
+                        ShizukuConnectionManager.requestPermission()
+                    }
+                }
+            }
         }
+    }
+
+    if (showShizukuInstallDialog) {
+        AlertDialog(
+            onDismissRequest = { showShizukuInstallDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.GraphicEq,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            title = {
+                Text(
+                    text = "Install Shizuku",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Shizuku enables crystal-clear 2-way call audio capture directly from Android system audio without rooting your device.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Text(
+                        text = "Select an installation source:",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showShizukuInstallDialog = false
+                        try {
+                            val marketIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(marketIntent)
+                        } catch (e: Exception) {
+                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(webIntent)
+                        }
+                    }
+                ) {
+                    Text("Google Play")
+                }
+            },
+            dismissButton = {
+                Row {
+                    OutlinedButton(
+                        onClick = {
+                            showShizukuInstallDialog = false
+                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(webIntent)
+                        }
+                    ) {
+                        Text("Website / APK")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { showShizukuInstallDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        )
     }
 
     Scaffold(

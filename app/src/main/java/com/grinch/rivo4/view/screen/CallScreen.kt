@@ -244,6 +244,10 @@ fun ExpressiveCallScreen(
     }
     val isRecording by CallRecorder.isRecording.collectAsState()
 
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        CallRecorder.prepare(context)
+    }
+
     val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->

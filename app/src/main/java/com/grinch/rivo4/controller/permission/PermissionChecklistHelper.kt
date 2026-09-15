@@ -17,8 +17,12 @@ import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PictureInPicture
 import androidx.compose.material.icons.outlined.VerifiedUser
+import androidx.compose.material.icons.outlined.FolderSpecial
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.ContextCompat
+import com.grinch.rivo4.controller.CallRecorder
+import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
 import com.grinch.rivo4.controller.util.getDefaultDialerIntent
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
 
@@ -27,7 +31,9 @@ enum class PermissionActionType {
     ROLE_DIALER,
     OVERLAY,
     BATTERY_OPTIMIZATION,
-    SETTINGS
+    SETTINGS,
+    STORAGE,
+    SHIZUKU
 }
 
 data class PermissionCheckItem(
@@ -38,7 +44,10 @@ data class PermissionCheckItem(
     val isGranted: Boolean,
     val isEssential: Boolean,
     val actionType: PermissionActionType,
-    val permissions: List<String> = emptyList()
+    val permissions: List<String> = emptyList(),
+    val isEnabled: Boolean = true,
+    val actionLabel: String? = null,
+    val statusNote: String? = null
 )
 
 object PermissionChecklistHelper {
@@ -207,7 +216,7 @@ object PermissionChecklistHelper {
         items.add(
             PermissionCheckItem(
                 id = "audio_recording",
-                title = "Call Recording",
+                title = "Call Recording (Microphone)",
                 description = "Record incoming and outgoing phone calls and voice notes directly within the app.",
                 icon = Icons.Outlined.Mic,
                 isGranted = hasAudioRecordPermission(context),
@@ -217,7 +226,107 @@ object PermissionChecklistHelper {
             )
         )
 
+        // Storage Access for saving call recordings directly
+        val hasStorage = hasStoragePermission(context)
+        items.add(
+            PermissionCheckItem(
+                id = "storage_recording",
+                title = "Recordings Storage",
+                description = if (hasStorage) {
+                    "Call recordings can be stored directly in Internal Storage without restrictions."
+                } else {
+                    "Allow storage access to save call recordings directly to Internal Storage / ${CallRecorder.DIRECTORY_NAME}."
+                },
+                icon = Icons.Outlined.FolderSpecial,
+                isGranted = hasStorage,
+                isEssential = false,
+                actionType = PermissionActionType.STORAGE,
+                actionLabel = "Allow"
+            )
+        )
+
+        // Shizuku Elevated 2-Way Audio Recording
+        val shizukuInstalled = isShizukuInstalled(context)
+        val shizukuRunning = isShizukuRunning()
+        val shizukuGranted = hasShizukuPermission(context)
+
+        val (shizukuDesc, shizukuActionLabel, shizukuStatusNote) = when {
+            shizukuGranted -> Triple(
+                "Internal call audio capture is enabled for crystal-clear 2-way call recordings.",
+                "Granted",
+                null
+            )
+            !shizukuInstalled -> Triple(
+                "Shizuku is not installed. Tap to view installation options (Play Store / Website).",
+                "Install",
+                "Not Installed"
+            )
+            !shizukuRunning -> Triple(
+                "Shizuku service is stopped. Open Shizuku and start via Wireless Debugging or Root.",
+                "Open",
+                "Service Stopped"
+            )
+            else -> Triple(
+                "Shizuku service is running. Grant permission to capture internal 2-way call audio.",
+                "Grant",
+                "Needs Permission"
+            )
+        }
+
+        items.add(
+            PermissionCheckItem(
+                id = "shizuku_recording",
+                title = "Shizuku 2-Way Audio",
+                description = shizukuDesc,
+                icon = Icons.Outlined.GraphicEq,
+                isGranted = shizukuGranted,
+                isEssential = false,
+                actionType = PermissionActionType.SHIZUKU,
+                isEnabled = shizukuInstalled,
+                actionLabel = shizukuActionLabel,
+                statusNote = shizukuStatusNote
+            )
+        )
+
         return items
+    }
+
+    const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
+
+    fun isShizukuInstalled(context: Context): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(SHIZUKU_PACKAGE, 0)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun isShizukuRunning(): Boolean {
+        return ShizukuConnectionManager.isAvailable()
+    }
+
+    fun hasShizukuPermission(context: Context): Boolean {
+        return ShizukuConnectionManager.hasPermission(context)
+    }
+
+    fun hasStoragePermission(context: Context): Boolean {
+        return CallRecorder.hasStoragePermission(context)
+    }
+
+    fun getStorageAccessIntent(context: Context): Intent {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Intent(
+                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    Uri.parse("package:${context.packageName}")
+                )
+            } catch (e: Exception) {
+                Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+            }
+        } else {
+            getAppSettingsIntent(context)
+        }
     }
 
     fun getOverlayIntent(context: Context): Intent {

@@ -152,6 +152,9 @@ fun CallRecordingsContent(
     var callRecordingEnabled by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true))
     }
+    var shizukuRecordingEnabled by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, true))
+    }
     var autoRecordEnabled by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false))
     }
@@ -795,12 +798,30 @@ fun CallRecordingsContent(
                                     )
                                     Spacer(Modifier.height(2.dp))
                                     Text(
-                                        text = if (shizukuAvailable && shizukuPermissionGranted) "Elevated internal call audio recording is enabled."
+                                        text = if (shizukuAvailable && shizukuPermissionGranted) {
+                                            if (shizukuRecordingEnabled) "Elevated internal call audio recording is enabled."
+                                            else "Shizuku recording is disabled; falling back to microphone."
+                                        }
                                         else "Android restricts call audio. Shizuku is required to capture crystal-clear internal call audio.",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            }
+
+                            if (shizukuAvailable && shizukuPermissionGranted) {
+                                Spacer(Modifier.height(8.dp))
+                                RivoDivider(Modifier.padding(vertical = 4.dp))
+                                RivoSwitchListItem(
+                                    headline = "Use Shizuku for 2-Way Audio",
+                                    supporting = if (shizukuRecordingEnabled) "Capturing crystal-clear internal call audio via Shizuku" else "Using fallback microphone recording",
+                                    leadingIcon = Icons.Outlined.GraphicEq,
+                                    checked = shizukuRecordingEnabled,
+                                    onCheckedChange = {
+                                        shizukuRecordingEnabled = it
+                                        prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, it)
+                                    }
+                                )
                             }
 
                             if (!shizukuAvailable || !shizukuPermissionGranted) {

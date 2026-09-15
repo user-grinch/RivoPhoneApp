@@ -64,6 +64,7 @@ class ShizukuConnectionManager(
     }
 
     private var serviceConnection: ServiceConnection? = null
+    private var currentService: IShellService? = null
 
     suspend fun getShellService(): IShellService = suspendCancellableCoroutine { continuation ->
         if (!isAvailable()) {
@@ -71,14 +72,22 @@ class ShizukuConnectionManager(
             return@suspendCancellableCoroutine
         }
 
+        val cached = currentService
+        if (cached != null && cached.asBinder().isBinderAlive) {
+            continuation.resume(cached)
+            return@suspendCancellableCoroutine
+        }
+
         val connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, binder: IBinder?) {
                 if (binder != null) {
                     val proxy = IShellService.Stub.asInterface(binder)
+                    currentService = proxy
                     if (continuation.isActive) {
                         continuation.resume(proxy)
                     }
                 } else {
+                    currentService = null
                     val e = IllegalStateException("Shizuku returned null binder")
                     if (continuation.isActive) {
                         continuation.resumeWithException(e)
@@ -87,6 +96,7 @@ class ShizukuConnectionManager(
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
+                currentService = null
                 unbind()
                 if (continuation.isActive) {
                     continuation.resumeWithException(IllegalStateException("Shizuku service disconnected"))
@@ -134,6 +144,7 @@ class ShizukuConnectionManager(
     }
 
     fun unbind() {
+        currentService = null
         val serviceConn = serviceConnection
         if (serviceConn != null) {
             try {
