@@ -108,9 +108,11 @@ fun CallLogFullScreen(
             }
         )
     }
+    val avatarStyle = rememberRivoAvatarStyle()
 
-    Scaffold(
-        topBar = {
+    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+        Scaffold(
+            topBar = {
             AnimatedContent(
                 targetState = selectedEntries.isNotEmpty(),
                 transitionSpec = {
@@ -189,12 +191,14 @@ fun CallLogFullScreen(
                         }
                     }
                 } else {
-                    val finalLogs = when (selectedFilter) {
-                        CallLogFilter.All -> filteredLogsByContact
-                        CallLogFilter.Missed -> filteredLogsByContact.filter { it.type == CallLog.Calls.MISSED_TYPE }
-                        CallLogFilter.Incoming -> filteredLogsByContact.filter { it.type == CallLog.Calls.INCOMING_TYPE }
-                        CallLogFilter.Outgoing -> filteredLogsByContact.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
-                        CallLogFilter.Contacts -> filteredLogsByContact.filter { it.name != null && it.name != it.number }
+                    val finalLogs = remember(filteredLogsByContact, selectedFilter) {
+                        when (selectedFilter) {
+                            CallLogFilter.All -> filteredLogsByContact
+                            CallLogFilter.Missed -> filteredLogsByContact.filter { it.type == CallLog.Calls.MISSED_TYPE }
+                            CallLogFilter.Incoming -> filteredLogsByContact.filter { it.type == CallLog.Calls.INCOMING_TYPE }
+                            CallLogFilter.Outgoing -> filteredLogsByContact.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
+                            CallLogFilter.Contacts -> filteredLogsByContact.filter { it.name != null && it.name != it.number }
+                        }
                     }
 
                     if (finalLogs.isEmpty()) {
@@ -202,7 +206,9 @@ fun CallLogFullScreen(
                             Text(stringResource(R.string.call_log_no_filter_match), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     } else {
-                        val groupedLogs = finalLogs.groupBy { formatDateHeader(context, it.date) }
+                        val groupedLogs = remember(finalLogs) {
+                            finalLogs.groupBy { formatDateHeader(context, it.date) }
+                        }
 
                         LazyColumn(
                             state = listState,
@@ -286,4 +292,5 @@ fun CallLogFullScreen(
             )
         }
     }
+}
 }

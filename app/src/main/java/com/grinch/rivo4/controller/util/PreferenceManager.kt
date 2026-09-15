@@ -16,8 +16,10 @@ class PreferenceManager(context: Context) {
     private val _settingsChanged = MutableStateFlow(0)
     val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()
 
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        _settingsChanged.value += 1
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME) {
+            _settingsChanged.value += 1
+        }
     }
 
     init {
@@ -389,6 +391,11 @@ class PreferenceManager(context: Context) {
         const val TAB_RECORDINGS = 3
 
         val DEFAULT_BOTTOM_NAV_ORDER = listOf(TAB_RECENTS, TAB_CONTACTS, TAB_FAVORITES, TAB_RECORDINGS)
+
+        const val KEY_MISSED_CALL_CARD = "missed_call_card"
+        const val KEY_AUTO_DECLINE_UNKNOWN = "auto_decline_unknown"
+        const val KEY_AUTO_DECLINE_NON_CONTACTS = "auto_decline_non_contacts"
+        const val KEY_DUAL_SIM_DIALPAD_BUTTONS = "dual_sim_dialpad_buttons"
     }
 
     fun isAppLockEnabled(): Boolean = getBoolean(KEY_APP_LOCK_ENABLED, false)
@@ -429,6 +436,18 @@ class PreferenceManager(context: Context) {
 
     fun isPostCallScreenEnabled(): Boolean = getBoolean(KEY_POST_CALL_SCREEN, true)
     fun setPostCallScreenEnabled(enabled: Boolean) = setBoolean(KEY_POST_CALL_SCREEN, enabled)
+
+    fun isMissedCallCardEnabled(): Boolean = getBoolean(KEY_MISSED_CALL_CARD, true)
+    fun setMissedCallCardEnabled(enabled: Boolean) = setBoolean(KEY_MISSED_CALL_CARD, enabled)
+
+    fun isAutoDeclineUnknownEnabled(): Boolean = getBoolean(KEY_AUTO_DECLINE_UNKNOWN, false)
+    fun setAutoDeclineUnknownEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_DECLINE_UNKNOWN, enabled)
+
+    fun isAutoDeclineNonContactsEnabled(): Boolean = getBoolean(KEY_AUTO_DECLINE_NON_CONTACTS, false)
+    fun setAutoDeclineNonContactsEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_DECLINE_NON_CONTACTS, enabled)
+
+    fun isDualSimDialpadButtonsEnabled(): Boolean = getBoolean(KEY_DUAL_SIM_DIALPAD_BUTTONS, false)
+    fun setDualSimDialpadButtonsEnabled(enabled: Boolean) = setBoolean(KEY_DUAL_SIM_DIALPAD_BUTTONS, enabled)
 
     fun resetSwipeActions() {
         setBoolean(KEY_SWIPE_ACTIONS_ENABLED, false)

@@ -71,6 +71,9 @@ fun CallAccountsScreen(
     var floatingBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
     var showRecentsStats by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, true)) }
     var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
+    var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
+    var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
+    var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var savingCallBg by remember { mutableStateOf(false) }
@@ -283,6 +286,43 @@ fun CallAccountsScreen(
                             onCheckedChange = {
                                 postCallSummary = it
                                 prefs.setPostCallScreenEnabled(it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_missed_call_card_title),
+                            supporting = stringResource(R.string.settings_missed_call_card_supporting),
+                            leadingIcon = Icons.Outlined.PhoneMissed,
+                            checked = missedCallCard,
+                            onCheckedChange = {
+                                missedCallCard = it
+                                prefs.setMissedCallCardEnabled(it)
+                            }
+                        )
+                    }
+                }
+
+                item {
+                    RivoExpressiveCard {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_auto_decline_unknown_title),
+                            supporting = stringResource(R.string.settings_auto_decline_unknown_supporting),
+                            leadingIcon = Icons.Outlined.PhoneDisabled,
+                            checked = autoDeclineUnknown,
+                            onCheckedChange = {
+                                autoDeclineUnknown = it
+                                prefs.setAutoDeclineUnknownEnabled(it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_auto_decline_non_contacts_title),
+                            supporting = stringResource(R.string.settings_auto_decline_non_contacts_supporting),
+                            leadingIcon = Icons.Outlined.PersonOff,
+                            checked = autoDeclineNonContacts,
+                            onCheckedChange = {
+                                autoDeclineNonContacts = it
+                                prefs.setAutoDeclineNonContactsEnabled(it)
                             }
                         )
                     }

@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -91,7 +92,10 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
         if (!customVisible) {
             Box(
                 modifier = Modifier
-                    .offset(x = blob1Offset.dp, y = (-80).dp)
+                    .graphicsLayer {
+                        translationX = blob1Offset.dp.toPx()
+                        translationY = (-80).dp.toPx()
+                    }
                     .size(280.dp)
                     .align(Alignment.TopStart)
                     .clip(CircleShape)
@@ -100,7 +104,10 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
             )
             Box(
                 modifier = Modifier
-                    .offset(x = blob2Offset.dp, y = 100.dp)
+                    .graphicsLayer {
+                        translationX = blob2Offset.dp.toPx()
+                        translationY = 100.dp.toPx()
+                    }
                     .size(320.dp)
                     .align(Alignment.BottomEnd)
                     .clip(CircleShape)

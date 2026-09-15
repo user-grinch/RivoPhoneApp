@@ -25,4 +25,5 @@ interface IContactsRepository {
     fun exportPrivateContacts(uri: Uri)
     fun importPrivateContacts(uri: Uri)
     fun isNumberHidden(number: String): Boolean
+    fun getHiddenNumbers(): List<String>
 }

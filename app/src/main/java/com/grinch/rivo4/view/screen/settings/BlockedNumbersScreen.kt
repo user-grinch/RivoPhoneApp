@@ -64,6 +64,8 @@ fun BlockedNumbersScreen(
     var blockMethod by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0)) }
     var logVisibility by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)) }
     var blockNotification by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, true)) }
+    var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
+    var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
 
     var blockedNumbers by remember { mutableStateOf<List<BlockedNumber>>(emptyList()) }
     var refreshKey by remember { mutableIntStateOf(0) }
@@ -393,6 +395,32 @@ fun BlockedNumbersScreen(
                             }
                         }
                     }
+                }
+            }
+
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_auto_decline_unknown_title),
+                        supporting = stringResource(R.string.settings_auto_decline_unknown_supporting),
+                        leadingIcon = Icons.Outlined.PhoneDisabled,
+                        checked = autoDeclineUnknown,
+                        onCheckedChange = {
+                            autoDeclineUnknown = it
+                            prefs.setAutoDeclineUnknownEnabled(it)
+                        }
+                    )
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_auto_decline_non_contacts_title),
+                        supporting = stringResource(R.string.settings_auto_decline_non_contacts_supporting),
+                        leadingIcon = Icons.Outlined.PersonOff,
+                        checked = autoDeclineNonContacts,
+                        onCheckedChange = {
+                            autoDeclineNonContacts = it
+                            prefs.setAutoDeclineNonContactsEnabled(it)
+                        }
+                    )
                 }
             }
 

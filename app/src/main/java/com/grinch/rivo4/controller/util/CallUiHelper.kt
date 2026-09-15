@@ -156,6 +156,9 @@ object CallUiHelper {
         packages.add("com.oneplus.launcher")
         packages.add("com.huawei.android.launcher")
         packages.add("com.transsion.hilauncher")
+        packages.add("com.bbk.launcher2")
+        packages.add("com.vivo.launcher")
+        packages.add("com.vivo.upslide")
 
         return packages
     }

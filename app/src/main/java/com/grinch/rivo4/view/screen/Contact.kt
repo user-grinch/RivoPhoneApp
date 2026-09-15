@@ -54,6 +54,8 @@ import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
 import com.grinch.rivo4.view.components.RivoPullToRefreshIndicator
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.LocalScrollToTopBottomPadding
+import com.grinch.rivo4.view.components.LocalRivoAvatarStyle
+import com.grinch.rivo4.view.components.rememberRivoAvatarStyle
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.ramcosta.composedestinations.annotation.Destination
@@ -121,8 +123,11 @@ fun ContactScreenContent(
         onSelectionStateChange?.invoke(isSelecting, if (isSelecting) batchActionBar else null)
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
+    val avatarStyle = rememberRivoAvatarStyle()
+
+    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
         topBar = {
             if (onSelectionStateChange != null) {
                 if (!isSelecting) {
@@ -197,6 +202,7 @@ fun ContactScreenContent(
             )
         }
     }
+}
 }
 
 @Composable

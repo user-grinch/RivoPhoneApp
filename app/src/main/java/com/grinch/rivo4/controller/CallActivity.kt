@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.telecom.Call
@@ -198,10 +199,8 @@ class CallActivity : ComponentActivity() {
                             val isPostCallEnabled = preferenceManager.isPostCallScreenEnabled()
                             val currentId = identity ?: lastKnownIdentity
                             delay(350)
-                            if (isPostCallEnabled && currentId != null) {
-                                val duration = if (lastConnectTime > 0) {
-                                    (System.currentTimeMillis() - lastConnectTime) / 1000
-                                } else 0L
+                            if (isPostCallEnabled && currentId != null && lastConnectTime > 0) {
+                                val duration = (System.currentTimeMillis() - lastConnectTime) / 1000
                                 PostCallActivity.start(
                                     context = this@CallActivity,
                                     contactName = currentId.name,
@@ -397,6 +396,7 @@ class CallActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        CallService.isActivityVisible.value = false
         releaseProximityLock()
     }
 
@@ -417,16 +417,33 @@ class CallActivity : ComponentActivity() {
             return
         }
 
-        setShowWhenLocked(false)
-        setTurnScreenOn(false)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(false)
+            setTurnScreenOn(false)
+        }
+        @Suppress("DEPRECATION")
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+        )
         finishAndRemoveTask()
     }
 
     private fun turnScreenOnAndShowWhileLocked() {
-        setShowWhenLocked(true)
-        setTurnScreenOn(true)
-        window.addFlags(WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+        @Suppress("DEPRECATION")
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+            WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+        )
     }
 
     override fun onStart() {
@@ -446,9 +463,11 @@ class CallActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        CallService.isActivityVisible.value = false
-        if (!isFinishing && !isDestroyed) {
-            checkAndStartFloatingBubble()
+        if (proximityWakeLock?.isHeld != true) {
+            CallService.isActivityVisible.value = false
+            if (!isFinishing && !isDestroyed) {
+                checkAndStartFloatingBubble()
+            }
         }
     }
 

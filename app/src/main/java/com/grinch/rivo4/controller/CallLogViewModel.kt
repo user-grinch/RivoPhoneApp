@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.data.CallLogFilter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,9 +44,15 @@ class CallLogViewModel(
     private val _selectedFilter = MutableStateFlow(CallLogFilter.All)
     val selectedFilter = _selectedFilter.asStateFlow()
 
+    private var debounceFetchJob: Job? = null
+
     private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
-            fetchLogs()
+            debounceFetchJob?.cancel()
+            debounceFetchJob = viewModelScope.launch(Dispatchers.IO) {
+                delay(250)
+                fetchLogsInternal()
+            }
         }
     }
 
@@ -58,6 +66,7 @@ class CallLogViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        debounceFetchJob?.cancel()
         try {
             contentResolver.unregisterContentObserver(contentObserver)
         } catch (e: Exception) {
@@ -70,15 +79,20 @@ class CallLogViewModel(
     }
 
     fun fetchLogs() {
+        debounceFetchJob?.cancel()
         viewModelScope.launch(Dispatchers.IO) {
-            if (_allCallLogs.value.isEmpty()) {
-                _isLoading.value = true
-            }
-            val result = callLogRepo.getCallLogs()
-            _allCallLogs.value = result
-            _todayStats.value = calculateTodayStats(result)
-            _isLoading.value = false
+            fetchLogsInternal()
         }
+    }
+
+    private suspend fun fetchLogsInternal() {
+        if (_allCallLogs.value.isEmpty()) {
+            _isLoading.value = true
+        }
+        val result = callLogRepo.getCallLogs()
+        _allCallLogs.value = result
+        _todayStats.value = calculateTodayStats(result)
+        _isLoading.value = false
     }
 
     private fun calculateTodayStats(logs: List<CallLogEntry>): TodayCallStats {

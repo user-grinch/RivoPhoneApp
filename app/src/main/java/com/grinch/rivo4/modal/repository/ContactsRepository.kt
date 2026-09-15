@@ -926,7 +926,7 @@ class ContactsRepository(
         }
 
         val nameMap = mutableMapOf<String, Int>()
-        val phoneList = mutableListOf<Pair<String, Int>>()
+        val phoneBuckets = mutableMapOf<String, MutableList<Pair<String, Int>>>()
         val emailMap = mutableMapOf<String, Int>()
 
         allContacts.forEachIndexed { index, contact ->
@@ -943,11 +943,14 @@ class ContactsRepository(
             contact.phoneNumbers.forEach { num ->
                 val cleanNum = num.trim()
                 if (cleanNum.isNotBlank()) {
-                    val match = phoneList.find { areNumbersEqual(it.first, cleanNum) }
+                    val normalized = com.grinch.rivo4.controller.util.normalizePhoneNumber(cleanNum)
+                    val bucketKey = if (normalized.length >= 7) normalized.takeLast(7) else normalized
+                    val bucket = phoneBuckets.getOrPut(bucketKey) { mutableListOf() }
+                    val match = bucket.find { areNumbersEqual(it.first, cleanNum) }
                     if (match != null) {
                         union(index, match.second)
                     } else {
-                        phoneList.add(Pair(cleanNum, index))
+                        bucket.add(Pair(cleanNum, index))
                     }
                 }
             }
@@ -1225,11 +1228,22 @@ class ContactsRepository(
         }
     }
 
+    override fun getHiddenNumbers(): List<String> {
+        return try {
+            privateContactDao.getAll()
+                .filter { it.isHidden }
+                .flatMap { entity ->
+                    runCatching { Json.decodeFromString<List<String>>(entity.phoneNumbersJson) }
+                        .getOrDefault(emptyList())
+                }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     override fun isNumberHidden(number: String): Boolean {
         if (number.isBlank()) return false
         val clean = number.replace(" ", "")
-        return privateContactDao.getAll().any { entity ->
-            entity.isHidden && runCatching { Json.decodeFromString<List<String>>(entity.phoneNumbersJson) }.getOrDefault(emptyList()).any { areNumbersEqual(it, clean) }
-        }
+        return getHiddenNumbers().any { areNumbersEqual(it, clean) }
     }
 }

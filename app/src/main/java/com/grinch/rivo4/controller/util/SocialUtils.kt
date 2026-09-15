@@ -183,6 +183,33 @@ object SocialUtils {
         }
     }
 
+    fun openMeet(context: Context, number: String) {
+        val launchIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.tachyon")
+        if (launchIntent != null) {
+            launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            try {
+                context.startActivity(launchIntent)
+            } catch (_: Exception) {}
+        }
+    }
+
+    fun openTruecaller(context: Context, number: String) {
+        val digits = cleanDigitsOnly(context, number)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("truecaller://search?q=$digits")).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (isPackageInstalled(context, "com.truecaller")) {
+                setPackage("com.truecaller")
+            }
+        }
+        try {
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            val launchIntent = context.packageManager.getLaunchIntentForPackage("com.truecaller")
+            launchIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            launchIntent?.let { runCatching { context.startActivity(it) } }
+        }
+    }
+
     fun openSms(context: Context, number: String) {
         val intl = formatInternationalNumber(context, number)
         val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$intl")).apply {
@@ -332,6 +359,38 @@ object SocialUtils {
                     packageName = "jp.naver.line.android",
                     iconDrawable = icon,
                     action = { ctx, num -> openLine(ctx, num) }
+                )
+            )
+        }
+
+        // 8. Meet
+        if (isPackageInstalled(context, "com.google.android.apps.tachyon")) {
+            val appInfo = runCatching { pm.getApplicationInfo("com.google.android.apps.tachyon", 0) }.getOrNull()
+            val label = appInfo?.let { pm.getApplicationLabel(it).toString() } ?: "Meet"
+            val icon = appInfo?.let { pm.getApplicationIcon(it) }
+            list.add(
+                SocialAppInfo(
+                    id = "meet",
+                    name = label,
+                    packageName = "com.google.android.apps.tachyon",
+                    iconDrawable = icon,
+                    action = { ctx, num -> openMeet(ctx, num) }
+                )
+            )
+        }
+
+        // 9. Truecaller
+        if (isPackageInstalled(context, "com.truecaller")) {
+            val appInfo = runCatching { pm.getApplicationInfo("com.truecaller", 0) }.getOrNull()
+            val label = appInfo?.let { pm.getApplicationLabel(it).toString() } ?: "Truecaller"
+            val icon = appInfo?.let { pm.getApplicationIcon(it) }
+            list.add(
+                SocialAppInfo(
+                    id = "truecaller",
+                    name = label,
+                    packageName = "com.truecaller",
+                    iconDrawable = icon,
+                    action = { ctx, num -> openTruecaller(ctx, num) }
                 )
             )
         }

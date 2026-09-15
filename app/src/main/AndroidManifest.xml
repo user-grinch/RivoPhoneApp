@@ -57,6 +57,8 @@
         <package android:name="com.tencent.mm" />
         <package android:name="jp.naver.line.android" />
         <package android:name="com.google.android.apps.messaging" />
+        <package android:name="com.google.android.apps.tachyon" />
+        <package android:name="com.truecaller" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
@@ -178,6 +180,18 @@
 
         <activity
             android:name=".controller.PostCallActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.Rivo.TranslucentPostCall" />
+
+        <activity
+            android:name=".controller.MissedCallActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"

@@ -112,10 +112,15 @@ object PermissionChecklistHelper {
     }
 
     fun areAllEssentialGranted(context: Context): Boolean {
-        return isDefaultDialer(context) &&
+        val base = isDefaultDialer(context) &&
                 hasPhonePermission(context) &&
                 hasContactsPermission(context) &&
                 hasCallLogPermission(context)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            base && hasNotificationPermission(context)
+        } else {
+            base
+        }
     }
 
     fun getEssentialItems(context: Context): List<PermissionCheckItem> {
@@ -128,7 +133,7 @@ object PermissionChecklistHelper {
             }
         }
 
-        return listOf(
+        val items = mutableListOf(
             PermissionCheckItem(
                 id = "default_dialer",
                 title = "Default Phone App",
@@ -169,22 +174,39 @@ object PermissionChecklistHelper {
                 permissions = listOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG)
             )
         )
-    }
-
-    fun getRecommendedItems(context: Context): List<PermissionCheckItem> {
-        val items = mutableListOf<PermissionCheckItem>()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             items.add(
                 PermissionCheckItem(
                     id = "notifications",
                     title = "Call Notifications",
-                    description = "Show incoming call banners, active call status, and missed call reminders.",
+                    description = "Required to show incoming call banners, heads-up notifications, and call status.",
                     icon = Icons.Outlined.Notifications,
                     isGranted = hasNotificationPermission(context),
-                    isEssential = false,
+                    isEssential = true,
                     actionType = PermissionActionType.RUNTIME,
                     permissions = listOf(Manifest.permission.POST_NOTIFICATIONS)
+                )
+            )
+        }
+
+        return items
+    }
+
+    fun getRecommendedItems(context: Context): List<PermissionCheckItem> {
+        val items = mutableListOf<PermissionCheckItem>()
+
+        if (com.grinch.rivo4.controller.util.OemPermissionHelper.isVivo()) {
+            items.add(
+                PermissionCheckItem(
+                    id = "vivo_background_popup",
+                    title = "Vivo Background Pop-up",
+                    description = "Allow Rivo to display incoming call screens and floating alerts over other apps on Vivo/iQOO devices.",
+                    icon = Icons.Outlined.PictureInPicture,
+                    isGranted = hasOverlayPermission(context),
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Open Vivo Settings"
                 )
             )
         }

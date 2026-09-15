@@ -6,7 +6,7 @@ plugins {
     id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
 }
 
-def baseVersionCode = 2026081400
+def baseVersionCode = 2026091504
 def buildNumber = (System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "0") as int
 def isPreviewBuild = System.getenv("PREVIEW_BUILD") == "true"
 def baseVersionName = "2.2"
@@ -76,18 +76,6 @@ android {
         }
     }
 
-    bundle {
-        language {
-            enableSplit = true
-        }
-        density {
-            enableSplit = true
-        }
-        abi {
-            enableSplit = true
-        }
-    }
-
     flavorDimensions "distribution"
     productFlavors {
         play {
@@ -96,29 +84,20 @@ android {
         }
         foss {
             dimension "distribution"
+            minSdk = 29
         }
     }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = "RivoPhone-${variant.versionName}-${variant.flavorName}.apk"
+            def flavorSuffix = (variant.flavorName == "foss") ? "-foss" : ""
+            def buildTypeSuffix = (variant.buildType.name == "debug") ? "-debug" : ""
+            outputFileName = "RivoPhone-${variant.versionName}${flavorSuffix}${buildTypeSuffix}.apk"
         }
     }
 }
 
 afterEvaluate {
-    tasks.matching { it.name.startsWith("bundle") && it.name.endsWith("Release") }.configureEach { task ->
-        task.doLast {
-            def outDir = layout.buildDirectory.dir("outputs/bundle/${task.name.replace('bundle', '').uncapitalize()}").get().asFile
-            if (outDir.exists()) {
-                outDir.listFiles()?.each { file ->
-                    if (file.name.endsWith(".aab") && !file.name.contains("RivoPhone")) {
-                        file.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}-${task.name.replace('bundle', '').replace('Release', '').uncapitalize()}.aab"))
-                    }
-                }
-            }
-        }
-    }
 
     // Prevent Windows java.nio.file.FileAlreadyExistsException during KSP compilation
     tasks.matching { it.name.startsWith("ksp") && it.name.endsWith("Kotlin") }.configureEach { task ->

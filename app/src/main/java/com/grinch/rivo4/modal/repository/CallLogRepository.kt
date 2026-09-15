@@ -15,6 +15,7 @@ import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
 
 class CallLogRepository(
     private val contentResolver: ContentResolver,
@@ -129,11 +130,16 @@ class CallLogRepository(
         val tempLogs = mutableListOf<CallLogEntry>()
         val simCache = mutableMapOf<String, String>()
         val unknownLabel = context.getString(R.string.label_unknown)
+        val hiddenNumbers = if (!preferenceManager.isHiddenContactsVisible()) {
+            try { contactsRepo.getHiddenNumbers() } catch (e: Exception) { emptyList() }
+        } else {
+            emptyList()
+        }
 
         while (cursor.moveToNext()) {
             val callId = cursor.getLong(idIdx)
             val number = cursor.getString(numberIdx) ?: unknownLabel
-            if (!preferenceManager.isHiddenContactsVisible() && contactsRepo.isNumberHidden(number)) {
+            if (hiddenNumbers.isNotEmpty() && hiddenNumbers.any { areNumbersEqual(it, number) }) {
                 continue
             }
             val type = cursor.getInt(typeIdx)

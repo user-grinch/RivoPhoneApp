@@ -6,6 +6,10 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
 import android.provider.ContactsContract
+import android.telecom.PhoneAccountHandle
+import android.telecom.TelecomManager
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -67,8 +71,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.grinch.rivo4.modal.data.Contact
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
@@ -157,10 +164,15 @@ fun DialPadScreen(
 
     val callLauncher = rememberCallLauncher()
 
-    val searchResults by remember(number, allContacts, t9Enabled) {
-        derivedStateOf {
-            if (number.isEmpty()) emptyList()
-            else {
+    val avatarStyle = rememberRivoAvatarStyle()
+
+    var searchResults by remember { mutableStateOf<List<Contact>>(emptyList()) }
+
+    LaunchedEffect(number, allContacts, t9Enabled) {
+        if (number.isEmpty()) {
+            searchResults = emptyList()
+        } else {
+            searchResults = withContext(Dispatchers.Default) {
                 val cleanQuery = number.replace(" ", "")
                 allContacts.asSequence()
                     .filter { contact ->
@@ -197,9 +209,54 @@ fun DialPadScreen(
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        topBar = {
+    val dualSimButtonsEnabled by remember(settingsState) {
+        mutableStateOf(prefs.isDualSimDialpadButtonsEnabled())
+    }
+    val telecomManager = remember(context) {
+        context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+    }
+    val phoneAccounts = remember(telecomManager, context) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            try {
+                telecomManager.callCapablePhoneAccounts
+            } catch (e: SecurityException) {
+                emptyList()
+            }
+        } else {
+            emptyList()
+        }
+    }
+
+    val performCallWithSim = { targetNumber: String, handle: PhoneAccountHandle? ->
+        val cleanNumber = targetNumber.replace(" ", "")
+        if (cleanNumber.isNotEmpty()) {
+            if (cleanNumber == "*#06#" ||
+                (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
+                (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4)
+            ) {
+                val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
+                if (handled) {
+                    textFieldValue = TextFieldValue("")
+                } else {
+                    com.grinch.rivo4.controller.util.makeCall(context, targetNumber, handle)
+                }
+            } else {
+                com.grinch.rivo4.controller.util.makeCall(context, targetNumber, handle)
+                if (cleanNumber.startsWith("*") && cleanNumber.endsWith("#")) {
+                    textFieldValue = TextFieldValue("")
+                }
+            }
+        }
+    }
+
+    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surface,
+            topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.dialpad_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
@@ -459,15 +516,40 @@ fun DialPadScreen(
                                 )
                             }
 
-                            DialerActionExpressive(
-                                onClick = { performCall(number, null) },
-                                icon = Icons.Default.Call,
-                                contentDescription = stringResource(R.string.action_call),
-                                containerColor = MaterialTheme.callColors.answer,
-                                contentColor = MaterialTheme.callColors.onAnswer,
-                                modifier = Modifier.width(100.dp).height(72.dp),
-                                isLarge = true
-                            )
+                            if (dualSimButtonsEnabled) {
+                                val sim1Handle = phoneAccounts.getOrNull(0)
+                                val sim2Handle = phoneAccounts.getOrNull(1)
+                                val sim1Account = sim1Handle?.let { runCatching { telecomManager.getPhoneAccount(it) }.getOrNull() }
+                                val sim2Account = sim2Handle?.let { runCatching { telecomManager.getPhoneAccount(it) }.getOrNull() }
+                                val sim1Label = sim1Account?.label?.toString()?.takeIf { it.isNotBlank() } ?: "SIM 1"
+                                val sim2Label = sim2Account?.label?.toString()?.takeIf { it.isNotBlank() } ?: "SIM 2"
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    DialerSimActionExpressive(
+                                        onClick = { performCallWithSim(number, sim1Handle) },
+                                        simNumber = 1,
+                                        simLabel = sim1Label
+                                    )
+                                    DialerSimActionExpressive(
+                                        onClick = { performCallWithSim(number, sim2Handle) },
+                                        simNumber = 2,
+                                        simLabel = sim2Label
+                                    )
+                                }
+                            } else {
+                                DialerActionExpressive(
+                                    onClick = { performCall(number, null) },
+                                    icon = Icons.Default.Call,
+                                    contentDescription = stringResource(R.string.action_call),
+                                    containerColor = MaterialTheme.callColors.answer,
+                                    contentColor = MaterialTheme.callColors.onAnswer,
+                                    modifier = Modifier.width(100.dp).height(72.dp),
+                                    isLarge = true
+                                )
+                            }
 
                             Row(
                                 modifier = Modifier.align(Alignment.CenterEnd),
@@ -555,6 +637,7 @@ fun DialPadScreen(
             }
         }
     }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -592,6 +675,69 @@ fun DialerActionExpressive(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription, modifier = Modifier.size(if (isLarge) 36.dp else 24.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DialerSimActionExpressive(
+    onClick: () -> Unit,
+    simNumber: Int,
+    simLabel: String,
+    modifier: Modifier = Modifier.width(68.dp).height(72.dp),
+    containerColor: Color = MaterialTheme.callColors.answer,
+    contentColor: Color = MaterialTheme.callColors.onAnswer
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 18.dp else 24.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "SimButtonShape"
+    )
+
+    Surface(
+        modifier = modifier
+            .combinedClickable(
+                onClick = onClick,
+                interactionSource = interactionSource,
+                indication = null
+            ),
+        shape = RoundedCornerShape(cornerRadius),
+        color = containerColor,
+        contentColor = contentColor
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Call,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "$simNumber",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = simLabel,
+                style = MaterialTheme.typography.labelSmall,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
         }
     }
 }

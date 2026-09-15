@@ -26,6 +26,7 @@ import com.grinch.rivo4.controller.sensor.FlipToSilenceManager
 import com.grinch.rivo4.controller.util.CallUiHelper
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import com.grinch.rivo4.modal.data.Contact
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +46,7 @@ class CallService : InCallService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var redialCount = 0
     private val callStartTimes = mutableMapOf<Call, Long>()
+    private val callRingStartTimes = mutableMapOf<Call, Long>()
     private val cachedContactNames = java.util.concurrent.ConcurrentHashMap<String, String>()
     private var flipToSilenceManager: FlipToSilenceManager? = null
 
@@ -208,6 +210,8 @@ class CallService : InCallService() {
                 if (!hasRinging) {
                     flipToSilenceManager?.stopListening()
                 }
+            } else if (!callRingStartTimes.containsKey(call)) {
+                callRingStartTimes[call] = System.currentTimeMillis()
             }
 
             if (state == Call.STATE_ACTIVE) {
@@ -332,9 +336,31 @@ class CallService : InCallService() {
             }
         }
         
+        val ringStartTime = callRingStartTimes.remove(call)
+        val ringDurationSeconds = if (ringStartTime != null && ringStartTime > 0L) {
+            ((System.currentTimeMillis() - ringStartTime) / 1000L).coerceAtLeast(1L).toInt()
+        } else 0
+        
         if (isIncoming && wasNeverConnected && (cause?.code == DisconnectCause.MISSED || cause?.code == DisconnectCause.REMOTE || cause?.code == DisconnectCause.REJECTED)) {
+            val contact = if (number.isNotEmpty()) {
+                try {
+                    contactsRepository.getContactByNumber(number)
+                } catch (e: Exception) { null }
+            } else null
+            val contactName = contact?.name ?: cachedContactNames[number] ?: number.ifEmpty { getString(R.string.label_unknown_number) }
+
             if (!isNumberBlocked(number) || preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 1) {
-                showMissedCallNotification(call)
+                showMissedCallNotification(call, contact, contactName, ringDurationSeconds)
+            }
+
+            if (preferenceManager.isMissedCallCardEnabled()) {
+                MissedCallActivity.start(
+                    context = this,
+                    contactName = contactName,
+                    phoneNumber = number,
+                    photoUri = contact?.photoUri,
+                    ringSeconds = ringDurationSeconds
+                )
             }
         }
     }
@@ -373,7 +399,7 @@ class CallService : InCallService() {
         notificationManager.notify(number.hashCode(), builder.build())
     }
 
-    private fun showMissedCallNotification(call: Call) {
+    private fun showMissedCallNotification(call: Call, contact: Contact?, contactName: String, ringDurationSeconds: Int) {
         if (!preferenceManager.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) {
             return
         }
@@ -393,14 +419,6 @@ class CallService : InCallService() {
 
         val handle = call.details.handle
         val number = handle?.schemeSpecificPart ?: ""
-
-        val contact = if (number.isNotEmpty()) {
-            try {
-                contactsRepository.getContactByNumber(number)
-            } catch (e: Exception) { null }
-        } else null
-
-        val contactName = contact?.name ?: number.ifEmpty { getString(R.string.label_unknown_number) }
         val contactPhoto = getContactBitmap(contact?.photoUri)
 
         val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
@@ -408,9 +426,19 @@ class CallService : InCallService() {
             try { telecomManager.getPhoneAccount(it)?.label?.toString() } catch (e: SecurityException) { null }
         }
 
-        val intent = Intent(this, com.grinch.rivo4.MainActivity::class.java).apply {
-            action = "com.grinch.rivo4.ACTION_VIEW_RECENTS"
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        val intent = if (preferenceManager.isMissedCallCardEnabled()) {
+            Intent(this, MissedCallActivity::class.java).apply {
+                putExtra(MissedCallActivity.EXTRA_CONTACT_NAME, contactName)
+                putExtra(MissedCallActivity.EXTRA_PHONE_NUMBER, number)
+                putExtra(MissedCallActivity.EXTRA_PHOTO_URI, contact?.photoUri)
+                putExtra(MissedCallActivity.EXTRA_RING_SECONDS, ringDurationSeconds)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+        } else {
+            Intent(this, com.grinch.rivo4.MainActivity::class.java).apply {
+                action = "com.grinch.rivo4.ACTION_VIEW_RECENTS"
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
         }
         val pendingIntent = PendingIntent.getActivity(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -491,6 +519,29 @@ class CallService : InCallService() {
         if (isNumberBlocked(number)) {
             handleBlockedCall(call, number)
             return
+        }
+
+        val isUnknownNumber = number.isBlank() || number == "null" || number == "-1" || number == "-2" ||
+                call.details.handlePresentation == TelecomManager.PRESENTATION_RESTRICTED ||
+                call.details.handlePresentation == TelecomManager.PRESENTATION_UNKNOWN
+
+        if (isUnknownNumber && preferenceManager.isAutoDeclineUnknownEnabled()) {
+            handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })
+            return
+        }
+
+        if (preferenceManager.isAutoDeclineNonContactsEnabled()) {
+            val contact = if (number.isNotBlank()) {
+                try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
+            } else null
+            if (contact == null) {
+                handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })
+                return
+            }
+        }
+
+        if (call.state == Call.STATE_RINGING) {
+            callRingStartTimes[call] = System.currentTimeMillis()
         }
 
         // Prime CallRecorder asynchronously so recording starts with zero delay when call answers
@@ -583,8 +634,10 @@ class CallService : InCallService() {
             getString(R.string.notif_channel_calls),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
+            description = getString(R.string.notif_channel_calls_desc)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             enableVibration(true)
+            setShowBadge(true)
         }
         notificationManager.createNotificationChannel(channel)
 
@@ -593,9 +646,11 @@ class CallService : InCallService() {
             getString(R.string.notif_channel_calls),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
+            description = getString(R.string.notif_channel_calls_desc)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             enableVibration(false)
             setSound(null, null)
+            setShowBadge(false)
         }
         notificationManager.createNotificationChannel(silentChannel)
 
@@ -682,16 +737,24 @@ class CallService : InCallService() {
             ?: call.details.connectTimeMillis.takeIf { it > 0 }
             ?: System.currentTimeMillis()
 
-        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
-        val powerManager = getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
-        val isLocked = keyguardManager?.isKeyguardLocked == true || powerManager?.isInteractive == false
-        val alwaysFullScreen = preferenceManager.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)
-        val isFullScreenShowing = isActivityVisible.value || alwaysFullScreen || isLocked || CallUiHelper.isHomeScreenForeground(this) || com.grinch.rivo4.RivoApp.isAppInForeground
-
         val isRinging = call.state == Call.STATE_RINGING
-        val useSilentChannel = (!isRinging && isActivityVisible.value) || (isRinging && isFullScreenShowing)
 
-        val targetChannel = if (useSilentChannel) SILENT_CHANNEL_ID else CHANNEL_ID
+        // CRITICAL FOR VIVO & OEM COMPATIBILITY:
+        // Ringing calls must NEVER use the silent channel or low priority!
+        // Ringing calls need IMPORTANCE_HIGH and PRIORITY_MAX so the system can trigger
+        // heads-up banners or full-screen intents across all OEMs (including Vivo, Xiaomi, Samsung).
+        val targetChannel = if (isRinging) {
+            CHANNEL_ID
+        } else if (isActivityVisible.value) {
+            // Ongoing call with CallActivity currently visible on screen:
+            // Keep notification low-priority in the status bar so it doesn't obstruct the conversation.
+            SILENT_CHANNEL_ID
+        } else {
+            // Ongoing call while user is multitasking/in background:
+            // Use CHANNEL_ID so the notification is easily reachable in the notification shade.
+            CHANNEL_ID
+        }
+
         val builder = NotificationCompat.Builder(this, targetChannel)
             .setSmallIcon(if (isRinging) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
             .setContentTitle(contactName)
@@ -709,21 +772,24 @@ class CallService : InCallService() {
                 }
             )
 
-        if (useSilentChannel) {
-            // Full-screen is active: keep notification quiet in the background so it does not obstruct the call UI
+        if (isRinging) {
+            // Incoming ringing call: Always MAX priority + full-screen intent.
+            // Android and OEM notification managers (especially Vivo Funtouch/OriginOS) require this
+            // to show the heads-up notification and/or launch the incoming call activity when locked or unlocked.
+            builder.setPriority(NotificationCompat.PRIORITY_MAX)
+            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+            builder.setSilent(false)
+            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+        } else if (targetChannel == SILENT_CHANNEL_ID) {
+            // Ongoing call while inside CallActivity: quiet status bar icon
             builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)
             builder.setOnlyAlertOnce(true)
-            // If screen is locked, we still set fullScreenIntent to show over lockscreen
-            if (isLocked && isRinging) {
-                builder.setFullScreenIntent(fullScreenPendingIntent, true)
-            }
         } else {
-            // Heads-Up Mode: show prominent floating notification banner with answer and decline actions
-            builder.setPriority(NotificationCompat.PRIORITY_MAX)
-            builder.setSilent(false)
-            builder.setDefaults(if (isRinging) NotificationCompat.DEFAULT_ALL else 0)
-            // DO NOT set fullScreenIntent with true here to prevent the system from taking over full screen
+            // Ongoing call while in background: standard ongoing call priority
+            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            builder.setSilent(true)
+            builder.setOnlyAlertOnce(true)
         }
 
         if (call.state == Call.STATE_ACTIVE) {

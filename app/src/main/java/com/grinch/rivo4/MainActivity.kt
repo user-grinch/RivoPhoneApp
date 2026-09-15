@@ -3,6 +3,10 @@ package com.grinch.rivo4
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.telecom.Call
+import com.grinch.rivo4.controller.CallActivity
+import com.grinch.rivo4.controller.CallService
+import com.grinch.rivo4.view.components.OngoingCallTopBanner
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +23,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -98,6 +103,26 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, false) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
 
+                val currentCallSession by CallService.currentCallSession.collectAsState()
+                val isCallOngoing = currentCallSession != null &&
+                        (currentCallSession?.state == Call.STATE_ACTIVE ||
+                                currentCallSession?.state == Call.STATE_HOLDING ||
+                                currentCallSession?.state == Call.STATE_DIALING ||
+                                currentCallSession?.state == Call.STATE_CONNECTING)
+
+                val darkTheme = isSystemInDarkTheme()
+                DisposableEffect(isCallOngoing, darkTheme) {
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    if (isCallOngoing) {
+                        insetsController.isAppearanceLightStatusBars = false
+                    } else {
+                        insetsController.isAppearanceLightStatusBars = !darkTheme
+                    }
+                    onDispose {
+                        insetsController.isAppearanceLightStatusBars = !darkTheme
+                    }
+                }
+
                 if (isAppLocked && prefs.isAppLockEnabled()) {
                     AppLockOverlay(
                         onUnlocked = {
@@ -113,16 +138,41 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                         }
                     )
                 } else {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.surface)
                     ) {
-                        DestinationsNavHost(
-                            navGraph = NavGraphs.root,
-                            navController = navController,
-                            defaultTransitions = getAppTransition(transitionStyle)
-                        )
+                        if (isCallOngoing) {
+                            OngoingCallTopBanner(
+                                onReturnToCall = {
+                                    val intent = Intent(this@MainActivity, CallActivity::class.java).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                                    }
+                                    startActivity(intent)
+                                }
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .then(
+                                    if (isCallOngoing) {
+                                        Modifier.consumeWindowInsets(
+                                            WindowInsets.statusBars.union(WindowInsets.displayCutout)
+                                        )
+                                    } else {
+                                        Modifier
+                                    }
+                                )
+                        ) {
+                            DestinationsNavHost(
+                                navGraph = NavGraphs.root,
+                                navController = navController,
+                                defaultTransitions = getAppTransition(transitionStyle)
+                            )
 
                         var showRatePrompt by remember { mutableStateOf(false) }
                         val rateShown = remember { prefs.getBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, false) }
@@ -182,6 +232,7 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                             }
                         }
                     }
+                }
 
                     LaunchedEffect(Unit) {
                         if (!isAlreadyDefaultDialer(this@MainActivity)) {

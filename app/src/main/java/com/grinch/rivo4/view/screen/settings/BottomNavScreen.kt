@@ -48,9 +48,6 @@ fun BottomNavScreen(
     var floatingBarRoundness by remember(settingsState) {
         mutableIntStateOf(prefs.getFloatingBarRoundness())
     }
-    var isBlurEnabled by remember(settingsState) {
-        mutableStateOf(prefs.isUiBlurEnabled())
-    }
     var iconOnly by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ICON_ONLY_NAV, false))
     }
@@ -140,43 +137,6 @@ fun BottomNavScreen(
                                 prefs.setFloatingBarRoundness(floatingBarRoundness)
                             }
                         )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_floating_bar_blur),
-                            supporting = stringResource(R.string.settings_floating_bar_blur_supporting),
-                            leadingIcon = Icons.Outlined.BlurOn,
-                            checked = isBlurEnabled,
-                            onCheckedChange = {
-                                isBlurEnabled = it
-                                prefs.setUiBlurEnabled(it)
-                            }
-                        )
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.45f),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.WarningAmber,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.settings_floating_bar_blur_warning),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                                )
-                            }
-                        }
                     }
                 }
             }

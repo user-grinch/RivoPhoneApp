@@ -57,26 +57,30 @@ fun SearchScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surface
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-            ContactSearchContent(
-                navigator = navigator,
-                isGranted = permState.status == PermissionStatus.Granted,
-                onRequestPermission = { permState.launchPermissionRequest() },
-                listState = listState
-            )
+    val avatarStyle = rememberRivoAvatarStyle()
 
-            ScrollToTopButton(
-                visible = showButton,
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
+    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.surface
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                ContactSearchContent(
+                    navigator = navigator,
+                    isGranted = permState.status == PermissionStatus.Granted,
+                    onRequestPermission = { permState.launchPermissionRequest() },
+                    listState = listState
+                )
+
+                ScrollToTopButton(
+                    visible = showButton,
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
@@ -122,13 +126,15 @@ fun ContactSearchContent(
 
     val filteredContacts = remember(query, contacts) {
         if (query.isBlank()) emptyList()
-        else contacts.filter {
+        else {
             val cleanQuery = query.replace(" ", "")
-            val matchesName = it.name.contains(query, ignoreCase = true)
-            val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
-            val matchesNumber = it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
-            matchesName || matchesNickname || matchesNumber
-        }.take(50)
+            contacts.asSequence().filter {
+                val matchesName = it.name.contains(query, ignoreCase = true)
+                val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
+                val matchesNumber = it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
+                matchesName || matchesNickname || matchesNumber
+            }.take(50).toList()
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

@@ -193,11 +193,13 @@ private fun gradientAvatarBrush(name: String, dark: Boolean): Brush {
     }
 }
 
+private val WHITESPACE_REGEX = Regex("\\s+")
+
 private fun contactInitials(name: String, useTwo: Boolean): String {
     val letters = name.filter { it.isLetter() }
     if (letters.isEmpty()) return ""
     if (!useTwo) return letters.first().uppercase()
-    val words = name.trim().split(Regex("\\s+")).filter { it.any { c -> c.isLetter() } }
+    val words = name.trim().split(WHITESPACE_REGEX).filter { it.any { c -> c.isLetter() } }
     return if (words.size >= 2) {
         words.take(2).joinToString("") { word ->
             word.first { it.isLetter() }.uppercase()

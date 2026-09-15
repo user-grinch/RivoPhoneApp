@@ -7,15 +7,22 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
@@ -167,9 +174,12 @@ fun RecentScreenContent(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets(0),
+    val avatarStyle = rememberRivoAvatarStyle()
+
+    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            contentWindowInsets = WindowInsets(0),
         topBar = {
             if (onSelectionStateChange != null) {
                 if (!isSelecting) {
@@ -239,6 +249,7 @@ fun RecentScreenContent(
             )
         }
     }
+}
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -530,6 +541,8 @@ fun CallLogFullContent(
                             item {
                                 RecentsDailyStatusHeader(
                                     totalCalls = todayStats.totalCalls,
+                                    incomingCalls = todayStats.incomingCalls,
+                                    outgoingCalls = todayStats.outgoingCalls,
                                     missedCalls = todayStats.missedCalls,
                                     totalDurationSeconds = todayStats.totalDurationSeconds,
                                     onOpenAnalytics = {
@@ -538,7 +551,7 @@ fun CallLogFullContent(
                                     onHideStats = {
                                         prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, false)
                                     },
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                                    modifier = Modifier.padding(vertical = 6.dp)
                                 )
                             }
                         }
@@ -806,137 +819,169 @@ fun EmptyCallLogsState() {
 @Composable
 fun RecentsDailyStatusHeader(
     totalCalls: Int,
-    missedCalls: Int,
-    totalDurationSeconds: Long,
+    incomingCalls: Int = 0,
+    outgoingCalls: Int = 0,
+    missedCalls: Int = 0,
+    totalDurationSeconds: Long = 0L,
     onOpenAnalytics: () -> Unit,
     modifier: Modifier = Modifier,
     onHideStats: (() -> Unit)? = null
 ) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onOpenAnalytics),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Outlined.Analytics,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = "Today's Calls",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Analytics",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Icon(
-                        Icons.Default.ChevronRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    if (onHideStats != null) {
-                        Spacer(Modifier.width(8.dp))
-                        IconButton(
-                            onClick = onHideStats,
-                            modifier = Modifier.size(24.dp)
-                        ) {
-                            Icon(
-                                Icons.Outlined.Close,
-                                contentDescription = "Hide Stats",
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
+        // 1. Today (Total Calls)
+        item(key = "today_total") {
+            DailyStatCard(
+                value = "$totalCalls",
+                label = "Today",
+                icon = Icons.AutoMirrored.Filled.CallReceived,
+                containerColor = if (isDark) Color(0xFF253138) else Color(0xFFE2EFF6),
+                badgeColor = if (isDark) Color(0xFF3F596C) else Color(0xFFBEDEEF),
+                iconColor = if (isDark) Color(0xFF73BAE7) else Color(0xFF19658E),
+                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF16252C),
+                labelColor = if (isDark) Color(0xFFA1AFB6) else Color(0xFF4C6674),
+                onClick = onOpenAnalytics
+            )
+        }
 
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                DailyStatChip(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Outlined.Phone,
-                    value = "$totalCalls",
-                    label = "Calls",
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                DailyStatChip(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Outlined.PhoneMissed,
-                    value = "$missedCalls",
-                    label = "Missed",
-                    containerColor = if (missedCalls > 0) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceContainerHighest,
-                    contentColor = if (missedCalls > 0) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                DailyStatChip(
-                    modifier = Modifier.weight(1.15f),
-                    icon = Icons.Outlined.Schedule,
-                    value = formatShortDuration(totalDurationSeconds),
-                    label = "Talk Time",
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.6f),
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+        // 2. Incoming (if incomingCalls > 0)
+        if (incomingCalls > 0) {
+            item(key = "today_incoming") {
+                DailyStatCard(
+                    value = "$incomingCalls",
+                    label = "Incoming",
+                    icon = Icons.AutoMirrored.Filled.CallReceived,
+                    containerColor = if (isDark) Color(0xFF1E2F38) else Color(0xFFE0F4FF),
+                    badgeColor = if (isDark) Color(0xFF335566) else Color(0xFFB8E4FF),
+                    iconColor = if (isDark) Color(0xFF5CC4FF) else Color(0xFF00668B),
+                    valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF0F2633),
+                    labelColor = if (isDark) Color(0xFF90B5C6) else Color(0xFF496879),
+                    onClick = onOpenAnalytics
                 )
             }
+        }
+
+        // 3. Missed
+        item(key = "today_missed") {
+            DailyStatCard(
+                value = "$missedCalls",
+                label = "Missed",
+                icon = Icons.AutoMirrored.Filled.CallMissed,
+                containerColor = if (isDark) Color(0xFF3B252B) else Color(0xFFFFECEF),
+                badgeColor = if (isDark) Color(0xFF6B3B48) else Color(0xFFFFCDD6),
+                iconColor = if (isDark) Color(0xFFE87597) else Color(0xFFBA1A3E),
+                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF2E151A),
+                labelColor = if (isDark) Color(0xFFB59DA2) else Color(0xFF7E4E57),
+                onClick = onOpenAnalytics
+            )
+        }
+
+        // 4. Outgoing
+        item(key = "today_outgoing") {
+            DailyStatCard(
+                value = "$outgoingCalls",
+                label = "Outgoing",
+                icon = Icons.AutoMirrored.Filled.CallMade,
+                containerColor = if (isDark) Color(0xFF253422) else Color(0xFFEBF7EA),
+                badgeColor = if (isDark) Color(0xFF3D5936) else Color(0xFFC7ECC4),
+                iconColor = if (isDark) Color(0xFF78D78E) else Color(0xFF286D2C),
+                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF152613),
+                labelColor = if (isDark) Color(0xFFA3B39F) else Color(0xFF4C664A),
+                onClick = onOpenAnalytics
+            )
+        }
+
+        // 5. Call Time
+        item(key = "today_call_time") {
+            DailyStatCard(
+                value = formatShortDuration(totalDurationSeconds),
+                label = "Call Time",
+                icon = Icons.Outlined.Schedule,
+                containerColor = if (isDark) Color(0xFF3B2E1E) else Color(0xFFFFF4E5),
+                badgeColor = if (isDark) Color(0xFF614A2E) else Color(0xFFFFE0B8),
+                iconColor = if (isDark) Color(0xFFE5B56A) else Color(0xFF875200),
+                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF2B1D0B),
+                labelColor = if (isDark) Color(0xFFB6A694) else Color(0xFF745738),
+                onClick = onOpenAnalytics
+            )
         }
     }
 }
 
 @Composable
-private fun DailyStatChip(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+private fun DailyStatCard(
     value: String,
     label: String,
-    containerColor: androidx.compose.ui.graphics.Color,
-    contentColor: androidx.compose.ui.graphics.Color,
+    icon: ImageVector,
+    containerColor: Color,
+    badgeColor: Color,
+    iconColor: Color,
+    valueColor: Color,
+    labelColor: Color,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        color = containerColor,
-        contentColor = contentColor
+        modifier = modifier
+            .width(104.dp)
+            .height(100.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(22.dp),
+        color = containerColor
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            // Top-right circular badge
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.TopEnd)
+                    .clip(CircleShape)
+                    .background(badgeColor),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(17.dp)
+                )
+            }
+
+            // Bottom-left stats
+            Column(
+                modifier = Modifier.align(Alignment.BottomStart)
+            ) {
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = if (value.length > 4) 20.sp else 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = valueColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(1.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = labelColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

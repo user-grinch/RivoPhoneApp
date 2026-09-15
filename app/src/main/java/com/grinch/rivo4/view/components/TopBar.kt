@@ -33,7 +33,7 @@ import com.ramcosta.composedestinations.generated.destinations.SearchScreenDesti
 import com.ramcosta.composedestinations.generated.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-private val TopBarSearchMinHeight = 56.dp
+private val TopBarSearchMinHeight = 48.dp
 
 @Composable
 fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
@@ -51,7 +51,7 @@ fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
             onClick = { navigator.navigate(SearchScreenDestination) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 6.dp)
                 .heightIn(min = TopBarSearchMinHeight),
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -60,7 +60,7 @@ fun TopBar(navController: NavController, navigator: DestinationsNavigator) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,

@@ -800,4 +800,45 @@
     <string name="swipe_action_triggered_toast">Gesture triggered: %1$s</string>
     <string name="settings_swipe_actions_reset">Reset Swipe Actions</string>
     <string name="settings_swipe_actions_tab_warning">Swipe navigation between tabs is disabled while swipe actions are enabled to prevent gesture conflicts.</string>
+
+    <!-- Ongoing Call Top Banner & Vivo Notifications -->
+    <string name="call_is_ongoing_tap_to_return">Call is Ongoing — Tap to return</string>
+    <string name="call_is_ongoing_with_time">Call is Ongoing (%1$s) — Tap to return</string>
+    <string name="oem_vivo_popup_permission_title">Vivo Background Pop-up</string>
+    <string name="oem_vivo_popup_permission_desc">Allow Rivo to display incoming call screens and floating alerts on Vivo devices.</string>
+    <string name="notif_channel_calls_desc">Incoming, ongoing, and missed call notifications</string>
+
+    <!-- Missed Call Card & Auto Decline -->
+    <string name="settings_missed_call_card_title">Missed Call Card</string>
+    <string name="settings_missed_call_card_supporting">Show an instant popup card after a missed call for quick callback, SMS replies, and messaging apps</string>
+    <string name="missed_call_just_now">Missed call Just now, rang %1$ds</string>
+    <string name="missed_call_view_logs">View call logs</string>
+    <string name="missed_call_respond_with_message">RESPOND WITH MESSAGE</string>
+    <string name="settings_auto_decline_unknown_title">Auto Decline Unknown Callers</string>
+    <string name="settings_auto_decline_unknown_supporting">Automatically decline incoming calls from private, hidden, or restricted numbers</string>
+    <string name="settings_auto_decline_non_contacts_title">Auto Decline Numbers Not In Contacts</string>
+    <string name="settings_auto_decline_non_contacts_supporting">Automatically decline incoming calls from phone numbers not saved in your contacts</string>
+    <string name="missed_call_msg_call_me_back">Call me back?</string>
+    <string name="missed_call_msg_sorry_busy">Sorry I\'m busy</string>
+    <string name="missed_call_msg_call_right_back">I\'ll call you right back</string>
+    <string name="missed_call_msg_cant_talk">Can\'t talk right now</string>
+
+    <!-- Favorites Modernization -->
+    <string name="favorites_count_pill">%1$d favorites</string>
+    <string name="favorites_one_pill">1 favorite</string>
+    <string name="favorites_add_action">Add</string>
+    <string name="favorites_action_call">Call</string>
+    <string name="favorites_action_message">Message</string>
+    <string name="favorites_hero_badge">Top Favorite</string>
+    <string name="favorites_add_empty_button">Add Favorites</string>
+    <string name="favorites_no_number">No phone number</string>
+    <string name="favorites_no_contacts_found">No contacts found</string>
+    <string name="search_contacts">Search contacts…</string>
+    <string name="action_add_to_favorites">Add to favorites</string>
+    <string name="content_desc_clear_search">Clear search</string>
+    <string name="action_dismiss">Dismiss</string>
+
+    <!-- Dual SIM Buttons -->
+    <string name="settings_interface_dual_sim_buttons_title">Dual SIM Call Buttons</string>
+    <string name="settings_interface_dual_sim_buttons_supporting">Show separate SIM 1 and SIM 2 call buttons on the dialpad</string>
 </resources>

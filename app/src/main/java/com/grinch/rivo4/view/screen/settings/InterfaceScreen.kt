@@ -74,6 +74,9 @@ fun InterfaceScreen(
     var uiBlurEnabled by remember(settingsState) {
         mutableStateOf(prefs.isUiBlurEnabled())
     }
+    var dualSimButtons by remember(settingsState) {
+        mutableStateOf(prefs.isDualSimDialpadButtonsEnabled())
+    }
 
     val presetColors = listOf(
         Color(0xFF6750A4), Color(0xFF0061A4), Color(0xFF006A60),
@@ -251,7 +254,23 @@ fun InterfaceScreen(
                     }
                 }
 
-                // 4. Related Styling Links
+                // 4. Dialpad Interface
+                item {
+                    RivoExpressiveCard(title = "Dialpad & Calling") {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_dual_sim_buttons_title),
+                            supporting = stringResource(R.string.settings_interface_dual_sim_buttons_supporting),
+                            leadingIcon = Icons.Outlined.SimCard,
+                            checked = dualSimButtons,
+                            onCheckedChange = {
+                                dualSimButtons = it
+                                prefs.setDualSimDialpadButtonsEnabled(it)
+                            }
+                        )
+                    }
+                }
+
+                // 5. Related Styling Links
                 item {
                     RivoExpressiveCard(title = "More Display Settings") {
                         RivoListItem(

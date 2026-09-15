@@ -157,13 +157,29 @@ object OemPermissionHelper {
         if (isVivo()) {
             intents.add(
                 Intent().apply {
+                    setComponent(ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.SoftPermissionDetailActivity"))
+                    putExtra("packagename", context.packageName)
+                    putExtra("packageName", context.packageName)
+                }
+            )
+            intents.add(
+                Intent().apply {
                     setComponent(ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity"))
                 }
             )
             intents.add(
                 Intent().apply {
-                    setComponent(ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.SoftPermissionDetailActivity"))
-                    putExtra("packagename", context.packageName)
+                    setComponent(ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"))
+                }
+            )
+            intents.add(
+                Intent().apply {
+                    setComponent(ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.FloatWindowManager"))
+                }
+            )
+            intents.add(
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                 }
             )
         }
