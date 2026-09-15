@@ -89,11 +89,12 @@
     <string name="patreon_prompt_title">Rivo unterstützen</string>
     <string name="patreon_prompt_confirm">Unterstützen Sie uns</string>
     <string name="patreon_prompt_dismiss">Vielleicht später</string>
-    <string name="patreon_prompt_body">Rivo ist kostenlos und quelloffen. Wenn Sie die App mögen, erwägen Sie bitte, unsere Entwicklung auf Patreon zu unterstützen!</string>
+    <string name="patreon_prompt_body">Rivo ist kostenlos und quelloffen. Wenn Sie die App mögen, erwägen Sie bitte, die Entwicklung auf Patreon zu unterstützen!</string>
     <!-- Disable ads warning dialog -->
     <string name="ads_disable_dialog_title">Unterstützen Sie die Open-Source-Entwicklung</string>
-    <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und quelloffen bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass sie die Werbung ausschalten wollen?</string>
+    <string name="ads_disable_dialog_body">Werbung hilft, dass Rivo kostenlos und quelloffen bleibt. Ohne Werbeeinnahmen oder Spenden könnten die Wartung, Fehlerbehebung und Weiterentwicklung enden. Sind Sie sicher, dass Sie die Werbung ausschalten wollen?</string>
     <string name="ads_disable_dialog_confirm">Werbung deaktivieren</string>
+    <string name="ads_disable_dialog_keep">Werbung weiter anzeigen</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Machen Sie Rivo zu Ihrer Standard-Telefon-App</string>
     <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und um vor Spam-Anrufen geschützt zu werden, muss Rivo zur Standard-Telefon-App gemacht werden.</string>
@@ -112,7 +113,7 @@
         <item quantity="other">Sind Sie sicher, dass Sie die ausgewählten %1$d Anruflisteneinträge löschen wollen?</item>
     </plurals>
     <string name="call_log_delete_title">Anruflisteneinträge löschen</string>
-    <string name="call_log_clear_all_title">Alle Listen leeren</string>
+    <string name="call_log_clear_all_title">Alle Anruflisteneinträge leeren</string>
     <string name="call_log_clear_all_confirm">Alles leeren</string>
     <string name="call_log_clear_all_message">Dies wird die gesamte Anrufliste löschen. Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
     <string name="content_desc_clear_all_logs">Alle Listen löschen</string>
@@ -166,6 +167,8 @@
     <string name="contact_remove_from_device">Diesen Kontakt vom Gerät entfernen</string>
     <string name="contact_delete_dialog_title">Kontakt löschen?</string>
     <string name="contact_delete_dialog_message">Sind Sie sicher, dass Sie diesen Kontakt entfernen wollen? Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="contact_personalization_title">Personalisierung</string>
+    <string name="contact_privacy_title">Privatsphäre &amp; Sicherheit</string>
     <!-- Contact edit -->
     <string name="contact_create_title">Kontakt erstellen</string>
     <string name="contact_edit_title">Kontakt bearbeiten</string>
@@ -192,7 +195,7 @@
     <string name="dialpad_start_dialing">Wahlvorgang beginnen</string>
     <string name="dialpad_start_hint">Zum Beginnen Name oder Nummer eingegeben</string>
     <string name="content_desc_call_named">Anruf %1$s</string>
-    <string name="content_desc_backspace">Rücktaste</string>
+    <string name="content_desc_backspace">Zurücktaste</string>
     <string name="dialpad_connect_via_social">Über Social verbinden</string>
     <!-- Search -->
     <string name="search_contacts_placeholder">In Kontakten suchen</string>
@@ -720,7 +723,15 @@
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Eckenradius der schwebenden Leiste</string>
     <string name="settings_floating_bar_roundness_supporting">Die Eckenrundung und die Form der schwebende Leiste anpassen</string>
+    <string name="settings_floating_bar_blur">Transparente Glas-Unschärfe</string>
+    <string name="settings_floating_bar_blur_supporting">Aktiviert Milchglas-Unschärfe für alle Navigations- und Dialog-Popups (globale Einstellung)</string>
+    <string name="settings_floating_bar_blur_warning">Ressourcen-intensiv auf älteren Geräten (Android 12+ empfohlen)</string>
     <!-- Global UI Blur Effects -->
+    <string name="settings_group_effects">Visuelle Effekte</string>
+    <string name="settings_ui_blur_title">Milchglas- &amp; Unschärfe-Effekte</string>
+    <string name="settings_ui_blur_supporting">Aktiviert Milchglas-Unschärfe hinter Dialog-Popups, unteren Tabellen und der Navigationsleiste (Android 12+)</string>
+    <string name="settings_ui_blur_active_hint">Aktiv für alle Popups, Tabellen &amp; Navigationsleisten</string>
+    <string name="settings_nav_blur_global_hint">Kontrolliert durch die globale UI-Unschärfe-Einstellung</string>
     <!-- Swipe Actions on Contacts & Call Logs -->
     <string name="settings_swipe_actions_title">Wischgesten</string>
     <string name="settings_swipe_actions_supporting">Wischgesten bei Kontakten und Anrufliste konfigurieren</string>
@@ -744,4 +755,8 @@
     <string name="swipe_action_triggered_toast">Ausgelöste Geste: %1$s</string>
     <string name="settings_swipe_actions_reset">Wischaktionen zurücksetzen</string>
     <string name="settings_swipe_actions_tab_warning">Die Wisch-Navigation zwischen Tabs ist deaktiviert, während Wisch-Aktionen aktiviert sind, um Gestenkonflikte zu vermeiden.</string>
+    <!-- Ongoing Call Top Banner & Vivo Notifications -->
+    <!-- Missed Call Card & Auto Decline -->
+    <!-- Favorites Modernization -->
+    <!-- Dual SIM Buttons -->
 </resources>

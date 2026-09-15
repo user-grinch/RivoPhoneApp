@@ -96,6 +96,7 @@
     <string name="ads_disable_dialog_title">Wesprzyj rozwój otwartoźródłowy</string>
     <string name="ads_disable_dialog_body">Wyświetlanie reklam pomaga utrzymać Rivo darmowym i otwartoźródłowym. Bez przychodów z reklam i wsparcia społeczności dalszy rozwój i aktualizacje mogą ustać. Czy na pewno chcesz wyłączyć reklamy?</string>
     <string name="ads_disable_dialog_confirm">Wyłącz reklamy</string>
+    <string name="ads_disable_dialog_keep">Zachowaj reklamy</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Ustaw Rivo jako oficjalną aplikację do dzwonienia</string>
     <string name="default_dialer_description">Aby móc wykonywać i odbierać połączenia, zarządzać historią oraz korzystać z ochrony przed spamem, musisz ustawić Rivo jako domyślną aplikację telefoniczną.</string>
@@ -170,6 +171,8 @@
     <string name="contact_remove_from_device">Usuń ten kontakt z urządzenia</string>
     <string name="contact_delete_dialog_title">Usunąć kontakt?</string>
     <string name="contact_delete_dialog_message">Czy na pewno chcesz usunąć ten kontakt? Tej operacji nie można cofnąć.</string>
+    <string name="contact_personalization_title">Personalizacja</string>
+    <string name="contact_privacy_title">Prywatność i bezpieczeństwo</string>
     <!-- Contact edit -->
     <string name="contact_create_title">Utwórz kontakt</string>
     <string name="contact_edit_title">Edytuj kontakt</string>
@@ -724,6 +727,42 @@
     <string name="contact_management_card_clean_sub">Wszystkie kontakty są unikalne • Dotknij, aby zarządzać pamięcią</string>
     <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i połączyć numery, e-maile i informacje</string>
     <!-- Floating Bar Customization & Blur -->
+    <string name="settings_floating_bar_roundness">Zaokrąglenie rogów pływającego paska</string>
+    <string name="settings_floating_bar_roundness_supporting">Dostosuj zaokrąglenie rogu i kształt pływającego paska nawigacji</string>
+    <string name="settings_floating_bar_blur">Efekt matowego szkła</string>
+    <string name="settings_floating_bar_blur_supporting">Stosuje efekt rozmycia matowego szkła w czasie rzeczywistym dla paska nawigacji i okien dialogowych (ustawienie globalne)</string>
+    <string name="settings_floating_bar_blur_warning">Może obciążać starsze urządzenia (zalecany system Android 12 lub nowszy)</string>
     <!-- Global UI Blur Effects -->
+    <string name="settings_group_effects">Efekty wizualne</string>
+    <string name="settings_ui_blur_title">Efekty matowego szkła i rozmycia</string>
+    <string name="settings_ui_blur_supporting">Stosuje efekt rozmycia matowego szkła w czasie rzeczywistym pod oknami dialogowymi, dolnymi panelami i paskiem nawigacji (Android 12+)</string>
+    <string name="settings_ui_blur_active_hint">Aktywne we wszystkich oknach dialogowych, panelach i paskach nawigacji</string>
+    <string name="settings_nav_blur_global_hint">Kontrolowane przez globalne ustawienie rozmycia interfejsu</string>
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="settings_swipe_actions_title">Akcje przesuwania</string>
+    <string name="settings_swipe_actions_supporting">Skonfiguruj gesty przesuwania w kontaktach i historii połączeń</string>
+    <string name="settings_swipe_actions_enable">Włącz gesty przesuwania</string>
+    <string name="settings_swipe_actions_enable_supporting">Przesuń pozycję kontaktu lub historii połączeń w lewo lub w prawo, aby wywołać akcję z dynamicznym, sprężystym efektem wizualnym</string>
+    <string name="settings_swipe_right_action">Akcja przesunięcia w prawo</string>
+    <string name="settings_swipe_left_action">Akcja przesunięcia w lewo</string>
+    <string name="settings_swipe_right_action_supporting">Akcja wywoływana po przesunięciu elementu od lewej do prawej strony</string>
+    <string name="settings_swipe_left_action_supporting">Akcja wywoływana po przesunięciu elementu od prawej do lewej strony</string>
+    <string name="swipe_action_none">Brak</string>
+    <string name="swipe_action_call">Zadzwoń</string>
+    <string name="swipe_action_message">Wiadomość</string>
+    <string name="swipe_action_video_call">Wideorozmowa</string>
+    <string name="swipe_action_whatsapp">WhatsApp</string>
+    <string name="swipe_action_copy_number">Kopiuj numer</string>
+    <string name="swipe_action_delete">Usuń</string>
+    <string name="swipe_action_preview_title">Interaktywny podgląd gestów</string>
+    <string name="swipe_action_preview_supporting">Przesuń tę kartę w lewo lub w prawo, aby wypróbować dynamiczną, sprężystą fizykę Material 3</string>
+    <string name="swipe_action_test_contact_name">Alex Rivera</string>
+    <string name="swipe_action_test_contact_number">+1 (555) 019-2834</string>
+    <string name="swipe_action_triggered_toast">Gest wywołany: %1$s</string>
+    <string name="settings_swipe_actions_reset">Zresetuj akcje przesuwania</string>
+    <string name="settings_swipe_actions_tab_warning">Nawigacja gestem przesunięcia między kartami jest wyłączona, gdy aktywne są akcje przesunięcia, aby zapobiec konfliktom gestów.</string>
+    <!-- Ongoing Call Top Banner & Vivo Notifications -->
+    <!-- Missed Call Card & Auto Decline -->
+    <!-- Favorites Modernization -->
+    <!-- Dual SIM Buttons -->
 </resources>
