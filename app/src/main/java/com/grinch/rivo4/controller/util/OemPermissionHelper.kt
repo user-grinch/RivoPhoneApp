@@ -164,7 +164,22 @@ object OemPermissionHelper {
             )
             intents.add(
                 Intent().apply {
+                    setComponent(ComponentName("com.vivo.permissioncontroller", "com.vivo.permissioncontroller.activity.SoftPermissionDetailActivity"))
+                    putExtra("packagename", context.packageName)
+                    putExtra("packageName", context.packageName)
+                }
+            )
+            intents.add(
+                Intent().apply {
                     setComponent(ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity"))
+                    putExtra("packagename", context.packageName)
+                    putExtra("packageName", context.packageName)
+                }
+            )
+            intents.add(
+                Intent().apply {
+                    setComponent(ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.FloatWindowManager"))
+                    putExtra("packagename", context.packageName)
                 }
             )
             intents.add(
@@ -172,11 +187,13 @@ object OemPermissionHelper {
                     setComponent(ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"))
                 }
             )
-            intents.add(
-                Intent().apply {
-                    setComponent(ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.FloatWindowManager"))
-                }
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                intents.add(
+                    Intent("android.settings.MANAGE_APP_USE_FULL_SCREEN_INTENT").apply {
+                        data = Uri.parse("package:${context.packageName}")
+                    }
+                )
+            }
             intents.add(
                 Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                     putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
@@ -201,6 +218,11 @@ object OemPermissionHelper {
 
         return launchFirstWorkingIntent(context, intents)
     }
+
+    /**
+     * Alias for opening OEM background pop-up / lockscreen permission screen (e.g. Vivo/iQOO).
+     */
+    fun openBackgroundPopupPermission(context: Context): Boolean = openOemPermissions(context)
 
     /**
      * Attempts to launch the Autostart settings across all OEMs.

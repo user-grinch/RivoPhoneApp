@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,11 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.MicNone
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShortNavigationBar
@@ -131,9 +138,6 @@ fun BottomBar(
     val floatingBarRoundness = remember(settingsState) {
         prefs.getFloatingBarRoundness()
     }
-    val isBlurEnabled = remember(settingsState) {
-        prefs.isFloatingBarBlurEnabled()
-    }
     val storedTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
     val tabIds = visibleTabs ?: storedTabs
 
@@ -152,14 +156,6 @@ fun BottomBar(
 
     if (navBarStyle == PreferenceManager.NAV_BAR_STYLE_TOOLBAR) {
         val barShape = RoundedCornerShape(floatingBarRoundness.dp)
-        val barContainerColor = if (isBlurEnabled) {
-            MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.50f)
-        } else {
-            MaterialTheme.colorScheme.surfaceContainerHigh
-        }
-        val barShadowElevation = 6.dp
-        val barTonalElevation = if (isBlurEnabled) 0.dp else 4.dp
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,145 +163,82 @@ fun BottomBar(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .shadow(elevation = barShadowElevation, shape = barShape, clip = false)
+            @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+            HorizontalFloatingToolbar(
+                expanded = true,
+                shape = barShape,
+                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                    toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+                expandedShadowElevation = 4.dp
             ) {
-                if (isBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val blurRadiusPx = with(LocalDensity.current) { 42.dp.toPx() }
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .clip(barShape)
-                            .graphicsLayer {
-                                renderEffect = RenderEffect.createBlurEffect(
-                                    blurRadiusPx, blurRadiusPx,
-                                    Shader.TileMode.CLAMP
-                                ).asComposeRenderEffect()
-                            }
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.88f),
-                                        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.82f)
-                                    )
-                                )
-                            )
+                tabs.forEach { tab ->
+                    val isSelected = if (pagerState != null) {
+                        pagerState.currentPage == tab.value
+                    } else {
+                        currentDestination?.hierarchy?.any { it.route == tab.route } == true
+                    }
+
+                    val indicatorColor by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        label = "expressiveIndicatorColor"
                     )
-                }
+                    val iconColor by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        label = "expressiveIconColor"
+                    )
 
-                Surface(
-                    shape = barShape,
-                    color = if (isBlurEnabled) Color.Transparent else barContainerColor,
-                    tonalElevation = barTonalElevation,
-                    shadowElevation = 0.dp,
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        tabs.forEach { tab ->
-                            val isSelected = if (pagerState != null) {
-                                pagerState.currentPage == tab.value
-                            } else {
-                                currentDestination?.hierarchy?.any { it.route == tab.route } == true
+                    val onItemClick = {
+                        if (onPageSelected != null && pagerState != null) {
+                            onPageSelected(tab.value)
+                        } else {
+                            navController.navigate(tab.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
+                        }
+                    }
 
-                            val contentColor by animateColorAsState(
-                                targetValue = if (isSelected) {
-                                    if (isBlurEnabled) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSecondaryContainer
-                                    }
-                                } else {
-                                    if (isBlurEnabled) {
-                                        MaterialTheme.colorScheme.onSurface
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    }
-                                },
-                                animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-                                label = "toolbarItemContent"
-                            )
-                            val itemScale by animateFloatAsState(
-                                targetValue = if (isSelected) 1.05f else 1f,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
-                                label = "toolbarItemScale"
-                            )
-
-                            val itemCornerRadius = (floatingBarRoundness - 6).coerceAtLeast(10).dp
-                            val itemShape = RoundedCornerShape(itemCornerRadius)
-
-                            Box(
-                                modifier = Modifier
-                                    .graphicsLayer {
-                                        scaleX = itemScale
-                                        scaleY = itemScale
-                                    }
-                                    .clip(itemShape)
-                                    .background(
-                                        if (isSelected) {
-                                            if (isBlurEnabled) {
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.20f)
-                                            } else {
-                                                MaterialTheme.colorScheme.secondaryContainer
-                                            }
-                                        } else {
-                                            Color.Transparent
-                                        }
-                                    )
-                                    .clickable {
-                                        if (onPageSelected != null && pagerState != null) {
-                                            onPageSelected(tab.value)
-                                        } else {
-                                            navController.navigate(tab.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
-                                    }
+                    Row(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(indicatorColor)
+                            .clickable(onClick = onItemClick)
+                            .padding(
+                                horizontal = if (isSelected && !iconOnly) 16.dp else 12.dp,
+                                vertical = 10.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isSelected) tab.icon else navigationTabUnselectedIcon(tab.id),
+                            contentDescription = tab.label,
+                            tint = iconColor,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        if (!iconOnly) {
+                            AnimatedVisibility(
+                                visible = isSelected,
+                                enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) + expandHorizontally(spring(stiffness = Spring.StiffnessMediumLow)),
+                                exit = fadeOut(spring(stiffness = Spring.StiffnessMediumLow)) + shrinkHorizontally(spring(stiffness = Spring.StiffnessMediumLow))
                             ) {
-                                if (iconOnly) {
-                                    Box(
-                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = if (isSelected) tab.icon else navigationTabUnselectedIcon(tab.id),
-                                            contentDescription = tab.label,
-                                            tint = contentColor,
-                                            modifier = Modifier.size(22.dp)
-                                        )
-                                    }
-                                } else {
-                                    Column(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = if (isSelected) tab.icon else navigationTabUnselectedIcon(tab.id),
-                                            contentDescription = tab.label,
-                                            tint = contentColor,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                        Spacer(Modifier.height(2.dp))
-                                        Text(
-                                            text = tab.label,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                            color = contentColor,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = tab.label,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = iconColor,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                 }
                             }
                         }

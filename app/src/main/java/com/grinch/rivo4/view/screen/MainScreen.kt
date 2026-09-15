@@ -114,7 +114,6 @@ fun MainScreen(
     val navBarStyle = LocalNavBarStyle.current
     val isToolbar = navBarStyle == PreferenceManager.NAV_BAR_STYLE_TOOLBAR
     val isSwipeActionsEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() }
-    val isBlurEnabled = remember(settingsState) { prefs.isFloatingBarBlurEnabled() }
 
     var isToolbarVisible by remember { mutableStateOf(true) }
 
@@ -282,37 +281,6 @@ fun MainScreen(
                 }
             }
 
-            if (isToolbar && isBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                AnimatedVisibility(
-                    visible = isToolbarVisible,
-                    enter = fadeIn(animationSpec = tween(150)),
-                    exit = fadeOut(animationSpec = tween(150)),
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                ) {
-                    val blurRadiusPx = with(LocalDensity.current) { 44.dp.toPx() }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(navBarsBottom + 60.dp)
-                            .graphicsLayer {
-                                renderEffect = RenderEffect.createBlurEffect(
-                                    blurRadiusPx, blurRadiusPx,
-                                    Shader.TileMode.CLAMP
-                                ).asComposeRenderEffect()
-                            }
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.35f),
-                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.70f),
-                                        MaterialTheme.colorScheme.surface.copy(alpha = 0.90f)
-                                    )
-                                )
-                            )
-                    )
-                }
-            }
 
             if (isToolbar) {
                 AnimatedVisibility(

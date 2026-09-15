@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.telecom.Call
+import android.telecom.TelecomManager
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.WindowManager
@@ -71,14 +72,24 @@ class CallActivity : ComponentActivity() {
     private val identityCache = mutableMapOf<String, CachedCallIdentity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        turnScreenOnAndShowWhileLocked()
         super.onCreate(savedInstanceState)
 
         CallBackgroundStore.attach(preferenceManager)
         AdPreloader.preloadPostCallAd(this@CallActivity)
         CallRecorder.prepare(this)
 
-        if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
-            CallService.currentCallSession.value == null
+        val telecomManager = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+        val isTelecomInCall = try {
+            telecomManager?.isInCall == true
+        } catch (e: SecurityException) {
+            false
+        }
+
+        if (!isTelecomInCall &&
+            CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED } &&
+            CallService.currentCallSession.value == null &&
+            CallService.instance == null
         ) {
             setShowWhenLocked(false)
             setTurnScreenOn(false)
@@ -86,8 +97,6 @@ class CallActivity : ComponentActivity() {
             finishAndRemoveTask()
             return
         }
-
-        turnScreenOnAndShowWhileLocked()
 
         if (preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -431,6 +440,11 @@ class CallActivity : ComponentActivity() {
         finishAndRemoveTask()
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        turnScreenOnAndShowWhileLocked()
+    }
+
     private fun turnScreenOnAndShowWhileLocked() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -444,6 +458,10 @@ class CallActivity : ComponentActivity() {
             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
             WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
         )
+        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            keyguardManager?.requestDismissKeyguard(this, null)
+        }
     }
 
     override fun onStart() {
@@ -453,6 +471,7 @@ class CallActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        turnScreenOnAndShowWhileLocked()
         com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
     }
 

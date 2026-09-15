@@ -1,5 +1,6 @@
 package com.grinch.rivo4.controller
 
+import android.app.ActivityOptions
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.BlockedNumberContract
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -49,6 +51,41 @@ class CallService : InCallService() {
     private val callRingStartTimes = mutableMapOf<Call, Long>()
     private val cachedContactNames = java.util.concurrent.ConcurrentHashMap<String, String>()
     private var flipToSilenceManager: FlipToSilenceManager? = null
+    private var screenWakeLock: PowerManager.WakeLock? = null
+
+    private fun acquireScreenWakeLock() {
+        try {
+            if (screenWakeLock == null) {
+                val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+                @Suppress("DEPRECATION")
+                screenWakeLock = powerManager?.newWakeLock(
+                    PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
+                    "Rivo:IncomingCallWakeLock"
+                )?.apply {
+                    setReferenceCounted(false)
+                }
+            }
+            screenWakeLock?.let {
+                if (!it.isHeld) {
+                    it.acquire(15000L) // 15 sec safety timeout
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("CallService", "Failed to acquire screen wake lock: ${e.message}")
+        }
+    }
+
+    private fun releaseScreenWakeLock() {
+        try {
+            screenWakeLock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("CallService", "Failed to release screen wake lock: ${e.message}")
+        }
+    }
 
     private fun getContactBitmap(photoUri: String?): Bitmap? {
         if (photoUri == null) return null
@@ -80,7 +117,7 @@ class CallService : InCallService() {
 
         val isActivityVisible = MutableStateFlow(false)
 
-        private var instance: CallService? = null
+        var instance: CallService? = null
 
         fun setPreferredCall(call: Call) {
             _preferredCall.value = call
@@ -209,9 +246,11 @@ class CallService : InCallService() {
                 val hasRinging = getCalls()?.any { it.state == Call.STATE_RINGING } == true
                 if (!hasRinging) {
                     flipToSilenceManager?.stopListening()
+                    releaseScreenWakeLock()
                 }
             } else if (!callRingStartTimes.containsKey(call)) {
                 callRingStartTimes[call] = System.currentTimeMillis()
+                acquireScreenWakeLock()
             }
 
             if (state == Call.STATE_ACTIVE) {
@@ -562,10 +601,17 @@ class CallService : InCallService() {
         updateCallState()
 
         val isIncoming = call.state == Call.STATE_RINGING
-        if (isIncoming && preferenceManager.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) {
-            flipToSilenceManager?.startListening()
+        if (isIncoming) {
+            acquireScreenWakeLock()
+            if (preferenceManager.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) {
+                flipToSilenceManager?.startListening()
+            }
         }
 
+        // 1. Post notification FIRST so foreground service & fullScreenIntent are fully armed
+        updateNotification(call)
+
+        // 2. Direct full-screen activity start as an active trigger
         val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
         if (showFullScreen) {
@@ -580,8 +626,6 @@ class CallService : InCallService() {
         } else {
             Log.i("CallService", "User is actively in another app; presenting heads-up incoming call notification only.")
         }
-
-        updateNotification(call)
     }
 
     override fun onCallRemoved(call: Call) {
@@ -592,6 +636,7 @@ class CallService : InCallService() {
         val hasRinging = calls.any { it.state == Call.STATE_RINGING }
         if (!hasRinging) {
             flipToSilenceManager?.stopListening()
+            releaseScreenWakeLock()
         }
         if (calls.isEmpty()) {
             if (CallRecorder.isRecording.value) CallRecorder.stop()
@@ -816,14 +861,18 @@ class CallService : InCallService() {
         }
 
         val notification = builder.build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            var fgsType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && CallRecorder.hasAudioPermission(this)) {
-                fgsType = fgsType or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                var fgsType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && CallRecorder.isRecording.value && CallRecorder.hasAudioPermission(this)) {
+                    fgsType = fgsType or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                }
+                startForeground(NOTIFICATION_ID, notification, fgsType)
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
             }
-            startForeground(NOTIFICATION_ID, notification, fgsType)
-        } else {
-            startForeground(NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+            Log.e("CallService", "Error starting foreground notification: ${e.message}", e)
         }
     }
 
@@ -833,6 +882,7 @@ class CallService : InCallService() {
     }
 
     override fun onDestroy() {
+        releaseScreenWakeLock()
         super.onDestroy()
         flipToSilenceManager?.stopListening()
         if (CallRecorder.isRecording.value) CallRecorder.stop()

@@ -35,14 +35,17 @@ object CallUiHelper {
             return true
         }
 
-        // 2. Lockscreen or screen is off/sleeping
+        // 2. Lockscreen or screen is off/sleeping or OEM compatibility (Vivo, iQOO, etc.)
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
-        val isLocked = keyguardManager?.isKeyguardLocked == true
+        @Suppress("DEPRECATION")
+        val isLocked = keyguardManager?.isKeyguardLocked == true ||
+                keyguardManager?.inKeyguardRestrictedInputMode() == true ||
+                keyguardManager?.isDeviceLocked == true
         val isInteractive = powerManager?.isInteractive == true
 
-        if (isLocked || !isInteractive) {
-            Log.d(TAG, "Full-screen: device is locked ($isLocked) or screen is off (${!isInteractive})")
+        if (isLocked || !isInteractive || OemPermissionHelper.isVivo()) {
+            Log.d(TAG, "Full-screen: device is locked ($isLocked), screen off (${!isInteractive}), or Vivo/OEM device")
             return true
         }
 

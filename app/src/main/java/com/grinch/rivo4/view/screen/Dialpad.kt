@@ -655,14 +655,24 @@ fun DialerActionExpressive(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.92f else 1.0f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "ButtonScale"
+    )
+
     val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) (if (isLarge) 20.dp else 16.dp) else (if (isLarge) 28.dp else 24.dp),
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        targetValue = if (isPressed) (if (isLarge) 24.dp else 20.dp) else (if (isLarge) 34.dp else 30.dp),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "ButtonShape"
     )
 
     Surface(
         modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick,
@@ -671,10 +681,15 @@ fun DialerActionExpressive(
             ),
         shape = RoundedCornerShape(cornerRadius),
         color = containerColor,
-        contentColor = contentColor
+        contentColor = contentColor,
+        tonalElevation = if (isLarge) 6.dp else 0.dp
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription, modifier = Modifier.size(if (isLarge) 36.dp else 24.dp))
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(if (isLarge) 32.dp else 24.dp)
+            )
         }
     }
 }
@@ -685,21 +700,31 @@ fun DialerSimActionExpressive(
     onClick: () -> Unit,
     simNumber: Int,
     simLabel: String,
-    modifier: Modifier = Modifier.width(68.dp).height(72.dp),
-    containerColor: Color = MaterialTheme.callColors.answer,
-    contentColor: Color = MaterialTheme.callColors.onAnswer
+    modifier: Modifier = Modifier.width(76.dp).height(68.dp),
+    containerColor: Color = if (simNumber == 1) MaterialTheme.callColors.answer else MaterialTheme.colorScheme.primaryContainer,
+    contentColor: Color = if (simNumber == 1) MaterialTheme.callColors.onAnswer else MaterialTheme.colorScheme.onPrimaryContainer
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.92f else 1.0f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "SimButtonScale"
+    )
+
     val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) 18.dp else 24.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        targetValue = if (isPressed) 20.dp else 28.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "SimButtonShape"
     )
 
     Surface(
         modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .combinedClickable(
                 onClick = onClick,
                 interactionSource = interactionSource,
@@ -707,34 +732,46 @@ fun DialerSimActionExpressive(
             ),
         shape = RoundedCornerShape(cornerRadius),
         color = containerColor,
-        contentColor = contentColor
+        contentColor = contentColor,
+        tonalElevation = 4.dp
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 6.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 6.dp, vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Call,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
-                Text(
-                    text = "$simNumber",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp
-                )
+                Surface(
+                    shape = CircleShape,
+                    color = contentColor.copy(alpha = 0.22f),
+                    modifier = Modifier.size(18.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "$simNumber",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp,
+                            color = contentColor
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = simLabel,
                 style = MaterialTheme.typography.labelSmall,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontSize = 10.5.sp,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )

@@ -228,7 +228,11 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                 settingsLauncher.launch(PermissionChecklistHelper.getBatteryOptimizationIntent(context))
             }
             PermissionActionType.SETTINGS -> {
-                settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                if (item.id == "vivo_background_popup") {
+                    com.grinch.rivo4.controller.util.OemPermissionHelper.openBackgroundPopupPermission(context)
+                } else {
+                    settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                }
             }
             PermissionActionType.RUNTIME -> {
                 singleRuntimeLauncher.launch(item.permissions.toTypedArray())

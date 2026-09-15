@@ -849,7 +849,22 @@ fun RecentsDailyStatusHeader(
             )
         }
 
-        // 2. Incoming (if incomingCalls > 0)
+        // 2. Call Time (Total Talk Time)
+        item(key = "today_call_time") {
+            DailyStatCard(
+                value = formatShortDuration(totalDurationSeconds),
+                label = "Call Time",
+                icon = Icons.Outlined.Schedule,
+                containerColor = if (isDark) Color(0xFF3B2E1E) else Color(0xFFFFF4E5),
+                badgeColor = if (isDark) Color(0xFF614A2E) else Color(0xFFFFE0B8),
+                iconColor = if (isDark) Color(0xFFE5B56A) else Color(0xFF875200),
+                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF2B1D0B),
+                labelColor = if (isDark) Color(0xFFB6A694) else Color(0xFF745738),
+                onClick = onOpenAnalytics
+            )
+        }
+
+        // 3. Incoming (if incomingCalls > 0)
         if (incomingCalls > 0) {
             item(key = "today_incoming") {
                 DailyStatCard(
@@ -866,7 +881,7 @@ fun RecentsDailyStatusHeader(
             }
         }
 
-        // 3. Missed
+        // 4. Missed
         item(key = "today_missed") {
             DailyStatCard(
                 value = "$missedCalls",
@@ -881,7 +896,7 @@ fun RecentsDailyStatusHeader(
             )
         }
 
-        // 4. Outgoing
+        // 5. Outgoing
         item(key = "today_outgoing") {
             DailyStatCard(
                 value = "$outgoingCalls",
@@ -892,21 +907,6 @@ fun RecentsDailyStatusHeader(
                 iconColor = if (isDark) Color(0xFF78D78E) else Color(0xFF286D2C),
                 valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF152613),
                 labelColor = if (isDark) Color(0xFFA3B39F) else Color(0xFF4C664A),
-                onClick = onOpenAnalytics
-            )
-        }
-
-        // 5. Call Time
-        item(key = "today_call_time") {
-            DailyStatCard(
-                value = formatShortDuration(totalDurationSeconds),
-                label = "Call Time",
-                icon = Icons.Outlined.Schedule,
-                containerColor = if (isDark) Color(0xFF3B2E1E) else Color(0xFFFFF4E5),
-                badgeColor = if (isDark) Color(0xFF614A2E) else Color(0xFFFFE0B8),
-                iconColor = if (isDark) Color(0xFFE5B56A) else Color(0xFF875200),
-                valueColor = if (isDark) Color(0xFFEDE8DF) else Color(0xFF2B1D0B),
-                labelColor = if (isDark) Color(0xFFB6A694) else Color(0xFF745738),
                 onClick = onOpenAnalytics
             )
         }
