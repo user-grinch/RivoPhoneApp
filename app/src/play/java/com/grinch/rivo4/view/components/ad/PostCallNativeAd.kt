@@ -68,7 +68,7 @@ fun PostCallNativeAd(
 
     DisposableEffect(effectiveAdUnitId) {
         if (loadedNativeAd == null) {
-            MobileAds.initialize(context) {}
+            AdPreloader.init(context)
 
             val adLoader = AdLoader.Builder(context, effectiveAdUnitId)
                 .forNativeAd { ad: NativeAd ->

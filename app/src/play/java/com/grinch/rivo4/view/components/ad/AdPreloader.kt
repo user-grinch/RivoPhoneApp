@@ -8,9 +8,14 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+
+val TEST_DEVICE_IDS = listOf(
+    "372B822B004FEC61757C53C2F881C02C"
+)
 
 object AdPreloader {
     private const val TAG = "AdPreloader"
@@ -36,6 +41,11 @@ object AdPreloader {
             isInitialized = true
             val appContext = context.applicationContext
             try {
+                val requestConfiguration = RequestConfiguration.Builder()
+                    .setTestDeviceIds(TEST_DEVICE_IDS)
+                    .build()
+                MobileAds.setRequestConfiguration(requestConfiguration)
+
                 MobileAds.initialize(appContext) {
                     preloadPostCallAd(appContext)
                     preloadBannerAd(appContext)
