@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Cancelar</string>
     <string name="action_confirm">Confirmar</string>
@@ -20,6 +21,7 @@
     <string name="action_decline">Rechazar</string>
     <string name="action_end">Finalizar</string>
     <string name="action_mute">Silenciar</string>
+    <string name="action_unmute">Desactivar silencio</string>
     <string name="action_keypad">Teclado</string>
     <string name="action_add_call">Agregar llamada</string>
     <string name="action_hold">Pausar</string>
@@ -33,6 +35,10 @@
     <string name="content_desc_scroll_to_top">Volver arriba</string>
     <string name="sim_picker_title">Seleccionar tarjeta SIM</string>
     <string name="sim_picker_unknown_sim">SIM desconocida</string>
+    <plurals name="selection_count_selected">
+        <item quantity="one">%1$d Seleccionado</item>
+        <item quantity="other">%1$d Seleccionados</item>
+    </plurals>
     <string name="label_unknown">Desconocido</string>
     <string name="label_unknown_number">Número desconocido</string>
     <string name="label_mobile">Móvil</string>
@@ -49,6 +55,7 @@
     <string name="date_yesterday">Ayer</string>
     <string name="nav_contacts">Contactos</string>
     <string name="nav_recents">Recientes</string>
+    <string name="nav_call_recordings">Grabaciones</string>
     <string name="call_type_incoming">Entrante</string>
     <string name="call_type_outgoing">Saliente</string>
     <string name="call_type_missed">Perdida</string>
@@ -69,6 +76,7 @@
     <string name="onboarding_get_started">Primeros pasos</string>
     <string name="onboarding_page1_title">Diseño expresivo</string>
     <string name="onboarding_page1_description">Experimenta una interfaz moderna gracias a las animaciones de Material 3 y Jetpack Compose.</string>
+    <string name="onboarding_page2_title">Marcación ultrarrápida</string>
     <string name="onboarding_page2_description">Encuentra contactos en un instante con nuestra búsqueda inteligente T9 y nuestro historial de llamadas organizado.</string>
     <string name="onboarding_page3_title">Construido para ti</string>
     <string name="onboarding_page3_description">Una experiencia de llamadas de código abierto y de proximidad diseñada para la eficiencia.</string>
@@ -86,6 +94,7 @@
     <string name="ads_disable_dialog_title">Apoya el desarrollo de código abierto</string>
     <string name="ads_disable_dialog_body">Mostrar anuncios ayuda a mantener Rivo libre y de código abierto. Sin ingresos de anuncios o donaciones comunitarias, mantenimiento continuo, corrección de errores y desarrollo pueden desaparecer. ¿Estás seguro de que quieres desactivar los anuncios?</string>
     <string name="ads_disable_dialog_confirm">Quitar anuncios</string>
+    <string name="ads_disable_dialog_keep">Mantener Anuncios</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Haz de Rivo tu marcador oficial</string>
     <string name="default_dialer_description">Para hacer y recibir llamadas, administrar tu historial de llamadas y protegerte contra el spam, Rivo necesita ser configurada como tu aplicación de teléfono predeterminada.</string>
@@ -99,6 +108,10 @@
     <string name="call_history_with_contact">Historial con %1$s</string>
     <string name="call_log_no_history_found">No se encontró historial de llamadas</string>
     <string name="call_log_no_filter_match">Ninguna llamada coincide con este filtro</string>
+    <plurals name="call_log_delete_confirm">
+        <item quantity="one">¿Seguro que quieres eliminar %1$d registros de llamadas seleccionado?</item>
+        <item quantity="other">¿Seguro que quieres eliminar %1$d registros de llamadas seleccionados?</item>
+    </plurals>
     <string name="call_log_delete_title">Borrar registros de llamadas</string>
     <string name="call_log_clear_all_title">Borrar todos los registros</string>
     <string name="call_log_clear_all_confirm">Borrar todo</string>
@@ -114,11 +127,13 @@
     <string name="contact_filter_private">Privado</string>
     <string name="contact_move_to_storage">Mover al almacenamiento</string>
     <string name="contact_move_private_storage_title">Almacenamiento privado</string>
+    <string name="contact_move_private_storage_supporting">Almacenamiento exclusivo de la aplicación</string>
     <string name="contact_move_local_memory_supporting">Solo en dispositivo</string>
     <string name="content_desc_move">Mover</string>
     <string name="contacts_empty_title">No se encontraron contactos</string>
     <string name="contacts_permission_rationale">Para mostrar tu lista de contactos e identificar llamadas entrantes, Rivo necesita permiso para acceder a tus contactos.</string>
     <!-- Contact details -->
+    <string name="contact_details_qr_title">QR de contacto</string>
     <string name="contact_details_qr_content_desc">Código QR</string>
     <string name="contact_details_call">Llamar</string>
     <string name="contact_details_video">Video</string>
