@@ -3,6 +3,7 @@ package com.grinch.rivo4.view.screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.ContactsContract
 import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
@@ -17,12 +18,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,19 +35,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import com.grinch.rivo4.MainActivity
 import com.grinch.rivo4.R
-import com.grinch.rivo4.controller.util.SocialAppInfo
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.makeCall
+import com.grinch.rivo4.view.components.CallNotesSheet
 import com.grinch.rivo4.view.components.RivoAvatar
+import com.grinch.rivo4.view.components.ad.PostCallNativeAd
 import java.util.Date
 
 @Composable
@@ -57,6 +62,7 @@ fun MissedCallScreen(
 ) {
     val context = LocalContext.current
     var isVisible by remember { mutableStateOf(false) }
+    var showNoteSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isVisible = true
@@ -79,324 +85,428 @@ fun MissedCallScreen(
         )
     }
 
+    val displayName = remember(contactName, phoneNumber) {
+        contactName.ifEmpty { phoneNumber.ifEmpty { context.getString(R.string.label_unknown) } }
+    }
+
+    val isUnsaved = remember(contactName, phoneNumber) {
+        contactName.isEmpty() || contactName == phoneNumber
+    }
+
     val timeFormatted = remember(timestampMillis) {
         DateFormat.getTimeFormat(context).format(Date(timestampMillis))
     }
 
-    val displayName = contactName.ifBlank { phoneNumber.ifBlank { stringResource(R.string.label_unknown_number) } }
-
-    val amberAccent = Color(0xFFE5B842)
-    val amberContainer = Color(0xFF3B331A)
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.42f))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onDismiss
-            ),
-        contentAlignment = Alignment.Center
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(animationSpec = tween(250)),
+        exit = fadeOut(animationSpec = tween(200))
     ) {
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = fadeIn(animationSpec = tween(220)) + scaleIn(initialScale = 0.92f, animationSpec = tween(250)),
-            exit = fadeOut(animationSpec = tween(180)) + scaleOut(targetScale = 0.92f, animationSpec = tween(180))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.45f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDismiss
+                ),
+            contentAlignment = Alignment.BottomCenter
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    .navigationBarsPadding()
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = {}
+                        onClick = {} // Consume clicks inside card
                     ),
                 shape = RoundedCornerShape(28.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.98f),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                shadowElevation = 16.dp
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                tonalElevation = 4.dp,
+                shadowElevation = 14.dp
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp, bottom = 22.dp, start = 20.dp, end = 20.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    // 1. Header: Avatar + Missed badge + Subtitle + Close button
+                    // Top drag indicator
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .size(width = 36.dp, height = 4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Top Status Bar: Logo + Rivo text + Missed Call + Close ✕ button
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            modifier = Modifier.size(54.dp),
-                            contentAlignment = Alignment.TopStart
-                        ) {
-                            RivoAvatar(
-                                name = displayName,
-                                photoUri = photoUri,
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .align(Alignment.Center)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(R.drawable.logo),
+                                contentDescription = null,
+                                modifier = Modifier.size(36.dp)
                             )
-                            // Missed Call Badge
-                            Surface(
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .align(Alignment.TopStart),
-                                shape = CircleShape,
-                                color = amberAccent,
-                                shadowElevation = 2.dp
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Column {
+                                Text(
+                                    text = "RIVO",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 1.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = stringResource(R.string.notif_channel_missed_calls),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+
+                        // Prominent ✕ Close Button
+                        Surface(
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            modifier = Modifier.size(34.dp),
+                            onClick = onDismiss
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Caller Card (Elevated Truecaller-style container)
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(contentAlignment = Alignment.Center) {
+                                Box(
+                                    modifier = Modifier.size(54.dp),
+                                    contentAlignment = Alignment.TopStart
+                                ) {
+                                    RivoAvatar(
+                                        name = displayName,
+                                        photoUri = photoUri,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                    Surface(
+                                        modifier = Modifier
+                                            .size(18.dp)
+                                            .align(Alignment.TopStart),
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.error,
+                                        shadowElevation = 2.dp
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.CallMissed,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onError,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(14.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = displayName,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+
+                                    val missedStatusText = if (ringSeconds > 0) {
+                                        stringResource(R.string.missed_call_just_now, ringSeconds)
+                                    } else {
+                                        "Missed call • $timeFormatted"
+                                    }
+
+                                    Text(
+                                        text = if (displayName != phoneNumber && phoneNumber.isNotEmpty()) {
+                                            "$phoneNumber • $missedStatusText"
+                                        } else {
+                                            missedStatusText
+                                        },
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.error,
+                                        fontWeight = FontWeight.Medium,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            // Quick SMS reply chips
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                quickReplies.forEach { text ->
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        border = BorderStroke(
+                                            width = 0.5.dp,
+                                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                        ),
+                                        onClick = {
+                                            val body = if (text.startsWith("Type custom")) "" else text
+                                            sendOrComposeSms(context, phoneNumber, body)
+                                            onDismiss()
+                                        }
+                                    ) {
+                                        Text(
+                                            text = text,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // Action buttons row (Call, SMS, Note, Save)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                // Call
+                                FilledTonalButton(
+                                    onClick = {
+                                        makeCall(context, phoneNumber)
+                                        onDismiss()
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(14.dp),
+                                    contentPadding = PaddingValues(vertical = 8.dp)
+                                ) {
+                                    Icon(Icons.Outlined.Phone, contentDescription = null, modifier = Modifier.size(17.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(stringResource(R.string.favorites_action_call), style = MaterialTheme.typography.labelMedium)
+                                }
+
+                                // Message
+                                FilledTonalButton(
+                                    onClick = {
+                                        SocialUtils.openSms(context, phoneNumber)
+                                        onDismiss()
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(14.dp),
+                                    contentPadding = PaddingValues(vertical = 8.dp)
+                                ) {
+                                    Icon(Icons.AutoMirrored.Filled.Message, contentDescription = null, modifier = Modifier.size(17.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(stringResource(R.string.favorites_action_message), style = MaterialTheme.typography.labelMedium)
+                                }
+
+                                // Note
+                                FilledTonalButton(
+                                    onClick = { showNoteSheet = true },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(14.dp),
+                                    contentPadding = PaddingValues(vertical = 8.dp)
+                                ) {
+                                    Icon(Icons.Outlined.EditNote, contentDescription = null, modifier = Modifier.size(17.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text("Note", style = MaterialTheme.typography.labelMedium)
+                                }
+
+                                // If unsaved number, show "Save" button
+                                if (isUnsaved && phoneNumber.isNotEmpty()) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            addContact(context, phoneNumber)
+                                            onDismiss()
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(14.dp),
+                                        contentPadding = PaddingValues(vertical = 8.dp)
+                                    ) {
+                                        Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(17.dp))
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        Text("Save", style = MaterialTheme.typography.labelMedium)
+                                    }
+                                }
+                            }
+
+                            // Social apps row (WhatsApp, Telegram, etc.) if any installed
+                            if (installedSocialApps.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState()),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    installedSocialApps.take(4).forEach { app ->
+                                        Surface(
+                                            shape = RoundedCornerShape(12.dp),
+                                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
+                                            onClick = {
+                                                app.action(context, phoneNumber)
+                                                onDismiss()
+                                            }
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                if (app.iconDrawable != null) {
+                                                    val bitmap = remember(app.iconDrawable) {
+                                                        runCatching { app.iconDrawable.toBitmap(48, 48) }.getOrNull()
+                                                    }
+                                                    if (bitmap != null) {
+                                                        Image(
+                                                            bitmap = bitmap.asImageBitmap(),
+                                                            contentDescription = app.name,
+                                                            modifier = Modifier.size(16.dp)
+                                                        )
+                                                        Spacer(Modifier.width(6.dp))
+                                                    }
+                                                }
+                                                Text(
+                                                    text = app.name,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // View Call Logs Pill Button
+                            Surface(
+                                onClick = {
+                                    val intent = Intent(context, MainActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    }
+                                    context.startActivity(intent)
+                                    onDismiss()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(38.dp),
+                                shape = RoundedCornerShape(50),
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.CallMissed,
+                                        imageVector = Icons.Outlined.History,
                                         contentDescription = null,
-                                        tint = Color(0xFF1E1C16),
-                                        modifier = Modifier.size(13.dp)
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.missed_call_view_logs),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
                         }
-
-                        Spacer(Modifier.width(14.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = if (ringSeconds > 0) {
-                                    stringResource(R.string.missed_call_just_now, ringSeconds)
-                                } else {
-                                    "Missed call • Just now"
-                                },
-                                style = MaterialTheme.typography.labelMedium,
-                                color = amberAccent,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(2.dp))
-                            Text(
-                                text = displayName,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onDismiss,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.action_dismiss),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                            )
-                        }
                     }
 
-                    Spacer(Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // 2. View Call Logs Pill Button
-                    Surface(
-                        onClick = {
-                            val intent = Intent(context, MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            }
-                            context.startActivity(intent)
-                            onDismiss()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp),
-                        shape = RoundedCornerShape(50),
-                        color = amberContainer
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.History,
-                                contentDescription = null,
-                                tint = amberAccent,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.missed_call_view_logs),
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = amberAccent
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.height(20.dp))
-
-                    // 3. RESPOND WITH MESSAGE
-                    Text(
-                        text = stringResource(R.string.missed_call_respond_with_message),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = amberAccent,
-                        letterSpacing = 0.8.sp
+                    // Big Ad Card (Native Advanced with MediaView in Play variant)
+                    PostCallNativeAd(
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        quickReplies.forEach { reply ->
-                            Surface(
-                                onClick = {
-                                    sendOrComposeSms(context, phoneNumber, reply)
-                                    onDismiss()
-                                },
-                                shape = RoundedCornerShape(20.dp),
-                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
-                            ) {
-                                Text(
-                                    text = reply,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(22.dp))
-
-                    // 4. Action Row (Call, Message, WhatsApp, Telegram, Meet, Truecaller, etc.)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Call button
-                        MissedCallActionItem(
-                            label = stringResource(R.string.favorites_action_call),
-                            containerColor = amberContainer,
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Filled.Call,
-                                    contentDescription = null,
-                                    tint = amberAccent,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            },
-                            onClick = {
-                                makeCall(context, phoneNumber)
-                                onDismiss()
-                            }
-                        )
-
-                        // Message button
-                        MissedCallActionItem(
-                            label = stringResource(R.string.favorites_action_message),
-                            containerColor = amberContainer,
-                            content = {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Message,
-                                    contentDescription = null,
-                                    tint = amberAccent,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            },
-                            onClick = {
-                                SocialUtils.openSms(context, phoneNumber)
-                                onDismiss()
-                            }
-                        )
-
-                        // Dynamic social messaging apps
-                        installedSocialApps.take(4).forEach { app ->
-                            MissedCallActionItem(
-                                label = app.name,
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                content = {
-                                    if (app.iconDrawable != null) {
-                                        val bitmap = remember(app.iconDrawable) {
-                                            runCatching { app.iconDrawable.toBitmap(56, 56) }.getOrNull()
-                                        }
-                                        if (bitmap != null) {
-                                            Image(
-                                                bitmap = bitmap.asImageBitmap(),
-                                                contentDescription = app.name,
-                                                modifier = Modifier.size(30.dp)
-                                            )
-                                        } else {
-                                            Text(app.name.take(1), fontWeight = FontWeight.Bold)
-                                        }
-                                    } else {
-                                        Text(app.name.take(1), fontWeight = FontWeight.Bold)
-                                    }
-                                },
-                                onClick = {
-                                    app.action(context, phoneNumber)
-                                    onDismiss()
-                                }
-                            )
-                        }
-                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
             }
         }
-    }
-}
 
-@Composable
-private fun MissedCallActionItem(
-    label: String,
-    containerColor: Color,
-    content: @Composable () -> Unit,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(62.dp)
-    ) {
-        Surface(
-            onClick = onClick,
-            modifier = Modifier.size(52.dp),
-            shape = CircleShape,
-            color = containerColor,
-            shadowElevation = 2.dp
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                content()
-            }
+        if (showNoteSheet) {
+            CallNotesSheet(
+                phoneNumber = phoneNumber,
+                contactName = contactName,
+                onDismiss = { showNoteSheet = false }
+            )
         }
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
 private fun sendOrComposeSms(context: Context, number: String, text: String) {
     val intl = SocialUtils.formatInternationalNumber(context, number)
     val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$intl")).apply {
-        putExtra("sms_body", text)
+        if (text.isNotEmpty()) {
+            putExtra("sms_body", text)
+        }
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     try {
+        context.startActivity(intent)
+    } catch (_: Exception) {}
+}
+
+private fun addContact(context: Context, number: String) {
+    if (number.isEmpty()) return
+    try {
+        val intent = Intent(Intent.ACTION_INSERT_OR_EDIT).apply {
+            type = "vnd.android.cursor.item/contact"
+            putExtra(ContactsContract.Intents.Insert.PHONE, number)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         context.startActivity(intent)
     } catch (_: Exception) {}
 }

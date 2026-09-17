@@ -2,18 +2,49 @@ package com.grinch.rivo4.view.screen
 
 import android.Manifest
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -28,14 +59,24 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.formatPhoneNumber
-import com.grinch.rivo4.view.components.*
+import com.grinch.rivo4.view.components.CallLogTileSimple
+import com.grinch.rivo4.view.components.PermissionDeniedView
+import com.grinch.rivo4.view.components.RivoDivider
+import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoListItem
+import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
+import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.ScrollToTopButton
+import com.grinch.rivo4.view.components.rememberCallLauncher
+import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
+import com.grinch.rivo4.view.components.LocalRivoAvatarStyle
+import com.grinch.rivo4.view.components.rememberRivoAvatarStyle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -104,7 +145,12 @@ fun ContactSearchContent(
     }
 
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val callLogVM: CallLogViewModel = koinActivityViewModel()
     val contacts by contactsVM.allContacts.collectAsState()
+    val callLogs by callLogVM.allCallLogs.collectAsState()
+    val isContactsLoading by contactsVM.isLoading.collectAsState()
+    val isCallLogsLoading by callLogVM.isLoading.collectAsState()
+
     val prefs = koinInject<PreferenceManager>()
     val callLauncher = rememberCallLauncher()
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -120,6 +166,8 @@ fun ContactSearchContent(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
+        contactsVM.fetchContacts()
+        callLogVM.fetchLogs()
         focusRequester.requestFocus()
         keyboardController?.show()
     }
@@ -134,6 +182,18 @@ fun ContactSearchContent(
                 val matchesNumber = it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
                 matchesName || matchesNickname || matchesNumber
             }.take(50).toList()
+        }
+    }
+
+    val filteredCallLogs = remember(query, callLogs) {
+        if (query.isBlank()) emptyList()
+        else {
+            val cleanQuery = query.replace(" ", "")
+            callLogs.asSequence().filter { log ->
+                val matchesName = log.name?.contains(query, ignoreCase = true) == true
+                val matchesNumber = log.number.replace(" ", "").contains(cleanQuery)
+                matchesName || matchesNumber
+            }.take(30).toList()
         }
     }
 
@@ -179,9 +239,9 @@ fun ContactSearchContent(
         Box(modifier = Modifier.weight(1f)) {
             AnimatedContent(
                 targetState = when {
-                    contacts.isEmpty() -> 0
                     query.isBlank() -> 1
-                    filteredContacts.isEmpty() -> 2
+                    (isContactsLoading && contacts.isEmpty()) && (isCallLogsLoading && callLogs.isEmpty()) -> 0
+                    filteredContacts.isEmpty() && filteredCallLogs.isEmpty() -> 2
                     else -> 3
                 },
                 transitionSpec = {
@@ -258,37 +318,79 @@ fun ContactSearchContent(
                                 com.grinch.rivo4.view.components.ad.BannerAd()
                             }
 
-                            item {
-                                RivoExpressiveCard {
-                                    filteredContacts.forEachIndexed { index, contact ->
-                                        RivoListItem(
-                                            headline = contact.name,
-                                            supporting = buildString {
-                                                contact.nickname?.let { append("$it • ") }
-                                                contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
-                                            }.ifEmpty { null },
-                                            avatarName = contact.name,
-                                            photoUri = contact.photoUri,
-                                            onClick = {
-                                                navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                                            },
-                                            trailingContent = {
-                                                contact.phoneNumbers.firstOrNull()?.let { num ->
-                                                    IconButton(
-                                                        onClick = { callLauncher.dial(num, contact) }
-                                                    ) {
-                                                        Icon(
-                                                            Icons.Rounded.Call,
-                                                            contentDescription = stringResource(R.string.action_call),
-                                                            tint = MaterialTheme.colorScheme.primary,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
+                            if (filteredContacts.isNotEmpty()) {
+                                item {
+                                    RivoSectionHeader(
+                                        title = stringResource(R.string.nav_contacts),
+                                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                    )
+                                }
+
+                                item {
+                                    RivoExpressiveCard {
+                                        filteredContacts.forEachIndexed { index, contact ->
+                                            RivoListItem(
+                                                headline = contact.name,
+                                                supporting = buildString {
+                                                    contact.nickname?.let { append("$it • ") }
+                                                    contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
+                                                }.ifEmpty { null },
+                                                avatarName = contact.name,
+                                                photoUri = contact.photoUri,
+                                                onClick = {
+                                                    navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                },
+                                                trailingContent = {
+                                                    contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                        IconButton(
+                                                            onClick = { callLauncher.dial(num, contact) }
+                                                        ) {
+                                                            Icon(
+                                                                Icons.Rounded.Call,
+                                                                contentDescription = stringResource(R.string.action_call),
+                                                                tint = MaterialTheme.colorScheme.primary,
+                                                                modifier = Modifier.size(20.dp)
+                                                            )
+                                                        }
                                                     }
                                                 }
+                                            )
+                                            if (index < filteredContacts.size - 1) {
+                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                             }
-                                        )
-                                        if (index < filteredContacts.size - 1) {
-                                            RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (filteredCallLogs.isNotEmpty()) {
+                                item {
+                                    RivoSectionHeader(
+                                        title = stringResource(R.string.nav_recents),
+                                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                    )
+                                }
+
+                                item {
+                                    RivoExpressiveCard {
+                                        filteredCallLogs.forEachIndexed { index, lg ->
+                                            CallLogTileSimple(
+                                                log = lg,
+                                                onClick = {
+                                                    navigator.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = lg.contactId,
+                                                            phoneNumber = lg.number
+                                                        )
+                                                    )
+                                                },
+                                                onCallClick = {
+                                                    callLauncher.dial(lg.number, null)
+                                                }
+                                            )
+                                            if (index < filteredCallLogs.size - 1) {
+                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                                            }
                                         }
                                     }
                                 }

@@ -659,10 +659,14 @@ class CallService : InCallService() {
         when (intent?.action) {
             "ANSWER_CALL" -> {
                 answerCall()
-                val activityIntent = Intent(this, CallActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                if (preferenceManager.isFloatingCallBubbleEnabled() && android.provider.Settings.canDrawOverlays(this)) {
+                    com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
+                } else {
+                    val activityIntent = Intent(this, CallActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    }
+                    startActivity(activityIntent)
                 }
-                startActivity(activityIntent)
             }
             "DECLINE_CALL" -> declineCall()
             "TOGGLE_MUTE" -> toggleMute()

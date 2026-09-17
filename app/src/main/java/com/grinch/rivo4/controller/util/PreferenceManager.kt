@@ -396,7 +396,20 @@ class PreferenceManager(context: Context) {
         const val KEY_AUTO_DECLINE_UNKNOWN = "auto_decline_unknown"
         const val KEY_AUTO_DECLINE_NON_CONTACTS = "auto_decline_non_contacts"
         const val KEY_DUAL_SIM_DIALPAD_BUTTONS = "dual_sim_dialpad_buttons"
+        const val KEY_CALL_LOG_LIMIT = "call_log_limit"
+        const val CALL_LOG_LIMIT_DEFAULT = 500
+        const val KEY_AUTO_PASTE_CLIPBOARD = "auto_paste_clipboard"
+        const val KEY_SEPARATE_CONTACTS_ICON = "separate_contacts_icon"
     }
+
+    fun getCallLogLimit(): Int = getInt(KEY_CALL_LOG_LIMIT, CALL_LOG_LIMIT_DEFAULT)
+    fun setCallLogLimit(limit: Int) = setInt(KEY_CALL_LOG_LIMIT, limit)
+
+    fun isAutoPasteClipboardEnabled(): Boolean = getBoolean(KEY_AUTO_PASTE_CLIPBOARD, false)
+    fun setAutoPasteClipboardEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_PASTE_CLIPBOARD, enabled)
+
+    fun isSeparateContactsIconEnabled(): Boolean = getBoolean(KEY_SEPARATE_CONTACTS_ICON, false)
+    fun setSeparateContactsIconEnabled(enabled: Boolean) = setBoolean(KEY_SEPARATE_CONTACTS_ICON, enabled)
 
     fun isAppLockEnabled(): Boolean = getBoolean(KEY_APP_LOCK_ENABLED, false)
     fun setAppLockEnabled(enabled: Boolean) = setBoolean(KEY_APP_LOCK_ENABLED, enabled)

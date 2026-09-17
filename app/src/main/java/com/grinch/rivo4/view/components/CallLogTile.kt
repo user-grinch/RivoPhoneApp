@@ -59,11 +59,24 @@ fun CallLogTileSimple(
         CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
         CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
         CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.BLOCKED_TYPE -> Icons.Default.Block
         else -> Icons.Default.Call
     }
 
-    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
+    val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
+    val badgeColor = if (isMissedOrRejected) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val headlineColor = if (isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified
+
+    val displayName = remember(log.name, log.number) {
+        log.name?.takeIf { it.isNotBlank() } ?: formatPhoneNumber(log.number)
+    }
+    val callTypeLabel = when (log.type) {
+        CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
+        CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
+        CallLog.Calls.MISSED_TYPE, CallLog.Calls.REJECTED_TYPE -> stringResource(R.string.call_type_missed)
+        else -> stringResource(R.string.action_call)
+    }
 
     RivoSwipeToActionBox(
         enabled = swipeEnabled,
@@ -100,18 +113,25 @@ fun CallLogTileSimple(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
-                        headline = when (log.type) {
-                            CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
-                            CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
-                            CallLog.Calls.MISSED_TYPE -> stringResource(R.string.call_type_missed)
-                            else -> stringResource(R.string.action_call)
+                        headline = buildString {
+                            append(displayName)
+                            if (log.count > 1) append(" (${log.count})")
                         },
                         supporting = buildString {
+                            if (!log.name.isNullOrBlank() && log.name != log.number) {
+                                append(formatPhoneNumber(log.number))
+                                append(" • ")
+                            }
+                            append(callTypeLabel)
+                            append(" • ")
                             append(formatDate(context, log.date))
-                            if (log.duration > 0) append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
+                            if (log.duration > 0) {
+                                append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
+                            }
                         },
                         supporting2 = if (showSim) log.simLabel else null,
-                        avatarName = "", 
+                        avatarName = log.name?.ifBlank { null } ?: formatPhoneNumber(log.number),
+                        photoUri = log.photoUri,
                         badgeIcon = icon,
                         badgeColor = badgeColor,
                         headlineColor = headlineColor,
@@ -164,13 +184,14 @@ fun CallLogTile(
 
     val icon = when (log.type) {
         CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
         CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
         CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
         else -> Icons.Default.Call
     }
     
-    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
+    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
     
     val favNum = log.contactId?.let { prefs.getFavoriteNumber(it) }
     val isFavorite = com.grinch.rivo4.controller.util.areNumbersEqual(log.number, favNum)

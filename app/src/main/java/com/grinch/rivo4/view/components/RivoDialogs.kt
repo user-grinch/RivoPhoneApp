@@ -132,8 +132,25 @@ fun ApplyDialogBlurBehind() {
     val view = LocalView.current
 
     DisposableEffect(isBlurEnabled, view) {
-        val window = (view.parent as? DialogWindowProvider)?.window
-            ?: (view.context as? Activity)?.window
+        var p: android.view.ViewParent? = view.parent
+        var dialogWindowProvider: androidx.compose.ui.window.DialogWindowProvider? = null
+        while (p != null) {
+            if (p is androidx.compose.ui.window.DialogWindowProvider) {
+                dialogWindowProvider = p
+                break
+            }
+            p = p.parent
+        }
+        val window = dialogWindowProvider?.window
+            ?: (view.context as? android.app.Activity)?.window
+            ?: run {
+                var c: android.content.Context? = view.context
+                while (c is android.content.ContextWrapper) {
+                    if (c is android.app.Activity) return@run c.window
+                    c = c.baseContext
+                }
+                null
+            }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && window != null) {
             if (isBlurEnabled) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)

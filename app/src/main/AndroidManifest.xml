@@ -166,6 +166,20 @@
             </intent-filter>
         </activity>
 
+        <activity-alias
+            android:name=".ContactsAliasActivity"
+            android:targetActivity=".MainActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_contacts"
+            android:roundIcon="@mipmap/ic_launcher_contacts_round"
+            android:label="@string/app_name_contacts">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <activity
             android:name=".controller.CallActivity"
             android:exported="false"

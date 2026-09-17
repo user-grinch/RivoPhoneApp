@@ -2,7 +2,6 @@ package com.grinch.rivo4.view.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
@@ -11,20 +10,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
@@ -35,8 +31,6 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.MicNone
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -45,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.ShortNavigationBarItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,24 +47,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
-import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.ramcosta.composedestinations.generated.destinations.CallRecordingsScreenDestination
@@ -138,6 +123,9 @@ fun BottomBar(
     val floatingBarRoundness = remember(settingsState) {
         prefs.getFloatingBarRoundness()
     }
+    val isBlurEnabled = remember(settingsState) {
+        prefs.isUiBlurEnabled()
+    }
     val storedTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
     val tabIds = visibleTabs ?: storedTabs
 
@@ -155,23 +143,32 @@ fun BottomBar(
     val currentDestination = navBackStackEntry?.destination
 
     if (navBarStyle == PreferenceManager.NAV_BAR_STYLE_TOOLBAR) {
-        val barShape = RoundedCornerShape(floatingBarRoundness.dp)
+        @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+        val barShape = if (floatingBarRoundness >= 28) {
+            FloatingToolbarDefaults.ContainerShape
+        } else {
+            RoundedCornerShape(floatingBarRoundness.dp)
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            contentAlignment = Alignment.Center
+                .padding(bottom = 12.dp),
+            contentAlignment = Alignment.BottomCenter
         ) {
             @OptIn(ExperimentalMaterial3ExpressiveApi::class)
             HorizontalFloatingToolbar(
                 expanded = true,
                 shape = barShape,
                 colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                    toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    toolbarContainerColor = if (isBlurEnabled) {
+                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.70f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    }
                 ),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
-                expandedShadowElevation = 4.dp
+                contentPadding = FloatingToolbarDefaults.ContentPadding
             ) {
                 tabs.forEach { tab ->
                     val isSelected = if (pagerState != null) {
@@ -181,7 +178,10 @@ fun BottomBar(
                     }
 
                     val indicatorColor by animateColorAsState(
-                        targetValue = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                        targetValue = if (isSelected) {
+                            if (isBlurEnabled) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.85f)
+                            else MaterialTheme.colorScheme.secondaryContainer
+                        } else Color.Transparent,
                         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
                         label = "expressiveIndicatorColor"
                     )
@@ -211,8 +211,8 @@ fun BottomBar(
                             .background(indicatorColor)
                             .clickable(onClick = onItemClick)
                             .padding(
-                                horizontal = if (isSelected && !iconOnly) 16.dp else 12.dp,
-                                vertical = 10.dp
+                                horizontal = if (isSelected && !iconOnly) 12.dp else 10.dp,
+                                vertical = 8.dp
                             ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
@@ -230,10 +230,10 @@ fun BottomBar(
                                 exit = fadeOut(spring(stiffness = Spring.StiffnessMediumLow)) + shrinkHorizontally(spring(stiffness = Spring.StiffnessMediumLow))
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = tab.label,
-                                        style = MaterialTheme.typography.labelLarge,
+                                        style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         color = iconColor,
                                         maxLines = 1,
@@ -256,7 +256,11 @@ fun BottomBar(
         )
 
         ShortNavigationBar(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = if (isBlurEnabled) {
+                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.70f)
+            } else {
+                MaterialTheme.colorScheme.surfaceContainer
+            },
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             tabs.forEach { tab ->

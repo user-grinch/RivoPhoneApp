@@ -280,6 +280,15 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
         intent ?: return
         val data = intent.data
         val action = intent.action
+        val componentName = intent.component?.className
+
+        if (componentName?.endsWith("ContactsAliasActivity") == true) {
+            navController.navigate(MainScreenDestination(initialTab = PreferenceManager.TAB_CONTACTS).route) {
+                popUpTo(navController.graph.startDestinationId)
+                launchSingleTop = true
+            }
+            return
+        }
 
         when (action) {
             "com.grinch.rivo4.ACTION_VIEW_RECENTS" -> {

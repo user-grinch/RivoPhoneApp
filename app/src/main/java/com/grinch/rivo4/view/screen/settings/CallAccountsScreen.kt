@@ -74,6 +74,8 @@ fun CallAccountsScreen(
     var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
     var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
     var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
+    var autoPasteClipboard by remember(settingsState) { mutableStateOf(prefs.isAutoPasteClipboardEnabled()) }
+    var callLogLimit by remember(settingsState) { mutableStateOf(prefs.getCallLogLimit()) }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var savingCallBg by remember { mutableStateOf(false) }
@@ -188,6 +190,17 @@ fun CallAccountsScreen(
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_auto_paste_clipboard),
+                            supporting = stringResource(R.string.settings_auto_paste_clipboard_supporting),
+                            leadingIcon = Icons.Outlined.ContentPaste,
+                            checked = autoPasteClipboard,
+                            onCheckedChange = {
+                                autoPasteClipboard = it
+                                prefs.setAutoPasteClipboardEnabled(it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSwitchListItem(
                             headline = stringResource(R.string.settings_call_proximity_sensor),
                             supporting = stringResource(R.string.settings_call_proximity_sensor_supporting),
                             leadingIcon = Icons.Outlined.Sensors,
@@ -275,6 +288,24 @@ fun CallAccountsScreen(
                             onCheckedChange = {
                                 showRecentsStats = it
                                 prefs.setBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, it)
+                            }
+                        )
+                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        RivoSelectListItem(
+                            headline = stringResource(R.string.settings_call_log_limit),
+                            supporting = stringResource(R.string.settings_call_log_limit_supporting),
+                            leadingIcon = Icons.Outlined.History,
+                            options = listOf(
+                                stringResource(R.string.settings_call_log_limit_100) to 100,
+                                stringResource(R.string.settings_call_log_limit_250) to 250,
+                                stringResource(R.string.settings_call_log_limit_500) to 500,
+                                stringResource(R.string.settings_call_log_limit_1000) to 1000,
+                                stringResource(R.string.settings_call_log_limit_unlimited) to 0
+                            ),
+                            selectedValue = callLogLimit,
+                            onValueChange = {
+                                callLogLimit = it
+                                prefs.setCallLogLimit(it)
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
@@ -511,7 +542,8 @@ fun CallAccountsScreen(
             val callWaitingOptions = listOf(
                 Triple(stringResource(R.string.settings_call_waiting_enable), "*43#", Icons.AutoMirrored.Outlined.PhoneCallback),
                 Triple(stringResource(R.string.settings_call_waiting_disable), "#43#", Icons.Outlined.PhoneDisabled),
-                Triple(stringResource(R.string.settings_call_waiting_check), "*#43#", Icons.Outlined.Info)
+                Triple(stringResource(R.string.settings_call_waiting_check), "*#43#", Icons.Outlined.Info),
+                Triple(stringResource(R.string.settings_call_waiting_system_settings), "SYSTEM_SETTINGS", Icons.Outlined.Settings)
             )
             RivoSelectionDialog(
                 onDismissRequest = { showCallWaitingDialog = false },
@@ -519,11 +551,32 @@ fun CallAccountsScreen(
                 icon = Icons.AutoMirrored.Outlined.PhoneCallback,
                 items = callWaitingOptions,
                 itemLabel = { option -> option.first },
-                itemSupporting = { option -> option.second },
+                itemSupporting = { option -> if (option.second == "SYSTEM_SETTINGS") "" else option.second },
                 itemIcon = { option -> option.third },
                 onItemSelected = { option ->
                     showCallWaitingDialog = false
-                    makeCall(context, option.second)
+                    if (option.second == "SYSTEM_SETTINGS") {
+                        try {
+                            val intent = Intent(TelecomManager.ACTION_SHOW_CALL_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            try {
+                                val intent = Intent("android.telecom.action.SHOW_CALL_SETTINGS").apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            } catch (e2: Exception) {
+                                val intent = Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            }
+                        }
+                    } else {
+                        makeCall(context, option.second)
+                    }
                 }
             )
         }

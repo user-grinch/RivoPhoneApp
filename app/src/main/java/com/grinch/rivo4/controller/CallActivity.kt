@@ -434,8 +434,7 @@ class CallActivity : ComponentActivity() {
         window.clearFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
         finishAndRemoveTask()
     }
@@ -455,13 +454,8 @@ class CallActivity : ComponentActivity() {
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
             WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
         )
-        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            keyguardManager?.requestDismissKeyguard(this, null)
-        }
     }
 
     override fun onStart() {

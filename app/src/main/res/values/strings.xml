@@ -841,4 +841,24 @@
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Dual SIM Call Buttons</string>
     <string name="settings_interface_dual_sim_buttons_supporting">Show separate SIM 1 and SIM 2 call buttons on the dialpad</string>
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Recent calls limit</string>
+    <string name="settings_call_log_limit_supporting">Limit the number of recent call log entries loaded to improve loading speed and performance</string>
+    <string name="settings_call_log_limit_100">100 calls</string>
+    <string name="settings_call_log_limit_250">250 calls</string>
+    <string name="settings_call_log_limit_500">500 calls (Default)</string>
+    <string name="settings_call_log_limit_1000">1,000 calls</string>
+    <string name="settings_call_log_limit_unlimited">Unlimited</string>
+
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Auto paste copied number</string>
+    <string name="settings_auto_paste_clipboard_supporting">Automatically fill the dialpad with the phone number currently copied to your clipboard</string>
+
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Separate Contacts home screen icon</string>
+    <string name="settings_contacts_launcher_icon_supporting">Display a dedicated Contacts icon in your app launcher and home screen</string>
+    <string name="app_name_contacts">Contacts</string>
+
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">System carrier call settings</string>
 </resources>

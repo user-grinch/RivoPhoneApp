@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.InterceptPlatformTextInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -96,8 +97,22 @@ fun DialPadScreen(
     val settingsState by prefs.settingsChanged.collectAsState()
 
     val allContacts by contactsVM.allContacts.collectAsState()
+    val clipboardManager = LocalClipboardManager.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue(initialNumber ?: "")) }
     val number = textFieldValue.text
+
+    LaunchedEffect(Unit) {
+        if (initialNumber.isNullOrEmpty() && prefs.isAutoPasteClipboardEnabled()) {
+            val clipText = clipboardManager.getText()?.text?.trim()
+            if (!clipText.isNullOrEmpty()) {
+                val digitsCount = clipText.count { it.isDigit() }
+                val validChars = clipText.all { it.isDigit() || it == '+' || it == '*' || it == '#' || it == ' ' || it == '-' || it == '(' || it == ')' }
+                if (validChars && digitsCount >= 3 && clipText.length <= 30) {
+                    textFieldValue = TextFieldValue(clipText, TextRange(clipText.length))
+                }
+            }
+        }
+    }
 
     var showSocialDialog by remember { mutableStateOf(false) }
 

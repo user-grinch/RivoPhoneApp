@@ -68,6 +68,8 @@ fun ContactManagementScreen(
     val scope = rememberCoroutineScope()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    var separateContactsIcon by remember(settingsState) { mutableStateOf(prefs.isSeparateContactsIconEnabled()) }
 
     val allContacts by contactsVM.allContacts.collectAsState()
     val duplicateGroups by contactsVM.duplicateGroups.collectAsState()
@@ -549,6 +551,27 @@ fun ContactManagementScreen(
                         supporting = "Manage secret local contacts stored strictly in app database",
                         leadingIcon = Icons.Outlined.Lock,
                         onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                    )
+
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_contacts_launcher_icon),
+                        supporting = stringResource(R.string.settings_contacts_launcher_icon_supporting),
+                        leadingIcon = Icons.Outlined.PersonPin,
+                        checked = separateContactsIcon,
+                        onCheckedChange = { enabled ->
+                            separateContactsIcon = enabled
+                            prefs.setSeparateContactsIconEnabled(enabled)
+                            try {
+                                val pm = context.packageManager
+                                val componentName = android.content.ComponentName(context, "com.grinch.rivo4.ContactsAliasActivity")
+                                val state = if (enabled) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                                pm.setComponentEnabledSetting(componentName, state, android.content.pm.PackageManager.DONT_KILL_APP)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
                     )
                 }
             }

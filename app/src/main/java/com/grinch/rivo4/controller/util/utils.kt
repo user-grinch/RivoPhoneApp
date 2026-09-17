@@ -208,8 +208,21 @@ fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle
 
     val isAirplane = isAirplaneModeOn(context)
     val isWifi = isWifiConnected(context)
+    val isMmi = number.contains("#") || number.startsWith("*")
 
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+        if (isMmi) {
+            try {
+                val callIntent = Intent(Intent.ACTION_CALL, uri).apply {
+                    putExtras(extras)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(callIntent)
+                return
+            } catch (e: Exception) {
+                // fallback below
+            }
+        }
         if (isAirplane && isWifi) {
             // In airplane mode with Wi-Fi connected, route through system ACTION_CALL so privileged IMS/VoWiFi handles it
             try {

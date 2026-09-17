@@ -29,7 +29,7 @@ enum class CallLogFilter {
                 Contacts -> logs.filter { it.name != null && it.name.isNotEmpty() }
                 Incoming -> logs.filter { it.type == android.provider.CallLog.Calls.INCOMING_TYPE }
                 Outgoing -> logs.filter { it.type == android.provider.CallLog.Calls.OUTGOING_TYPE }
-                Missed -> logs.filter { it.type == android.provider.CallLog.Calls.MISSED_TYPE }
+                Missed -> logs.filter { it.type == android.provider.CallLog.Calls.MISSED_TYPE || it.type == android.provider.CallLog.Calls.REJECTED_TYPE }
             }
             return filteredList.groupBy { formatDateHeader(context, it.date) }.values.toList()
         }

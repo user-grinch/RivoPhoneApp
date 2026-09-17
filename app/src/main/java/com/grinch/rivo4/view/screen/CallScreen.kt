@@ -1,5 +1,7 @@
 package com.grinch.rivo4.view.screen
 
+import android.os.Build
+
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -714,10 +716,21 @@ fun ExpressiveCallScreen(
                     }
                 }
 
-                Column(
-                    modifier = Modifier
+                val isUiBlurEnabled = remember(settingsState) { preferenceManager.isUiBlurEnabled() }
+                val controlsModifier = if (isUiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                        .padding(horizontal = 12.dp, vertical = 14.dp)
+                } else {
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                }
+
+                Column(
+                    modifier = controlsModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom
                 ) {

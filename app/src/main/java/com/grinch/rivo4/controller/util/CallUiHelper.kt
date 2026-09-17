@@ -44,8 +44,8 @@ object CallUiHelper {
                 keyguardManager?.isDeviceLocked == true
         val isInteractive = powerManager?.isInteractive == true
 
-        if (isLocked || !isInteractive || OemPermissionHelper.isVivo()) {
-            Log.d(TAG, "Full-screen: device is locked ($isLocked), screen off (${!isInteractive}), or Vivo/OEM device")
+        if (isLocked || !isInteractive) {
+            Log.d(TAG, "Full-screen: device is locked ($isLocked), screen off (${!isInteractive})")
             return true
         }
 

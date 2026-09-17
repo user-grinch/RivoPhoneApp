@@ -761,41 +761,59 @@
     <string name="swipe_action_triggered_toast">Gest wywołany: %1$s</string>
     <string name="settings_swipe_actions_reset">Zresetuj akcje przesuwania</string>
     <string name="settings_swipe_actions_tab_warning">Nawigacja gestem przesunięcia między kartami jest wyłączona, gdy aktywne są akcje przesunięcia, aby zapobiec konfliktom gestów.</string>
-    <!-- Ongoing Call Top Banner & Vivo Notifications -->
-    <string name="call_is_ongoing_tap_to_return">Połączenie jest w toku - Dotknij, aby wrócić</string>
-    <string name="call_is_ongoing_with_time">Połączenie jest w toku (%1$s) — Dotknij, aby wrócić</string>
-    <string name="oem_vivo_popup_permission_title">Wyskakujące okna w tłe w Vivo</string>
-    <string name="oem_vivo_popup_permission_desc">Zezwól Rivo na wyświetlanie ekranów połączeń i wyskakujących okien w tle na urządzeniach Vivo.</string>
-    <string name="notif_channel_calls_desc">Powiadomienia o przychodzących, trwających i nieodebranych połączeniach</string>
-    <!-- Missed Call Card & Auto Decline -->
-    <string name="settings_missed_call_card_title">Karta nieodebranych połączeń</string>
-    <string name="settings_missed_call_card_supporting">Pokazuj wyskakującą kartę po nieodebranym połączeniu do szybkiego oddzwaniania, pisania SMS-ów i obsługi komunikatorów</string>
-    <string name="missed_call_just_now">Nieodebrane połączenie przed chwilą, dzwonił %1$ds</string>
-    <string name="missed_call_view_logs">Wyświetl dziennik połączeń</string>
-    <string name="missed_call_respond_with_message">ODPOWIEDZ Z WIADOMOŚCIĄ</string>
-    <string name="settings_auto_decline_unknown_title">Automatycznie odrzuć nieznanych dzwoniących</string>
-    <string name="settings_auto_decline_unknown_supporting">Automatycznie odrzucaj połączenia przychodzące z prywatnych, ukrytych lub ograniczonych numerów</string>
-    <string name="settings_auto_decline_non_contacts_title">Automatyczne odrzucanie numerów spoza kontaktów</string>
-    <string name="settings_auto_decline_non_contacts_supporting">Automatycznie odrzuć połączenia przychodzące z numerów telefonów nie zapisanych w kontaktach</string>
+    <!-- Missing strings translated & approved (#166) -->
+    <string name="call_is_ongoing_tap_to_return">Połączenie trwa — Dotknij, aby powrócić</string>
+    <string name="call_is_ongoing_with_time">Połączenie trwa (%1) — Dotknij, aby powrócić</string>
+    <string name="oem_vivo_popup_permission_title">Wyskakujące okna w tle Vivo</string>
+    <string name="oem_vivo_popup_permission_desc">Zezwól aplikacji Rivo na wyświetlanie ekranu połączenia i pływających powiadomień na urządzeniach Vivo.</string>
+    <string name="notif_channel_calls_desc">Powiadomienia o połączeniach przychodzących, trwających i nieodebranych</string>
+    <string name="settings_missed_call_card_title">Karta nieodebranego połączenia</string>
+    <string name="settings_missed_call_card_supporting">Pokaż natychmiastową kartę po nieodebranym połączeniu z opcją szybkiego oddzwonienia, odpowiedzi SMS i komunikatorów</string>
+    <string name="missed_call_just_now">Nieodebrane połączenie Przed chwilą, dzwoniło %1</string>
+    <string name="missed_call_view_logs">Pokaż rejestr połączeń</string>
+    <string name="missed_call_respond_with_message">ODPOWIEDZ WIADOMOŚCIĄ</string>
+    <string name="settings_auto_decline_unknown_title">Automatycznie odrzucaj nieznane numery</string>
+    <string name="settings_auto_decline_unknown_supporting">Automatycznie odrzucaj połączenia przychodzące z numerów prywatnych, ukrytych lub zastrzeżonych</string>
+    <string name="settings_auto_decline_non_contacts_title">Automatycznie odrzucaj numery spoza kontaktów</string>
+    <string name="settings_auto_decline_non_contacts_supporting">Automatycznie odrzucaj połączenia przychodzące od osób niezapisanych w Twoich kontaktach</string>
     <string name="missed_call_msg_call_me_back">Oddzwonisz do mnie?</string>
-    <string name="missed_call_msg_sorry_busy">Przepraszam, jestem zajęty</string>
-    <string name="missed_call_msg_call_right_back">Za chwilę oddzwonię</string>
+    <string name="missed_call_msg_sorry_busy">Przepraszam, jestem zajęty(a)</string>
+    <string name="missed_call_msg_call_right_back">Zaraz oddzwonię</string>
     <string name="missed_call_msg_cant_talk">Nie mogę teraz rozmawiać</string>
-    <!-- Favorites Modernization -->
-    <string name="favorites_count_pill">%1$d ulubionych</string>
+    <string name="favorites_count_pill">%1 ulubionych</string>
     <string name="favorites_one_pill">1 ulubiony</string>
     <string name="favorites_add_action">Dodaj</string>
     <string name="favorites_action_call">Zadzwoń</string>
     <string name="favorites_action_message">Wiadomość</string>
-    <string name="favorites_hero_badge">Najważniejsze ulubione</string>
-    <string name="favorites_add_empty_button">Dodaj ulubionych</string>
+    <string name="favorites_hero_badge">Główny ulubiony</string>
+    <string name="favorites_add_empty_button">Dodaj do ulubionych</string>
     <string name="favorites_no_number">Brak numeru telefonu</string>
     <string name="favorites_no_contacts_found">Nie znaleziono kontaktów</string>
-    <string name="search_contacts">Szukaj kontaktów...</string>
+    <string name="search_contacts">Szukaj kontaktów…</string>
     <string name="action_add_to_favorites">Dodaj do ulubionych</string>
     <string name="content_desc_clear_search">Wyczyść wyszukiwanie</string>
     <string name="action_dismiss">Odrzuć</string>
-    <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Przyciski połączeń Dual SIM</string>
-    <string name="settings_interface_dual_sim_buttons_supporting">Pokaż oddzielne przyciski połączeń SIM 1 i SIM 2 na klawiaturze</string>
+    <string name="settings_interface_dual_sim_buttons_supporting">Wyświetlaj osobne przyciski SIM 1 i SIM 2 na klawiaturze numerycznej</string>
+
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Limit ostatnich połączeń</string>
+    <string name="settings_call_log_limit_supporting">Ogranicz liczbę wczytywanych wpisów historii, aby poprawić szybkość i wydajność</string>
+    <string name="settings_call_log_limit_100">100 połączeń</string>
+    <string name="settings_call_log_limit_250">250 połączeń</string>
+    <string name="settings_call_log_limit_500">500 połączeń (Domyślnie)</string>
+    <string name="settings_call_log_limit_1000">1 000 połączeń</string>
+    <string name="settings_call_log_limit_unlimited">Bez limitu</string>
+
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Automatyczne wklejanie skopiowanego numeru</string>
+    <string name="settings_auto_paste_clipboard_supporting">Automatycznie wypełniaj klawiaturę numeryczną numerem aktualnie skopiowanym do schowka</string>
+
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Osobna ikona Kontaktów na ekranie głównym</string>
+    <string name="settings_contacts_launcher_icon_supporting">Wyświetlaj dedykowaną ikonę Kontaktów w menu aplikacji i na ekranie głównym</string>
+    <string name="app_name_contacts">Kontakty</string>
+
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Ustawienia połączeń operatora w systemie</string>
 </resources>
