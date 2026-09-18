@@ -50,4 +50,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Limit nedávných hovorů</string>
+    <string name="settings_call_log_limit_supporting">Omezit počet nahraných záznamů protokolu hovorů pro zlepšení rychlosti načítání a výkonu</string>
+    <string name="settings_call_log_limit_100">100 hovorů</string>
+    <string name="settings_call_log_limit_250">250 hovorů</string>
+    <string name="settings_call_log_limit_500">500 hovorů (výchozí)</string>
+    <string name="settings_call_log_limit_1000">1.000 hovorů</string>
+    <string name="settings_call_log_limit_unlimited">Bez omezení</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Automaticky vložit zkopírované číslo</string>
+    <string name="settings_auto_paste_clipboard_supporting">Automaticky vyplnit číselník telefonním číslem, které je aktuálně zkopírováno do schránky</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Oddělit ikonu kontaktů na domovské obrazovce</string>
+    <string name="settings_contacts_launcher_icon_supporting">Zobrazí ikonu vyhrazených kontaktů na domovské obrazovce aplikace</string>
+    <string name="app_name_contacts">Kontakty</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Nastavení volání systémového operátora</string>
 </resources>

@@ -50,4 +50,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Ліміт останніх дзвінків</string>
+    <string name="settings_call_log_limit_supporting">Обмежити кількість записів в останніх викликах, завантажених для підвищення швидкості завантаження та продуктивності</string>
+    <string name="settings_call_log_limit_100">100 дзвінків</string>
+    <string name="settings_call_log_limit_250">250 викликів</string>
+    <string name="settings_call_log_limit_500">500 викликів (за замовчуванням)</string>
+    <string name="settings_call_log_limit_1000">1 000 дзвінків</string>
+    <string name="settings_call_log_limit_unlimited">Необмежено</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Автовставка скопійованого номера</string>
+    <string name="settings_auto_paste_clipboard_supporting">Автоматично заповнити клавіатуру набору номеру телефону, який наразі скопійовано до буферу обміну</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Відокремити значок контакта з головним екраном</string>
+    <string name="settings_contacts_launcher_icon_supporting">Відображення іконки спеціальних контактів у лаунчері та домашньому екрані</string>
+    <string name="app_name_contacts">Контакти</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Налаштування системного оператора</string>
 </resources>

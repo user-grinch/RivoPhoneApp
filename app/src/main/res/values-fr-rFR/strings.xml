@@ -484,4 +484,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Limite d\'appels récents</string>
+    <string name="settings_call_log_limit_supporting">Limiter le nombre d\'entrées récentes du journal d\'appels chargées pour améliorer la vitesse et les performances de chargement</string>
+    <string name="settings_call_log_limit_100">100 appels</string>
+    <string name="settings_call_log_limit_250">250 appels</string>
+    <string name="settings_call_log_limit_500">500 appels (par défaut)</string>
+    <string name="settings_call_log_limit_1000">1 000 appels</string>
+    <string name="settings_call_log_limit_unlimited">Illimité</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Coller automatiquement le numéro copié</string>
+    <string name="settings_auto_paste_clipboard_supporting">Remplissez automatiquement le pavé numérique avec le numéro de téléphone actuellement copié dans votre presse-papiers</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Séparer l\'icône de l\'écran d\'accueil des contacts</string>
+    <string name="settings_contacts_launcher_icon_supporting">Afficher une icône dédiée aux Contacts dans le lanceur d\'applications et l\'écran d\'accueil</string>
+    <string name="app_name_contacts">Contacts</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Paramètres d\'appel opérateur système</string>
 </resources>

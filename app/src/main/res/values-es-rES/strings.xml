@@ -507,4 +507,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Límite de llamadas recientes</string>
+    <string name="settings_call_log_limit_supporting">Limitar el número de entradas recientes de registro de llamadas cargadas para mejorar la velocidad de carga y el rendimiento</string>
+    <string name="settings_call_log_limit_100">100 llamadas</string>
+    <string name="settings_call_log_limit_250">250 llamadas</string>
+    <string name="settings_call_log_limit_500">500 llamadas (por defecto)</string>
+    <string name="settings_call_log_limit_1000">1.000 llamadas</string>
+    <string name="settings_call_log_limit_unlimited">Ilimitado</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Auto pegar número copiado</string>
+    <string name="settings_auto_paste_clipboard_supporting">Rellena automáticamente el dialpad con el número de teléfono actualmente copiado al portapapeles</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Icono separado de la pantalla de inicio de contactos</string>
+    <string name="settings_contacts_launcher_icon_supporting">Mostrar un icono de contactos dedicado en su launcher de aplicaciones y pantalla de inicio</string>
+    <string name="app_name_contacts">Contactos</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Configuración de llamada del operador</string>
 </resources>

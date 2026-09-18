@@ -204,4 +204,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">最近通话限制</string>
+    <string name="settings_call_log_limit_supporting">限制最近通话记录的加载次数，以提高加载速度和性能。</string>
+    <string name="settings_call_log_limit_100">100次呼叫</string>
+    <string name="settings_call_log_limit_250">250个呼叫</string>
+    <string name="settings_call_log_limit_500">500次呼叫 (默认)</string>
+    <string name="settings_call_log_limit_1000">1 000个呼叫</string>
+    <string name="settings_call_log_limit_unlimited">无限制</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">自动粘贴复制的号码</string>
+    <string name="settings_auto_paste_clipboard_supporting">自动用当前复制到剪贴板的电话号码填充拨号</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">分离联系人主屏幕图标</string>
+    <string name="settings_contacts_launcher_icon_supporting">在您的应用程序启动器和主屏幕上显示一个专用联系人图标</string>
+    <string name="app_name_contacts">联系人</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">系统运营商通话设置</string>
 </resources>
