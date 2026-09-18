@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Sloučit hovory</string>
+    <string name="conference_call">Konferenční hovor</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">Prostřední jméno</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,13 @@
     <string name="app_name_contacts">Kontakty</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Nastavení volání systémového operátora</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Analytika volání &amp; sledování</string>
+    <string name="settings_call_analytics_supporting">metrika volání trasy, statistiky doby řeči, doby špičky a častých kontaktních postřehů</string>
+    <string name="settings_call_analytics_disabled_supporting">Statistiky sledování hovorů a jejich používání jsou zakázány</string>
+    <string name="settings_call_analytics_view_title">Zobrazit analytiku &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Hovořit o žebříčku, vrcholné hodiny &amp; distribuce</string>
+    <string name="call_analytics_disabled_title">Analytické hovory &amp; Sledování zakázáno</string>
+    <string name="call_analytics_disabled_desc">Analytika hovorů a sledování času hovorů jsou momentálně vypnuty. Povolte tuto možnost pro výpočet doby hovoru, doby špičky a kontaktních postřehů.</string>
+    <string name="call_analytics_enable_action">Povolit Analytics &amp; Sledování</string>
 </resources>

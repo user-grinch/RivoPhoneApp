@@ -67,4 +67,11 @@
     <string name="app_name_contacts">Επαφές</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Ρυθμίσεις κλήσης παρόχου συστήματος</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Κλήση Analytics &amp; Παρακολούθηση</string>
+    <string name="settings_call_analytics_supporting">Μετρήσεις κλήσεων παρακολούθησης, στατιστικά του χρόνου ομιλίας, ώρες αιχμής και συχνές πληροφορίες επαφής</string>
+    <string name="settings_call_analytics_disabled_supporting">Η παρακολούθηση κλήσεων και τα στατιστικά χρήσης είναι απενεργοποιημένα</string>
+    <string name="settings_call_analytics_view_title">Προβολή Αναλυτικών Στοιχείων &amp; Insights</string>
+    <string name="call_analytics_disabled_desc">Τα αναλυτικά στοιχεία κλήσεων και ο εντοπισμός χρόνου ομιλίας είναι απενεργοποιημένα. Ενεργοποιήστε αυτή την επιλογή για τον υπολογισμό του χρόνου ομιλίας, των ωρών αιχμής και των γνώσεων επαφής.</string>
+    <string name="call_analytics_enable_action">Ενεργοποίηση Analytics &amp; Tracking</string>
 </resources>

@@ -67,4 +67,13 @@
     <string name="app_name_contacts">Contatti</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Impostazioni chiamata operatore di sistema</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Analisi Delle Chiamate &amp; Tracciamento</string>
+    <string name="settings_call_analytics_supporting">Traccia metriche di chiamata, statistiche del tempo di conversazione, ore di punta, e informazioni di contatto frequenti</string>
+    <string name="settings_call_analytics_disabled_supporting">Le statistiche di monitoraggio e utilizzo delle chiamate sono disabilitate</string>
+    <string name="settings_call_analytics_view_title">Visualizza Analisi &amp; Approfondimenti</string>
+    <string name="settings_call_analytics_view_supporting">Talk tempo leaderboard, ore di punta &amp; distribuzione</string>
+    <string name="call_analytics_disabled_title">Analisi Delle Chiamate &amp; Tracciamento Disabilitato</string>
+    <string name="call_analytics_disabled_desc">L\'analisi delle chiamate e il tracciamento dell\'orario di conversazione sono attualmente disattivati. Abilita questa opzione per calcolare il tempo di conversazione, le ore di punta e le informazioni sui contatti.</string>
+    <string name="call_analytics_enable_action">Abilita Analisi &amp; Tracciamento</string>
 </resources>

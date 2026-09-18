@@ -67,4 +67,13 @@
     <string name="app_name_contacts">Kontakter</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Innstillinger for systemtransportørens samtaler</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Samtale Analytics &amp; Sporing</string>
+    <string name="settings_call_analytics_supporting">Spor antall samtaler, snakke tidsstatistikk, topptimer og hyppig kontakt informasjon</string>
+    <string name="settings_call_analytics_disabled_supporting">Samtalesporing og bruk statistikk er deaktivert</string>
+    <string name="settings_call_analytics_view_title">Vis Analytics &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Snakk med tidsleder, topptimer &amp; distribusjon</string>
+    <string name="call_analytics_disabled_title">Samtale Analytics &amp; Sporing deaktivert</string>
+    <string name="call_analytics_disabled_desc">Samtaletidssporing er slått av. Aktiver dette valget for å beregne tid, maks og kontakt innsikt.</string>
+    <string name="call_analytics_enable_action">Aktiver Analytics &amp; sporing</string>
 </resources>

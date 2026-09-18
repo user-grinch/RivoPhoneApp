@@ -221,4 +221,13 @@
     <string name="app_name_contacts">联系人</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">系统运营商通话设置</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">通话分析 &amp; 跟踪</string>
+    <string name="settings_call_analytics_supporting">跟踪通话计量、交谈时间统计、高峰时数和频繁的联系人见解。</string>
+    <string name="settings_call_analytics_disabled_supporting">通话跟踪和使用统计已禁用</string>
+    <string name="settings_call_analytics_view_title">查看分析 &amp; 信息</string>
+    <string name="settings_call_analytics_view_supporting">朗读时间排行榜，高峰时段 &amp; 分布</string>
+    <string name="call_analytics_disabled_title">通话分析 &amp; 跟踪已禁用</string>
+    <string name="call_analytics_disabled_desc">通话分析和谈话时间跟踪当前已关闭。启用此选项以计算谈话时间、高峰时段和联系人洞察力。</string>
+    <string name="call_analytics_enable_action">启用分析 &amp; 跟踪</string>
 </resources>

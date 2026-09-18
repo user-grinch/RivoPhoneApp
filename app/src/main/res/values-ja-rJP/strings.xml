@@ -67,4 +67,10 @@
     <string name="app_name_contacts">連絡先</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">システムキャリア通話の設定</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_supporting">通話指標、通話時間統計、ピーク時間、頻繁な連絡先情報を追跡する</string>
+    <string name="settings_call_analytics_disabled_supporting">通話履歴と使用状況の統計は無効になっています</string>
+    <string name="settings_call_analytics_view_supporting">トークタイムリーダーボード、ピーク時間 &amp; 配布</string>
+    <string name="call_analytics_disabled_desc">通話分析と通話時間追跡は現在オフになっています。このオプションを有効にすると、通話時間、ピーク時間、連絡先情報を計算できます。</string>
+    <string name="call_analytics_enable_action">Analytics &amp; 追跡を有効にする</string>
 </resources>
