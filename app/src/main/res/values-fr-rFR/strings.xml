@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
+
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Annuler</string>
     <string name="action_confirm">Confirmer</string>
@@ -18,42 +20,48 @@
     <string name="action_grant_permission_lower">Autoriser</string>
     <string name="action_answer">Répondre</string>
     <string name="action_decline">Refuser</string>
-    <string name="action_end">Raccrocher</string>
-    <string name="action_mute">Muet</string>
+    <string name="action_end">Terminer</string>
+    <string name="action_mute">Couper le micro</string>
+    <string name="action_unmute">Réactiver le micro</string>
     <string name="action_keypad">Clavier</string>
     <string name="action_add_call">Ajouter un appel</string>
     <string name="action_hold">Mettre en attente</string>
     <string name="action_resume">Reprendre</string>
     <string name="action_end_call">Raccrocher</string>
     <string name="content_desc_selected_item">Sélectionné</string>
-    <string name="select_number_title">Choisir un numéro</string>
-    <string name="select_email_title">Choisir un e-mail</string>
+    <string name="select_number_title">Sélectionner un numéro</string>
+    <string name="select_email_title">Sélectionner une adresse e-mail</string>
     <string name="content_desc_remove_favorite">Retirer des favoris</string>
-    <string name="content_desc_select_option">Choisir une option</string>
-    <string name="content_desc_scroll_to_top">Retour en haut</string>
-    <string name="sim_picker_title">Choisir la carte SIM</string>
+    <string name="content_desc_select_option">Sélectionner une option</string>
+    <string name="content_desc_scroll_to_top">Revenir en haut</string>
+    <string name="sim_picker_title">Sélectionner une carte SIM</string>
     <string name="sim_picker_unknown_sim">SIM inconnue</string>
+    <plurals name="selection_count_selected">
+        <item quantity="one">%1$d sélectionné</item>
+        <item quantity="other">%1$d sélectionnés</item>
+    </plurals>
     <string name="label_unknown">Inconnu</string>
     <string name="label_unknown_number">Numéro inconnu</string>
-    <string name="label_mobile">Mobile</string>
+    <string name="label_mobile">Portable</string>
     <string name="label_email">E-mail</string>
     <string name="label_address">Adresse</string>
     <string name="label_notes">Notes</string>
-    <string name="label_social_apps">Applications sociales</string>
+    <string name="label_social_apps">Applications de communication</string>
     <string name="label_local_memory">Mémoire locale</string>
     <string name="option_standard">Standard</string>
     <string name="ringtone_default">Par défaut</string>
     <string name="ringtone_custom">Personnalisée</string>
-    <string name="empty_state_try_clearing_filters">Essayez de réinitialiser vos filtres ou ajoutez un nouveau contact.</string>
+    <string name="empty_state_try_clearing_filters">Essayez d’effacer vos filtres ou d’ajouter un nouveau contact.</string>
     <string name="date_today">Aujourd’hui</string>
     <string name="date_yesterday">Hier</string>
     <string name="nav_contacts">Contacts</string>
     <string name="nav_recents">Récents</string>
+    <string name="nav_call_recordings">Enregistrements</string>
     <string name="call_type_incoming">Entrant</string>
     <string name="call_type_outgoing">Sortant</string>
     <string name="call_type_missed">Manqué</string>
     <string name="filter_all">Tous</string>
-    <string name="sim_ask_every_time">Demander à chaque fois</string>
+    <string name="sim_ask_every_time">Toujours demander</string>
     <string name="sim_slot_1">SIM 1</string>
     <string name="sim_slot_2">SIM 2</string>
     <string name="brand_whatsapp">WhatsApp</string>
@@ -63,149 +71,173 @@
     <string name="brand_zoom">Zoom</string>
     <string name="account_mi_account">Compte Mi</string>
     <string name="account_sim_card">Carte SIM</string>
+
     <!-- Onboarding -->
-    <string name="onboarding_skip">Passer</string>
+    <string name="onboarding_skip">Ignorer</string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_page1_title">Design expressif</string>
-    <string name="onboarding_page1_description">Découvrez une interface moderne propulsée par Material 3 et des animations Jetpack Compose fluides.</string>
-    <string name="onboarding_page2_title">Numérotation ultra-rapide</string>
-    <string name="onboarding_page2_description">Trouvez vos contacts instantanément grâce à notre recherche T9 intelligente et un historique d’appels organisé.</string>
-    <string name="onboarding_page3_title">Conçu pour vous</string>
-    <string name="onboarding_page3_description">Une expérience d’appel entièrement open source, avec détection de proximité, pensée pour l’efficacité.</string>
+    <string name="onboarding_page1_description">Profitez d’une interface moderne basée sur Material 3 et d’animations fluides avec Jetpack Compose.</string>
+    <string name="onboarding_page2_title">Numérotation ultrarapide</string>
+    <string name="onboarding_page2_description">Trouvez vos contacts instantanément grâce à la recherche T9 intelligente et à un historique d’appels bien organisé.</string>
+    <string name="onboarding_page3_title">Pensé pour vous</string>
+    <string name="onboarding_page3_description">Une expérience d’appel entièrement open source, tenant compte de la proximité et conçue pour être efficace.</string>
+
     <!-- Permission Popup -->
     <string name="permission_popup_title">Autorisations requises</string>
-    <string name="permission_popup_body">Pour garantir le bon fonctionnement de toutes les fonctionnalités sur votre appareil, veuillez accorder les autorisations nécessaires. Certains fabricants comme Xiaomi ou Oppo peuvent nécessiter une configuration manuelle supplémentaire dans les paramètres du système.</string>
+    <string name="permission_popup_body">Pour que toutes les fonctionnalités fonctionnent correctement sur votre appareil, accordez les autorisations nécessaires. Certains fabricants, comme Xiaomi ou Oppo, peuvent nécessiter une configuration manuelle supplémentaire dans les paramètres système.</string>
     <string name="permission_popup_grant">Accorder les autorisations</string>
     <string name="permission_popup_settings">Ouvrir les paramètres</string>
+
     <!-- Patreon support prompt (MainActivity) -->
     <string name="patreon_prompt_title">Soutenir Rivo</string>
-    <string name="patreon_prompt_confirm">Soutenir sur Patreon</string>
+    <string name="patreon_prompt_confirm">Nous soutenir</string>
     <string name="patreon_prompt_dismiss">Plus tard</string>
-    <string name="patreon_prompt_body">Rivo est gratuite et open source. Si vous aimez l’application, pensez à soutenir son développement sur Patreon !</string>
+    <string name="patreon_prompt_body">Rivo est gratuit et open source. Si l’application vous plaît, vous pouvez soutenir son développement sur Patreon !</string>
+
     <!-- Disable ads warning dialog -->
     <string name="ads_disable_dialog_title">Soutenir le développement open source</string>
-    <string name="ads_disable_dialog_body">L’affichage des publicités permet de maintenir Rivo gratuite et open source. Sans revenus publicitaires ni dons de la communauté, le développement continu et la maintenance risquent de s’éteindre. Voulez-vous vraiment désactiver les publicités ?</string>
+    <string name="ads_disable_dialog_body">L’affichage de publicités aide à maintenir Rivo gratuit et open source. Sans revenus publicitaires ni dons de la communauté, la maintenance, la correction des bugs et le développement pourraient s’arrêter. Voulez-vous vraiment désactiver les publicités ?</string>
     <string name="ads_disable_dialog_confirm">Désactiver les publicités</string>
+    <string name="ads_disable_dialog_keep">Conserver les publicités</string>
+
     <!-- Default dialer prompt -->
-    <string name="default_dialer_headline">Faites de Rivo votre application d’appel officielle</string>
-    <string name="default_dialer_description">Pour passer et recevoir des appels, gérer votre historique d’appels et bénéficier de la protection anti-spam, Rivo doit être définie comme application téléphone par défaut.</string>
+    <string name="default_dialer_headline">Définir Rivo comme application Téléphone par défaut</string>
+    <string name="default_dialer_description">Pour passer et recevoir des appels, gérer votre historique d’appels et bénéficier de la protection antispam, Rivo doit être défini comme application Téléphone par défaut.</string>
     <string name="default_dialer_denied_message">Rivo ne peut pas fonctionner sans cette autorisation. Veuillez réessayer.</string>
     <string name="default_dialer_set_as_default">Définir par défaut</string>
+
     <!-- Top bar / bottom navigation -->
     <string name="top_bar_search_placeholder">Rechercher dans Rivo</string>
     <string name="content_desc_search">Rechercher</string>
+
     <!-- Recents / Call log -->
     <string name="call_history_title">Historique des appels</string>
     <string name="call_history_with_contact">Historique avec %1$s</string>
     <string name="call_log_no_history_found">Aucun historique d’appels trouvé</string>
     <string name="call_log_no_filter_match">Aucun appel ne correspond à ce filtre</string>
-    <string name="call_log_delete_title">Supprimer les journaux d’appels</string>
-    <string name="call_log_clear_all_title">Effacer tous les journaux</string>
+    <plurals name="call_log_delete_confirm">
+        <item quantity="one">Voulez-vous vraiment supprimer %1$d entrée sélectionnée du journal d’appels ?</item>
+        <item quantity="other">Voulez-vous vraiment supprimer %1$d entrées sélectionnées du journal d’appels ?</item>
+    </plurals>
+    <string name="call_log_delete_title">Supprimer des entrées du journal d’appels</string>
+    <string name="call_log_clear_all_title">Effacer tout le journal</string>
     <string name="call_log_clear_all_confirm">Tout effacer</string>
-    <string name="call_log_clear_all_message">Cette action supprimera tout votre historique d’appels. Cette action est irréversible.</string>
-    <string name="content_desc_clear_all_logs">Effacer tous les journaux</string>
+    <string name="call_log_clear_all_message">Cette action supprimera tout votre historique d’appels. Elle est irréversible.</string>
+    <string name="content_desc_clear_all_logs">Effacer tout le journal</string>
     <string name="content_desc_delete_selected">Supprimer la sélection</string>
     <string name="recents_permission_title">Historique des appels</string>
-    <string name="recents_permission_description">Rivo a besoin d’accéder à vos journaux d’appels pour afficher votre activité récente et vos appels manqués.</string>
+    <string name="recents_permission_description">Rivo doit accéder à votre journal d’appels pour afficher votre activité récente et vos appels manqués.</string>
     <string name="recents_favorites">Favoris</string>
-    <string name="recents_empty_call_log">Votre historique d’appels est vide</string>
-    <string name="content_desc_dialpad">Clavier</string>
+    <string name="recents_empty_call_log">Votre journal d’appels est vide</string>
+    <string name="content_desc_dialpad">Clavier de numérotation</string>
+
     <!-- Contacts list -->
-    <string name="contact_filter_private">Privé</string>
+    <string name="contact_filter_private">Privés</string>
     <string name="contact_move_to_storage">Déplacer vers un stockage</string>
     <string name="contact_move_private_storage_title">Stockage privé</string>
     <string name="contact_move_private_storage_supporting">Stockage réservé à l’application</string>
-    <string name="contact_move_local_memory_supporting">Sur l’appareil uniquement</string>
+    <string name="contact_move_local_memory_supporting">Appareil uniquement</string>
     <string name="content_desc_move">Déplacer</string>
     <string name="contacts_empty_title">Aucun contact trouvé</string>
-    <string name="contacts_permission_rationale">Pour afficher votre liste de contacts et identifier les appels entrants, Rivo a besoin d’accéder à vos contacts.</string>
+    <string name="contacts_permission_rationale">Pour afficher votre liste de contacts et identifier les appels entrants, Rivo doit être autorisé à accéder à vos contacts.</string>
+
     <!-- Contact details -->
-    <string name="contact_details_qr_title">QR code du contact</string>
-    <string name="contact_details_qr_content_desc">QR code</string>
+    <string name="contact_details_qr_title">QR du contact</string>
+    <string name="contact_details_qr_content_desc">Code QR</string>
     <string name="contact_details_call">Appeler</string>
     <string name="contact_details_video">Vidéo</string>
     <string name="contact_details_info_title">Informations du contact</string>
-    <string name="contact_bullet_favorite">" • Favori"</string>
-    <string name="contact_bullet_recent">" • Récent"</string>
+    <string name="contact_bullet_favorite">&quot; • Favori&quot;</string>
+    <string name="contact_bullet_recent">&quot; • Récent&quot;</string>
     <string name="content_desc_favorite">Favori</string>
     <string name="contact_clear_favorite">Retirer des favoris</string>
-    <string name="contact_set_as_favorite">Définir comme favori</string>
+    <string name="contact_set_as_favorite">Ajouter aux favoris</string>
     <string name="contact_copy_to_clipboard">Copier dans le presse-papiers</string>
-    <string name="contact_clear_default">Retirer par défaut</string>
+    <string name="contact_clear_default">Ne plus utiliser par défaut</string>
     <string name="contact_set_as_default">Définir par défaut</string>
     <string name="contact_add_to_contacts">Ajouter aux contacts</string>
     <string name="contact_events_title">Événements et plus</string>
     <string name="contact_event_birthday">Anniversaire</string>
     <string name="contact_event_generic">Événement</string>
     <string name="contact_recent_activity_title">Activité récente</string>
-    <string name="contact_show_full_history">Afficher l’historique complet</string>
+    <string name="contact_show_full_history">Afficher tout l’historique</string>
     <string name="contact_settings_title">Paramètres du contact</string>
     <string name="contact_custom_ringtone">Sonnerie personnalisée</string>
-    <string name="contact_select_ringtone">Choisir une sonnerie</string>
+    <string name="contact_select_ringtone">Sélectionner une sonnerie</string>
     <string name="contact_share">Partager le contact</string>
-    <string name="contact_share_description">Envoyer les coordonnées à d’autres personnes</string>
+    <string name="contact_share_description">Envoyer les coordonnées du contact</string>
     <string name="contact_share_text">Nom : %1$s\nTéléphone : %2$s</string>
-    <string name="contact_qr_code">QR code</string>
-    <string name="contact_qr_code_description">Afficher le QR code du contact</string>
+    <string name="contact_qr_code">Code QR</string>
+    <string name="contact_qr_code_description">Afficher le code QR du contact</string>
     <string name="contact_move_to_public_storage">Déplacer vers le stockage public</string>
     <string name="contact_move_to_private_storage">Déplacer vers le stockage privé</string>
-    <string name="contact_visible_to_other_apps">Rendre visible aux autres applications</string>
+    <string name="contact_visible_to_other_apps">Rendre visible pour les autres applications</string>
     <string name="contact_hidden_from_other_apps">Masquer aux autres applications</string>
     <string name="contact_remove_from_device">Supprimer ce contact de l’appareil</string>
     <string name="contact_delete_dialog_title">Supprimer le contact ?</string>
     <string name="contact_delete_dialog_message">Voulez-vous vraiment supprimer ce contact ? Cette action est irréversible.</string>
+    <string name="contact_personalization_title">Personnalisation</string>
+    <string name="contact_privacy_title">Confidentialité et sécurité</string>
+
     <!-- Contact edit -->
     <string name="contact_create_title">Créer un contact</string>
     <string name="contact_edit_title">Modifier le contact</string>
     <string name="contact_edit_account_header">Compte</string>
     <string name="contact_edit_save_to_account">Enregistrer dans le compte</string>
     <string name="contact_edit_private_storage">Stockage privé (application uniquement)</string>
-    <string name="contact_edit_select_account_title">Choisir un compte</string>
-    <string name="contact_edit_private_storage_description">Non visible par les autres applications</string>
+    <string name="contact_edit_select_account_title">Sélectionner un compte</string>
+    <string name="contact_edit_private_storage_description">Invisible pour les autres applications</string>
     <string name="contact_edit_identity_header">Identité</string>
     <string name="contact_edit_full_name">Nom complet</string>
+    <string name="contact_edit_first_name">Prénom</string>
+    <string name="contact_edit_last_name">Nom</string>
     <string name="contact_edit_nickname">Surnom</string>
     <string name="contact_edit_phone_numbers_header">Numéros de téléphone</string>
     <string name="contact_edit_phone_field_label">Téléphone</string>
     <string name="contact_edit_add_phone">Ajouter un numéro</string>
-    <string name="contact_edit_emails_header">E-mails</string>
-    <string name="contact_edit_add_email">Ajouter un e-mail</string>
+    <string name="contact_edit_emails_header">Adresses e-mail</string>
+    <string name="contact_edit_add_email">Ajouter une adresse e-mail</string>
     <string name="contact_edit_address_header">Adresse</string>
     <string name="contact_edit_add_address">Ajouter une adresse</string>
     <string name="contact_edit_notes_header">Notes</string>
+
     <!-- Dialpad -->
-    <string name="dialpad_title">Clavier</string>
-    <string name="dialpad_start_dialing">Composer un numéro</string>
+    <string name="dialpad_title">Clavier de numérotation</string>
+    <string name="dialpad_start_dialing">Commencer à composer</string>
     <string name="dialpad_start_hint">Saisissez un nom ou un numéro pour commencer</string>
     <string name="content_desc_call_named">Appeler %1$s</string>
-    <string name="content_desc_backspace">Effacer</string>
-    <string name="dialpad_connect_via_social">Contacter via les réseaux sociaux</string>
+    <string name="content_desc_backspace">Effacer le dernier caractère</string>
+    <string name="dialpad_connect_via_social">Contacter via une application</string>
+
     <!-- Search -->
     <string name="search_contacts_placeholder">Rechercher des contacts</string>
     <string name="search_contacts_title">Rechercher des contacts</string>
-    <string name="search_type_to_start">Saisissez un nom ou un numéro pour commencer la recherche</string>
-    <string name="search_no_results_title">Aucun résultat trouvé</string>
+    <string name="search_type_to_start">Saisissez un nom ou un numéro pour lancer la recherche</string>
+    <string name="search_no_results_title">Aucun résultat</string>
     <string name="search_no_results_hint">Essayez un autre nom ou numéro</string>
-    <string name="search_results_header">Résultats de recherche</string>
+    <string name="search_results_header">Résultats de la recherche</string>
     <string name="search_contacts_permission_title">Autorisation d’accès aux contacts requise</string>
-    <string name="search_contacts_permission_description">Pour rechercher dans vos contacts et identifier les appels entrants, Rivo a besoin d’accéder à vos contacts.</string>
+    <string name="search_contacts_permission_description">Pour rechercher dans vos contacts et identifier les appels entrants, Rivo doit accéder à vos contacts.</string>
+
     <!-- Call screen -->
     <string name="call_screen_sim_label">SIM %1$s</string>
     <string name="call_status_ended">Appel terminé</string>
     <string name="call_status_on_hold">En attente</string>
-    <string name="call_status_calling">Appel en cours...</string>
+    <string name="call_status_calling">Appel en cours…</string>
     <string name="call_status_incoming">Appel entrant</string>
-    <string name="call_status_connecting">Connexion...</string>
-    <string name="audio_route_handset">Combiné</string>
+    <string name="call_status_connecting">Connexion…</string>
+    <string name="call_status_disconnecting">Fin de l’appel…</string>
+    <string name="audio_route_handset">Téléphone</string>
     <string name="audio_route_speaker">Haut-parleur</string>
     <string name="audio_route_headset">Casque</string>
     <string name="audio_route_bluetooth">Bluetooth</string>
     <string name="audio_route_bluetooth_short">BT</string>
     <string name="audio_output_title">Sortie audio</string>
-    <string name="swipe_up_to_answer">Glissez vers le haut pour répondre</string>
-    <string name="swipe_down_to_reject">Glissez vers le bas pour refuser</string>
-    <string name="slide_to_answer">glisser pour répondre</string>
+    <string name="swipe_up_to_answer">Balayez vers le haut pour répondre</string>
+    <string name="swipe_down_to_reject">Balayez vers le bas pour refuser</string>
+    <string name="slide_to_answer">faites glisser pour répondre</string>
+
     <!-- Call notifications (CallService) -->
     <string name="notif_channel_calls">Appels</string>
     <string name="notif_channel_missed_calls">Appels manqués</string>
@@ -215,64 +247,81 @@
     <string name="notif_missed_call_text">Appel manqué de %1$s à %2$s</string>
     <string name="notif_via_sim">via %1$s</string>
     <string name="notif_active_call">Appel en cours</string>
+
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Contacts exportés avec succès</string>
     <string name="backup_contacts_import_success">Contacts importés avec succès</string>
-    <string name="backup_call_logs_export_success">Journaux d’appels exportés avec succès</string>
-    <string name="backup_call_logs_import_success">Journaux d’appels importés avec succès</string>
+    <string name="backup_call_logs_export_success">Journal d’appels exporté avec succès</string>
+    <string name="backup_call_logs_import_success">Journal d’appels importé avec succès</string>
     <string name="backup_export_failed">Échec de l’exportation : %1$s</string>
     <string name="backup_import_failed">Échec de l’importation : %1$s</string>
+
     <!-- Settings > root -->
     <string name="settings_title">Paramètres</string>
     <string name="settings_support_rivo_title">Soutenir Rivo</string>
-    <string name="settings_support_rivo_description">Aidez-nous à garder Rivo gratuite et open source</string>
+    <string name="settings_support_rivo_description">Aidez-nous à maintenir Rivo gratuit et open source</string>
     <string name="settings_donate">Faire un don</string>
     <string name="settings_interface_headline">Interface</string>
     <string name="settings_interface_supporting">Thème, couleurs et accessibilité</string>
-    <string name="settings_sound_vibration_headline">Son et vibration</string>
-    <string name="settings_sound_vibration_supporting">Sonneries et tonalités du clavier</string>
+    <string name="settings_sound_vibration_headline">Son et vibrations</string>
+    <string name="settings_sound_vibration_supporting">Sonneries et sons du clavier</string>
     <string name="settings_call_settings_headline">Paramètres d’appel</string>
-    <string name="settings_call_settings_supporting">Gérer les cartes SIM, la numérotation et le rappel automatique</string>
+    <string name="settings_call_settings_supporting">Gérer les SIM, la numérotation et le rappel automatique</string>
     <string name="settings_blocked_numbers_headline">Numéros bloqués</string>
-    <string name="settings_blocked_numbers_supporting">Gérer les appels bloqués et le spam</string>
+    <string name="settings_blocked_numbers_supporting">Gérer les appels bloqués et les indésirables</string>
     <string name="settings_backup_restore_headline">Sauvegarde et restauration</string>
-    <string name="settings_backup_restore_supporting">Importer et exporter les contacts et journaux</string>
+    <string name="settings_backup_restore_supporting">Importer et exporter les contacts et le journal d’appels</string>
     <string name="settings_manage_contacts_headline">Gérer les contacts</string>
     <string name="settings_manage_contacts_supporting">Fusionner les doublons et nettoyer votre liste</string>
     <string name="settings_about_headline">À propos de Rivo</string>
     <string name="settings_about_supporting">Version, licences et politique de confidentialité</string>
+
     <!-- Settings > Interface -->
     <string name="settings_interface_title">Interface utilisateur</string>
-    <string name="settings_interface_restart_required">Un redémarrage est nécessaire pour appliquer entièrement les changements de thème.</string>
+    <string name="settings_group_color">Couleur</string>
+    <string name="settings_group_avatars">Avatars</string>
+    <string name="settings_group_shape_motion">Formes et animations</string>
+    <string name="settings_group_navigation">Navigation</string>
+    <string name="settings_interface_restart_required">Un redémarrage est nécessaire pour appliquer complètement les changements de thème.</string>
     <string name="settings_interface_restart_action">Redémarrer</string>
     <string name="settings_interface_material_you">Thème Material You</string>
-    <string name="settings_interface_material_you_supporting">Coloration de l’application basée sur le fond d’écran.</string>
+    <string name="settings_interface_material_you_supporting">Adapte les couleurs de l’application à votre fond d’écran.</string>
     <string name="settings_interface_primary_color">Couleur principale</string>
-    <string name="settings_interface_amoled">Mode sombre Amoled</string>
-    <string name="settings_interface_amoled_supporting">Utilise un noir profond pour les éléments de l’interface.</string>
+    <string name="settings_interface_amoled">Mode sombre AMOLED</string>
+    <string name="settings_interface_amoled_supporting">Utilise un noir absolu pour les éléments de l’interface.</string>
     <string name="settings_interface_show_first_letter">Afficher la première lettre dans l’avatar</string>
-    <string name="settings_interface_show_first_letter_supporting">Affiche une lettre lorsqu’il n’y a pas de photo</string>
+    <string name="settings_interface_show_first_letter_supporting">Affiche une lettre lorsqu’aucune photo n’est disponible</string>
     <string name="settings_interface_colorful_avatars">Utiliser des avatars colorés</string>
     <string name="settings_interface_colorful_avatars_supporting">Couleurs aléatoires basées sur le nom du contact</string>
+    <string name="settings_interface_gradient_avatars">Avatars de contact en dégradé</string>
+    <string name="settings_interface_gradient_avatars_supporting">Utiliser des arrière-plans en dégradé multicolore</string>
     <string name="settings_interface_show_picture">Afficher la photo dans l’avatar</string>
-    <string name="settings_interface_show_picture_supporting">Affiche la photo du contact si disponible</string>
+    <string name="settings_interface_show_picture_supporting">Affiche la photo du contact si elle est disponible</string>
     <string name="settings_interface_avatar_shape">Forme de l’avatar</string>
     <string name="settings_interface_avatar_shape_supporting">Choisissez la forme des avatars de contact</string>
     <string name="settings_interface_avatar_shape_squircle">Squircle</string>
     <string name="settings_interface_avatar_shape_circle">Cercle</string>
     <string name="settings_interface_avatar_shape_square">Carré</string>
+    <string name="settings_interface_avatar_shape_cookie">Biscuit</string>
+    <string name="settings_interface_avatar_shape_clover">Trèfle</string>
+    <string name="settings_interface_avatar_shape_arch">Arche</string>
+    <string name="settings_interface_avatar_shape_pill">Pilule</string>
+    <string name="settings_interface_avatar_shape_gem">Gemme</string>
+    <string name="settings_interface_avatar_shape_sunny">Soleil</string>
+    <string name="settings_interface_avatar_shape_heart">Cœur</string>
+    <string name="settings_interface_avatar_shape_burst">Éclat doux</string>
     <string name="settings_interface_call_screen_avatar">Avatar sur l’écran d’appel</string>
     <string name="settings_interface_call_screen_avatar_supporting">Afficher la photo du contact sur l’écran d’appel</string>
     <string name="settings_interface_show_dividers">Afficher les séparateurs</string>
-    <string name="settings_interface_show_dividers_supporting">Afficher des lignes entre les éléments de liste</string>
+    <string name="settings_interface_show_dividers_supporting">Afficher des lignes entre les éléments des listes</string>
     <string name="settings_interface_expressive_cards">Utiliser des cartes expressives</string>
-    <string name="settings_interface_expressive_cards_supporting">Enveloppe les éléments de liste dans des cartes stylisées</string>
+    <string name="settings_interface_expressive_cards_supporting">Afficher les éléments des listes dans des cartes stylisées</string>
     <string name="settings_interface_transition_animation">Animation de transition</string>
     <string name="settings_interface_transition_animation_supporting">Style des animations entre les écrans</string>
     <string name="settings_interface_transition_slide">Glissement</string>
     <string name="settings_interface_transition_fade">Fondu</string>
     <string name="settings_interface_transition_none">Aucune</string>
-    <string name="settings_interface_search_matching_mode">Mode de correspondance de recherche</string>
+    <string name="settings_interface_search_matching_mode">Mode de correspondance de la recherche</string>
     <string name="settings_interface_search_matching_mode_supporting">Comportement de l’algorithme de filtrage des contacts</string>
     <string name="settings_interface_search_mode_t9_contains">T9 et contient</string>
     <string name="settings_interface_search_mode_starts_with">Commence par</string>
@@ -284,58 +333,63 @@
     <string name="settings_interface_roundness_semi_square">Semi-carré</string>
     <string name="settings_interface_roundness_square">Carré</string>
     <string name="settings_interface_default_bottom_bar">Barre inférieure par défaut</string>
-    <string name="settings_interface_default_bottom_bar_supporting">Choisissez l’onglet ouvert au démarrage</string>
+    <string name="settings_interface_default_bottom_bar_supporting">Sélectionner l’onglet ouvert au démarrage</string>
     <string name="settings_interface_flip_bottom_bar">Inverser la barre inférieure</string>
-    <string name="settings_interface_flip_bottom_bar_supporting">Inverse la position des onglets contacts et récents</string>
-    <string name="settings_interface_icon_only_bar">Barre inférieure avec icônes seules</string>
-    <string name="settings_interface_icon_only_bar_supporting">Supprime les libellés textuels de la navigation</string>
+    <string name="settings_interface_flip_bottom_bar_supporting">Inverse la position des onglets Contacts et Récents</string>
+    <string name="settings_interface_icon_only_bar">Barre inférieure avec icônes uniquement</string>
+    <string name="settings_interface_icon_only_bar_supporting">Supprime les libellés de texte de la navigation</string>
+
     <!-- Settings > Sound & Vibration -->
-    <string name="settings_sound_title">Son et vibration</string>
+    <string name="settings_sound_title">Son et vibrations</string>
     <string name="settings_sound_dtmf_tone">Tonalité DTMF</string>
-    <string name="settings_sound_dtmf_tone_supporting">Tonalité du clavier lors de la saisie</string>
+    <string name="settings_sound_dtmf_tone_supporting">Tonalité émise lors de l’appui sur une touche du clavier</string>
     <string name="settings_sound_dialpad_vibration">Vibration du clavier</string>
-    <string name="settings_sound_dialpad_vibration_supporting">Vibration du clavier lors de la saisie</string>
-    <string name="settings_sound_vibrate_on_answer">Vibrer au décrochage</string>
-    <string name="settings_sound_vibrate_on_answer_supporting">Vibrer lorsque le correspondant répond</string>
-    <string name="settings_sound_vibrate_on_hangup">Vibrer au raccrochage</string>
+    <string name="settings_sound_dialpad_vibration_supporting">Vibration émise lors de l’appui sur une touche du clavier</string>
+    <string name="settings_sound_vibrate_on_answer">Vibrer à la réponse</string>
+    <string name="settings_sound_vibrate_on_answer_supporting">Vibrer lorsque votre correspondant répond</string>
+    <string name="settings_sound_vibrate_on_hangup">Vibrer à la fin de l’appel</string>
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibrer lorsque l’appel se termine</string>
     <string name="settings_sound_haptic_scroll">Retour haptique au défilement</string>
-    <string name="settings_sound_haptic_scroll_supporting">Vibrer discrètement lors du défilement des listes</string>
+    <string name="settings_sound_haptic_scroll_supporting">Vibrer légèrement lors du défilement des listes</string>
     <string name="settings_sound_missed_call_notifications">Notifications d’appels manqués</string>
-    <string name="settings_sound_missed_call_notifications_supporting">Afficher une notification pour les appels manqués</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Afficher des notifications pour les appels manqués</string>
     <string name="settings_sound_ringtone_settings">Paramètres de sonnerie</string>
-    <string name="settings_sound_ringtone_settings_supporting">Ouvrir les paramètres audio du système</string>
-    <string name="call_failed_airplane_mode">Impossible de passer un appel en mode avion</string>
-    <string name="call_failed_no_network">Échec de l’appel : réseau cellulaire indisponible</string>
+    <string name="settings_sound_ringtone_settings_supporting">Ouvrir les paramètres sonores du système</string>
+
+    <string name="call_failed_airplane_mode">Impossible de passer un appel lorsque le mode Avion est activé</string>
+    <string name="call_failed_no_network">Échec de l’appel : réseau mobile indisponible</string>
     <string name="call_failed_restricted">Échec de l’appel : appel restreint</string>
-    <string name="call_failed_generic">Impossible d’effectuer l’appel</string>
-    <string name="settings_manage_standardize_confirm_message">Cette action supprimera les espaces et caractères spéciaux de tous vos contacts. Voulez-vous continuer ?</string>
+    <string name="call_failed_generic">Impossible d’établir l’appel</string>
+    <string name="settings_manage_standardize_confirm_message">Cette opération supprimera les espaces et les caractères spéciaux de tous les numéros de contacts stockés sur votre appareil. Voulez-vous continuer ?</string>
     <string name="settings_manage_standardize_completed">Numéros de téléphone normalisés</string>
     <string name="action_copy_number">Copier le numéro</string>
     <string name="number_copied_toast">Numéro copié dans le presse-papiers</string>
+
     <!-- Settings > Call accounts -->
     <string name="settings_call_title">Paramètres d’appel</string>
-    <string name="settings_call_speed_dial">Numérotation rapide</string>
+    <string name="settings_call_speed_dial">Numérotation abrégée</string>
     <string name="settings_call_enabled">Activé</string>
     <string name="settings_call_disabled">Désactivé</string>
     <string name="settings_call_default_sim">SIM par défaut</string>
     <string name="settings_call_calling_accounts">Comptes d’appel</string>
-    <string name="settings_call_calling_accounts_supporting">Configurer les paramètres opérateur (appel en attente, transfert, etc.)</string>
+    <string name="settings_call_calling_accounts_supporting">Configurer les paramètres de l’opérateur (appel en attente, renvoi d’appel, etc.)</string>
     <string name="settings_call_t9_dialing">Numérotation T9</string>
-    <string name="settings_call_t9_dialing_supporting">Prédit des mots à partir des touches du clavier numérique</string>
+    <string name="settings_call_t9_dialing_supporting">Prédit les mots à partir des saisies sur le clavier numérique</string>
     <string name="settings_call_proximity_sensor">Capteur de proximité</string>
-    <string name="settings_call_proximity_sensor_supporting">Éteindre l’écran pendant les appels lorsqu’il est près de l’oreille</string>
-    <string name="settings_call_incoming_ui">Interface d’appel entrant</string>
-    <string name="settings_call_incoming_ui_supporting">Choisissez comment répondre aux appels entrants</string>
-    <string name="settings_call_incoming_ui_horizontal_swipe">Glissement horizontal</string>
+    <string name="settings_call_proximity_sensor_supporting">Éteindre l’écran pendant les appels lorsque le téléphone est près de l’oreille</string>
+    <string name="settings_call_incoming_ui">Interface des appels entrants</string>
+    <string name="settings_call_incoming_ui_supporting">Choisir comment répondre aux appels entrants</string>
+    <string name="settings_call_incoming_ui_horizontal_swipe">Balayage horizontal</string>
     <string name="settings_call_incoming_ui_buttons">Boutons</string>
     <string name="settings_call_incoming_ui_slide_ios">Glisser pour répondre (iOS)</string>
-    <string name="settings_call_incoming_ui_vertical_swipe">Glissement vertical</string>
-    <string name="settings_call_dialpad_style">Style du clavier</string>
+    <string name="settings_call_incoming_ui_vertical_swipe">Balayage vertical</string>
+    <string name="settings_call_always_fullscreen">Toujours afficher en plein écran</string>
+    <string name="settings_call_always_fullscreen_supporting">Ouvrir directement les appels entrants en plein écran. Lorsque cette option est désactivée, les appels s’affichent sous forme de bannière flottante lors de l’utilisation d’autres applications.</string>
+    <string name="settings_call_dialpad_style">Style du clavier de numérotation</string>
     <string name="settings_call_dialpad_style_supporting">Apparence visuelle du clavier téléphonique</string>
     <string name="settings_call_dialpad_style_modern">Moderne</string>
     <string name="settings_call_dialpad_style_classic">Classique</string>
-    <string name="settings_call_dialpad_style_minimal">Minimaliste</string>
+    <string name="settings_call_dialpad_style_minimal">Minimal</string>
     <string name="settings_call_dialpad_layout">Disposition du clavier</string>
     <string name="settings_call_dialpad_layout_supporting">Alignement pour une utilisation à une main</string>
     <string name="settings_call_dialpad_layout_left">Gauche</string>
@@ -349,7 +403,7 @@
     <string name="settings_call_redial_attempts_3">3 tentatives</string>
     <string name="settings_call_redial_attempts_5">5 tentatives</string>
     <string name="settings_call_redial_attempts_10">10 tentatives</string>
-    <string name="settings_call_redial_delay">Délai de rappel</string>
+    <string name="settings_call_redial_delay">Délai avant rappel</string>
     <string name="settings_call_redial_delay_supporting">Délai entre les tentatives de rappel</string>
     <string name="settings_call_redial_delay_1s">1 seconde</string>
     <string name="settings_call_redial_delay_2s">2 secondes</string>
@@ -357,148 +411,454 @@
     <string name="settings_call_redial_delay_5s">5 secondes</string>
     <string name="settings_call_redial_delay_10s">10 secondes</string>
     <string name="settings_call_voicemail">Messagerie vocale</string>
-    <string name="settings_call_voicemail_supporting">Configurer votre messagerie</string>
+    <string name="settings_call_voicemail_supporting">Configurer votre messagerie vocale</string>
+
     <!-- Settings > Blocked numbers -->
     <string name="settings_blocked_title">Numéros bloqués</string>
     <string name="settings_blocked_method">Méthode de blocage</string>
-    <string name="settings_blocked_method_supporting">Comment les appels bloqués sont traités</string>
+    <string name="settings_blocked_method_supporting">Façon dont les appels bloqués sont traités</string>
     <string name="settings_blocked_method_decline">Refuser automatiquement</string>
-    <string name="settings_blocked_method_silent">Sonner en silence</string>
+    <string name="settings_blocked_method_silent">Sonnerie silencieuse</string>
     <string name="settings_blocked_log_visibility">Visibilité dans le journal</string>
-    <string name="settings_blocked_log_visibility_supporting">Afficher ou masquer les appels bloqués dans les récents</string>
+    <string name="settings_blocked_log_visibility_supporting">Afficher ou masquer les appels bloqués dans Récents</string>
     <string name="settings_blocked_log_hide">Masquer du journal</string>
     <string name="settings_blocked_log_show">Afficher dans le journal</string>
     <string name="settings_blocked_notifications">Notifications de blocage</string>
-    <string name="settings_blocked_notifications_supporting">Afficher une alerte discrète pour les appels bloqués</string>
+    <string name="settings_blocked_notifications_supporting">Afficher une alerte de faible priorité pour les appels bloqués</string>
     <string name="settings_blocked_system_button">Numéros bloqués du système</string>
+
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Sauvegarde et restauration</string>
     <string name="settings_backup_contacts_header">Contacts</string>
     <string name="settings_backup_export_contacts">Exporter les contacts</string>
     <string name="settings_backup_export_contacts_supporting">Enregistrer les contacts dans un fichier VCF</string>
-    <string name="settings_backup_import_contacts">Importer les contacts</string>
+    <string name="settings_backup_import_contacts">Importer des contacts</string>
     <string name="settings_backup_import_contacts_supporting">Restaurer les contacts depuis un fichier VCF</string>
-    <string name="settings_backup_call_logs_header">Journaux d’appels</string>
-    <string name="settings_backup_export_logs">Exporter les journaux d’appels</string>
+    <string name="settings_backup_call_logs_header">Journal d’appels</string>
+    <string name="settings_backup_export_logs">Exporter le journal d’appels</string>
     <string name="settings_backup_export_logs_supporting">Enregistrer l’historique dans un fichier JSON</string>
-    <string name="settings_backup_import_logs">Importer les journaux d’appels</string>
+    <string name="settings_backup_import_logs">Importer le journal d’appels</string>
     <string name="settings_backup_import_logs_supporting">Restaurer l’historique depuis un fichier JSON</string>
+
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Gérer les contacts</string>
     <string name="settings_manage_standardizing_title">Normalisation des numéros</string>
     <string name="settings_manage_percent_completed">%1$d%% terminé</string>
     <string name="settings_manage_display_sorting">Affichage et tri</string>
     <string name="settings_manage_sort_by">Trier par</string>
-    <string name="settings_manage_sort_by_supporting">Choisissez comment les contacts sont classés</string>
+    <string name="settings_manage_sort_by_supporting">Choisir l’ordre des contacts</string>
     <string name="settings_manage_sort_first_name">Prénom</string>
     <string name="settings_manage_sort_last_name">Nom</string>
     <string name="settings_manage_name_format">Format du nom</string>
-    <string name="settings_manage_name_format_supporting">Choisissez comment les noms sont affichés</string>
+    <string name="settings_manage_name_format_supporting">Choisir le mode d’affichage des noms</string>
     <string name="settings_manage_name_format_first_first">Prénom en premier</string>
     <string name="settings_manage_name_format_last_first">Nom en premier</string>
     <string name="settings_manage_storage">Stockage</string>
-    <string name="settings_manage_visibility">Visibilité</string>
-    <string name="settings_manage_visibility_supporting">Choisissez les comptes à afficher dans votre liste</string>
+    <string name="settings_manage_private_contacts">Stockage privé</string>
+    <string name="settings_manage_private_contacts_supporting">Gérer les contacts enregistrés dans le stockage privé de l’application</string>
+    <string name="settings_manage_visibility">Visibilité des contacts</string>
+    <string name="settings_manage_visibility_supporting">Choisir les comptes à afficher dans votre liste</string>
     <string name="settings_manage_quick_fixes">Corrections rapides</string>
     <string name="settings_manage_standardize_numbers">Normaliser les numéros de téléphone</string>
-    <string name="settings_manage_standardize_numbers_supporting">Supprime les espaces et caractères spéciaux de tous les numéros</string>
+    <string name="settings_manage_standardize_numbers_supporting">Supprimer les espaces et caractères spéciaux de tous les numéros</string>
     <string name="settings_manage_no_duplicates">Aucun doublon trouvé.</string>
     <string name="settings_manage_found_duplicates">%1$d groupes de doublons trouvés</string>
     <string name="settings_manage_merge_duplicates">Fusionner les doublons</string>
+
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Visibilité des contacts</string>
-    <string name="settings_visibility_description">Choisissez les comptes qui doivent être visibles dans votre liste de contacts. Désélectionner un compte masquera ses contacts sans les supprimer.</string>
+    <string name="settings_visibility_description">Sélectionnez les comptes à afficher dans votre liste de contacts. Désélectionner un compte masquera ses contacts sans les supprimer.</string>
     <string name="settings_visibility_accounts_header">Comptes</string>
-    <string name="settings_visibility_local_memory_supporting">Contacts stockés sur l’appareil</string>
+    <string name="settings_visibility_local_memory_supporting">Contacts enregistrés sur l’appareil</string>
     <string name="settings_visibility_reset_all">Réinitialiser pour tout afficher</string>
+
     <!-- Settings > Private storage -->
+    <string name="settings_private_title">Stockage privé</string>
     <string name="content_desc_import">Importer</string>
     <string name="content_desc_export">Exporter</string>
+    <string name="settings_private_empty">Aucun contact trouvé dans le stockage privé</string>
+    <string name="settings_private_manage_hint">Gérer les contacts enregistrés dans le stockage privé</string>
+
     <!-- Settings > Speed dial -->
-    <string name="settings_speed_dial_title">Numérotation rapide</string>
-    <string name="settings_speed_dial_enable">Activer la numérotation rapide</string>
-    <string name="settings_speed_dial_enable_supporting">Appui long sur une touche pour appeler le contact assigné</string>
-    <string name="settings_speed_dial_assignments_header">Assignations</string>
-    <string name="settings_speed_dial_not_assigned">Non assigné</string>
-    <string name="content_desc_assign">Assigner</string>
+    <string name="settings_speed_dial_title">Numérotation abrégée</string>
+    <string name="settings_speed_dial_enable">Activer la numérotation abrégée</string>
+    <string name="settings_speed_dial_enable_supporting">Appuyez longuement sur une touche pour appeler le contact associé</string>
+    <string name="settings_speed_dial_assignments_header">Affectations</string>
+    <string name="settings_speed_dial_not_assigned">Non attribué</string>
+    <string name="content_desc_assign">Attribuer</string>
     <string name="settings_speed_dial_search_contact">Rechercher un contact</string>
     <string name="settings_speed_dial_no_number">Aucun numéro</string>
+
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_title">Messagerie vocale</string>
-    <string name="settings_voicemail_carrier_settings">Paramètres opérateur</string>
+    <string name="settings_voicemail_carrier_settings">Paramètres de l’opérateur</string>
     <string name="settings_voicemail_number">Numéro de messagerie vocale</string>
     <string name="content_desc_auto_detect_sim">Détecter automatiquement depuis la SIM</string>
-    <string name="settings_voicemail_number_hint">Le numéro d’accès à la messagerie vocale de votre opérateur.</string>
+    <string name="settings_voicemail_number_hint">Numéro d’accès à la messagerie vocale de votre opérateur.</string>
     <string name="settings_voicemail_call_voicemail">Appeler la messagerie vocale</string>
-    <string name="settings_voicemail_call_voicemail_supporting">Composer directement votre service de messagerie vocale</string>
+    <string name="settings_voicemail_call_voicemail_supporting">Composer directement le numéro de votre messagerie vocale</string>
     <string name="settings_voicemail_notifications_header">Notifications</string>
-    <string name="settings_voicemail_ringtone">Sonnerie de messagerie vocale</string>
-    <string name="settings_voicemail_select_notification_ringtone">Choisir la notification de messagerie vocale</string>
+    <string name="settings_voicemail_ringtone">Sonnerie de la messagerie vocale</string>
+    <string name="settings_voicemail_select_notification_ringtone">Sélectionner la sonnerie de notification de la messagerie vocale</string>
     <string name="settings_voicemail_vibration">Vibration</string>
-    <string name="settings_voicemail_vibration_supporting">Vibrer pour les nouveaux messages vocaux</string>
+    <string name="settings_voicemail_vibration_supporting">Vibrer lors de nouvelles notifications de messagerie vocale</string>
     <string name="settings_voicemail_visual_header">Messagerie vocale visuelle</string>
-    <string name="settings_voicemail_visual_description">La messagerie vocale visuelle est actuellement gérée par votre opérateur. Assurez-vous que l’application de votre opérateur est installée pour une expérience optimale.</string>
+    <string name="settings_voicemail_visual_description">La messagerie vocale visuelle est actuellement gérée par votre opérateur. Pour une expérience optimale, vérifiez que l’application de votre opérateur est installée.</string>
+
     <!-- Settings > About -->
     <string name="about_title">À propos</string>
     <string name="about_logo_content_desc">Logo Rivo</string>
     <string name="about_app_display_name">Rivo</string>
     <string name="about_app_card_title">À propos de l’application</string>
-    <string name="about_app_card_body">Rivo est une application de numérotation moderne qui allie simplicité et élégance. Conçue avec Material You, elle s’adapte parfaitement à votre thème.</string>
+    <string name="about_app_card_body">Rivo est une application Téléphone moderne qui rend les appels simples et élégants. Conçue avec Material You, elle s’adapte automatiquement à votre thème.</string>
     <string name="about_version">Version</string>
     <string name="about_build_number">Numéro de build</string>
     <string name="contributors_title">Contributeurs</string>
     <string name="about_contributors_supporting">Découvrez l’équipe derrière le projet</string>
-    <string name="about_patreon">Soutenez-nous sur Patreon</string>
-    <string name="about_patreon_supporting">Aidez à maintenir le projet en vie</string>
+    <string name="about_patreon">Nous soutenir</string>
+    <string name="about_patreon_supporting">Aidez à faire vivre le projet</string>
     <string name="about_discord">Serveur Discord</string>
-    <string name="about_discord_supporting">Rejoignez la communauté</string>
+    <string name="about_discord_supporting">Rejoindre la communauté</string>
     <string name="about_source_code">Code source</string>
     <string name="about_source_code_supporting">Voir le code source sur GitHub</string>
-    <string name="about_check_updates">Vérifier les mises à jour</string>
+    <string name="about_check_updates">Rechercher des mises à jour</string>
     <string name="about_current_version">Version actuelle : %1$s</string>
     <string name="about_copyright">© 2025-2026 Projet RivoPhone</string>
+    <string name="settings_top_card_subtext">Mises à jour • Contributeurs • Faire un don</string>
+    <string name="settings_top_card_updates">Mises à jour</string>
+    <string name="settings_top_card_donate">Faire un don</string>
+
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Développeur principal</string>
     <string name="contributor_role_developer">Développeur</string>
+    <string name="contributor_role_localization">Localisation et traductions</string>
+    <string name="contributor_role_contributor">Contributeur</string>
+    <string name="contributor_commits">%1$d commits</string>
+
     <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_recording_guide_title">Optimisation de l’appareil pour l’enregistrement</string>
+    <string name="oem_recording_guide_subtitle">Xiaomi MIUI/HyperOS et d’autres fabricants nécessitent des autorisations spéciales en arrière-plan pour enregistrer les appels sans interruption.</string>
+    <string name="oem_perm_bg_recording">Audio en arrière-plan</string>
+    <string name="oem_perm_bg_recording_desc">Autoriser l’enregistrement audio en arrière-plan dans les paramètres de sécurité du fabricant.</string>
+    <string name="oem_perm_autostart">Démarrage automatique</string>
+    <string name="oem_perm_autostart_desc">Activez le démarrage automatique pour empêcher le système d’arrêter l’enregistreur pendant les appels.</string>
+    <string name="oem_perm_battery">Économiseur de batterie : aucune restriction</string>
+    <string name="oem_perm_battery_desc">Exclure Rivo des politiques agressives d’économie de batterie.</string>
+    <string name="oem_btn_open_perms">Ouvrir les autorisations du fabricant</string>
+    <string name="oem_btn_open_autostart">Ouvrir le démarrage automatique</string>
+    <string name="oem_btn_open_battery">Paramètres de batterie</string>
+    <string name="call_recording_notification_title">Enregistrement de l’appel</string>
+    <string name="call_recording_notification_text">L’audio est en cours de capture et d’enregistrement</string>
+
     <!-- Favorites -->
+    <string name="nav_favorites">Favoris</string>
+    <string name="favorites_permission_title">Autorisation d’accès aux contacts requise</string>
+    <string name="favorites_permission_description">Autorisez l’accès à vos contacts pour afficher vos favoris ici.</string>
+    <string name="favorites_empty_title">Aucun favori pour le moment</string>
+    <string name="favorites_empty_description">Ajoutez un contact aux favoris pour le voir dans cette grille.</string>
+    <string name="favorites_drag_to_reorder">Faites glisser pour réorganiser</string>
+    <string name="favorites_add_title">Ajouter un contact favori</string>
+    <string name="favorites_add_button">Ajouter aux favoris</string>
+    <string name="favorites_collapse">Réduire les favoris</string>
+    <string name="favorites_expand">Développer les favoris</string>
+    <string name="blocked_select_contact">Sélectionner un contact</string>
+    <string name="blocked_search_contact_hint">Rechercher un nom ou un numéro…</string>
+
     <!-- Bottom navigation layout -->
+    <string name="settings_bottom_nav_title">Navigation inférieure</string>
+    <string name="settings_bottom_nav_supporting">Réorganiser, afficher ou masquer les boutons de navigation</string>
+    <string name="settings_bottom_nav_description">Modifiez l’ordre et la visibilité des boutons en bas de l’application. Au moins un bouton doit rester visible.</string>
+    <string name="settings_bottom_nav_preview">Aperçu</string>
+    <string name="settings_bottom_nav_buttons">Boutons</string>
+    <string name="settings_bottom_nav_position">Position %1$d</string>
+    <string name="settings_bottom_nav_hidden">Masqué</string>
+    <string name="settings_bottom_nav_move_up">Déplacer vers le haut</string>
+    <string name="settings_bottom_nav_move_down">Déplacer vers le bas</string>
+    <string name="settings_bottom_nav_reset">Réinitialiser par défaut</string>
+    <string name="settings_interface_merge_favorites">Afficher les favoris dans Récents</string>
+    <string name="settings_interface_merge_favorites_supporting">Conserver la ligne des favoris en haut de la liste des appels récents</string>
+
     <!-- Blocking -->
+    <string name="action_block">Bloquer</string>
+    <string name="action_unblock">Débloquer</string>
+    <string name="action_block_number">Bloquer le numéro</string>
+    <string name="action_unblock_number">Débloquer le numéro</string>
+    <string name="blocked_list_title">Numéros bloqués</string>
+    <string name="blocked_list_empty">Vous n’avez encore bloqué aucun numéro.</string>
+    <string name="blocked_list_item_supporting">Les appels provenant de ce numéro sont bloqués</string>
+    <string name="blocked_add_number">Bloquer un numéro</string>
+    <string name="blocked_add_number_hint">Numéro de téléphone</string>
+    <string name="contact_block">Bloquer le contact</string>
+    <string name="contact_block_supporting">Ne plus recevoir d’appels de ce contact</string>
+    <string name="contact_unblock">Débloquer le contact</string>
+    <string name="contact_unblock_supporting">Autoriser de nouveau les appels de ce contact</string>
+    <string name="call_log_block_title">Bloquer les numéros ?</string>
+    <plurals name="call_log_block_message">
+        <item quantity="one">Les appels provenant de %1$d entrée sélectionnée seront bloqués.</item>
+        <item quantity="other">Les appels provenant des %1$d entrées sélectionnées seront bloqués.</item>
+    </plurals>
+
     <!-- Contact call screen background -->
+    <string name="contact_call_background">Arrière-plan de l’écran d’appel</string>
+    <string name="settings_interface_hide_avatar_with_bg">Masquer la photo de profil lorsqu’un arrière-plan est disponible</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Masquer l’avatar de l’appelant sur l’écran d’appel lorsqu’une image d’arrière-plan est active</string>
+    <string name="settings_interface_use_cards">Utiliser des cartes expressives</string>
+    <string name="settings_interface_use_cards_supporting">Regrouper les éléments dans des cartes expressives dans Récents et les listes de contacts</string>
+    <string name="contact_call_background_set">Image personnalisée sélectionnée</string>
+    <string name="contact_call_background_none">Utiliser l’arrière-plan par défaut</string>
+    <string name="contact_call_background_choose">Choisir une image</string>
+    <string name="contact_call_background_change">Changer l’image</string>
+    <string name="contact_call_background_remove">Supprimer l’arrière-plan</string>
+    <string name="contact_call_background_saving">Enregistrement de l’image…</string>
+    <string name="contact_call_background_error">Impossible d’enregistrer cette image</string>
+    <string name="contact_call_background_no_target">Enregistrez d’abord le numéro comme contact</string>
+    <string name="contact_call_background_preview">Aperçu de l’arrière-plan de l’écran d’appel</string>
+
     <!-- Call waiting -->
+    <string name="settings_call_waiting">Appel en attente</string>
+    <string name="settings_call_waiting_supporting">Recevoir un deuxième appel pendant un appel en cours</string>
+    <string name="settings_call_waiting_description">L’appel en attente est un service de l’opérateur. Choisir une option ci-dessous compose le code standard sur votre SIM.</string>
+    <string name="settings_call_waiting_enable">Activer l’appel en attente</string>
+    <string name="settings_call_waiting_disable">Désactiver l’appel en attente</string>
+    <string name="settings_call_waiting_check">Vérifier l’état actuel</string>
+    <string name="call_waiting_answer_hold">Répondre et mettre en attente</string>
+    <string name="call_waiting_end_and_answer">Raccrocher et répondre</string>
+
     <!-- Call recording -->
+    <string name="settings_call_recording">Enregistrement des appels</string>
+    <string name="settings_call_recording_supporting">Afficher un bouton d’enregistrement pendant les appels</string>
+    <string name="settings_call_recording_auto">Enregistrer tous les appels</string>
+    <string name="settings_call_recording_auto_supporting">Démarrer automatiquement l’enregistrement lorsqu’un appel est connecté</string>
+    <string name="settings_call_recording_notice">L’enregistrement des appels peut être restreint par votre appareil ou par la législation de votre région. Assurez-vous d’être autorisé à enregistrer avant d’utiliser cette fonctionnalité.</string>
+    <string name="settings_call_default_background">Arrière-plan d’appel par défaut</string>
+    <string name="settings_call_default_background_set">Une image personnalisée est affichée pour tous les appels</string>
+    <string name="settings_call_default_background_none">Non défini — les appels utilisent le thème de l’application</string>
+    <string name="settings_call_default_background_choose">Choisir une image</string>
+    <string name="settings_call_default_background_change">Modifier</string>
+    <string name="settings_call_default_background_supporting">Affiché pour tous les appels entrants et sortants, sauf si un contact possède son propre arrière-plan.</string>
+    <string name="action_remove">Supprimer</string>
+    <string name="action_record">Enregistrer</string>
+    <string name="action_stop_recording">Arrêter</string>
+    <string name="call_recording_in_progress">Enregistrement en cours</string>
+    <string name="call_recordings_title">Enregistrements</string>
+    <string name="call_recordings_supporting">Lire, partager ou supprimer les enregistrements sauvegardés</string>
+    <string name="call_recordings_empty">Aucun enregistrement</string>
+    <string name="call_recordings_empty_description">Les enregistrements réalisés pendant les appels apparaîtront ici.</string>
+    <string name="call_recordings_play">Lire</string>
+    <string name="call_recordings_share">Partager l’enregistrement</string>
+    <string name="call_recordings_delete_title">Supprimer l’enregistrement ?</string>
+    <string name="call_recordings_delete_message">Cet enregistrement sera définitivement supprimé de votre appareil.</string>
+
     <!-- Video calling app picker -->
     <string name="video_call_title">Appel vidéo</string>
     <string name="video_call_chooser_with">Appel vidéo avec</string>
     <string name="video_call_system">Appel vidéo du système</string>
+
     <!-- Call screen background and active controls -->
+    <string name="callbg_image_unavailable">Impossible de charger l’image d’arrière-plan de l’appel</string>
+
     <!-- Incoming call controls and in-call keypad -->
+    <string name="callin_handle_horizontal_desc">Appel entrant. Balayez vers la droite pour répondre, vers la gauche pour refuser.</string>
+    <string name="callin_handle_vertical_desc">Appel entrant. Balayez vers le haut pour répondre, vers le bas pour refuser.</string>
+    <string name="callin_handle_slide_desc">Appel entrant. Faites glisser vers la droite pour répondre.</string>
+    <string name="callin_action_answer">Répondre à l’appel</string>
+    <string name="callin_action_decline">Refuser l’appel</string>
+    <string name="callin_action_message">Répondre par un message</string>
+    <string name="callin_waiting_actions">Options d’appel en attente</string>
+    <string name="callkp_digit_desc">Composer %1$s</string>
+    <string name="callkp_entered_desc">Chiffres saisis : %1$s</string>
+    <string name="callkp_entered_empty">Aucun chiffre saisi</string>
     <!-- IMEI / Secret codes -->
+    <string name="imei_dialog_title">Informations sur l’appareil (IMEI)</string>
+    <string name="imei_label">IMEI %1$d</string>
+    <string name="meid_label">MEID</string>
+    <string name="serial_label">Numéro de série</string>
+    <string name="imei_copied">Copié dans le presse-papiers</string>
+    <string name="imei_not_available">Non disponible sur cet appareil</string>
     <!-- Fake Call feature -->
+    <string name="fake_call_title">Faux appel</string>
+    <string name="fake_call_subtitle">Programmer des appels entrants simulés</string>
+    <string name="fake_call_channel_title">Programmation des faux appels</string>
+    <string name="fake_call_channel_desc">Notifications pour les faux appels programmés</string>
+    <string name="fake_call_notif_title">Faux appel programmé</string>
+    <string name="fake_call_notif_content">Faux appel de %1$s à %2$s</string>
+    <string name="fake_call_caller_details">Informations sur l’appelant</string>
+    <string name="fake_call_name">Nom de l’appelant</string>
+    <string name="fake_call_number">Numéro de téléphone</string>
+    <string name="fake_call_pick_contact">Choisir dans les contacts</string>
+    <string name="fake_call_schedule_time">Date et heure</string>
+    <string name="fake_call_now">Appeler maintenant</string>
+    <string name="fake_call_schedule_btn">Programmer l’appel</string>
+    <string name="fake_call_cancel_btn">Annuler</string>
+    <string name="fake_call_scheduled_banner">Prochain faux appel</string>
+    <string name="fake_call_scheduled_desc">Faux appel entrant de %1$s dans %2$s</string>
+    <string name="fake_call_success_scheduled">Faux appel programmé pour %1$s</string>
+    <string name="fake_call_cancelled">Faux appel programmé annulé</string>
+    <string name="fake_call_select_date">Sélectionner la date</string>
+    <string name="fake_call_select_time">Sélectionner l’heure</string>
+    <string name="fake_call_screen_incoming">Appel entrant</string>
+    <string name="fake_call_screen_ended">Appel terminé</string>
+    <string name="fake_call_new_schedule">Nouveau faux appel</string>
+    <string name="fake_call_schedules_title">Appels programmés</string>
+    <string name="fake_call_no_schedules_title">Aucun appel programmé</string>
+    <string name="fake_call_no_schedules_desc">Programmez des appels entrants simulés à la date et à l’heure de votre choix. Ils ressemblent à de vrais appels et se comportent de la même manière.</string>
+    <string name="fake_call_clear_all">Tout effacer</string>
+    <string name="fake_call_clear_all_confirm">Voulez-vous vraiment annuler tous les faux appels programmés ?</string>
+    <string name="fake_call_delete_schedule">Supprimer la programmation</string>
+    <string name="fake_call_deleted">Appel programmé supprimé</string>
+    <string name="fake_call_time_calling_in">Appel dans %1$s</string>
+    <string name="fake_call_vibrate">Vibrer lors de la sonnerie</string>
+    <string name="fake_call_vibrate_desc">Faire vibrer l’appareil lorsqu’un appel simulé sonne</string>
+    <string name="fake_call_test_now">Tester l’appel maintenant</string>
+    <string name="fake_call_options">Options d’appel</string>
+
     <!-- Navigation Bar Style -->
+    <string name="settings_interface_nav_bar_style">Style de la barre de navigation</string>
+    <string name="settings_interface_nav_bar_style_supporting">Choisir entre une barre inférieure standard et une barre d’outils expressive flottante</string>
+    <string name="settings_nav_bar_standard">Barre standard</string>
+    <string name="settings_nav_bar_toolbar">Barre d’outils flottante</string>
+    <string name="fake_call_incoming_channel_title">Faux appels entrants</string>
+    <string name="fake_call_incoming_channel_desc">Notifications pour les appels entrants simulés et les appels simulés en cours</string>
+    <string name="settings_sound_flip_to_silence">Retourner pour couper la sonnerie</string>
+    <string name="settings_sound_flip_to_silence_supporting">Couper la sonnerie d’un appel entrant en posant le téléphone écran vers le bas</string>
+    <string name="settings_blocked_export_csv">Exporter la liste des numéros bloqués (CSV)</string>
+    <string name="settings_blocked_export_csv_desc">Enregistrer vos numéros bloqués dans un fichier CSV</string>
+    <string name="settings_blocked_import_csv">Importer une liste de numéros bloqués (CSV)</string>
+    <string name="settings_blocked_import_csv_desc">Importer depuis un fichier CSV des numéros à bloquer</string>
+    <string name="settings_blocked_export_success">%1$d numéros exportés au format CSV</string>
+    <string name="settings_blocked_import_success">%1$d nouveaux numéros importés (%2$d déjà bloqués)</string>
+    <string name="settings_blocked_csv_empty">Aucun numéro de téléphone valide trouvé dans le fichier</string>
+    <string name="settings_blocked_file_error">Échec du traitement du fichier</string>
+
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contacts_management_title">Contacts et stockage</string>
+    <string name="settings_contact_management_headline">Gestion des contacts</string>
+    <string name="settings_contact_management_supporting">Fusionner les doublons et transférer des contacts entre la SIM, l’appareil et les comptes</string>
+    <string name="contact_management_title">Gestion des contacts</string>
+    <string name="contact_management_storage_overview">Répartition du stockage</string>
+    <string name="contact_management_duplicates_title">Contacts en double</string>
+    <string name="contact_management_duplicates_found">%1$d contacts en double trouvés dans %2$d groupes</string>
+    <string name="contact_management_no_duplicates">Le carnet d’adresses est propre. Aucun doublon trouvé.</string>
+    <string name="contact_management_merge_all">Tout fusionner</string>
+    <string name="contact_management_merge_all_confirm_title">Fusionner tous les doublons ?</string>
+    <string name="contact_management_merge_all_confirm_msg">Cette opération regroupera les numéros de téléphone, adresses e-mail, adresses et notes des %1$d groupes de doublons, puis supprimera les contacts redondants.</string>
+    <string name="contact_management_merge_success">%1$d groupes de doublons fusionnés avec succès</string>
+    <string name="contact_management_merge_group_btn">Fusionner</string>
+    <string name="contact_management_ignore_btn">Ignorer</string>
+    <string name="contact_management_move_title">Transférer les contacts</string>
+    <string name="contact_management_move_supporting">Déplacer des contacts entre la SIM, la mémoire locale, les comptes et le stockage privé</string>
+    <string name="contact_management_move_from">De</string>
+    <string name="contact_management_move_to">Vers</string>
+    <string name="contact_management_select_to_move">Sélectionner les contacts à déplacer</string>
+    <string name="contact_management_move_all">Tout déplacer (%1$d)</string>
+    <string name="contact_management_move_confirm_title">Déplacer les contacts ?</string>
+    <string name="contact_management_move_confirm_msg">Voulez-vous vraiment déplacer %1$d contacts de %2$s vers %3$s ?</string>
+    <string name="contact_management_move_success">%1$d contacts déplacés vers %2$s</string>
+    <string name="contact_management_same_source_dest">Les stockages source et destination doivent être différents</string>
+    <string name="contact_management_tools_title">Outils du carnet d’adresses</string>
+    <string name="contact_management_standardize_numbers">Normaliser les numéros de téléphone</string>
+    <string name="contact_management_standardize_supporting">Supprimer les espaces de mise en forme inutiles et normaliser le format international</string>
+    <string name="contact_management_card_review">Vérifier et fusionner</string>
+    <string name="contact_management_card_clean">Carnet d’adresses propre</string>
+    <string name="contact_management_card_clean_sub">Tous les contacts sont uniques • Touchez pour gérer le stockage</string>
+    <string name="contact_management_card_dup_sub">Touchez pour examiner et fusionner les numéros, adresses e-mail et informations</string>
+
     <!-- Floating Bar Customization & Blur -->
+    <string name="settings_floating_bar_roundness">Rayon des coins de la barre flottante</string>
+    <string name="settings_floating_bar_roundness_supporting">Ajuster l’arrondi des coins et la forme en pilule de la barre de navigation flottante</string>
+    <string name="settings_floating_bar_blur">Flou de verre translucide</string>
+    <string name="settings_floating_bar_blur_supporting">Applique un flou de verre dépoli en temps réel à la navigation et aux boîtes de dialogue (paramètre global)</string>
+    <string name="settings_floating_bar_blur_warning">Gourmand en ressources sur les anciens appareils (Android 12 ou version ultérieure recommandé)</string>
+
     <!-- Global UI Blur Effects -->
+    <string name="settings_group_effects">Effets visuels</string>
+    <string name="settings_ui_blur_title">Effets de verre dépoli et de flou</string>
+    <string name="settings_ui_blur_supporting">Applique un flou de verre dépoli en temps réel derrière les boîtes de dialogue, les feuilles inférieures et la barre de navigation (Android 12 ou version ultérieure)</string>
+    <string name="settings_ui_blur_active_hint">Actif sur toutes les fenêtres contextuelles, feuilles et barres de navigation</string>
+    <string name="settings_nav_blur_global_hint">Contrôlé par le paramètre global de flou de l’interface</string>
+
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="settings_swipe_actions_title">Actions de balayage</string>
+    <string name="settings_swipe_actions_supporting">Configurer les gestes de balayage sur les contacts et l’historique des appels</string>
+    <string name="settings_swipe_actions_enable">Activer les gestes de balayage</string>
+    <string name="settings_swipe_actions_enable_supporting">Balayez les contacts et les entrées du journal d’appels vers la gauche ou la droite pour déclencher des actions avec un effet de ressort expressif</string>
+    <string name="settings_swipe_right_action">Action du balayage vers la droite</string>
+    <string name="settings_swipe_left_action">Action du balayage vers la gauche</string>
+    <string name="settings_swipe_right_action_supporting">Action déclenchée lors du balayage d’un élément de gauche à droite</string>
+    <string name="settings_swipe_left_action_supporting">Action déclenchée lors du balayage d’un élément de droite à gauche</string>
+    <string name="swipe_action_none">Aucune</string>
+    <string name="swipe_action_call">Appeler</string>
+    <string name="swipe_action_message">Message</string>
+    <string name="swipe_action_video_call">Appel vidéo</string>
+    <string name="swipe_action_whatsapp">WhatsApp</string>
+    <string name="swipe_action_copy_number">Copier le numéro</string>
+    <string name="swipe_action_delete">Supprimer</string>
+    <string name="swipe_action_preview_title">Aperçu interactif des gestes</string>
+    <string name="swipe_action_preview_supporting">Faites glisser cette carte vers la gauche ou la droite pour découvrir la physique de ressort de Material 3 Expressive</string>
+    <string name="swipe_action_test_contact_name">Alex Rivera</string>
+    <string name="swipe_action_test_contact_number">+1 (555) 019-2834</string>
+    <string name="swipe_action_triggered_toast">Geste déclenché : %1$s</string>
+    <string name="settings_swipe_actions_reset">Réinitialiser les actions de balayage</string>
+    <string name="settings_swipe_actions_tab_warning">La navigation par balayage entre les onglets est désactivée lorsque les actions de balayage sont actives afin d’éviter les conflits de gestes.</string>
+
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
+    <string name="call_is_ongoing_tap_to_return">Appel en cours — Touchez pour revenir</string>
+    <string name="call_is_ongoing_with_time">Appel en cours (%1$s) — Touchez pour revenir</string>
+    <string name="oem_vivo_popup_permission_title">Fenêtre contextuelle Vivo en arrière-plan</string>
+    <string name="oem_vivo_popup_permission_desc">Autoriser Rivo à afficher les écrans d’appel entrant et les alertes flottantes sur les appareils Vivo.</string>
+    <string name="notif_channel_calls_desc">Notifications d’appels entrants, en cours et manqués</string>
+
     <!-- Missed Call Card & Auto Decline -->
+    <string name="settings_missed_call_card_title">Carte d’appel manqué</string>
+    <string name="settings_missed_call_card_supporting">Afficher immédiatement une carte contextuelle après un appel manqué pour rappeler rapidement, répondre par SMS ou utiliser une application de messagerie</string>
+    <string name="missed_call_just_now">Appel manqué à l’instant, sonnerie pendant %1$d s</string>
+    <string name="missed_call_view_logs">Voir le journal d’appels</string>
+    <string name="missed_call_respond_with_message">RÉPONDRE PAR MESSAGE</string>
+    <string name="settings_auto_decline_unknown_title">Refuser automatiquement les appelants inconnus</string>
+    <string name="settings_auto_decline_unknown_supporting">Refuser automatiquement les appels entrants provenant de numéros privés, masqués ou restreints</string>
+    <string name="settings_auto_decline_non_contacts_title">Refuser automatiquement les numéros absents des contacts</string>
+    <string name="settings_auto_decline_non_contacts_supporting">Refuser automatiquement les appels entrants provenant de numéros qui ne sont pas enregistrés dans vos contacts</string>
+    <string name="missed_call_msg_call_me_back">Rappelle-moi ?</string>
+    <string name="missed_call_msg_sorry_busy">Désolé, je suis occupé</string>
+    <string name="missed_call_msg_call_right_back">Je te rappelle tout de suite</string>
+    <string name="missed_call_msg_cant_talk">Je ne peux pas parler maintenant</string>
+
     <!-- Favorites Modernization -->
+    <string name="favorites_count_pill">%1$d favoris</string>
+    <string name="favorites_one_pill">1 favori</string>
+    <string name="favorites_add_action">Ajouter</string>
+    <string name="favorites_action_call">Appeler</string>
+    <string name="favorites_action_message">Message</string>
+    <string name="favorites_hero_badge">Favori principal</string>
+    <string name="favorites_add_empty_button">Ajouter des favoris</string>
+    <string name="favorites_no_number">Aucun numéro de téléphone</string>
+    <string name="favorites_no_contacts_found">Aucun contact trouvé</string>
+    <string name="search_contacts">Rechercher des contacts…</string>
+    <string name="action_add_to_favorites">Ajouter aux favoris</string>
+    <string name="content_desc_clear_search">Effacer la recherche</string>
+    <string name="action_dismiss">Fermer</string>
+
     <!-- Dual SIM Buttons -->
+    <string name="settings_interface_dual_sim_buttons_title">Boutons d’appel double SIM</string>
+    <string name="settings_interface_dual_sim_buttons_supporting">Afficher des boutons d’appel distincts pour la SIM 1 et la SIM 2 sur le clavier de numérotation</string>
     <!-- Call Log Limit (#161) -->
-    <string name="settings_call_log_limit">Limite d\'appels récents</string>
-    <string name="settings_call_log_limit_supporting">Limiter le nombre d\'entrées récentes du journal d\'appels chargées pour améliorer la vitesse et les performances de chargement</string>
+    <string name="settings_call_log_limit">Limite des appels récents</string>
+    <string name="settings_call_log_limit_supporting">Limiter le nombre d’entrées récentes du journal d’appels chargées afin d’améliorer la vitesse de chargement et les performances</string>
     <string name="settings_call_log_limit_100">100 appels</string>
     <string name="settings_call_log_limit_250">250 appels</string>
     <string name="settings_call_log_limit_500">500 appels (par défaut)</string>
     <string name="settings_call_log_limit_1000">1 000 appels</string>
     <string name="settings_call_log_limit_unlimited">Illimité</string>
+
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Coller automatiquement le numéro copié</string>
-    <string name="settings_auto_paste_clipboard_supporting">Remplissez automatiquement le pavé numérique avec le numéro de téléphone actuellement copié dans votre presse-papiers</string>
+    <string name="settings_auto_paste_clipboard_supporting">Remplir automatiquement le clavier de numérotation avec le numéro de téléphone actuellement copié dans votre presse-papiers</string>
+
     <!-- Separate Contacts Home Screen Icon (#167) -->
-    <string name="settings_contacts_launcher_icon">Séparer l\'icône de l\'écran d\'accueil des contacts</string>
-    <string name="settings_contacts_launcher_icon_supporting">Afficher une icône dédiée aux Contacts dans le lanceur d\'applications et l\'écran d\'accueil</string>
+    <string name="settings_contacts_launcher_icon">Icône Contacts distincte sur l’écran d’accueil</string>
+    <string name="settings_contacts_launcher_icon_supporting">Afficher une icône Contacts dédiée dans le lanceur d’applications et sur l’écran d’accueil</string>
     <string name="app_name_contacts">Contacts</string>
+
     <!-- Call Waiting Carrier Settings (#62) -->
-    <string name="settings_call_waiting_system_settings">Paramètres d\'appel opérateur système</string>
+    <string name="settings_call_waiting_system_settings">Paramètres système d’appel de l’opérateur</string>
 </resources>
