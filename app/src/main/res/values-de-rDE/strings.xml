@@ -792,4 +792,21 @@
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Anruf-Schaltflächen bei dualen SIM-Karten</string>
     <string name="settings_interface_dual_sim_buttons_supporting">Auf dem Tastenfeld separate Anrufschaltflächen für SIM 1 und SIM 2 anzeigen</string>
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Limit der letzten Anrufe</string>
+    <string name="settings_call_log_limit_supporting">Anzahl der zuletzt geladenen Anruflisten begrenzen, um die Ladegeschwindigkeit und Leistung zu verbessern</string>
+    <string name="settings_call_log_limit_100">100 Anrufe</string>
+    <string name="settings_call_log_limit_250">250 Anrufe</string>
+    <string name="settings_call_log_limit_500">500 Aufrufe (Standard)</string>
+    <string name="settings_call_log_limit_1000">1.000 Anrufe</string>
+    <string name="settings_call_log_limit_unlimited">Unbegrenzt</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Kopierte Nummer automatisch einfügen</string>
+    <string name="settings_auto_paste_clipboard_supporting">Füllen Sie das Wählfeld automatisch mit der derzeit in die Zwischenablage kopierten Telefonnummer aus</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Eigenes Symbol für Kontakte Startbildschirm</string>
+    <string name="settings_contacts_launcher_icon_supporting">Zeige ein dediziertes Kontaktsymbol in deinem App Launcher und Startbildschirm</string>
+    <string name="app_name_contacts">Kontakte</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Systemanruf-Einstellungen</string>
 </resources>

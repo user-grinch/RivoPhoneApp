@@ -798,4 +798,21 @@
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Кнопки вызова для двух SIM-карт</string>
     <string name="settings_interface_dual_sim_buttons_supporting">Показывать отдельные кнопки вызовов SIM 1 и SIM 2 на панели набора номера</string>
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Лимит последних звонков</string>
+    <string name="settings_call_log_limit_supporting">Ограничить количество последних загруженных записей журнала вызовов для увеличения скорости загрузки и производительности</string>
+    <string name="settings_call_log_limit_100">100 звонков</string>
+    <string name="settings_call_log_limit_250">250 звонков</string>
+    <string name="settings_call_log_limit_500">500 звонков (по умолчанию)</string>
+    <string name="settings_call_log_limit_1000">1000 звонков</string>
+    <string name="settings_call_log_limit_unlimited">Неограниченный</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Номер автовставки скопирован</string>
+    <string name="settings_auto_paste_clipboard_supporting">Автоматически заполнять панель номером телефона, скопированным в буфер обмена</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Иконка домашнего экрана \"Контакты\"</string>
+    <string name="settings_contacts_launcher_icon_supporting">Отображать иконку «Выделенные контакты» в меню приложений и домашнем экране</string>
+    <string name="app_name_contacts">Контакты</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Настройки вызовов оператора системы</string>
 </resources>

@@ -50,4 +50,21 @@
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
     <!-- Dual SIM Buttons -->
+    <!-- Call Log Limit (#161) -->
+    <string name="settings_call_log_limit">Recente oproepen limiet</string>
+    <string name="settings_call_log_limit_supporting">Beperk het aantal recente oproeplogboek dat geladen is om de laadsnelheid en prestaties te verbeteren</string>
+    <string name="settings_call_log_limit_100">100 oproepen</string>
+    <string name="settings_call_log_limit_250">250 oproepen</string>
+    <string name="settings_call_log_limit_500">500 oproepen (standaard)</string>
+    <string name="settings_call_log_limit_1000">1.000 oproepen</string>
+    <string name="settings_call_log_limit_unlimited">Onbeperkt</string>
+    <!-- Auto Paste Clipboard (#168) -->
+    <string name="settings_auto_paste_clipboard">Automatisch plakken gekopieerde nummer</string>
+    <string name="settings_auto_paste_clipboard_supporting">Vul automatisch het toetsenbord in met het telefoonnummer dat momenteel naar het klembord is gekopieerd</string>
+    <!-- Separate Contacts Home Screen Icon (#167) -->
+    <string name="settings_contacts_launcher_icon">Scheid contacten homescherm icoon</string>
+    <string name="settings_contacts_launcher_icon_supporting">Eigen contacten pictogram weergeven in uw app launcher en het startscherm</string>
+    <string name="app_name_contacts">Contactpersonen</string>
+    <!-- Call Waiting Carrier Settings (#62) -->
+    <string name="settings_call_waiting_system_settings">Oproepinstellingen systeem provider</string>
 </resources>
