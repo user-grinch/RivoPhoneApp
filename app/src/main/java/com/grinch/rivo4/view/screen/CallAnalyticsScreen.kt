@@ -36,6 +36,7 @@ import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
+import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -49,6 +50,7 @@ fun CallAnalyticsScreen(
     navigator: DestinationsNavigator
 ) {
     val viewModel: CallAnalyticsViewModel = koinViewModel()
+    val isTrackingEnabled by viewModel.isTrackingEnabled.collectAsState()
     val analytics by viewModel.analytics.collectAsState()
     val selectedRange by viewModel.selectedRange.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -56,31 +58,102 @@ fun CallAnalyticsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Call Analytics & Tracking", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_call_analytics_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.loadAnalytics() }) {
-                        Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                    if (isTrackingEnabled) {
+                        IconButton(onClick = { viewModel.loadAnalytics(forceRefresh = true) }) {
+                            Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                        }
                     }
                 }
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
-        if (isLoading && analytics.totalCalls == 0) {
-            RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize().padding(padding))
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // Tracking Switch Item
+            item {
+                RivoExpressiveCard {
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_call_analytics_title),
+                        supporting = stringResource(
+                            if (isTrackingEnabled) R.string.settings_call_analytics_supporting
+                            else R.string.settings_call_analytics_disabled_supporting
+                        ),
+                        leadingIcon = Icons.Outlined.Analytics,
+                        checked = isTrackingEnabled,
+                        onCheckedChange = { viewModel.setAnalyticsTrackingEnabled(it) }
+                    )
+                }
+            }
+
+            if (!isTrackingEnabled) {
+                item {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Analytics,
+                                contentDescription = null,
+                                modifier = Modifier.size(56.dp),
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(R.string.call_analytics_disabled_title),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(R.string.call_analytics_disabled_desc),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(20.dp))
+                            Button(
+                                onClick = { viewModel.setAnalyticsTrackingEnabled(true) },
+                                shape = CircleShape
+                            ) {
+                                Icon(Icons.Outlined.Check, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.call_analytics_enable_action))
+                            }
+                        }
+                    }
+                }
+            } else if (isLoading && analytics.totalCalls == 0) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        RivoLoadingIndicatorView()
+                    }
+                }
+            } else {
                 // Time Range Segmented Control
                 item {
                     SingleChoiceSegmentedButtonRow(

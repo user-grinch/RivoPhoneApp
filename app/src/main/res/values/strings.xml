@@ -861,4 +861,14 @@
 
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">System carrier call settings</string>
+
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Call Analytics &amp; Tracking</string>
+    <string name="settings_call_analytics_supporting">Track call metrics, talk time statistics, peak hours, and frequent contact insights</string>
+    <string name="settings_call_analytics_disabled_supporting">Call tracking and usage statistics are disabled</string>
+    <string name="settings_call_analytics_view_title">View Analytics &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Talk time leaderboard, peak hours &amp; distribution</string>
+    <string name="call_analytics_disabled_title">Call Analytics &amp; Tracking Disabled</string>
+    <string name="call_analytics_disabled_desc">Call analytics and talk time tracking are currently turned off. Enable this option to compute talk time, peak hours, and contact insights.</string>
+    <string name="call_analytics_enable_action">Enable Analytics &amp; Tracking</string>
 </resources>

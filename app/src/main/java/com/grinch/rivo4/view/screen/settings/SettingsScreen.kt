@@ -219,12 +219,26 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(CallRecordingsScreenDestination()) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    RivoListItem(
-                        headline = "Call Analytics & Insights",
-                        supporting = "Talk time leaderboard, peak hours & distribution",
+                    val isAnalyticsTrackingEnabled = remember(settingsState) { prefs.isCallAnalyticsTrackingEnabled() }
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_call_analytics_title),
+                        supporting = stringResource(
+                            if (isAnalyticsTrackingEnabled) R.string.settings_call_analytics_supporting
+                            else R.string.settings_call_analytics_disabled_supporting
+                        ),
                         leadingIcon = Icons.Outlined.Analytics,
-                        onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
+                        checked = isAnalyticsTrackingEnabled,
+                        onCheckedChange = { prefs.setCallAnalyticsTrackingEnabled(it) }
                     )
+                    if (isAnalyticsTrackingEnabled) {
+                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_call_analytics_view_title),
+                            supporting = stringResource(R.string.settings_call_analytics_view_supporting),
+                            leadingIcon = Icons.Outlined.Analytics,
+                            onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
+                        )
+                    }
                 }
             }
 

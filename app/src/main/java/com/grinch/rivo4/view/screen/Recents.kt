@@ -440,7 +440,8 @@ fun CallLogFullContent(
         }
         var showAddFavoriteDialog by remember { mutableStateOf(false) }
         val showRecentsStats = remember(settingsState) {
-            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, true)
+            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, true) &&
+                prefs.isCallAnalyticsTrackingEnabled()
         }
 
         val favRowState = rememberLazyListState()

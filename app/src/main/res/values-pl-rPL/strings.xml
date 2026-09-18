@@ -815,4 +815,17 @@
     <string name="app_name_contacts">Kontakty</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Ustawienia połączeń systemowych</string>
+=======
+    <string name="settings_call_waiting_system_settings">Ustawienia połączeń operatora w systemie</string>
+
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Analityka i śledzenie połączeń</string>
+    <string name="settings_call_analytics_supporting">Śledź statystyki połączeń, czas rozmów, godziny szczytu i statystyki częstych kontaktów</string>
+    <string name="settings_call_analytics_disabled_supporting">Śledzenie połączeń i statystyki użycia są wyłączone</string>
+    <string name="settings_call_analytics_view_title">Pokaż analitykę i statystyki</string>
+    <string name="settings_call_analytics_view_supporting">Czas rozmów, godziny szczytu i rozkład połączeń</string>
+    <string name="call_analytics_disabled_title">Analityka i śledzenie połączeń wyłączone</string>
+    <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczać czas rozmów, godziny szczytu i statystyki kontaktów.</string>
+    <string name="call_analytics_enable_action">Włącz analitykę i śledzenie</string>
+>>>>>>> bf232ba (Add setting to toggle call analytics and tracking (#183))
 </resources>
