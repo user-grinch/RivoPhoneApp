@@ -23,6 +23,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -380,12 +381,12 @@ fun ExpressiveCallScreen(
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f, fill = false)) {
                                 Text(
                                     text = ocName,
                                     style = MaterialTheme.typography.titleSmall,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 Text(
                                     text = stringResource(R.string.call_status_on_hold),
@@ -393,6 +394,16 @@ fun ExpressiveCallScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
+                        }
+                        IconButton(onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            CallService.mergeCalls()
+                        }) {
+                            Icon(
+                                Icons.Outlined.CallMerge,
+                                contentDescription = stringResource(R.string.action_merge_calls),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                         IconButton(onClick = { oc.disconnect() }) {
                             Icon(Icons.Default.CallEnd, contentDescription = stringResource(R.string.action_end), tint = MaterialTheme.callColors.decline)
@@ -431,7 +442,10 @@ fun ExpressiveCallScreen(
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .basicMarquee()
             )
 
             if (phoneNumber.isNotEmpty() && phoneNumber != contactName) {
@@ -516,6 +530,8 @@ fun ExpressiveCallScreen(
         )
     }
 
+    val canMerge = otherCall != null || (try { call.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) } catch (_: Exception) { false })
+
     val activeControls: @Composable (Boolean) -> Unit = { compact ->
         ActiveCallControls(
             callState = callState,
@@ -525,6 +541,11 @@ fun ExpressiveCallScreen(
             recordingEnabled = recordingEnabled,
             isRecording = isRecording,
             compact = compact,
+            canMerge = canMerge,
+            onMergeCalls = {
+                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                CallService.mergeCalls()
+            },
             onToggleMute = { CallService.mute(!isMuted) },
             onToggleKeypad = { showKeypad = !showKeypad },
             onAudioClick = {

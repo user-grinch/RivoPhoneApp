@@ -25,6 +25,8 @@
     <string name="action_unmute">Unmute</string>
     <string name="action_keypad">Keypad</string>
     <string name="action_add_call">Add call</string>
+    <string name="action_merge_calls">Merge calls</string>
+    <string name="conference_call">Conference call</string>
     <string name="action_hold">Hold</string>
     <string name="action_resume">Resume</string>
     <string name="action_end_call">End Call</string>
@@ -191,6 +193,7 @@
     <string name="contact_edit_identity_header">Identity</string>
     <string name="contact_edit_full_name">Full Name</string>
     <string name="contact_edit_first_name">First name</string>
+    <string name="contact_edit_middle_name">Middle name</string>
     <string name="contact_edit_last_name">Last name</string>
     <string name="contact_edit_nickname">Nickname</string>
     <string name="contact_edit_phone_numbers_header">Phone Numbers</string>

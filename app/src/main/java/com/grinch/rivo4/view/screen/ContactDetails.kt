@@ -24,6 +24,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -187,7 +188,7 @@ fun ContactDetailsScreen(
 
     val unknownLabel = stringResource(R.string.label_unknown)
     val displayPhone = phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull() ?: unknownLabel
-    val displayName = fullContact?.name ?: phoneNumber ?: unknownLabel
+    val displayName = fullContact?.formattedDisplayName ?: fullContact?.name ?: phoneNumber ?: unknownLabel
     val shareContactLabel = stringResource(R.string.contact_share)
 
     val context = LocalContext.current
@@ -643,7 +644,13 @@ fun ContactDetailsScreen(
                             Text(
                                 text = displayName,
                                 style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp)
+                                    .basicMarquee()
                             )
                             fullContact?.nickname?.let { nickname ->
                                 Spacer(modifier = Modifier.height(2.dp))

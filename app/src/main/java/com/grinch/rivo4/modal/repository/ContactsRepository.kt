@@ -215,6 +215,7 @@ class ContactsRepository(
             ContactsContract.Data.DATA1,
             ContactsContract.Data.DATA2,
             ContactsContract.Data.DATA3,
+            ContactsContract.Data.DATA5,
             ContactsContract.Data.STARRED,
             ContactsContract.Data.CUSTOM_RINGTONE
         )
@@ -236,6 +237,7 @@ class ContactsRepository(
                 val data1Idx = cursor.getColumnIndex(ContactsContract.Data.DATA1)
                 val data2Idx = cursor.getColumnIndex(ContactsContract.Data.DATA2)
                 val data3Idx = cursor.getColumnIndex(ContactsContract.Data.DATA3)
+                val data5Idx = cursor.getColumnIndex(ContactsContract.Data.DATA5)
                 val starredIdx = cursor.getColumnIndex(ContactsContract.Data.STARRED)
                 val ringtoneIdx = cursor.getColumnIndex(ContactsContract.Data.CUSTOM_RINGTONE)
 
@@ -261,9 +263,19 @@ class ContactsRepository(
 
                     contact = when (mimeType) {
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE -> {
+                            val given = cursor.getString(data2Idx)
+                            val family = cursor.getString(data3Idx)
+                            val middle = if (data5Idx != -1) cursor.getString(data5Idx) else null
+                            val constructed = listOfNotNull(
+                                given?.trim()?.ifBlank { null },
+                                middle?.trim()?.ifBlank { null },
+                                family?.trim()?.ifBlank { null }
+                            ).joinToString(" ")
                             currentContact.copy(
-                                givenName = cursor.getString(data2Idx),
-                                familyName = cursor.getString(data3Idx)
+                                name = if (constructed.isNotBlank()) constructed else currentContact.name,
+                                givenName = given,
+                                middleName = middle,
+                                familyName = family
                             )
                         }
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
@@ -463,6 +475,7 @@ class ContactsRepository(
                     )
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                     .build()
             )
@@ -574,6 +587,7 @@ class ContactsRepository(
                         )
                         .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
                         .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
                         .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                         .build()
                 )

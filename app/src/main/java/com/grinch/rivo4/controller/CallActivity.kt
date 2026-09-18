@@ -351,12 +351,21 @@ class CallActivity : ComponentActivity() {
                 ?: identity.backgroundUri.takeIf { resolveFailed }
                 ?: defaultBackground
 
+            val isConference = try {
+                call.details?.hasProperty(Call.Details.PROPERTY_CONFERENCE) == true
+            } catch (_: Exception) { false }
+            val conferenceLabel = context.getString(R.string.conference_call)
+
             val resolved = CallIdentity(
                 number = number,
-                name = contact?.name?.takeIf { it.isNotBlank() }
-                    ?: identity.name.takeIf { contactFailed && it.isNotBlank() }
-                    ?: number.ifEmpty { unknownLabel },
-                photoUri = contact?.photoUri ?: identity.photoUri.takeIf { contactFailed },
+                name = if (isConference) {
+                    conferenceLabel
+                } else {
+                    contact?.name?.takeIf { it.isNotBlank() }
+                        ?: identity.name.takeIf { contactFailed && it.isNotBlank() }
+                        ?: number.ifEmpty { unknownLabel }
+                },
+                photoUri = if (isConference) null else contact?.photoUri ?: identity.photoUri.takeIf { contactFailed },
                 backgroundUri = background
             )
             cacheIdentity(number, resolved, settingsState)

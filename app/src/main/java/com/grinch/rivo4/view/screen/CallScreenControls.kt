@@ -28,6 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.CallMerge
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.Dialpad
@@ -277,6 +278,8 @@ fun ActiveCallControls(
     recordingEnabled: Boolean,
     isRecording: Boolean,
     compact: Boolean,
+    canMerge: Boolean = false,
+    onMergeCalls: () -> Unit = {},
     onToggleMute: () -> Unit,
     onToggleKeypad: () -> Unit,
     onAudioClick: () -> Unit,
@@ -380,14 +383,25 @@ fun ActiveCallControls(
                 modifier = Modifier.weight(1f),
                 onClick = onToggleHold
             )
-            CallActionButton(
-                icon = Icons.Default.Add,
-                isActive = false,
-                label = stringResource(R.string.action_add_call),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onAddCall
-            )
+            if (canMerge) {
+                CallActionButton(
+                    icon = Icons.Outlined.CallMerge,
+                    isActive = false,
+                    label = stringResource(R.string.action_merge_calls),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onMergeCalls
+                )
+            } else {
+                CallActionButton(
+                    icon = Icons.Default.Add,
+                    isActive = false,
+                    label = stringResource(R.string.action_add_call),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onAddCall
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(if (compact) 16.dp else 22.dp))

@@ -24,6 +24,8 @@
     <string name="action_unmute">Włącz dźwięk</string>
     <string name="action_keypad">Klawiatura</string>
     <string name="action_add_call">Dodaj połączenie</string>
+    <string name="action_merge_calls">Scal połączenia</string>
+    <string name="conference_call">Połączenie konferencyjne</string>
     <string name="action_hold">Zawieś</string>
     <string name="action_resume">Wznów</string>
     <string name="action_end_call">Zakończ połączenie</string>
@@ -184,6 +186,7 @@
     <string name="contact_edit_identity_header">Tożsamość</string>
     <string name="contact_edit_full_name">Imię i nazwisko</string>
     <string name="contact_edit_first_name">Imię</string>
+    <string name="contact_edit_middle_name">Drugie imię</string>
     <string name="contact_edit_last_name">Nazwisko</string>
     <string name="contact_edit_nickname">Pseudonim</string>
     <string name="contact_edit_phone_numbers_header">Numery telefonu</string>
@@ -814,8 +817,6 @@
     <string name="settings_contacts_launcher_icon_supporting">Wyświetl ikonę dedykowanych kontaktów w launcherze aplikacji i ekranie głównym</string>
     <string name="app_name_contacts">Kontakty</string>
     <!-- Call Waiting Carrier Settings (#62) -->
-    <string name="settings_call_waiting_system_settings">Ustawienia połączeń systemowych</string>
-=======
     <string name="settings_call_waiting_system_settings">Ustawienia połączeń operatora w systemie</string>
 
     <!-- Call Analytics & Tracking -->

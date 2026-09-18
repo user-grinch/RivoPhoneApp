@@ -99,7 +99,8 @@ class CallService : InCallService() {
     }
 
     companion object {
-        private const val CHANNEL_ID = "call_channel"
+        private const val CHANNEL_ID = "call_channel_v2"
+        private const val LEGACY_CHANNEL_ID = "call_channel"
         private const val SILENT_CHANNEL_ID = "call_silent_channel"
         private const val MISSED_CHANNEL_ID = "missed_call_channel"
         private const val NOTIFICATION_ID = 101
@@ -173,15 +174,28 @@ class CallService : InCallService() {
         }
 
         fun mergeCalls() {
-            val calls = instance?.getCalls() ?: return
-            if (calls.size >= 2) {
-                val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
-                val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+            val inst = instance ?: return
+            val calls = inst.getCalls() ?: return
+            val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
+            val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+
+            try {
+                if (activeCall != null && activeCall.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)) {
+                    activeCall.mergeConference()
+                    return
+                }
+            } catch (e: Exception) {
+                Log.w("CallService", "mergeConference failed: ${e.message}")
+            }
+
+            try {
                 if (activeCall != null && heldCall != null) {
                     activeCall.conference(heldCall)
                 } else if (calls.size >= 2) {
                     calls[0].conference(calls[1])
                 }
+            } catch (e: Exception) {
+                Log.e("CallService", "Error conferencing calls: ${e.message}")
             }
         }
 
@@ -267,6 +281,8 @@ class CallService : InCallService() {
                     removeForeground()
                     cancelNotification()
                 }
+            } else if (state == Call.STATE_DISCONNECTING) {
+                // When disconnecting or canceled, do not re-post notification
             } else {
                 updateNotification(call)
             }
@@ -678,6 +694,10 @@ class CallService : InCallService() {
     private fun updateNotification(call: Call) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
+        try {
+            notificationManager.deleteNotificationChannel(LEGACY_CHANNEL_ID)
+        } catch (_: Exception) {}
+
         val channel = NotificationChannel(
             CHANNEL_ID,
             getString(R.string.notif_channel_calls),
@@ -686,6 +706,7 @@ class CallService : InCallService() {
             description = getString(R.string.notif_channel_calls_desc)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             enableVibration(true)
+            setSound(null, null)
             setShowBadge(true)
         }
         notificationManager.createNotificationChannel(channel)
@@ -787,21 +808,11 @@ class CallService : InCallService() {
             ?: System.currentTimeMillis()
 
         val isRinging = call.state == Call.STATE_RINGING
-
-        // CRITICAL FOR VIVO & OEM COMPATIBILITY:
-        // Ringing calls must NEVER use the silent channel or low priority!
-        // Ringing calls need IMPORTANCE_HIGH and PRIORITY_MAX so the system can trigger
-        // heads-up banners or full-screen intents across all OEMs (including Vivo, Xiaomi, Samsung).
         val targetChannel = if (isRinging) {
             CHANNEL_ID
-        } else if (isActivityVisible.value) {
-            // Ongoing call with CallActivity currently visible on screen:
-            // Keep notification low-priority in the status bar so it doesn't obstruct the conversation.
-            SILENT_CHANNEL_ID
         } else {
-            // Ongoing call while user is multitasking/in background:
-            // Use CHANNEL_ID so the notification is easily reachable in the notification shade.
-            CHANNEL_ID
+            // All ongoing, outgoing, holding, and disconnecting calls must use the silent channel
+            SILENT_CHANNEL_ID
         }
 
         val builder = NotificationCompat.Builder(this, targetChannel)
@@ -822,21 +833,12 @@ class CallService : InCallService() {
             )
 
         if (isRinging) {
-            // Incoming ringing call: Always MAX priority + full-screen intent.
-            // Android and OEM notification managers (especially Vivo Funtouch/OriginOS) require this
-            // to show the heads-up notification and/or launch the incoming call activity when locked or unlocked.
             builder.setPriority(NotificationCompat.PRIORITY_MAX)
             builder.setFullScreenIntent(fullScreenPendingIntent, true)
-            builder.setSilent(false)
-            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
-        } else if (targetChannel == SILENT_CHANNEL_ID) {
-            // Ongoing call while inside CallActivity: quiet status bar icon
-            builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)
-            builder.setOnlyAlertOnce(true)
+            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
         } else {
-            // Ongoing call while in background: standard ongoing call priority
-            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)
             builder.setOnlyAlertOnce(true)
         }
