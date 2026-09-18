@@ -828,5 +828,4 @@
     <string name="call_analytics_disabled_title">Analityka i śledzenie połączeń wyłączone</string>
     <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczać czas rozmów, godziny szczytu i statystyki kontaktów.</string>
     <string name="call_analytics_enable_action">Włącz analitykę i śledzenie</string>
->>>>>>> bf232ba (Add setting to toggle call analytics and tracking (#183))
 </resources>
