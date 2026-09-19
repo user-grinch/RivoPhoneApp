@@ -45,7 +45,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Release APKs
+      - name: Build Release APKs & Play AAB
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -56,12 +56,12 @@ jobs:
           GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
         run: |
           sed -i '/org.gradle.java.home/d' gradle.properties
-          ./gradlew assemblePlayRelease assembleFossRelease
+          ./gradlew assemblePlayRelease assembleFossRelease bundlePlayRelease
 
       - name: Collect outputs
         run: |
           mkdir outputs
-          find . -type f -name "RivoPhone-*.apk" -exec cp {} outputs/ \;
+          find . -type f \( -name "RivoPhone-*.apk" -o -name "RivoPhone-*.aab" \) -exec cp {} outputs/ \;
 
       - name: Extract Signing Certificate Fingerprint
         run: |

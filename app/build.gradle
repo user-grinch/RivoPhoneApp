@@ -76,6 +76,18 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
     flavorDimensions "distribution"
     productFlavors {
         play {
@@ -98,6 +110,18 @@ android {
 }
 
 afterEvaluate {
+    tasks.matching { it.name == "bundlePlayRelease" }.configureEach { task ->
+        task.doLast {
+            def outDir = layout.buildDirectory.dir("outputs/bundle/playRelease").get().asFile
+            if (outDir.exists()) {
+                outDir.listFiles()?.each { file ->
+                    if (file.name.endsWith(".aab") && !file.name.contains("RivoPhone")) {
+                        file.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}.aab"))
+                    }
+                }
+            }
+        }
+    }
 
     // Prevent Windows java.nio.file.FileAlreadyExistsException during KSP compilation
     tasks.matching { it.name.startsWith("ksp") && it.name.endsWith("Kotlin") }.configureEach { task ->
