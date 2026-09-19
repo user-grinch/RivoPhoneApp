@@ -248,24 +248,7 @@ object PermissionChecklistHelper {
             )
         )
 
-        // Storage Access for saving call recordings directly
-        val hasStorage = hasStoragePermission(context)
-        items.add(
-            PermissionCheckItem(
-                id = "storage_recording",
-                title = "Recordings Storage",
-                description = if (hasStorage) {
-                    "Call recordings can be stored directly in Internal Storage without restrictions."
-                } else {
-                    "Allow storage access to save call recordings directly to Internal Storage / ${CallRecorder.DIRECTORY_NAME}."
-                },
-                icon = Icons.Outlined.FolderSpecial,
-                isGranted = hasStorage,
-                isEssential = false,
-                actionType = PermissionActionType.STORAGE,
-                actionLabel = "Allow"
-            )
-        )
+
 
         // Shizuku Elevated 2-Way Audio Recording
         val shizukuInstalled = isShizukuInstalled(context)

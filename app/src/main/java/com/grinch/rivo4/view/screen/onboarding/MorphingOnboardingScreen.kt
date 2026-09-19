@@ -289,12 +289,6 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
         if (ungrantedRuntime.isNotEmpty()) {
             singleRuntimeLauncher.launch(ungrantedRuntime.toTypedArray())
-        } else if (!PermissionChecklistHelper.hasStoragePermission(context)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                storageLauncher.launch(PermissionChecklistHelper.getStorageAccessIntent(context))
-            } else {
-                singleRuntimeLauncher.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            }
         } else if (!PermissionChecklistHelper.hasOverlayPermission(context)) {
             settingsLauncher.launch(PermissionChecklistHelper.getOverlayIntent(context))
         } else if (!PermissionChecklistHelper.isBatteryOptimizationIgnored(context)) {
