@@ -16,23 +16,14 @@ object CallUiHelper {
     private const val TAG = "CallUiHelper"
 
     /**
-     * Determines whether an incoming call (real or fake) should immediately open full-screen.
-     *
-     * Returns true (Full-Screen) IF:
-     * 1. User enabled "Always Jump to Full Screen" in Settings.
-     * 2. The device is on the lockscreen or display is turned off (screen locked/sleeping).
-     *
-     * Returns false (Heads-Up Notification only) IF:
-     * - The user is actively using the phone (screen is on and device is unlocked).
+     * Determines whether an incoming call should immediately open full-screen.
      */
     fun shouldShowFullScreen(context: Context, preferenceManager: PreferenceManager): Boolean {
-        // 1. Check user preference toggle
         if (preferenceManager.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) {
             Log.d(TAG, "Full-screen enabled via preference")
             return true
         }
 
-        // 2. Lockscreen or screen is off/sleeping
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         @Suppress("DEPRECATION")
@@ -46,7 +37,6 @@ object CallUiHelper {
             return true
         }
 
-        // 3. User is actively using the phone -> show heads-up banner only
         Log.d(TAG, "Heads-up notification only: user is actively using the phone")
         return false
     }

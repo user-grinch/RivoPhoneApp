@@ -72,6 +72,7 @@ class CallActivity : ComponentActivity() {
     private val identityCache = mutableMapOf<String, CachedCallIdentity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        CallService.isActivityVisible.value = true
         turnScreenOnAndShowWhileLocked()
         super.onCreate(savedInstanceState)
 

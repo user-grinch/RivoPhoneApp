@@ -27,8 +27,7 @@ data class Contributor(
     val name: String,
     @StringRes val role: Int,
     val githubUrl: String? = null,
-    val imageAsset: String? = null,
-    val commits: Int? = null
+    val imageAsset: String? = null
 )
 
 val appContributors = listOf(
@@ -36,43 +35,37 @@ val appContributors = listOf(
         name = "Grinch_",
         role = R.string.contributor_role_lead_developer,
         githubUrl = "https://github.com/user-grinch",
-        imageAsset = "grinch.jpeg",
-        commits = 177
+        imageAsset = "grinch.jpeg"
     ),
     Contributor(
         name = "Hamma",
         role = R.string.contributor_role_developer,
         githubUrl = "https://github.com/MoHamed-B-M",
-        imageAsset = "hamma.jpeg",
-        commits = 52
+        imageAsset = "hamma.jpeg"
     ),
     Contributor(
         name = "Crowdin Bot",
         role = R.string.contributor_role_localization,
         githubUrl = "https://github.com/crowdin-bot",
-        imageAsset = "crowdin.png",
-        commits = 9
+        imageAsset = "crowdin.png"
     ),
     Contributor(
         name = "Victor-root",
         role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/Victor-root",
-        imageAsset = "victor.png",
-        commits = 7
+        imageAsset = "victor.png"
     ),
     Contributor(
         name = "master-bob",
         role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/master-bob",
-        imageAsset = "master_bob.png",
-        commits = 2
+        imageAsset = "master_bob.png"
     ),
     Contributor(
         name = "tmpjx555",
         role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/tmpjx555",
-        imageAsset = "tmpjx555.png",
-        commits = 1
+        imageAsset = "tmpjx555.png"
     )
 )
 
@@ -108,7 +101,6 @@ fun ContributorsScreen(
                         RivoListItem(
                             headline = contributor.name,
                             supporting = stringResource(contributor.role),
-                            supporting2 = contributor.commits?.let { stringResource(R.string.contributor_commits, it) },
                             avatarName = contributor.name,
                             photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
                             trailingIcon = if (contributor.githubUrl != null) Icons.AutoMirrored.Outlined.Launch else null,

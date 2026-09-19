@@ -103,7 +103,8 @@ class CallService : InCallService() {
     companion object {
         private const val CHANNEL_ID = "call_channel_v2"
         private const val LEGACY_CHANNEL_ID = "call_channel"
-        private const val SILENT_CHANNEL_ID = "call_silent_channel"
+        private const val SILENT_CHANNEL_ID = "call_silent_channel_v2"
+        private const val LEGACY_SILENT_CHANNEL_ID = "call_silent_channel"
         private const val MISSED_CHANNEL_ID = "missed_call_channel"
         private const val NOTIFICATION_ID = 101
 
@@ -299,7 +300,6 @@ class CallService : InCallService() {
                     cancelNotification()
                 }
             } else if (state == Call.STATE_DISCONNECTING) {
-                // When disconnecting or canceled, do not re-post notification
             } else {
                 updateNotification(call)
             }
@@ -652,10 +652,8 @@ class CallService : InCallService() {
 
         val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
-        // 1. Post notification FIRST
         updateNotification(call, showFullScreen)
 
-        // 2. Direct full-screen activity start as an active trigger
         if (showFullScreen) {
             val intent = Intent(this, CallActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -722,6 +720,7 @@ class CallService : InCallService() {
         
         try {
             notificationManager.deleteNotificationChannel(LEGACY_CHANNEL_ID)
+            notificationManager.deleteNotificationChannel(LEGACY_SILENT_CHANNEL_ID)
         } catch (_: Exception) {}
 
         val channel = NotificationChannel(
@@ -743,7 +742,7 @@ class CallService : InCallService() {
             NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = getString(R.string.notif_channel_calls_desc)
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            lockscreenVisibility = Notification.VISIBILITY_SECRET
             enableVibration(false)
             setSound(null, null)
             setShowBadge(false)
@@ -838,10 +837,18 @@ class CallService : InCallService() {
         val showFullScreen = directFullScreen ?: (!isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
         val isActivityShowing = isActivityVisible.value
 
-        val targetChannel = if (isRinging && !isActivityShowing) {
+        val shouldHeadsUp = isRinging && !isActivityShowing && !showFullScreen
+
+        val targetChannel = if (shouldHeadsUp) {
             CHANNEL_ID
         } else {
             SILENT_CHANNEL_ID
+        }
+
+        val notifVisibility = if (shouldHeadsUp) {
+            NotificationCompat.VISIBILITY_PUBLIC
+        } else {
+            NotificationCompat.VISIBILITY_SECRET
         }
 
         val builder = NotificationCompat.Builder(this, targetChannel)
@@ -851,36 +858,22 @@ class CallService : InCallService() {
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(notifVisibility)
             .setAutoCancel(false)
-            .setStyle(
-                if (isRinging) {
-                    NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent)
-                } else {
-                    NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
-                }
-            )
 
         if (isRinging) {
-            if (isActivityShowing) {
-                // CallActivity is in foreground: stay quiet in the status bar (no heads-up banner over the full screen)
-                builder.setPriority(NotificationCompat.PRIORITY_LOW)
-                builder.setSilent(true)
-                builder.setOnlyAlertOnce(true)
-            } else if (!showFullScreen) {
-                // User is actively using phone: HEADS-UP NOTIFICATION ONLY!
-                // Do NOT set fullScreenIntent with true so Android does not pop up CallActivity!
-                builder.setPriority(NotificationCompat.PRIORITY_MAX)
-                builder.setSilent(true)
-                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
-            } else {
-                // Screen is off or locked: Full-screen intent needed to wake/show on lock screen
+            if (shouldHeadsUp) {
+                builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
                 builder.setPriority(NotificationCompat.PRIORITY_MAX)
                 builder.setFullScreenIntent(fullScreenPendingIntent, true)
-                builder.setSilent(true)
                 builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            } else {
+                builder.setPriority(NotificationCompat.PRIORITY_MIN)
+                builder.setSilent(true)
+                builder.setOnlyAlertOnce(true)
             }
         } else {
+            builder.setStyle(NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent))
             builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)
             builder.setOnlyAlertOnce(true)

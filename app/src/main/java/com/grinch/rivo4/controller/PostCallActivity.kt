@@ -90,7 +90,6 @@ class PostCallActivity : ComponentActivity() {
             durationSeconds: Long
         ) {
             if (durationSeconds <= 0L) {
-                // Never show post-call summary dialog for calls that were not connected/completed
                 return
             }
             val intent = Intent(context, PostCallActivity::class.java).apply {
