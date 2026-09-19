@@ -24,6 +24,8 @@
     <string name="action_unmute">Вкл звук</string>
     <string name="action_keypad">Клавиатура</string>
     <string name="action_add_call">Добавить звонок</string>
+    <string name="action_merge_calls">Объединить вызовы</string>
+    <string name="conference_call">Конференц-звонок</string>
     <string name="action_hold">Удержать</string>
     <string name="action_resume">Продолжить</string>
     <string name="action_end_call">Конец вызова</string>
@@ -184,6 +186,7 @@
     <string name="contact_edit_identity_header">Личные данные</string>
     <string name="contact_edit_full_name">Имя и фамилия</string>
     <string name="contact_edit_first_name">Имя</string>
+    <string name="contact_edit_middle_name">Отчество</string>
     <string name="contact_edit_last_name">Фамилия</string>
     <string name="contact_edit_nickname">Никнейм</string>
     <string name="contact_edit_phone_numbers_header">Номер телефона</string>
@@ -815,4 +818,13 @@
     <string name="app_name_contacts">Контакты</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Настройки вызовов оператора системы</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Аналитика вызовов &amp; Отслеживание</string>
+    <string name="settings_call_analytics_supporting">Отслеживать метрику звонков, статистику по времени разговора, часы пика и частые контактные данные</string>
+    <string name="settings_call_analytics_disabled_supporting">Статистика звонков и звонков отключена</string>
+    <string name="settings_call_analytics_view_title">Просмотр аналитики &amp; Прогнозы</string>
+    <string name="settings_call_analytics_view_supporting">Лидеры по времени, пиковые часы &amp; распределение</string>
+    <string name="call_analytics_disabled_title">Аналитика вызовов &amp; Отслеживание отключено</string>
+    <string name="call_analytics_disabled_desc">В данный момент отключена функция отслеживания звонков и времени разговора. Включите эту опцию, чтобы вычислить время разговора, часы пика и контактные знания.</string>
+    <string name="call_analytics_enable_action">Включить аналитику &amp; отслеживание</string>
 </resources>

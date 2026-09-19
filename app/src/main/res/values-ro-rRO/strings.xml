@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Îmbinare apeluri</string>
+    <string name="conference_call">Apel conferință</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">Al doilea nume</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,13 @@
     <string name="app_name_contacts">Contacte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Setări apel operator de sistem</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Analiză apel &amp; urmărire</string>
+    <string name="settings_call_analytics_supporting">Urmăriți valorile apelului, statistica timpului de vorbire, orele de vârf și informații de contact frecvente</string>
+    <string name="settings_call_analytics_disabled_supporting">Statisticile de urmărire și utilizare a apelurilor sunt dezactivate</string>
+    <string name="settings_call_analytics_view_title">Vezi Analytics &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Clasamentul timpului de vorbire, orele de vârf &amp; distribuție</string>
+    <string name="call_analytics_disabled_title">Analiză Apel &amp; Urmărire dezactivată</string>
+    <string name="call_analytics_disabled_desc">Analizele de apel și urmărirea timpului de vorbire sunt dezactivate în prezent. Activați această opțiune pentru a calcula timpul de vorbire, orele de vârf și contacta perceptii.</string>
+    <string name="call_analytics_enable_action">Activează Analytics &amp; Urmărire</string>
 </resources>

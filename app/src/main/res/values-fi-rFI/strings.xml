@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Yhdistä puhelut</string>
+    <string name="conference_call">Konferenssi puhelu</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">Toinen nimi</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,13 @@
     <string name="app_name_contacts">Yhteystiedot</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Järjestelmän operaattorin puheluasetukset</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Puheluanalytiikka &amp; Seuranta</string>
+    <string name="settings_call_analytics_supporting">Seuraa puheluita, puheaikatilastoja, huipputunteja ja usein toistuvia yhteystietoja</string>
+    <string name="settings_call_analytics_disabled_supporting">Puhelujen seuranta ja käytön tilastot on poistettu käytöstä</string>
+    <string name="settings_call_analytics_view_title">Näytä Analytiikka &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Puheajan leaderboard, ruuhka-tunnit &amp; jako</string>
+    <string name="call_analytics_disabled_title">Puheluanalytiikka &amp; Seuranta Pois Käytöstä</string>
+    <string name="call_analytics_disabled_desc">Puhelun analytiikka ja puheajan seuranta on tällä hetkellä pois päältä. Ota tämä asetus käyttöön, jos haluat laskea puheajan, ruuhka-ajan ja yhteystietojen tallentamisen.</string>
+    <string name="call_analytics_enable_action">Ota Analytics &amp; Seuranta Käyttöön</string>
 </resources>

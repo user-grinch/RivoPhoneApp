@@ -24,6 +24,8 @@
     <string name="action_unmute">Desactivar silencio</string>
     <string name="action_keypad">Teclado</string>
     <string name="action_add_call">Agregar llamada</string>
+    <string name="action_merge_calls">Combinar llamadas</string>
+    <string name="conference_call">Llamada</string>
     <string name="action_hold">Pausar</string>
     <string name="action_resume">Reanudar</string>
     <string name="action_end_call">Colgar</string>
@@ -176,6 +178,7 @@
     <string name="contact_edit_identity_header">Identidad</string>
     <string name="contact_edit_full_name">Nombre completo</string>
     <string name="contact_edit_first_name">Primer nombre</string>
+    <string name="contact_edit_middle_name">Segundo nombre</string>
     <string name="contact_edit_last_name">Apellido(s)</string>
     <string name="contact_edit_nickname">Apodo</string>
     <string name="contact_edit_phone_numbers_header">Número de teléfono</string>
@@ -524,4 +527,13 @@
     <string name="app_name_contacts">Contactos</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Configuración de llamada del operador</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Llamada analítica &amp; Seguimiento</string>
+    <string name="settings_call_analytics_supporting">Rastrear métricas de llamadas, estadísticas de tiempo de charla, horas pico y puntos de contacto frecuentes</string>
+    <string name="settings_call_analytics_disabled_supporting">Las estadísticas de uso y seguimiento de llamadas están desactivadas</string>
+    <string name="settings_call_analytics_view_title">Ver Analytics &amp; Insights</string>
+    <string name="settings_call_analytics_view_supporting">Hablar puntaje de tiempo, horario pico &amp; distribución</string>
+    <string name="call_analytics_disabled_title">Análisis de llamadas &amp; Seguimiento deshabilitado</string>
+    <string name="call_analytics_disabled_desc">Actualmente se han desactivado los análisis de llamadas y el seguimiento del tiempo de habla. Activa esta opción para calcular la hora de habla, las horas pico y los datos de contacto.</string>
+    <string name="call_analytics_enable_action">Habilitar Analytics &amp; Seguimiento</string>
 </resources>

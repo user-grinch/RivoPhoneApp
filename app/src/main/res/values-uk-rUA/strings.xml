@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Об’єдн. дзвінки</string>
+    <string name="conference_call">Конференц-виклик</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">По батькові</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,12 @@
     <string name="app_name_contacts">Контакти</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Налаштування системного оператора</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Аналітика викликів &amp; Відстеження</string>
+    <string name="settings_call_analytics_supporting">Відстежуйте статистику дзвінків, статистику часу, пік годин і часті контакти</string>
+    <string name="settings_call_analytics_disabled_supporting">Трекінг і використання викликів вимкнено</string>
+    <string name="settings_call_analytics_view_title">Перегляд аналітики &amp; Статистика</string>
+    <string name="settings_call_analytics_view_supporting">Таблиця лідерів часу розмови, пік годин &amp; розподіл</string>
+    <string name="call_analytics_disabled_title">Аналітика викликів &amp; Відстеження вимкнено</string>
+    <string name="call_analytics_disabled_desc">Викликати аналітику і відстежування часу розмови в даний час вимкнено. Увімкніть цю опцію для обчислення часу розмови, пікових годин і зверніться до особистої інформації.</string>
 </resources>

@@ -24,7 +24,7 @@
     <string name="action_unmute">Włącz dźwięk</string>
     <string name="action_keypad">Klawiatura</string>
     <string name="action_add_call">Dodaj połączenie</string>
-    <string name="action_merge_calls">Scal połączenia</string>
+    <string name="action_merge_calls">Połącz połączenia</string>
     <string name="conference_call">Połączenie konferencyjne</string>
     <string name="action_hold">Zawieś</string>
     <string name="action_resume">Wznów</string>
@@ -759,7 +759,7 @@
     <string name="swipe_action_delete">Usuń</string>
     <string name="swipe_action_preview_title">Interaktywny podgląd gestów</string>
     <string name="swipe_action_preview_supporting">Przesuń tę kartę w lewo lub w prawo, aby wypróbować dynamiczną, sprężystą fizykę Material 3</string>
-    <string name="swipe_action_test_contact_name">Alex Rivera</string>
+    <string name="swipe_action_test_contact_name">Jan Kowalski</string>
     <string name="swipe_action_test_contact_number">+1 (555) 019-2834</string>
     <string name="swipe_action_triggered_toast">Gest wywołany: %1$s</string>
     <string name="settings_swipe_actions_reset">Zresetuj akcje przesuwania</string>
@@ -817,15 +817,14 @@
     <string name="settings_contacts_launcher_icon_supporting">Wyświetl ikonę dedykowanych kontaktów w launcherze aplikacji i ekranie głównym</string>
     <string name="app_name_contacts">Kontakty</string>
     <!-- Call Waiting Carrier Settings (#62) -->
-    <string name="settings_call_waiting_system_settings">Ustawienia połączeń operatora w systemie</string>
-
+    <string name="settings_call_waiting_system_settings">Ustawienia połączeń systemowych</string>
     <!-- Call Analytics & Tracking -->
-    <string name="settings_call_analytics_title">Analityka i śledzenie połączeń</string>
-    <string name="settings_call_analytics_supporting">Śledź statystyki połączeń, czas rozmów, godziny szczytu i statystyki częstych kontaktów</string>
-    <string name="settings_call_analytics_disabled_supporting">Śledzenie połączeń i statystyki użycia są wyłączone</string>
-    <string name="settings_call_analytics_view_title">Pokaż analitykę i statystyki</string>
-    <string name="settings_call_analytics_view_supporting">Czas rozmów, godziny szczytu i rozkład połączeń</string>
-    <string name="call_analytics_disabled_title">Analityka i śledzenie połączeń wyłączone</string>
-    <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczać czas rozmów, godziny szczytu i statystyki kontaktów.</string>
-    <string name="call_analytics_enable_action">Włącz analitykę i śledzenie</string>
+    <string name="settings_call_analytics_title">Analiza połączeń &amp; Śledzenie</string>
+    <string name="settings_call_analytics_supporting">Śledź wskaźniki połączeń, statystyki czasu mowy, godziny szczytu i częste spostrzeżenia kontaktów</string>
+    <string name="settings_call_analytics_disabled_supporting">Śledzenie połączeń i ich użycie są wyłączone</string>
+    <string name="settings_call_analytics_view_title">Zobacz Analityki &amp; Spostrzeżenia</string>
+    <string name="settings_call_analytics_view_supporting">Porozmawiaj z liderem czasu, godziny szczytowe &amp; rozkład</string>
+    <string name="call_analytics_disabled_title">Analityka połączeń &amp; Śledzenie wyłączone</string>
+    <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczyć czas rozmowy, godziny szczytowe i spostrzeżenia kontaktów.</string>
+    <string name="call_analytics_enable_action">Włącz Analitykę &amp; Śledzenie</string>
 </resources>

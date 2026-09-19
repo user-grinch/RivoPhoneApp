@@ -24,6 +24,8 @@
     <string name="action_unmute">Stumm deaktivieren</string>
     <string name="action_keypad">Tastenfeld</string>
     <string name="action_add_call">Anruf hinzufügen</string>
+    <string name="action_merge_calls">Anrufe zusammenführen</string>
+    <string name="conference_call">Konferenzanruf</string>
     <string name="action_hold">Halten</string>
     <string name="action_resume">Fortsetzen</string>
     <string name="action_end_call">Anruf beenden</string>
@@ -180,6 +182,7 @@
     <string name="contact_edit_identity_header">Identität</string>
     <string name="contact_edit_full_name">Voller Name</string>
     <string name="contact_edit_first_name">Vorname</string>
+    <string name="contact_edit_middle_name">Mittlerer Name</string>
     <string name="contact_edit_last_name">Nachname</string>
     <string name="contact_edit_nickname">Spitzname</string>
     <string name="contact_edit_phone_numbers_header">Telefonnummern</string>
@@ -314,11 +317,11 @@
     <string name="settings_interface_roundness_rounded">Gerundet</string>
     <string name="settings_interface_roundness_semi_square">Halb quadratisch</string>
     <string name="settings_interface_roundness_square">Quadratisch</string>
-    <string name="settings_interface_default_bottom_bar">Untere Leiste: Standard setzen</string>
+    <string name="settings_interface_default_bottom_bar">Navigationsleiste: Standard setzen</string>
     <string name="settings_interface_default_bottom_bar_supporting">Auswahl des Start-Tabs</string>
-    <string name="settings_interface_flip_bottom_bar">Untere Leiste: Tabs tauschen</string>
+    <string name="settings_interface_flip_bottom_bar">Navigationsleiste: Tabs tauschen</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Tauscht die Tab-Position von \"Kontakte\" &amp; \"Zuletzt\"</string>
-    <string name="settings_interface_icon_only_bar">Untere Leiste: nur Icons</string>
+    <string name="settings_interface_icon_only_bar">Navigationsleiste: nur Icons</string>
     <string name="settings_interface_icon_only_bar_supporting">Entfernt Text-Labels</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Töne &amp; Vibration</string>
@@ -532,9 +535,9 @@
     <string name="blocked_select_contact">Favorit auswählen</string>
     <string name="blocked_search_contact_hint">Kontaktname oder -nummer suchen</string>
     <!-- Bottom navigation layout -->
-    <string name="settings_bottom_nav_title">Untere Leiste: Tabs anordnen</string>
+    <string name="settings_bottom_nav_title">Navigationsleiste: Anordnen</string>
     <string name="settings_bottom_nav_supporting">Schaltflächen anordnen, anzeigen oder verbergen</string>
-    <string name="settings_bottom_nav_description">Anordnung und Sichtbarkeit der Schaltflächen der unteren Leiste. Zumindest eine Schaltfläche muss sichtbar bleiben.</string>
+    <string name="settings_bottom_nav_description">Anordnung und Sichtbarkeit der Schaltflächen der Navigationsleiste. Zumindest eine Schaltfläche muss sichtbar bleiben.</string>
     <string name="settings_bottom_nav_preview">Vorschau</string>
     <string name="settings_bottom_nav_buttons">Schaltflächen</string>
     <string name="settings_bottom_nav_position">Position %1$d</string>
@@ -673,7 +676,7 @@
     <string name="fake_call_options">Anruf-Optionen</string>
     <!-- Navigation Bar Style -->
     <string name="settings_interface_nav_bar_style">Stil der Navigationsleiste</string>
-    <string name="settings_interface_nav_bar_style_supporting">Auswahl zwischen unterer Standard-Leiste oder schwebender expressiver Leiste</string>
+    <string name="settings_interface_nav_bar_style_supporting">Auswahl zwischen Standard-Leiste oder schwebender Leiste</string>
     <string name="settings_nav_bar_standard">Standard-Leiste</string>
     <string name="settings_nav_bar_toolbar">Schwebende Leiste</string>
     <string name="fake_call_incoming_channel_title">Simulierte eingehende Anrufe</string>
@@ -809,4 +812,13 @@
     <string name="app_name_contacts">Kontakte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Systemanruf-Einstellungen</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Anruf-Analytik &amp; Tracking</string>
+    <string name="settings_call_analytics_supporting">Tracken Sie Anrufmetriken, Talk-Zeitstatistiken, Höchststunden und häufige Kontaktansichten</string>
+    <string name="settings_call_analytics_disabled_supporting">Anrufverfolgung und Nutzungsstatistik sind deaktiviert</string>
+    <string name="settings_call_analytics_view_title">Analytics &amp; Einblicke anzeigen</string>
+    <string name="settings_call_analytics_view_supporting">Vortragszeit Rangliste, Hauptstunden &amp; Distribution</string>
+    <string name="call_analytics_disabled_title">Anruf-Analyse &amp; Tracking deaktiviert</string>
+    <string name="call_analytics_disabled_desc">Anrufanalytik und Talk-Time-Tracking sind derzeit deaktiviert. Aktivieren Sie diese Option, um die Gesprächszeit, die Höchststunden und die Kontaktinformationen zu berechnen.</string>
+    <string name="call_analytics_enable_action">Analytics &amp; Tracking aktivieren</string>
 </resources>

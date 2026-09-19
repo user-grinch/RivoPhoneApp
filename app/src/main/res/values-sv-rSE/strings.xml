@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Slå ihop samtal</string>
+    <string name="conference_call">Konferenssamtal</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">Mitten namn</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,13 @@
     <string name="app_name_contacts">Kontakter</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Inställningar för systemoperatörs samtal</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Ring Analytics &amp; Spårning</string>
+    <string name="settings_call_analytics_supporting">Spåra samtalsmätningar, taltidsstatistik, högtider och frekventa kontaktinsikter</string>
+    <string name="settings_call_analytics_disabled_supporting">Statistik över samtalsspårning och användning är inaktiverad</string>
+    <string name="settings_call_analytics_view_title">Se Analytics &amp; Insikter</string>
+    <string name="settings_call_analytics_view_supporting">Taltid leaderboard, högtider &amp; distribution</string>
+    <string name="call_analytics_disabled_title">Samtal Analytics &amp; Spårning inaktiverad</string>
+    <string name="call_analytics_disabled_desc">Samtalsanalys och taltidsmätning är för närvarande avstängda. Aktivera detta alternativ för att beräkna taltid, högtrafik och kontaktinsikter.</string>
+    <string name="call_analytics_enable_action">Aktivera Analytics &amp; Spårning</string>
 </resources>
