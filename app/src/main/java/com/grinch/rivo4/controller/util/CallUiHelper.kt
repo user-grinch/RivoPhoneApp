@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
 import android.util.Log
-import com.grinch.rivo4.RivoApp
 
 object CallUiHelper {
 
@@ -22,11 +21,9 @@ object CallUiHelper {
      * Returns true (Full-Screen) IF:
      * 1. User enabled "Always Jump to Full Screen" in Settings.
      * 2. The device is on the lockscreen or display is turned off (screen locked/sleeping).
-     * 3. The user is actively inside the Rivo app.
-     * 4. The user is on the home screen (launcher) with no other app open.
      *
      * Returns false (Heads-Up Notification only) IF:
-     * - The user is actively using the device inside another application (e.g. YouTube, WhatsApp, browser, games).
+     * - The user is actively using the phone (screen is on and device is unlocked).
      */
     fun shouldShowFullScreen(context: Context, preferenceManager: PreferenceManager): Boolean {
         // 1. Check user preference toggle
@@ -35,7 +32,7 @@ object CallUiHelper {
             return true
         }
 
-        // 2. Lockscreen or screen is off/sleeping or OEM compatibility (Vivo, iQOO, etc.)
+        // 2. Lockscreen or screen is off/sleeping
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         @Suppress("DEPRECATION")
@@ -49,20 +46,8 @@ object CallUiHelper {
             return true
         }
 
-        // 3. User is actively using the Rivo app
-        if (RivoApp.isAppInForeground) {
-            Log.d(TAG, "Full-screen: Rivo app is in foreground")
-            return true
-        }
-
-        // 4. Check if user is on the home screen (launcher)
-        if (isHomeScreenForeground(context)) {
-            Log.d(TAG, "Full-screen: user is on home screen")
-            return true
-        }
-
-        // Otherwise: User is actively in another app -> show heads-up banner only
-        Log.d(TAG, "Heads-up notification only: user is actively in another app")
+        // 3. User is actively using the phone -> show heads-up banner only
+        Log.d(TAG, "Heads-up notification only: user is actively using the phone")
         return false
     }
 

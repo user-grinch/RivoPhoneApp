@@ -33,6 +33,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.android.ext.android.inject
+import java.util.Collections
+import java.util.WeakHashMap
 
 data class CallSession(
     val call: Call,
@@ -224,8 +226,18 @@ class CallService : InCallService() {
             }
         }
 
-        fun declineCall() {
-            val call = _currentCallSession.value?.call ?: return
+        private val userRejectedCalls = Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Call, Boolean>()))
+
+        fun markCallAsRejected(call: Call) {
+            userRejectedCalls.add(call)
+        }
+
+        fun isCallRejectedByUser(call: Call): Boolean {
+            return userRejectedCalls.remove(call)
+        }
+
+        fun rejectCall(call: Call) {
+            markCallAsRejected(call)
             try {
                 if (call.state == Call.STATE_RINGING) {
                     call.reject(Call.REJECT_REASON_DECLINED)
@@ -235,6 +247,11 @@ class CallService : InCallService() {
             } catch (e: Exception) {
                 try { call.disconnect() } catch (e: Exception) {}
             }
+        }
+
+        fun declineCall() {
+            val call = _currentCallSession.value?.call ?: return
+            rejectCall(call)
         }
     }
 
@@ -363,9 +380,14 @@ class CallService : InCallService() {
             }
         }
 
-        val wasNeverConnected = call.details.connectTimeMillis == 0L
+        val wasConnected = call.details.connectTimeMillis > 0L || callStartTimes.containsKey(call)
+        val wasNeverConnected = !wasConnected
         val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
         val isOutgoing = call.details.callDirection == Call.Details.DIRECTION_OUTGOING
+
+        val wasUserRejected = isCallRejectedByUser(call) ||
+                cause?.code == DisconnectCause.REJECTED ||
+                (isIncoming && cause?.code == DisconnectCause.LOCAL)
 
         if (isOutgoing && wasNeverConnected) {
             val isAirplane = com.grinch.rivo4.controller.util.isAirplaneModeOn(this)
@@ -396,7 +418,9 @@ class CallService : InCallService() {
             ((System.currentTimeMillis() - ringStartTime) / 1000L).coerceAtLeast(1L).toInt()
         } else 0
         
-        if (isIncoming && wasNeverConnected && (cause?.code == DisconnectCause.MISSED || cause?.code == DisconnectCause.REMOTE || cause?.code == DisconnectCause.REJECTED)) {
+        if (isIncoming && wasNeverConnected && !wasUserRejected &&
+            (cause?.code == DisconnectCause.MISSED || cause?.code == DisconnectCause.REMOTE || cause?.code == DisconnectCause.CANCELED)
+        ) {
             val contact = if (number.isNotEmpty()) {
                 try {
                     contactsRepository.getContactByNumber(number)
@@ -404,18 +428,20 @@ class CallService : InCallService() {
             } else null
             val contactName = contact?.name ?: cachedContactNames[number] ?: number.ifEmpty { getString(R.string.label_unknown_number) }
 
-            if (!isNumberBlocked(number) || preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 1) {
-                showMissedCallNotification(call, contact, contactName, ringDurationSeconds)
-            }
+            val isBlocked = isNumberBlocked(number) && preferenceManager.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0) == 0
 
-            if (preferenceManager.isMissedCallCardEnabled()) {
-                MissedCallActivity.start(
-                    context = this,
-                    contactName = contactName,
-                    phoneNumber = number,
-                    photoUri = contact?.photoUri,
-                    ringSeconds = ringDurationSeconds
-                )
+            if (!isBlocked) {
+                showMissedCallNotification(call, contact, contactName, ringDurationSeconds)
+
+                if (preferenceManager.isMissedCallCardEnabled()) {
+                    MissedCallActivity.start(
+                        context = this,
+                        contactName = contactName,
+                        phoneNumber = number,
+                        photoUri = contact?.photoUri,
+                        ringSeconds = ringDurationSeconds
+                    )
+                }
             }
         }
     }
@@ -624,12 +650,12 @@ class CallService : InCallService() {
             }
         }
 
-        // 1. Post notification FIRST so foreground service & fullScreenIntent are fully armed
-        updateNotification(call)
-
-        // 2. Direct full-screen activity start as an active trigger
         val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
+        // 1. Post notification FIRST
+        updateNotification(call, showFullScreen)
+
+        // 2. Direct full-screen activity start as an active trigger
         if (showFullScreen) {
             val intent = Intent(this, CallActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -640,7 +666,7 @@ class CallService : InCallService() {
                 Log.e("CallService", "Failed to start CallActivity: ${e.message}", e)
             }
         } else {
-            Log.i("CallService", "User is actively in another app; presenting heads-up incoming call notification only.")
+            Log.i("CallService", "User is actively using phone; presenting heads-up incoming call notification only.")
         }
     }
 
@@ -691,7 +717,7 @@ class CallService : InCallService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun updateNotification(call: Call) {
+    private fun updateNotification(call: Call, directFullScreen: Boolean? = null) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
         try {
@@ -808,10 +834,13 @@ class CallService : InCallService() {
             ?: System.currentTimeMillis()
 
         val isRinging = call.state == Call.STATE_RINGING
-        val targetChannel = if (isRinging) {
+        val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        val showFullScreen = directFullScreen ?: (!isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
+        val isActivityShowing = isActivityVisible.value
+
+        val targetChannel = if (isRinging && !isActivityShowing) {
             CHANNEL_ID
         } else {
-            // All ongoing, outgoing, holding, and disconnecting calls must use the silent channel
             SILENT_CHANNEL_ID
         }
 
@@ -833,10 +862,24 @@ class CallService : InCallService() {
             )
 
         if (isRinging) {
-            builder.setPriority(NotificationCompat.PRIORITY_MAX)
-            builder.setFullScreenIntent(fullScreenPendingIntent, true)
-            builder.setSilent(true)
-            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            if (isActivityShowing) {
+                // CallActivity is in foreground: stay quiet in the status bar (no heads-up banner over the full screen)
+                builder.setPriority(NotificationCompat.PRIORITY_LOW)
+                builder.setSilent(true)
+                builder.setOnlyAlertOnce(true)
+            } else if (!showFullScreen) {
+                // User is actively using phone: HEADS-UP NOTIFICATION ONLY!
+                // Do NOT set fullScreenIntent with true so Android does not pop up CallActivity!
+                builder.setPriority(NotificationCompat.PRIORITY_MAX)
+                builder.setSilent(true)
+                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            } else {
+                // Screen is off or locked: Full-screen intent needed to wake/show on lock screen
+                builder.setPriority(NotificationCompat.PRIORITY_MAX)
+                builder.setFullScreenIntent(fullScreenPendingIntent, true)
+                builder.setSilent(true)
+                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            }
         } else {
             builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)

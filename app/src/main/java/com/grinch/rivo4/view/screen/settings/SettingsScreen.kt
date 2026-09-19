@@ -256,12 +256,9 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(AppLockScreenDestination) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    val secretCode = remember(settingsState) {
-                        prefs.getString(PreferenceManager.KEY_SECRET_DIALPAD_CODE, PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
-                    }
                     RivoListItem(
                         headline = "Private Storage",
-                        supporting = "Secret dialpad vault ($secretCode) • Stored only in app memory",
+                        supporting = "Secret dialpad vault • Stored only in app memory",
                         leadingIcon = Icons.Outlined.FolderShared,
                         onClick = { navigator.navigate(PrivateContactsScreenDestination) }
                     )

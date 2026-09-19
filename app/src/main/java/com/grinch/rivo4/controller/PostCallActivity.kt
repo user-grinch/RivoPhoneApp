@@ -40,6 +40,11 @@ class PostCallActivity : ComponentActivity() {
         val photoUri = intent.getStringExtra(EXTRA_PHOTO_URI)
         val durationSeconds = intent.getLongExtra(EXTRA_DURATION_SECONDS, 0L)
 
+        if (durationSeconds <= 0L) {
+            finish()
+            return
+        }
+
         setContent {
             Rivo4Theme {
                 PostCallScreen(
@@ -84,6 +89,10 @@ class PostCallActivity : ComponentActivity() {
             photoUri: String?,
             durationSeconds: Long
         ) {
+            if (durationSeconds <= 0L) {
+                // Never show post-call summary dialog for calls that were not connected/completed
+                return
+            }
             val intent = Intent(context, PostCallActivity::class.java).apply {
                 putExtra(EXTRA_CONTACT_NAME, contactName)
                 putExtra(EXTRA_PHONE_NUMBER, phoneNumber)

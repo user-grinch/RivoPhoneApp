@@ -1354,11 +1354,10 @@ fun ContactDetailsScreen(
 
                                     // 2. Hide Completely (if private)
                                     if (fc.isPrivate) {
-                                        val secretCode = prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
                                         RivoDivider(Modifier.padding(horizontal = 16.dp))
                                         RivoListItem(
                                             headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
-                                            supporting = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial $secretCode to unlock)",
+                                            supporting = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial secret code to unlock)",
                                             leadingIcon = if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                                             isCompact = true,
                                             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,

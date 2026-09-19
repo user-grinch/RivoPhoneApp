@@ -128,6 +128,7 @@ class CallActivity : ComponentActivity() {
 
                 var lastKnownIdentity by remember { mutableStateOf<CallIdentity?>(null) }
                 var lastConnectTime by remember { mutableLongStateOf(0L) }
+                var postCallShown by remember { mutableStateOf(false) }
 
                 LaunchedEffect(identity) {
                     if (identity != null) {
@@ -208,15 +209,18 @@ class CallActivity : ComponentActivity() {
                             val isPostCallEnabled = preferenceManager.isPostCallScreenEnabled()
                             val currentId = identity ?: lastKnownIdentity
                             delay(350)
-                            if (isPostCallEnabled && currentId != null && lastConnectTime > 0) {
+                            if (isPostCallEnabled && currentId != null && lastConnectTime > 0 && !postCallShown) {
                                 val duration = (System.currentTimeMillis() - lastConnectTime) / 1000
-                                PostCallActivity.start(
-                                    context = this@CallActivity,
-                                    contactName = currentId.name,
-                                    phoneNumber = currentId.number,
-                                    photoUri = currentId.photoUri,
-                                    durationSeconds = duration
-                                )
+                                if (duration > 0) {
+                                    postCallShown = true
+                                    PostCallActivity.start(
+                                        context = this@CallActivity,
+                                        contactName = currentId.name,
+                                        phoneNumber = currentId.number,
+                                        photoUri = currentId.photoUri,
+                                        durationSeconds = duration
+                                    )
+                                }
                             }
                             dismissCallScreen()
                         }
@@ -228,17 +232,18 @@ class CallActivity : ComponentActivity() {
                         val isPostCallEnabled = preferenceManager.isPostCallScreenEnabled()
                         val currentId = lastKnownIdentity
                         delay(350)
-                        if (isPostCallEnabled && currentId != null) {
-                            val duration = if (lastConnectTime > 0) {
-                                (System.currentTimeMillis() - lastConnectTime) / 1000
-                            } else 0L
-                            PostCallActivity.start(
-                                context = this@CallActivity,
-                                contactName = currentId.name,
-                                phoneNumber = currentId.number,
-                                photoUri = currentId.photoUri,
-                                durationSeconds = duration
-                            )
+                        if (isPostCallEnabled && currentId != null && lastConnectTime > 0 && !postCallShown) {
+                            val duration = (System.currentTimeMillis() - lastConnectTime) / 1000
+                            if (duration > 0) {
+                                postCallShown = true
+                                PostCallActivity.start(
+                                    context = this@CallActivity,
+                                    contactName = currentId.name,
+                                    phoneNumber = currentId.number,
+                                    photoUri = currentId.photoUri,
+                                    durationSeconds = duration
+                                )
+                            }
                         }
                         if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED }) {
                             dismissCallScreen()
@@ -526,14 +531,5 @@ class CallActivity : ComponentActivity() {
         } catch (e: Exception) {
             Log.e("CallActivity", "Failed to release proximity lock", e)
         }
-    }
-
-    private val volumeSqueezeHelper by lazy { com.grinch.rivo4.controller.util.VolumeSqueezeHelper(this, preferenceManager) }
-
-    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
-        if (volumeSqueezeHelper.handleKeyEvent(event)) {
-            return true
-        }
-        return super.dispatchKeyEvent(event)
     }
 }

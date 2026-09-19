@@ -307,6 +307,7 @@ fun ExpressiveCallScreen(
     }
 
     val onSendQuickResponse: (String) -> Unit = { message ->
+        CallService.markCallAsRejected(call)
         try {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 call.reject(true, message)
@@ -588,15 +589,8 @@ fun ExpressiveCallScreen(
     val incomingControls: @Composable (Boolean) -> Unit = { compact ->
         val useCustomUI = preferenceManager.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)
         val onDeclineCallAction = {
-            try {
-                if (call.state == Call.STATE_RINGING) {
-                    call.reject(Call.REJECT_REASON_DECLINED)
-                } else {
-                    call.disconnect()
-                }
-            } catch (e: Exception) {
-                try { call.disconnect() } catch (e: Exception) {}
-            }
+            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+            CallService.rejectCall(call)
         }
 
         Column(
@@ -777,13 +771,7 @@ fun ExpressiveCallScreen(
                 onDismiss = { showQuickResponsesSheet = false },
                 onSend = onSendQuickResponse,
                 onOpenSmsApp = {
-                    try {
-                        if (call.state == Call.STATE_RINGING) {
-                            call.reject(Call.REJECT_REASON_DECLINED)
-                        } else {
-                            call.disconnect()
-                        }
-                    } catch (_: Exception) {}
+                    CallService.rejectCall(call)
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
                         data = Uri.parse("smsto:$phoneNumber")
                     }
@@ -800,13 +788,7 @@ fun ExpressiveCallScreen(
                         )
                         Toast.makeText(context, "Reminder set for $label", Toast.LENGTH_SHORT).show()
                     }
-                    try {
-                        if (call.state == Call.STATE_RINGING) {
-                            call.reject(Call.REJECT_REASON_DECLINED)
-                        } else {
-                            call.disconnect()
-                        }
-                    } catch (_: Exception) {}
+                    CallService.rejectCall(call)
                     showQuickResponsesSheet = false
                 }
             )
