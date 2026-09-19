@@ -107,7 +107,8 @@ class BillingManager(
 
         billingClient.queryProductDetailsAsync(params) { billingResult, queryResult ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                val detailsMap = queryResult.associateBy { it.productId }
+                val detailsList = queryResult.productDetailsList ?: emptyList()
+                val detailsMap = detailsList.associateBy { it.productId }
                 val updated = defaultTipProducts().map { fallback ->
                     val details = detailsMap[fallback.id]
                     val price = details?.oneTimePurchaseOfferDetails?.formattedPrice ?: fallback.defaultPrice
@@ -119,7 +120,7 @@ class BillingManager(
                     )
                 }
                 _products.value = updated
-                Log.d(TAG, "Successfully loaded ${queryResult.size} tip products from Google Play.")
+                Log.d(TAG, "Successfully loaded ${detailsList.size} tip products from Google Play.")
             } else {
                 Log.w(TAG, "Failed to query products: ${billingResult.responseCode} - ${billingResult.debugMessage}")
             }
