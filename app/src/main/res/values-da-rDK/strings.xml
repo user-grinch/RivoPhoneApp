@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="action_merge_calls">Flet opkald</string>
+    <string name="conference_call">Opkald på konference</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -11,6 +13,7 @@
     <!-- Contacts list -->
     <!-- Contact details -->
     <!-- Contact edit -->
+    <string name="contact_edit_middle_name">Mellemnavn</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -67,4 +70,13 @@
     <string name="app_name_contacts">Kontakter</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Indstillinger for systemoperatøropkald</string>
+    <!-- Call Analytics & Tracking -->
+    <string name="settings_call_analytics_title">Ring Til Analyse &amp; Sporing</string>
+    <string name="settings_call_analytics_supporting">Spor opkaldsmålinger, statistik over taletid, spidsbelastningstider og hyppig kontaktindsigt</string>
+    <string name="settings_call_analytics_disabled_supporting">Opkaldssporing og brugsstatistik er deaktiveret</string>
+    <string name="settings_call_analytics_view_title">Se Analytics &amp; Indsigter</string>
+    <string name="settings_call_analytics_view_supporting">Tale tid leaderboard, peak hours &amp; distribution</string>
+    <string name="call_analytics_disabled_title">Ring Til Analytics &amp; Sporing Deaktiveret</string>
+    <string name="call_analytics_disabled_desc">Opkaldsanalyse og sporing af taletid er i øjeblikket slået fra. Aktivér denne mulighed for at beregne taletid, spidstider og kontaktindsigt.</string>
+    <string name="call_analytics_enable_action">Aktiver Analytics &amp; Tracking</string>
 </resources>
