@@ -42,11 +42,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
-import com.grinch.rivo4.MainActivity
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.CallNotesSheet
+import com.grinch.rivo4.MainActivity
+import com.grinch.rivo4.view.components.AddToContactBottomSheet
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.ad.PostCallNativeAd
 import java.util.Date
@@ -63,6 +64,7 @@ fun MissedCallScreen(
     val context = LocalContext.current
     var isVisible by remember { mutableStateOf(false) }
     var showNoteSheet by remember { mutableStateOf(false) }
+    var showAddToContactSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isVisible = true
@@ -363,8 +365,7 @@ fun MissedCallScreen(
                                 if (isUnsaved && phoneNumber.isNotEmpty()) {
                                     FilledTonalButton(
                                         onClick = {
-                                            addContact(context, phoneNumber)
-                                            onDismiss()
+                                            showAddToContactSheet = true
                                         },
                                         modifier = Modifier.weight(1f),
                                         shape = RoundedCornerShape(14.dp),
@@ -481,6 +482,33 @@ fun MissedCallScreen(
                 phoneNumber = phoneNumber,
                 contactName = contactName,
                 onDismiss = { showNoteSheet = false }
+            )
+        }
+
+        if (showAddToContactSheet) {
+            AddToContactBottomSheet(
+                phoneNumber = phoneNumber,
+                onDismissRequest = { showAddToContactSheet = false },
+                onCreateNewContact = {
+                    showAddToContactSheet = false
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        action = Intent.ACTION_INSERT
+                        putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
+                    context.startActivity(intent)
+                    onDismiss()
+                },
+                onAddToExistingContact = {
+                    showAddToContactSheet = false
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        action = "com.grinch.rivo4.ACTION_ADD_TO_EXISTING_CONTACT"
+                        putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
+                    context.startActivity(intent)
+                    onDismiss()
+                }
             )
         }
     }

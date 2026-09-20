@@ -82,6 +82,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.CallLogFullScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -208,6 +209,7 @@ fun ContactDetailsScreen(
     var callBackground by remember { mutableStateOf<String?>(null) }
     var backgroundSaving by remember { mutableStateOf(false) }
     var showBackgroundDialog by remember { mutableStateOf(false) }
+    var addToContactNumber by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
 
@@ -698,11 +700,7 @@ fun ContactDetailsScreen(
                                     size = 52.dp,
                                     iconSize = 22.dp,
                                     onClick = {
-                                        navigator.navigate(
-                                            ContactEditScreenDestination(
-                                                initialPhone = displayPhone
-                                            )
-                                        )
+                                        addToContactNumber = displayPhone
                                     },
                                     modifier = Modifier.weight(1f)
                                 )
@@ -907,11 +905,7 @@ fun ContactDetailsScreen(
                                             text = { Text(stringResource(R.string.contact_add_to_contacts)) },
                                             onClick = {
                                                 showMenu = false
-                                                navigator.navigate(
-                                                    ContactEditScreenDestination(
-                                                        initialPhone = phoneNumber
-                                                    )
-                                                )
+                                                addToContactNumber = phoneNumber
                                             },
                                             leadingIcon = { Icon(Icons.Default.PersonAdd, null) }
                                         )
@@ -1429,6 +1423,32 @@ fun ContactDetailsScreen(
                     scope.launch {
                         listState.animateScrollToItem(0)
                     }
+                }
+            )
+        }
+
+        if (addToContactNumber != null) {
+            AddToContactBottomSheet(
+                phoneNumber = addToContactNumber!!,
+                onDismissRequest = { addToContactNumber = null },
+                onCreateNewContact = {
+                    val num = addToContactNumber
+                    addToContactNumber = null
+                    navigator.navigate(
+                        ContactEditScreenDestination(
+                            initialPhone = num
+                        )
+                    )
+                },
+                onAddToExistingContact = {
+                    val num = addToContactNumber
+                    addToContactNumber = null
+                    navigator.navigate(
+                        ContactSelectionScreenDestination(
+                            title = "Add to Existing Contact",
+                            initialPhoneToAssign = num
+                        )
+                    )
                 }
             )
         }

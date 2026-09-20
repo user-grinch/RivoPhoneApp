@@ -72,6 +72,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
+import com.grinch.rivo4.view.components.AddToContactBottomSheet
 import com.grinch.rivo4.modal.data.Contact
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -115,6 +117,7 @@ fun DialPadScreen(
     }
 
     var showSocialDialog by remember { mutableStateOf(false) }
+    var showAddToContactSheet by remember { mutableStateOf(false) }
 
     BackHandler(enabled = number.isNotEmpty()) {
         textFieldValue = TextFieldValue("")
@@ -519,11 +522,7 @@ fun DialPadScreen(
                             ) {
                                 DialerActionExpressive(
                                     onClick = {
-                                        navigator.navigate(
-                                            ContactEditScreenDestination(
-                                                initialPhone = number
-                                            )
-                                        )
+                                        showAddToContactSheet = true
                                     },
                                     icon = Icons.Default.PersonAdd,
                                     contentDescription = stringResource(R.string.action_add_contact),
@@ -651,6 +650,28 @@ fun DialPadScreen(
                 )
             }
         }
+    }
+
+    if (showAddToContactSheet) {
+        AddToContactBottomSheet(
+            phoneNumber = number,
+            onDismissRequest = { showAddToContactSheet = false },
+            onCreateNewContact = {
+                navigator.navigate(
+                    ContactEditScreenDestination(
+                        initialPhone = number
+                    )
+                )
+            },
+            onAddToExistingContact = {
+                navigator.navigate(
+                    ContactSelectionScreenDestination(
+                        title = "Add to Existing Contact",
+                        initialPhoneToAssign = number
+                    )
+                )
+            }
+        )
     }
     }
 }

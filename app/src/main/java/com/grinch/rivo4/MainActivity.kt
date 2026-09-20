@@ -58,6 +58,7 @@ import com.ramcosta.composedestinations.generated.destinations.MainScreenDestina
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
@@ -316,6 +317,20 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                 }
             }
             Intent.ACTION_INSERT -> {
+                val name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME)
+                val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
+                navController.navigate(ContactEditScreenDestination(initialName = name, initialPhone = phone).route)
+            }
+            "com.grinch.rivo4.ACTION_ADD_TO_EXISTING_CONTACT" -> {
+                val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
+                navController.navigate(
+                    ContactSelectionScreenDestination(
+                        title = "Add to Existing Contact",
+                        initialPhoneToAssign = phone
+                    ).route
+                )
+            }
+            Intent.ACTION_INSERT_OR_EDIT -> {
                 val name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME)
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
                 navController.navigate(ContactEditScreenDestination(initialName = name, initialPhone = phone).route)

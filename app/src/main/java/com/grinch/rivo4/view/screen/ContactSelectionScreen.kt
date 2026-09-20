@@ -54,7 +54,8 @@ fun ContactSelectionScreen(
     title: String = "Select Contact",
     isMultiSelect: Boolean = false,
     actionButtonText: String = "Select",
-    returnContactId: Boolean = false
+    returnContactId: Boolean = false,
+    initialPhoneToAssign: String? = null
 ) {
     val viewModel: ContactsViewModel = koinActivityViewModel()
     val allContacts by viewModel.allContacts.collectAsState()
@@ -118,7 +119,7 @@ fun ContactSelectionScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { navigator.navigate(ContactEditScreenDestination()) }) {
+                    IconButton(onClick = { navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign)) }) {
                         Icon(Icons.Outlined.PersonAdd, contentDescription = "Create New Contact")
                     }
                     if (isMultiSelect && totalSelectedCount > 0) {
@@ -205,7 +206,7 @@ fun ContactSelectionScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Button(
-                                    onClick = { navigator.navigate(ContactEditScreenDestination()) },
+                                    onClick = { navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign)) },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(itemCornerDp)
                                 ) {
@@ -427,7 +428,14 @@ fun ContactSelectionScreen(
                                                     }
                                                 }
                                             } else {
-                                                if (returnContactId) {
+                                                if (initialPhoneToAssign != null) {
+                                                    navigator.navigate(
+                                                        ContactEditScreenDestination(
+                                                            contactId = contact.id,
+                                                            initialPhone = initialPhoneToAssign
+                                                        )
+                                                    )
+                                                } else if (returnContactId) {
                                                     resultNavigator.navigateBack(result = contact.id)
                                                 } else {
                                                     if (contact.phoneNumbers.size > 1) {

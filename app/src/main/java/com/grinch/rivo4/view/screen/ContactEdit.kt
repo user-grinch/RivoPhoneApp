@@ -115,6 +115,19 @@ fun ContactEditScreen(
                 } else {
                     phones.add(PhoneNumberEntry(""))
                 }
+                if (!initialPhone.isNullOrBlank()) {
+                    val cleanInitial = initialPhone.replace(Regex("[^0-9+]"), "")
+                    val alreadyPresent = phones.any {
+                        it.number.replace(Regex("[^0-9+]"), "") == cleanInitial
+                    }
+                    if (!alreadyPresent) {
+                        if (phones.size == 1 && phones[0].number.isBlank()) {
+                            phones[0] = PhoneNumberEntry(initialPhone)
+                        } else {
+                            phones.add(PhoneNumberEntry(initialPhone))
+                        }
+                    }
+                }
 
                 emails.clear()
                 val existingEmails = existing.emailEntries.ifEmpty {
