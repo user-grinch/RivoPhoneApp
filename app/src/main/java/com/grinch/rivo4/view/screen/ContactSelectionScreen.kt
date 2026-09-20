@@ -192,12 +192,38 @@ fun ContactSelectionScreen(
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold
                                     )
-                                    Spacer(Modifier.height(2.dp))
-                                    Text(
-                                        text = "${allContacts.size} contacts available • Tap to select or enter custom number",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
+                                    if (initialPhoneToAssign != null) {
+                                        Spacer(Modifier.height(4.dp))
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Phone,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(13.dp)
+                                                )
+                                                Spacer(Modifier.width(6.dp))
+                                                Text(
+                                                    text = formatPhoneNumber(initialPhoneToAssign),
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        Spacer(Modifier.height(2.dp))
+                                        Text(
+                                            text = "${allContacts.size} contacts available • Tap to select or enter custom number",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
                                 }
                             }
                             Spacer(Modifier.height(14.dp))
@@ -506,7 +532,7 @@ fun ContactSelectionScreen(
                                         }
                                     }
 
-                                    if (!isMultiSelect && primaryNumber.isNotBlank()) {
+                                    if (!isMultiSelect && (primaryNumber.isNotBlank() || initialPhoneToAssign != null)) {
                                         Icon(
                                             Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                                             contentDescription = null,
