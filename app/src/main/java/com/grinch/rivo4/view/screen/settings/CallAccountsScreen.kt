@@ -69,7 +69,6 @@ fun CallAccountsScreen(
     var alwaysFullScreenCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) }
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
     var floatingBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
-    var showRecentsStats by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, true)) }
     var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
     var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
     var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
@@ -277,17 +276,6 @@ fun CallAccountsScreen(
                                 }
                                 floatingBubble = enable
                                 prefs.setFloatingCallBubbleEnabled(enable)
-                            }
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        RivoSwitchListItem(
-                            headline = "Show Daily Stats in Recents",
-                            supporting = "Display summary cards for calls, talk time, and missed calls in the recents screen",
-                            leadingIcon = Icons.Outlined.Analytics,
-                            checked = showRecentsStats,
-                            onCheckedChange = {
-                                showRecentsStats = it
-                                prefs.setBoolean(PreferenceManager.KEY_SHOW_RECENTS_STATS, it)
                             }
                         )
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))

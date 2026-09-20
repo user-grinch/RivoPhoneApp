@@ -219,26 +219,12 @@ fun SettingsScreen(
                         onClick = { navigator.navigate(CallRecordingsScreenDestination()) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    val isAnalyticsTrackingEnabled = remember(settingsState) { prefs.isCallAnalyticsTrackingEnabled() }
-                    RivoSwitchListItem(
+                    RivoListItem(
                         headline = stringResource(R.string.settings_call_analytics_title),
-                        supporting = stringResource(
-                            if (isAnalyticsTrackingEnabled) R.string.settings_call_analytics_supporting
-                            else R.string.settings_call_analytics_disabled_supporting
-                        ),
+                        supporting = stringResource(R.string.settings_call_analytics_supporting),
                         leadingIcon = Icons.Outlined.Analytics,
-                        checked = isAnalyticsTrackingEnabled,
-                        onCheckedChange = { prefs.setCallAnalyticsTrackingEnabled(it) }
+                        onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
                     )
-                    if (isAnalyticsTrackingEnabled) {
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_call_analytics_view_title),
-                            supporting = stringResource(R.string.settings_call_analytics_view_supporting),
-                            leadingIcon = Icons.Outlined.Analytics,
-                            onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
-                        )
-                    }
                 }
             }
 
@@ -297,6 +283,15 @@ fun SettingsScreen(
                         supporting = stringResource(R.string.settings_contact_management_supporting),
                         leadingIcon = Icons.Outlined.ManageAccounts,
                         onClick = { navigator.navigate(ContactManagementScreenDestination) }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    val isContactManagementCardEnabled = remember(settingsState) { prefs.isContactManagementCardEnabled() }
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_contact_management_card),
+                        supporting = stringResource(R.string.settings_contact_management_card_supporting),
+                        leadingIcon = Icons.Outlined.Info,
+                        checked = isContactManagementCardEnabled,
+                        onCheckedChange = { prefs.setContactManagementCardEnabled(it) }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))
                     RivoListItem(

@@ -769,6 +769,8 @@
     <string name="contact_management_card_clean">Address Book Clean</string>
     <string name="contact_management_card_clean_sub">All contacts are unique • Tap to manage storage</string>
     <string name="contact_management_card_dup_sub">Tap to review and combine numbers, emails &amp; info</string>
+    <string name="settings_contact_management_card">Show Contact Management Card</string>
+    <string name="settings_contact_management_card_supporting">Display storage overview, cleanup status, and duplicate contact alerts above contacts</string>
 
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Floating Bar Corner Radius</string>

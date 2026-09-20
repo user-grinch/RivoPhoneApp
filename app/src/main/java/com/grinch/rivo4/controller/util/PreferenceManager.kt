@@ -401,6 +401,7 @@ class PreferenceManager(context: Context) {
         const val KEY_AUTO_PASTE_CLIPBOARD = "auto_paste_clipboard"
         const val KEY_SEPARATE_CONTACTS_ICON = "separate_contacts_icon"
         const val KEY_CALL_ANALYTICS_TRACKING = "call_analytics_tracking"
+        const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
     }
 
     fun getCallLogLimit(): Int = getInt(KEY_CALL_LOG_LIMIT, CALL_LOG_LIMIT_DEFAULT)
@@ -414,6 +415,9 @@ class PreferenceManager(context: Context) {
 
     fun isCallAnalyticsTrackingEnabled(): Boolean = getBoolean(KEY_CALL_ANALYTICS_TRACKING, true)
     fun setCallAnalyticsTrackingEnabled(enabled: Boolean) = setBoolean(KEY_CALL_ANALYTICS_TRACKING, enabled)
+
+    fun isContactManagementCardEnabled(): Boolean = getBoolean(KEY_SHOW_CONTACT_MANAGEMENT_CARD, true)
+    fun setContactManagementCardEnabled(enabled: Boolean) = setBoolean(KEY_SHOW_CONTACT_MANAGEMENT_CARD, enabled)
 
     fun isAppLockEnabled(): Boolean = getBoolean(KEY_APP_LOCK_ENABLED, false)
     fun setAppLockEnabled(enabled: Boolean) = setBoolean(KEY_APP_LOCK_ENABLED, enabled)

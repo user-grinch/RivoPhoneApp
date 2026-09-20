@@ -42,6 +42,8 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.PreferenceManager
+import org.koin.compose.koinInject
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.AZListScroll
 import com.grinch.rivo4.view.components.BottomBar
@@ -435,12 +437,15 @@ fun ContactContent(
     onToggleSelection: (String) -> Unit
 ) {
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val isContactCardEnabled = remember(settingsState) { prefs.isContactManagementCardEnabled() }
+
     val isLoading by contactsVM.isLoading.collectAsState()
     val contacts by contactsVM.filteredContacts.collectAsState()
     val groupedContacts by contactsVM.groupedContacts.collectAsState()
     val duplicateGroups by contactsVM.duplicateGroups.collectAsState()
 
-    var isCardDismissed by remember { mutableStateOf(false) }
     var showMergeAllDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isGranted) {
@@ -451,7 +456,7 @@ fun ContactContent(
 
     val pullToRefreshState = rememberPullToRefreshState()
 
-    val showTopCard = selectedIds.isEmpty() && !isCardDismissed
+    val showTopCard = selectedIds.isEmpty() && isContactCardEnabled
     val topCardHeader: (@Composable () -> Unit)? = if (showTopCard) {
         {
             ContactManagementTopCard(
@@ -463,7 +468,7 @@ fun ContactContent(
                     showMergeAllDialog = true
                 },
                 onHideCard = {
-                    isCardDismissed = true
+                    prefs.setContactManagementCardEnabled(false)
                 }
             )
         }

@@ -464,8 +464,7 @@ fun CallLogFullContent(
         }
         var showAddFavoriteDialog by remember { mutableStateOf(false) }
         val showRecentsStats = remember(settingsState) {
-            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, true) &&
-                prefs.isCallAnalyticsTrackingEnabled()
+            prefs.isCallAnalyticsTrackingEnabled()
         }
 
         val favRowState = rememberLazyListState()
@@ -572,9 +571,6 @@ fun CallLogFullContent(
                                     totalDurationSeconds = todayStats.totalDurationSeconds,
                                     onOpenAnalytics = {
                                         navigator.navigate(com.ramcosta.composedestinations.generated.destinations.CallAnalyticsScreenDestination())
-                                    },
-                                    onHideStats = {
-                                        prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_RECENTS_STATS, false)
                                     },
                                     modifier = Modifier.padding(vertical = 6.dp)
                                 )
@@ -849,8 +845,7 @@ fun RecentsDailyStatusHeader(
     missedCalls: Int = 0,
     totalDurationSeconds: Long = 0L,
     onOpenAnalytics: () -> Unit,
-    modifier: Modifier = Modifier,
-    onHideStats: (() -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
 

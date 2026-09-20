@@ -555,6 +555,20 @@ fun ContactManagementScreen(
 
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
+                    var contactManagementCard by remember(settingsState) { mutableStateOf(prefs.isContactManagementCardEnabled()) }
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_contact_management_card),
+                        supporting = stringResource(R.string.settings_contact_management_card_supporting),
+                        leadingIcon = Icons.Outlined.Info,
+                        checked = contactManagementCard,
+                        onCheckedChange = { enabled ->
+                            contactManagementCard = enabled
+                            prefs.setContactManagementCardEnabled(enabled)
+                        }
+                    )
+
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
                     RivoSwitchListItem(
                         headline = stringResource(R.string.settings_contacts_launcher_icon),
                         supporting = stringResource(R.string.settings_contacts_launcher_icon_supporting),
