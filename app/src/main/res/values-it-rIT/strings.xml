@@ -12,6 +12,10 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_create_new">Crea nuovo contatto</string>
+    <string name="contact_create_new_desc">Salva come nuovo contatto</string>
+    <string name="contact_add_to_existing">Aggiungi al contatto esistente</string>
+    <string name="contact_add_to_existing_desc">Aggiungi questo numero a un contatto esistente</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Secondo nome</string>
     <!-- Dialpad -->
@@ -46,6 +50,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">Mostra Scheda Gestione Contatti</string>
+    <string name="settings_contact_management_card_supporting">Visualizza la panoramica dell\'archiviazione, lo stato della pulizia e gli avvisi duplicati dei contatti sopra i contatti</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->

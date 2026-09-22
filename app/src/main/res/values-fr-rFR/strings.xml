@@ -137,6 +137,10 @@
     <string name="contact_clear_default">Retirer par défaut</string>
     <string name="contact_set_as_default">Définir par défaut</string>
     <string name="contact_add_to_contacts">Ajouter aux contacts</string>
+    <string name="contact_create_new">Créer un nouveau contact</string>
+    <string name="contact_create_new_desc">Enregistrer en tant que nouveau contact</string>
+    <string name="contact_add_to_existing">Ajouter à un contact existant</string>
+    <string name="contact_add_to_existing_desc">Ajouter ce numéro à un contact existant</string>
     <string name="contact_events_title">Événements et plus</string>
     <string name="contact_event_birthday">Anniversaire</string>
     <string name="contact_event_generic">Événement</string>
@@ -480,6 +484,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">Afficher la carte de gestion des contacts</string>
+    <string name="settings_contact_management_card_supporting">Afficher l\'aperçu du stockage, l\'état de nettoyage et les alertes de contact en double au-dessus des contacts</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
