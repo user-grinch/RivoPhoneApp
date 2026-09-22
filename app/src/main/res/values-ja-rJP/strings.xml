@@ -12,6 +12,10 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_create_new">新しい連絡先を作成</string>
+    <string name="contact_create_new_desc">新しい連絡先として保存</string>
+    <string name="contact_add_to_existing">既存の連絡先に追加</string>
+    <string name="contact_add_to_existing_desc">既存の連絡先にこの番号を追加</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">ミドルネーム</string>
     <!-- Dialpad -->
@@ -46,6 +50,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">連絡先管理カードを表示</string>
+    <string name="settings_contact_management_card_supporting">連絡先の上にストレージの概要、クリーンアップステータス、重複した連絡先アラートを表示します</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->

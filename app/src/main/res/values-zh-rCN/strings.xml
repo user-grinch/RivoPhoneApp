@@ -124,6 +124,10 @@
     <string name="contact_clear_default">清除默认值</string>
     <string name="contact_set_as_default">设置为默认</string>
     <string name="contact_add_to_contacts">添加到联系人</string>
+    <string name="contact_create_new">创建新联系人</string>
+    <string name="contact_create_new_desc">保存为新联系人</string>
+    <string name="contact_add_to_existing">添加到现有联系人</string>
+    <string name="contact_add_to_existing_desc">将此号码添加到现有联系人</string>
     <string name="contact_event_birthday">生日</string>
     <string name="contact_event_generic">事件</string>
     <string name="contact_recent_activity_title">近期活动</string>
@@ -200,6 +204,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">显示联系人管理卡</string>
+    <string name="settings_contact_management_card_supporting">显示存储概览、清理状态以及联系人上方的重复联系通知</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->

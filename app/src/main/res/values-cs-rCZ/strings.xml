@@ -12,6 +12,10 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_create_new">Vytvořit nový kontakt</string>
+    <string name="contact_create_new_desc">Uložit jako nový kontakt</string>
+    <string name="contact_add_to_existing">Přidat k existujícímu kontaktu</string>
+    <string name="contact_add_to_existing_desc">Přidat toto číslo k existujícímu kontaktu</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Prostřední jméno</string>
     <!-- Dialpad -->
@@ -46,6 +50,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">Zobrazit kartu pro správu kontaktů</string>
+    <string name="settings_contact_management_card_supporting">Zobrazit přehled, vyčištění stavu úložiště a duplicitní upozornění kontaktu nad kontakty</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->

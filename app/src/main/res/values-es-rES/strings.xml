@@ -149,6 +149,10 @@
     <string name="contact_clear_default">Eliminar predeterminado</string>
     <string name="contact_set_as_default">Establecer como predeterminado</string>
     <string name="contact_add_to_contacts">Añadir a Contactos</string>
+    <string name="contact_create_new">Crear nuevo contacto</string>
+    <string name="contact_create_new_desc">Guardar como un nuevo contacto</string>
+    <string name="contact_add_to_existing">Añadir al contacto existente</string>
+    <string name="contact_add_to_existing_desc">Añadir este número a un contacto existente</string>
     <string name="contact_events_title">Eventos &amp; más</string>
     <string name="contact_event_birthday">Cumpleaños</string>
     <string name="contact_event_generic">Evento</string>
@@ -158,6 +162,7 @@
     <string name="contact_custom_ringtone">Tono personalizado</string>
     <string name="contact_select_ringtone">Seleccionar tono</string>
     <string name="contact_share">Compartir contacto</string>
+    <string name="contact_share_description">Enviar datos de contacto a otros</string>
     <string name="contact_share_text">Nombre: %1$s\nTeléfono: %2$s</string>
     <string name="contact_qr_code">Código QR</string>
     <string name="contact_qr_code_description">Mostrar código QR de contacto</string>
@@ -167,6 +172,8 @@
     <string name="contact_remove_from_device">Eliminar este contacto del dispositivo</string>
     <string name="contact_delete_dialog_title">¿Eliminar contacto?</string>
     <string name="contact_delete_dialog_message">¿Estás seguro de que quieres eliminar este contacto? Esta acción no se puede deshacer.</string>
+    <string name="contact_personalization_title">Personalización</string>
+    <string name="contact_privacy_title">Privacidad &amp; seguridad</string>
     <!-- Contact edit -->
     <string name="contact_create_title">Crear contacto</string>
     <string name="contact_edit_title">Editar contacto</string>
@@ -195,6 +202,7 @@
     <string name="dialpad_start_hint">Introduce un nombre o número para empezar</string>
     <string name="content_desc_call_named">Llamar a %1$s</string>
     <string name="content_desc_backspace">Atrás</string>
+    <string name="dialpad_connect_via_social">Conectar a través de Social</string>
     <!-- Search -->
     <string name="search_contacts_placeholder">Buscar contactos</string>
     <string name="search_contacts_title">Buscar en Contactos</string>
@@ -323,6 +331,7 @@
     <string name="settings_sound_vibrate_on_answer_supporting">Vibrar cuando la otra parte conteste</string>
     <string name="settings_sound_vibrate_on_hangup">Vibrar al colgar</string>
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibrar cuando finalice la llamada</string>
+    <string name="settings_sound_haptic_scroll_supporting">Vibrar sutilmente al desplazar</string>
     <string name="settings_sound_missed_call_notifications">Notificaciones de llamadas perdidas</string>
     <string name="settings_sound_missed_call_notifications_supporting">Mostrar notificaciones de llamadas perdidas</string>
     <string name="settings_sound_ringtone_settings">Ajustes del tono de llamada</string>
@@ -341,6 +350,9 @@
     <string name="settings_call_enabled">Activado</string>
     <string name="settings_call_disabled">Desactivado</string>
     <string name="settings_call_default_sim">SIM predeterminada</string>
+    <string name="settings_call_calling_accounts">Cuentas de llamada</string>
+    <string name="settings_call_calling_accounts_supporting">Configurar ajustes del operador (Espera, Reenviando, etc.)</string>
+    <string name="settings_call_t9_dialing">Marcación T9</string>
     <string name="settings_call_t9_dialing_supporting">Predice palabras de las entradas del teclado numérico</string>
     <string name="settings_call_proximity_sensor">Sensor de proximidad</string>
     <string name="settings_call_proximity_sensor_supporting">Apagar la pantalla durante las llamadas cerca de la oreja</string>
@@ -350,6 +362,8 @@
     <string name="settings_call_incoming_ui_buttons">Botones</string>
     <string name="settings_call_incoming_ui_slide_ios">Deslizar para responder (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Deslizamiento vertical</string>
+    <string name="settings_call_always_fullscreen">Ir siempre a pantalla completa</string>
+    <string name="settings_call_always_fullscreen_supporting">Abrir llamadas entrantes en pantalla completa. Al desactivar, las llamadas se muestran como una notificación mientras usas otras aplicaciones.</string>
     <string name="settings_call_dialpad_style">Estilo del marcador</string>
     <string name="settings_call_dialpad_style_supporting">Apariencia visual del marcador del teléfono</string>
     <string name="settings_call_dialpad_style_modern">Moderna</string>
@@ -380,6 +394,7 @@
     <!-- Settings > Blocked numbers -->
     <string name="settings_blocked_title">Números bloqueados</string>
     <string name="settings_blocked_method">Método de bloqueo</string>
+    <string name="settings_blocked_method_supporting">Cómo se gestionan las llamadas bloqueadas</string>
     <string name="settings_blocked_method_decline">Rechazar automáticamente</string>
     <string name="settings_blocked_method_silent">Modo silencioso</string>
     <string name="settings_blocked_log_hide">Ocultar de los registros</string>
@@ -411,6 +426,7 @@
     <string name="settings_manage_name_format_first_first">Nombre primero</string>
     <string name="settings_manage_name_format_last_first">Apellido primero</string>
     <string name="settings_manage_storage">Almacenamiento</string>
+    <string name="settings_manage_private_contacts">Almacenamiento privado</string>
     <string name="settings_manage_quick_fixes">Correcciones rápidas</string>
     <string name="settings_manage_standardize_numbers_supporting">Remueve espacios y caracteres especiales de todos los números</string>
     <string name="settings_manage_no_duplicates">No se han encontrado duplicados</string>
@@ -421,8 +437,11 @@
     <string name="settings_visibility_local_memory_supporting">Contactos almacenados en el dispositivo</string>
     <string name="settings_visibility_reset_all">Restablecer para mostrar todo</string>
     <!-- Settings > Private storage -->
+    <string name="settings_private_title">Almacenamiento privado</string>
     <string name="content_desc_import">Importar</string>
     <string name="content_desc_export">Exportar</string>
+    <string name="settings_private_empty">No se encontraron contactos en el almacenamiento privado</string>
+    <string name="settings_private_manage_hint">Gestionar contactos almacenados en almacenamiento privado</string>
     <!-- Settings > Speed dial -->
     <string name="settings_speed_dial_title">Marcado rápido</string>
     <string name="settings_speed_dial_enable">Activar marcado rápido</string>
@@ -459,10 +478,15 @@
     <string name="about_check_updates">Buscar actualizaciones</string>
     <string name="about_current_version">Versión actual: %1$s</string>
     <string name="about_copyright">©️ Proyecto RivoPhone 2025-2026</string>
+    <string name="settings_top_card_subtext">Comprobar actualizaciones • Contribuidores • Donar</string>
+    <string name="settings_top_card_updates">Actualizaciones</string>
+    <string name="settings_top_card_donate">Donar</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Director de desarrollo</string>
     <string name="contributor_role_developer">Desarrollador</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
+    <string name="oem_perm_bg_recording">Audio en segundo plano</string>
+    <string name="oem_perm_autostart">Inicio automático</string>
     <!-- Favorites -->
     <string name="nav_favorites">Favoritos</string>
     <string name="favorites_permission_title">Se necesita permiso de contactos</string>
@@ -503,6 +527,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">Mostrar tarjeta de gestión de contactos</string>
+    <string name="settings_contact_management_card_supporting">Mostrar la vista general, el estado de limpieza y las alertas de contactos duplicadas sobre los contactos</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->

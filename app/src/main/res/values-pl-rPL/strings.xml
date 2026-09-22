@@ -153,6 +153,10 @@
     <string name="contact_clear_default">Usuń domyślne</string>
     <string name="contact_set_as_default">Ustaw jako domyślne</string>
     <string name="contact_add_to_contacts">Dodaj do kontaktów</string>
+    <string name="contact_create_new">Utwórz nowy kontakt</string>
+    <string name="contact_create_new_desc">Zapisz jako nowy kontakt</string>
+    <string name="contact_add_to_existing">Dodaj do istniejącego kontaktu</string>
+    <string name="contact_add_to_existing_desc">Dodaj ten numer do istniejącego kontaktu</string>
     <string name="contact_events_title">Wydarzenia i więcej</string>
     <string name="contact_event_birthday">Urodziny</string>
     <string name="contact_event_generic">Wydarzenie</string>
@@ -708,7 +712,7 @@
     <string name="contact_management_no_duplicates">Książka adresowa jest pusta. Nie znaleziono duplikatów.</string>
     <string name="contact_management_merge_all">Scal wszystkie</string>
     <string name="contact_management_merge_all_confirm_title">Scalić wszystkie duplikaty?</string>
-    <string name="contact_management_merge_all_confirm_msg">Spowoduje to połączenie numerów telefonów, adresów e-mail, adresów i notatek dla wszystkich %1$d grup duplikatów oraz usunięcie powtarzających się kontaktów.</string>
+    <string name="contact_management_merge_all_confirm_msg">Spowoduje to połączenie numerów telefonów, e-maili, adresów i notatek dla wszystkich %1$d zestawów duplikatów oraz usunięcie powtarzających się kontaktów.</string>
     <string name="contact_management_merge_success">Pomyślnie scalono %1$d grup duplikatów</string>
     <string name="contact_management_merge_group_btn">Scal</string>
     <string name="contact_management_ignore_btn">Odrzuć</string>
@@ -728,7 +732,9 @@
     <string name="contact_management_card_review">Przejrzyj i scal</string>
     <string name="contact_management_card_clean">Oczyszczenie książki adresowej</string>
     <string name="contact_management_card_clean_sub">Wszystkie kontakty są unikalne • Dotknij, aby zarządzać pamięcią</string>
-    <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i połączyć numery, e-maile i informacje</string>
+    <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i scalić numery, e-maile i informacje</string>
+    <string name="settings_contact_management_card">Pokaż kartę zarządzania kontaktami</string>
+    <string name="settings_contact_management_card_supporting">Wyświetl podgląd pamięci, status czyszczenia i zduplikowane powiadomienia o kontaktach powyżej kontaktów</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Zaokrąglenie rogów pływającego paska</string>
     <string name="settings_floating_bar_roundness_supporting">Dostosuj zaokrąglenie rogu i kształt pływającego paska nawigacji</string>
@@ -819,12 +825,12 @@
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Ustawienia połączeń systemowych</string>
     <!-- Call Analytics & Tracking -->
-    <string name="settings_call_analytics_title">Analiza połączeń &amp; Śledzenie</string>
+    <string name="settings_call_analytics_title">Analiza połączeń i śledzenie</string>
     <string name="settings_call_analytics_supporting">Śledź wskaźniki połączeń, statystyki czasu mowy, godziny szczytu i częste spostrzeżenia kontaktów</string>
     <string name="settings_call_analytics_disabled_supporting">Śledzenie połączeń i ich użycie są wyłączone</string>
-    <string name="settings_call_analytics_view_title">Zobacz Analityki &amp; Spostrzeżenia</string>
-    <string name="settings_call_analytics_view_supporting">Porozmawiaj z liderem czasu, godziny szczytowe &amp; rozkład</string>
-    <string name="call_analytics_disabled_title">Analityka połączeń &amp; Śledzenie wyłączone</string>
+    <string name="settings_call_analytics_view_title">Zobacz analizy i spostrzeżenia</string>
+    <string name="settings_call_analytics_view_supporting">Ranking czasu rozmów, godziny szczytu i rozkład połączeń</string>
+    <string name="call_analytics_disabled_title">Analiza i śledzenie połączeń wyłączone</string>
     <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczyć czas rozmowy, godziny szczytowe i spostrzeżenia kontaktów.</string>
-    <string name="call_analytics_enable_action">Włącz Analitykę &amp; Śledzenie</string>
+    <string name="call_analytics_enable_action">Włącz analizę i śledzenie</string>
 </resources>

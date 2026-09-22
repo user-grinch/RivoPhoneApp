@@ -153,6 +153,10 @@
     <string name="contact_clear_default">Сбросить по умолчанию</string>
     <string name="contact_set_as_default">Назначить по умолчанию</string>
     <string name="contact_add_to_contacts">Добавить в контакты</string>
+    <string name="contact_create_new">Создать новый контакт</string>
+    <string name="contact_create_new_desc">Сохранить как новый контакт</string>
+    <string name="contact_add_to_existing">Добавить в существующий контакт</string>
+    <string name="contact_add_to_existing_desc">Добавить этот номер к существующему контакту</string>
     <string name="contact_events_title">События &amp; ещё</string>
     <string name="contact_event_birthday">День рождения</string>
     <string name="contact_event_generic">Событие</string>
@@ -729,6 +733,8 @@
     <string name="contact_management_card_clean">Очистить адресную книгу</string>
     <string name="contact_management_card_clean_sub">Все контакты уникальны • Нажмите для управления памятью</string>
     <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты &amp; данных</string>
+    <string name="settings_contact_management_card">Показать карту управления контактами</string>
+    <string name="settings_contact_management_card_supporting">Отображать обзор хранения, статус очистки и дублирование уведомлений контакта выше контактов</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Радиус угла плавающей панели</string>
     <string name="settings_floating_bar_roundness_supporting">Настройте округление и таблетку плавающей панели навигации</string>
@@ -810,21 +816,21 @@
     <string name="settings_call_log_limit_1000">1000 звонков</string>
     <string name="settings_call_log_limit_unlimited">Неограниченный</string>
     <!-- Auto Paste Clipboard (#168) -->
-    <string name="settings_auto_paste_clipboard">Номер автовставки скопирован</string>
+    <string name="settings_auto_paste_clipboard">Автоматическая вставка скопированного номера</string>
     <string name="settings_auto_paste_clipboard_supporting">Автоматически заполнять панель номером телефона, скопированным в буфер обмена</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
     <string name="settings_contacts_launcher_icon">Иконка домашнего экрана \"Контакты\"</string>
-    <string name="settings_contacts_launcher_icon_supporting">Отображать иконку «Выделенные контакты» в меню приложений и домашнем экране</string>
+    <string name="settings_contacts_launcher_icon_supporting">Значок главного экрана с отдельными контактами</string>
     <string name="app_name_contacts">Контакты</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Настройки вызовов оператора системы</string>
     <!-- Call Analytics & Tracking -->
     <string name="settings_call_analytics_title">Аналитика вызовов &amp; Отслеживание</string>
     <string name="settings_call_analytics_supporting">Отслеживать метрику звонков, статистику по времени разговора, часы пика и частые контактные данные</string>
-    <string name="settings_call_analytics_disabled_supporting">Статистика звонков и звонков отключена</string>
+    <string name="settings_call_analytics_disabled_supporting">Отслеживание звонков и статистика их использования отключены</string>
     <string name="settings_call_analytics_view_title">Просмотр аналитики &amp; Прогнозы</string>
-    <string name="settings_call_analytics_view_supporting">Лидеры по времени, пиковые часы &amp; распределение</string>
+    <string name="settings_call_analytics_view_supporting">Таблица лидеров по времени разговора, часы пиковой нагрузки &amp; распределение</string>
     <string name="call_analytics_disabled_title">Аналитика вызовов &amp; Отслеживание отключено</string>
-    <string name="call_analytics_disabled_desc">В данный момент отключена функция отслеживания звонков и времени разговора. Включите эту опцию, чтобы вычислить время разговора, часы пика и контактные знания.</string>
+    <string name="call_analytics_disabled_desc">Аналитика звонков и отслеживание времени разговора в настоящее время отключены. Включите эту опцию, чтобы рассчитать время разговора, часы пиковой нагрузки и информацию о контактах.</string>
     <string name="call_analytics_enable_action">Включить аналитику &amp; отслеживание</string>
 </resources>

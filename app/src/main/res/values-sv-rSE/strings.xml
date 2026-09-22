@@ -12,6 +12,10 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_create_new">Skapa ny kontakt</string>
+    <string name="contact_create_new_desc">Spara som ny kontakt</string>
+    <string name="contact_add_to_existing">Lägg till i befintlig kontakt</string>
+    <string name="contact_add_to_existing_desc">Lägg till detta nummer till en befintlig kontakt</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Mitten namn</string>
     <!-- Dialpad -->
@@ -46,6 +50,8 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="settings_contact_management_card">Visa kontakthanteringskort</string>
+    <string name="settings_contact_management_card_supporting">Visa lagringsöversikt, rensa status och duplicera kontaktvarningar ovan kontakter</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
