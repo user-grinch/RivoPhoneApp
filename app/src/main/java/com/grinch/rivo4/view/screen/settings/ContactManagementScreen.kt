@@ -591,7 +591,6 @@ fun ContactManagementScreen(
             }
 
             item {
-                com.grinch.rivo4.view.components.ad.BannerAd()
             }
 
             item { Spacer(Modifier.height(40.dp)) }

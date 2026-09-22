@@ -290,7 +290,6 @@ fun InterfaceScreen(
                 }
 
                 item {
-                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
 
                 item { Spacer(modifier = Modifier.height(32.dp)) }

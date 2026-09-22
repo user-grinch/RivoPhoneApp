@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
@@ -54,47 +47,14 @@ fun BannerAd(
     if (!adsEnabled) return
 
     val context = LocalContext.current
-    val isDebug = remember {
-        (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    }
-    val effectiveAdUnitId = if (isDebug) TEST_NATIVE_BANNER_AD_UNIT_ID else adUnitId
 
-    var loadedNativeAd by remember { mutableStateOf<NativeAd?>(AdPreloader.consumeBannerAd(context)) }
-    var isFailedToLoad by remember { mutableStateOf(false) }
-
-    DisposableEffect(effectiveAdUnitId) {
-        if (loadedNativeAd == null) {
-            AdPreloader.init(context)
-
-            val adLoader = AdLoader.Builder(context, effectiveAdUnitId)
-                .forNativeAd { ad: NativeAd ->
-                    loadedNativeAd = ad
-                    isFailedToLoad = false
-                    Log.d(TAG, "Native banner loaded successfully ($effectiveAdUnitId)")
-                }
-                .withAdListener(object : AdListener() {
-                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                        isFailedToLoad = true
-                        Log.w(TAG, "Native banner failed to load: ${loadAdError.code} - ${loadAdError.message}")
-                    }
-                })
-                .withNativeAdOptions(
-                    NativeAdOptions.Builder()
-                        .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
-                        .build()
-                )
-                .build()
-
-            adLoader.loadAd(AdRequest.Builder().build())
-        }
-
-        onDispose {
-            loadedNativeAd?.destroy()
-        }
+    LaunchedEffect(Unit) {
+        AdPreloader.requestBannerAd(context)
     }
 
-    val nativeAd = loadedNativeAd
-    if (nativeAd != null && !isFailedToLoad) {
+    val nativeAd by AdPreloader.bannerAdState.collectAsState()
+
+    nativeAd?.let { currentAd ->
         val primaryColor = MaterialTheme.colorScheme.primary.toArgb()
         val onPrimaryColor = MaterialTheme.colorScheme.onPrimary.toArgb()
         val onSurfaceColor = MaterialTheme.colorScheme.onSurface.toArgb()
@@ -123,7 +83,7 @@ fun BannerAd(
                     )
                 },
                 update = { view ->
-                    populateNativeBannerView(view, nativeAd)
+                    populateNativeBannerView(view, currentAd)
                 }
             )
         }
@@ -306,4 +266,3 @@ private fun populateNativeBannerView(nativeAdView: NativeAdView, nativeAd: Nativ
 
     nativeAdView.setNativeAd(nativeAd)
 }
-

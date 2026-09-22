@@ -1,9 +1,7 @@
 package com.grinch.rivo4.view.components.ad
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.graphics.Typeface
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -27,15 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.compose.koinInject
@@ -58,52 +49,14 @@ fun PostCallNativeAd(
     if (!adsEnabled) return
 
     val context = LocalContext.current
-    val isDebug = remember {
-        (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    }
-    val effectiveAdUnitId = if (isDebug) TEST_NATIVE_AD_UNIT_ID else adUnitId
 
-    var loadedNativeAd by remember { mutableStateOf<NativeAd?>(AdPreloader.consumePostCallAd(context)) }
-    var isFailedToLoad by remember { mutableStateOf(false) }
-
-    DisposableEffect(effectiveAdUnitId) {
-        if (loadedNativeAd == null) {
-            AdPreloader.init(context)
-
-            val adLoader = AdLoader.Builder(context, effectiveAdUnitId)
-                .forNativeAd { ad: NativeAd ->
-                    loadedNativeAd = ad
-                    isFailedToLoad = false
-                    Log.d(TAG, "Native ad loaded successfully ($effectiveAdUnitId)")
-                }
-                .withAdListener(object : AdListener() {
-                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                        isFailedToLoad = true
-                        Log.w(TAG, "Native ad failed to load: ${loadAdError.code} - ${loadAdError.message}")
-                    }
-                })
-                .withNativeAdOptions(
-                    NativeAdOptions.Builder()
-                        .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
-                        .setVideoOptions(
-                            VideoOptions.Builder()
-                                .setStartMuted(true)
-                                .build()
-                        )
-                        .build()
-                )
-                .build()
-
-            adLoader.loadAd(AdRequest.Builder().build())
-        }
-
-        onDispose {
-            loadedNativeAd?.destroy()
-        }
+    LaunchedEffect(Unit) {
+        AdPreloader.requestPostCallAd(context)
     }
 
-    val nativeAd = loadedNativeAd
-    if (nativeAd != null && !isFailedToLoad) {
+    val nativeAd by AdPreloader.postCallAdState.collectAsState()
+
+    nativeAd?.let { currentAd ->
         val primaryColor = MaterialTheme.colorScheme.primary.toArgb()
         val onPrimaryColor = MaterialTheme.colorScheme.onPrimary.toArgb()
         val onSurfaceColor = MaterialTheme.colorScheme.onSurface.toArgb()
@@ -135,7 +88,7 @@ fun PostCallNativeAd(
                         )
                     },
                     update = { view ->
-                        populateNativeAdView(view, nativeAd)
+                        populateNativeAdView(view, currentAd)
                     }
                 )
             }
@@ -161,8 +114,8 @@ private fun createExpressiveNativeAdView(
         )
     }
 
-    // Top Header: Sponsor icon / name + "Ad" pill badge
-    val topHeader = LinearLayout(context).apply {
+    // Top Row: [AD badge + Advertiser]
+    val topMetaRow = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         layoutParams = LinearLayout.LayoutParams(
@@ -173,57 +126,65 @@ private fun createExpressiveNativeAdView(
         }
     }
 
-    val iconView = ImageView(context).apply {
-        id = View.generateViewId()
-        val sizePx = (20 * dp).toInt()
-        layoutParams = LinearLayout.LayoutParams(sizePx, sizePx).apply {
-            marginEnd = (6 * dp).toInt()
-        }
-        scaleType = ImageView.ScaleType.FIT_CENTER
-    }
-    nativeAdView.iconView = iconView
-    topHeader.addView(iconView)
-
-    val advertiserView = TextView(context).apply {
-        id = View.generateViewId()
-        textSize = 11f
-        setTypeface(null, Typeface.BOLD)
-        setTextColor(onSurfaceVariant)
-        maxLines = 1
-        ellipsize = android.text.TextUtils.TruncateAt.END
-        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-    }
-    nativeAdView.advertiserView = advertiserView
-    topHeader.addView(advertiserView)
-
-    // "AD" badge pill
     val adBadge = TextView(context).apply {
-        text = "AD"
-        textSize = 8.5f
+        text = "Sponsored"
+        textSize = 9.5f
         setTypeface(null, Typeface.BOLD)
         setTextColor(onSurfaceVariant)
         background = android.graphics.drawable.GradientDrawable().apply {
             shape = android.graphics.drawable.GradientDrawable.RECTANGLE
-            cornerRadius = 4 * dp
-            setColor((onSurfaceVariant and 0x00FFFFFF) or 0x22000000)
+            cornerRadius = 5 * dp
+            setColor((onSurfaceVariant and 0x00FFFFFF) or 0x20000000)
         }
-        setPadding((5 * dp).toInt(), (1 * dp).toInt(), (5 * dp).toInt(), (1 * dp).toInt())
+        setPadding((5 * dp).toInt(), (2 * dp).toInt(), (5 * dp).toInt(), (2 * dp).toInt())
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            marginEnd = (6 * dp).toInt()
+        }
     }
-    topHeader.addView(adBadge)
+    topMetaRow.addView(adBadge)
 
-    root.addView(topHeader)
+    val advertiserView = TextView(context).apply {
+        id = View.generateViewId()
+        textSize = 11.5f
+        setTextColor(onSurfaceVariant)
+        maxLines = 1
+    }
+    nativeAdView.advertiserView = advertiserView
+    topMetaRow.addView(advertiserView)
 
-    // Content: Horizontal split (Left: Headline, Body, CTA. Right: MediaView)
+    root.addView(topMetaRow)
+
+    // Middle Content Row: Icon + (Headline & Body)
     val contentRow = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+        ).apply {
+            bottomMargin = (8 * dp).toInt()
+        }
     }
 
-    // Left info column
+    val iconView = ImageView(context).apply {
+        id = View.generateViewId()
+        val sizePx = (46 * dp).toInt()
+        layoutParams = LinearLayout.LayoutParams(sizePx, sizePx).apply {
+            marginEnd = (12 * dp).toInt()
+        }
+        scaleType = ImageView.ScaleType.FIT_CENTER
+        background = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            cornerRadius = 12 * dp
+        }
+        clipToOutline = true
+    }
+    nativeAdView.iconView = iconView
+    contentRow.addView(iconView)
+
     val textCol = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
@@ -234,118 +195,112 @@ private fun createExpressiveNativeAdView(
         textSize = 14f
         setTypeface(null, Typeface.BOLD)
         setTextColor(onSurfaceColor)
-        maxLines = 2
-        ellipsize = android.text.TextUtils.TruncateAt.END
+        maxLines = 1
     }
     nativeAdView.headlineView = headlineView
     textCol.addView(headlineView)
 
     val bodyView = TextView(context).apply {
         id = View.generateViewId()
-        textSize = 11.5f
+        textSize = 12f
         setTextColor(onSurfaceVariant)
         maxLines = 2
-        ellipsize = android.text.TextUtils.TruncateAt.END
-        setPadding(0, (2 * dp).toInt(), 0, 0)
     }
     nativeAdView.bodyView = bodyView
     textCol.addView(bodyView)
 
-    // Call To Action button
-    val ctaButton = Button(context).apply {
-        id = View.generateViewId()
-        val btnHeightPx = (36 * dp).toInt()
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            btnHeightPx
-        ).apply {
-            topMargin = (8 * dp).toInt()
-        }
-        background = android.graphics.drawable.GradientDrawable().apply {
-            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
-            cornerRadius = 18 * dp
-            setColor(primaryColor)
-        }
-        setTextColor(onPrimaryColor)
-        textSize = 12f
-        setTypeface(null, Typeface.BOLD)
-        isAllCaps = false
-        elevation = 0f
-        setPadding((16 * dp).toInt(), 0, (16 * dp).toInt(), 0)
-    }
-    nativeAdView.callToActionView = ctaButton
-    textCol.addView(ctaButton)
-
     contentRow.addView(textCol)
+    root.addView(contentRow)
 
-    // Right: Media visual (AdMob requires >= 120dp x 120dp for video)
+    // Media View (Optional, compact)
     val mediaView = MediaView(context).apply {
         id = View.generateViewId()
-        val mediaWidthPx = (125 * dp).toInt()
-        val mediaHeightPx = (122 * dp).toInt()
-        layoutParams = LinearLayout.LayoutParams(mediaWidthPx, mediaHeightPx).apply {
-            marginStart = (10 * dp).toInt()
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        minimumWidth = (120 * dp).toInt()
-        minimumHeight = (120 * dp).toInt()
-        outlineProvider = object : android.view.ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: android.graphics.Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, 12 * dp)
-            }
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            (120 * dp).toInt()
+        ).apply {
+            bottomMargin = (8 * dp).toInt()
         }
         clipToOutline = true
+        background = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            cornerRadius = 12 * dp
+        }
     }
     nativeAdView.mediaView = mediaView
-    contentRow.addView(mediaView)
+    root.addView(mediaView)
 
-    root.addView(contentRow)
+    // Call to Action Button (Full width expressive button)
+    val ctaButton = Button(context).apply {
+        id = View.generateViewId()
+        textSize = 13f
+        setTypeface(null, Typeface.BOLD)
+        setTextColor(onPrimaryColor)
+        background = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            cornerRadius = 16 * dp
+            setColor(primaryColor)
+        }
+        isAllCaps = false
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            (40 * dp).toInt()
+        )
+    }
+    nativeAdView.callToActionView = ctaButton
+    root.addView(ctaButton)
+
     nativeAdView.addView(root)
     return nativeAdView
 }
 
 private fun populateNativeAdView(nativeAdView: NativeAdView, nativeAd: NativeAd) {
-    val headlineView = nativeAdView.headlineView as? TextView
-    val bodyView = nativeAdView.bodyView as? TextView
-    val iconView = nativeAdView.iconView as? ImageView
+    (nativeAdView.headlineView as? TextView)?.text = nativeAd.headline
+
     val advertiserView = nativeAdView.advertiserView as? TextView
-    val callToActionView = nativeAdView.callToActionView as? Button
-    val mediaView = nativeAdView.mediaView as? MediaView
-
-    headlineView?.text = nativeAd.headline
-    headlineView?.visibility = if (nativeAd.headline.isNullOrEmpty()) View.GONE else View.VISIBLE
-
-    bodyView?.text = nativeAd.body
-    bodyView?.visibility = if (nativeAd.body.isNullOrEmpty()) View.GONE else View.VISIBLE
-
-    val advertiserText = nativeAd.advertiser ?: nativeAd.store
-    if (!advertiserText.isNullOrEmpty()) {
-        advertiserView?.text = advertiserText
+    if (nativeAd.advertiser != null) {
+        advertiserView?.text = nativeAd.advertiser
+        advertiserView?.visibility = View.VISIBLE
+    } else if (nativeAd.store != null) {
+        advertiserView?.text = nativeAd.store
         advertiserView?.visibility = View.VISIBLE
     } else {
         advertiserView?.visibility = View.GONE
     }
 
-    if (nativeAd.icon != null && nativeAd.icon?.drawable != null) {
+    val bodyView = nativeAdView.bodyView as? TextView
+    if (nativeAd.body != null) {
+        bodyView?.text = nativeAd.body
+        bodyView?.visibility = View.VISIBLE
+    } else {
+        bodyView?.visibility = View.GONE
+    }
+
+    val iconView = nativeAdView.iconView as? ImageView
+    if (nativeAd.icon != null) {
         iconView?.setImageDrawable(nativeAd.icon?.drawable)
         iconView?.visibility = View.VISIBLE
     } else {
         iconView?.visibility = View.GONE
     }
 
-    if (!nativeAd.callToAction.isNullOrEmpty()) {
-        callToActionView?.text = nativeAd.callToAction
-        callToActionView?.visibility = View.VISIBLE
-    } else {
-        callToActionView?.visibility = View.GONE
-    }
-
-    if (nativeAd.mediaContent != null && (nativeAd.mediaContent?.hasVideoContent() == true || nativeAd.images.isNotEmpty())) {
-        mediaView?.setMediaContent(nativeAd.mediaContent!!)
-        mediaView?.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+    val mediaView = nativeAdView.mediaView as? MediaView
+    if (nativeAd.mediaContent != null && nativeAd.mediaContent?.hasVideoContent() == true) {
+        mediaView?.mediaContent = nativeAd.mediaContent
+        mediaView?.visibility = View.VISIBLE
+    } else if (nativeAd.images.isNotEmpty()) {
+        mediaView?.mediaContent = nativeAd.mediaContent
         mediaView?.visibility = View.VISIBLE
     } else {
         mediaView?.visibility = View.GONE
+    }
+
+    val ctaButton = nativeAdView.callToActionView as? Button
+    if (nativeAd.callToAction != null) {
+        ctaButton?.text = nativeAd.callToAction
+        ctaButton?.visibility = View.VISIBLE
+    } else {
+        ctaButton?.visibility = View.GONE
     }
 
     nativeAdView.setNativeAd(nativeAd)

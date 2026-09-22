@@ -471,7 +471,6 @@ fun FakeCallSchedulerScreen(
                 }
 
                 item {
-                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
             }
         } else if (schedules.isEmpty()) {
@@ -554,7 +553,6 @@ fun FakeCallSchedulerScreen(
                         }
                     }
 
-                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
             }
         } else {
@@ -879,7 +877,6 @@ fun FakeCallSchedulerScreen(
                 }
 
                 item {
-                    com.grinch.rivo4.view.components.ad.BannerAd()
                 }
             }
         }

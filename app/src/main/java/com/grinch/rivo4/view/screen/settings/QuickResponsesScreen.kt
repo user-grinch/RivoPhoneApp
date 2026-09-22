@@ -189,7 +189,6 @@ fun QuickResponsesScreen(
             }
 
             item {
-                com.grinch.rivo4.view.components.ad.BannerAd()
             }
         }
     }

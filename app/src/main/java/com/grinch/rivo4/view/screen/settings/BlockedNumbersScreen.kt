@@ -493,7 +493,6 @@ fun BlockedNumbersScreen(
             }
 
             item {
-                com.grinch.rivo4.view.components.ad.BannerAd()
             }
 
             item { Spacer(Modifier.height(80.dp)) }

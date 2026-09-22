@@ -244,7 +244,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 )
             }
 
-            com.grinch.rivo4.view.components.ad.BannerAd()
 
             Text(
                 text = stringResource(R.string.about_copyright),
