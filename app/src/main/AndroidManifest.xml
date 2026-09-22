@@ -129,7 +129,7 @@
                 <data android:scheme="tel" />
             </intent-filter>
 
-            <!-- Contacts Intent Filters -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -138,7 +138,7 @@
                 <data android:mimeType="vnd.android.cursor.item/person" />
             </intent-filter>
 
-            <!-- Add/Insert Contact -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -147,7 +147,7 @@
                 <data android:mimeType="vnd.android.cursor.dir/raw_contact" />
             </intent-filter>
 
-            <!-- Edit Contact -->
+            
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -179,99 +179,61 @@
         <activity
             android:name=".controller.CallActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
-            android:showWhenLocked="true"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustNothing"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:excludeFromRecents="true"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:inheritShowWhenLocked="true"
             android:directBootAware="true"
             android:theme="@style/Theme.RivoPhone" />
 
         <activity
+            android:name=".controller.PostCallActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.Rivo.TranslucentPostCall" />
+
+        <activity
+            android:name=".controller.MissedCallActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.Rivo.TranslucentPostCall" />
+
+        <activity
             android:name=".controller.fakecall.FakeCallActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
-            android:showWhenLocked="true"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustNothing"
-            android:directBootAware="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:excludeFromRecents="true"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:theme="@style/Theme.RivoPhone" />
 
-        <service
-            android:name=".controller.CallService"
-            android:permission="android.permission.BIND_INCALL_SERVICE"
-            android:foregroundServiceType="phoneCall|microphone"
-            android:directBootAware="true"
+        <receiver
+            android:name=".controller.fakecall.FakeCallReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.telecom.InCallService" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".controller.CallScreeningServiceImpl"
-            android:permission="android.permission.BIND_SCREENING_SERVICE"
-            android:directBootAware="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.telecom.CallScreeningService" />
-            </intent-filter>
-        </service>
-
-        <receiver
-            android:name=".controller.reminder.ReminderReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.grinch.rivo4.ACTION_TRIGGER_REMINDER" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".controller.reminder.ReminderDismissReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.grinch.rivo4.ACTION_DISMISS_REMINDER" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".controller.HeadsetHookReceiver"
-            android:exported="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".controller.CallActionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.grinch.rivo4.ACTION_DECLINE" />
-                <action android:name="com.grinch.rivo4.ACTION_SPEAKER" />
-                <action android:name="com.grinch.rivo4.ACTION_MUTE" />
-                <action android:name="com.grinch.rivo4.ACTION_HANGUP" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".controller.MissedCallActionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.grinch.rivo4.ACTION_DISMISS_MISSED_CALL" />
-                <action android:name="com.grinch.rivo4.ACTION_CALL_BACK_MISSED_CALL" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".controller.BootReceiver"
-            android:exported="false"
-            android:directBootAware="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="com.grinch.rivo4.ACTION_TRIGGER_FAKE_CALL" />
+                <action android:name="com.grinch.rivo4.ACTION_DECLINE_FAKE_CALL" />
+                <action android:name="com.grinch.rivo4.ACTION_MUTE_FAKE_CALL" />
+                <action android:name="com.grinch.rivo4.ACTION_SPEAKER_FAKE_CALL" />
+                <action android:name="com.grinch.rivo4.ACTION_CANCEL_FAKE_CALL" />
+                <action android:name="com.grinch.rivo4.ACTION_TEST_RECORD" />
             </intent-filter>
         </receiver>
 
@@ -285,6 +247,41 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <service
+            android:name=".controller.CallService"
+            android:permission="android.permission.BIND_INCALL_SERVICE"
+            android:foregroundServiceType="phoneCall|microphone"
+            android:directBootAware="true"
+            android:exported="true">
+            <meta-data
+                android:name="android.telecom.IN_CALL_SERVICE_UI"
+                android:value="true" />
+            <intent-filter>
+                <action android:name="android.telecom.InCallService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".controller.CallRecordingService"
+            android:foregroundServiceType="microphone"
+            android:exported="false" />
+
+        <service
+            android:name=".controller.floating.FloatingCallService"
+            android:foregroundServiceType="phoneCall"
+            android:exported="false" />
+
+        <receiver
+            android:name=".controller.reminder.CallbackReminderReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>
