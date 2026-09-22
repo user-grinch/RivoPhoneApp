@@ -118,10 +118,6 @@ fun CallLogTileSimple(
                             if (log.count > 1) append(" (${log.count})")
                         },
                         supporting = buildString {
-                            if (!log.name.isNullOrBlank() && log.name != log.number) {
-                                append(formatPhoneNumber(log.number))
-                                append(" • ")
-                            }
                             append(callTypeLabel)
                             append(" • ")
                             append(formatDate(context, log.date))
@@ -236,24 +232,24 @@ fun CallLogTile(
                         } ?: formatPhoneNumber(log.number)
                     }
 
-                    RivoListItem(
-                        headline = buildString {
-                            append(displayName)
-                            if (log.count > 1) append(" (${log.count})")
-                        },
-                        supporting = buildString {
-                            if (log.name != null && log.name != log.number) {
-                                append(formatPhoneNumber(log.number))
-                            }
-                        },
-                        supporting2 = buildString {
+                    val timeSimText = remember(log.date, log.simLabel, showSim) {
+                        buildString {
                             if (showSim && log.simLabel != null) {
                                 append(log.simLabel)
                                 append(" • ")
                             }
                             append(formatTime(context, log.date))
+                        }
+                    }
+
+                    RivoListItem(
+                        headline = buildString {
+                            append(displayName)
+                            if (log.count > 1) append(" (${log.count})")
                         },
-                        avatarName = log.name ?: formatPhoneNumber(log.number),
+                        supporting = timeSimText,
+                        supporting2 = null,
+                        avatarName = log.name?.takeIf { it.isNotBlank() } ?: formatPhoneNumber(log.number),
                         photoUri = log.photoUri,
                         badgeIcon = icon,
                         badgeColor = badgeColor,

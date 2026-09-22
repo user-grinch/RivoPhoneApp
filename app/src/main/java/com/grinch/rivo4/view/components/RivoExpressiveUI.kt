@@ -513,7 +513,7 @@ fun RivoListItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (supporting != null) {
+                if (!supporting.isNullOrBlank()) {
                     Text(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
@@ -522,7 +522,7 @@ fun RivoListItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                if (supporting2 != null) {
+                if (!supporting2.isNullOrBlank()) {
                     Text(
                         text = supporting2,
                         style = RivoListItemDefaults.metaStyle(),
