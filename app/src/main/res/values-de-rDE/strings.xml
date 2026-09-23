@@ -278,16 +278,16 @@
     <string name="settings_interface_primary_color">Primärfarbe</string>
     <string name="settings_interface_amoled">Amoled Dark Mode</string>
     <string name="settings_interface_amoled_supporting">Komplett schwarz für UI-Elemente.</string>
-    <string name="settings_interface_show_first_letter">Anfangsbuchstabe in Avatar anzeigen</string>
+    <string name="settings_interface_show_first_letter">Anfangsbuchstabe in Avatar</string>
     <string name="settings_interface_show_first_letter_supporting">Buchstabe anzeigen, wenn Bild fehlt</string>
-    <string name="settings_interface_colorful_avatars">Farbige Avatare verwenden</string>
+    <string name="settings_interface_colorful_avatars">Farbige Avatare</string>
     <string name="settings_interface_colorful_avatars_supporting">Zufällige Farben basierend auf Kontakt-Name</string>
     <string name="settings_interface_gradient_avatars">Verlaufende Kontakt-Avatare</string>
-    <string name="settings_interface_gradient_avatars_supporting">Mehrfarbige verlaufende Hintergründe verwenden</string>
-    <string name="settings_interface_show_picture">Bild in Avatar anzeigen</string>
+    <string name="settings_interface_gradient_avatars_supporting">Mehrfarbige verlaufende Hintergründe</string>
+    <string name="settings_interface_show_picture">Kontaktbild als Avatar</string>
     <string name="settings_interface_show_picture_supporting">Kontakt-Bild anzeigen soweit verfügbar</string>
     <string name="settings_interface_avatar_shape">Avatar-Form</string>
-    <string name="settings_interface_avatar_shape_supporting">Form der Kontakt-Avatare wählen</string>
+    <string name="settings_interface_avatar_shape_supporting">Form der Kontakt-Avatare</string>
     <string name="settings_interface_avatar_shape_squircle">Quadrat-Kreis</string>
     <string name="settings_interface_avatar_shape_circle">Kreis</string>
     <string name="settings_interface_avatar_shape_square">Quadrat</string>
@@ -300,9 +300,9 @@
     <string name="settings_interface_avatar_shape_heart">Herz</string>
     <string name="settings_interface_avatar_shape_burst">Weiche Explosion</string>
     <string name="settings_interface_call_screen_avatar">Anrufbildschirm Avatar</string>
-    <string name="settings_interface_call_screen_avatar_supporting">Kontaktbild auf Anrufbildschirm anzeigen</string>
-    <string name="settings_interface_show_dividers">Trenner anzeigen</string>
-    <string name="settings_interface_show_dividers_supporting">Linien zwischen Listeneinträgen anzeigen</string>
+    <string name="settings_interface_call_screen_avatar_supporting">Kontaktbild auf Anrufbildschirm</string>
+    <string name="settings_interface_show_dividers">Trenner</string>
+    <string name="settings_interface_show_dividers_supporting">Linien zwischen Listeneinträgen</string>
     <string name="settings_interface_expressive_cards">Expressive Cards benutzen</string>
     <string name="settings_interface_expressive_cards_supporting">Listeneinträge in stilisierten Karten anordnen</string>
     <string name="settings_interface_transition_animation">Übergangs-Animationen</string>
@@ -340,7 +340,7 @@
     <string name="settings_sound_haptic_scroll">Haptisches Feedback beim Scrollen</string>
     <string name="settings_sound_haptic_scroll_supporting">Leichte Vibration beim Scrollen</string>
     <string name="settings_sound_missed_call_notifications">Benachrichtigung bei verpassten Anrufen</string>
-    <string name="settings_sound_missed_call_notifications_supporting">Benachrichtigung bei verpassten Anrufen anzeigen</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Benachrichtigung bei verpassten Anrufen</string>
     <string name="settings_sound_ringtone_settings">Klingelton-Einstellungen</string>
     <string name="settings_sound_ringtone_settings_supporting">Sound-Systemeinstellungen öffnen</string>
     <string name="call_failed_airplane_mode">Anruf kann wegen Flugmodus nicht ausgeführt werden</string>
@@ -363,7 +363,7 @@
     <string name="settings_call_t9_dialing_supporting">Worte über numerische Eingaben vorhersagen</string>
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Bildschirm bei Anrufen abschalten, wenn Gerät nahe Ohr</string>
-    <string name="settings_call_incoming_ui">Bildschirm bei eingehendem Anruf</string>
+    <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
     <string name="settings_call_incoming_ui_buttons">Schaltflächen</string>
@@ -549,8 +549,8 @@
     <string name="settings_bottom_nav_move_up">Hochschieben</string>
     <string name="settings_bottom_nav_move_down">Herunterschieben</string>
     <string name="settings_bottom_nav_reset">Auf Standard zurücksetzen</string>
-    <string name="settings_interface_merge_favorites">Favoriten unter \"Zuletzt\" anzeigen</string>
-    <string name="settings_interface_merge_favorites_supporting">Favoriten-Bereich oben unter \"Zuletzt\" weiter anzeigen</string>
+    <string name="settings_interface_merge_favorites">Favoriten unter \"Zuletzt\"</string>
+    <string name="settings_interface_merge_favorites_supporting">Favoriten unter \"Zuletzt\"  anzeigen</string>
     <!-- Blocking -->
     <string name="action_block">Blockieren</string>
     <string name="action_unblock">Nicht mehr blockieren</string>
@@ -572,8 +572,8 @@
     </plurals>
     <!-- Contact call screen background -->
     <string name="contact_call_background">Hintergrund des Anrufbildschirms</string>
-    <string name="settings_interface_hide_avatar_with_bg">Profilbild verbergen, wenn Hintergrund verfügbar ist</string>
-    <string name="settings_interface_hide_avatar_with_bg_supporting">Anrufer-Avatar auf dem Anrufbildschirm verbergen, wenn ein Anrufhintergrund aktiviert ist</string>
+    <string name="settings_interface_hide_avatar_with_bg">Kontaktbild verbergen bei Hintergrund</string>
+    <string name="settings_interface_hide_avatar_with_bg_supporting">Bei aktiviertem Hintergrund kein Anrufer-Avatar</string>
     <string name="settings_interface_use_cards">Expressive Cards benutzen</string>
     <string name="settings_interface_use_cards_supporting">Einträge unter \"Zuletzt\" und \"Kontakte\" als Expressive Cards darstellen</string>
     <string name="contact_call_background_set">Ausgewähltes individuelles Bild</string>
@@ -772,7 +772,7 @@
     <string name="notif_channel_calls_desc">Benachrichtigungen zu eingehenden, andauernden und verpassten Anrufen</string>
     <!-- Missed Call Card & Auto Decline -->
     <string name="settings_missed_call_card_title">Verpasste Anrufe-Popup</string>
-    <string name="settings_missed_call_card_supporting">Nach verpasstem Anruf sofortiges Popup für schnellen Rückruf, SMS-Antworten und Messaging-Apps anzeigen</string>
+    <string name="settings_missed_call_card_supporting">Nach verpasstem Anruf sofortiges Popup für schnellen Rückruf, SMS-Antworten und Messenger-Apps anzeigen</string>
     <string name="missed_call_just_now">Gerade verpasster Anruf, klingelte %1$ds</string>
     <string name="missed_call_view_logs">Anrufliste anzeigen</string>
     <string name="missed_call_respond_with_message">Mit Nachricht antworten</string>
@@ -813,8 +813,8 @@
     <string name="settings_auto_paste_clipboard">Kopierte Nummer automatisch einfügen</string>
     <string name="settings_auto_paste_clipboard_supporting">In Wahlfeld automatisch die aktuell in die Zwischenablage kopierte Telefonnummer einfügen</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
-    <string name="settings_contacts_launcher_icon">Eigenes Symbol für Kontakte auf Startbildschirm</string>
-    <string name="settings_contacts_launcher_icon_supporting">Eigenes Kontaktsymbol in App Launcher und Startbildschirm anzeigen</string>
+    <string name="settings_contacts_launcher_icon">Eigenes Kontakt-Symbol auf Startbildschirm</string>
+    <string name="settings_contacts_launcher_icon_supporting">Eigenes Kontaktsymbol in App-Launcher und Startbildschirm</string>
     <string name="app_name_contacts">Kontakte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Systemanruf-Einstellungen</string>
