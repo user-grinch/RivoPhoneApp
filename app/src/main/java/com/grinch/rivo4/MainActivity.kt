@@ -1,5 +1,6 @@
 package com.grinch.rivo4
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -291,13 +292,30 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
             return
         }
 
-        when (action) {
-            "com.grinch.rivo4.ACTION_VIEW_RECENTS" -> {
-                navController.navigate(MainScreenDestination(initialTab = 0).route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
+        val isMissedCallOrRecents = action == "com.grinch.rivo4.ACTION_VIEW_RECENTS" ||
+                action == "android.telecom.action.SHOW_MISSED_CALLS_NOTIFICATION" ||
+                (action == Intent.ACTION_VIEW && (
+                    intent.type == android.provider.CallLog.Calls.CONTENT_TYPE ||
+                    data?.authority == "call_log" ||
+                    data?.toString()?.contains("call_log") == true ||
+                    data?.toString()?.contains("calls") == true
+                ))
+
+        if (isMissedCallOrRecents) {
+            try {
+                val telecomManager = getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager
+                telecomManager?.cancelMissedCallsNotification()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+            navController.navigate(MainScreenDestination(initialTab = 0).route) {
+                popUpTo(navController.graph.startDestinationId)
+                launchSingleTop = true
+            }
+            return
+        }
+
+        when (action) {
             Intent.ACTION_DIAL, Intent.ACTION_VIEW, Intent.ACTION_CALL -> {
                 if (data?.scheme == "tel") {
                     val rawNumber = data.schemeSpecificPart

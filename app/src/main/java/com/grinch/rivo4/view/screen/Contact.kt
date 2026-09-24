@@ -230,17 +230,17 @@ fun AccountFilterBar(viewModel: ContactsViewModel) {
         }
         item {
             RivoFilterChip(stringResource(R.string.label_local_memory), showLocalOnly, {
-                viewModel.setShowLocalOnly(true)
+                viewModel.setShowLocalOnly(!showLocalOnly)
             })
         }
         item {
             RivoFilterChip(stringResource(R.string.contact_filter_private), showPrivateOnly, {
-                viewModel.setShowPrivateOnly(true)
+                viewModel.setShowPrivateOnly(!showPrivateOnly)
             })
         }
         items(accounts) { account ->
             RivoFilterChip(ContactUtils.getFriendlyAccountName(LocalContext.current, account), selectedAccount == account, {
-                viewModel.selectAccount(account)
+                viewModel.selectAccount(if (selectedAccount == account) null else account)
             })
         }
     }

@@ -27,9 +27,11 @@ data class EmailEntry(
 data class Contact(
     val id: String,
     val name: String,
+    val prefix: String? = null,
     val givenName: String? = null,
     val middleName: String? = null,
     val familyName: String? = null,
+    val suffix: String? = null,
     val nickname: String? = null,
     val phoneNumbers: List<String> = emptyList(),
     val emails: List<String> = emptyList(),
@@ -49,9 +51,11 @@ data class Contact(
     val formattedDisplayName: String
         get() {
             val parts = listOfNotNull(
+                prefix?.trim()?.ifBlank { null },
                 givenName?.trim()?.ifBlank { null },
                 middleName?.trim()?.ifBlank { null },
-                familyName?.trim()?.ifBlank { null }
+                familyName?.trim()?.ifBlank { null },
+                suffix?.trim()?.ifBlank { null }
             )
             return if (parts.isNotEmpty()) {
                 parts.joinToString(" ")

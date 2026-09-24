@@ -151,12 +151,11 @@ fun AZListScroll(
                         RivoExpressiveCard(isCompact = true) {
                             val unknownLabel = stringResource(R.string.label_unknown)
                             contactsForChar.forEachIndexed { index, contact ->
-                                val displayName = ContactUtils.formatContactName(
-                                    contact.name.ifEmpty {
-                                        contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: unknownLabel
-                                    },
-                                    displayOrder
-                                )
+                                val displayName = if (contact.name.isNotBlank()) {
+                                    ContactUtils.formatContactName(contact, displayOrder)
+                                } else {
+                                    contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: unknownLabel
+                                }
                                 RivoSwipeToActionBox(
                                     enabled = swipeEnabled,
                                     swipeRightAction = swipeRightAction,

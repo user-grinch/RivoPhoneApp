@@ -384,6 +384,8 @@
     <string name="settings_call_t9_dialing_supporting">Predicts words from numeric keypad inputs</string>
     <string name="settings_call_proximity_sensor">Proximity Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Turn off screen during calls when near ear</string>
+    <string name="settings_call_auto_speaker_proximity">Auto Speakerphone</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Switch to speaker when away from ear, earpiece when near ear (suppressed when headphones connected)</string>
     <string name="settings_call_incoming_ui">Incoming Call UI</string>
     <string name="settings_call_incoming_ui_supporting">Choose how to answer incoming calls</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontal Swipe</string>

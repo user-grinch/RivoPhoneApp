@@ -7,6 +7,11 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.telecom.CallAudioState
 import android.os.PowerManager
 import android.telecom.Call
 import android.telecom.TelecomManager
@@ -68,6 +73,44 @@ class CallActivity : ComponentActivity() {
     private val contactsRepo: IContactsRepository by inject()
     private val preferenceManager: PreferenceManager by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
+    private var proximitySensorManager: SensorManager? = null
+    private var proximitySensor: Sensor? = null
+    private var isProximityListenerRegistered = false
+    private val proximityListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent?) {
+            if (event == null || event.values.isEmpty()) return
+            if (!preferenceManager.isAutoSpeakerProximityEnabled()) return
+
+            val hasActiveCall = CallService.allCalls.value.any { it.state == Call.STATE_ACTIVE }
+            if (!hasActiveCall) return
+
+            val audioState = CallService.audioState.value
+            val isHeadsetOrBt = audioState?.let {
+                it.route == CallAudioState.ROUTE_WIRED_HEADSET ||
+                it.route == CallAudioState.ROUTE_BLUETOOTH ||
+                (it.supportedRouteMask and CallAudioState.ROUTE_WIRED_HEADSET) != 0 ||
+                it.activeBluetoothDevice != null
+            } ?: false
+
+            if (isHeadsetOrBt) return
+
+            val maxRange = proximitySensor?.maximumRange ?: 5f
+            val distance = event.values[0]
+            val isNear = distance < maxRange.coerceAtMost(5f)
+
+            if (isNear) {
+                if (audioState?.route != CallAudioState.ROUTE_EARPIECE) {
+                    CallService.setAudioRoute(CallAudioState.ROUTE_EARPIECE)
+                }
+            } else {
+                if (audioState?.route != CallAudioState.ROUTE_SPEAKER) {
+                    CallService.setAudioRoute(CallAudioState.ROUTE_SPEAKER)
+                }
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
     private var isFinishingCall = false
     private val identityCache = mutableMapOf<String, CachedCallIdentity>()
 
@@ -182,6 +225,11 @@ class CallActivity : ComponentActivity() {
                             } else {
                                 releaseProximityLock()
                             }
+                            if (preferenceManager.isAutoSpeakerProximityEnabled()) {
+                                startProximitySensorRouting()
+                            } else {
+                                stopProximitySensorRouting()
+                            }
                         }
 
                         Call.STATE_DIALING -> {
@@ -197,6 +245,7 @@ class CallActivity : ComponentActivity() {
                         }
 
                         Call.STATE_DISCONNECTED -> {
+                            stopProximitySensorRouting()
                             if (preferenceManager.getBoolean(
                                     PreferenceManager.KEY_VIBRATE_ON_HANGUP,
                                     false
@@ -418,7 +467,28 @@ class CallActivity : ComponentActivity() {
         }
     }
 
+    private fun startProximitySensorRouting() {
+        if (!preferenceManager.isAutoSpeakerProximityEnabled()) return
+        if (isProximityListenerRegistered) return
+        if (proximitySensorManager == null) {
+            proximitySensorManager = getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+            proximitySensor = proximitySensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        }
+        proximitySensor?.let { sensor ->
+            proximitySensorManager?.registerListener(proximityListener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            isProximityListenerRegistered = true
+        }
+    }
+
+    private fun stopProximitySensorRouting() {
+        if (isProximityListenerRegistered) {
+            proximitySensorManager?.unregisterListener(proximityListener)
+            isProximityListenerRegistered = false
+        }
+    }
+
     override fun onDestroy() {
+        stopProximitySensorRouting()
         super.onDestroy()
         CallService.isActivityVisible.value = false
         releaseProximityLock()
@@ -433,6 +503,7 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun dismissCallScreen() {
+        stopProximitySensorRouting()
         if (isFinishingCall) return
         isFinishingCall = true
 

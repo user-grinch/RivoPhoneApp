@@ -366,7 +366,7 @@ fun DialPadScreen(
                                 ) {
                                     Box(modifier = Modifier.weight(1f)) {
                                         RivoListItem(
-                                            headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact.name, displayOrder),
+                                            headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder),
                                             supporting = buildString {
                                                 contact.nickname?.let { append("$it • ") }
                                                 contactNumber?.let { append(formatPhoneNumber(it)) }

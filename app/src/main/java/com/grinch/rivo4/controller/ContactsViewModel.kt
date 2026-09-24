@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.controller.util.ContactUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -67,7 +68,8 @@ class ContactsViewModel(
         _showPrivateOnly,
         _showLocalOnly,
         _visibleAccounts,
-        _sortOrder
+        _sortOrder,
+        _availableAccounts
     ) { args ->
         val contacts = args[0] as List<Contact>
         val account = args[1] as Account?
@@ -75,35 +77,62 @@ class ContactsViewModel(
         val localOnly = args[3] as Boolean
         val visibleAccounts = args[4] as Set<String>?
         val sortOrder = args[5] as Int
+        val availableAccountsList = args[6] as List<Account>
 
         val baseFiltered = when {
             privateOnly -> contacts.filter { it.isPrivate }
-            localOnly -> contacts.filter { it.accountName == null && it.accountType == null }
+            localOnly -> contacts.filter { !it.isPrivate && ContactUtils.isLocalAccount(it.accountType, it.accountName, availableAccountsList) }
             account == null -> {
                 if (visibleAccounts == null) contacts
                 else contacts.filter { contact ->
-                    val key = if (contact.accountType == null && contact.accountName == null) "local|local" else "${contact.accountType}|${contact.accountName}"
-                    visibleAccounts.contains(key) || contact.isPrivate
+                    if (contact.isPrivate) {
+                        true
+                    } else if (ContactUtils.isLocalAccount(contact.accountType, contact.accountName, availableAccountsList)) {
+                        visibleAccounts.contains("local|local")
+                    } else {
+                        val key = "${contact.accountType}|${contact.accountName}"
+                        visibleAccounts.contains(key)
+                    }
                 }
             }
             else -> contacts.filter { it.accountName == account.name && it.accountType == account.type }
         }
         
         if (sortOrder == 1) {
-            baseFiltered.sortedBy { it.name.split(" ").lastOrNull()?.lowercase() ?: it.name.lowercase() }
+            baseFiltered.sortedBy { contact ->
+                val sortKey = when {
+                    !contact.familyName.isNullOrBlank() -> contact.familyName
+                    !contact.givenName.isNullOrBlank() -> contact.givenName
+                    else -> contact.name.split(" ").lastOrNull() ?: contact.name
+                }
+                sortKey.lowercase()
+            }
         } else {
-            baseFiltered.sortedBy { it.name.lowercase() }
+            baseFiltered.sortedBy { contact ->
+                val sortKey = when {
+                    !contact.givenName.isNullOrBlank() -> contact.givenName
+                    else -> contact.name
+                }
+                sortKey.lowercase()
+            }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val groupedContacts = combine(filteredContacts, _sortOrder) { contacts, sortOrder ->
-        val mainGroups = contacts.groupBy {
+        val mainGroups = contacts.groupBy { contact ->
             val nameToUse = if (sortOrder == 1) {
-                it.name.split(" ").lastOrNull() ?: it.name
+                when {
+                    !contact.familyName.isNullOrBlank() -> contact.familyName
+                    !contact.givenName.isNullOrBlank() -> contact.givenName
+                    else -> contact.name.split(" ").lastOrNull() ?: contact.name
+                }
             } else {
-                it.name
+                when {
+                    !contact.givenName.isNullOrBlank() -> contact.givenName
+                    else -> contact.name
+                }
             }
-            val firstChar = nameToUse.firstOrNull()?.uppercaseChar() ?: '#'
+            val firstChar = nameToUse.trim().firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 
