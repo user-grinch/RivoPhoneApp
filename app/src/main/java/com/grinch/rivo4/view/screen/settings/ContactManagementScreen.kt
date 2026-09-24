@@ -110,29 +110,49 @@ fun ContactManagementScreen(
     var showMoveAllConfirmDialog by remember { mutableStateOf(false) }
 
     // Filter contacts belonging to selected source storage
-    val sourceContacts = remember(allContacts, selectedSourceStorage) {
+    val sourceContacts = remember(allContacts, selectedSourceStorage, availableAccounts) {
         when (val src = selectedSourceStorage) {
-            is StorageTarget.LocalMemory -> allContacts.filter { !it.isPrivate && it.accountName == null && it.accountType == null }
+            is StorageTarget.LocalMemory -> allContacts.filter { !it.isPrivate && ContactUtils.isContactLocal(it, availableAccounts) }
             is StorageTarget.PrivateStorage -> allContacts.filter { it.isPrivate }
-            is StorageTarget.SimCard -> allContacts.filter { !it.isPrivate && it.accountName == src.account.name && it.accountType == src.account.type }
-            is StorageTarget.CloudAccount -> allContacts.filter { !it.isPrivate && it.accountName == src.account.name && it.accountType == src.account.type }
+            is StorageTarget.SimCard -> allContacts.filter { contact ->
+                !ContactUtils.isContactLocal(contact, availableAccounts) && !contact.isPrivate && (
+                    (contact.accountName == src.account.name && contact.accountType == src.account.type) ||
+                    contact.linkedAccounts.any { it.name == src.account.name && it.type == src.account.type }
+                )
+            }
+            is StorageTarget.CloudAccount -> allContacts.filter { contact ->
+                !ContactUtils.isContactLocal(contact, availableAccounts) && !contact.isPrivate && (
+                    (contact.accountName == src.account.name && contact.accountType == src.account.type) ||
+                    contact.linkedAccounts.any { it.name == src.account.name && it.type == src.account.type }
+                )
+            }
         }
     }
 
-    val destContactsCount = remember(allContacts, selectedDestStorage) {
+    val destContactsCount = remember(allContacts, selectedDestStorage, availableAccounts) {
         when (val dst = selectedDestStorage) {
-            is StorageTarget.LocalMemory -> allContacts.count { !it.isPrivate && it.accountName == null && it.accountType == null }
+            is StorageTarget.LocalMemory -> allContacts.count { !it.isPrivate && ContactUtils.isContactLocal(it, availableAccounts) }
             is StorageTarget.PrivateStorage -> allContacts.count { it.isPrivate }
-            is StorageTarget.SimCard -> allContacts.count { !it.isPrivate && it.accountName == dst.account.name && it.accountType == dst.account.type }
-            is StorageTarget.CloudAccount -> allContacts.count { !it.isPrivate && it.accountName == dst.account.name && it.accountType == dst.account.type }
+            is StorageTarget.SimCard -> allContacts.count { contact ->
+                !ContactUtils.isContactLocal(contact, availableAccounts) && !contact.isPrivate && (
+                    (contact.accountName == dst.account.name && contact.accountType == dst.account.type) ||
+                    contact.linkedAccounts.any { it.name == dst.account.name && it.type == dst.account.type }
+                )
+            }
+            is StorageTarget.CloudAccount -> allContacts.count { contact ->
+                !ContactUtils.isContactLocal(contact, availableAccounts) && !contact.isPrivate && (
+                    (contact.accountName == dst.account.name && contact.accountType == dst.account.type) ||
+                    contact.linkedAccounts.any { it.name == dst.account.name && it.type == dst.account.type }
+                )
+            }
         }
     }
 
     // Counts by storage
-    val localCount = remember(allContacts) { allContacts.count { !it.isPrivate && it.accountName == null && it.accountType == null } }
+    val localCount = remember(allContacts, availableAccounts) { allContacts.count { !it.isPrivate && ContactUtils.isContactLocal(it, availableAccounts) } }
     val privateCount = remember(allContacts) { allContacts.count { it.isPrivate } }
-    val simCount = remember(allContacts) { allContacts.count { !it.isPrivate && it.accountType?.contains("sim", ignoreCase = true) == true } }
-    val cloudCount = remember(allContacts) { allContacts.count { !it.isPrivate && it.accountType != null && it.accountType?.contains("sim", ignoreCase = true) != true } }
+    val simCount = remember(allContacts, availableAccounts) { allContacts.count { !it.isPrivate && !ContactUtils.isContactLocal(it, availableAccounts) && it.accountType?.contains("sim", ignoreCase = true) == true } }
+    val cloudCount = remember(allContacts, availableAccounts) { allContacts.count { !it.isPrivate && !ContactUtils.isContactLocal(it, availableAccounts) && it.accountType?.contains("sim", ignoreCase = true) != true } }
 
     Scaffold(
         topBar = {

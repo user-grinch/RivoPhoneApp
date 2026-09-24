@@ -24,6 +24,12 @@ data class EmailEntry(
 )
 
 @Serializable
+data class AccountEntry(
+    val name: String?,
+    val type: String?
+)
+
+@Serializable
 data class Contact(
     val id: String,
     val name: String,
@@ -46,7 +52,8 @@ data class Contact(
     val accountType: String? = null,
     val isPrivate: Boolean = false,
     val isHidden: Boolean = false,
-    val notes: String? = null
+    val notes: String? = null,
+    val linkedAccounts: List<AccountEntry> = emptyList()
 ) {
     val formattedDisplayName: String
         get() {

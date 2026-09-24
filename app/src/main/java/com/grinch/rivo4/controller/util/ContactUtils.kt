@@ -11,7 +11,7 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 
 object ContactUtils {
-    fun isLocalAccount(accountType: String?, accountName: String?, availableAccounts: List<Account>): Boolean {
+    fun isLocalAccount(accountType: String?, accountName: String?, availableAccounts: List<Account> = emptyList()): Boolean {
         if (accountType == null || accountName == null) return true
         val typeLower = accountType.lowercase()
         val nameLower = accountName.lowercase()
@@ -20,7 +20,17 @@ object ContactUtils {
             nameLower == "phone" || nameLower == "device" || nameLower == "default" || nameLower == "local") {
             return true
         }
+        if (availableAccounts.isEmpty()) return false
         return availableAccounts.none { it.type.equals(accountType, ignoreCase = true) && it.name.equals(accountName, ignoreCase = true) }
+    }
+
+    /**
+     * Helper to determine whether a contact is stored locally (either as primary account or in its linked accounts).
+     */
+    fun isContactLocal(contact: Contact, availableAccounts: List<Account> = emptyList()): Boolean {
+        if (contact.isPrivate) return false
+        if (isLocalAccount(contact.accountType, contact.accountName, availableAccounts)) return true
+        return contact.linkedAccounts.any { isLocalAccount(it.type, it.name, availableAccounts) }
     }
 
     fun getFriendlyAccountName(context: Context, account: Account): String {
@@ -51,7 +61,6 @@ object ContactUtils {
         }
         return name
     }
-
     fun formatContactName(contact: Contact, displayOrder: Int): String {
         return if (displayOrder == 1) {
             if (!contact.familyName.isNullOrBlank()) {

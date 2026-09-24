@@ -16,6 +16,8 @@ import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.db.PrivateContactDao
 import com.grinch.rivo4.modal.db.PrivateContactEntity
+import com.grinch.rivo4.modal.data.AccountEntry
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.CallBackgroundStore
@@ -43,6 +45,27 @@ class ContactsRepository(
         return rawName
     }
 
+    private fun isSyncAdapterAccount(type: String?): Boolean {
+        if (type == null) return false
+        val t = type.lowercase()
+        return t.contains("whatsapp") || t.contains("telegram") || t.contains("viber") || t.contains("skype")
+    }
+
+    private fun pickPrimaryAccount(
+        rawList: List<AccountEntry>,
+        availableAccounts: List<Account>
+    ): Pair<String?, String?> {
+        if (rawList.isEmpty()) return Pair(null, null)
+        val local = rawList.find { ContactUtils.isLocalAccount(it.type, it.name, availableAccounts) }
+        if (local != null) return Pair(local.name, local.type)
+
+        val cloud = rawList.find { !isSyncAdapterAccount(it.type) }
+        if (cloud != null) return Pair(cloud.name, cloud.type)
+
+        val first = rawList.first()
+        return Pair(first.name, first.type)
+    }
+
     override fun getContacts(includePrivate: Boolean, includeHidden: Boolean): List<Contact> {
         val contactsMap = LinkedHashMap<String, Contact>()
         
@@ -55,7 +78,8 @@ class ContactsRepository(
             }
         }
 
-        val accountMap = mutableMapOf<String, Pair<String?, String?>>()
+        val availableAccountsList = getAvailableAccounts()
+        val rawAccountsMap = mutableMapOf<String, MutableList<AccountEntry>>()
         try {
             contentResolver.query(
                 ContactsContract.RawContacts.CONTENT_URI,
@@ -72,8 +96,10 @@ class ContactsRepository(
                     val name = if (nameCol != -1) cursor.getString(nameCol) else null
                     val type = if (typeCol != -1) cursor.getString(typeCol) else null
                     if (!contactId.isNullOrBlank()) {
-                        if (!accountMap.containsKey(contactId) || (name != null && type != null)) {
-                            accountMap[contactId] = Pair(name, type)
+                        val entry = AccountEntry(name, type)
+                        val list = rawAccountsMap.getOrPut(contactId) { mutableListOf() }
+                        if (list.none { it.name == name && it.type == type }) {
+                            list.add(entry)
                         }
                     }
                 }
@@ -115,15 +141,17 @@ class ContactsRepository(
                             contactsMap[id] = existingContact.copy(phoneNumbers = numbers)
                         }
                     } else {
-                        val accInfo = accountMap[id]
+                        val linked = rawAccountsMap[id] ?: emptyList()
+                        val (primaryName, primaryType) = pickPrimaryAccount(linked, availableAccountsList)
                         contactsMap[id] = Contact(
                             id = id,
                             name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
                             phoneNumbers = mutableListOf(number),
-                            accountName = accInfo?.first,
-                            accountType = accInfo?.second
+                            accountName = primaryName,
+                            accountType = primaryType,
+                            linkedAccounts = linked
                         )
                     }
                 }
@@ -305,15 +333,16 @@ class ContactsRepository(
                     val ringtone = cursor.getString(ringtoneIdx)
 
                     val currentContact = contact ?: run {
-                        val (accName, accType) = getAccountInfo(resolvedId)
+                        val (accInfo, linked) = getAccountInfoWithLinked(resolvedId)
                         Contact(
                             id = id,
                             name = formatName(cursor.getString(nameIdx) ?: unknownLabel),
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = isStarred,
                             customRingtone = ringtone,
-                            accountName = accName,
-                            accountType = accType
+                            accountName = accInfo.first,
+                            accountType = accInfo.second,
+                            linkedAccounts = linked
                         )
                     }
 
@@ -472,7 +501,8 @@ class ContactsRepository(
         return getRawContactIds(contactId).firstOrNull()
     }
 
-    private fun getAccountInfo(contactId: String): Pair<String?, String?> {
+    private fun getAccountInfoWithLinked(contactId: String): Pair<Pair<String?, String?>, List<AccountEntry>> {
+        val entries = mutableListOf<AccountEntry>()
         try {
             contentResolver.query(
                 ContactsContract.RawContacts.CONTENT_URI,
@@ -481,18 +511,26 @@ class ContactsRepository(
                 arrayOf(contactId),
                 null
             )?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val nameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
-                    val typeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                val nameIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME)
+                val typeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                while (cursor.moveToNext()) {
                     val name = if (nameIdx != -1) cursor.getString(nameIdx) else null
                     val type = if (typeIdx != -1) cursor.getString(typeIdx) else null
-                    return Pair(name, type)
+                    val entry = AccountEntry(name, type)
+                    if (entries.none { it.name == name && it.type == type }) {
+                        entries.add(entry)
+                    }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return Pair(null, null)
+        val primary = pickPrimaryAccount(entries, getAvailableAccounts())
+        return Pair(primary, entries)
+    }
+
+    private fun getAccountInfo(contactId: String): Pair<String?, String?> {
+        return getAccountInfoWithLinked(contactId).first
     }
 
     override fun saveContact(contact: Contact) {
@@ -965,13 +1003,17 @@ class ContactsRepository(
                         listOf(number)
                     }
 
+                    val (accInfo, linked) = if (id.isNotBlank()) getAccountInfoWithLinked(id) else Pair(Pair(null, null), emptyList())
                     return Contact(
                         id = id,
                         name = formatName(name ?: unknownLabel),
                         photoUri = photoUri,
                         isFavorite = starred,
                         phoneNumbers = numbers,
-                        customRingtone = ringtone
+                        customRingtone = ringtone,
+                        accountName = accInfo.first,
+                        accountType = accInfo.second,
+                        linkedAccounts = linked
                     )
                 }
             }

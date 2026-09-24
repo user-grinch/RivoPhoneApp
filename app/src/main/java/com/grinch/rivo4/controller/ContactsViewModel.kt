@@ -81,21 +81,26 @@ class ContactsViewModel(
 
         val baseFiltered = when {
             privateOnly -> contacts.filter { it.isPrivate }
-            localOnly -> contacts.filter { !it.isPrivate && ContactUtils.isLocalAccount(it.accountType, it.accountName, availableAccountsList) }
+            localOnly -> contacts.filter { !it.isPrivate && ContactUtils.isContactLocal(it, availableAccountsList) }
             account == null -> {
                 if (visibleAccounts == null) contacts
                 else contacts.filter { contact ->
                     if (contact.isPrivate) {
                         true
-                    } else if (ContactUtils.isLocalAccount(contact.accountType, contact.accountName, availableAccountsList)) {
+                    } else if (ContactUtils.isContactLocal(contact, availableAccountsList)) {
                         visibleAccounts.contains("local|local")
                     } else {
-                        val key = "${contact.accountType}|${contact.accountName}"
-                        visibleAccounts.contains(key)
+                        val hasVisibleAccount = contact.linkedAccounts.any { acc ->
+                            visibleAccounts.contains("${acc.type}|${acc.name}")
+                        }
+                        hasVisibleAccount || visibleAccounts.contains("${contact.accountType}|${contact.accountName}")
                     }
                 }
             }
-            else -> contacts.filter { it.accountName == account.name && it.accountType == account.type }
+            else -> contacts.filter { contact ->
+                (contact.accountName == account.name && contact.accountType == account.type) ||
+                        contact.linkedAccounts.any { it.name == account.name && it.type == account.type }
+            }
         }
         
         if (sortOrder == 1) {
