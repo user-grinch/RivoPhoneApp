@@ -332,6 +332,8 @@
     <string name="settings_call_t9_dialing_supporting">Prédit des mots à partir des touches du clavier numérique</string>
     <string name="settings_call_proximity_sensor">Capteur de proximité</string>
     <string name="settings_call_proximity_sensor_supporting">Éteindre l’écran pendant les appels lorsqu’il est près de l’oreille</string>
+    <string name="settings_call_auto_speaker_proximity">Haut-parleur automatique</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Basculer vers le haut-parleur quand il est éloigné de l\'oreille, l\'écouteur lorsque l\'oreille est près de l\'oreille (supprimé lorsque les écouteurs sont connectés)</string>
     <string name="settings_call_incoming_ui">Interface d’appel entrant</string>
     <string name="settings_call_incoming_ui_supporting">Choisissez comment répondre aux appels entrants</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Glissement horizontal</string>
