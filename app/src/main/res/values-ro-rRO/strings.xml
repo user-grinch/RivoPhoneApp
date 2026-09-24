@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Difuzor automat</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Comutaţi la difuzor atunci când nu sunteţi în ureche, căşti în apropierea urechii (suprimate atunci când sunt conectate căşti)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

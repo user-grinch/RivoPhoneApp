@@ -356,6 +356,8 @@
     <string name="settings_call_t9_dialing_supporting">Predice palabras de las entradas del teclado numérico</string>
     <string name="settings_call_proximity_sensor">Sensor de proximidad</string>
     <string name="settings_call_proximity_sensor_supporting">Apagar la pantalla durante las llamadas cerca de la oreja</string>
+    <string name="settings_call_auto_speaker_proximity">Altavoz automático</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Cambiar al altavoz cuando esté lejos de la oreja, auricular cuando esté cerca de la oreja (reprimido cuando los auriculares se conectan)</string>
     <string name="settings_call_incoming_ui">IU de la llamada entrante</string>
     <string name="settings_call_incoming_ui_supporting">Elige cómo responder a llamadas entrantes</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Deslizamiento horizontal</string>
