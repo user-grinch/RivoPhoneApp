@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automaattinen Kaiutinpuhelin</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Vaihda kaiuttimeen, kun se on poissa korvasta, kuuloke kun se on lähellä korvaa (sammutetaan kuulokkeet yhdistettynä)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

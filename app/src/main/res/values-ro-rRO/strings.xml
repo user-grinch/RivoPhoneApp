@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Îmbinare apeluri</string>
     <string name="conference_call">Apel conferință</string>
+    <string name="content_desc_select_option">Selectează opțiunea</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->

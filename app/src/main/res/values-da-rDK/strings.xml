@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automatisk Højttalertelefon</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Skift til højttaler, når den er væk fra øret, øreemnet når nær øret (undertrykket, når hovedtelefoner er tilsluttet)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

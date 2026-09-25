@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">自動スピーカーフォン</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">耳から離れた時にスピーカーに切り替える（ヘッドホン接続時には消去）</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

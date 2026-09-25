@@ -367,6 +367,8 @@
     <string name="settings_call_t9_dialing_supporting">Предиктивный ввод с цифровой клавиатуры</string>
     <string name="settings_call_proximity_sensor">Датчик приближения</string>
     <string name="settings_call_proximity_sensor_supporting">Датчик приближения во время вызова</string>
+    <string name="settings_call_auto_speaker_proximity">Автодинамик</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Переключаться на динамик при отключении от уха и уха при приближении уха (подавление при подключении наушников)</string>
     <string name="settings_call_incoming_ui">Интерфейс входящего вызова</string>
     <string name="settings_call_incoming_ui_supporting">Выберите способ ответа на входящие вызовы</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Горизонтальный свайп</string>

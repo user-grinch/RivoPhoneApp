@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automatisk høyttalertelefon</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Bytt til høyttaler når man ikke er fra øret, ørestykket når det er nær øret (undertrykkes når hodetelefoner kobles til)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

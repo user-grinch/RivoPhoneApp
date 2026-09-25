@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Altoparlante Automatico</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Passare all\'altoparlante quando lontano dall\'orecchio, auricolare quando vicino all\'orecchio (soppresso quando le cuffie si sono collegate)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

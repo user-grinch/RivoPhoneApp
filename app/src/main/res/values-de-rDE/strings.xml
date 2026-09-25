@@ -281,7 +281,7 @@
     <string name="settings_interface_show_first_letter">Anfangsbuchstabe in Avatar</string>
     <string name="settings_interface_show_first_letter_supporting">Buchstabe anzeigen, wenn Bild fehlt</string>
     <string name="settings_interface_colorful_avatars">Farbige Avatare</string>
-    <string name="settings_interface_colorful_avatars_supporting">Zufällige Farben basierend auf Kontakt-Name</string>
+    <string name="settings_interface_colorful_avatars_supporting">Zufällige Farben je nach Kontakt-Name</string>
     <string name="settings_interface_gradient_avatars">Verlaufende Kontakt-Avatare</string>
     <string name="settings_interface_gradient_avatars_supporting">Mehrfarbige verlaufende Hintergründe</string>
     <string name="settings_interface_show_picture">Kontaktbild als Avatar</string>
@@ -333,14 +333,14 @@
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
     <string name="settings_sound_dialpad_vibration_supporting">Vibration bei Tastendruck</string>
-    <string name="settings_sound_vibrate_on_answer">Vibration bei Abnehmen</string>
-    <string name="settings_sound_vibrate_on_answer_supporting">Vibration bei Abnehmen des Angerufenen</string>
+    <string name="settings_sound_vibrate_on_answer">Vibration bei Abnahme</string>
+    <string name="settings_sound_vibrate_on_answer_supporting">Bei Abnahme des Angerufenen vibrieren</string>
     <string name="settings_sound_vibrate_on_hangup">Vibration bei Anrufende</string>
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibration bei Anrufende</string>
-    <string name="settings_sound_haptic_scroll">Haptisches Feedback beim Scrollen</string>
+    <string name="settings_sound_haptic_scroll">Vibration beim Scrollen</string>
     <string name="settings_sound_haptic_scroll_supporting">Leichte Vibration beim Scrollen</string>
-    <string name="settings_sound_missed_call_notifications">Benachrichtigung bei verpassten Anrufen</string>
-    <string name="settings_sound_missed_call_notifications_supporting">Benachrichtigung bei verpassten Anrufen</string>
+    <string name="settings_sound_missed_call_notifications">Nachricht bei verpasstem Anruf</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Nachricht bei verpasstem Anruf</string>
     <string name="settings_sound_ringtone_settings">Klingelton-Einstellungen</string>
     <string name="settings_sound_ringtone_settings_supporting">Sound-Systemeinstellungen öffnen</string>
     <string name="call_failed_airplane_mode">Anruf kann wegen Flugmodus nicht ausgeführt werden</string>
@@ -360,9 +360,11 @@
     <string name="settings_call_calling_accounts">Anruf-Konten</string>
     <string name="settings_call_calling_accounts_supporting">Netzbetreiber-Einstellungen (Anklopfen, Weiterleitung etc.)</string>
     <string name="settings_call_t9_dialing">T9-Wählen</string>
-    <string name="settings_call_t9_dialing_supporting">Worte über numerische Eingaben vorhersagen</string>
+    <string name="settings_call_t9_dialing_supporting">Worte über Ziffern vorhersagen</string>
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Anrufbildschirm bei Ohrnähe abschalten</string>
+    <string name="settings_call_auto_speaker_proximity">Auto-Lautsprecher</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Wechseln Sie zum Lautsprecher, wenn weg vom Ohr, Ohrstück in der Nähe des Ohrs (unterdrückt, wenn Kopfhörer angeschlossen werden)</string>
     <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
@@ -380,8 +382,8 @@
     <string name="settings_call_dialpad_layout_supporting">Ausrichtung für Einhand-Nutzung</string>
     <string name="settings_call_dialpad_layout_left">Links</string>
     <string name="settings_call_dialpad_layout_right">Rechts</string>
-    <string name="settings_call_auto_redial">Auto-Wahlwiederholung</string>
-    <string name="settings_call_auto_redial_supporting">Automatische Wahlwiederholung bei Besetzt</string>
+    <string name="settings_call_auto_redial">Automatische Wahlwiederholung</string>
+    <string name="settings_call_auto_redial_supporting">Bei \"Besetzt\" automatische Wahlwiederholung</string>
     <string name="settings_call_redial_attempts">Versuche der Wahlwiederholung</string>
     <string name="settings_call_redial_attempts_supporting">Maximale Zahl der Wahlwiederholungen</string>
     <string name="settings_call_redial_attempts_1">1 Versuch</string>
@@ -425,11 +427,11 @@
     <string name="settings_backup_import_logs_supporting">Anrufliste aus JSON-Datei wiederherstellen</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Kontakte verwalten</string>
-    <string name="settings_manage_standardizing_title">Standardisierte Nummern</string>
+    <string name="settings_manage_standardizing_title">Telefonnummern standardisieren</string>
     <string name="settings_manage_percent_completed">%1$d%% abgeschlossen</string>
     <string name="settings_manage_display_sorting">Anzeige &amp; Sortierung</string>
     <string name="settings_manage_sort_by">Sortieren nach</string>
-    <string name="settings_manage_sort_by_supporting">Auswählen wie Kontakte sortiert werden</string>
+    <string name="settings_manage_sort_by_supporting">Auswählen, wie Kontakte sortiert werden</string>
     <string name="settings_manage_sort_first_name">Vorname</string>
     <string name="settings_manage_sort_last_name">Nachname</string>
     <string name="settings_manage_name_format">Format Name</string>
@@ -440,10 +442,10 @@
     <string name="settings_manage_private_contacts">Privater Speicher</string>
     <string name="settings_manage_private_contacts_supporting">Kontakte im privaten App-Speicher verwalten</string>
     <string name="settings_manage_visibility">Kontakt-Sichtbarkeit</string>
-    <string name="settings_manage_visibility_supporting">Auswählen, welche Konten in Ihrer Liste angezeigt werden</string>
+    <string name="settings_manage_visibility_supporting">Auswahl der angezeigten Konten</string>
     <string name="settings_manage_quick_fixes">Schnelle Korrekturen</string>
-    <string name="settings_manage_standardize_numbers">Standardisierte Telefonnummern</string>
-    <string name="settings_manage_standardize_numbers_supporting">Leerzeichen und Sonderzeichen aus allen Nummern entfernen</string>
+    <string name="settings_manage_standardize_numbers">Telefonnummern standardisieren</string>
+    <string name="settings_manage_standardize_numbers_supporting">Leerzeichen und Sonderzeichen entfernen</string>
     <string name="settings_manage_no_duplicates">Keine Duplikate gefunden.</string>
     <string name="settings_manage_found_duplicates">%1$d Gruppen von Duplikaten gefunden</string>
     <string name="settings_manage_merge_duplicates">Duplikate zusammenführen</string>
@@ -451,7 +453,7 @@
     <string name="settings_visibility_title">Kontakt-Sichtbarkeit</string>
     <string name="settings_visibility_description">Auswählen, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
     <string name="settings_visibility_accounts_header">Konten</string>
-    <string name="settings_visibility_local_memory_supporting">Auf dem Gerät gespeicherte Kontakte</string>
+    <string name="settings_visibility_local_memory_supporting">Auf Gerät gespeichert</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
     <!-- Settings > Private storage -->
     <string name="settings_private_title">Privater Speicher</string>
@@ -602,7 +604,7 @@
     <string name="settings_call_recording_notice">Die Aufnahme von Anrufen könnte von Ihrem Gerät oder aufgrund von Gesetzen eingeschränkt sein. Stellen Sie sicher, dass die Aufnahme erlaubt ist, bevor Sie diese Funktion nutzen.</string>
     <string name="settings_call_default_background">Standard Anruf-Hintergrund</string>
     <string name="settings_call_default_background_set">Ein individuelles Bild wird bei jedem Anruf gezeigt</string>
-    <string name="settings_call_default_background_none">Nicht eingestellt - Anrufe nutzen das App-Design</string>
+    <string name="settings_call_default_background_none">Nicht festgelegt - Anrufe nutzen das App-Design</string>
     <string name="settings_call_default_background_choose">Bild auswählen</string>
     <string name="settings_call_default_background_change">Ändern</string>
     <string name="settings_call_default_background_supporting">Wird bei jedem eingehenden und ausgehenden Anruf gezeigt, es sei denn, ein Kontakt hat seinen eigenen Hintergrund.</string>
@@ -643,8 +645,8 @@
     <string name="imei_copied">In Zwischenablage kopiert</string>
     <string name="imei_not_available">Nicht verfügbar auf diesem Gerät</string>
     <!-- Fake Call feature -->
-    <string name="fake_call_title">Simulierter Anruf</string>
-    <string name="fake_call_subtitle">Simulierten eingehenden Anruf planen</string>
+    <string name="fake_call_title">Simulierte Anrufe</string>
+    <string name="fake_call_subtitle">Simulierte eingehende Anrufe planen</string>
     <string name="fake_call_channel_title">Geplante simulierte Anrufe</string>
     <string name="fake_call_channel_desc">Benachrichtigungen für geplante simulierte Anrufe</string>
     <string name="fake_call_notif_title">Simulierter Anruf geplant</string>
@@ -686,7 +688,7 @@
     <string name="fake_call_incoming_channel_title">Simulierte eingehende Anrufe</string>
     <string name="fake_call_incoming_channel_desc">Benachrichtigungen für simulierte eingehende und aktive Anrufe</string>
     <string name="settings_sound_flip_to_silence">Umdrehen zur Stummschaltung</string>
-    <string name="settings_sound_flip_to_silence_supporting">Stummschalten, indem Telefon mit Display nach unten hingelegt wird</string>
+    <string name="settings_sound_flip_to_silence_supporting">Telefon mit Display nach unten hinlegen</string>
     <string name="settings_blocked_export_csv">Blockliste exportieren (CSV)</string>
     <string name="settings_blocked_export_csv_desc">Speichern Sie die blockierten Nummern in eine CSV-Datei</string>
     <string name="settings_blocked_import_csv">Blockliste importieren (CSV)</string>
@@ -728,7 +730,7 @@
     <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen, um Speicher zu verwalten</string>
     <string name="contact_management_card_dup_sub">Tippen, um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
     <string name="settings_contact_management_card">Kontaktverwaltungskarte anzeigen</string>
-    <string name="settings_contact_management_card_supporting">Zeige Speicherübersicht, Bereinigungsstatus und doppelte Kontaktnachrichten über den Kontakten</string>
+    <string name="settings_contact_management_card_supporting">Zeige Speicherübersicht, Bereinigungsstatus und doppelte Kontaktnachrichten über Kontakten</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Eckenradius der schwebenden Leiste</string>
     <string name="settings_floating_bar_roundness_supporting">Die Ecken-Rundheit und die Form der schwebende Leiste anpassen</string>
@@ -737,8 +739,8 @@
     <string name="settings_floating_bar_blur_warning">Ressourcen-intensiv auf älteren Geräten (Android 12+ empfohlen)</string>
     <!-- Global UI Blur Effects -->
     <string name="settings_group_effects">Visuelle Effekte</string>
-    <string name="settings_ui_blur_title">Milchglas- &amp; Unschärfe-Effekte</string>
-    <string name="settings_ui_blur_supporting">Aktiviert Milchglas-Unschärfe hinter Dialog-Popups, unteren Tabellen und der Navigationsleiste (Android 12+)</string>
+    <string name="settings_ui_blur_title">Milchglas- &amp; Unschärfe</string>
+    <string name="settings_ui_blur_supporting">Effekte hinter Dialog-Popups, Tabellen und Navigationsleiste (Android 12+)</string>
     <string name="settings_ui_blur_active_hint">Aktiv für alle Popups, Tabellen &amp; Navigationsleisten</string>
     <string name="settings_nav_blur_global_hint">Kontrolliert durch die globale UI-Unschärfe-Einstellung</string>
     <!-- Swipe Actions on Contacts & Call Logs -->
@@ -772,13 +774,13 @@
     <string name="notif_channel_calls_desc">Benachrichtigungen zu eingehenden, andauernden und verpassten Anrufen</string>
     <!-- Missed Call Card & Auto Decline -->
     <string name="settings_missed_call_card_title">Verpasste Anrufe-Popup</string>
-    <string name="settings_missed_call_card_supporting">Nach verpasstem Anruf sofortiges Popup für schnellen Rückruf, SMS-Antworten und Messenger-Apps anzeigen</string>
+    <string name="settings_missed_call_card_supporting">Nach verpasstem Anruf Popup für schnellen Rückruf, SMS-Antworten und Messenger-Apps anzeigen</string>
     <string name="missed_call_just_now">Gerade verpasster Anruf, klingelte %1$ds</string>
     <string name="missed_call_view_logs">Anrufliste anzeigen</string>
     <string name="missed_call_respond_with_message">Mit Nachricht antworten</string>
-    <string name="settings_auto_decline_unknown_title">Unbekannte Anrufer automatisch ablehnen</string>
+    <string name="settings_auto_decline_unknown_title">Unbekannte Anrufer ablehnen</string>
     <string name="settings_auto_decline_unknown_supporting">Anrufe von privaten, unterdrückten oder beschränkten Nummern automatisch ablehnen</string>
-    <string name="settings_auto_decline_non_contacts_title">Anrufe von Nicht-Kontakten automatisch ablehnen</string>
+    <string name="settings_auto_decline_non_contacts_title">Anrufe von Nicht-Kontakten ablehnen</string>
     <string name="settings_auto_decline_non_contacts_supporting">Anrufe von Telefonnummern, die nicht als Kontakt gespeichert sind, automatisch ablehnen</string>
     <string name="missed_call_msg_call_me_back">Rufen Sie mich bitte zurück?</string>
     <string name="missed_call_msg_sorry_busy">Entschuldigung, ich bin gerade beschäftigt.</string>
@@ -800,10 +802,10 @@
     <string name="action_dismiss">Verwerfen</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Schaltflächen bei Dual-SIM</string>
-    <string name="settings_interface_dual_sim_buttons_supporting">Auf Tastenfeld SIM 1 und SIM 2 anzeigen</string>
+    <string name="settings_interface_dual_sim_buttons_supporting">Auf Tastenfeld SIM 1 und 2 anzeigen</string>
     <!-- Call Log Limit (#161) -->
-    <string name="settings_call_log_limit">Limit der letzten Anrufe</string>
-    <string name="settings_call_log_limit_supporting">Anzahl der zuletzt geladenen Anruflisten begrenzen, um die Ladegeschwindigkeit und Leistung zu verbessern</string>
+    <string name="settings_call_log_limit">Limit für Anrufliste</string>
+    <string name="settings_call_log_limit_supporting">Zahl der geladenen letzten Anrufe begrenzen, um Ladegeschwindigkeit und Leistung zu verbessern</string>
     <string name="settings_call_log_limit_100">100 Anrufe</string>
     <string name="settings_call_log_limit_250">250 Anrufe</string>
     <string name="settings_call_log_limit_500">500 Anrufe (Standard)</string>
@@ -811,7 +813,7 @@
     <string name="settings_call_log_limit_unlimited">Unbegrenzt</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Kopierte Nummer automatisch einfügen</string>
-    <string name="settings_auto_paste_clipboard_supporting">In Wahlfeld automatisch die aktuell in die Zwischenablage kopierte Telefonnummer einfügen</string>
+    <string name="settings_auto_paste_clipboard_supporting">In Wahlfeld automatisch aktuell kopierte Telefonnummer einfügen</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
     <string name="settings_contacts_launcher_icon">Eigenes Kontakt-Symbol auf Startbildschirm</string>
     <string name="settings_contacts_launcher_icon_supporting">Eigenes Kontaktsymbol in App-Launcher und Startbildschirm</string>

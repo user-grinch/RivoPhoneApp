@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automatisk högtalartelefon</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Växla till högtalare när du är borta från örat, öronsnöre när du är nära örat (dämpad när hörlurar är anslutna)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
