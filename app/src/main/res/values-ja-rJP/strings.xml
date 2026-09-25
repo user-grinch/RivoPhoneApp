@@ -85,5 +85,19 @@
     <string name="call_analytics_disabled_desc">通話分析と通話時間追跡は現在オフになっています。このオプションを有効にすると、通話時間、ピーク時間、連絡先情報を計算できます。</string>
     <string name="call_analytics_enable_action">Analytics &amp; 追跡を有効にする</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">既定のSIMカード</string>
+    <string name="contact_default_sim_supporting">この連絡先に電話をかけるときに使用するSIMを選択してください</string>
+    <string name="sim_remember_for_contact">この連絡先には常にこの SIM を使用してください</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">ストレージ &amp; 場所</string>
+    <string name="settings_recording_save_folder">場所を保存</string>
+    <string name="settings_recording_save_folder_default">デフォルト (録音/リボ録音)</string>
+    <string name="settings_recording_reset_folder">既定のフォルダにリセット</string>
+    <string name="settings_recording_reset_folder_supporting">録音を標準のRivo 録音ディレクトリに保存します</string>
+    <string name="settings_recording_folder_changed">保存場所の更新: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">保存場所のリセットをデフォルトにする</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">通話中はマナーモードにする</string>
+    <string name="settings_sound_dnd_during_calls_supporting">通話中に通知やその他の中断を自動的にサイレントにする</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

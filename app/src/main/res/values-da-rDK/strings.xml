@@ -90,5 +90,17 @@
     <!-- Dual SIM per Contact -->
     <string name="contact_default_sim">Standard SIM-kort</string>
     <string name="contact_default_sim_supporting">Vælg hvilket SIM-kort der skal bruges, når du ringer til denne kontakt</string>
+    <string name="sim_remember_for_contact">Brug altid dette SIM-kort til denne kontakt</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Lagerplads &amp; Placering</string>
+    <string name="settings_recording_save_folder">Gem Placering</string>
+    <string name="settings_recording_save_folder_default">Standard (Optagelser/Rivo Optagelser)</string>
+    <string name="settings_recording_reset_folder">Nulstil til standardmappe</string>
+    <string name="settings_recording_reset_folder_supporting">Gem optagelser til den almindelige Rivo Optagelsesmappe</string>
+    <string name="settings_recording_folder_changed">Gem placering opdateret: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Gem placering nulstilling til standard</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Forstyr ikke under opkald</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Gør notifikationer og andre afbrydelser automatisk lydløse under et opkald</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

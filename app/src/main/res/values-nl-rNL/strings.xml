@@ -88,5 +88,19 @@
     <string name="call_analytics_disabled_desc">Oproep analytics en talk time tracking zijn momenteel uitgeschakeld. Schakel deze optie in om de gesprekstijd, piekuren en contact met inzichten te berekenen.</string>
     <string name="call_analytics_enable_action">Activeer Analytics &amp; Tracking</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Standaard SIM-kaart</string>
+    <string name="contact_default_sim_supporting">Kies welke simkaart gebruikt moet worden bij het aanroepen van dit contact</string>
+    <string name="sim_remember_for_contact">Deze simkaart altijd gebruiken voor dit contact</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Opslag &amp; Locatie</string>
+    <string name="settings_recording_save_folder">Locatie opslaan</string>
+    <string name="settings_recording_save_folder_default">Standaard (opnames/Rivo opnames)</string>
+    <string name="settings_recording_reset_folder">Terugzetten naar standaardmap</string>
+    <string name="settings_recording_reset_folder_supporting">Sla opnames op in de standaard Rivo opnamemap</string>
+    <string name="settings_recording_folder_changed">Opslaan locatie bijgewerkt: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Locatie resetten naar standaard opslaan</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Niet storen tijdens gesprekken</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Automatisch meldingen en andere onderbrekingen tijdens een oproep negeren</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

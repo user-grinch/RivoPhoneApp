@@ -92,7 +92,20 @@
     <string name="contact_default_sim">Cartela SIM implicită</string>
     <string name="contact_default_sim_supporting">Alegeți ce cartelă SIM să utilizaţi când apelați acest contact</string>
     <string name="sim_remember_for_contact">Utilizaţi întotdeauna acest SIM pentru acest contact</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Spațiu de stocare &amp; Locație</string>
+    <string name="settings_recording_save_folder">Salvează locația</string>
+    <string name="settings_recording_save_folder_default">Implicit (înregistrări/înregistrări Rivo)</string>
+    <string name="settings_recording_reset_folder">Resetare la folderul implicit</string>
+    <string name="settings_recording_reset_folder_supporting">Salvați înregistrările în directorul standard Rivo Înregistrări</string>
+    <string name="settings_recording_folder_changed">Salvare locație actualizată: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Salvează resetarea locației la cea implicită</string>
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Nu deranja în timpul apelurilor</string>
     <string name="settings_sound_dnd_during_calls_supporting">Dezactivează automat notificările și alte întreruperi în timpul unui apel</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Fundaluri apel</string>
+    <string name="settings_call_unknown_background">Fundal apel necunoscut</string>
+    <string name="settings_call_unknown_background_set">O imagine personalizată este afișată pentru apelanți necunoscuți</string>
+    <string name="settings_call_unknown_background_none">Nu este setat — folosește fundalul de apel implicit</string>
 </resources>

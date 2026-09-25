@@ -242,5 +242,19 @@
     <string name="call_analytics_disabled_desc">通话分析和谈话时间跟踪当前已关闭。启用此选项以计算谈话时间、高峰时段和联系人洞察力。</string>
     <string name="call_analytics_enable_action">启用分析 &amp; 跟踪</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">默认 SIM 卡</string>
+    <string name="contact_default_sim_supporting">选择拨打此联系人时使用的SIM 卡</string>
+    <string name="sim_remember_for_contact">总是为此联系人使用此 SIM 卡</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">存储 &amp; 位置</string>
+    <string name="settings_recording_save_folder">保存位置</string>
+    <string name="settings_recording_save_folder_default">默认 (录制/Rivo 录制)</string>
+    <string name="settings_recording_reset_folder">重置为默认文件夹</string>
+    <string name="settings_recording_reset_folder_supporting">保存录音到标准Rivo录制目录</string>
+    <string name="settings_recording_folder_changed">保存位置更新: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">保存位置重置为默认值</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">通话时请勿扰模式</string>
+    <string name="settings_sound_dnd_during_calls_supporting">通话时自动静音通知和其他中断</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>
