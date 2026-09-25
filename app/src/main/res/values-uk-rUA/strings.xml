@@ -86,4 +86,6 @@
     <string name="settings_call_analytics_view_supporting">Таблиця лідерів часу розмови, пік годин &amp; розподіл</string>
     <string name="call_analytics_disabled_title">Аналітика викликів &amp; Відстеження вимкнено</string>
     <string name="call_analytics_disabled_desc">Викликати аналітику і відстежування часу розмови в даний час вимкнено. Увімкніть цю опцію для обчислення часу розмови, пікових годин і зверніться до особистої інформації.</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

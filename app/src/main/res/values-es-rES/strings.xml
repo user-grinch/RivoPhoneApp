@@ -564,4 +564,11 @@
     <string name="call_analytics_disabled_title">Análisis de llamadas &amp; Seguimiento deshabilitado</string>
     <string name="call_analytics_disabled_desc">Actualmente se han desactivado los análisis de llamadas y el seguimiento del tiempo de habla. Activa esta opción para calcular la hora de habla, las horas pico y los datos de contacto.</string>
     <string name="call_analytics_enable_action">Habilitar Analytics &amp; Seguimiento</string>
+    <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Tarjeta SIM por defecto</string>
+    <string name="contact_default_sim_supporting">Elige qué SIM usar al llamar a este contacto</string>
+    <string name="sim_remember_for_contact">Usar siempre esta SIM para este contacto</string>
+    <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">No molestar durante las llamadas</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Silenciar automáticamente las notificaciones y otras interrupciones durante una llamada</string>
 </resources>

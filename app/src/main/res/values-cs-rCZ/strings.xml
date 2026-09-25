@@ -87,4 +87,11 @@
     <string name="call_analytics_disabled_title">Analytické hovory &amp; Sledování zakázáno</string>
     <string name="call_analytics_disabled_desc">Analytika hovorů a sledování času hovorů jsou momentálně vypnuty. Povolte tuto možnost pro výpočet doby hovoru, doby špičky a kontaktních postřehů.</string>
     <string name="call_analytics_enable_action">Povolit Analytics &amp; Sledování</string>
+    <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Výchozí SIM karta</string>
+    <string name="contact_default_sim_supporting">Vyberte, která SIM karta má být použita při volání tohoto kontaktu</string>
+    <string name="sim_remember_for_contact">Vždy použít tuto SIM kartu pro tento kontakt</string>
+    <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Režim Nerušit během hovorů</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Automaticky ztlumit oznámení a další přerušení při hovoru</string>
 </resources>

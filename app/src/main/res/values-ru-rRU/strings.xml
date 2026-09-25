@@ -835,4 +835,6 @@
     <string name="call_analytics_disabled_title">Аналитика вызовов &amp; Отслеживание отключено</string>
     <string name="call_analytics_disabled_desc">Аналитика звонков и отслеживание времени разговора в настоящее время отключены. Включите эту опцию, чтобы рассчитать время разговора, часы пиковой нагрузки и информацию о контактах.</string>
     <string name="call_analytics_enable_action">Включить аналитику &amp; отслеживание</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

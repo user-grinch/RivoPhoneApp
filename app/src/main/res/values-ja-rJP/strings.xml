@@ -84,4 +84,6 @@
     <string name="settings_call_analytics_view_supporting">トークタイムリーダーボード、ピーク時間 &amp; 配布</string>
     <string name="call_analytics_disabled_desc">通話分析と通話時間追跡は現在オフになっています。このオプションを有効にすると、通話時間、ピーク時間、連絡先情報を計算できます。</string>
     <string name="call_analytics_enable_action">Analytics &amp; 追跡を有効にする</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>
