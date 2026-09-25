@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automatický reproduktor</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Přepnout na reproduktor, když je mimo uš, sluchátka, když je poblíž ucha (potlačeno při připojení sluchátek)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

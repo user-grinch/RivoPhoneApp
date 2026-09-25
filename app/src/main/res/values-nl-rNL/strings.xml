@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Automatische luidspreker</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Schakel over naar de luidspreker wanneer weg van oor, oortelefoon wanneer dichtbij oor staat (onderdrukt wanneer een koptelefoon is aangesloten)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

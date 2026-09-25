@@ -181,6 +181,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">自动扬声器</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">离开耳朵时切换到扬声器，靠近耳机时的耳机(耳机连接时被抑制)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->

@@ -367,6 +367,8 @@
     <string name="settings_call_t9_dialing_supporting">Przewiduje słowa i kontakty na podstawie wpisywanych cyfr</string>
     <string name="settings_call_proximity_sensor">Czujnik zbliżeniowy</string>
     <string name="settings_call_proximity_sensor_supporting">Wyłączaj ekran podczas rozmowy, gdy telefon znajduje się przy uchu</string>
+    <string name="settings_call_auto_speaker_proximity">Auto głośnik</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Przełącz się na głośnik, gdy oddali się od ucha, gdy słuchawka jest bliska ucha (tłumiona po podłączeniu słuchawek)</string>
     <string name="settings_call_incoming_ui">Interfejs połączenia przychodzącego</string>
     <string name="settings_call_incoming_ui_supporting">Wybierz sposób odbierania połączeń przychodzących</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Przesunięcie poziome</string>

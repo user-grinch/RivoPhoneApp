@@ -27,6 +27,8 @@
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
+    <string name="settings_call_auto_speaker_proximity">Auto-viva-voz</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Alternar para o alto-falante quando estiver longe de ouvir, peça de ouvido quando perto (suprimido quando os fones de ouvido forem conectados)</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
