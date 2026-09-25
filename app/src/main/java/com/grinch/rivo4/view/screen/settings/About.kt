@@ -35,6 +35,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
@@ -129,7 +130,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
             RivoExpressiveCard {
                 Column(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -223,25 +224,31 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            RivoExpressiveCard {
-                RivoListItem(
-                    headline = stringResource(R.string.about_discord),
-                    supporting = stringResource(R.string.about_discord_supporting),
-                    leadingIcon = Icons.AutoMirrored.Filled.Chat,
-                    onClick = { openLink(context, DISCORD_URL) }
-                )
-                RivoListItem(
-                    headline = stringResource(R.string.about_source_code),
-                    supporting = stringResource(R.string.about_source_code_supporting),
-                    leadingIcon = Icons.Outlined.Code,
-                    onClick = { openLink(context, GITHUB_URL) }
-                )
-                RivoListItem(
-                    headline = stringResource(R.string.about_check_updates),
-                    supporting = stringResource(R.string.about_current_version, appInfo.first),
-                    leadingIcon = Icons.Outlined.SystemUpdate,
-                    onClick = { openLink(context, "$GITHUB_URL/releases") }
-                )
+            RivoExpressiveGroup {
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.about_discord),
+                        supporting = stringResource(R.string.about_discord_supporting),
+                        leadingIcon = Icons.AutoMirrored.Filled.Chat,
+                        onClick = { openLink(context, DISCORD_URL) }
+                    )
+                }
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.about_source_code),
+                        supporting = stringResource(R.string.about_source_code_supporting),
+                        leadingIcon = Icons.Outlined.Code,
+                        onClick = { openLink(context, GITHUB_URL) }
+                    )
+                }
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.about_check_updates),
+                        supporting = stringResource(R.string.about_current_version, appInfo.first),
+                        leadingIcon = Icons.Outlined.SystemUpdate,
+                        onClick = { openLink(context, "$GITHUB_URL/releases") }
+                    )
+                }
             }
 
 

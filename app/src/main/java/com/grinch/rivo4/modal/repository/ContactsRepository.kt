@@ -62,8 +62,8 @@ class ContactsRepository(
         val cloud = rawList.find { !isSyncAdapterAccount(it.type) }
         if (cloud != null) return Pair(cloud.name, cloud.type)
 
-        val first = rawList.first()
-        return Pair(first.name, first.type)
+        // If only sync adapters exist (e.g. WhatsApp), do not prioritize WhatsApp over Device storage!
+        return Pair(null, null)
     }
 
     override fun getContacts(includePrivate: Boolean, includeHidden: Boolean): List<Contact> {

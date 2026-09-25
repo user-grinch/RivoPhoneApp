@@ -95,6 +95,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSwitchListItem
@@ -356,46 +357,52 @@ fun FakeCallSchedulerScreen(
                     }
                 }
 
-                // Card 2: Schedule Date & Time
+                // Group 2: Schedule Date & Time
                 item {
-                    RivoExpressiveCard(
+                    val dateStr = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault()).format(Date(targetTimestamp))
+                    val is24 = DateFormat.is24HourFormat(context)
+                    val timeFormatPattern = if (is24) "HH:mm" else "hh:mm a"
+                    val timeStr = SimpleDateFormat(timeFormatPattern, Locale.getDefault()).format(Date(targetTimestamp))
+
+                    RivoExpressiveGroup(
                         title = stringResource(R.string.fake_call_schedule_time),
                         icon = Icons.Outlined.Schedule
                     ) {
-                        val dateStr = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault()).format(Date(targetTimestamp))
-                        val is24 = DateFormat.is24HourFormat(context)
-                        val timeFormatPattern = if (is24) "HH:mm" else "hh:mm a"
-                        val timeStr = SimpleDateFormat(timeFormatPattern, Locale.getDefault()).format(Date(targetTimestamp))
+                        item {
+                            RivoListItem(
+                                headline = dateStr,
+                                supporting = stringResource(R.string.fake_call_select_date),
+                                leadingIcon = Icons.Outlined.CalendarToday,
+                                onClick = { showDatePicker = true }
+                            )
+                        }
 
-                        RivoListItem(
-                            headline = dateStr,
-                            supporting = stringResource(R.string.fake_call_select_date),
-                            leadingIcon = Icons.Outlined.CalendarToday,
-                            onClick = { showDatePicker = true }
-                        )
-
-                        RivoListItem(
-                            headline = timeStr,
-                            supporting = stringResource(R.string.fake_call_select_time),
-                            leadingIcon = Icons.Outlined.AccessTime,
-                            onClick = { showTimePicker = true }
-                        )
+                        item {
+                            RivoListItem(
+                                headline = timeStr,
+                                supporting = stringResource(R.string.fake_call_select_time),
+                                leadingIcon = Icons.Outlined.AccessTime,
+                                onClick = { showTimePicker = true }
+                            )
+                        }
                     }
                 }
 
-                // Card 3: Call Options
+                // Group 3: Call Options
                 item {
-                    RivoExpressiveCard(
+                    RivoExpressiveGroup(
                         title = stringResource(R.string.fake_call_options),
                         icon = Icons.Outlined.Settings
                     ) {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.fake_call_vibrate),
-                            supporting = stringResource(R.string.fake_call_vibrate_desc),
-                            leadingIcon = Icons.Outlined.Vibration,
-                            checked = newVibrate,
-                            onCheckedChange = { newVibrate = it }
-                        )
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.fake_call_vibrate),
+                                supporting = stringResource(R.string.fake_call_vibrate_desc),
+                                leadingIcon = Icons.Outlined.Vibration,
+                                checked = newVibrate,
+                                onCheckedChange = { newVibrate = it }
+                            )
+                        }
                     }
                 }
 

@@ -22,6 +22,7 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.ramcosta.composedestinations.annotation.Destination
@@ -67,7 +68,7 @@ fun ContactVisibilityScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
                 Text(
@@ -79,75 +80,87 @@ fun ContactVisibilityScreen(
             }
 
             item {
-                RivoExpressiveCard(
-                    title = stringResource(R.string.settings_manage_display_sorting)
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_manage_display_sorting),
+                    icon = Icons.Outlined.SortByAlpha
                 ) {
-                    RivoVisualOptionSelectorRow(
-                        headline = stringResource(R.string.settings_manage_sort_by),
-                        supporting = stringResource(R.string.settings_manage_sort_by_supporting),
-                        leadingIcon = Icons.Outlined.SortByAlpha,
-                        options = listOf(
-                            stringResource(R.string.settings_manage_sort_first_name) to 0,
-                            stringResource(R.string.settings_manage_sort_last_name) to 1
-                        ),
-                        selectedValue = sortOrderState,
-                        onValueChange = {
-                            viewModel.setSortOrder(it)
+                    item {
+                        Box(modifier = Modifier.padding(vertical = 4.dp)) {
+                            RivoVisualOptionSelectorRow(
+                                headline = stringResource(R.string.settings_manage_sort_by),
+                                supporting = stringResource(R.string.settings_manage_sort_by_supporting),
+                                leadingIcon = Icons.Outlined.SortByAlpha,
+                                options = listOf(
+                                    stringResource(R.string.settings_manage_sort_first_name) to 0,
+                                    stringResource(R.string.settings_manage_sort_last_name) to 1
+                                ),
+                                selectedValue = sortOrderState,
+                                onValueChange = {
+                                    viewModel.setSortOrder(it)
+                                }
+                            ) { _, selected ->
+                                Icon(
+                                    imageVector = Icons.Outlined.SortByAlpha,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
-                    ) { _, selected ->
-                        Icon(
-                            imageVector = Icons.Outlined.SortByAlpha,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
-                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    RivoVisualOptionSelectorRow(
-                        headline = stringResource(R.string.settings_manage_name_format),
-                        supporting = stringResource(R.string.settings_manage_name_format_supporting),
-                        leadingIcon = Icons.Outlined.Badge,
-                        options = listOf(
-                            stringResource(R.string.settings_manage_name_format_first_first) to 0,
-                            stringResource(R.string.settings_manage_name_format_last_first) to 1
-                        ),
-                        selectedValue = displayOrderState,
-                        onValueChange = {
-                            viewModel.setDisplayOrder(it)
+                    item {
+                        Box(modifier = Modifier.padding(vertical = 4.dp)) {
+                            RivoVisualOptionSelectorRow(
+                                headline = stringResource(R.string.settings_manage_name_format),
+                                supporting = stringResource(R.string.settings_manage_name_format_supporting),
+                                leadingIcon = Icons.Outlined.Badge,
+                                options = listOf(
+                                    stringResource(R.string.settings_manage_name_format_first_first) to 0,
+                                    stringResource(R.string.settings_manage_name_format_last_first) to 1
+                                ),
+                                selectedValue = displayOrderState,
+                                onValueChange = {
+                                    viewModel.setDisplayOrder(it)
+                                }
+                            ) { _, selected ->
+                                Icon(
+                                    imageVector = Icons.Outlined.Badge,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
-                    ) { _, selected ->
-                        Icon(
-                            imageVector = Icons.Outlined.Badge,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
 
             item {
-                RivoExpressiveCard(
+                RivoExpressiveGroup(
                     title = stringResource(R.string.settings_visibility_accounts_header),
                     icon = Icons.Default.Visibility
                 ) {
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.label_local_memory),
-                        supporting = stringResource(R.string.settings_visibility_local_memory_supporting),
-                        leadingIcon = Icons.Default.CloudOff,
-                        checked = currentVisible.contains("local|local"),
-                        onCheckedChange = { isChecked: Boolean -> toggleAccount("local|local", isChecked) }
-                    )
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.label_local_memory),
+                            supporting = stringResource(R.string.settings_visibility_local_memory_supporting),
+                            leadingIcon = Icons.Default.CloudOff,
+                            checked = currentVisible.contains("local|local"),
+                            onCheckedChange = { isChecked: Boolean -> toggleAccount("local|local", isChecked) }
+                        )
+                    }
 
                     accounts.forEach { account ->
                         val key = "${account.type}|${account.name}"
-                        RivoSwitchListItem(
-                            headline = ContactUtils.getFriendlyAccountName(LocalContext.current, account),
-                            supporting = account.name,
-                            leadingIcon = ContactUtils.getAccountIcon(account),
-                            checked = currentVisible.contains(key),
-                            onCheckedChange = { isChecked: Boolean -> toggleAccount(key, isChecked) }
-                        )
+                        item {
+                            RivoSwitchListItem(
+                                headline = ContactUtils.getFriendlyAccountName(LocalContext.current, account),
+                                supporting = account.name,
+                                leadingIcon = ContactUtils.getAccountIcon(account),
+                                checked = currentVisible.contains(key),
+                                onCheckedChange = { isChecked: Boolean -> toggleAccount(key, isChecked) }
+                            )
+                        }
                     }
                 }
             }

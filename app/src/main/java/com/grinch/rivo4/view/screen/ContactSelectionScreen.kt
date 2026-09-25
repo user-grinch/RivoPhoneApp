@@ -2,11 +2,11 @@ package com.grinch.rivo4.view.screen
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.formatPhoneNumber
@@ -64,10 +65,6 @@ fun ContactSelectionScreen(
     var selectedContactIds by remember { mutableStateOf(setOf<String>()) }
     var selectedPhoneNumbers by remember { mutableStateOf(setOf<String>()) }
     var pendingMultiNumberContact by remember { mutableStateOf<Contact?>(null) }
-
-    val heroCornerDp = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness)
-    val itemCornerDp = rivoCornerDp(RivoShapeDefaults.BaseLarge, roundness)
-    val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.25f }
 
     LaunchedEffect(Unit) {
         viewModel.fetchContacts()
@@ -118,16 +115,31 @@ fun ContactSelectionScreen(
                         }
                     },
                     actions = {
+                        if (isMultiSelect) {
+                            val allSelected = filteredContacts.isNotEmpty() && filteredContacts.all {
+                                if (returnContactId) selectedContactIds.contains(it.id)
+                                else it.phoneNumbers.any { num -> selectedPhoneNumbers.contains(num) }
+                            }
+                            TextButton(
+                                onClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                    if (allSelected) {
+                                        selectedContactIds = emptySet()
+                                        selectedPhoneNumbers = emptySet()
+                                    } else {
+                                        selectedContactIds = filteredContacts.map { it.id }.toSet()
+                                        selectedPhoneNumbers = filteredContacts.flatMap { it.phoneNumbers }.toSet()
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = if (allSelected) "Deselect All" else "Select All",
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
                         IconButton(onClick = { navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign)) }) {
                             Icon(Icons.Outlined.PersonAdd, contentDescription = stringResource(R.string.contact_create_new))
-                        }
-                        if (isMultiSelect && totalSelectedCount > 0) {
-                            IconButton(onClick = {
-                                selectedContactIds = emptySet()
-                                selectedPhoneNumbers = emptySet()
-                            }) {
-                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_cancel))
-                            }
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -135,22 +147,80 @@ fun ContactSelectionScreen(
                     )
                 )
             },
-            floatingActionButton = {
-                if (isMultiSelect && totalSelectedCount > 0) {
-                    ExtendedFloatingActionButton(
-                        onClick = {
-                            val csvResult = if (returnContactId) {
-                                selectedContactIds.joinToString(",")
-                            } else {
-                                selectedPhoneNumbers.joinToString(",")
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = isMultiSelect && totalSelectedCount > 0,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shadowElevation = 8.dp
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "$totalSelectedCount selected",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Ready to proceed",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
-                            resultNavigator.navigateBack(result = csvResult)
-                        },
-                        icon = { Icon(Icons.Default.Check, contentDescription = null) },
-                        text = { Text("$actionButtonText ($totalSelectedCount)", fontWeight = FontWeight.Bold) },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        selectedContactIds = emptySet()
+                                        selectedPhoneNumbers = emptySet()
+                                    }
+                                ) {
+                                    Text("Clear")
+                                }
+                                Button(
+                                    onClick = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                        val csvResult = if (returnContactId) {
+                                            selectedContactIds.joinToString(",")
+                                        } else {
+                                            selectedPhoneNumbers.joinToString(",")
+                                        }
+                                        resultNavigator.navigateBack(result = csvResult)
+                                    },
+                                    shape = RoundedCornerShape(rivoCornerDp(16, roundness)),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                ) {
+                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = "$actionButtonText ($totalSelectedCount)",
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface
@@ -162,15 +232,17 @@ fun ContactSelectionScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = if (isMultiSelect && totalSelectedCount > 0) 100.dp else 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    // Hero Card
-                    item {
+                    // Modern Hero Card
+                    item(key = "hero_overview") {
                         Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(heroCornerDp),
-                            color = MaterialTheme.colorScheme.surfaceContainerHigh
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp),
+                            shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
                         ) {
                             Column(modifier = Modifier.padding(18.dp)) {
                                 Row(
@@ -178,8 +250,8 @@ fun ContactSelectionScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Surface(
-                                        modifier = Modifier.size(50.dp),
-                                        shape = logoMorph,
+                                        modifier = Modifier.size(48.dp),
+                                        shape = RoundedCornerShape(rivoCornerDp(14, roundness)),
                                         color = MaterialTheme.colorScheme.primaryContainer,
                                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                     ) {
@@ -187,7 +259,7 @@ fun ContactSelectionScreen(
                                             Icon(
                                                 imageVector = if (initialPhoneToAssign != null) Icons.Outlined.PersonSearch else Icons.Outlined.Contacts,
                                                 contentDescription = null,
-                                                modifier = Modifier.size(26.dp)
+                                                modifier = Modifier.size(24.dp)
                                             )
                                         }
                                     }
@@ -199,8 +271,8 @@ fun ContactSelectionScreen(
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
+                                        Spacer(Modifier.height(4.dp))
                                         if (initialPhoneToAssign != null) {
-                                            Spacer(Modifier.height(4.dp))
                                             Surface(
                                                 shape = CircleShape,
                                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
@@ -224,7 +296,6 @@ fun ContactSelectionScreen(
                                                 }
                                             }
                                         } else {
-                                            Spacer(Modifier.height(2.dp))
                                             Text(
                                                 text = "${allContacts.size} contacts available",
                                                 style = MaterialTheme.typography.bodySmall,
@@ -241,9 +312,9 @@ fun ContactSelectionScreen(
                                             navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign))
                                         },
                                         modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(itemCornerDp),
+                                        shape = RoundedCornerShape(rivoCornerDp(16, roundness)),
                                         colors = ButtonDefaults.filledTonalButtonColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                                             contentColor = MaterialTheme.colorScheme.primary
                                         )
                                     ) {
@@ -263,11 +334,13 @@ fun ContactSelectionScreen(
                         }
                     }
 
-                    // Search Bar
-                    item {
+                    // Modern Search Field Pill
+                    item(key = "search_bar") {
                         Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(heroCornerDp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            shape = RoundedCornerShape(rivoCornerDp(20, roundness)),
                             color = MaterialTheme.colorScheme.surfaceContainerHigh
                         ) {
                             TextField(
@@ -311,11 +384,12 @@ fun ContactSelectionScreen(
                         }
                     }
 
-                    // Filter Chips
-                    item {
+                    // Filter Chips Row
+                    item(key = "filter_chips") {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(bottom = 10.dp)
                                 .horizontalScroll(rememberScrollState()),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
@@ -347,13 +421,15 @@ fun ContactSelectionScreen(
                     val cleanQuery = searchQuery.trim()
                     val isPhoneQuery = cleanQuery.any { it.isDigit() } || cleanQuery.startsWith("+")
 
+                    // Custom Number Direct Selection
                     if (isPhoneQuery) {
-                        item {
+                        item(key = "custom_phone_entry") {
                             val isCustomSelected = selectedPhoneNumbers.contains(cleanQuery)
                             Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(itemCornerDp))
+                                    .padding(bottom = 8.dp)
+                                    .clip(RoundedCornerShape(rivoCornerDp(20, roundness)))
                                     .clickable {
                                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                         if (isMultiSelect) {
@@ -366,13 +442,12 @@ fun ContactSelectionScreen(
                                             resultNavigator.navigateBack(result = cleanQuery)
                                         }
                                     },
-                                shape = RoundedCornerShape(itemCornerDp),
+                                shape = RoundedCornerShape(rivoCornerDp(20, roundness)),
                                 color = if (isCustomSelected) {
                                     MaterialTheme.colorScheme.primaryContainer
                                 } else {
                                     MaterialTheme.colorScheme.surfaceContainerLow
-                                },
-                                border = if (isCustomSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+                                }
                             ) {
                                 Row(
                                     modifier = Modifier.padding(14.dp),
@@ -394,8 +469,8 @@ fun ContactSelectionScreen(
                                     Surface(
                                         modifier = Modifier.size(44.dp),
                                         shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                        color = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                                     ) {
                                         Box(contentAlignment = Alignment.Center) {
                                             Icon(Icons.Outlined.Dialpad, contentDescription = null, modifier = Modifier.size(22.dp))
@@ -406,7 +481,8 @@ fun ContactSelectionScreen(
                                         Text(
                                             text = "Use number: $cleanQuery",
                                             style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Spacer(Modifier.height(2.dp))
                                         Text(
@@ -426,13 +502,14 @@ fun ContactSelectionScreen(
                         }
                     }
 
+                    // Empty State
                     if (filteredContacts.isEmpty() && !isPhoneQuery) {
-                        item {
+                        item(key = "empty_state") {
                             Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 32.dp),
-                                shape = RoundedCornerShape(heroCornerDp),
+                                    .padding(vertical = 24.dp),
+                                shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
                                 color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
                                 Column(
@@ -471,7 +548,7 @@ fun ContactSelectionScreen(
                                             onClick = {
                                                 navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign))
                                             },
-                                            shape = RoundedCornerShape(itemCornerDp)
+                                            shape = RoundedCornerShape(rivoCornerDp(16, roundness))
                                         ) {
                                             Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(18.dp))
                                             Spacer(Modifier.width(8.dp))
@@ -482,124 +559,127 @@ fun ContactSelectionScreen(
                             }
                         }
                     } else {
+                        // Grouped Contacts with Continuous Grouped Shapes
                         groupedContacts.forEach { (initial, contactsInGroup) ->
                             item(key = "header_$initial") {
                                 RivoSectionHeader(
                                     title = initial,
-                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                    modifier = Modifier.padding(top = 14.dp, bottom = 4.dp),
+                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
                                 )
                             }
 
-                            item(key = "group_$initial") {
-                                RivoExpressiveCard(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                                ) {
-                                    contactsInGroup.forEachIndexed { index, contact ->
-                                        val primaryNumber = contact.phoneNumbers.firstOrNull() ?: ""
-                                        val isSelected = if (isMultiSelect) {
-                                            selectedContactIds.contains(contact.id) || selectedPhoneNumbers.contains(primaryNumber)
-                                        } else false
+                            itemsIndexed(contactsInGroup, key = { _, c -> "sel_contact_${c.id}" }) { index, contact ->
+                                val primaryNumber = contact.phoneNumbers.firstOrNull() ?: ""
+                                val isSelected = if (isMultiSelect) {
+                                    if (returnContactId) {
+                                        selectedContactIds.contains(contact.id)
+                                    } else {
+                                        contact.phoneNumbers.any { num -> selectedPhoneNumbers.contains(num) }
+                                    }
+                                } else false
+                                val shape = rivoGroupedItemShape(index, contactsInGroup.size)
 
-                                        RivoListItem(
-                                            headline = contact.name,
-                                            supporting = if (contact.phoneNumbers.isNotEmpty()) {
-                                                if (contact.phoneNumbers.size > 1) {
-                                                    "${formatPhoneNumber(primaryNumber)} (+${contact.phoneNumbers.size - 1} more)"
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = shape,
+                                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f) else MaterialTheme.colorScheme.surfaceContainerLow
+                                ) {
+                                    RivoListItem(
+                                        headline = contact.name,
+                                        supporting = if (contact.phoneNumbers.isNotEmpty()) {
+                                            if (contact.phoneNumbers.size > 1) {
+                                                "${formatPhoneNumber(primaryNumber)} (+${contact.phoneNumbers.size - 1} more)"
+                                            } else {
+                                                formatPhoneNumber(primaryNumber)
+                                            }
+                                        } else null,
+                                        avatarName = contact.name,
+                                        photoUri = contact.photoUri,
+                                        badgeIcon = if (contact.isFavorite) Icons.Outlined.Star else if (contact.isPrivate) Icons.Outlined.Lock else null,
+                                        badgeColor = if (contact.isFavorite) MaterialTheme.colorScheme.primary else null,
+                                        selected = isSelected,
+                                        onClick = {
+                                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                            if (isMultiSelect) {
+                                                if (isSelected) {
+                                                    selectedContactIds = selectedContactIds - contact.id
+                                                    selectedPhoneNumbers = selectedPhoneNumbers - contact.phoneNumbers.toSet()
                                                 } else {
-                                                    formatPhoneNumber(primaryNumber)
-                                                }
-                                            } else null,
-                                            avatarName = contact.name,
-                                            photoUri = contact.photoUri,
-                                            badgeIcon = if (contact.isFavorite) Icons.Outlined.Star else if (contact.isPrivate) Icons.Outlined.Lock else null,
-                                            badgeColor = if (contact.isFavorite) MaterialTheme.colorScheme.primary else null,
-                                            selected = isSelected,
-                                            onClick = {
-                                                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                if (isMultiSelect) {
-                                                    if (isSelected) {
-                                                        selectedContactIds = selectedContactIds - contact.id
-                                                        selectedPhoneNumbers = selectedPhoneNumbers - contact.phoneNumbers.toSet()
-                                                    } else {
-                                                        selectedContactIds = selectedContactIds + contact.id
-                                                        if (primaryNumber.isNotBlank()) {
-                                                            selectedPhoneNumbers = selectedPhoneNumbers + primaryNumber
-                                                        }
+                                                    selectedContactIds = selectedContactIds + contact.id
+                                                    if (contact.phoneNumbers.isNotEmpty()) {
+                                                        selectedPhoneNumbers = selectedPhoneNumbers + contact.phoneNumbers.toSet()
                                                     }
-                                                } else {
-                                                    if (initialPhoneToAssign != null) {
-                                                        navigator.navigate(
-                                                            ContactEditScreenDestination(
-                                                                contactId = contact.id,
-                                                                initialPhone = initialPhoneToAssign
-                                                            )
+                                                }
+                                            } else {
+                                                if (initialPhoneToAssign != null) {
+                                                    navigator.navigate(
+                                                        ContactEditScreenDestination(
+                                                            contactId = contact.id,
+                                                            initialPhone = initialPhoneToAssign
                                                         )
-                                                    } else if (returnContactId) {
-                                                        resultNavigator.navigateBack(result = contact.id)
-                                                    } else {
-                                                        if (contact.phoneNumbers.size > 1) {
-                                                            pendingMultiNumberContact = contact
-                                                        } else if (primaryNumber.isNotBlank()) {
-                                                            resultNavigator.navigateBack(result = primaryNumber)
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            trailingContent = {
-                                                if (isMultiSelect) {
-                                                    Checkbox(
-                                                        checked = isSelected,
-                                                        onCheckedChange = { checked ->
-                                                            if (checked) {
-                                                                selectedContactIds = selectedContactIds + contact.id
-                                                                if (primaryNumber.isNotBlank()) {
-                                                                    selectedPhoneNumbers = selectedPhoneNumbers + primaryNumber
-                                                                }
-                                                            } else {
-                                                                selectedContactIds = selectedContactIds - contact.id
-                                                                selectedPhoneNumbers = selectedPhoneNumbers - contact.phoneNumbers.toSet()
-                                                            }
-                                                        }
                                                     )
-                                                } else if (initialPhoneToAssign != null) {
-                                                    Surface(
-                                                        shape = CircleShape,
-                                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                                    ) {
-                                                        Row(
-                                                            verticalAlignment = Alignment.CenterVertically,
-                                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                                        ) {
-                                                            Icon(
-                                                                imageVector = Icons.Outlined.PersonAdd,
-                                                                contentDescription = null,
-                                                                modifier = Modifier.size(13.dp)
-                                                            )
-                                                            Spacer(Modifier.width(4.dp))
-                                                            Text(
-                                                                text = "Add",
-                                                                style = MaterialTheme.typography.labelSmall,
-                                                                fontWeight = FontWeight.Bold
-                                                            )
-                                                        }
-                                                    }
+                                                } else if (returnContactId) {
+                                                    resultNavigator.navigateBack(result = contact.id)
                                                 } else {
-                                                    Icon(
-                                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
+                                                    if (contact.phoneNumbers.size > 1) {
+                                                        pendingMultiNumberContact = contact
+                                                    } else if (primaryNumber.isNotBlank()) {
+                                                        resultNavigator.navigateBack(result = primaryNumber)
+                                                    }
                                                 }
                                             }
-                                        )
-
-                                        if (index < contactsInGroup.size - 1) {
-                                            RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                                        },
+                                        trailingContent = {
+                                            if (isMultiSelect) {
+                                                Checkbox(
+                                                    checked = isSelected,
+                                                    onCheckedChange = { checked ->
+                                                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                                                        if (checked) {
+                                                            selectedContactIds = selectedContactIds + contact.id
+                                                            if (contact.phoneNumbers.isNotEmpty()) {
+                                                                selectedPhoneNumbers = selectedPhoneNumbers + contact.phoneNumbers.toSet()
+                                                            }
+                                                        } else {
+                                                            selectedContactIds = selectedContactIds - contact.id
+                                                            selectedPhoneNumbers = selectedPhoneNumbers - contact.phoneNumbers.toSet()
+                                                        }
+                                                    }
+                                                )
+                                            } else if (initialPhoneToAssign != null) {
+                                                Surface(
+                                                    shape = CircleShape,
+                                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.PersonAdd,
+                                                            contentDescription = null,
+                                                            modifier = Modifier.size(13.dp)
+                                                        )
+                                                        Spacer(Modifier.width(4.dp))
+                                                        Text(
+                                                            text = "Add",
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                    }
+                                                }
+                                            } else {
+                                                Icon(
+                                                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
                                         }
-                                    }
+                                    )
                                 }
                             }
                         }

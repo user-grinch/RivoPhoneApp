@@ -23,7 +23,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
@@ -94,17 +96,17 @@ fun rivoSurfaceStyle(): RivoSurfaceStyle {
 }
 
 object RivoListItemDefaults {
-    val MinHeight: Dp = 48.dp
-    val AvatarSize: Dp = 44.dp
-    val CompactAvatarSize: Dp = 40.dp
-    val HorizontalPadding: Dp = 12.dp
-    val CompactHorizontalPadding: Dp = 10.dp
-    val VerticalPadding: Dp = 8.dp
-    val CompactVerticalPadding: Dp = 6.dp
-    val Spacing: Dp = 14.dp
-    val CompactSpacing: Dp = 12.dp
-    val TrailingSpacing: Dp = 10.dp
-    val TrailingIconSize: Dp = 20.dp
+    val MinHeight: Dp = 56.dp
+    val AvatarSize: Dp = 48.dp
+    val CompactAvatarSize: Dp = 44.dp
+    val HorizontalPadding: Dp = 16.dp
+    val CompactHorizontalPadding: Dp = 14.dp
+    val VerticalPadding: Dp = 12.dp
+    val CompactVerticalPadding: Dp = 10.dp
+    val Spacing: Dp = 16.dp
+    val CompactSpacing: Dp = 14.dp
+    val TrailingSpacing: Dp = 12.dp
+    val TrailingIconSize: Dp = 22.dp
 
     @Composable
     fun headlineStyle(): TextStyle = MaterialTheme.typography.titleMedium
@@ -117,6 +119,117 @@ object RivoListItemDefaults {
 
     @Composable
     fun shape(): Shape = MaterialTheme.shapes.extraLarge
+}
+
+/**
+ * Calculates continuous grouped card corner shapes for items in a section.
+ * First item: rounded top corners
+ * Middle items: subtle inner corners
+ * Last item: rounded bottom corners
+ * Single item: all corners rounded
+ */
+fun rivoGroupedItemShape(
+    index: Int,
+    total: Int,
+    cornerRadius: Dp = 20.dp,
+    innerCorner: Dp = 4.dp
+): Shape {
+    return when {
+        total <= 1 -> RoundedCornerShape(cornerRadius)
+        index == 0 -> RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius, bottomStart = innerCorner, bottomEnd = innerCorner)
+        index == total - 1 -> RoundedCornerShape(topStart = innerCorner, topEnd = innerCorner, bottomStart = cornerRadius, bottomEnd = cornerRadius)
+        else -> RoundedCornerShape(innerCorner)
+    }
+}
+
+/**
+ * Reusable container for grouped card items matching the Recents M3 Expressive design.
+ */
+@Composable
+fun RivoGroupedCardContainer(
+    index: Int,
+    total: Int,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    cornerRadius: Dp = 20.dp,
+    innerCorner: Dp = 4.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val shape = rivoGroupedItemShape(index, total, cornerRadius, innerCorner)
+    RivoGroupedCardContainer(
+        shape = shape,
+        modifier = modifier,
+        containerColor = containerColor,
+        content = content
+    )
+}
+
+@Composable
+fun RivoGroupedCardContainer(
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(containerColor),
+        content = content
+    )
+}
+
+class RivoGroupScope {
+    internal val items = mutableListOf<@Composable () -> Unit>()
+
+    fun item(content: @Composable () -> Unit) {
+        items.add(content)
+    }
+}
+
+/**
+ * Material 3 Expressive grouped section container.
+ * Renders an external section header (if title/icon provided) and styles children as
+ * connected cards with dynamic corner radii (top rounded 20dp, middle subtle 4dp, bottom rounded 20dp, or single 20dp),
+ * separated by 3dp hairline gaps matching the Recents, Contacts, and Call Recordings design.
+ */
+@Composable
+fun RivoExpressiveGroup(
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    icon: ImageVector? = null,
+    headerPadding: PaddingValues = PaddingValues(top = 16.dp, bottom = 4.dp),
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    content: @Composable RivoGroupScope.() -> Unit
+) {
+    val scope = RivoGroupScope()
+    scope.content()
+    if (scope.items.isEmpty() && title == null && icon == null) return
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        if (title != null || icon != null) {
+            RivoSectionHeader(
+                title = title.orEmpty(),
+                icon = icon,
+                modifier = Modifier.padding(headerPadding)
+            )
+        }
+        val total = scope.items.size
+        scope.items.forEachIndexed { index, itemLambda ->
+            val shape = rivoGroupedItemShape(index, total)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = shape,
+                color = containerColor
+            ) {
+                itemLambda()
+            }
+        }
+    }
 }
 
 enum class RivoIconTileSize { Medium, Large }
@@ -172,48 +285,44 @@ fun RivoExpressiveCard(
     icon: ImageVector? = null,
     shape: Shape? = null,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
-    isCompact: Boolean = true,
+    isCompact: Boolean = false,
     showCards: Boolean? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val cardsEnabled = showCards ?: rivoSurfaceStyle().showCards
-    val resolvedShape = shape ?: MaterialTheme.shapes.extraLarge
+    val resolvedShape = shape ?: RoundedCornerShape(20.dp)
 
-    val padding = if (isCompact) 14.dp else 16.dp
-    val spacing = if (isCompact) 10.dp else 12.dp
-
-    if (cardsEnabled) {
-        Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = resolvedShape,
-            colors = CardDefaults.cardColors(containerColor = containerColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = RivoElevation.Flat)
-        ) {
-            Column(
-                modifier = Modifier.padding(padding),
-                verticalArrangement = Arrangement.spacedBy(spacing)
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        if (title != null || icon != null) {
+            RivoSectionHeader(
+                title = title.orEmpty(),
+                icon = icon,
+                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+            )
+        }
+        if (cardsEnabled) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = resolvedShape,
+                color = containerColor
             ) {
-                if (title != null || icon != null) {
-                    RivoSectionHeader(
-                        title = title.orEmpty(),
-                        icon = icon,
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
-                    )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    content()
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
                 content()
             }
-        }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(spacing)
-        ) {
-            if (title != null || icon != null) {
-                RivoSectionHeader(title = title.orEmpty(), icon = icon)
-            }
-            content()
         }
     }
 }
@@ -363,7 +472,7 @@ fun RivoListItem(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
-    isCompact: Boolean = true,
+    isCompact: Boolean = false,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selectable: Boolean = false,
@@ -443,7 +552,10 @@ fun RivoListItem(
         shadowElevation = RivoElevation.Flat,
         modifier = modifier
             .fillMaxWidth()
-            .scale(itemScale)
+            .graphicsLayer {
+                scaleX = itemScale
+                scaleY = itemScale
+            }
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = ripple(),

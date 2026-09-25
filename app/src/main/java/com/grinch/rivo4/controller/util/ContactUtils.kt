@@ -11,17 +11,30 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.data.Contact
 
 object ContactUtils {
+    fun isSyncAdapterType(accountType: String?): Boolean {
+        if (accountType == null) return false
+        val t = accountType.lowercase()
+        return t.contains("whatsapp") || t.contains("telegram") || t.contains("viber") || t.contains("skype")
+    }
+
     fun isLocalAccount(accountType: String?, accountName: String?, availableAccounts: List<Account> = emptyList()): Boolean {
         if (accountType == null || accountName == null) return true
+        if (accountType.isBlank() || accountName.isBlank()) return true
         val typeLower = accountType.lowercase()
         val nameLower = accountName.lowercase()
         if (typeLower.contains("phone") || typeLower.contains("local") || typeLower.contains("device") ||
             typeLower.contains("default") || typeLower.contains("sec.contact") ||
+            typeLower.contains("miui.contact") || typeLower == "com.android.contacts" ||
+            typeLower.startsWith("com.google.android.gms.null") ||
             nameLower == "phone" || nameLower == "device" || nameLower == "default" || nameLower == "local") {
             return true
         }
-        if (availableAccounts.isEmpty()) return false
-        return availableAccounts.none { it.type.equals(accountType, ignoreCase = true) && it.name.equals(accountName, ignoreCase = true) }
+        if (isSyncAdapterType(accountType)) {
+            return false
+        }
+        val nonSyncAccounts = availableAccounts.filter { !isSyncAdapterType(it.type) }
+        if (nonSyncAccounts.isEmpty()) return true
+        return nonSyncAccounts.none { it.type.equals(accountType, ignoreCase = true) && it.name.equals(accountName, ignoreCase = true) }
     }
 
     /**
@@ -30,7 +43,16 @@ object ContactUtils {
     fun isContactLocal(contact: Contact, availableAccounts: List<Account> = emptyList()): Boolean {
         if (contact.isPrivate) return false
         if (isLocalAccount(contact.accountType, contact.accountName, availableAccounts)) return true
-        return contact.linkedAccounts.any { isLocalAccount(it.type, it.name, availableAccounts) }
+        if (contact.linkedAccounts.any { isLocalAccount(it.type, it.name, availableAccounts) }) return true
+
+        val hasCloudAccount = contact.linkedAccounts.any { acc ->
+            acc.type != null && !isSyncAdapterType(acc.type) && !isLocalAccount(acc.type, acc.name, availableAccounts)
+        }
+        val primaryIsCloud = contact.accountType != null &&
+            !isSyncAdapterType(contact.accountType) &&
+            !isLocalAccount(contact.accountType, contact.accountName, availableAccounts)
+
+        return !hasCloudAccount && !primaryIsCloud
     }
 
     fun getFriendlyAccountName(context: Context, account: Account): String {

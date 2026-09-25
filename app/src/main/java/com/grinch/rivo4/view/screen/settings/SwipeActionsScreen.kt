@@ -128,38 +128,49 @@ fun SwipeActionsScreen(
 
             // Interactive Live Preview Card
             item {
-                RivoExpressiveCard(title = stringResource(R.string.swipe_action_preview_title)) {
-                    Text(
-                        text = stringResource(R.string.swipe_action_preview_supporting),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
-                    )
-
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainer,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        RivoSwipeToActionBox(
-                            enabled = enabled,
-                            swipeRightAction = swipeRightAction,
-                            swipeLeftAction = swipeLeftAction,
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            onTriggerAction = { action ->
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.swipe_action_triggered_toast, context.getString(action.titleRes)),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.swipe_action_preview_title),
+                    icon = Icons.Outlined.Gesture
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 12.dp)
                         ) {
-                            RivoListItem(
-                                headline = stringResource(R.string.swipe_action_test_contact_name),
-                                supporting = stringResource(R.string.swipe_action_test_contact_number),
-                                avatarName = stringResource(R.string.swipe_action_test_contact_name),
-                                onClick = {}
+                            Text(
+                                text = stringResource(R.string.swipe_action_preview_supporting),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(bottom = 8.dp)
                             )
+
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                RivoSwipeToActionBox(
+                                    enabled = enabled,
+                                    swipeRightAction = swipeRightAction,
+                                    swipeLeftAction = swipeLeftAction,
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    onTriggerAction = { action ->
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.swipe_action_triggered_toast, context.getString(action.titleRes)),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                ) {
+                                    RivoListItem(
+                                        headline = stringResource(R.string.swipe_action_test_contact_name),
+                                        supporting = stringResource(R.string.swipe_action_test_contact_number),
+                                        avatarName = stringResource(R.string.swipe_action_test_contact_name),
+                                        onClick = {}
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -167,50 +178,60 @@ fun SwipeActionsScreen(
 
             // Swipe Right Configuration
             item {
-                RivoExpressiveCard(title = stringResource(R.string.settings_swipe_right_action)) {
-                    RivoVisualOptionSelectorRow(
-                        headline = stringResource(R.string.settings_swipe_right_action),
-                        supporting = stringResource(R.string.settings_swipe_right_action_supporting),
-                        leadingIcon = Icons.Outlined.SwipeRight,
-                        options = actionOptions.map { stringResource(it.titleRes) to it.id },
-                        selectedValue = rightActionId,
-                        onValueChange = { selected ->
-                            rightActionId = selected
-                            prefs.setSwipeRightAction(selected)
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_swipe_right_action),
+                    icon = Icons.Outlined.SwipeRight
+                ) {
+                    item {
+                        RivoVisualOptionSelectorRow(
+                            headline = stringResource(R.string.settings_swipe_right_action),
+                            supporting = stringResource(R.string.settings_swipe_right_action_supporting),
+                            leadingIcon = Icons.Outlined.SwipeRight,
+                            options = actionOptions.map { stringResource(it.titleRes) to it.id },
+                            selectedValue = rightActionId,
+                            onValueChange = { selected ->
+                                rightActionId = selected
+                                prefs.setSwipeRightAction(selected)
+                            }
+                        ) { value, selected ->
+                            val action = SwipeActionType.fromId(value)
+                            Icon(
+                                imageVector = action.icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                    ) { value, selected ->
-                        val action = SwipeActionType.fromId(value)
-                        Icon(
-                            imageVector = action.icon,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
 
             // Swipe Left Configuration
             item {
-                RivoExpressiveCard(title = stringResource(R.string.settings_swipe_left_action)) {
-                    RivoVisualOptionSelectorRow(
-                        headline = stringResource(R.string.settings_swipe_left_action),
-                        supporting = stringResource(R.string.settings_swipe_left_action_supporting),
-                        leadingIcon = Icons.Outlined.SwipeLeft,
-                        options = actionOptions.map { stringResource(it.titleRes) to it.id },
-                        selectedValue = leftActionId,
-                        onValueChange = { selected ->
-                            leftActionId = selected
-                            prefs.setSwipeLeftAction(selected)
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_swipe_left_action),
+                    icon = Icons.Outlined.SwipeLeft
+                ) {
+                    item {
+                        RivoVisualOptionSelectorRow(
+                            headline = stringResource(R.string.settings_swipe_left_action),
+                            supporting = stringResource(R.string.settings_swipe_left_action_supporting),
+                            leadingIcon = Icons.Outlined.SwipeLeft,
+                            options = actionOptions.map { stringResource(it.titleRes) to it.id },
+                            selectedValue = leftActionId,
+                            onValueChange = { selected ->
+                                leftActionId = selected
+                                prefs.setSwipeLeftAction(selected)
+                            }
+                        ) { value, selected ->
+                            val action = SwipeActionType.fromId(value)
+                            Icon(
+                                imageVector = action.icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                    ) { value, selected ->
-                        val action = SwipeActionType.fromId(value)
-                        Icon(
-                            imageVector = action.icon,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }

@@ -63,6 +63,8 @@ import com.ramcosta.composedestinations.generated.destinations.ContactSelectionS
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import com.grinch.rivo4.controller.lock.AppLockManager
 import com.grinch.rivo4.view.screen.settings.AppLockOverlay
 import org.koin.android.ext.android.inject
@@ -71,11 +73,17 @@ import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 
-class MainActivity : androidx.fragment.app.FragmentActivity() {
+val LocalRequestedTab = compositionLocalOf<MutableState<Int?>> { mutableStateOf(null) }
+
+open class MainActivity : androidx.fragment.app.FragmentActivity() {
     private val preferenceManager: PreferenceManager by inject()
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
-    private var intentState by mutableStateOf<Intent?>(null)
+    protected var intentState by mutableStateOf<Intent?>(null)
     private var isAppLocked by mutableStateOf(false)
+
+    open val isContactsOnlyEntry: Boolean
+        get() = intentState?.component?.className?.endsWith("ContactsAliasActivity") == true ||
+                intent?.component?.className?.endsWith("ContactsAliasActivity") == true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -98,6 +106,13 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
         setContent {
             Rivo4Theme {
                 val navController = rememberNavController()
+                val requestedTab = remember {
+                    mutableStateOf<Int?>(if (isContactsOnlyEntry) PreferenceManager.TAB_CONTACTS else null)
+                }
+
+                CompositionLocalProvider(
+                    LocalRequestedTab provides requestedTab
+                ) {
 
                 val prefs = koinInject<PreferenceManager>()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
@@ -237,13 +252,14 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                 }
 
                     LaunchedEffect(Unit) {
-                        if (!isAlreadyDefaultDialer(this@MainActivity)) {
+                        val isContacts = isContactsOnlyEntry || intentState?.component?.className?.endsWith("ContactsAliasActivity") == true
+                        if (!isContacts && !isAlreadyDefaultDialer(this@MainActivity)) {
                             navController.navigate(DefaultDialerScreenDestination.route) {
                                 popUpTo(MainScreenDestination.route) {
                                     inclusive = true
                                 }
                             }
-                        } else if (intentState?.action == null || intentState?.action == Intent.ACTION_MAIN) {
+                        } else if (!isContacts && (intentState?.action == null || intentState?.action == Intent.ACTION_MAIN)) {
                             val startLocation = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
                             if (startLocation == PreferenceManager.START_LOCATION_DIALPAD_RECENTS || startLocation == PreferenceManager.START_LOCATION_DIALPAD_CONTACTS) {
                                 navController.navigate(DialPadScreenDestination().route)
@@ -252,8 +268,9 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                     }
 
                     LaunchedEffect(intentState) {
-                        handleIntent(intentState, navController)
+                        handleIntent(intentState, navController, requestedTab)
                     }
+                }
                 }
             }
         }
@@ -278,16 +295,18 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
         intentState = intent
     }
 
-    private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController) {
+    private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController, requestedTab: MutableState<Int?>? = null) {
         intent ?: return
         val data = intent.data
         val action = intent.action
         val componentName = intent.component?.className
 
-        if (componentName?.endsWith("ContactsAliasActivity") == true) {
-            navController.navigate(MainScreenDestination(initialTab = PreferenceManager.TAB_CONTACTS).route) {
-                popUpTo(navController.graph.startDestinationId)
-                launchSingleTop = true
+        if (componentName?.endsWith("ContactsAliasActivity") == true || isContactsOnlyEntry) {
+            requestedTab?.value = PreferenceManager.TAB_CONTACTS
+            try {
+                navController.popBackStack(MainScreenDestination.route, inclusive = false)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
             return
         }

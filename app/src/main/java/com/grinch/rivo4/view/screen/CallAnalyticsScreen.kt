@@ -228,7 +228,12 @@ fun CallAnalyticsScreen(
                             title = "SIM Usage Breakdown",
                             icon = Icons.Outlined.SimCard
                         ) {
-                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
                                 analytics.simUsage.forEach { (sim, durationSec) ->
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -320,7 +325,12 @@ private fun CallDistributionCard(analytics: CallAnalyticsSummary) {
         title = "Call Breakdown",
         icon = Icons.Outlined.PieChart
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             val total = analytics.totalCalls.coerceAtLeast(1).toFloat()
             val inRatio = analytics.incomingCalls / total
             val outRatio = analytics.outgoingCalls / total

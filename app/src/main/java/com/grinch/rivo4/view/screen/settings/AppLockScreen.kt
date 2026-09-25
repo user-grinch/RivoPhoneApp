@@ -72,6 +72,7 @@ import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.components.RivoSwitchListItem
@@ -132,58 +133,59 @@ fun AppLockScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            RivoExpressiveCard(
+            RivoExpressiveGroup(
                 title = "Security & Protection",
                 icon = Icons.Outlined.Security
             ) {
-                RivoSwitchListItem(
-                    headline = "Enable App Lock",
-                    supporting = "Require authentication to open Rivo Phone",
-                    leadingIcon = Icons.Outlined.Lock,
-                    checked = isLockEnabled,
-                    onCheckedChange = { enable ->
-                        if (enable) {
-                            if (activity != null && AppLockManager.canAuthenticate(context)) {
-                                AppLockManager.authenticate(
-                                    activity = activity,
-                                    title = "Enable App Lock",
-                                    subtitle = "Authenticate to confirm enabling lock",
-                                    onSuccess = {
-                                        prefs.setAppLockEnabled(true)
-                                        Toast.makeText(context, "App lock enabled", Toast.LENGTH_SHORT).show()
-                                    },
-                                    onError = {
-                                        Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                item {
+                    RivoSwitchListItem(
+                        headline = "Enable App Lock",
+                        supporting = "Require authentication to open Rivo Phone",
+                        leadingIcon = Icons.Outlined.Lock,
+                        checked = isLockEnabled,
+                        onCheckedChange = { enable ->
+                            if (enable) {
+                                if (activity != null && AppLockManager.canAuthenticate(context)) {
+                                    AppLockManager.authenticate(
+                                        activity = activity,
+                                        title = "Enable App Lock",
+                                        subtitle = "Authenticate to confirm enabling lock",
+                                        onSuccess = {
+                                            prefs.setAppLockEnabled(true)
+                                            Toast.makeText(context, "App lock enabled", Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = {
+                                            Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                } else {
+                                    showPinDialog = true
+                                }
                             } else {
-                                showPinDialog = true
-                            }
-                        } else {
-                            if (activity != null && AppLockManager.canAuthenticate(context)) {
-                                AppLockManager.authenticate(
-                                    activity = activity,
-                                    title = "Disable App Lock",
-                                    subtitle = "Authenticate to confirm disabling lock",
-                                    onSuccess = {
-                                        prefs.setAppLockEnabled(false)
-                                        Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
-                                    },
-                                    onError = {
-                                        Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            } else {
-                                prefs.setAppLockEnabled(false)
-                                Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
+                                if (activity != null && AppLockManager.canAuthenticate(context)) {
+                                    AppLockManager.authenticate(
+                                        activity = activity,
+                                        title = "Disable App Lock",
+                                        subtitle = "Authenticate to confirm disabling lock",
+                                        onSuccess = {
+                                            prefs.setAppLockEnabled(false)
+                                            Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = {
+                                            Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                } else {
+                                    prefs.setAppLockEnabled(false)
+                                    Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
 
-                AnimatedVisibility(visible = isLockEnabled) {
-                    Column {
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                if (isLockEnabled) {
+                    item {
                         RivoSwitchListItem(
                             headline = "Biometric Unlock",
                             supporting = "Use Face, Fingerprint, or Device PIN/Password",
@@ -191,16 +193,16 @@ fun AppLockScreen(
                             checked = isBiometricEnabled,
                             onCheckedChange = { prefs.setBiometricLockEnabled(it) }
                         )
-
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    }
+                    item {
                         RivoListItem(
                             headline = if (hasPin) "Change App PIN" else "Set Custom App PIN",
                             supporting = if (hasPin) "Custom PIN is configured" else "Optional separate PIN for Rivo Phone",
                             leadingIcon = Icons.Outlined.Password,
                             onClick = { showPinDialog = true }
                         )
-
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    }
+                    item {
                         RivoListItem(
                             headline = "Lock Timeout",
                             supporting = currentTimeoutLabel,

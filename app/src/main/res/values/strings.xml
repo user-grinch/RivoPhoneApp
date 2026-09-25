@@ -900,4 +900,14 @@
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Do Not Disturb during calls</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatically silence notifications and other interruptions while on a call</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Call Backgrounds</string>
+    <string name="settings_call_unknown_background">Unknown Call Background</string>
+    <string name="settings_call_unknown_background_set">A custom image is shown for unknown callers</string>
+    <string name="settings_call_unknown_background_none">Not set — uses default call background</string>
+    <string name="settings_call_unknown_background_supporting">Shown on incoming calls from unknown or unsaved phone numbers.</string>
+    <string name="settings_call_background_no_preview">No custom background</string>
+    <string name="settings_call_background_change_gallery">Change image</string>
+    <string name="settings_call_background_choose_gallery">Choose from gallery</string>
+    <string name="settings_call_background_remove">Remove background</string>
 </resources>

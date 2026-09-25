@@ -53,6 +53,7 @@ import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoFilterChip
 import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
+import com.grinch.rivo4.view.components.ContactLoadingIndicator
 import com.grinch.rivo4.view.components.RivoPullToRefreshIndicator
 import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.LocalScrollToTopBottomPadding
@@ -489,7 +490,7 @@ fun ContactContent(
         Column(modifier = Modifier.fillMaxSize()) {
             if (isGranted) {
                 if (isLoading && contacts.isEmpty()) {
-                    RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
+                    ContactLoadingIndicator(modifier = Modifier.fillMaxSize())
                 } else if (contacts.isEmpty()) {
                     EmptyContactsState()
                 } else {

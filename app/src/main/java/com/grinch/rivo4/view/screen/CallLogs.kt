@@ -9,8 +9,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.grinch.rivo4.view.components.CallLogTileConfig
+import com.grinch.rivo4.view.components.LocalCallLogTileConfig
+import com.grinch.rivo4.view.components.LocalRivoSurfaceStyle
+import com.grinch.rivo4.view.components.rememberRivoSurfaceStyle
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -118,8 +125,22 @@ fun CallLogFullScreen(
         )
     }
     val avatarStyle = rememberRivoAvatarStyle()
+    val surfaceStyle = rememberRivoSurfaceStyle(prefs)
+    val callLogConfig = remember(settingsState, selectedEntries.isNotEmpty()) {
+        CallLogTileConfig(
+            showSim = prefs.getBoolean(PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true),
+            swipeEnabled = prefs.isSwipeActionsEnabled() && selectedEntries.isEmpty(),
+            swipeRightAction = SwipeActionType.fromId(prefs.getSwipeRightAction()),
+            swipeLeftAction = SwipeActionType.fromId(prefs.getSwipeLeftAction()),
+            displayOrder = 0
+        )
+    }
 
-    CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
+    CompositionLocalProvider(
+        LocalRivoAvatarStyle provides avatarStyle,
+        LocalRivoSurfaceStyle provides surfaceStyle,
+        LocalCallLogTileConfig provides callLogConfig
+    ) {
         Scaffold(
             topBar = {
             AnimatedContent(
@@ -223,73 +244,98 @@ fun CallLogFullScreen(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
-                            item {
+                            item(key = "ad_header", contentType = "ad") {
                                 com.grinch.rivo4.view.components.ad.BannerAd()
+                                Spacer(modifier = Modifier.height(4.dp))
                             }
-                            groupedLogs.forEach { (header, logsInGroup) ->
-                                item {
-                                    RivoSectionHeader(title = header)
-                                    RivoExpressiveCard {
-                                        logsInGroup.forEachIndexed { index, lg ->
-                                            CallLogTileSimple(
-                                                log = lg,
-                                                onClick = {
-                                                    if (selectedEntries.isNotEmpty()) {
-                                                        selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
-                                                            selectedEntries.filter { it.id != lg.id }.toSet()
-                                                        } else {
-                                                            selectedEntries + lg
-                                                        }
-                                                    }
-                                                },
-                                                onLongClick = {
-                                                    if (selectedEntries.none { it.id == lg.id }) {
-                                                        selectedEntries = selectedEntries + lg
-                                                    }
-                                                },
-                                                onCallClick = {
-                                                    val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
-                                                        context,
-                                                        android.Manifest.permission.READ_PHONE_STATE
-                                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            groupedLogs.entries.forEachIndexed { groupIndex, (header, logsInGroup) ->
+                                item(key = "header_${header}_$groupIndex", contentType = "header") {
+                                    RivoSectionHeader(
+                                        title = header,
+                                        modifier = Modifier.padding(top = if (groupIndex == 0) 4.dp else 16.dp, bottom = 4.dp)
+                                    )
+                                }
 
-                                                    val targetContactId = lg.contactId ?: contactId
+                                itemsIndexed(
+                                    items = logsInGroup,
+                                    key = { _, lg -> lg.id },
+                                    contentType = { _, _ -> "call_log" }
+                                ) { index, lg ->
+                                    val isFirst = index == 0
+                                    val isLast = index == logsInGroup.size - 1
+                                    val isSingle = logsInGroup.size == 1
 
-                                                    if (hasPermission) {
-                                                        val accounts = telecomManager.callCapablePhoneAccounts
-                                                        val favSim = targetContactId?.let { prefs.getDefaultSimForContact(it) }
-                                                        val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
-                                                        if (preferredHandle != null) {
-                                                            makeCall(context, lg.number, preferredHandle, contactId = targetContactId)
-                                                        } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
-                                                            pendingNumber = lg.number
-                                                            pendingContactId = targetContactId
-                                                            showSimPicker = true
-                                                        } else {
-                                                            makeCall(context, lg.number, contactId = targetContactId)
-                                                        }
+                                    val shape = when {
+                                        isSingle -> RoundedCornerShape(20.dp)
+                                        isFirst -> RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
+                                        isLast -> RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
+                                        else -> RoundedCornerShape(4.dp)
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(shape)
+                                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                    ) {
+                                        CallLogTileSimple(
+                                            log = lg,
+                                            showSim = callLogConfig.showSim,
+                                            swipeEnabled = callLogConfig.swipeEnabled,
+                                            swipeRightAction = callLogConfig.swipeRightAction,
+                                            swipeLeftAction = callLogConfig.swipeLeftAction,
+                                            onClick = {
+                                                if (selectedEntries.isNotEmpty()) {
+                                                    selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
+                                                        selectedEntries.filter { it.id != lg.id }.toSet()
+                                                    } else {
+                                                        selectedEntries + lg
+                                                    }
+                                                }
+                                            },
+                                            onLongClick = {
+                                                if (selectedEntries.none { it.id == lg.id }) {
+                                                    selectedEntries = selectedEntries + lg
+                                                }
+                                            },
+                                            onCallClick = {
+                                                val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                                    context,
+                                                    android.Manifest.permission.READ_PHONE_STATE
+                                                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                                                val targetContactId = lg.contactId ?: contactId
+
+                                                if (hasPermission) {
+                                                    val accounts = telecomManager.callCapablePhoneAccounts
+                                                    val favSim = targetContactId?.let { prefs.getDefaultSimForContact(it) }
+                                                    val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
+                                                    if (preferredHandle != null) {
+                                                        makeCall(context, lg.number, preferredHandle, contactId = targetContactId)
+                                                    } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
+                                                        pendingNumber = lg.number
+                                                        pendingContactId = targetContactId
+                                                        showSimPicker = true
                                                     } else {
                                                         makeCall(context, lg.number, contactId = targetContactId)
                                                     }
-                                                },
-                                                selected = selectedEntries.any { it.id == lg.id },
-                                                onSwipeAction = { action, log ->
-                                                    if (action == SwipeActionType.DELETE) {
-                                                        viewModel.deleteCallLogsByIds(log.ids)
-                                                    }
+                                                } else {
+                                                    makeCall(context, lg.number, contactId = targetContactId)
                                                 }
-                                            )
-                                            
-                                            if (index < logsInGroup.size - 1) {
-                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                                            },
+                                            selected = selectedEntries.any { it.id == lg.id },
+                                            onSwipeAction = { action, log ->
+                                                if (action == SwipeActionType.DELETE) {
+                                                    viewModel.deleteCallLogsByIds(log.ids)
+                                                }
                                             }
-                                        }
+                                        )
                                     }
                                 }
                             }
-                            item { Spacer(modifier = Modifier.height(100.dp)) }
+                            item(key = "bottom_spacer") { Spacer(modifier = Modifier.height(100.dp)) }
                         }
                     }
                 }

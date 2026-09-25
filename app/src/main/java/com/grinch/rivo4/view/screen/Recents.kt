@@ -7,6 +7,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -504,6 +505,18 @@ fun CallLogFullContent(
         val videoLauncher = rememberVideoLauncher()
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
         val displayOrder = remember(settingsState) { prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
+        val callLogConfig = remember(settingsState, selectedEntries.isNotEmpty()) {
+            CallLogTileConfig(
+                showSim = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true),
+                swipeEnabled = prefs.isSwipeActionsEnabled() && selectedEntries.isEmpty(),
+                swipeRightAction = SwipeActionType.fromId(prefs.getSwipeRightAction()),
+                swipeLeftAction = SwipeActionType.fromId(prefs.getSwipeLeftAction()),
+                displayOrder = displayOrder
+            )
+        }
+        val contactsById = remember(allContacts) { allContacts.associateBy { it.id } }
+        val favoriteContactIds = remember(favorites) { favorites.map { it.id }.toSet() }
+        val surfaceStyle = rememberRivoSurfaceStyle(prefs)
 
         val filteredLogs = remember(logs, selectedFilter, blockLogVisibility) {
             val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
@@ -548,6 +561,10 @@ fun CallLogFullContent(
                 )
             }
         ) {
+            CompositionLocalProvider(
+                LocalRivoSurfaceStyle provides surfaceStyle,
+                LocalCallLogTileConfig provides callLogConfig
+            ) {
             if (isLoading && logs.isEmpty()) {
                 RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
             } else if (logs.isEmpty() && (favorites.isEmpty() || selectedFilter != CallLogFilter.All)) {
@@ -559,7 +576,7 @@ fun CallLogFullContent(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 100.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
                         if (showRecentsStats && selectedFilter == CallLogFilter.All && logs.isNotEmpty()) {
                             item {
@@ -724,70 +741,96 @@ fun CallLogFullContent(
                         }
 
                         groupedLogs.entries.forEachIndexed { groupIndex, (header, logsInGroup) ->
-                            item {
-                                RivoSectionHeader(title = header)
-                                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                    RivoExpressiveCard {
-                                        logsInGroup.forEachIndexed { index, lg ->
-                                            CallLogTile(
-                                                log = lg,
-                                                displayOrder = displayOrder,
-                                                onTileClick = { log ->
-                                                    if (selectedEntries.isNotEmpty()) {
-                                                        onToggleSelection(log)
-                                                    } else {
-                                                        navigator.navigate(
-                                                            ContactDetailsScreenDestination(
-                                                                contactId = log.contactId ?: "null",
-                                                                phoneNumber = log.number
-                                                            )
-                                                        )
+                            item(key = "header_${header}_$groupIndex", contentType = "header") {
+                                RivoSectionHeader(
+                                    title = header,
+                                    modifier = Modifier.padding(top = if (groupIndex == 0) 4.dp else 16.dp, bottom = 4.dp)
+                                )
+                            }
+
+                            itemsIndexed(
+                                items = logsInGroup,
+                                key = { _, lg -> lg.id },
+                                contentType = { _, _ -> "call_log" }
+                            ) { index, lg ->
+                                val isFirst = index == 0
+                                val isLast = index == logsInGroup.size - 1
+                                val isSingle = logsInGroup.size == 1
+
+                                val shape = when {
+                                    isSingle -> RoundedCornerShape(20.dp)
+                                    isFirst -> RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
+                                    isLast -> RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
+                                    else -> RoundedCornerShape(4.dp)
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp)
+                                        .clip(shape)
+                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                ) {
+                                    CallLogTile(
+                                        log = lg,
+                                        displayOrder = displayOrder,
+                                        showSim = callLogConfig.showSim,
+                                        isFavorite = lg.contactId != null && lg.contactId in favoriteContactIds,
+                                        swipeEnabled = callLogConfig.swipeEnabled,
+                                        swipeRightAction = callLogConfig.swipeRightAction,
+                                        swipeLeftAction = callLogConfig.swipeLeftAction,
+                                        onTileClick = { log ->
+                                            if (selectedEntries.isNotEmpty()) {
+                                                onToggleSelection(log)
+                                            } else {
+                                                navigator.navigate(
+                                                    ContactDetailsScreenDestination(
+                                                        contactId = log.contactId ?: "null",
+                                                        phoneNumber = log.number
+                                                    )
+                                                )
+                                            }
+                                        },
+                                        onButtonClick = { log ->
+                                            val contact = contactsById[log.contactId]
+                                            callLauncher.dial(log.number, contact)
+                                        },
+                                        onLongClick = { log ->
+                                            onToggleSelection(log)
+                                        },
+                                        selected = selectedEntries.any { it.id == lg.id },
+                                        onSwipeAction = { action, log ->
+                                            if (action == SwipeActionType.DELETE) {
+                                                viewModel.deleteCallLogsByIds(log.ids)
+                                            } else {
+                                                val contact = contactsById[log.contactId]
+                                                when (action) {
+                                                    SwipeActionType.CALL -> callLauncher.dial(log.number, contact)
+                                                    SwipeActionType.MESSAGE -> messageLauncher.sendMessage(log.number, contact)
+                                                    SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(log.number, contact)
+                                                    SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, log.number)
+                                                    SwipeActionType.COPY_NUMBER -> {
+                                                        clipboardManager.setText(AnnotatedString(log.number))
+                                                        Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
                                                     }
-                                                },
-                                                onButtonClick = { log ->
-                                                    val contact = allContacts.find { it.id == log.contactId }
-                                                    callLauncher.dial(log.number, contact)
-                                                },
-                                                onLongClick = { log ->
-                                                    onToggleSelection(log)
-                                                },
-                                                selected = selectedEntries.any { it.id == lg.id },
-                                                onSwipeAction = { action, log ->
-                                                    if (action == SwipeActionType.DELETE) {
-                                                        viewModel.deleteCallLogsByIds(log.ids)
-                                                    } else {
-                                                        val contact = allContacts.find { it.id == log.contactId }
-                                                        when (action) {
-                                                            SwipeActionType.CALL -> callLauncher.dial(log.number, contact)
-                                                            SwipeActionType.MESSAGE -> messageLauncher.sendMessage(log.number, contact)
-                                                            SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(log.number, contact)
-                                                            SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, log.number)
-                                                            SwipeActionType.COPY_NUMBER -> {
-                                                                clipboardManager.setText(AnnotatedString(log.number))
-                                                                Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
-                                                            }
-                                                            SwipeActionType.NONE, SwipeActionType.DELETE -> {}
-                                                        }
-                                                    }
+                                                    SwipeActionType.NONE, SwipeActionType.DELETE -> {}
                                                 }
-                                            )
-                                            if (index < logsInGroup.size - 1) {
-                                                RivoDivider(modifier = Modifier.padding(horizontal = 16.dp))
                                             }
                                         }
-                                    }
+                                    )
                                 }
-                                Spacer(modifier = Modifier.height(12.dp))
                             }
+
                             if (groupIndex % 3 == 0) {
-                                item {
+                                item(key = "ad_$groupIndex", contentType = "ad") {
                                     com.grinch.rivo4.view.components.ad.BannerAd()
-                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Spacer(modifier = Modifier.height(4.dp))
                                 }
                             }
                         }
                     }
                 }
+            }
             }
         }
     } else {

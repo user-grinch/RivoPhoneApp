@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -92,73 +93,69 @@ fun BackupRestoreScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-                Text(
-                    stringResource(R.string.settings_backup_contacts_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                Spacer(Modifier.height(8.dp))
-                RivoExpressiveCard {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_backup_export_contacts),
-                        supporting = stringResource(R.string.settings_backup_export_contacts_supporting),
-                        leadingIcon = Icons.Outlined.FileUpload,
-                        onClick = { exportContactsLauncher.launch("contacts_backup.vcf") }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_backup_import_contacts),
-                        supporting = stringResource(R.string.settings_backup_import_contacts_supporting),
-                        leadingIcon = Icons.Outlined.FileDownload,
-                        onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard")) }
-                    )
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_backup_contacts_header),
+                    icon = Icons.Outlined.ContactPhone
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_export_contacts),
+                            supporting = stringResource(R.string.settings_backup_export_contacts_supporting),
+                            leadingIcon = Icons.Outlined.FileUpload,
+                            onClick = { exportContactsLauncher.launch("contacts_backup.vcf") }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_import_contacts),
+                            supporting = stringResource(R.string.settings_backup_import_contacts_supporting),
+                            leadingIcon = Icons.Outlined.FileDownload,
+                            onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard")) }
+                        )
+                    }
                 }
             }
 
             item {
-                Text(
-                    stringResource(R.string.settings_backup_call_logs_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                Spacer(Modifier.height(8.dp))
-                RivoExpressiveCard {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_backup_export_logs),
-                        supporting = stringResource(R.string.settings_backup_export_logs_supporting),
-                        leadingIcon = Icons.Outlined.History,
-                        onClick = { exportLogsLauncher.launch("call_logs_backup.json") }
-                    )
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_backup_import_logs),
-                        supporting = stringResource(R.string.settings_backup_import_logs_supporting),
-                        leadingIcon = Icons.Outlined.Restore,
-                        onClick = { importLogsLauncher.launch(arrayOf("application/json")) }
-                    )
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_backup_call_logs_header),
+                    icon = Icons.Outlined.History
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_export_logs),
+                            supporting = stringResource(R.string.settings_backup_export_logs_supporting),
+                            leadingIcon = Icons.Outlined.History,
+                            onClick = { exportLogsLauncher.launch("call_logs_backup.json") }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_import_logs),
+                            supporting = stringResource(R.string.settings_backup_import_logs_supporting),
+                            leadingIcon = Icons.Outlined.Restore,
+                            onClick = { importLogsLauncher.launch(arrayOf("application/json")) }
+                        )
+                    }
                 }
             }
 
             item {
-                Text(
-                    stringResource(R.string.settings_manage_contacts_headline),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                Spacer(Modifier.height(8.dp))
-                RivoExpressiveCard {
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_manage_standardize_numbers),
-                        supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
-                        leadingIcon = Icons.Outlined.Numbers,
-                        onClick = { showStandardizeConfirm = true }
-                    )
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_manage_contacts_headline),
+                    icon = Icons.Outlined.Numbers
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_manage_standardize_numbers),
+                            supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
+                            leadingIcon = Icons.Outlined.Numbers,
+                            onClick = { showStandardizeConfirm = true }
+                        )
+                    }
                 }
             }
 

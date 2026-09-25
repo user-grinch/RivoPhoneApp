@@ -51,7 +51,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 sealed class StorageTarget(val id: String, val displayName: String) {
-    object LocalMemory : StorageTarget("local", "Local Memory (Device)")
+    object LocalMemory : StorageTarget("local", "Device")
     object PrivateStorage : StorageTarget("private", "Private Storage (App Vault)")
     data class SimCard(val account: Account) : StorageTarget("sim_${account.name}", "SIM Card (${account.name})")
     data class CloudAccount(val account: Account) : StorageTarget("account_${account.name}_${account.type}", account.name)
@@ -540,73 +540,81 @@ fun ContactManagementScreen(
 
             // 4. Address Book Tools
             item {
-                RivoExpressiveCard(
+                RivoExpressiveGroup(
                     title = stringResource(R.string.contact_management_tools_title),
                     icon = Icons.Outlined.Build
                 ) {
-                    RivoListItem(
-                        headline = stringResource(R.string.contact_management_standardize_numbers),
-                        supporting = stringResource(R.string.contact_management_standardize_supporting),
-                        leadingIcon = Icons.Outlined.FormatColorText,
-                        onClick = { showStandardizeConfirm = true }
-                    )
-                    if (standardizeProgress != null) {
-                        LinearProgressIndicator(
-                            progress = { standardizeProgress ?: 0f },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                    item {
+                        Column {
+                            RivoListItem(
+                                headline = stringResource(R.string.contact_management_standardize_numbers),
+                                supporting = stringResource(R.string.contact_management_standardize_supporting),
+                                leadingIcon = Icons.Outlined.FormatColorText,
+                                onClick = { showStandardizeConfirm = true }
+                            )
+                            if (standardizeProgress != null) {
+                                LinearProgressIndicator(
+                                    progress = { standardizeProgress ?: 0f },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_manage_visibility),
+                            supporting = stringResource(R.string.settings_manage_visibility_supporting),
+                            leadingIcon = Icons.Outlined.Visibility,
+                            onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
                         )
                     }
 
-                    RivoListItem(
-                        headline = stringResource(R.string.settings_manage_visibility),
-                        supporting = stringResource(R.string.settings_manage_visibility_supporting),
-                        leadingIcon = Icons.Outlined.Visibility,
-                        onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
-                    )
+                    item {
+                        RivoListItem(
+                            headline = "Private Storage Vault",
+                            supporting = "Manage secret local contacts stored strictly in app database",
+                            leadingIcon = Icons.Outlined.Lock,
+                            onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                        )
+                    }
 
-                    RivoListItem(
-                        headline = "Private Storage Vault",
-                        supporting = "Manage secret local contacts stored strictly in app database",
-                        leadingIcon = Icons.Outlined.Lock,
-                        onClick = { navigator.navigate(PrivateContactsScreenDestination) }
-                    )
-
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                    var contactManagementCard by remember(settingsState) { mutableStateOf(prefs.isContactManagementCardEnabled()) }
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_contact_management_card),
-                        supporting = stringResource(R.string.settings_contact_management_card_supporting),
-                        leadingIcon = Icons.Outlined.Info,
-                        checked = contactManagementCard,
-                        onCheckedChange = { enabled ->
-                            contactManagementCard = enabled
-                            prefs.setContactManagementCardEnabled(enabled)
-                        }
-                    )
-
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_contacts_launcher_icon),
-                        supporting = stringResource(R.string.settings_contacts_launcher_icon_supporting),
-                        leadingIcon = Icons.Outlined.PersonPin,
-                        checked = separateContactsIcon,
-                        onCheckedChange = { enabled ->
-                            separateContactsIcon = enabled
-                            prefs.setSeparateContactsIconEnabled(enabled)
-                            try {
-                                val pm = context.packageManager
-                                val componentName = android.content.ComponentName(context, "com.grinch.rivo4.ContactsAliasActivity")
-                                val state = if (enabled) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                                pm.setComponentEnabledSetting(componentName, state, android.content.pm.PackageManager.DONT_KILL_APP)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                    item {
+                        var contactManagementCard by remember(settingsState) { mutableStateOf(prefs.isContactManagementCardEnabled()) }
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_contact_management_card),
+                            supporting = stringResource(R.string.settings_contact_management_card_supporting),
+                            leadingIcon = Icons.Outlined.Info,
+                            checked = contactManagementCard,
+                            onCheckedChange = { enabled ->
+                                contactManagementCard = enabled
+                                prefs.setContactManagementCardEnabled(enabled)
                             }
-                        }
-                    )
+                        )
+                    }
+
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_contacts_launcher_icon),
+                            supporting = stringResource(R.string.settings_contacts_launcher_icon_supporting),
+                            leadingIcon = Icons.Outlined.PersonPin,
+                            checked = separateContactsIcon,
+                            onCheckedChange = { enabled ->
+                                separateContactsIcon = enabled
+                                prefs.setSeparateContactsIconEnabled(enabled)
+                                try {
+                                    val pm = context.packageManager
+                                    val componentName = android.content.ComponentName(context, "com.grinch.rivo4.ContactsAliasActivity")
+                                    val state = if (enabled) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                                    pm.setComponentEnabledSetting(componentName, state, android.content.pm.PackageManager.DONT_KILL_APP)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        )
+                    }
                 }
             }
 

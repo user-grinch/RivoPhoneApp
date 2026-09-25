@@ -724,7 +724,6 @@ class CallService : InCallService() {
         if (calls.isEmpty()) {
             restoreDndIfEnabled()
             if (CallRecorder.isRecording.value) CallRecorder.stop()
-            com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
             removeForeground()
             cancelNotification()
         } else {
@@ -743,14 +742,10 @@ class CallService : InCallService() {
         when (intent?.action) {
             "ANSWER_CALL" -> {
                 answerCall()
-                if (preferenceManager.isFloatingCallBubbleEnabled() && android.provider.Settings.canDrawOverlays(this)) {
-                    com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
-                } else {
-                    val activityIntent = Intent(this, CallActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    }
-                    startActivity(activityIntent)
+                val activityIntent = Intent(this, CallActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 }
+                startActivity(activityIntent)
             }
             "DECLINE_CALL" -> declineCall()
             "TOGGLE_MUTE" -> toggleMute()
@@ -840,12 +835,16 @@ class CallService : InCallService() {
         val speakerIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_SPEAKER" }
         val speakerPendingIntent = PendingIntent.getService(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val avatarBitmap = com.grinch.rivo4.controller.util.CallNotificationHelper.getAvatarBitmap(this, contactName, contactPhoto)
         val personBuilder = androidx.core.app.Person.Builder()
             .setName(contactName)
             .setImportant(true)
-        
-        if (contactPhoto != null) {
-            personBuilder.setIcon(IconCompat.createWithBitmap(contactPhoto))
+            .setBot(false)
+            .setIcon(IconCompat.createWithBitmap(avatarBitmap))
+
+        if (number.isNotBlank()) {
+            personBuilder.setUri("tel:")
+            personBuilder.setKey(number)
         }
         val person = personBuilder.build()
 
@@ -867,7 +866,7 @@ class CallService : InCallService() {
         val contentText = buildString {
             if (call.state == Call.STATE_RINGING) append(getString(R.string.call_status_incoming)) else append(getString(R.string.notif_active_call))
             if (!simLabel.isNullOrEmpty()) {
-                append(" ")
+                append(" • ")
                 append(getString(R.string.notif_via_sim, simLabel))
             }
         }
@@ -889,11 +888,7 @@ class CallService : InCallService() {
             SILENT_CHANNEL_ID
         }
 
-        val notifVisibility = if (shouldHeadsUp) {
-            NotificationCompat.VISIBILITY_PUBLIC
-        } else {
-            NotificationCompat.VISIBILITY_SECRET
-        }
+        val notifColor = com.grinch.rivo4.controller.util.CallNotificationHelper.getNotificationColor(this)
 
         val builder = NotificationCompat.Builder(this, targetChannel)
             .setSmallIcon(if (isRinging) android.R.drawable.sym_call_incoming else R.drawable.ic_call_ongoing)
@@ -902,12 +897,16 @@ class CallService : InCallService() {
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
-            .setVisibility(notifVisibility)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
+            .setColorized(true)
+            .setColor(notifColor)
+            .setLargeIcon(avatarBitmap)
+            .addPerson(person)
 
         if (isRinging) {
+            builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
             if (shouldHeadsUp) {
-                builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
                 builder.setPriority(NotificationCompat.PRIORITY_MAX)
                 builder.setFullScreenIntent(fullScreenPendingIntent, true)
                 builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)

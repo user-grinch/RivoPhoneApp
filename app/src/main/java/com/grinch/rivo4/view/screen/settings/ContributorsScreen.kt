@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
+import androidx.compose.material.icons.outlined.People
 import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -93,25 +95,24 @@ fun ContributorsScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-                RivoExpressiveCard {
-                    appContributors.forEachIndexed { index, contributor ->
-                        RivoListItem(
-                            headline = contributor.name,
-                            supporting = stringResource(contributor.role),
-                            avatarName = contributor.name,
-                            photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
-                            trailingIcon = if (contributor.githubUrl != null) Icons.AutoMirrored.Outlined.Launch else null,
-                            onClick = {
-                                contributor.githubUrl?.let { openLink(context, it) }
-                            }
-                        )
-                        if (index < appContributors.size - 1) {
-                            HorizontalDivider(
-                                Modifier.padding(horizontal = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contributors_title),
+                    icon = Icons.Outlined.People
+                ) {
+                    appContributors.forEach { contributor ->
+                        item {
+                            RivoListItem(
+                                headline = contributor.name,
+                                supporting = stringResource(contributor.role),
+                                avatarName = contributor.name,
+                                photoUri = contributor.imageAsset?.let { "file:///android_asset/contributors/$it" },
+                                trailingIcon = if (contributor.githubUrl != null) Icons.AutoMirrored.Outlined.Launch else null,
+                                onClick = {
+                                    contributor.githubUrl?.let { openLink(context, it) }
+                                }
                             )
                         }
                     }

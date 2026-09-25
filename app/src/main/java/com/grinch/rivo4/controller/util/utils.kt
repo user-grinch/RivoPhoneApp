@@ -22,13 +22,24 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+private val formattedNumberCache = android.util.LruCache<String, String>(500)
+private val sameYearFormat = ThreadLocal.withInitial {
+    SimpleDateFormat("MMMM d", Locale.getDefault())
+}
+private val diffYearFormat = ThreadLocal.withInitial {
+    SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+}
+private val timeFormatCache = ThreadLocal<Pair<Boolean, java.text.DateFormat>>()
+private val calThreadLocal1 = ThreadLocal.withInitial { Calendar.getInstance() }
+private val calThreadLocal2 = ThreadLocal.withInitial { Calendar.getInstance() }
+
 private fun isYesterday(timestamp: Long): Boolean {
     return DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)
 }
 
 private fun isSameYear(timestamp1: Long, timestamp2: Long): Boolean {
-    val cal1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
-    val cal2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
+    val cal1 = (calThreadLocal1.get() ?: Calendar.getInstance()).apply { timeInMillis = timestamp1 }
+    val cal2 = (calThreadLocal2.get() ?: Calendar.getInstance()).apply { timeInMillis = timestamp2 }
     return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
 }
 
@@ -44,20 +55,26 @@ fun formatDateHeader(context: Context, timestamp: Long): String {
     val relative = getRelativeDay(context, timestamp)
     if (relative != null) return relative
 
-    val pattern = if (isSameYear(timestamp, System.currentTimeMillis())) "MMMM d" else "MMMM d, yyyy"
-    return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(timestamp))
+    val isCurrentYear = isSameYear(timestamp, System.currentTimeMillis())
+    val formatter = (if (isCurrentYear) sameYearFormat.get() else diffYearFormat.get())
+        ?: SimpleDateFormat(if (isCurrentYear) "MMMM d" else "MMMM d, yyyy", Locale.getDefault())
+    return formatter.format(Date(timestamp))
+}
+
+fun formatTime(context: Context, timestamp: Long): String {
+    val is24 = android.text.format.DateFormat.is24HourFormat(context)
+    var cached = timeFormatCache.get()
+    if (cached == null || cached.first != is24) {
+        cached = Pair(is24, android.text.format.DateFormat.getTimeFormat(context))
+        timeFormatCache.set(cached)
+    }
+    return cached.second.format(Date(timestamp))
 }
 
 fun formatDate(context: Context, timestamp: Long): String {
     val relative = getRelativeDay(context, timestamp)
-    val time = android.text.format.DateFormat.getTimeFormat(context).format(Date(timestamp))
-
+    val time = formatTime(context, timestamp)
     return if (relative != null) "$relative, $time" else "${formatDateHeader(context, timestamp)}, $time"
-}
-
-fun formatTime(context: Context, timestamp: Long): String {
-    val time = android.text.format.DateFormat.getTimeFormat(context).format(Date(timestamp))
-    return "$time"
 }
 
 fun formatDuration(durationSeconds: Long): String {
@@ -65,7 +82,12 @@ fun formatDuration(durationSeconds: Long): String {
 }
 
 fun formatPhoneNumber(number: String): String {
-    return PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
+    if (number.isBlank()) return number
+    return formattedNumberCache.get(number) ?: run {
+        val formatted = PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
+        formattedNumberCache.put(number, formatted)
+        formatted
+    }
 }
 
 fun normalizePhoneNumber(number: String): String {

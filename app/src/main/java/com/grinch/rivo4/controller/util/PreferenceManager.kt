@@ -114,6 +114,11 @@ class PreferenceManager(context: Context) {
         setString(KEY_CALL_RECORDING_FOLDER_NAME, name)
     }
 
+    fun saveCustomRecordingFolder(uri: String, name: String? = null) {
+        setCustomRecordingFolderUri(uri)
+        if (name != null) setCustomRecordingFolderName(name)
+    }
+
     fun resetCustomRecordingFolder() {
         prefs.edit()
             .remove(KEY_CALL_RECORDING_FOLDER_URI)
@@ -358,7 +363,7 @@ class PreferenceManager(context: Context) {
 
         const val KEY_POCKET_MODE = "pocket_mode"
         const val KEY_VOLUME_SQUEEZE_DND = "volume_squeeze_dnd"
-        const val KEY_DND_DURING_CALLS = "dnd_during_calls" 
+        const val KEY_DND_DURING_CALLS = "dnd_during_calls"
         const val KEY_QUICK_RESPONSES = "custom_quick_responses"
         val DEFAULT_QUICK_RESPONSES = listOf(
             "Can't talk now. What's up?",

@@ -5,14 +5,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -24,20 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.modal.data.Contact
-import com.grinch.rivo4.view.components.RivoAvatar
-import com.grinch.rivo4.view.components.RivoDialog
-import com.grinch.rivo4.view.components.RivoSelectionDialog
-import com.grinch.rivo4.view.components.RivoDropdownMenu
-import com.grinch.rivo4.view.components.RivoDropdownMenuItem
-import com.grinch.rivo4.view.components.RivoExpressiveCard
-import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.RivoLoadingIndicatorView
+import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -68,8 +65,23 @@ fun PrivateContactsScreen(
     var showMoveAccountDialog by remember { mutableStateOf(false) }
     var targetContactsToMove by remember { mutableStateOf<List<Contact>>(emptyList()) }
     var showSecurityDialog by remember { mutableStateOf(false) }
-    var secretCodeInput by remember { mutableStateOf(prefs.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE, com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE) }
-    var hideFromSettings by remember { mutableStateOf(prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, false)) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var secretCodeInput by remember {
+        mutableStateOf(
+            prefs.getString(
+                com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE,
+                com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+            ) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+        )
+    }
+    var hideFromSettings by remember {
+        mutableStateOf(
+            prefs.getBoolean(
+                com.grinch.rivo4.controller.util.PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY,
+                false
+            )
+        )
+    }
 
     val isSelecting = selectedContactIds.isNotEmpty()
 
@@ -97,9 +109,10 @@ fun PrivateContactsScreen(
         if (searchQuery.isBlank()) {
             privateContacts
         } else {
+            val q = searchQuery.trim()
             privateContacts.filter {
-                (it.name ?: "").contains(searchQuery, ignoreCase = true) ||
-                (it.phoneNumbers ?: emptyList()).any { num -> num.contains(searchQuery) }
+                it.name.contains(q, ignoreCase = true) ||
+                it.phoneNumbers.any { num -> num.contains(q) }
             }
         }
     }
@@ -135,13 +148,12 @@ fun PrivateContactsScreen(
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = {
-                                viewModel.deleteContacts(selectedContactIds.toList())
-                                selectedContactIds = emptySet()
-                            }
-                        ) {
-                            Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error)
+                        IconButton(onClick = { showDeleteConfirmDialog = true }) {
+                            Icon(
+                                Icons.Outlined.Delete,
+                                contentDescription = stringResource(R.string.action_delete),
+                                tint = MaterialTheme.colorScheme.error
+                            )
                         }
                         IconButton(
                             onClick = {
@@ -150,7 +162,10 @@ fun PrivateContactsScreen(
                                 showMoveAccountDialog = true
                             }
                         ) {
-                            Icon(Icons.Outlined.DriveFileMove, contentDescription = stringResource(R.string.contact_move_to_public_storage))
+                            Icon(
+                                Icons.AutoMirrored.Outlined.DriveFileMove,
+                                contentDescription = stringResource(R.string.contact_move_to_public_storage)
+                            )
                         }
                         IconButton(
                             onClick = {
@@ -158,7 +173,10 @@ fun PrivateContactsScreen(
                                 selectedContactIds = emptySet()
                             }
                         ) {
-                            Icon(Icons.Outlined.LockOpen, contentDescription = stringResource(R.string.contact_move_to_public_storage))
+                            Icon(
+                                Icons.Outlined.LockOpen,
+                                contentDescription = stringResource(R.string.contact_move_to_public_storage)
+                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -174,6 +192,15 @@ fun PrivateContactsScreen(
                         }
                     },
                     actions = {
+                        if (filteredPrivateContacts.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    selectedContactIds = filteredPrivateContacts.map { it.id }.toSet()
+                                }
+                            ) {
+                                Icon(Icons.Outlined.SelectAll, contentDescription = "Select All")
+                            }
+                        }
                         IconButton(onClick = { showSecurityDialog = true }) {
                             Icon(Icons.Outlined.Password, contentDescription = "Secret Dialpad Code")
                         }
@@ -190,97 +217,169 @@ fun PrivateContactsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                // 1. Vault Overview Hero Card
                 item {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large,
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(18.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
                                 Surface(
-                                    modifier = Modifier.size(48.dp),
+                                    modifier = Modifier.size(50.dp),
                                     shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
                                     contentColor = MaterialTheme.colorScheme.primary
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
-                                        Icon(Icons.Outlined.Lock, contentDescription = null, modifier = Modifier.size(24.dp))
+                                        Icon(
+                                            Icons.Outlined.Lock,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(26.dp)
+                                        )
                                     }
                                 }
                                 Spacer(Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = stringResource(R.string.settings_private_title),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                        ) {
+                                            Text(
+                                                text = "${privateContacts.size} secured",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(Modifier.height(3.dp))
                                     Text(
-                                        text = stringResource(R.string.settings_private_title),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(Modifier.height(2.dp))
-                                    Text(
-                                        text = "Stored locally in Rivo only (hidden from other apps) • ${privateContacts.size} contacts",
+                                        text = "Stored locally in Rivo's sandboxed vault • Hidden from WhatsApp and system apps",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
+
                             Spacer(Modifier.height(16.dp))
+
+                            // Action buttons: Primary full-width "Add Contacts to Vault" so text never breaks into two lines
+                            Button(
+                                onClick = {
+                                    navigator.navigate(
+                                        ContactSelectionScreenDestination(
+                                            title = "Select Contacts for Private Storage",
+                                            isMultiSelect = true,
+                                            actionButtonText = "Move to Private Storage",
+                                            returnContactId = true
+                                        )
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.medium,
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+                            ) {
+                                Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text("Add Contacts to Vault", style = MaterialTheme.typography.labelLarge)
+                            }
+
+                            Spacer(Modifier.height(8.dp))
+
+                            // Secondary Row: Import & Export VCF
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Button(
-                                    onClick = {
-                                        navigator.navigate(
-                                            ContactSelectionScreenDestination(
-                                                title = "Select Contacts for Private Storage",
-                                                isMultiSelect = true,
-                                                actionButtonText = "Move to Private Storage",
-                                                returnContactId = true
-                                            )
-                                        )
-                                    },
-                                    modifier = Modifier.weight(1.2f),
-                                    contentPadding = PaddingValues(horizontal = 8.dp),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Icon(Icons.Outlined.PersonSearch, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(Modifier.width(4.dp))
-                                    Text("Pick Contacts", style = MaterialTheme.typography.labelMedium)
-                                }
                                 FilledTonalButton(
                                     onClick = { importLauncher.launch("text/vcard") },
-                                    modifier = Modifier.weight(0.9f),
-                                    contentPadding = PaddingValues(horizontal = 6.dp),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(Modifier.width(4.dp))
-                                    Text("Import", style = MaterialTheme.typography.labelMedium)
-                                }
-                                FilledTonalButton(
-                                    onClick = { exportLauncher.launch("private_contacts.vcf") },
-                                    modifier = Modifier.weight(0.9f),
-                                    contentPadding = PaddingValues(horizontal = 6.dp),
-                                    shape = MaterialTheme.shapes.medium
+                                    modifier = Modifier.weight(1f),
+                                    shape = MaterialTheme.shapes.medium,
+                                    contentPadding = PaddingValues(vertical = 8.dp)
                                 ) {
                                     Icon(Icons.Outlined.FileUpload, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(Modifier.width(4.dp))
-                                    Text("Export", style = MaterialTheme.typography.labelMedium)
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("Import VCF", style = MaterialTheme.typography.labelMedium)
+                                }
+
+                                FilledTonalButton(
+                                    onClick = { exportLauncher.launch("private_contacts.vcf") },
+                                    modifier = Modifier.weight(1f),
+                                    shape = MaterialTheme.shapes.medium,
+                                    contentPadding = PaddingValues(vertical = 8.dp)
+                                ) {
+                                    Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("Export VCF", style = MaterialTheme.typography.labelMedium)
                                 }
                             }
                         }
                     }
                 }
 
+                // 2. Vault Security Options
+                item {
+                    val currentSecretCode = prefs.getString(
+                        com.grinch.rivo4.controller.util.PreferenceManager.KEY_SECRET_DIALPAD_CODE,
+                        com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                    ) ?: com.grinch.rivo4.controller.util.PreferenceManager.DEFAULT_SECRET_DIALPAD_CODE
+                    RivoExpressiveGroup(
+                        title = "Vault Access & Security",
+                        icon = Icons.Outlined.Key
+                    ) {
+                        item {
+                            RivoListItem(
+                                headline = "Secret Dialpad Code",
+                                supporting = "Dial $currentSecretCode on the dialpad to quickly open private vault",
+                                leadingIcon = Icons.Outlined.Password,
+                                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                onClick = { showSecurityDialog = true }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = "Hide from Settings",
+                                supporting = "Remove Private Storage from the settings menu (accessible only via secret code)",
+                                leadingIcon = Icons.Outlined.VisibilityOff,
+                                checked = hideFromSettings,
+                                onCheckedChange = { checked ->
+                                    hideFromSettings = checked
+                                    prefs.setBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_HIDE_PRIVATE_SETTINGS_ENTRY, checked)
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // 3. Search Bar (if contacts exist)
                 if (privateContacts.isNotEmpty()) {
                     item {
                         OutlinedTextField(
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 4.dp),
                             placeholder = { Text(stringResource(R.string.search_contacts_placeholder)) },
                             leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                             trailingIcon = {
@@ -291,18 +390,31 @@ fun PrivateContactsScreen(
                                 }
                             },
                             singleLine = true,
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(20.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = Color.Transparent
+                            )
                         )
                     }
                 }
 
+                // 4. Contact List Section Header & Items
                 if (filteredPrivateContacts.isEmpty()) {
                     item {
-                        RivoExpressiveCard {
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(32.dp),
+                                    .padding(vertical = 36.dp, horizontal = 20.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Surface(
@@ -327,36 +439,56 @@ fun PrivateContactsScreen(
                                 )
                                 Spacer(Modifier.height(4.dp))
                                 Text(
-                                    text = stringResource(R.string.settings_manage_private_contacts_supporting),
+                                    text = if (searchQuery.isNotBlank()) {
+                                        "No private contacts match \"$searchQuery\""
+                                    } else {
+                                        stringResource(R.string.settings_manage_private_contacts_supporting)
+                                    },
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                                Spacer(Modifier.height(20.dp))
-                                Button(
-                                    onClick = {
-                                        navigator.navigate(
-                                            ContactSelectionScreenDestination(
-                                                title = "Select Contacts for Private Storage",
-                                                isMultiSelect = true,
-                                                actionButtonText = "Move to Private Storage",
-                                                returnContactId = true
+                                if (searchQuery.isBlank()) {
+                                    Spacer(Modifier.height(20.dp))
+                                    Button(
+                                        onClick = {
+                                            navigator.navigate(
+                                                ContactSelectionScreenDestination(
+                                                    title = "Select Contacts for Private Storage",
+                                                    isMultiSelect = true,
+                                                    actionButtonText = "Move to Private Storage",
+                                                    returnContactId = true
+                                                )
                                             )
-                                        )
-                                    },
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Icon(Icons.Outlined.PersonSearch, contentDescription = null)
-                                    Spacer(Modifier.width(8.dp))
-                                    Text("Pick Contacts for Private Storage")
+                                        },
+                                        shape = MaterialTheme.shapes.medium
+                                    ) {
+                                        Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(Modifier.width(8.dp))
+                                        Text("Pick Contacts for Vault")
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    items(filteredPrivateContacts, key = { "private_${it.id}_${it.name.hashCode()}" }) { contact ->
+                    item {
+                        RivoSectionHeader(
+                            title = "Secured Contacts (${filteredPrivateContacts.size})",
+                            icon = Icons.Outlined.Lock,
+                            modifier = Modifier.padding(top = 14.dp, bottom = 4.dp)
+                        )
+                    }
+
+                    itemsIndexed(
+                        items = filteredPrivateContacts,
+                        key = { _, c -> "private_${c.id}" }
+                    ) { index, contact ->
                         val isSelected = selectedContactIds.contains(contact.id)
-                        PrivateContactCard(
+                        val shape = rivoGroupedItemShape(index, filteredPrivateContacts.size)
+
+                        PrivateContactListItem(
                             contact = contact,
+                            shape = shape,
                             isSelected = isSelected,
                             isSelecting = isSelecting,
                             onSelect = {
@@ -399,6 +531,22 @@ fun PrivateContactsScreen(
         }
     }
 
+    if (showDeleteConfirmDialog && selectedContactIds.isNotEmpty()) {
+        RivoConfirmationDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            onConfirm = {
+                viewModel.deleteContacts(selectedContactIds.toList())
+                selectedContactIds = emptySet()
+                showDeleteConfirmDialog = false
+            },
+            title = stringResource(R.string.action_delete),
+            message = "Permanently delete ${selectedContactIds.size} selected contact(s) from private storage?",
+            confirmLabel = stringResource(R.string.action_delete),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Outlined.Delete
+        )
+    }
+
     if (showMoveAccountDialog && targetContactsToMove.isNotEmpty()) {
         val publicLabel = stringResource(R.string.contact_move_to_public_storage)
         val publicDesc = "Move to public device contacts database"
@@ -412,7 +560,7 @@ fun PrivateContactsScreen(
                 targetContactsToMove = emptyList()
             },
             title = publicLabel,
-            icon = Icons.Outlined.DriveFileMove,
+            icon = Icons.AutoMirrored.Outlined.DriveFileMove,
             items = storageOptions,
             itemLabel = { option -> option.second.first },
             itemSupporting = { option -> option.second.second },
@@ -439,7 +587,7 @@ fun PrivateContactsScreen(
             onDismissRequest = { showSecurityDialog = false },
             title = "Secret Dialpad Code",
             icon = Icons.Outlined.Password,
-            confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
+            confirmAction = RivoDialogAction(
                 label = stringResource(R.string.action_save),
                 onClick = {
                     val trimmed = secretCodeInput.trim()
@@ -451,12 +599,12 @@ fun PrivateContactsScreen(
                     android.widget.Toast.makeText(context, "Secret code settings updated", android.widget.Toast.LENGTH_SHORT).show()
                 }
             ),
-            dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
+            dismissAction = RivoDialogAction(
                 label = stringResource(R.string.action_cancel),
                 onClick = { showSecurityDialog = false }
             )
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Text(
                     text = "Type this secret code on the dialpad to reveal contacts in private storage.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -469,7 +617,7 @@ fun PrivateContactsScreen(
                     placeholder = { Text("*#0000#") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(14.dp)
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -499,8 +647,9 @@ fun PrivateContactsScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PrivateContactCard(
+private fun PrivateContactListItem(
     contact: Contact,
+    shape: androidx.compose.ui.graphics.Shape,
     isSelected: Boolean,
     isSelecting: Boolean,
     onSelect: () -> Unit,
@@ -512,48 +661,53 @@ fun PrivateContactCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val cardContainerColor = if (isSelected) {
-        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+    val containerColor = if (isSelected) {
+        MaterialTheme.colorScheme.secondaryContainer
     } else {
         MaterialTheme.colorScheme.surfaceContainerLow
     }
 
-    RivoExpressiveCard(
-        modifier = Modifier.clip(MaterialTheme.shapes.large),
-        containerColor = cardContainerColor
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(containerColor)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onSelect
+            )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onSelect
-                )
-                .padding(12.dp),
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isSelecting) {
                 Checkbox(
                     checked = isSelected,
                     onCheckedChange = { onSelect() },
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.padding(end = 12.dp)
                 )
             }
 
             RivoAvatar(
                 name = contact.name,
                 photoUri = contact.photoUri,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(46.dp)
             )
 
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = contact.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                     Spacer(Modifier.width(6.dp))
                     val badgeBg = if (contact.isHidden) {
@@ -588,12 +742,14 @@ fun PrivateContactCard(
                         }
                     }
                 }
-                Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(3.dp))
                 if (contact.phoneNumbers.isNotEmpty()) {
                     Text(
                         text = formatPhoneNumber(contact.phoneNumbers.first()),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -611,11 +767,11 @@ fun PrivateContactCard(
             var showMenu by remember { mutableStateOf(false) }
             Box {
                 IconButton(onClick = { showMenu = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                    Icon(Icons.Default.MoreVert, contentDescription = "More actions")
                 }
                 RivoDropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     RivoDropdownMenuItem(
-                        text = { Text(if (contact.isHidden) "Unhide Contact" else "Hide Contact Completely") },
+                        text = { Text(if (contact.isHidden) "Unhide in Vault" else "Hide Completely") },
                         onClick = {
                             showMenu = false
                             onToggleHidden()
@@ -628,14 +784,6 @@ fun PrivateContactCard(
                         }
                     )
                     RivoDropdownMenuItem(
-                        text = { Text(stringResource(R.string.action_edit)) },
-                        onClick = {
-                            showMenu = false
-                            onEdit()
-                        },
-                        leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) }
-                    )
-                    RivoDropdownMenuItem(
                         text = { Text(stringResource(R.string.contact_move_to_public_storage)) },
                         onClick = {
                             showMenu = false
@@ -644,21 +792,28 @@ fun PrivateContactCard(
                         leadingIcon = { Icon(Icons.Outlined.LockOpen, contentDescription = null) }
                     )
                     RivoDropdownMenuItem(
-                        text = { Text("Move to Account...") },
+                        text = { Text("Move to Account") },
                         onClick = {
                             showMenu = false
                             onMoveToAccount()
                         },
-                        leadingIcon = { Icon(Icons.Outlined.DriveFileMove, contentDescription = null) }
+                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.DriveFileMove, contentDescription = null) }
                     )
                     RivoDropdownMenuItem(
-                        text = { Text(stringResource(R.string.action_delete)) },
+                        text = { Text(stringResource(R.string.action_edit)) },
+                        onClick = {
+                            showMenu = false
+                            onEdit()
+                        },
+                        leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) }
+                    )
+                    RivoDropdownMenuItem(
+                        text = { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) },
                         onClick = {
                             showMenu = false
                             onDelete()
                         },
-                        leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                        destructive = true
+                        leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) }
                     )
                 }
             }

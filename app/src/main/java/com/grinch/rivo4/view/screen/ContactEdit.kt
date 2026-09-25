@@ -11,7 +11,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
+import androidx.compose.material.icons.automirrored.outlined.Notes
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Cloud
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,8 +42,8 @@ import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDropdownMenu
 import com.grinch.rivo4.view.components.RivoDropdownMenuItem
-import com.grinch.rivo4.view.components.RivoExpressiveCard
-import com.grinch.rivo4.view.components.RivoSectionHeader
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
+import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -311,229 +317,184 @@ fun ContactEditScreen(
             }
 
             item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_account_header))
-                RivoExpressiveCard {
-                    var showPicker by remember { mutableStateOf(false) }
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_account_header),
+                    icon = Icons.Outlined.Cloud
+                ) {
+                    item {
+                        var showPicker by remember { mutableStateOf(false) }
 
-                    Surface(
-                        onClick = { showPicker = true },
-                        shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = when {
-                                    isPrivate -> Icons.Default.Lock
-                                    selectedAccount != null -> ContactUtils.getAccountIcon(selectedAccount!!)
-                                    else -> Icons.Default.CloudOff
-                                },
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.width(16.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = stringResource(R.string.contact_edit_save_to_account),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = when {
-                                        isPrivate -> stringResource(R.string.contact_edit_private_storage)
-                                        selectedAccount != null -> ContactUtils.getFriendlyAccountName(context, selectedAccount!!)
-                                        else -> stringResource(R.string.label_local_memory)
-                                    },
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Icon(Icons.Default.ArrowDropDown, null)
-                        }
-                    }
-
-                    if (showPicker) {
-                        val privateTitle = stringResource(R.string.contact_edit_private_storage)
-                        val privateDesc = stringResource(R.string.contact_edit_private_storage_description)
-                        val localTitle = stringResource(R.string.label_local_memory)
-
-                        val accountOptions = remember(availableAccounts, privateTitle, localTitle) {
-                            listOf(
-                                "private" to Triple(privateTitle, privateDesc, Icons.Default.Lock),
-                                "local" to Triple(localTitle, "", Icons.Default.CloudOff)
-                            ) + availableAccounts.map { acc ->
-                                acc.name to Triple(ContactUtils.getFriendlyAccountName(context, acc), acc.name, ContactUtils.getAccountIcon(acc))
-                            }
-                        }
-
-                        RivoSelectionDialog(
-                            onDismissRequest = { showPicker = false },
-                            title = stringResource(R.string.contact_edit_select_account_title),
-                            icon = Icons.Default.AccountBalance,
-                            items = accountOptions,
-                            itemLabel = { option -> option.second.first },
-                            itemSupporting = { option -> option.second.second },
-                            itemIcon = { option -> option.second.third },
-                            isSelected = { option ->
-                                when (option.first) {
-                                    "private" -> isPrivate
-                                    "local" -> !isPrivate && selectedAccount == null
-                                    else -> !isPrivate && selectedAccount?.name == option.first
-                                }
+                        RivoListItem(
+                            headline = stringResource(R.string.contact_edit_save_to_account),
+                            supporting = when {
+                                isPrivate -> stringResource(R.string.contact_edit_private_storage)
+                                selectedAccount != null -> ContactUtils.getFriendlyAccountName(context, selectedAccount!!)
+                                else -> stringResource(R.string.label_local_memory)
                             },
-                            onItemSelected = { selectedOption ->
-                                when (selectedOption.first) {
-                                    "private" -> {
-                                        selectedAccount = null
-                                        isPrivate = true
-                                    }
-                                    "local" -> {
-                                        selectedAccount = null
-                                        isPrivate = false
-                                    }
-                                    else -> {
-                                        selectedAccount = availableAccounts.find { it.name == selectedOption.first }
-                                        isPrivate = false
-                                    }
+                            leadingIcon = when {
+                                isPrivate -> Icons.Default.Lock
+                                selectedAccount != null -> ContactUtils.getAccountIcon(selectedAccount!!)
+                                else -> Icons.Default.CloudOff
+                            },
+                            trailingIcon = Icons.Default.ArrowDropDown,
+                            onClick = { showPicker = true }
+                        )
+
+                        if (showPicker) {
+                            val privateTitle = stringResource(R.string.contact_edit_private_storage)
+                            val privateDesc = stringResource(R.string.contact_edit_private_storage_description)
+                            val localTitle = stringResource(R.string.label_local_memory)
+
+                            val accountOptions = remember(availableAccounts, privateTitle, localTitle) {
+                                listOf(
+                                    "private" to Triple(privateTitle, privateDesc, Icons.Default.Lock),
+                                    "local" to Triple(localTitle, "", Icons.Default.CloudOff)
+                                ) + availableAccounts.map { acc ->
+                                    acc.name to Triple(ContactUtils.getFriendlyAccountName(context, acc), acc.name, ContactUtils.getAccountIcon(acc))
                                 }
-                                showPicker = false
                             }
-                        )
-                    }
-                }
-            }
 
-            item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_identity_header))
-                RivoExpressiveCard {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        OutlinedTextField(
-                            value = givenName,
-                            onValueChange = { givenName = it },
-                            label = { Text(stringResource(R.string.contact_edit_first_name)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            leadingIcon = { Icon(Icons.Default.Person, null) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                                focusedBorderColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                        OutlinedTextField(
-                            value = middleName,
-                            onValueChange = { middleName = it },
-                            label = { Text(stringResource(R.string.contact_edit_middle_name)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            leadingIcon = { Icon(Icons.Default.PersonOutline, null) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                                focusedBorderColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                        OutlinedTextField(
-                            value = familyName,
-                            onValueChange = { familyName = it },
-                            label = { Text(stringResource(R.string.contact_edit_last_name)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            leadingIcon = { Icon(Icons.Default.Badge, null) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                                focusedBorderColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                        OutlinedTextField(
-                            value = nickname,
-                            onValueChange = { nickname = it },
-                            label = { Text(stringResource(R.string.contact_edit_nickname)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            leadingIcon = { Icon(Icons.AutoMirrored.Filled.Label, null) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                                focusedBorderColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    }
-                }
-            }
-
-
-            item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_phone_numbers_header))
-                RivoExpressiveCard {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        val phoneFieldLabel = stringResource(R.string.contact_edit_phone_field_label)
-                        phones.forEachIndexed { index, phone ->
-                            TypedEditField(
-                                value = phone.number,
-                                onValueChange = { phones[index] = phone.copy(number = it) },
-                                label = phoneFieldLabel,
-                                icon = Icons.Default.Phone,
-                                keyboardType = KeyboardType.Phone,
-                                typeValue = phone.type,
-                                typeOptions = ContactTypeLabels.phoneTypeOptions,
-                                typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
-                                onTypeChange = { phones[index] = phone.copy(type = it) },
-                                onDelete = {
-                                    if (phones.size > 1) {
-                                        phones.removeAt(index)
-                                    } else {
-                                        phones[0] = PhoneNumberEntry("")
+                            RivoSelectionDialog(
+                                onDismissRequest = { showPicker = false },
+                                title = stringResource(R.string.contact_edit_select_account_title),
+                                icon = Icons.Default.AccountBalance,
+                                items = accountOptions,
+                                itemLabel = { option -> option.second.first },
+                                itemSupporting = { option -> option.second.second },
+                                itemIcon = { option -> option.second.third },
+                                isSelected = { option ->
+                                    when (option.first) {
+                                        "private" -> isPrivate
+                                        "local" -> !isPrivate && selectedAccount == null
+                                        else -> !isPrivate && selectedAccount?.name == option.first
                                     }
+                                },
+                                onItemSelected = { selectedOption ->
+                                    when (selectedOption.first) {
+                                        "private" -> {
+                                            selectedAccount = null
+                                            isPrivate = true
+                                        }
+                                        "local" -> {
+                                            selectedAccount = null
+                                            isPrivate = false
+                                        }
+                                        else -> {
+                                            selectedAccount = availableAccounts.find { it.name == selectedOption.first }
+                                            isPrivate = false
+                                        }
+                                    }
+                                    showPicker = false
                                 }
                             )
                         }
-                        TextButton(
-                            onClick = { phones.add(PhoneNumberEntry("")) },
-                            modifier = Modifier.align(Alignment.Start)
-                        ) {
-                            Icon(Icons.Default.Add, null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.contact_edit_add_phone))
-                        }
                     }
                 }
             }
 
-
             item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_emails_header))
-                RivoExpressiveCard {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        val emailFieldLabel = stringResource(R.string.label_email)
-                        emails.forEachIndexed { index, email ->
-                            TypedEditField(
-                                value = email.address,
-                                onValueChange = { emails[index] = email.copy(address = it) },
-                                label = emailFieldLabel,
-                                icon = Icons.Default.Email,
-                                keyboardType = KeyboardType.Email,
-                                typeValue = email.type,
-                                typeOptions = ContactTypeLabels.emailTypeOptions,
-                                typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
-                                onTypeChange = { emails[index] = email.copy(type = it) },
-                                onDelete = {
-                                    if (emails.size > 1) {
-                                        emails.removeAt(index)
-                                    } else {
-                                        emails[0] = EmailEntry("")
-                                    }
-                                }
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_identity_header),
+                    icon = Icons.Outlined.Person
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = givenName,
+                                onValueChange = { givenName = it },
+                                label = { Text(stringResource(R.string.contact_edit_first_name)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                leadingIcon = { Icon(Icons.Default.Person, null) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            OutlinedTextField(
+                                value = middleName,
+                                onValueChange = { middleName = it },
+                                label = { Text(stringResource(R.string.contact_edit_middle_name)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                leadingIcon = { Icon(Icons.Default.PersonOutline, null) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            OutlinedTextField(
+                                value = familyName,
+                                onValueChange = { familyName = it },
+                                label = { Text(stringResource(R.string.contact_edit_last_name)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                leadingIcon = { Icon(Icons.Default.Badge, null) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            OutlinedTextField(
+                                value = nickname,
+                                onValueChange = { nickname = it },
+                                label = { Text(stringResource(R.string.contact_edit_nickname)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.Label, null) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
                             )
                         }
-                        TextButton(
-                            onClick = { emails.add(EmailEntry("")) },
-                            modifier = Modifier.align(Alignment.Start)
+                    }
+                }
+            }
+
+
+            item {
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_phone_numbers_header),
+                    icon = Icons.Outlined.Phone
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Icon(Icons.Default.Add, null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.contact_edit_add_email))
+                            val phoneFieldLabel = stringResource(R.string.contact_edit_phone_field_label)
+                            phones.forEachIndexed { index, phone ->
+                                TypedEditField(
+                                    value = phone.number,
+                                    onValueChange = { phones[index] = phone.copy(number = it) },
+                                    label = phoneFieldLabel,
+                                    icon = Icons.Default.Phone,
+                                    keyboardType = KeyboardType.Phone,
+                                    typeValue = phone.type,
+                                    typeOptions = ContactTypeLabels.phoneTypeOptions,
+                                    typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
+                                    onTypeChange = { phones[index] = phone.copy(type = it) },
+                                    onDelete = {
+                                        if (phones.size > 1) {
+                                            phones.removeAt(index)
+                                        } else {
+                                            phones[0] = PhoneNumberEntry("")
+                                        }
+                                    }
+                                )
+                            }
+                            TextButton(
+                                onClick = { phones.add(PhoneNumberEntry("")) },
+                                modifier = Modifier.align(Alignment.Start)
+                            ) {
+                                Icon(Icons.Default.Add, null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.contact_edit_add_phone))
+                            }
                         }
                     }
                 }
@@ -541,53 +502,111 @@ fun ContactEditScreen(
 
 
             item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_address_header))
-                RivoExpressiveCard {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        val addressFieldLabel = stringResource(R.string.label_address)
-                        addresses.forEachIndexed { index, address ->
-                            EditField(
-                                value = address,
-                                onValueChange = { addresses[index] = it },
-                                label = addressFieldLabel,
-                                icon = Icons.Default.LocationOn,
-                                onDelete = {
-                                    if (addresses.size > 1) {
-                                        addresses.removeAt(index)
-                                    } else {
-                                        addresses[0] = ""
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_emails_header),
+                    icon = Icons.Outlined.Email
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            val emailFieldLabel = stringResource(R.string.label_email)
+                            emails.forEachIndexed { index, email ->
+                                TypedEditField(
+                                    value = email.address,
+                                    onValueChange = { emails[index] = email.copy(address = it) },
+                                    label = emailFieldLabel,
+                                    icon = Icons.Default.Email,
+                                    keyboardType = KeyboardType.Email,
+                                    typeValue = email.type,
+                                    typeOptions = ContactTypeLabels.emailTypeOptions,
+                                    typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
+                                    onTypeChange = { emails[index] = email.copy(type = it) },
+                                    onDelete = {
+                                        if (emails.size > 1) {
+                                            emails.removeAt(index)
+                                        } else {
+                                            emails[0] = EmailEntry("")
+                                        }
                                     }
-                                }
+                                )
+                            }
+                            TextButton(
+                                onClick = { emails.add(EmailEntry("")) },
+                                modifier = Modifier.align(Alignment.Start)
+                            ) {
+                                Icon(Icons.Default.Add, null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.contact_edit_add_email))
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            item {
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_address_header),
+                    icon = Icons.Outlined.LocationOn
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            val addressFieldLabel = stringResource(R.string.label_address)
+                            addresses.forEachIndexed { index, address ->
+                                EditField(
+                                    value = address,
+                                    onValueChange = { addresses[index] = it },
+                                    label = addressFieldLabel,
+                                    icon = Icons.Default.LocationOn,
+                                    onDelete = {
+                                        if (addresses.size > 1) {
+                                            addresses.removeAt(index)
+                                        } else {
+                                            addresses[0] = ""
+                                        }
+                                    }
+                                )
+                            }
+                            TextButton(
+                                onClick = { addresses.add("") },
+                                modifier = Modifier.align(Alignment.Start)
+                            ) {
+                                Icon(Icons.Default.Add, null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.contact_edit_add_address))
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.contact_edit_notes_header),
+                    icon = Icons.AutoMirrored.Outlined.Notes
+                ) {
+                    item {
+                        Box(modifier = Modifier.padding(14.dp)) {
+                            OutlinedTextField(
+                                value = notes,
+                                onValueChange = { notes = it },
+                                label = { Text(stringResource(R.string.label_notes)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, null) },
+                                minLines = 3,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
                             )
                         }
-                        TextButton(
-                            onClick = { addresses.add("") },
-                            modifier = Modifier.align(Alignment.Start)
-                        ) {
-                            Icon(Icons.Default.Add, null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.contact_edit_add_address))
-                        }
                     }
-                }
-            }
-
-            item {
-                RivoSectionHeader(title = stringResource(R.string.contact_edit_notes_header))
-                RivoExpressiveCard {
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text(stringResource(R.string.label_notes)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, null) },
-                        minLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedBorderColor = MaterialTheme.colorScheme.primary
-                        )
-                    )
                 }
             }
 

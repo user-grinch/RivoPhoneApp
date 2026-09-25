@@ -1,16 +1,11 @@
 package com.grinch.rivo4.view.screen.settings
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
 import android.os.PowerManager
-import android.provider.Settings
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -20,26 +15,23 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -55,154 +47,218 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.AudioMetadataCache
 import com.grinch.rivo4.controller.CallRecorder
-import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
 import com.grinch.rivo4.controller.util.OemPermissionHelper
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.controller.util.formatDateHeader
-import com.grinch.rivo4.controller.util.openLink
-import com.grinch.rivo4.view.components.LocalRivoSurfaceStyle
-import com.grinch.rivo4.view.components.RivoConfirmationDialog
-import com.grinch.rivo4.view.components.RivoDivider
-import com.grinch.rivo4.view.components.RivoExpressiveCard
-import com.grinch.rivo4.view.components.RivoLeadingIconTile
-import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.RivoSectionHeader
-import com.grinch.rivo4.view.components.RivoSelectListItem
-import com.grinch.rivo4.view.components.RivoSurfaceStyle
-import com.grinch.rivo4.view.components.RivoSwitchListItem
+import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.koin.compose.koinInject
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.math.sin
 
-enum class DateFilterPreset {
+/**
+ * Immutable model for call recording items to allow Compose smart recomposition skipping.
+ */
+@Immutable
+data class CallRecordingItem(
+    val file: File,
+    val nameWithoutExtension: String,
+    val callerLabel: String,
+    val dateHeader: String,
+    val dateFormatted: String,
+    val sizeFormatted: String,
+    val lastModified: Long,
+    val durationMs: Long
+)
+
+/**
+ * Converts a raw recording [File] into a pre-computed [CallRecordingItem].
+ */
+fun File.toCallRecordingItem(context: Context): CallRecordingItem {
+    val lastMod = this.lastModified()
+    val kb = this.length() / 1024
+    val sizeStr = if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
+    val caller = this.nameWithoutExtension
+        .substringBeforeLast('_')
+        .substringBeforeLast('_')
+    val duration = AudioMetadataCache.getDurationMsSync(context, this)
+
+    return CallRecordingItem(
+        file = this,
+        nameWithoutExtension = this.nameWithoutExtension,
+        callerLabel = caller,
+        dateHeader = formatDateHeader(context, lastMod),
+        dateFormatted = SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault()).format(Date(lastMod)),
+        sizeFormatted = sizeStr,
+        lastModified = lastMod,
+        durationMs = duration
+    )
+}
+
+private enum class DateFilterPreset {
     ALL,
     TODAY,
-    LAST_7_DAYS,
+    YESTERDAY,
+    THIS_WEEK,
     THIS_MONTH,
     CUSTOM
+}
+
+private fun formatDateHeader(context: Context, timestamp: Long): String {
+    val cal = Calendar.getInstance()
+    val todayStart = cal.apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    val yesterdayStart = todayStart - 24 * 60 * 60 * 1000L
+
+    return when {
+        timestamp >= todayStart -> context.getString(R.string.date_today)
+        timestamp >= yesterdayStart -> context.getString(R.string.date_yesterday)
+        else -> SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(timestamp))
+    }
 }
 
 @Destination<RootGraph>
 @Composable
 fun CallRecordingsScreen(
-    navigator: DestinationsNavigator,
-    initialShowList: Boolean = false
+    initialShowList: Boolean = false,
+    navigator: DestinationsNavigator
 ) {
     CallRecordingsContent(
-        showTopBar = true,
         initialShowList = initialShowList,
-        onBack = { navigator.navigateUp() }
+        onNavigateBack = { navigator.navigateUp() }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CallRecordingsContent(
-    showTopBar: Boolean = false,
     initialShowList: Boolean = false,
-    onBack: (() -> Unit)? = null
+    showTopBar: Boolean = true,
+    onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val prefs = koinInject<PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
+    val prefs = remember { PreferenceManager(context) }
+
+    var refreshKey by remember { mutableIntStateOf(0) }
+    var recordings by remember { mutableStateOf<List<CallRecordingItem>>(emptyList()) }
+    var isLoadingRecordings by remember { mutableStateOf(true) }
 
     var showingRecordingsList by remember { mutableStateOf(initialShowList) }
-    var fromDateMillis by remember { mutableStateOf<Long?>(null) }
-    var toDateMillis by remember { mutableStateOf<Long?>(null) }
-    var datePreset by remember { mutableStateOf(DateFilterPreset.ALL) }
-    var showFromDatePicker by remember { mutableStateOf(false) }
-    var showToDatePicker by remember { mutableStateOf(false) }
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var recordings by remember { mutableStateOf<List<File>>(emptyList()) }
-    var pendingDelete by remember { mutableStateOf<File?>(null) }
-    var showDeleteAllConfirm by remember { mutableStateOf(false) }
-    var selectedFilterNumber by remember { mutableStateOf<String?>(null) }
 
-    BackHandler(enabled = showingRecordingsList && !initialShowList) {
-        showingRecordingsList = false
+    // Settings state
+    var callRecordingEnabled by remember {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true))
     }
+    var autoRecordEnabled by remember {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false))
+    }
+    var autoRecordFilter by remember {
+        mutableIntStateOf(
+            prefs.getInt(
+                PreferenceManager.KEY_CALL_RECORDING_FILTER,
+                PreferenceManager.RECORD_FILTER_ALL
+            )
+        )
+    }
+
+    var bitrate by remember {
+        mutableIntStateOf(prefs.getInt("call_recording_bitrate", 128000))
+    }
+    var minDurationFilter by remember {
+        mutableIntStateOf(prefs.getInt("call_recording_min_duration", 0))
+    }
+
+    // Storage path state
+    val customFolderName = remember(refreshKey) { prefs.getCustomRecordingFolderName() }
+    val customFolderUri = remember(refreshKey) { prefs.getCustomRecordingFolderUri() }
 
     val folderPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
-    ) { uri: Uri? ->
+    ) { uri ->
         if (uri != null) {
-            try {
-                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                context.contentResolver.takePersistableUriPermission(uri, flags)
-            } catch (e: Exception) {
-                // Ignore if platform does not support persistable grant
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
             }
-            val folderName = CallRecorder.getFolderDisplayName(context, uri)
-            prefs.setCustomRecordingFolderUri(uri.toString())
-            prefs.setCustomRecordingFolderName(folderName)
+            prefs.saveCustomRecordingFolder(uri.toString())
             refreshKey++
             android.widget.Toast.makeText(
                 context,
-                context.getString(R.string.settings_recording_folder_changed, folderName),
+                "Save folder updated",
                 android.widget.Toast.LENGTH_SHORT
             ).show()
         }
     }
 
-    // Shizuku & Recording Preference States
-    val shizukuAvailable = remember(settingsState, refreshKey) { ShizukuConnectionManager.isAvailable() }
-    val shizukuPermissionGranted = remember(settingsState, refreshKey) { ShizukuConnectionManager.hasPermission(context) }
-
-    // Auto-refresh recordings when returning to the screen
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                refreshKey++
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    var callRecordingEnabled by remember(settingsState) {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true))
-    }
-    var shizukuRecordingEnabled by remember(settingsState) {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, true))
-    }
-    var autoRecordEnabled by remember(settingsState) {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false))
-    }
-    var autoRecordFilter by remember(settingsState) {
-        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, PreferenceManager.RECORD_FILTER_ALL))
-    }
-    var minDurationFilter by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_min_duration", 0)) }
-    var bitrate by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_bitrate", 128000)) }
-    val customFolderUri by remember(settingsState) {
-        mutableStateOf(prefs.getCustomRecordingFolderUri())
-    }
-    val customFolderName by remember(settingsState) {
-        mutableStateOf(prefs.getCustomRecordingFolderName())
-    }
-
-    val shareTitle = stringResource(R.string.call_recordings_share)
-
-    // Inline Media Player State
+    // Audio Playback state
     var activePlayingFile by remember { mutableStateOf<File?>(null) }
-    var isPlaying by remember { mutableStateOf(false) }
+    var isRecordingPlaying by remember { mutableStateOf(false) }
     var currentPositionMs by remember { mutableIntStateOf(0) }
-    var durationMs by remember { mutableIntStateOf(0) }
+    var recordingDurationMs by remember { mutableIntStateOf(0) }
     var playbackSpeed by remember { mutableFloatStateOf(1.0f) }
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
+    // Dialog state
+    var pendingDelete by remember { mutableStateOf<File?>(null) }
+    var showDeleteAllConfirm by remember { mutableStateOf(false) }
+
+    // Filter states
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedFilterNumber by remember { mutableStateOf<String?>(null) }
+    var datePreset by remember { mutableStateOf(DateFilterPreset.ALL) }
+    var fromDateMillis by remember { mutableStateOf<Long?>(null) }
+    var toDateMillis by remember { mutableStateOf<Long?>(null) }
+
+    var showFromDatePicker by remember { mutableStateOf(false) }
+    var showToDatePicker by remember { mutableStateOf(false) }
+
+    // Async recordings discovery off main thread
+    LaunchedEffect(refreshKey) {
+        isLoadingRecordings = true
+        recordings = withContext(Dispatchers.IO) {
+            val rawFiles = CallRecorder.listRecordings(context)
+            val dateFormat = SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault())
+            rawFiles.map { file ->
+                val lastMod = file.lastModified()
+                val kb = file.length() / 1024
+                val sizeStr = if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
+                val caller = file.nameWithoutExtension
+                    .substringBeforeLast('_')
+                    .substringBeforeLast('_')
+                val duration = AudioMetadataCache.getDurationMsSync(context, file)
+
+                CallRecordingItem(
+                    file = file,
+                    nameWithoutExtension = file.nameWithoutExtension,
+                    callerLabel = caller,
+                    dateHeader = formatDateHeader(context, lastMod),
+                    dateFormatted = dateFormat.format(Date(lastMod)),
+                    sizeFormatted = sizeStr,
+                    lastModified = lastMod,
+                    durationMs = duration
+                )
+            }
+        }
+        isLoadingRecordings = false
+    }
+
+    // Managed MediaPlayer Lifecycle
     DisposableEffect(activePlayingFile) {
         if (activePlayingFile != null) {
             val mp = MediaPlayer().apply {
@@ -211,12 +267,12 @@ fun CallRecordingsContent(
                     prepare()
                     start()
                     this@apply.playbackParams = this@apply.playbackParams.setSpeed(playbackSpeed)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 }
             }
             mediaPlayer = mp
-            isPlaying = mp.isPlaying
-            durationMs = runCatching { mp.duration }.getOrDefault(0)
+            isRecordingPlaying = mp.isPlaying
+            recordingDurationMs = runCatching { mp.duration }.getOrDefault(0)
 
             onDispose {
                 runCatching {
@@ -224,674 +280,428 @@ fun CallRecordingsContent(
                     mp.release()
                 }
                 mediaPlayer = null
-                isPlaying = false
+                isRecordingPlaying = false
             }
         } else {
             onDispose { }
         }
     }
 
-    LaunchedEffect(isPlaying, activePlayingFile) {
-        while (isPlaying && activePlayingFile != null) {
+    // Playback Progress Poll Loop
+    LaunchedEffect(isRecordingPlaying, activePlayingFile) {
+        while (isRecordingPlaying && activePlayingFile != null) {
             mediaPlayer?.let { mp ->
                 if (mp.isPlaying) {
                     currentPositionMs = mp.currentPosition
-                    durationMs = mp.duration
+                    recordingDurationMs = mp.duration
                 } else {
-                    isPlaying = false
+                    isRecordingPlaying = false
                 }
             }
             delay(250)
         }
     }
 
-    LaunchedEffect(refreshKey) {
-        recordings = CallRecorder.listRecordings(context)
+    val (effectiveFrom, effectiveTo) = remember(datePreset, fromDateMillis, toDateMillis) {
+        val cal = Calendar.getInstance()
+        when (datePreset) {
+            DateFilterPreset.ALL -> null to null
+            DateFilterPreset.TODAY -> {
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val start = cal.timeInMillis
+                cal.set(Calendar.HOUR_OF_DAY, 23)
+                cal.set(Calendar.MINUTE, 59)
+                cal.set(Calendar.SECOND, 59)
+                cal.set(Calendar.MILLISECOND, 999)
+                start to cal.timeInMillis
+            }
+
+            DateFilterPreset.YESTERDAY -> {
+                cal.add(Calendar.DAY_OF_YEAR, -1)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val start = cal.timeInMillis
+                cal.set(Calendar.HOUR_OF_DAY, 23)
+                cal.set(Calendar.MINUTE, 59)
+                cal.set(Calendar.SECOND, 59)
+                cal.set(Calendar.MILLISECOND, 999)
+                start to cal.timeInMillis
+            }
+
+            DateFilterPreset.THIS_WEEK -> {
+                cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val start = cal.timeInMillis
+                val now = System.currentTimeMillis()
+                start to now
+            }
+
+            DateFilterPreset.THIS_MONTH -> {
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val start = cal.timeInMillis
+                val now = System.currentTimeMillis()
+                start to now
+            }
+
+            DateFilterPreset.CUSTOM -> fromDateMillis to toDateMillis
+        }
     }
 
-    val effectiveFrom = remember(fromDateMillis, toDateMillis) {
-        if (fromDateMillis != null && toDateMillis != null && fromDateMillis!! > toDateMillis!!) toDateMillis else fromDateMillis
-    }
-    val effectiveTo = remember(fromDateMillis, toDateMillis) {
-        if (fromDateMillis != null && toDateMillis != null && fromDateMillis!! > toDateMillis!!) fromDateMillis else toDateMillis
-    }
-
-    val filteredRecordings = remember(recordings, effectiveFrom, effectiveTo, selectedFilterNumber) {
-        recordings.filter { file ->
-            val timestamp = file.lastModified()
+    val filteredRecordings = remember(recordings, searchQuery, effectiveFrom, effectiveTo, selectedFilterNumber) {
+        recordings.filter { item ->
+            val timestamp = item.lastModified
             val matchesFrom = effectiveFrom == null || timestamp >= effectiveFrom
             val matchesTo = effectiveTo == null || timestamp <= effectiveTo
-            val callerLabel = file.nameWithoutExtension
-                .substringBeforeLast('_')
-                .substringBeforeLast('_')
-            val matchesFilter = selectedFilterNumber == null || callerLabel.equals(selectedFilterNumber, ignoreCase = true)
-            matchesFrom && matchesTo && matchesFilter
+            val matchesSearch =
+                searchQuery.isBlank() || item.nameWithoutExtension.contains(searchQuery, ignoreCase = true)
+            val matchesFilter =
+                selectedFilterNumber == null || item.callerLabel.equals(selectedFilterNumber, ignoreCase = true)
+            matchesFrom && matchesTo && matchesSearch && matchesFilter
         }
     }
 
     val uniqueCallerLabels = remember(recordings) {
-        recordings.map { file ->
-            file.nameWithoutExtension
-                .substringBeforeLast('_')
-                .substringBeforeLast('_')
-        }.distinct().sorted()
+        recordings.map { it.callerLabel }.distinct().sorted()
     }
 
     val groupedRecordings = remember(filteredRecordings) {
         filteredRecordings
-            .sortedByDescending { it.lastModified() }
-            .groupBy { formatDateHeader(context, it.lastModified()) }
+            .sortedByDescending { it.lastModified }
+            .groupBy { it.dateHeader }
+    }
+
+    val dateFormatPresetLabel: @Composable (DateFilterPreset) -> String = { preset ->
+        when (preset) {
+            DateFilterPreset.ALL -> stringResource(R.string.filter_all)
+            DateFilterPreset.TODAY -> stringResource(R.string.date_today)
+            DateFilterPreset.YESTERDAY -> stringResource(R.string.date_yesterday)
+            DateFilterPreset.THIS_WEEK -> "This Week"
+            DateFilterPreset.THIS_MONTH -> "This Month"
+            DateFilterPreset.CUSTOM -> "Custom"
+        }
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             if (showTopBar) {
                 TopAppBar(
                     title = {
                         Text(
-                            text = if (showingRecordingsList) "Saved Call Recordings" else "Call Recording Settings",
-                            style = MaterialTheme.typography.titleLarge,
+                            text = stringResource(R.string.call_recordings_title),
                             fontWeight = FontWeight.Bold
                         )
                     },
                     navigationIcon = {
-                        if (onBack != null || (showingRecordingsList && !initialShowList)) {
-                            IconButton(onClick = {
+                        IconButton(
+                            onClick = {
                                 if (showingRecordingsList && !initialShowList) {
                                     showingRecordingsList = false
                                 } else {
-                                    onBack?.invoke()
+                                    onNavigateBack()
                                 }
-                            }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                             }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back)
+                            )
                         }
                     },
                     actions = {
-                        if (showingRecordingsList && recordings.isNotEmpty()) {
-                            IconButton(onClick = { showDeleteAllConfirm = true }) {
+                        if (showingRecordingsList) {
+                            if (filteredRecordings.isNotEmpty()) {
+                                IconButton(onClick = { showDeleteAllConfirm = true }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.DeleteSweep,
+                                        contentDescription = "Delete All",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        } else {
+                            IconButton(onClick = { refreshKey++ }) {
                                 Icon(
-                                    Icons.Outlined.DeleteSweep,
-                                    contentDescription = "Delete all recordings",
-                                    tint = MaterialTheme.colorScheme.error
+                                    imageVector = Icons.Outlined.Refresh,
+                                    contentDescription = "Refresh"
                                 )
                             }
-                        }
-                        IconButton(onClick = { refreshKey++ }) {
-                            Icon(Icons.Outlined.Refresh, contentDescription = "Refresh recordings")
                         }
                     }
                 )
             }
-        },
-        containerColor = MaterialTheme.colorScheme.surface
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // View Mode 1: Saved Call Recordings List
-            if (showingRecordingsList) {
-                // Filter Card (From -> To Date Range, Date Presets, Contacts)
-                item {
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 4.dp, vertical = 2.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            // Header Row: Filter title, count badge, and (if active) Reset button
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.FilterList,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                    Text(
-                                        text = "Filter Recordings",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    if (recordings.isNotEmpty()) {
-                                        Surface(
-                                            shape = CircleShape,
-                                            color = MaterialTheme.colorScheme.secondaryContainer,
-                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                        ) {
-                                            Text(
-                                                text = "${filteredRecordings.size}",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
-                                            )
-                                        }
-                                    }
+        }
+    ) { innerPadding ->
+        if (showingRecordingsList) {
+            // VIEW MODE: Saved Call Recordings List
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                // Search & Filter Header
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Search recordings…") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { searchQuery = "" }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Clear search")
                                 }
+                            }
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(24.dp)
+                    )
 
-                                val hasActiveFilter = fromDateMillis != null || toDateMillis != null || selectedFilterNumber != null
-                                if (hasActiveFilter) {
-                                    TextButton(
-                                        onClick = {
-                                            fromDateMillis = null
-                                            toDateMillis = null
-                                            datePreset = DateFilterPreset.ALL
-                                            selectedFilterNumber = null
-                                        },
-                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-                                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                                    ) {
+                    Spacer(Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        DateFilterPreset.entries.forEach { preset ->
+                            FilterChip(
+                                selected = datePreset == preset,
+                                onClick = {
+                                    datePreset = preset
+                                    if (preset == DateFilterPreset.CUSTOM) {
+                                        showFromDatePicker = true
+                                    }
+                                },
+                                label = { Text(dateFormatPresetLabel(preset)) },
+                                leadingIcon = if (datePreset == preset) {
+                                    {
                                         Icon(
-                                            imageVector = Icons.Outlined.RestartAlt,
+                                            Icons.Default.Check,
                                             contentDescription = null,
                                             modifier = Modifier.size(16.dp)
                                         )
-                                        Spacer(Modifier.width(4.dp))
-                                        Text("Reset", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
                                     }
-                                }
-                            }
+                                } else null
+                            )
+                        }
+                    }
 
-                            // Interactive "From -> To" Date Range Selectors
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                // FROM Pill Button
-                                Surface(
-                                    onClick = { showFromDatePicker = true },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = if (fromDateMillis != null) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    border = BorderStroke(
-                                        1.dp,
-                                        if (fromDateMillis != null) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.CalendarToday,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp),
-                                            tint = if (fromDateMillis != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Spacer(Modifier.width(8.dp))
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = "From",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                text = if (fromDateMillis != null) formatDateHeader(context, fromDateMillis!!) else "Start date",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                fontWeight = if (fromDateMillis != null) FontWeight.SemiBold else FontWeight.Normal,
-                                                color = if (fromDateMillis != null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.outline,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                    }
-                                }
-
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    if (uniqueCallerLabels.size > 1) {
+                        Spacer(Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FilterChip(
+                                selected = selectedFilterNumber == null,
+                                onClick = { selectedFilterNumber = null },
+                                label = { Text("All Contacts") }
+                            )
+                            uniqueCallerLabels.forEach { label ->
+                                FilterChip(
+                                    selected = selectedFilterNumber == label,
+                                    onClick = {
+                                        selectedFilterNumber = if (selectedFilterNumber == label) null else label
+                                    },
+                                    label = { Text(label) }
                                 )
-
-                                // TO Pill Button
-                                Surface(
-                                    onClick = { showToDatePicker = true },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = if (toDateMillis != null) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    border = BorderStroke(
-                                        1.dp,
-                                        if (toDateMillis != null) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Event,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp),
-                                            tint = if (toDateMillis != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Spacer(Modifier.width(8.dp))
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = "To",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                text = if (toDateMillis != null) formatDateHeader(context, toDateMillis!!) else "End date",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                fontWeight = if (toDateMillis != null) FontWeight.SemiBold else FontWeight.Normal,
-                                                color = if (toDateMillis != null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.outline,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Quick Date Presets Row
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                item {
-                                    FilterChip(
-                                        selected = datePreset == DateFilterPreset.ALL,
-                                        onClick = {
-                                            fromDateMillis = null
-                                            toDateMillis = null
-                                            datePreset = DateFilterPreset.ALL
-                                        },
-                                        label = { Text("All Dates") },
-                                        leadingIcon = if (datePreset == DateFilterPreset.ALL) {
-                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                        } else null,
-                                        shape = CircleShape
-                                    )
-                                }
-                                item {
-                                    FilterChip(
-                                        selected = datePreset == DateFilterPreset.TODAY,
-                                        onClick = {
-                                            val start = Calendar.getInstance().apply {
-                                                set(Calendar.HOUR_OF_DAY, 0)
-                                                set(Calendar.MINUTE, 0)
-                                                set(Calendar.SECOND, 0)
-                                                set(Calendar.MILLISECOND, 0)
-                                            }.timeInMillis
-                                            val end = Calendar.getInstance().apply {
-                                                set(Calendar.HOUR_OF_DAY, 23)
-                                                set(Calendar.MINUTE, 59)
-                                                set(Calendar.SECOND, 59)
-                                                set(Calendar.MILLISECOND, 999)
-                                            }.timeInMillis
-                                            fromDateMillis = start
-                                            toDateMillis = end
-                                            datePreset = DateFilterPreset.TODAY
-                                        },
-                                        label = { Text("Today") },
-                                        leadingIcon = if (datePreset == DateFilterPreset.TODAY) {
-                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                        } else null,
-                                        shape = CircleShape
-                                    )
-                                }
-                                item {
-                                    FilterChip(
-                                        selected = datePreset == DateFilterPreset.LAST_7_DAYS,
-                                        onClick = {
-                                            val start = Calendar.getInstance().apply {
-                                                add(Calendar.DAY_OF_YEAR, -6)
-                                                set(Calendar.HOUR_OF_DAY, 0)
-                                                set(Calendar.MINUTE, 0)
-                                                set(Calendar.SECOND, 0)
-                                                set(Calendar.MILLISECOND, 0)
-                                            }.timeInMillis
-                                            val end = Calendar.getInstance().apply {
-                                                set(Calendar.HOUR_OF_DAY, 23)
-                                                set(Calendar.MINUTE, 59)
-                                                set(Calendar.SECOND, 59)
-                                                set(Calendar.MILLISECOND, 999)
-                                            }.timeInMillis
-                                            fromDateMillis = start
-                                            toDateMillis = end
-                                            datePreset = DateFilterPreset.LAST_7_DAYS
-                                        },
-                                        label = { Text("Last 7 Days") },
-                                        leadingIcon = if (datePreset == DateFilterPreset.LAST_7_DAYS) {
-                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                        } else null,
-                                        shape = CircleShape
-                                    )
-                                }
-                                item {
-                                    FilterChip(
-                                        selected = datePreset == DateFilterPreset.THIS_MONTH,
-                                        onClick = {
-                                            val start = Calendar.getInstance().apply {
-                                                set(Calendar.DAY_OF_MONTH, 1)
-                                                set(Calendar.HOUR_OF_DAY, 0)
-                                                set(Calendar.MINUTE, 0)
-                                                set(Calendar.SECOND, 0)
-                                                set(Calendar.MILLISECOND, 0)
-                                            }.timeInMillis
-                                            val end = Calendar.getInstance().apply {
-                                                set(Calendar.HOUR_OF_DAY, 23)
-                                                set(Calendar.MINUTE, 59)
-                                                set(Calendar.SECOND, 59)
-                                                set(Calendar.MILLISECOND, 999)
-                                            }.timeInMillis
-                                            fromDateMillis = start
-                                            toDateMillis = end
-                                            datePreset = DateFilterPreset.THIS_MONTH
-                                        },
-                                        label = { Text("This Month") },
-                                        leadingIcon = if (datePreset == DateFilterPreset.THIS_MONTH) {
-                                            { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                        } else null,
-                                        shape = CircleShape
-                                    )
-                                }
-                                if (datePreset == DateFilterPreset.CUSTOM) {
-                                    item {
-                                        FilterChip(
-                                            selected = true,
-                                            onClick = {},
-                                            label = { Text("Custom Range") },
-                                            leadingIcon = { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) },
-                                            shape = CircleShape
-                                        )
-                                    }
-                                }
-                            }
-
-                            // Caller / Contact Filter Chips Row
-                            if (uniqueCallerLabels.size > 1) {
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text(
-                                        text = "Contact",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    LazyRow(
-                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        item {
-                                            FilterChip(
-                                                selected = selectedFilterNumber == null,
-                                                onClick = { selectedFilterNumber = null },
-                                                label = { Text("All Contacts") },
-                                                leadingIcon = if (selectedFilterNumber == null) {
-                                                    { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                                } else null,
-                                                shape = CircleShape
-                                            )
-                                        }
-                                        items(uniqueCallerLabels) { label ->
-                                            FilterChip(
-                                                selected = selectedFilterNumber == label,
-                                                onClick = {
-                                                    selectedFilterNumber = if (selectedFilterNumber == label) null else label
-                                                },
-                                                label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                                                leadingIcon = if (selectedFilterNumber == label) {
-                                                    { Icon(Icons.Outlined.Done, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                                } else null,
-                                                shape = CircleShape
-                                            )
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
                 }
 
-                if (filteredRecordings.isEmpty()) {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 36.dp, horizontal = 16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Surface(
-                                shape = RoundedCornerShape(24.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                modifier = Modifier.size(64.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.MicNone,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(32.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(14.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+                if (isLoadingRecordings) {
+                    RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
+                } else if (filteredRecordings.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Outlined.GraphicEq,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                            Spacer(Modifier.height(12.dp))
                             Text(
-                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty) else "No matching recordings",
+                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty) else "No recordings found",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(Modifier.height(6.dp))
-                            Text(
-                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty_description)
-                                else "No recordings match your selected date or contact filter.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-                            if (recordings.isNotEmpty() && (fromDateMillis != null || toDateMillis != null || selectedFilterNumber != null)) {
-                                Spacer(Modifier.height(14.dp))
-                                Button(
-                                    onClick = {
-                                        fromDateMillis = null
-                                        toDateMillis = null
-                                        datePreset = DateFilterPreset.ALL
-                                        selectedFilterNumber = null
-                                    },
-                                    shape = CircleShape
-                                ) {
-                                    Icon(Icons.Outlined.RestartAlt, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(Modifier.width(6.dp))
-                                    Text("Reset Filters")
-                                }
-                            }
                         }
                     }
                 } else {
-                    groupedRecordings.forEach { (dateHeader, filesInGroup) ->
-                        item {
-                            RivoSectionHeader(
-                                title = dateHeader,
-                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
-                            )
-                        }
-                        items(filesInGroup, key = { it.absolutePath }) { file ->
-                            val isCurrentActive = activePlayingFile?.absolutePath == file.absolutePath
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        groupedRecordings.forEach { (header, itemsInGroup) ->
+                            item(key = "header_$header") {
+                                Text(
+                                    text = header,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(start = 4.dp, top = 8.dp, bottom = 4.dp)
+                                )
+                            }
 
-                            CallRecordEntryCard(
-                                file = file,
-                                isCurrentActive = isCurrentActive,
-                                isPlaying = isCurrentActive && isPlaying,
-                                currentPositionMs = if (isCurrentActive) currentPositionMs else 0,
-                                durationMs = if (isCurrentActive) durationMs else 0,
-                                playbackSpeed = playbackSpeed,
-                                onCardClick = {
-                                    if (isCurrentActive) {
+                            items(
+                                items = itemsInGroup,
+                                key = { it.file.absolutePath }
+                            ) { item ->
+                                val isCurrentActive = activePlayingFile?.absolutePath == item.file.absolutePath
+
+                                CallRecordEntryCard(
+                                    item = item,
+                                    isCurrentActive = isCurrentActive,
+                                    isPlaying = isCurrentActive && isRecordingPlaying,
+                                    currentPositionMs = if (isCurrentActive) currentPositionMs else 0,
+                                    durationMs = if (isCurrentActive) recordingDurationMs else 0,
+                                    playbackSpeed = playbackSpeed,
+                                    onCardClick = {
+                                        if (isCurrentActive) {
+                                            mediaPlayer?.let { mp ->
+                                                if (mp.isPlaying) {
+                                                    mp.pause()
+                                                    isRecordingPlaying = false
+                                                } else {
+                                                    mp.start()
+                                                    isRecordingPlaying = true
+                                                }
+                                            }
+                                        } else {
+                                            activePlayingFile = item.file
+                                        }
+                                    },
+                                    onPlayPauseClick = {
+                                        if (isCurrentActive) {
+                                            mediaPlayer?.let { mp ->
+                                                if (mp.isPlaying) {
+                                                    mp.pause()
+                                                    isRecordingPlaying = false
+                                                } else {
+                                                    mp.start()
+                                                    isRecordingPlaying = true
+                                                }
+                                            }
+                                        } else {
+                                            activePlayingFile = item.file
+                                        }
+                                    },
+                                    onSeekTo = { posMs ->
+                                        if (isCurrentActive) {
+                                            currentPositionMs = posMs
+                                            mediaPlayer?.seekTo(posMs)
+                                        }
+                                    },
+                                    onRewind10 = {
+                                        if (isCurrentActive) {
+                                            val newPos = (currentPositionMs - 10000).coerceAtLeast(0)
+                                            currentPositionMs = newPos
+                                            mediaPlayer?.seekTo(newPos)
+                                        }
+                                    },
+                                    onForward10 = {
+                                        if (isCurrentActive) {
+                                            val newPos = (currentPositionMs + 10000).coerceAtMost(recordingDurationMs)
+                                            currentPositionMs = newPos
+                                            mediaPlayer?.seekTo(newPos)
+                                        }
+                                    },
+                                    onSpeedChange = { newSpeed ->
+                                        playbackSpeed = newSpeed
                                         mediaPlayer?.let { mp ->
-                                            if (mp.isPlaying) {
-                                                mp.pause()
-                                                isPlaying = false
-                                            } else {
-                                                mp.start()
-                                                isPlaying = true
+                                            runCatching {
+                                                mp.playbackParams = mp.playbackParams.setSpeed(newSpeed)
                                             }
                                         }
-                                    } else {
-                                        activePlayingFile = file
+                                    },
+                                    onShareClick = {
+                                        CallRecorder.share(context, item.file, "Share Recording")
+                                    },
+                                    onDeleteClick = {
+                                        pendingDelete = item.file
                                     }
-                                },
-                                onPlayPauseClick = {
-                                    if (isCurrentActive) {
-                                        mediaPlayer?.let { mp ->
-                                            if (mp.isPlaying) {
-                                                mp.pause()
-                                                isPlaying = false
-                                            } else {
-                                                mp.start()
-                                                isPlaying = true
-                                            }
-                                        }
-                                    } else {
-                                        activePlayingFile = file
-                                    }
-                                },
-                                onSeekTo = { posMs ->
-                                    if (isCurrentActive) {
-                                        currentPositionMs = posMs
-                                        mediaPlayer?.seekTo(posMs)
-                                    }
-                                },
-                                onRewind10 = {
-                                    if (isCurrentActive) {
-                                        val newPos = (currentPositionMs - 10000).coerceAtLeast(0)
-                                        currentPositionMs = newPos
-                                        mediaPlayer?.seekTo(newPos)
-                                    }
-                                },
-                                onForward10 = {
-                                    if (isCurrentActive) {
-                                        val newPos = (currentPositionMs + 10000).coerceAtMost(durationMs)
-                                        currentPositionMs = newPos
-                                        mediaPlayer?.seekTo(newPos)
-                                    }
-                                },
-                                onSpeedChange = { newSpeed ->
-                                    playbackSpeed = newSpeed
-                                    mediaPlayer?.let { mp ->
-                                        runCatching { mp.playbackParams = mp.playbackParams.setSpeed(newSpeed) }
-                                    }
-                                },
-                                onShareClick = { CallRecorder.share(context, file, shareTitle) },
-                                onDeleteClick = { pendingDelete = file }
-                            )
+                                )
+                            }
                         }
                     }
                 }
-            } else {
-                // View Mode 2: Main Settings & Quality Page
-
-                // 1. Shizuku ADB Service Banner (at top, regular tile color, not red!)
+            }
+        } else {
+            // SETTINGS MODE: Full Expressive Settings Page
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // 1. Hero Summary Header Card
                 item {
                     RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        shape = RoundedCornerShape(28.dp)
                     ) {
-                        Column(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(4.dp)
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                RivoLeadingIconTile(
-                                    icon = if (shizukuAvailable && shizukuPermissionGranted) Icons.Outlined.CheckCircle else Icons.Outlined.Warning,
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            RivoLeadingIconTile(
+                                icon = Icons.Outlined.Mic,
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.call_recordings_title),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
                                 )
-                                Spacer(Modifier.width(12.dp))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = if (shizukuAvailable && shizukuPermissionGranted) "Shizuku ADB Service Active"
-                                        else if (!shizukuAvailable) "Shizuku Service Required"
-                                        else "Shizuku Permission Required",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(Modifier.height(2.dp))
-                                    Text(
-                                        text = if (shizukuAvailable && shizukuPermissionGranted) {
-                                            if (shizukuRecordingEnabled) "Elevated internal call audio recording is enabled."
-                                            else "Shizuku recording is disabled; falling back to microphone."
-                                        }
-                                        else "Android restricts call audio. Shizuku is required to capture crystal-clear internal call audio.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-
-                            if (shizukuAvailable && shizukuPermissionGranted) {
-                                Spacer(Modifier.height(8.dp))
-                                RivoDivider(Modifier.padding(vertical = 4.dp))
-                                RivoSwitchListItem(
-                                    headline = "Use Shizuku for 2-Way Audio",
-                                    supporting = if (shizukuRecordingEnabled) "Capturing crystal-clear internal call audio via Shizuku" else "Using fallback microphone recording",
-                                    leadingIcon = Icons.Outlined.GraphicEq,
-                                    checked = shizukuRecordingEnabled,
-                                    onCheckedChange = {
-                                        shizukuRecordingEnabled = it
-                                        prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_SHIZUKU, it)
-                                    }
+                                Spacer(Modifier.height(4.dp))
+                                Text(
+                                    text = if (isLoadingRecordings) "Scanning recordings..." else "${recordings.size} saved recordings",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                            }
-
-                            if (!shizukuAvailable || !shizukuPermissionGranted) {
-                                Spacer(Modifier.height(12.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    if (!shizukuAvailable) {
-                                        Button(
-                                            onClick = { openLink(context, "https://shizuku.rikka.app/") },
-                                            modifier = Modifier.weight(1f),
-                                            shape = CircleShape
-                                        ) {
-                                            Icon(Icons.Outlined.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                                            Spacer(Modifier.width(6.dp))
-                                            Text("Install Shizuku")
-                                        }
-                                    }
-                                    if (shizukuAvailable) {
-                                        FilledTonalButton(
-                                            onClick = {
-                                                ShizukuConnectionManager.requestPermission()
-                                                refreshKey++
-                                            },
-                                            modifier = Modifier.weight(1f),
-                                            shape = CircleShape
-                                        ) {
-                                            Icon(Icons.Outlined.Security, contentDescription = null, modifier = Modifier.size(16.dp))
-                                            Spacer(Modifier.width(6.dp))
-                                            Text("Grant Permission")
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
                 }
 
-
-                // 2.5 OEM / Xiaomi Optimization Card
+                // 2. OEM Device Optimization Warning Tile
                 if (OemPermissionHelper.isOemDevice()) {
                     item {
                         val powerManager = remember { context.getSystemService(Context.POWER_SERVICE) as? PowerManager }
@@ -910,7 +720,7 @@ fun CallRecordingsContent(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(4.dp)
+                                        .padding(horizontal = 16.dp, vertical = 14.dp)
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         RivoLeadingIconTile(
@@ -949,7 +759,6 @@ fun CallRecordingsContent(
 
                                     Spacer(Modifier.height(8.dp))
 
-                                    // Vertical action rows instead of squeezed horizontal buttons
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -981,42 +790,16 @@ fun CallRecordingsContent(
                     }
                 }
 
-                // 3. Saved Call Recordings Navigation Tile (directly under Storage Banner)
+                // 3. Saved Call Recordings Navigation Tile
                 item {
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(20.dp))
-                                .clickable { showingRecordingsList = true }
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RivoLeadingIconTile(
-                                icon = Icons.Outlined.LibraryMusic,
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Saved Call Recordings",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "${recordings.size} recordings available",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = "Open Recordings",
-                                tint = MaterialTheme.colorScheme.primary
+                    RivoExpressiveGroup {
+                        item {
+                            RivoListItem(
+                                headline = "Saved Call Recordings",
+                                supporting = if (isLoadingRecordings) "Scanning recordings..." else "${recordings.size} recordings available",
+                                leadingIcon = Icons.Outlined.LibraryMusic,
+                                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                onClick = { showingRecordingsList = true }
                             )
                         }
                     }
@@ -1024,156 +807,149 @@ fun CallRecordingsContent(
 
                 // 4. Recording Controls Section
                 item {
-                    RivoSectionHeader(
+                    RivoExpressiveGroup(
                         title = "Recording Controls",
                         icon = Icons.Outlined.SettingsVoice
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
                     ) {
-                        RivoSwitchListItem(
-                            headline = "Enable Call Recording",
-                            supporting = "Allow recording calls and show Record button during active calls",
-                            leadingIcon = Icons.Outlined.Mic,
-                            checked = callRecordingEnabled,
-                            onCheckedChange = {
-                                callRecordingEnabled = it
-                                prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING, it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSwitchListItem(
-                            headline = "Auto-Record Calls",
-                            supporting = "Automatically record calls as soon as they connect",
-                            leadingIcon = Icons.Outlined.PlayCircleOutline,
-                            checked = autoRecordEnabled,
-                            onCheckedChange = {
-                                autoRecordEnabled = it
-                                prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, it)
-                            }
-                        )
-                        if (autoRecordEnabled) {
-                            RivoDivider(Modifier.padding(horizontal = 16.dp))
-                            RivoSelectListItem(
-                                headline = "Auto-Record Filter",
-                                supporting = when (autoRecordFilter) {
-                                    PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> "Recording incoming calls only"
-                                    PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> "Recording outgoing calls only"
-                                    PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY -> "Recording unknown numbers only"
-                                    PreferenceManager.RECORD_FILTER_CONTACTS_ONLY -> "Recording saved contacts only"
-                                    else -> "Recording all calls"
-                                },
-                                leadingIcon = Icons.Outlined.FilterList,
-                                options = listOf(
-                                    "All Calls" to PreferenceManager.RECORD_FILTER_ALL,
-                                    "Incoming Calls Only" to PreferenceManager.RECORD_FILTER_INCOMING_ONLY,
-                                    "Outgoing Calls Only" to PreferenceManager.RECORD_FILTER_OUTGOING_ONLY,
-                                    "Unknown Numbers Only" to PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY,
-                                    "Saved Contacts Only" to PreferenceManager.RECORD_FILTER_CONTACTS_ONLY
-                                ),
-                                selectedValue = autoRecordFilter,
-                                onValueChange = {
-                                    autoRecordFilter = it
-                                    prefs.setInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, it)
+                        item {
+                            RivoSwitchListItem(
+                                headline = "Enable Call Recording",
+                                supporting = "Allow recording calls and show Record button during active calls",
+                                leadingIcon = Icons.Outlined.Mic,
+                                checked = callRecordingEnabled,
+                                onCheckedChange = {
+                                    callRecordingEnabled = it
+                                    prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING, it)
                                 }
                             )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = "Auto-Record Calls",
+                                supporting = "Automatically record calls as soon as they connect",
+                                leadingIcon = Icons.Outlined.PlayCircleOutline,
+                                checked = autoRecordEnabled,
+                                onCheckedChange = {
+                                    autoRecordEnabled = it
+                                    prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, it)
+                                }
+                            )
+                        }
+                        if (autoRecordEnabled) {
+                            item {
+                                RivoSelectListItem(
+                                    headline = "Auto-Record Filter",
+                                    supporting = when (autoRecordFilter) {
+                                        PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> "Recording incoming calls only"
+                                        PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> "Recording outgoing calls only"
+                                        PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY -> "Recording unknown numbers only"
+                                        PreferenceManager.RECORD_FILTER_CONTACTS_ONLY -> "Recording saved contacts only"
+                                        else -> "Recording all calls"
+                                    },
+                                    leadingIcon = Icons.Outlined.FilterList,
+                                    options = listOf(
+                                        "All Calls" to PreferenceManager.RECORD_FILTER_ALL,
+                                        "Incoming Calls Only" to PreferenceManager.RECORD_FILTER_INCOMING_ONLY,
+                                        "Outgoing Calls Only" to PreferenceManager.RECORD_FILTER_OUTGOING_ONLY,
+                                        "Unknown Numbers Only" to PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY,
+                                        "Saved Contacts Only" to PreferenceManager.RECORD_FILTER_CONTACTS_ONLY
+                                    ),
+                                    selectedValue = autoRecordFilter,
+                                    onValueChange = {
+                                        autoRecordFilter = it
+                                        prefs.setInt(PreferenceManager.KEY_CALL_RECORDING_FILTER, it)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
 
                 // 5. Audio Quality & Filters Section
                 item {
-                    RivoSectionHeader(
+                    RivoExpressiveGroup(
                         title = "Audio Quality & Filters",
                         icon = Icons.Outlined.GraphicEq
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
                     ) {
-                        RivoSelectListItem(
-                            headline = "Audio Bitrate",
-                            supporting = "Higher bitrate yields clearer audio output",
-                            leadingIcon = Icons.Outlined.HighQuality,
-                            options = listOf(
-                                "64 kbps (Compact)" to 64000,
-                                "96 kbps (Balanced)" to 96000,
-                                "128 kbps (High Quality)" to 128000,
-                                "192 kbps (Ultra)" to 192000,
-                                "256 kbps (Maximum)" to 256000
-                            ),
-                            selectedValue = bitrate,
-                            onValueChange = {
-                                bitrate = it
-                                prefs.setInt("call_recording_bitrate", it)
-                            }
-                        )
-                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                        RivoSelectListItem(
-                            headline = "Minimum Duration Filter",
-                            supporting = "Discard ultra-short calls below threshold",
-                            leadingIcon = Icons.Outlined.Timer,
-                            options = listOf(
-                                "Record All Calls" to 0,
-                                "Ignore calls < 3s" to 3,
-                                "Ignore calls < 5s" to 5,
-                                "Ignore calls < 10s" to 10
-                            ),
-                            selectedValue = minDurationFilter,
-                            onValueChange = {
-                                minDurationFilter = it
-                                prefs.setInt("call_recording_min_duration", it)
-                            }
-                        )
-                    }
-                }
-
-                // 6. Storage & Location Section
-                item {
-                    RivoSectionHeader(
-                        title = stringResource(R.string.settings_recording_storage_title),
-                        icon = Icons.Outlined.Folder
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        val currentFolderText = customFolderName ?: stringResource(R.string.settings_recording_save_folder_default)
-
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_recording_save_folder),
-                            supporting = currentFolderText,
-                            leadingIcon = Icons.Outlined.FolderOpen,
-                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            onClick = { folderPickerLauncher.launch(null) }
-                        )
-
-                        if (!customFolderUri.isNullOrBlank()) {
-                            RivoDivider(Modifier.padding(horizontal = 16.dp))
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_recording_reset_folder),
-                                supporting = stringResource(R.string.settings_recording_reset_folder_supporting),
-                                leadingIcon = Icons.Outlined.Restore,
-                                onClick = {
-                                    prefs.resetCustomRecordingFolder()
-                                    refreshKey++
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        context.getString(R.string.settings_recording_reset_folder_toast),
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
+                        item {
+                            RivoSelectListItem(
+                                headline = "Audio Bitrate",
+                                supporting = "Higher bitrate yields clearer audio output",
+                                leadingIcon = Icons.Outlined.HighQuality,
+                                options = listOf(
+                                    "64 kbps (Compact)" to 64000,
+                                    "96 kbps (Balanced)" to 96000,
+                                    "128 kbps (High Quality)" to 128000,
+                                    "192 kbps (Ultra)" to 192000,
+                                    "256 kbps (Maximum)" to 256000
+                                ),
+                                selectedValue = bitrate,
+                                onValueChange = {
+                                    bitrate = it
+                                    prefs.setInt("call_recording_bitrate", it)
+                                }
+                            )
+                        }
+                        item {
+                            RivoSelectListItem(
+                                headline = "Minimum Duration Filter",
+                                supporting = "Discard ultra-short calls below threshold",
+                                leadingIcon = Icons.Outlined.Timer,
+                                options = listOf(
+                                    "Record All Calls" to 0,
+                                    "Ignore calls < 3s" to 3,
+                                    "Ignore calls < 5s" to 5,
+                                    "Ignore calls < 10s" to 10
+                                ),
+                                selectedValue = minDurationFilter,
+                                onValueChange = {
+                                    minDurationFilter = it
+                                    prefs.setInt("call_recording_min_duration", it)
                                 }
                             )
                         }
                     }
                 }
-            }
 
-            item {
+                // 6. Storage & Location Section
+                item {
+                    RivoExpressiveGroup(
+                        title = stringResource(R.string.settings_recording_storage_title),
+                        icon = Icons.Outlined.Folder
+                    ) {
+                        val currentFolderText =
+                            customFolderName ?: stringResource(R.string.settings_recording_save_folder_default)
+
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_recording_save_folder),
+                                supporting = currentFolderText,
+                                leadingIcon = Icons.Outlined.FolderOpen,
+                                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                onClick = { folderPickerLauncher.launch(null) }
+                            )
+                        }
+
+                        if (!customFolderUri.isNullOrBlank()) {
+                            item {
+                                RivoListItem(
+                                    headline = stringResource(R.string.settings_recording_reset_folder),
+                                    supporting = stringResource(R.string.settings_recording_reset_folder_supporting),
+                                    leadingIcon = Icons.Outlined.Restore,
+                                    onClick = {
+                                        prefs.resetCustomRecordingFolder()
+                                        refreshKey++
+                                        android.widget.Toast.makeText(
+                                            context,
+                                            context.getString(R.string.settings_recording_reset_folder_toast),
+                                            android.widget.Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1202,7 +978,7 @@ fun CallRecordingsContent(
             onDismissRequest = { showDeleteAllConfirm = false },
             onConfirm = {
                 activePlayingFile = null
-                recordings.forEach { file -> CallRecorder.delete(file) }
+                recordings.forEach { item -> CallRecorder.delete(item.file) }
                 showDeleteAllConfirm = false
                 refreshKey++
             },
@@ -1320,7 +1096,7 @@ fun CallRecordingsContent(
  */
 @Composable
 fun CallRecordEntryCard(
-    file: File,
+    item: CallRecordingItem,
     isCurrentActive: Boolean,
     isPlaying: Boolean,
     currentPositionMs: Int,
@@ -1334,42 +1110,33 @@ fun CallRecordEntryCard(
     onSpeedChange: (Float) -> Unit,
     onShareClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(20.dp)
 ) {
-    val context = LocalContext.current
-    val durationFormatted = remember(file, durationMs, isCurrentActive) {
-        if (isCurrentActive && durationMs > 0) {
-            formatTimeMs(durationMs)
-        } else {
-            val dur = getAudioDurationMs(context, file)
-            if (dur > 0) formatTimeMs(dur.toInt()) else null
-        }
-    }
-    val dateFormatted = remember(file) {
-        SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault()).format(Date(file.lastModified()))
-    }
-    val sizeFormatted = remember(file) {
-        val kb = file.length() / 1024
-        if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
+    val durationFormatted = remember(item.durationMs, durationMs, isCurrentActive) {
+        val dur = if (isCurrentActive && durationMs > 0) durationMs.toLong() else item.durationMs
+        if (dur > 0) formatTimeMs(dur.toInt()) else null
     }
 
-    RivoExpressiveCard(
-        modifier = modifier,
-        containerColor = if (isCurrentActive) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+        color = if (isCurrentActive) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
         } else {
-            MaterialTheme.colorScheme.surfaceContainer
-        },
-        shape = RoundedCornerShape(24.dp)
+            MaterialTheme.colorScheme.surfaceContainerLow
+        }
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp)
+        ) {
             // Collapsed Header: Leading icon + info + single Play/Pause button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(18.dp))
-                    .clickable { onCardClick() }
-                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                    .clickable { onCardClick() },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RivoLeadingIconTile(
@@ -1379,26 +1146,26 @@ fun CallRecordEntryCard(
                     contentColor = if (isCurrentActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
                 )
 
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(14.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = file.nameWithoutExtension,
+                        text = item.nameWithoutExtension,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(4.dp))
 
                     Text(
                         text = buildString {
-                            append(dateFormatted)
+                            append(item.dateFormatted)
                             if (durationFormatted != null) append(" • $durationFormatted")
-                            append(" • $sizeFormatted")
+                            append(" • ${item.sizeFormatted}")
                         },
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -1410,16 +1177,16 @@ fun CallRecordEntryCard(
                 // Single prominent Play/Pause button
                 Surface(
                     onClick = onPlayPauseClick,
-                    shape = RoundedCornerShape(16.dp),
-                    color = if (isCurrentActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = CircleShape,
+                    color = if (isCurrentActive && isPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
                     modifier = Modifier.size(44.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = if (isCurrentActive && isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = "Play/Pause",
-                            tint = if (isCurrentActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                            tint = if (isCurrentActive && isPlaying) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 }
@@ -1559,7 +1326,7 @@ fun CallRecordEntryCard(
 
                     Spacer(Modifier.height(10.dp))
 
-                    // Bottom Action Bar: Share & Delete (separated from playback controls)
+                    // Bottom Action Bar: Share & Delete
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -1604,6 +1371,50 @@ fun CallRecordEntryCard(
             }
         }
     }
+}
+
+/**
+ * Legacy overload for backward compatibility with [File].
+ */
+@Composable
+fun CallRecordEntryCard(
+    file: File,
+    isCurrentActive: Boolean,
+    isPlaying: Boolean,
+    currentPositionMs: Int,
+    durationMs: Int,
+    playbackSpeed: Float,
+    onCardClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onSeekTo: (Int) -> Unit,
+    onRewind10: () -> Unit,
+    onForward10: () -> Unit,
+    onSpeedChange: (Float) -> Unit,
+    onShareClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(20.dp)
+) {
+    val context = LocalContext.current
+    val item = remember(file) { file.toCallRecordingItem(context) }
+    CallRecordEntryCard(
+        item = item,
+        isCurrentActive = isCurrentActive,
+        isPlaying = isPlaying,
+        currentPositionMs = currentPositionMs,
+        durationMs = durationMs,
+        playbackSpeed = playbackSpeed,
+        onCardClick = onCardClick,
+        onPlayPauseClick = onPlayPauseClick,
+        onSeekTo = onSeekTo,
+        onRewind10 = onRewind10,
+        onForward10 = onForward10,
+        onSpeedChange = onSpeedChange,
+        onShareClick = onShareClick,
+        onDeleteClick = onDeleteClick,
+        modifier = modifier,
+        shape = shape
+    )
 }
 
 /**
@@ -1665,7 +1476,7 @@ fun WavyAudioSlider(
                 var x = 0f
                 val step = 3.dp.toPx()
                 while (x <= currentX) {
-                    val y = centerY + amplitudePx * sin((x / wavelengthPx) * 2 * Math.PI + phase).toFloat()
+                    val y = centerY + amplitudePx * kotlin.math.sin((x / wavelengthPx) * 2 * Math.PI + phase).toFloat()
                     path.lineTo(x, y)
                     x += step
                 }
@@ -1701,7 +1512,6 @@ fun WavyAudioSlider(
 
 /**
  * Full-width OEM action row with icon, title, subtitle, and trailing arrow.
- * Replaces squeezed horizontal button layout.
  */
 @Composable
 private fun OemActionRow(
@@ -1751,16 +1561,6 @@ private fun OemActionRow(
             )
         }
     }
-}
-
-private fun getAudioDurationMs(context: Context, file: File): Long {
-    return runCatching {
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(context, Uri.fromFile(file))
-        val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        retriever.release()
-        durationStr?.toLongOrNull() ?: 0L
-    }.getOrDefault(0L)
 }
 
 private fun formatTimeMs(ms: Int): String {

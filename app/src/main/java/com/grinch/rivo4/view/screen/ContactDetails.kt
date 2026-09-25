@@ -14,7 +14,9 @@ import java.util.Date
 import java.util.Locale
 import android.media.MediaPlayer
 import com.grinch.rivo4.view.screen.settings.CallRecordEntryCard
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -219,8 +221,16 @@ fun ContactDetailsScreen(
 
     val telecomMgr = remember(context) { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
     val phoneAccounts = remember(telecomMgr, context) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            try { telecomMgr.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            try {
+                telecomMgr.callCapablePhoneAccounts
+            } catch (e: SecurityException) {
+                emptyList()
+            }
         } else emptyList()
     }
 
@@ -301,7 +311,8 @@ fun ContactDetailsScreen(
                     prepare()
                     start()
                     this@apply.playbackParams = this@apply.playbackParams.setSpeed(playbackSpeed)
-                } catch (_: Exception) {}
+                } catch (_: Exception) {
+                }
             }
             mediaPlayer = mp
             isRecordingPlaying = mp.isPlaying
@@ -334,19 +345,22 @@ fun ContactDetailsScreen(
         }
     }
 
-    val contactRecordings = remember(fullContact, displayName, phoneNumber, recordingsRefreshKey) {
-        val all = CallRecorder.listRecordings(context)
-        all.filter { file ->
-            val name = file.name
-            val cleanDisplay = displayName.replace(Regex("[^\\p{L}\\p{N}]"), "_").trim('_')
-            val matchesName = cleanDisplay.length >= 3 && name.contains(cleanDisplay, ignoreCase = true)
-            val cleanPhone = phoneNumber?.replace(Regex("[^0-9]"), "")
-            val matchesPhone = cleanPhone != null && cleanPhone.length >= 6 && name.contains(cleanPhone)
-            val matchesContactPhones = fullContact?.phoneNumbers?.any { num ->
-                val digits = num.replace(Regex("[^0-9]"), "")
-                digits.length >= 6 && name.contains(digits)
-            } == true
-            matchesName || matchesPhone || matchesContactPhones
+    var contactRecordings by remember { mutableStateOf<List<File>>(emptyList()) }
+    LaunchedEffect(fullContact, displayName, phoneNumber, recordingsRefreshKey) {
+        contactRecordings = withContext(Dispatchers.IO) {
+            val all = CallRecorder.listRecordings(context)
+            all.filter { file ->
+                val name = file.name
+                val cleanDisplay = displayName.replace(Regex("[^\\p{L}\\p{N}]"), "_").trim('_')
+                val matchesName = cleanDisplay.length >= 3 && name.contains(cleanDisplay, ignoreCase = true)
+                val cleanPhone = phoneNumber?.replace(Regex("[^0-9]"), "")
+                val matchesPhone = cleanPhone != null && cleanPhone.length >= 6 && name.contains(cleanPhone)
+                val matchesContactPhones = fullContact?.phoneNumbers?.any { num ->
+                    val digits = num.replace(Regex("[^0-9]"), "")
+                    digits.length >= 6 && name.contains(digits)
+                } == true
+                matchesName || matchesPhone || matchesContactPhones
+            }
         }
     }
 
@@ -355,6 +369,7 @@ fun ContactDetailsScreen(
             !backgroundAvailable -> {
                 scope.launch { snackbarHostState.showSnackbar(backgroundNoTargetMessage) }
             }
+
             callBackground != null -> showBackgroundDialog = true
             else -> backgroundPickerLauncher.launch(arrayOf("image/*"))
         }
@@ -362,7 +377,12 @@ fun ContactDetailsScreen(
 
     val contactLogs = remember(fullContact, phoneNumber, allLogs) {
         allLogs.filter { log ->
-            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num -> areNumbersEqual(log.number, num) })) ||
+            (fullContact != null && (log.contactId == fullContact!!.id || fullContact!!.phoneNumbers.any { num ->
+                areNumbersEqual(
+                    log.number,
+                    num
+                )
+            })) ||
                     (phoneNumber != null && areNumbersEqual(log.number, phoneNumber))
         }
     }
@@ -618,7 +638,10 @@ fun ContactDetailsScreen(
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back)
+                        )
                     }
                 },
                 actions = {
@@ -665,7 +688,10 @@ fun ContactDetailsScreen(
                         IconButton(onClick = {
                             navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
                         }) {
-                            Icon(Icons.Default.PersonAdd, contentDescription = stringResource(R.string.action_add_contact))
+                            Icon(
+                                Icons.Default.PersonAdd,
+                                contentDescription = stringResource(R.string.action_add_contact)
+                            )
                         }
                     }
                 }
@@ -742,7 +768,10 @@ fun ContactDetailsScreen(
                                 size = 52.dp,
                                 iconSize = 22.dp,
                                 onClick = {
-                                    messageLauncher.sendMessage(if (fullContact == null) displayPhone else "", fullContact)
+                                    messageLauncher.sendMessage(
+                                        if (fullContact == null) displayPhone else "",
+                                        fullContact
+                                    )
                                 },
                                 modifier = Modifier.weight(1f)
                             )
@@ -761,7 +790,9 @@ fun ContactDetailsScreen(
                                 val numberBlocked = isNumberBlocked(displayPhone)
                                 RivoExpressiveButton(
                                     icon = if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block,
-                                    label = if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number),
+                                    label = if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(
+                                        R.string.action_block_number
+                                    ),
                                     containerColor = if (numberBlocked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
                                     size = 52.dp,
                                     iconSize = 22.dp,
@@ -807,82 +838,107 @@ fun ContactDetailsScreen(
                         val mobileLabel = stringResource(R.string.label_mobile)
                         val bulletFavorite = stringResource(R.string.contact_bullet_favorite)
                         val bulletRecent = stringResource(R.string.contact_bullet_recent)
-                        RivoExpressiveCard(title = stringResource(R.string.contact_details_info_title), icon = Icons.Default.Info, isCompact = true) {
+                        RivoExpressiveGroup(
+                            title = stringResource(R.string.contact_details_info_title),
+                            icon = Icons.Default.Info
+                        ) {
                             if (fullContact != null) {
                                 val phoneEntries = remember(fullContact) {
                                     val fc = fullContact ?: return@remember emptyList()
                                     if (fc.phones.isNotEmpty()) fc.phones
                                     else deduplicateNumbers(fc.phoneNumbers).map { PhoneNumberEntry(it) }
                                 }
-                                phoneEntries.forEachIndexed { index, phoneEntry ->
+                                phoneEntries.forEach { phoneEntry ->
                                     val number = phoneEntry.number
-                                    val typeText = ContactTypeLabels.phoneTypeLabel(context, phoneEntry.type, phoneEntry.label)
+                                    val typeText =
+                                        ContactTypeLabels.phoneTypeLabel(context, phoneEntry.type, phoneEntry.label)
                                     val isRecent = lastUsed != null && areNumbersEqual(lastUsed, number)
                                     val isFav = areNumbersEqual(favoriteNumber, number)
 
-                                    var showMenu by remember { mutableStateOf(false) }
+                                    item {
+                                        var showMenu by remember { mutableStateOf(false) }
 
-                                    Box {
-                                        RivoListItem(
-                                            headline = formatPhoneNumber(number),
-                                            supporting = buildString {
-                                                append(typeText.ifBlank { mobileLabel })
-                                                if (isFav) append(bulletFavorite)
-                                                if (isRecent) append(bulletRecent)
-                                            },
-                                            leadingIcon = Icons.Default.Phone,
-                                            trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
-                                            isCompact = true,
-                                            onClick = { callLauncher.dial(number, fullContact) },
-                                            onLongClick = { showMenu = true }
-                                        )
+                                        Box {
+                                            RivoListItem(
+                                                headline = formatPhoneNumber(number),
+                                                supporting = buildString {
+                                                    append(typeText.ifBlank { mobileLabel })
+                                                    if (isFav) append(bulletFavorite)
+                                                    if (isRecent) append(bulletRecent)
+                                                },
+                                                leadingIcon = Icons.Default.Phone,
+                                                trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
+                                                isCompact = true,
+                                                onClick = { callLauncher.dial(number, fullContact) },
+                                                onLongClick = { showMenu = true }
+                                            )
 
-                                        RivoDropdownMenu(
-                                            expanded = showMenu,
-                                            onDismissRequest = { showMenu = false }
-                                        ) {
-                                            RivoDropdownMenuItem(
-                                                text = { Text(if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(R.string.contact_set_as_favorite)) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    fullContact?.id?.let { cid ->
-                                                        if (isFav) {
-                                                            prefs.setFavoriteNumber(cid, null)
-                                                            favoriteNumber = null
-                                                        } else {
-                                                            prefs.setFavoriteNumber(cid, number)
-                                                            favoriteNumber = number
+                                            RivoDropdownMenu(
+                                                expanded = showMenu,
+                                                onDismissRequest = { showMenu = false }
+                                            ) {
+                                                RivoDropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(
+                                                                R.string.contact_set_as_favorite
+                                                            )
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        showMenu = false
+                                                        fullContact?.id?.let { cid ->
+                                                            if (isFav) {
+                                                                prefs.setFavoriteNumber(cid, null)
+                                                                favoriteNumber = null
+                                                            } else {
+                                                                prefs.setFavoriteNumber(cid, number)
+                                                                favoriteNumber = number
+                                                            }
                                                         }
+                                                    },
+                                                    leadingIcon = {
+                                                        Icon(
+                                                            if (isFav) Icons.Default.StarOutline else Icons.Default.Star,
+                                                            null
+                                                        )
                                                     }
-                                                },
-                                                leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
-                                            )
-                                            RivoDropdownMenuItem(
-                                                text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    clipboardManager.setText(AnnotatedString(number))
-                                                },
-                                                leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
-                                            )
-                                            val numberBlocked = isNumberBlocked(number)
-                                            RivoDropdownMenuItem(
-                                                text = { Text(if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number)) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    if (numberBlocked) {
-                                                        BlockedNumbersManager.unblock(context, number)
-                                                    } else {
-                                                        BlockedNumbersManager.block(context, number)
+                                                )
+                                                RivoDropdownMenuItem(
+                                                    text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
+                                                    onClick = {
+                                                        showMenu = false
+                                                        clipboardManager.setText(AnnotatedString(number))
+                                                    },
+                                                    leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                                )
+                                                val numberBlocked = isNumberBlocked(number)
+                                                RivoDropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(
+                                                                R.string.action_block_number
+                                                            )
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        showMenu = false
+                                                        if (numberBlocked) {
+                                                            BlockedNumbersManager.unblock(context, number)
+                                                        } else {
+                                                            BlockedNumbersManager.block(context, number)
+                                                        }
+                                                        blockedVersion++
+                                                    },
+                                                    leadingIcon = {
+                                                        Icon(
+                                                            if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block,
+                                                            null
+                                                        )
                                                     }
-                                                    blockedVersion++
-                                                },
-                                                leadingIcon = { Icon(if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block, null) }
-                                            )
+                                                )
+                                            }
                                         }
-                                    }
-                                    if (index < phoneEntries.size - 1 || fullContact?.emails?.isNotEmpty() == true) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
                                 }
                                 val emailEntries = remember(fullContact) {
@@ -890,227 +946,113 @@ fun ContactDetailsScreen(
                                     if (fc.emailEntries.isNotEmpty()) fc.emailEntries
                                     else fc.emails.map { EmailEntry(it) }
                                 }
-                                emailEntries.forEachIndexed { index, emailEntry ->
+                                emailEntries.forEach { emailEntry ->
                                     val email = emailEntry.address
-                                    val emailTypeText = ContactTypeLabels.emailTypeLabel(context, emailEntry.type, emailEntry.label)
+                                    val emailTypeText =
+                                        ContactTypeLabels.emailTypeLabel(context, emailEntry.type, emailEntry.label)
                                     val isFav = email == favoriteEmail
-                                    var showMenu by remember { mutableStateOf(false) }
 
-                                    Box {
-                                        RivoListItem(
-                                            headline = email,
-                                            supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) stringResource(R.string.contact_bullet_favorite) else "",
-                                            leadingIcon = Icons.Default.Email,
-                                            isCompact = true,
-                                            onClick = { emailLauncher.sendEmail(email, fullContact) },
-                                            onLongClick = { showMenu = true }
-                                        )
+                                    item {
+                                        var showMenu by remember { mutableStateOf(false) }
 
-                                        RivoDropdownMenu(
-                                            expanded = showMenu,
-                                            onDismissRequest = { showMenu = false }
-                                        ) {
-                                            RivoDropdownMenuItem(
-                                                text = { Text(if (isFav) stringResource(R.string.contact_clear_default) else stringResource(R.string.contact_set_as_default)) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    if (isFav) {
-                                                        prefs.setFavoriteEmail(fullContact!!.id, null)
-                                                        favoriteEmail = null
-                                                    } else {
-                                                        prefs.setFavoriteEmail(fullContact!!.id, email)
-                                                        favoriteEmail = email
-                                                    }
-                                                },
-                                                leadingIcon = { Icon(if (isFav) Icons.Default.StarOutline else Icons.Default.Star, null) }
+                                        Box {
+                                            RivoListItem(
+                                                headline = email,
+                                                supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) stringResource(
+                                                    R.string.contact_bullet_favorite
+                                                ) else "",
+                                                leadingIcon = Icons.Default.Email,
+                                                isCompact = true,
+                                                onClick = { emailLauncher.sendEmail(email, fullContact) },
+                                                onLongClick = { showMenu = true }
                                             )
-                                            RivoDropdownMenuItem(
-                                                text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    clipboardManager.setText(AnnotatedString(email))
-                                                },
-                                                leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
-                                            )
-                                        }
-                                    }
-                                    if (index < emailEntries.size - 1) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    }
-                                }
-                            } else if (phoneNumber != null && phoneNumber != unknownLabel) {
-                                var showMenu by remember { mutableStateOf(false) }
-                                Box {
-                                    RivoListItem(
-                                        headline = formatPhoneNumber(phoneNumber),
-                                        supporting = stringResource(R.string.label_unknown_number),
-                                        leadingIcon = Icons.Default.Phone,
-                                        isCompact = true,
-                                        onClick = { callLauncher.dial(phoneNumber, null) },
-                                        onLongClick = { showMenu = true }
-                                    )
 
-                                    DropdownMenu(
-                                        expanded = showMenu,
-                                        onDismissRequest = { showMenu = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(R.string.contact_add_to_contacts)) },
-                                            onClick = {
-                                                showMenu = false
-                                                addToContactNumber = phoneNumber
-                                            },
-                                            leadingIcon = { Icon(Icons.Default.PersonAdd, null) }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
-                                            onClick = {
-                                                showMenu = false
-                                                clipboardManager.setText(AnnotatedString(phoneNumber))
-                                            },
-                                            leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
-                                        )
-                                        val numberBlocked = isNumberBlocked(phoneNumber)
-                                        DropdownMenuItem(
-                                            text = { Text(if (numberBlocked) stringResource(R.string.action_unblock_number) else stringResource(R.string.action_block_number)) },
-                                            onClick = {
-                                                showMenu = false
-                                                if (numberBlocked) {
-                                                    BlockedNumbersManager.unblock(context, phoneNumber)
-                                                } else {
-                                                    BlockedNumbersManager.block(context, phoneNumber)
-                                                }
-                                                blockedVersion++
-                                            },
-                                            leadingIcon = { Icon(if (numberBlocked) Icons.Default.LockOpen else Icons.Default.Block, null) }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (fullContact != null && (fullContact!!.events.isNotEmpty() || fullContact!!.addresses.isNotEmpty())) {
-                        item {
-                            RivoExpressiveCard(title = stringResource(R.string.contact_events_title), icon = Icons.Default.Event, isCompact = true) {
-                                fullContact!!.events.forEachIndexed { index, event ->
-                                    val isBirthday = event.type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
-                                    RivoListItem(
-                                        headline = event.date,
-                                        supporting = event.label ?: if (isBirthday) stringResource(R.string.contact_event_birthday) else stringResource(R.string.contact_event_generic),
-                                        leadingIcon = if (isBirthday) Icons.Outlined.Cake else Icons.Outlined.Event,
-                                        isCompact = true,
-                                        onClick = { clipboardManager.setText(AnnotatedString(event.date)) }
-                                    )
-                                    if (index < fullContact!!.events.size - 1 || fullContact!!.addresses.isNotEmpty()) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    }
-                                }
-                                fullContact!!.addresses.forEachIndexed { index, address ->
-                                    RivoListItem(
-                                        headline = address,
-                                        supporting = stringResource(R.string.label_address),
-                                        leadingIcon = Icons.Default.LocationOn,
-                                        isCompact = true,
-                                        onClick = {
-                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$address"))
-                                            context.startActivity(intent)
-                                        }
-                                    )
-                                    if (index < fullContact!!.addresses.size - 1) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (fullContact?.notes?.isNotBlank() == true) {
-                        item {
-                            var showNotesMenu by remember { mutableStateOf(false) }
-                            RivoExpressiveCard(title = stringResource(R.string.label_notes), icon = Icons.AutoMirrored.Filled.Notes, isCompact = true) {
-                                Box {
-                                    Text(
-                                        text = fullContact!!.notes!!,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .combinedClickable(
-                                                onClick = { showNotesMenu = true },
-                                                onLongClick = { showNotesMenu = true }
-                                            )
-                                            .padding(12.dp),
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-
-                                    DropdownMenu(
-                                        expanded = showNotesMenu,
-                                        onDismissRequest = { showNotesMenu = false }
-                                    ) {
-                                        RivoDropdownMenuItem(
-                                            text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
-                                            onClick = {
-                                                showNotesMenu = false
-                                                clipboardManager.setText(AnnotatedString(fullContact!!.notes!!))
-                                            },
-                                            leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        val callNotes by callNoteDao.getNotesForNumber(displayPhone).collectAsState(initial = emptyList())
-                        val dateFormat = remember { SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault()) }
-                        RivoExpressiveCard(
-                            title = "Call Notes (${callNotes.size})",
-                            icon = Icons.Outlined.EditNote,
-                            isCompact = true
-                        ) {
-                            Column(modifier = Modifier.animateContentSize()) {
-                                if (callNotes.isEmpty()) {
-                                    Text(
-                                        text = "No call notes for this contact",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(12.dp)
-                                    )
-                                } else {
-                                    callNotes.forEachIndexed { index, noteItem ->
-                                        RivoListItem(
-                                            headline = noteItem.note,
-                                            supporting = dateFormat.format(Date(noteItem.timestamp)),
-                                            leadingIcon = Icons.AutoMirrored.Filled.Notes,
-                                            isCompact = true,
-                                            onClick = {},
-                                            trailingContent = {
-                                                IconButton(
+                                            RivoDropdownMenu(
+                                                expanded = showMenu,
+                                                onDismissRequest = { showMenu = false }
+                                            ) {
+                                                RivoDropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            if (isFav) stringResource(R.string.contact_clear_default) else stringResource(
+                                                                R.string.contact_set_as_default
+                                                            )
+                                                        )
+                                                    },
                                                     onClick = {
-                                                        scope.launch { callNoteDao.deleteNote(noteItem) }
+                                                        showMenu = false
+                                                        if (isFav) {
+                                                            prefs.setFavoriteEmail(fullContact!!.id, null)
+                                                            favoriteEmail = null
+                                                        } else {
+                                                            prefs.setFavoriteEmail(fullContact!!.id, email)
+                                                            favoriteEmail = email
+                                                        }
+                                                    },
+                                                    leadingIcon = {
+                                                        Icon(
+                                                            if (isFav) Icons.Default.StarOutline else Icons.Default.Star,
+                                                            null
+                                                        )
                                                     }
-                                                ) {
-                                                    Icon(
-                                                        Icons.Default.Delete,
-                                                        contentDescription = "Delete",
-                                                        tint = MaterialTheme.colorScheme.error,
-                                                        modifier = Modifier.size(18.dp)
-                                                    )
-                                                }
+                                                )
+                                                RivoDropdownMenuItem(
+                                                    text = { Text(stringResource(R.string.contact_copy_to_clipboard)) },
+                                                    onClick = {
+                                                        showMenu = false
+                                                        clipboardManager.setText(AnnotatedString(email))
+                                                    },
+                                                    leadingIcon = { Icon(Icons.Default.ContentCopy, null) }
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                fullContact?.addresses?.filter { it.isNotBlank() }?.forEach { address ->
+                                    item {
+                                        RivoListItem(
+                                            headline = address,
+                                            supporting = stringResource(R.string.label_address),
+                                            leadingIcon = Icons.Default.LocationOn,
+                                            isCompact = true,
+                                            onClick = {
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+                                                )
+                                                context.startActivity(intent)
                                             }
                                         )
-                                        if (index < callNotes.size - 1) {
-                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                        }
                                     }
                                 }
-                                TextButton(
-                                    onClick = { showAddNoteDialog = true },
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
-                                ) {
-                                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                                    Spacer(Modifier.width(8.dp))
-                                    Text("Add Call Note")
+                            } else if (phoneNumber != null) {
+                                item {
+                                    RivoListItem(
+                                        headline = formatPhoneNumber(phoneNumber),
+                                        supporting = stringResource(R.string.label_mobile),
+                                        leadingIcon = Icons.Default.Phone,
+                                        isCompact = true,
+                                        onClick = { callLauncher.dial(phoneNumber, null) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (fullContact != null && !fullContact!!.notes.isNullOrBlank()) {
+                        item {
+                            RivoExpressiveGroup(
+                                title = stringResource(R.string.label_notes),
+                                icon = Icons.Outlined.EditNote
+                            ) {
+                                item {
+                                    RivoListItem(
+                                        headline = fullContact!!.notes!!,
+                                        leadingIcon = Icons.AutoMirrored.Filled.Notes,
+                                        isCompact = true,
+                                        onClick = {}
+                                    )
                                 }
                             }
                         }
@@ -1118,32 +1060,50 @@ fun ContactDetailsScreen(
 
                     if (contactLogs.isNotEmpty()) {
                         item {
-                            RivoExpressiveCard(title = stringResource(R.string.contact_recent_activity_title), icon = Icons.Default.History, isCompact = true) {
-                                Column(modifier = Modifier.animateContentSize()) {
-                                    contactLogs.take(3).forEachIndexed { index, log ->
-                                        CallLogTileSimple(
-                                            log = log,
-                                            onCallClick = {
-                                                callLauncher.dial(log.number, fullContact)
-                                            }
+                            val finalContactId =
+                                if (fullContact?.id != null) fullContact!!.id else if (contactId != "null") contactId else null
+                            RivoExpressiveGroup(
+                                title = stringResource(R.string.contact_recent_activity_title),
+                                icon = Icons.Default.History
+                            ) {
+                                contactLogs.take(3).forEach { log ->
+                                    item {
+                                        RivoListItem(
+                                            headline = formatPhoneNumber(log.number),
+                                            supporting = SimpleDateFormat(
+                                                "MMM d, yyyy HH:mm",
+                                                Locale.getDefault()
+                                            ).format(Date(log.date)),
+                                            leadingIcon = when (log.type) {
+                                                android.provider.CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+                                                android.provider.CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+                                                android.provider.CallLog.Calls.MISSED_TYPE -> Icons.Default.CallMissed
+                                                else -> Icons.Default.Call
+                                            },
+                                            isCompact = true,
+                                            onClick = { callLauncher.dial(log.number, fullContact) }
                                         )
-                                        if (index < 2 && index < contactLogs.size - 1) {
-                                            RivoDivider(Modifier.padding(horizontal = 16.dp))
-                                        }
                                     }
+                                }
 
-                                    if (contactLogs.size > 3) {
-                                        val finalContactId = if (fullContact?.id != null) fullContact!!.id else if (contactId != "null") contactId else null
+                                if (contactLogs.size > 3) {
+                                    item {
                                         TextButton(
                                             onClick = {
-                                                navigator.navigate(CallLogFullScreenDestination(
-                                                    contactId = finalContactId,
-                                                    phoneNumber = phoneNumber
-                                                ))
+                                                navigator.navigate(
+                                                    CallLogFullScreenDestination(
+                                                        contactId = finalContactId,
+                                                        phoneNumber = phoneNumber
+                                                    )
+                                                )
                                             },
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text(stringResource(R.string.contact_show_full_history))
+                                            Text(
+                                                text = stringResource(R.string.contact_show_full_history),
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold
+                                            )
                                         }
                                     }
                                 }
@@ -1157,19 +1117,13 @@ fun ContactDetailsScreen(
 
                     if (contactRecordings.isNotEmpty()) {
                         item {
-                            RivoExpressiveCard(
+                            RivoExpressiveGroup(
                                 title = "Call Recordings (${contactRecordings.size})",
-                                icon = Icons.Outlined.Mic,
-                                isCompact = true
+                                icon = Icons.Outlined.Mic
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .animateContentSize()
-                                        .padding(vertical = 4.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    contactRecordings.take(3).forEach { file ->
+                                val recordingsToShow = contactRecordings.take(3)
+                                recordingsToShow.forEachIndexed { index, file ->
+                                    item {
                                         val isCurrentActive = activePlayingFile?.absolutePath == file.absolutePath
                                         CallRecordEntryCard(
                                             file = file,
@@ -1178,6 +1132,7 @@ fun ContactDetailsScreen(
                                             currentPositionMs = if (isCurrentActive) currentPositionMs else 0,
                                             durationMs = if (isCurrentActive) recordingDurationMs else 0,
                                             playbackSpeed = playbackSpeed,
+                                            shape = RoundedCornerShape(0.dp),
                                             onCardClick = {
                                                 if (isCurrentActive) {
                                                     mediaPlayer?.let { mp ->
@@ -1223,7 +1178,8 @@ fun ContactDetailsScreen(
                                             },
                                             onForward10 = {
                                                 if (isCurrentActive) {
-                                                    val newPos = (currentPositionMs + 10000).coerceAtMost(recordingDurationMs)
+                                                    val newPos =
+                                                        (currentPositionMs + 10000).coerceAtMost(recordingDurationMs)
                                                     currentPositionMs = newPos
                                                     mediaPlayer?.seekTo(newPos)
                                                 }
@@ -1231,19 +1187,30 @@ fun ContactDetailsScreen(
                                             onSpeedChange = { newSpeed ->
                                                 playbackSpeed = newSpeed
                                                 mediaPlayer?.let { mp ->
-                                                    runCatching { mp.playbackParams = mp.playbackParams.setSpeed(newSpeed) }
+                                                    runCatching {
+                                                        mp.playbackParams = mp.playbackParams.setSpeed(newSpeed)
+                                                    }
                                                 }
                                             },
                                             onShareClick = { CallRecorder.share(context, file, "Share Recording") },
                                             onDeleteClick = { pendingDeleteRecording = file }
                                         )
                                     }
-                                    if (contactRecordings.size > 3) {
+                                }
+
+                                if (contactRecordings.size > 3) {
+                                    item {
                                         TextButton(
-                                            onClick = { navigator.navigate(CallRecordingsScreenDestination(initialShowList = true)) },
+                                            onClick = {
+                                                navigator.navigate(CallRecordingsScreenDestination(initialShowList = true))
+                                            },
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text("View All Recordings (${contactRecordings.size})")
+                                            Text(
+                                                text = "View All Recordings (${contactRecordings.size})",
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold
+                                            )
                                         }
                                     }
                                 }
@@ -1253,31 +1220,32 @@ fun ContactDetailsScreen(
 
                     if (installedSocialApps.isNotEmpty()) {
                         item {
-                            RivoExpressiveCard(
+                            RivoExpressiveGroup(
                                 title = stringResource(R.string.label_social_apps),
-                                icon = Icons.AutoMirrored.Filled.Chat,
-                                isCompact = true
+                                icon = Icons.AutoMirrored.Filled.Chat
                             ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .horizontalScroll(rememberScrollState())
-                                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    installedSocialApps.forEach { app ->
-                                        val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
-                                        RivoExpressiveButton(
-                                            painter = painter,
-                                            label = app.name,
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                            size = 52.dp,
-                                            iconSize = 32.dp,
-                                            onClick = {
-                                                onNumberActionClick({ num -> app.action(context, num) }, app.name)
-                                            }
-                                        )
+                                item {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .horizontalScroll(rememberScrollState())
+                                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        installedSocialApps.forEach { app ->
+                                            val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
+                                            RivoExpressiveButton(
+                                                painter = painter,
+                                                label = app.name,
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                size = 52.dp,
+                                                iconSize = 32.dp,
+                                                onClick = {
+                                                    onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -1286,12 +1254,11 @@ fun ContactDetailsScreen(
 
                     if (fullContact == null) {
                         item {
-                            RivoExpressiveCard(
+                            RivoExpressiveGroup(
                                 title = stringResource(R.string.contact_personalization_title),
-                                icon = Icons.Default.Tune,
-                                isCompact = true
+                                icon = Icons.Default.Tune
                             ) {
-                                Column(modifier = Modifier.fillMaxWidth()) {
+                                item {
                                     RivoListItem(
                                         headline = "Callback Reminder",
                                         supporting = "Schedule a reminder to call back",
@@ -1300,8 +1267,9 @@ fun ContactDetailsScreen(
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = { showReminderDialog = true }
                                     )
-                                    if (backgroundAvailable) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                }
+                                if (backgroundAvailable) {
+                                    item {
                                         CallBackgroundRow(
                                             background = callBackground,
                                             saving = backgroundSaving,
@@ -1321,26 +1289,27 @@ fun ContactDetailsScreen(
                             val selectRingtoneLabel = stringResource(R.string.contact_select_ringtone)
 
                             val currentRingtone = fc.customRingtone?.let { uriStr ->
-                                runCatching { RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context) }.getOrNull() ?: customRingtoneLabel
+                                runCatching {
+                                    RingtoneManager.getRingtone(context, Uri.parse(uriStr))?.getTitle(context)
+                                }.getOrNull() ?: customRingtoneLabel
                             } ?: defaultRingtoneLabel
 
-                            RivoExpressiveCard(
+                            RivoExpressiveGroup(
                                 title = stringResource(R.string.contact_personalization_title),
-                                icon = Icons.Default.Tune,
-                                isCompact = true
+                                icon = Icons.Default.Tune
                             ) {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    // 0. Default SIM card (when Dual SIM)
-                                    if (phoneAccounts.size > 1) {
-                                        val selectedHandle = phoneAccounts.find { it.id == defaultSimId }
-                                        val unknownSimLabel = stringResource(R.string.sim_picker_unknown_sim)
-                                        val promptLabel = stringResource(R.string.sim_ask_every_time)
-                                        val simLabel = if (selectedHandle != null) {
-                                            val account = telecomMgr.getPhoneAccount(selectedHandle)
-                                            account?.label?.toString()?.takeIf { it.isNotBlank() }
-                                                ?: ("SIM " + (phoneAccounts.indexOf(selectedHandle) + 1) + " (" + unknownSimLabel + ")")
-                                        } else promptLabel
+                                // 0. Default SIM card (when Dual SIM)
+                                if (phoneAccounts.size > 1) {
+                                    val selectedHandle = phoneAccounts.find { it.id == defaultSimId }
+                                    val unknownSimLabel = stringResource(R.string.sim_picker_unknown_sim)
+                                    val promptLabel = stringResource(R.string.sim_ask_every_time)
+                                    val simLabel = if (selectedHandle != null) {
+                                        val account = telecomMgr.getPhoneAccount(selectedHandle)
+                                        account?.label?.toString()?.takeIf { it.isNotBlank() }
+                                            ?: ("SIM " + (phoneAccounts.indexOf(selectedHandle) + 1) + " (" + unknownSimLabel + ")")
+                                    } else promptLabel
 
+                                    item {
                                         RivoListItem(
                                             headline = stringResource(R.string.contact_default_sim),
                                             supporting = simLabel,
@@ -1349,10 +1318,11 @@ fun ContactDetailsScreen(
                                             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                             onClick = { showSimSelectDialog = true }
                                         )
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
                                     }
+                                }
 
-                                    // 1. Custom Ringtone
+                                // 1. Custom Ringtone
+                                item {
                                     RivoListItem(
                                         headline = stringResource(R.string.contact_custom_ringtone),
                                         supporting = currentRingtone,
@@ -1361,27 +1331,33 @@ fun ContactDetailsScreen(
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         onClick = {
                                             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
+                                                putExtra(
+                                                    RingtoneManager.EXTRA_RINGTONE_TYPE,
+                                                    RingtoneManager.TYPE_RINGTONE
+                                                )
                                                 putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, selectRingtoneLabel)
-                                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, fc.customRingtone?.let { Uri.parse(it) })
+                                                putExtra(
+                                                    RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+                                                    fc.customRingtone?.let { Uri.parse(it) })
                                             }
                                             ringtonePickerLauncher.launch(intent)
                                         }
                                     )
+                                }
 
-                                    // 2. Call Background (if available)
-                                    if (backgroundAvailable) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                // 2. Call Background (if available)
+                                if (backgroundAvailable) {
+                                    item {
                                         CallBackgroundRow(
                                             background = callBackground,
                                             saving = backgroundSaving,
                                             onClick = onBackgroundClick
                                         )
                                     }
+                                }
 
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-
-                                    // 3. Callback Reminder
+                                // 3. Callback Reminder
+                                item {
                                     RivoListItem(
                                         headline = "Callback Reminder",
                                         supporting = "Schedule a reminder to call back",
@@ -1396,18 +1372,22 @@ fun ContactDetailsScreen(
 
                         item {
                             val contactNumbers = fc.phoneNumbers
-                            val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
+                            val contactBlocked =
+                                contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
 
-                            RivoExpressiveCard(
+                            RivoExpressiveGroup(
                                 title = stringResource(R.string.contact_privacy_title),
-                                icon = Icons.Default.Security,
-                                isCompact = true
+                                icon = Icons.Default.Security
                             ) {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    // 1. Storage Location
+                                // 1. Storage Location
+                                item {
                                     RivoListItem(
-                                        headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(R.string.contact_move_to_private_storage),
-                                        supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(R.string.contact_hidden_from_other_apps),
+                                        headline = if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage) else stringResource(
+                                            R.string.contact_move_to_private_storage
+                                        ),
+                                        supporting = if (fc.isPrivate) stringResource(R.string.contact_visible_to_other_apps) else stringResource(
+                                            R.string.contact_hidden_from_other_apps
+                                        ),
                                         leadingIcon = if (fc.isPrivate) Icons.Default.LockOpen else Icons.Default.Lock,
                                         isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -1420,10 +1400,11 @@ fun ContactDetailsScreen(
                                             navigator.navigateUp()
                                         }
                                     )
+                                }
 
-                                    // 2. Hide Completely (if private)
-                                    if (fc.isPrivate) {
-                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                // 2. Hide Completely (if private)
+                                if (fc.isPrivate) {
+                                    item {
                                         RivoListItem(
                                             headline = if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely",
                                             supporting = if (fc.isHidden) "Visible in lists" else "Hidden from lists (dial secret code to unlock)",
@@ -1436,13 +1417,17 @@ fun ContactDetailsScreen(
                                             }
                                         )
                                     }
+                                }
 
-                                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-
-                                    // 3. Block / Unblock Number
+                                // 3. Block / Unblock Number
+                                item {
                                     RivoListItem(
-                                        headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(R.string.contact_block),
-                                        supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(R.string.contact_block_supporting),
+                                        headline = if (contactBlocked) stringResource(R.string.contact_unblock) else stringResource(
+                                            R.string.contact_block
+                                        ),
+                                        supporting = if (contactBlocked) stringResource(R.string.contact_unblock_supporting) else stringResource(
+                                            R.string.contact_block_supporting
+                                        ),
                                         leadingIcon = if (contactBlocked) Icons.Default.CheckCircle else Icons.Default.Block,
                                         isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -1482,7 +1467,7 @@ fun ContactDetailsScreen(
                                 Text(
                                     text = stringResource(R.string.action_delete),
                                     style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -1529,4 +1514,3 @@ fun ContactDetailsScreen(
         }
     }
 }
-

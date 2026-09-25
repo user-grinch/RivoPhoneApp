@@ -50,31 +50,27 @@ fun PermissionsChecklistCard(
 ) {
     val roundness = LocalCardRoundness.current
 
-    Surface(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 2.dp
+        verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            items.forEachIndexed { index, item ->
+        items.forEachIndexed { index, item ->
+            val shape = com.grinch.rivo4.view.components.rivoGroupedItemShape(
+                index = index,
+                total = items.size,
+                cornerRadius = rivoCornerDp(20, roundness),
+                innerCorner = rivoCornerDp(4, roundness)
+            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = shape,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                tonalElevation = 1.dp
+            ) {
                 PermissionItemRow(
                     item = item,
                     onClick = { onItemClick(item) }
                 )
-                if (index < items.size - 1) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .height(0.5.dp)
-                            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-                    )
-                }
             }
         }
     }

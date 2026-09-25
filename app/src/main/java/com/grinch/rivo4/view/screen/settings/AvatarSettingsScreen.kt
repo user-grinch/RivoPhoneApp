@@ -18,6 +18,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoAvatarShapeSelectorRow
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -75,80 +76,90 @@ fun AvatarSettingsScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-                RivoExpressiveCard(title = stringResource(R.string.settings_interface_avatar_shape)) {
-                    RivoAvatarShapeSelectorRow(
-                        headline = stringResource(R.string.settings_interface_avatar_shape),
-                        supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
-                        options = listOf(
-                            stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
-                            stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
-                            stringResource(R.string.settings_interface_avatar_shape_square) to 2,
-                            stringResource(R.string.settings_interface_avatar_shape_cookie) to 3,
-                            stringResource(R.string.settings_interface_avatar_shape_clover) to 4,
-                            stringResource(R.string.settings_interface_avatar_shape_arch) to 5,
-                            stringResource(R.string.settings_interface_avatar_shape_pill) to 6,
-                            stringResource(R.string.settings_interface_avatar_shape_gem) to 7,
-                            stringResource(R.string.settings_interface_avatar_shape_sunny) to 8,
-                            stringResource(R.string.settings_interface_avatar_shape_heart) to 9,
-                            stringResource(R.string.settings_interface_avatar_shape_burst) to 10
-                        ),
-                        selectedValue = avatarShape,
-                        onValueChange = { selected ->
-                            avatarShape = selected
-                            prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, selected)
-                        }
-                    )
+                RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_interface_avatar_shape),
+                    icon = Icons.Outlined.Palette
+                ) {
+                    item {
+                        RivoAvatarShapeSelectorRow(
+                            headline = stringResource(R.string.settings_interface_avatar_shape),
+                            supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
+                            options = listOf(
+                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
+                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
+                                stringResource(R.string.settings_interface_avatar_shape_square) to 2,
+                                stringResource(R.string.settings_interface_avatar_shape_cookie) to 3,
+                                stringResource(R.string.settings_interface_avatar_shape_clover) to 4,
+                                stringResource(R.string.settings_interface_avatar_shape_arch) to 5,
+                                stringResource(R.string.settings_interface_avatar_shape_pill) to 6,
+                                stringResource(R.string.settings_interface_avatar_shape_gem) to 7,
+                                stringResource(R.string.settings_interface_avatar_shape_sunny) to 8,
+                                stringResource(R.string.settings_interface_avatar_shape_heart) to 9,
+                                stringResource(R.string.settings_interface_avatar_shape_burst) to 10
+                            ),
+                            selectedValue = avatarShape,
+                            onValueChange = { selected ->
+                                avatarShape = selected
+                                prefs.setInt(PreferenceManager.KEY_AVATAR_SHAPE, selected)
+                            }
+                        )
+                    }
                 }
             }
 
             item {
-                RivoExpressiveCard(title = "Display Options") {
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_interface_show_picture),
-                        supporting = stringResource(R.string.settings_interface_show_picture_supporting),
-                        leadingIcon = Icons.Outlined.AccountCircle,
-                        checked = showPicture,
-                        onCheckedChange = {
-                            showPicture = it
-                            prefs.setBoolean(PreferenceManager.KEY_SHOW_PICTURE, it)
-                        }
-                    )
-                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_interface_colorful_avatars),
-                        supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
-                        leadingIcon = Icons.Outlined.Palette,
-                        checked = colorfulAvatars,
-                        onCheckedChange = {
-                            colorfulAvatars = it
-                            prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
-                        }
-                    )
-                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_interface_gradient_avatars),
-                        supporting = stringResource(R.string.settings_interface_gradient_avatars_supporting),
-                        leadingIcon = Icons.Outlined.Gradient,
-                        checked = gradientAvatars,
-                        onCheckedChange = {
-                            gradientAvatars = it
-                            prefs.setBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, it)
-                        }
-                    )
-                    RivoDivider(Modifier.padding(horizontal = 16.dp))
-                    RivoSwitchListItem(
-                        headline = stringResource(R.string.settings_interface_hide_avatar_with_bg),
-                        supporting = stringResource(R.string.settings_interface_hide_avatar_with_bg_supporting),
-                        leadingIcon = Icons.Outlined.AccountCircle,
-                        checked = hideAvatarWithBg,
-                        onCheckedChange = {
-                            hideAvatarWithBg = it
-                            prefs.setBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, it)
-                        }
-                    )
+                RivoExpressiveGroup(title = "Display Options", icon = Icons.Outlined.AccountCircle) {
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_show_picture),
+                            supporting = stringResource(R.string.settings_interface_show_picture_supporting),
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            checked = showPicture,
+                            onCheckedChange = {
+                                showPicture = it
+                                prefs.setBoolean(PreferenceManager.KEY_SHOW_PICTURE, it)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_colorful_avatars),
+                            supporting = stringResource(R.string.settings_interface_colorful_avatars_supporting),
+                            leadingIcon = Icons.Outlined.Palette,
+                            checked = colorfulAvatars,
+                            onCheckedChange = {
+                                colorfulAvatars = it
+                                prefs.setBoolean(PreferenceManager.KEY_COLORFUL_AVATARS, it)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_gradient_avatars),
+                            supporting = stringResource(R.string.settings_interface_gradient_avatars_supporting),
+                            leadingIcon = Icons.Outlined.Gradient,
+                            checked = gradientAvatars,
+                            onCheckedChange = {
+                                gradientAvatars = it
+                                prefs.setBoolean(PreferenceManager.KEY_GRADIENT_AVATARS, it)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_interface_hide_avatar_with_bg),
+                            supporting = stringResource(R.string.settings_interface_hide_avatar_with_bg_supporting),
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            checked = hideAvatarWithBg,
+                            onCheckedChange = {
+                                hideAvatarWithBg = it
+                                prefs.setBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, it)
+                            }
+                        )
+                    }
                 }
             }
 

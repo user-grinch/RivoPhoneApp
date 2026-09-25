@@ -178,16 +178,23 @@ fun RivoSwipeToActionBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset { IntOffset(currentOffset.roundToInt(), 0) }
-                .shadow(
-                    elevation = animatedElevation,
-                    shape = slidingShape,
-                    clip = false
+                .then(
+                    if (isDragging) {
+                        Modifier
+                            .shadow(
+                                elevation = animatedElevation,
+                                shape = slidingShape,
+                                clip = false
+                            )
+                            .clip(slidingShape)
+                    } else {
+                        Modifier
+                    }
                 )
                 .background(
                     color = containerColor,
-                    shape = slidingShape
+                    shape = if (isDragging) slidingShape else RoundedCornerShape(0.dp)
                 )
-                .clip(slidingShape)
                 .pointerInput(enabled, swipeRightAction, swipeLeftAction) {
                     detectHorizontalDragGestures(
                         onDragStart = {

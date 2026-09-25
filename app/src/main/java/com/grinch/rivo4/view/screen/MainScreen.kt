@@ -61,6 +61,7 @@ import com.grinch.rivo4.view.theme.LocalNavBarStyle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.grinch.rivo4.LocalRequestedTab
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -74,7 +75,16 @@ fun MainScreen(
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
 
-    val visibleTabs = remember(settingsState) { prefs.getVisibleBottomNavTabs() }
+    val requestedTabState = LocalRequestedTab.current
+    val externalRequestedTab = requestedTabState.value
+
+    val visibleTabs = remember(settingsState, externalRequestedTab) {
+        val tabs = prefs.getVisibleBottomNavTabs().toMutableList()
+        if (externalRequestedTab == PreferenceManager.TAB_CONTACTS && !tabs.contains(PreferenceManager.TAB_CONTACTS)) {
+            tabs.add(PreferenceManager.TAB_CONTACTS)
+        }
+        tabs.toList()
+    }
     val defaultTab = remember(settingsState) {
         val startLoc = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
         when (startLoc) {
@@ -84,7 +94,7 @@ fun MainScreen(
         }
     }
 
-    val requestedTab = initialTab ?: defaultTab
+    val requestedTab = externalRequestedTab ?: initialTab ?: defaultTab
     val startPage = visibleTabs.indexOf(requestedTab).coerceAtLeast(0)
 
     val pagerState = rememberPagerState(initialPage = startPage) { visibleTabs.size }
@@ -102,9 +112,9 @@ fun MainScreen(
         else -> false
     }
 
-    LaunchedEffect(initialTab, visibleTabs) {
+    LaunchedEffect(initialTab, visibleTabs, externalRequestedTab) {
         val target = visibleTabs.indexOf(requestedTab)
-        if (initialTab != null && target >= 0 && pagerState.currentPage != target) {
+        if (target >= 0 && pagerState.currentPage != target) {
             pagerState.scrollToPage(target)
         } else if (pagerState.currentPage > visibleTabs.lastIndex) {
             pagerState.scrollToPage(visibleTabs.lastIndex.coerceAtLeast(0))

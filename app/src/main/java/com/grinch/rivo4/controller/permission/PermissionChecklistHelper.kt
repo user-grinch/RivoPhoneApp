@@ -248,8 +248,6 @@ object PermissionChecklistHelper {
             )
         )
 
-
-
         // Shizuku Elevated 2-Way Audio Recording
         val shizukuInstalled = isShizukuInstalled(context)
         val shizukuRunning = isShizukuRunning()
@@ -287,7 +285,7 @@ object PermissionChecklistHelper {
                 isGranted = shizukuGranted,
                 isEssential = false,
                 actionType = PermissionActionType.SHIZUKU,
-                isEnabled = shizukuInstalled,
+                isEnabled = true,
                 actionLabel = shizukuActionLabel,
                 statusNote = shizukuStatusNote
             )

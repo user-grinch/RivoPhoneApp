@@ -23,15 +23,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
-import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.formatTime
 import com.grinch.rivo4.modal.data.CallLogEntry
+
+@Immutable
+data class CallLogTileConfig(
+    val showSim: Boolean = true,
+    val swipeEnabled: Boolean = false,
+    val swipeRightAction: SwipeActionType = SwipeActionType.CALL,
+    val swipeLeftAction: SwipeActionType = SwipeActionType.MESSAGE,
+    val displayOrder: Int = 0
+)
+
+val LocalCallLogTileConfig: ProvidableCompositionLocal<CallLogTileConfig> =
+    staticCompositionLocalOf { CallLogTileConfig() }
 
 @Composable
 fun CallLogTileSimple(
@@ -40,28 +48,20 @@ fun CallLogTileSimple(
     onLongClick: () -> Unit = {},
     onCallClick: () -> Unit = {},
     selected: Boolean = false,
+    showSim: Boolean = LocalCallLogTileConfig.current.showSim,
+    swipeEnabled: Boolean = LocalCallLogTileConfig.current.swipeEnabled && !selected,
+    swipeRightAction: SwipeActionType = LocalCallLogTileConfig.current.swipeRightAction,
+    swipeLeftAction: SwipeActionType = LocalCallLogTileConfig.current.swipeLeftAction,
     onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null
 ) {
-    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
-    val showSim = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)
-    val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() } && !selected
-    val rightAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeRightAction()) }
-    val leftAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeLeftAction()) }
-
-    val callLauncher = rememberCallLauncher()
-    val messageLauncher = rememberMessageLauncher()
-    val videoLauncher = rememberVideoLauncher()
-    val clipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    val icon = when (log.type) {
-        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-        CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-        CallLog.Calls.BLOCKED_TYPE -> Icons.Default.Block
-        else -> Icons.Default.Call
+    val icon = remember(log.type) {
+        when (log.type) {
+            CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+            CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+            CallLog.Calls.MISSED_TYPE, CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+            CallLog.Calls.BLOCKED_TYPE -> Icons.Default.Block
+            else -> Icons.Default.Call
+        }
     }
 
     val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
@@ -71,6 +71,12 @@ fun CallLogTileSimple(
     val displayName = remember(log.name, log.number) {
         log.name?.takeIf { it.isNotBlank() } ?: formatPhoneNumber(log.number)
     }
+
+    val headlineText = remember(displayName, log.count) {
+        if (log.count > 1) "$displayName (${log.count})" else displayName
+    }
+
+    val context = LocalContext.current
     val callTypeLabel = when (log.type) {
         CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
         CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
@@ -78,29 +84,19 @@ fun CallLogTileSimple(
         else -> stringResource(R.string.action_call)
     }
 
-    RivoSwipeToActionBox(
-        enabled = swipeEnabled,
-        swipeRightAction = rightAction,
-        swipeLeftAction = leftAction,
-        onTriggerAction = { action ->
-            if (onSwipeAction != null) {
-                onSwipeAction(action, log)
-            } else {
-                when (action) {
-                    SwipeActionType.CALL -> callLauncher.dial(log.number)
-                    SwipeActionType.MESSAGE -> messageLauncher.sendMessage(log.number)
-                    SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(log.number)
-                    SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, log.number)
-                    SwipeActionType.COPY_NUMBER -> {
-                        clipboardManager.setText(AnnotatedString(log.number))
-                        Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
-                    }
-                    SwipeActionType.DELETE -> {}
-                    SwipeActionType.NONE -> {}
-                }
+    val supportingText = remember(log.date, log.duration, callTypeLabel) {
+        buildString {
+            append(callTypeLabel)
+            append(" • ")
+            append(formatDate(context, log.date))
+            if (log.duration > 0) {
+                append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
             }
         }
-    ) {
+    }
+
+    @Composable
+    fun ContentBox() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,20 +109,10 @@ fun CallLogTileSimple(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
-                        headline = buildString {
-                            append(displayName)
-                            if (log.count > 1) append(" (${log.count})")
-                        },
-                        supporting = buildString {
-                            append(callTypeLabel)
-                            append(" • ")
-                            append(formatDate(context, log.date))
-                            if (log.duration > 0) {
-                                append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
-                            }
-                        },
+                        headline = headlineText,
+                        supporting = supportingText,
                         supporting2 = if (showSim) log.simLabel else null,
-                        avatarName = log.name?.ifBlank { null } ?: formatPhoneNumber(log.number),
+                        avatarName = displayName,
                         photoUri = log.photoUri,
                         badgeIcon = icon,
                         badgeColor = badgeColor,
@@ -136,22 +122,35 @@ fun CallLogTileSimple(
                         selected = selected
                     )
                 }
-                
+
                 if (!selected) {
                     IconButton(
                         onClick = onCallClick,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 10.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Call,
                             contentDescription = stringResource(R.string.action_call),
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 }
             }
         }
+    }
+
+    if (swipeEnabled && onSwipeAction != null) {
+        RivoSwipeToActionBox(
+            enabled = true,
+            swipeRightAction = swipeRightAction,
+            swipeLeftAction = swipeLeftAction,
+            onTriggerAction = { action -> onSwipeAction(action, log) }
+        ) {
+            ContentBox()
+        }
+    } else {
+        ContentBox()
     }
 }
 
@@ -162,59 +161,51 @@ fun CallLogTile(
     onButtonClick: (CallLogEntry) -> Unit,
     onLongClick: (CallLogEntry) -> Unit = {},
     selected: Boolean = false,
-    displayOrder: Int = 0,
+    displayOrder: Int = LocalCallLogTileConfig.current.displayOrder,
+    showSim: Boolean = LocalCallLogTileConfig.current.showSim,
+    isFavorite: Boolean = false,
+    swipeEnabled: Boolean = LocalCallLogTileConfig.current.swipeEnabled && !selected,
+    swipeRightAction: SwipeActionType = LocalCallLogTileConfig.current.swipeRightAction,
+    swipeLeftAction: SwipeActionType = LocalCallLogTileConfig.current.swipeLeftAction,
     onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null
 ) {
-    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
-    val settingsState by prefs.settingsChanged.collectAsState()
-    val showSim = prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_SHOW_SIM_ICON_HISTORY, true)
-    val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() } && !selected
-    val rightAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeRightAction()) }
-    val leftAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeLeftAction()) }
-
-    val callLauncher = rememberCallLauncher()
-    val messageLauncher = rememberMessageLauncher()
-    val videoLauncher = rememberVideoLauncher()
-    val clipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    val icon = when (log.type) {
-        CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-        CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
-        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
-        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-        else -> Icons.Default.Call
-    }
-    
-    val badgeColor = if (log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-    val headlineColor = if (log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE) MaterialTheme.colorScheme.error else Color.Unspecified
-    
-    val favNum = log.contactId?.let { prefs.getFavoriteNumber(it) }
-    val isFavorite = com.grinch.rivo4.controller.util.areNumbersEqual(log.number, favNum)
-
-    RivoSwipeToActionBox(
-        enabled = swipeEnabled,
-        swipeRightAction = rightAction,
-        swipeLeftAction = leftAction,
-        onTriggerAction = { action ->
-            if (onSwipeAction != null) {
-                onSwipeAction(action, log)
-            } else {
-                when (action) {
-                    SwipeActionType.CALL -> callLauncher.dial(log.number)
-                    SwipeActionType.MESSAGE -> messageLauncher.sendMessage(log.number)
-                    SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(log.number)
-                    SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, log.number)
-                    SwipeActionType.COPY_NUMBER -> {
-                        clipboardManager.setText(AnnotatedString(log.number))
-                        Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
-                    }
-                    SwipeActionType.DELETE -> {}
-                    SwipeActionType.NONE -> {}
-                }
-            }
+    val icon = remember(log.type) {
+        when (log.type) {
+            CallLog.Calls.MISSED_TYPE, CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+            CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+            CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+            CallLog.Calls.BLOCKED_TYPE -> Icons.Default.Block
+            else -> Icons.Default.Call
         }
-    ) {
+    }
+
+    val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
+    val badgeColor = if (isMissedOrRejected) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val headlineColor = if (isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified
+
+    val displayName = remember(log.name, log.number, displayOrder) {
+        log.name?.let {
+            if (it.isNotEmpty()) com.grinch.rivo4.controller.util.ContactUtils.formatContactName(it, displayOrder) else null
+        } ?: formatPhoneNumber(log.number)
+    }
+
+    val headlineText = remember(displayName, log.count) {
+        if (log.count > 1) "$displayName (${log.count})" else displayName
+    }
+
+    val context = LocalContext.current
+    val timeSimText = remember(log.date, log.simLabel, showSim) {
+        buildString {
+            if (showSim && log.simLabel != null) {
+                append(log.simLabel)
+                append(" • ")
+            }
+            append(formatTime(context, log.date))
+        }
+    }
+
+    @Composable
+    fun ContentBox() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -226,30 +217,11 @@ fun CallLogTile(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    val displayName = remember(log.name, displayOrder) {
-                        log.name?.let { 
-                            if (it.isNotEmpty()) com.grinch.rivo4.controller.util.ContactUtils.formatContactName(it, displayOrder) else null
-                        } ?: formatPhoneNumber(log.number)
-                    }
-
-                    val timeSimText = remember(log.date, log.simLabel, showSim) {
-                        buildString {
-                            if (showSim && log.simLabel != null) {
-                                append(log.simLabel)
-                                append(" • ")
-                            }
-                            append(formatTime(context, log.date))
-                        }
-                    }
-
                     RivoListItem(
-                        headline = buildString {
-                            append(displayName)
-                            if (log.count > 1) append(" (${log.count})")
-                        },
+                        headline = headlineText,
                         supporting = timeSimText,
                         supporting2 = null,
-                        avatarName = log.name?.takeIf { it.isNotBlank() } ?: formatPhoneNumber(log.number),
+                        avatarName = displayName,
                         photoUri = log.photoUri,
                         badgeIcon = icon,
                         badgeColor = badgeColor,
@@ -260,11 +232,11 @@ fun CallLogTile(
                         selected = selected
                     )
                 }
-                
+
                 if (!selected) {
                     IconButton(
                         onClick = { onButtonClick(log) },
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 10.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Call,
@@ -275,6 +247,19 @@ fun CallLogTile(
                 }
             }
         }
+    }
+
+    if (swipeEnabled && onSwipeAction != null) {
+        RivoSwipeToActionBox(
+            enabled = true,
+            swipeRightAction = swipeRightAction,
+            swipeLeftAction = swipeLeftAction,
+            onTriggerAction = { action -> onSwipeAction(action, log) }
+        ) {
+            ContentBox()
+        }
+    } else {
+        ContentBox()
     }
 }
 

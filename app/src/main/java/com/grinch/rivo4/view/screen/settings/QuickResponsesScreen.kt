@@ -26,6 +26,7 @@ import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -82,7 +83,7 @@ fun QuickResponsesScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
                 Surface(
@@ -121,12 +122,12 @@ fun QuickResponsesScreen(
                 }
             }
 
-            item {
-                RivoExpressiveCard(
-                    title = "Canned Responses (${responses.size})",
-                    icon = Icons.Outlined.Message
-                ) {
-                    if (responses.isEmpty()) {
+            if (responses.isEmpty()) {
+                item {
+                    RivoExpressiveCard(
+                        title = "Canned Responses (0)",
+                        icon = Icons.Outlined.Message
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -139,49 +140,55 @@ fun QuickResponsesScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    } else {
+                    }
+                }
+            } else {
+                item {
+                    RivoExpressiveGroup(
+                        title = "Canned Responses (${responses.size})",
+                        icon = Icons.Outlined.Message
+                    ) {
                         responses.forEachIndexed { index, responseText ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = responseText,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = {
-                                        editingIndex = index
-                                        editingText = responseText
-                                    }
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        Icons.Default.Edit,
-                                        contentDescription = "Edit",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(18.dp)
+                                    Text(
+                                        text = responseText,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.weight(1f)
                                     )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        val updated = responses.toMutableList()
-                                        updated.removeAt(index)
-                                        save(updated)
+                                    IconButton(
+                                        onClick = {
+                                            editingIndex = index
+                                            editingText = responseText
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Edit,
+                                            contentDescription = "Edit",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
                                     }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        contentDescription = "Delete",
-                                        tint = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(18.dp)
-                                    )
+                                    IconButton(
+                                        onClick = {
+                                            val updated = responses.toMutableList()
+                                            updated.removeAt(index)
+                                            save(updated)
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
                                 }
-                            }
-                            if (index < responses.size - 1) {
-                                RivoDivider(Modifier.padding(horizontal = 16.dp))
                             }
                         }
                     }

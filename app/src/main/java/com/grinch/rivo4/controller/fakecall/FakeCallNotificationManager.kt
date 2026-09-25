@@ -119,13 +119,19 @@ object FakeCallNotificationManager {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val photoBitmap = loadPhotoBitmap(context, photoUri)
+        val avatarBitmap = com.grinch.rivo4.controller.util.CallNotificationHelper.getAvatarBitmap(context, callerName, photoBitmap)
+        val notifColor = com.grinch.rivo4.controller.util.CallNotificationHelper.getNotificationColor(context)
+
         val personBuilder = Person.Builder()
             .setName(callerName)
             .setImportant(true)
+            .setBot(false)
+            .setIcon(IconCompat.createWithBitmap(avatarBitmap))
 
-        val photoBitmap = loadPhotoBitmap(context, photoUri)
-        if (photoBitmap != null) {
-            personBuilder.setIcon(IconCompat.createWithBitmap(photoBitmap))
+        if (phoneNumber.isNotBlank()) {
+            personBuilder.setUri("tel:")
+            personBuilder.setKey(phoneNumber)
         }
         val person = personBuilder.build()
 
@@ -156,6 +162,9 @@ object FakeCallNotificationManager {
                 .setAutoCancel(false)
                 .setTimeoutAfter(45_000L)
                 .setFullScreenIntent(contentPendingIntent, true)
+                .setColorized(true)
+                .setColor(notifColor)
+                .setLargeIcon(avatarBitmap)
                 .setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
 
             if (silentBackground) {
@@ -273,13 +282,19 @@ object FakeCallNotificationManager {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val photoBitmap = loadPhotoBitmap(context, photoUri)
+        val avatarBitmap = com.grinch.rivo4.controller.util.CallNotificationHelper.getAvatarBitmap(context, callerName, photoBitmap)
+        val notifColor = com.grinch.rivo4.controller.util.CallNotificationHelper.getNotificationColor(context)
+
         val personBuilder = Person.Builder()
             .setName(callerName)
             .setImportant(true)
+            .setBot(false)
+            .setIcon(IconCompat.createWithBitmap(avatarBitmap))
 
-        val photoBitmap = loadPhotoBitmap(context, photoUri)
-        if (photoBitmap != null) {
-            personBuilder.setIcon(IconCompat.createWithBitmap(photoBitmap))
+        if (phoneNumber.isNotBlank()) {
+            personBuilder.setUri("tel:")
+            personBuilder.setKey(phoneNumber)
         }
         val person = personBuilder.build()
 
@@ -320,6 +335,9 @@ object FakeCallNotificationManager {
                 .setWhen(effectiveTime)
                 .setUsesChronometer(true)
                 .setFullScreenIntent(returnPendingIntent, false)
+                .setColorized(true)
+                .setColor(notifColor)
+                .setLargeIcon(avatarBitmap)
                 .addAction(muteAction)
                 .addAction(speakerAction)
                 .setStyle(NotificationCompat.CallStyle.forOngoingCall(person, endPendingIntent))

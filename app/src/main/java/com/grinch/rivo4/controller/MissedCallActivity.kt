@@ -28,8 +28,8 @@ class MissedCallActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
             )
         }
 
@@ -39,37 +39,37 @@ class MissedCallActivity : ComponentActivity() {
         val ringSeconds = intent.getIntExtra(EXTRA_RING_SECONDS, 0)
         val timestampMillis = intent.getLongExtra(EXTRA_TIMESTAMP_MILLIS, System.currentTimeMillis())
 
- setContent {
- Rivo4Theme {
- MissedCallScreen(
- contactName = contactName,
- phoneNumber = phoneNumber,
- photoUri = photoUri,
- ringSeconds = ringSeconds,
- timestampMillis = timestampMillis,
- onDismiss = {
- finish()
- if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
- overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
- } else {
- @Suppress("DEPRECATION")
- overridePendingTransition(0, 0)
- }
- }
- )
- }
- }
- }
+        setContent {
+            Rivo4Theme {
+                MissedCallScreen(
+                    contactName = contactName,
+                    phoneNumber = phoneNumber,
+                    photoUri = photoUri,
+                    ringSeconds = ringSeconds,
+                    timestampMillis = timestampMillis,
+                    onDismiss = {
+                        finish()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            overridePendingTransition(0, 0)
+                        }
+                    }
+                )
+            }
+        }
+    }
 
- override fun finish() {
- super.finish()
- if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
- overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
- } else {
- @Suppress("DEPRECATION")
- overridePendingTransition(0, 0)
- }
- }
+    override fun finish() {
+        super.finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(0, 0)
+        }
+    }
 
     companion object {
         const val EXTRA_CONTACT_NAME = "extra_contact_name"
@@ -78,23 +78,23 @@ class MissedCallActivity : ComponentActivity() {
         const val EXTRA_RING_SECONDS = "extra_ring_seconds"
         const val EXTRA_TIMESTAMP_MILLIS = "extra_timestamp_millis"
 
- fun start(
- context: Context,
- contactName: String,
- phoneNumber: String,
- photoUri: String?,
- ringSeconds: Int,
- timestampMillis: Long = System.currentTimeMillis()
- ) {
- val intent = Intent(context, MissedCallActivity::class.java).apply {
- putExtra(EXTRA_CONTACT_NAME, contactName)
- putExtra(EXTRA_PHONE_NUMBER, phoneNumber)
- putExtra(EXTRA_PHOTO_URI, photoUri)
- putExtra(EXTRA_RING_SECONDS, ringSeconds)
- putExtra(EXTRA_TIMESTAMP_MILLIS, timestampMillis)
- addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NO_ANIMATION)
- }
- context.startActivity(intent)
- }
- }
+        fun start(
+            context: Context,
+            contactName: String,
+            phoneNumber: String,
+            photoUri: String?,
+            ringSeconds: Int,
+            timestampMillis: Long = System.currentTimeMillis()
+        ) {
+            val intent = Intent(context, MissedCallActivity::class.java).apply {
+                putExtra(EXTRA_CONTACT_NAME, contactName)
+                putExtra(EXTRA_PHONE_NUMBER, phoneNumber)
+                putExtra(EXTRA_PHOTO_URI, photoUri)
+                putExtra(EXTRA_RING_SECONDS, ringSeconds)
+                putExtra(EXTRA_TIMESTAMP_MILLIS, timestampMillis)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            }
+            context.startActivity(intent)
+        }
+    }
 }

@@ -210,6 +210,25 @@ private fun contactInitials(name: String, useTwo: Boolean): String {
 }
 
 @Composable
+private fun rememberMorphShapeIfEnabled(
+    morphEnabled: Boolean,
+    morphSelected: Boolean,
+    morphOnPress: Boolean,
+    pressed: Boolean,
+    morphStart: RoundedPolygon,
+    morphEnd: RoundedPolygon
+): Shape? {
+    if (!morphEnabled) return null
+    val morphTarget = if (morphSelected || (morphOnPress && pressed)) 1f else 0f
+    val morphProgress by animateFloatAsState(
+        targetValue = morphTarget,
+        animationSpec = RivoMotion.shapeMorph(),
+        label = "RivoAvatarMorph"
+    )
+    return rememberRivoMorphShape(morphStart, morphEnd) { morphProgress }
+}
+
+@Composable
 fun RivoAvatar(
     name: String,
     photoUri: String? = null,
@@ -229,21 +248,30 @@ fun RivoAvatar(
     morphStart: RoundedPolygon = RivoMaterialShapes.AvatarMorphStart,
     morphEnd: RoundedPolygon = RivoMaterialShapes.AvatarMorphEnd
 ) {
-    val ownInteractionSource = remember { MutableInteractionSource() }
-    val resolvedInteractionSource = interactionSource ?: ownInteractionSource
-    val pressed by resolvedInteractionSource.collectIsPressedAsState()
-
     val morphEnabled = morphOnPress || morphSelected
-    val morphTarget = if (morphSelected || (morphOnPress && pressed)) 1f else 0f
-    val morphProgress by animateFloatAsState(
-        targetValue = morphTarget,
-        animationSpec = RivoMotion.shapeMorph(),
-        label = "RivoAvatarMorph"
+    val resolvedInteractionSource = if (morphEnabled || onClick != null) {
+        interactionSource ?: remember { MutableInteractionSource() }
+    } else {
+        null
+    }
+    val pressed = if (morphEnabled && resolvedInteractionSource != null) {
+        val pressedState by resolvedInteractionSource.collectIsPressedAsState()
+        pressedState
+    } else {
+        false
+    }
+
+    val morphShape = rememberMorphShapeIfEnabled(
+        morphEnabled = morphEnabled,
+        morphSelected = morphSelected,
+        morphOnPress = morphOnPress,
+        pressed = pressed,
+        morphStart = morphStart,
+        morphEnd = morphEnd
     )
-    val morphShape = rememberRivoMorphShape(morphStart, morphEnd) { morphProgress }
 
     val avatarShape = when {
-        morphEnabled -> morphShape
+        morphEnabled && morphShape != null -> morphShape
         shape != null -> shape
         else -> style.shape
     }

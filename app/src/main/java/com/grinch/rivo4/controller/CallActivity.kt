@@ -363,13 +363,16 @@ class CallActivity : ComponentActivity() {
         var identity by remember(number, unknownLabel) {
             val base = cachedIdentity(number, settingsState)
                 ?: CallIdentity(number, number.ifEmpty { unknownLabel }, null, null)
-            mutableStateOf(
-                if (base.backgroundUri == null) {
-                    base.copy(backgroundUri = CallBackgroundStore.defaultModel(context))
+            val initialBg = if (base.backgroundUri == null) {
+                if (number.isEmpty()) {
+                    CallBackgroundStore.unknownModel(context) ?: CallBackgroundStore.defaultModel(context)
                 } else {
-                    base
+                    CallBackgroundStore.defaultModel(context)
                 }
-            )
+            } else {
+                base.backgroundUri
+            }
+            mutableStateOf(base.copy(backgroundUri = initialBg))
         }
 
         LaunchedEffect(number, settingsState) {
@@ -401,10 +404,13 @@ class CallActivity : ComponentActivity() {
             val resolvedBackground = handleBackground ?: idResult?.uri
             val resolveFailed =
                 handleResult.failed || idResult?.failed == true || contactFailed
+            val isUnknownCaller = contact == null || number.isEmpty()
+            val unknownBackground = if (isUnknownCaller) CallBackgroundStore.unknownModelAsync(context) else null
             val defaultBackground = CallBackgroundStore.defaultModelAsync(context)
+            val fallbackBackground = unknownBackground ?: defaultBackground
             val background = resolvedBackground
                 ?: identity.backgroundUri.takeIf { resolveFailed }
-                ?: defaultBackground
+                ?: fallbackBackground
 
             val isConference = try {
                 call.details?.hasProperty(Call.Details.PROPERTY_CONFERENCE) == true
@@ -552,34 +558,16 @@ class CallActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         turnScreenOnAndShowWhileLocked()
-        com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
     }
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        checkAndStartFloatingBubble()
     }
 
     override fun onStop() {
         super.onStop()
         if (proximityWakeLock?.isHeld != true) {
             CallService.isActivityVisible.value = false
-            if (!isFinishing && !isDestroyed) {
-                checkAndStartFloatingBubble()
-            }
-        }
-    }
-
-    private fun checkAndStartFloatingBubble() {
-        if (preferenceManager.isFloatingCallBubbleEnabled() &&
-            android.provider.Settings.canDrawOverlays(this)
-        ) {
-            val hasOngoingCall = CallService.allCalls.value.any {
-                it.state == Call.STATE_ACTIVE || it.state == Call.STATE_HOLDING || it.state == Call.STATE_DIALING
-            }
-            if (hasOngoingCall) {
-                com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
-            }
         }
     }
 
