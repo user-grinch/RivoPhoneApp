@@ -87,4 +87,6 @@
     <string name="call_analytics_disabled_title">Análise de Chamadas &amp; Rastreamento Desativado</string>
     <string name="call_analytics_disabled_desc">O rastreamento do tempo de conversa e análise estão desativados no momento. Habilite esta opção para calcular o tempo de conversa, horas de pico e pontos de contato.</string>
     <string name="call_analytics_enable_action">Habilitar Análise &amp; Rastreamento</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

@@ -87,4 +87,6 @@
     <string name="call_analytics_disabled_title">Puheluanalytiikka &amp; Seuranta Pois Käytöstä</string>
     <string name="call_analytics_disabled_desc">Puhelun analytiikka ja puheajan seuranta on tällä hetkellä pois päältä. Ota tämä asetus käyttöön, jos haluat laskea puheajan, ruuhka-ajan ja yhteystietojen tallentamisen.</string>
     <string name="call_analytics_enable_action">Ota Analytics &amp; Seuranta Käyttöön</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

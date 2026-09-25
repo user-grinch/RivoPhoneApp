@@ -521,4 +521,11 @@
     <string name="call_analytics_disabled_title">Analyse des appels &amp; Suivi désactivé</string>
     <string name="call_analytics_disabled_desc">L\'analyse des appels et le suivi du temps de parole sont actuellement désactivés. Activez cette option pour calculer le temps de discussion, les heures de pointe et les aperçus des contacts.</string>
     <string name="call_analytics_enable_action">Activer le suivi des Analyses &amp;</string>
+    <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Carte SIM par défaut</string>
+    <string name="contact_default_sim_supporting">Choisissez la carte SIM à utiliser lors de l\'appel à ce contact</string>
+    <string name="sim_remember_for_contact">Toujours utiliser cette carte SIM pour ce contact</string>
+    <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Ne pas déranger pendant les appels</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Désactiver automatiquement les notifications et autres interruptions pendant un appel</string>
 </resources>

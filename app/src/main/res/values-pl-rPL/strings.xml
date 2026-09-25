@@ -835,4 +835,6 @@
     <string name="call_analytics_disabled_title">Analiza i śledzenie połączeń wyłączone</string>
     <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczyć czas rozmowy, godziny szczytowe i spostrzeżenia kontaktów.</string>
     <string name="call_analytics_enable_action">Włącz analizę i śledzenie</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

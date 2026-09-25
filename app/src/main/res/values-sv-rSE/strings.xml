@@ -87,4 +87,6 @@
     <string name="call_analytics_disabled_title">Samtal Analytics &amp; Spårning inaktiverad</string>
     <string name="call_analytics_disabled_desc">Samtalsanalys och taltidsmätning är för närvarande avstängda. Aktivera detta alternativ för att beräkna taltid, högtrafik och kontaktinsikter.</string>
     <string name="call_analytics_enable_action">Aktivera Analytics &amp; Spårning</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

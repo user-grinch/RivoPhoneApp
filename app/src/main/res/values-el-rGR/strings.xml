@@ -85,4 +85,6 @@
     <string name="settings_call_analytics_view_title">Προβολή Αναλυτικών Στοιχείων &amp; Insights</string>
     <string name="call_analytics_disabled_desc">Τα αναλυτικά στοιχεία κλήσεων και ο εντοπισμός χρόνου ομιλίας είναι απενεργοποιημένα. Ενεργοποιήστε αυτή την επιλογή για τον υπολογισμό του χρόνου ομιλίας, των ωρών αιχμής και των γνώσεων επαφής.</string>
     <string name="call_analytics_enable_action">Ενεργοποίηση Analytics &amp; Tracking</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

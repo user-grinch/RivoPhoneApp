@@ -87,4 +87,6 @@
     <string name="call_analytics_disabled_title">Oproep-Analytics &amp; Tracking uitgeschakeld</string>
     <string name="call_analytics_disabled_desc">Oproep analytics en talk time tracking zijn momenteel uitgeschakeld. Schakel deze optie in om de gesprekstijd, piekuren en contact met inzichten te berekenen.</string>
     <string name="call_analytics_enable_action">Activeer Analytics &amp; Tracking</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>

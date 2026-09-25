@@ -87,4 +87,8 @@
     <string name="call_analytics_disabled_title">Ring Til Analytics &amp; Sporing Deaktiveret</string>
     <string name="call_analytics_disabled_desc">Opkaldsanalyse og sporing af taletid er i øjeblikket slået fra. Aktivér denne mulighed for at beregne taletid, spidstider og kontaktindsigt.</string>
     <string name="call_analytics_enable_action">Aktiver Analytics &amp; Tracking</string>
+    <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Standard SIM-kort</string>
+    <string name="contact_default_sim_supporting">Vælg hvilket SIM-kort der skal bruges, når du ringer til denne kontakt</string>
+    <!-- Do Not Disturb during calls -->
 </resources>

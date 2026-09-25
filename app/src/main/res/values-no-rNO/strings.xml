@@ -87,4 +87,6 @@
     <string name="call_analytics_disabled_title">Samtale Analytics &amp; Sporing deaktivert</string>
     <string name="call_analytics_disabled_desc">Samtaletidssporing er slått av. Aktiver dette valget for å beregne tid, maks og kontakt innsikt.</string>
     <string name="call_analytics_enable_action">Aktiver Analytics &amp; sporing</string>
+    <!-- Dual SIM per Contact -->
+    <!-- Do Not Disturb during calls -->
 </resources>
