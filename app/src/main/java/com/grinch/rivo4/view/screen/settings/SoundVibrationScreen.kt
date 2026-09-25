@@ -46,6 +46,7 @@ fun SoundVibrationScreen(
     var missedCallNotifications by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) }
     var flipToSilence by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) }
     var volumeSqueezeDnd by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VOLUME_SQUEEZE_DND, false)) }
+    var dndDuringCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DND_DURING_CALLS, false)) }
 
     Scaffold(
         topBar = {
@@ -139,6 +140,31 @@ fun SoundVibrationScreen(
                         onCheckedChange = {
                             flipToSilence = it
                             prefs.setBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, it)
+                        }
+                    )
+                    RivoDivider(Modifier.padding(horizontal = 16.dp))
+                    RivoSwitchListItem(
+                        headline = stringResource(R.string.settings_sound_dnd_during_calls),
+                        supporting = stringResource(R.string.settings_sound_dnd_during_calls_supporting),
+                        leadingIcon = Icons.Outlined.DoNotDisturbOn,
+                        checked = dndDuringCalls,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                val notificationManager = context.getSystemService(android.app.NotificationManager::class.java)
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M &&
+                                    !notificationManager.isNotificationPolicyAccessGranted
+                                ) {
+                                    try {
+                                        val intent = Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        context.startActivity(intent)
+                                        android.widget.Toast.makeText(context, "Grant Do Not Disturb permission to use this feature", android.widget.Toast.LENGTH_LONG).show()
+                                    } catch (_: Exception) {}
+                                }
+                            }
+                            dndDuringCalls = enabled
+                            prefs.setBoolean(PreferenceManager.KEY_DND_DURING_CALLS, enabled)
                         }
                     )
                     RivoDivider(Modifier.padding(horizontal = 16.dp))

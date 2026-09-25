@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.*
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class CallLauncher(
@@ -44,20 +46,40 @@ fun rememberCallLauncher(): CallLauncher {
     var pendingNumber by remember { mutableStateOf("") }
     var pendingContact by remember { mutableStateOf<Contact?>(null) }
 
+    val contactsRepo = koinInject<IContactsRepository>()
+    val coroutineScope = rememberCoroutineScope()
+
     val performFinalCall = { number: String, contactId: String? ->
         val hasPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
         if (hasPermission) {
             val accounts = try { telecomManager.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
-            
-            val favSim = contactId?.let { prefs.getFavoriteSim(it) }
-            val favNum = contactId?.let { prefs.getFavoriteNumber(it) }
-            val preferredHandle = accounts.find { it.id == favSim }
 
-            if (preferredHandle != null && areNumbersEqual(number, favNum)) {
+            val favSim = contactId?.let { prefs.getDefaultSimForContact(it) }
+            val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
+
+            if (preferredHandle != null) {
                 makeCall(context, number, preferredHandle, contactId = contactId)
             } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
                 pendingNumber = number
-                showSimPicker = true
+                if (pendingContact == null && number.isNotBlank()) {
+                    coroutineScope.launch {
+                        try {
+                            val resolved = contactsRepo.getContactByNumber(number)
+                            if (resolved != null) {
+                                pendingContact = resolved
+                                val resolvedFavSim = prefs.getDefaultSimForContact(resolved.id)
+                                val resolvedHandle = if (resolvedFavSim != null) accounts.find { it.id == resolvedFavSim } else null
+                                if (resolvedHandle != null) {
+                                    makeCall(context, number, resolvedHandle, contactId = resolved.id)
+                                    return@launch
+                                }
+                            }
+                        } catch (_: Exception) {}
+                        showSimPicker = true
+                    }
+                } else {
+                    showSimPicker = true
+                }
             } else {
                 makeCall(context, number, contactId = contactId)
             }
@@ -125,19 +147,19 @@ fun rememberCallLauncher(): CallLauncher {
     }
 
     if (showSimPicker) {
+        val targetContact = pendingContact
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                val contactId = pendingContact?.id ?: (pendingNumber.let { num ->
-                   null
-                })
-                
-                val favNum = contactId?.let { prefs.getFavoriteNumber(it) }
-                if (contactId != null && areNumbersEqual(pendingNumber, favNum)) {
-                    prefs.setFavoriteSim(contactId, handle.id)
+                makeCall(context, pendingNumber, handle, contactId = targetContact?.id)
+                showSimPicker = false
+            },
+            showRememberOption = targetContact != null,
+            onSimSelectedWithRemember = { handle, rememberForContact ->
+                if (rememberForContact && targetContact != null) {
+                    prefs.setDefaultSimForContact(targetContact.id, handle.id)
                 }
-                
-                makeCall(context, pendingNumber, handle, contactId = contactId)
+                makeCall(context, pendingNumber, handle, contactId = targetContact?.id)
                 showSimPicker = false
             }
         )

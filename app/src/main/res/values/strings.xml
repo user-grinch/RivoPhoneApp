@@ -882,4 +882,13 @@
     <string name="call_analytics_disabled_title">Call Analytics &amp; Tracking Disabled</string>
     <string name="call_analytics_disabled_desc">Call analytics and talk time tracking are currently turned off. Enable this option to compute talk time, peak hours, and contact insights.</string>
     <string name="call_analytics_enable_action">Enable Analytics &amp; Tracking</string>
+
+    <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Default SIM card</string>
+    <string name="contact_default_sim_supporting">Choose which SIM to use when calling this contact</string>
+    <string name="sim_remember_for_contact">Always use this SIM for this contact</string>
+
+    <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Do Not Disturb during calls</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Automatically silence notifications and other interruptions while on a call</string>
 </resources>

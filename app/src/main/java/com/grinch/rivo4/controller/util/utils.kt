@@ -188,9 +188,8 @@ fun makeCall(context: Context, number: String, accountHandle: PhoneAccountHandle
         } else emptyList()
 
         val favSim = contactId?.let { prefs.getFavoriteSim(it) }
-        val favNum = contactId?.let { prefs.getFavoriteNumber(it) }
         
-        preferredHandle = if (favSim != null && areNumbersEqual(number, favNum)) {
+        preferredHandle = if (favSim != null) {
             accounts.find { it.id == favSim }
         } else null
 

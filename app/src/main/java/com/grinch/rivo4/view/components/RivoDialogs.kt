@@ -586,7 +586,8 @@ fun <T> RivoSelectionDialog(
     itemIcon: ((T) -> ImageVector)? = null,
     itemPreview: (@Composable (T) -> Unit)? = null,
     isSelected: (T) -> Boolean = { false },
-    dismissLabel: String? = null
+    dismissLabel: String? = null,
+    footer: (@Composable () -> Unit)? = null
 ) {
     RivoDialog(
         onDismissRequest = onDismissRequest,
@@ -615,6 +616,9 @@ fun <T> RivoSelectionDialog(
                         .fillMaxWidth(0.92f)
                         .widthIn(max = 380.dp)
                 )
+            }
+            if (footer != null) {
+                footer()
             }
         }
     }

@@ -54,6 +54,47 @@ class CallService : InCallService() {
     private val cachedContactNames = java.util.concurrent.ConcurrentHashMap<String, String>()
     private var flipToSilenceManager: FlipToSilenceManager? = null
     private var screenWakeLock: PowerManager.WakeLock? = null
+    private var originalDndFilter: Int? = null
+    private var isDndActivatedByCall: Boolean = false
+
+    private fun applyDndIfEnabled() {
+        if (!preferenceManager.getBoolean(PreferenceManager.KEY_DND_DURING_CALLS, false)) return
+        if (isDndActivatedByCall) return
+
+        try {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && notificationManager.isNotificationPolicyAccessGranted) {
+                originalDndFilter = notificationManager.currentInterruptionFilter
+                if (originalDndFilter != NotificationManager.INTERRUPTION_FILTER_PRIORITY &&
+                    originalDndFilter != NotificationManager.INTERRUPTION_FILTER_NONE &&
+                    originalDndFilter != NotificationManager.INTERRUPTION_FILTER_ALARMS
+                ) {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
+                    isDndActivatedByCall = true
+                    Log.i("CallService", "DND enabled for call duration (original filter: $originalDndFilter)")
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("CallService", "Failed to enable DND during call: ${e.message}")
+        }
+    }
+
+    private fun restoreDndIfEnabled() {
+        if (!isDndActivatedByCall) return
+        try {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && notificationManager.isNotificationPolicyAccessGranted) {
+                val restoreTo = originalDndFilter ?: NotificationManager.INTERRUPTION_FILTER_ALL
+                notificationManager.setInterruptionFilter(restoreTo)
+                Log.i("CallService", "Restored DND filter to $restoreTo")
+            }
+        } catch (e: Exception) {
+            Log.w("CallService", "Failed to restore DND after call: ${e.message}")
+        } finally {
+            isDndActivatedByCall = false
+            originalDndFilter = null
+        }
+    }
 
     private fun acquireScreenWakeLock() {
         try {
@@ -625,6 +666,8 @@ class CallService : InCallService() {
             callRingStartTimes[call] = System.currentTimeMillis()
         }
 
+        applyDndIfEnabled()
+
         // Prime CallRecorder asynchronously so recording starts with zero delay when call answers
         CallRecorder.prepare(this)
         if (number.isNotEmpty()) {
@@ -679,6 +722,7 @@ class CallService : InCallService() {
             releaseScreenWakeLock()
         }
         if (calls.isEmpty()) {
+            restoreDndIfEnabled()
             if (CallRecorder.isRecording.value) CallRecorder.stop()
             com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
             removeForeground()
@@ -924,6 +968,7 @@ class CallService : InCallService() {
     }
 
     override fun onDestroy() {
+        restoreDndIfEnabled()
         releaseScreenWakeLock()
         super.onDestroy()
         flipToSilenceManager?.stopListening()

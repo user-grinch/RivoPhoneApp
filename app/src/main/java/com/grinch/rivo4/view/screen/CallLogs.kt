@@ -100,10 +100,19 @@ fun CallLogFullScreen(
     }
 
     if (showSimPicker && pendingNumber != null) {
+        val cid = pendingContactId
         SimPickerDialog(
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
-                makeCall(context, pendingNumber!!, handle, contactId = pendingContactId)
+                makeCall(context, pendingNumber!!, handle, contactId = cid)
+                showSimPicker = false
+            },
+            showRememberOption = cid != null,
+            onSimSelectedWithRemember = { handle, rememberForContact ->
+                if (rememberForContact && cid != null) {
+                    prefs.setDefaultSimForContact(cid, handle.id)
+                }
+                makeCall(context, pendingNumber!!, handle, contactId = cid)
                 showSimPicker = false
             }
         )
@@ -250,7 +259,11 @@ fun CallLogFullScreen(
 
                                                     if (hasPermission) {
                                                         val accounts = telecomManager.callCapablePhoneAccounts
-                                                        if (accounts.size > 1) {
+                                                        val favSim = targetContactId?.let { prefs.getDefaultSimForContact(it) }
+                                                        val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
+                                                        if (preferredHandle != null) {
+                                                            makeCall(context, lg.number, preferredHandle, contactId = targetContactId)
+                                                        } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
                                                             pendingNumber = lg.number
                                                             pendingContactId = targetContactId
                                                             showSimPicker = true

@@ -79,11 +79,23 @@ class PreferenceManager(context: Context) {
     }
 
     fun setFavoriteSim(contactId: String, simHandle: String?) {
-        prefs.edit().putString("favorite_sim_$contactId", simHandle).apply()
+        prefs.edit()
+            .putString("favorite_sim_$contactId", simHandle)
+            .putString("contact_default_sim_$contactId", simHandle)
+            .apply()
     }
 
     fun getFavoriteSim(contactId: String): String? {
-        return prefs.getString("favorite_sim_$contactId", null)
+        return prefs.getString("contact_default_sim_$contactId", null)
+            ?: prefs.getString("favorite_sim_$contactId", null)
+    }
+
+    fun setDefaultSimForContact(contactId: String, simHandle: String?) {
+        setFavoriteSim(contactId, simHandle)
+    }
+
+    fun getDefaultSimForContact(contactId: String): String? {
+        return getFavoriteSim(contactId)
     }
 
     fun setFavoriteEmail(contactId: String, email: String?) {
@@ -321,6 +333,7 @@ class PreferenceManager(context: Context) {
 
         const val KEY_POCKET_MODE = "pocket_mode"
         const val KEY_VOLUME_SQUEEZE_DND = "volume_squeeze_dnd"
+        const val KEY_DND_DURING_CALLS = "dnd_during_calls" 
         const val KEY_QUICK_RESPONSES = "custom_quick_responses"
         val DEFAULT_QUICK_RESPONSES = listOf(
             "Can't talk now. What's up?",

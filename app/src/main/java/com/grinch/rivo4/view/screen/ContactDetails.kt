@@ -42,6 +42,7 @@ import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.SimCard
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -213,10 +214,21 @@ fun ContactDetailsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
 
+    var defaultSimId by remember { mutableStateOf<String?>(null) }
+    var showSimSelectDialog by remember { mutableStateOf(false) }
+
+    val telecomMgr = remember(context) { context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager }
+    val phoneAccounts = remember(telecomMgr, context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            try { telecomMgr.callCapablePhoneAccounts } catch (e: SecurityException) { emptyList() }
+        } else emptyList()
+    }
+
     LaunchedEffect(fullContact) {
         fullContact?.id?.let {
             favoriteNumber = prefs.getFavoriteNumber(it)
             favoriteEmail = prefs.getFavoriteEmail(it)
+            defaultSimId = prefs.getDefaultSimForContact(it)
         }
     }
 
@@ -397,6 +409,48 @@ fun ContactDetailsScreen(
         } else {
             action(displayPhone)
         }
+    }
+
+    if (showSimSelectDialog && phoneAccounts.size > 1) {
+        val unknownSimLabel = stringResource(R.string.sim_picker_unknown_sim)
+        val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)
+        val options = listOf<android.telecom.PhoneAccountHandle?>(null) + phoneAccounts
+
+        RivoSelectionDialog(
+            onDismissRequest = { showSimSelectDialog = false },
+            title = stringResource(R.string.contact_default_sim),
+            items = options,
+            itemLabel = { handle ->
+                if (handle == null) {
+                    askEveryTimeLabel
+                } else {
+                    val account = telecomMgr.getPhoneAccount(handle)
+                    account?.label?.toString()?.takeIf { it.isNotBlank() }
+                        ?: ("SIM " + (phoneAccounts.indexOf(handle) + 1) + " (" + unknownSimLabel + ")")
+                }
+            },
+            onItemSelected = { handle ->
+                fullContact?.id?.let { cid ->
+                    prefs.setDefaultSimForContact(cid, handle?.id)
+                    defaultSimId = handle?.id
+                }
+            },
+            itemSupporting = { handle ->
+                if (handle == null) {
+                    askEveryTimeLabel
+                } else {
+                    val account = telecomMgr.getPhoneAccount(handle)
+                    val address = account?.address?.schemeSpecificPart
+                    val desc = account?.shortDescription?.toString()
+                    if (!address.isNullOrBlank()) address
+                    else if (!desc.isNullOrBlank()) desc
+                    else "Slot " + (phoneAccounts.indexOf(handle) + 1)
+                }
+            },
+            icon = Icons.Outlined.SimCard,
+            itemIcon = { Icons.Outlined.SimCard },
+            isSelected = { handle -> handle?.id == defaultSimId }
+        )
     }
 
     if (showReminderDialog) {
@@ -794,7 +848,6 @@ fun ContactDetailsScreen(
                                                     fullContact?.id?.let { cid ->
                                                         if (isFav) {
                                                             prefs.setFavoriteNumber(cid, null)
-                                                            prefs.setFavoriteSim(cid, null)
                                                             favoriteNumber = null
                                                         } else {
                                                             prefs.setFavoriteNumber(cid, number)
@@ -1277,6 +1330,28 @@ fun ContactDetailsScreen(
                                 isCompact = true
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
+                                    // 0. Default SIM card (when Dual SIM)
+                                    if (phoneAccounts.size > 1) {
+                                        val selectedHandle = phoneAccounts.find { it.id == defaultSimId }
+                                        val unknownSimLabel = stringResource(R.string.sim_picker_unknown_sim)
+                                        val promptLabel = stringResource(R.string.sim_ask_every_time)
+                                        val simLabel = if (selectedHandle != null) {
+                                            val account = telecomMgr.getPhoneAccount(selectedHandle)
+                                            account?.label?.toString()?.takeIf { it.isNotBlank() }
+                                                ?: ("SIM " + (phoneAccounts.indexOf(selectedHandle) + 1) + " (" + unknownSimLabel + ")")
+                                        } else promptLabel
+
+                                        RivoListItem(
+                                            headline = stringResource(R.string.contact_default_sim),
+                                            supporting = simLabel,
+                                            leadingIcon = Icons.Outlined.SimCard,
+                                            isCompact = true,
+                                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                            onClick = { showSimSelectDialog = true }
+                                        )
+                                        RivoDivider(Modifier.padding(horizontal = 16.dp))
+                                    }
+
                                     // 1. Custom Ringtone
                                     RivoListItem(
                                         headline = stringResource(R.string.contact_custom_ringtone),

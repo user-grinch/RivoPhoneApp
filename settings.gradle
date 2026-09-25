@@ -22,3 +22,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "Rivo4"
 include ':app'
+
+def externalBuildDir = System.getenv("GRADLE_BUILD_DIR")
+if (externalBuildDir) {
+    gradle.beforeProject { proj ->
+        if (proj == proj.rootProject) {
+            proj.layout.buildDirectory.set(new File(externalBuildDir, "root"))
+        } else {
+            proj.layout.buildDirectory.set(new File(externalBuildDir, proj.name))
+        }
+    }
+}
