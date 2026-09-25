@@ -66,6 +66,7 @@ import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoLeadingIconTile
+import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSurfaceStyle
@@ -131,6 +132,28 @@ fun CallRecordingsContent(
         showingRecordingsList = false
     }
 
+    val folderPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(uri, flags)
+            } catch (e: Exception) {
+                // Ignore if platform does not support persistable grant
+            }
+            val folderName = CallRecorder.getFolderDisplayName(context, uri)
+            prefs.setCustomRecordingFolderUri(uri.toString())
+            prefs.setCustomRecordingFolderName(folderName)
+            refreshKey++
+            android.widget.Toast.makeText(
+                context,
+                context.getString(R.string.settings_recording_folder_changed, folderName),
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     // Shizuku & Recording Preference States
     val shizukuAvailable = remember(settingsState, refreshKey) { ShizukuConnectionManager.isAvailable() }
     val shizukuPermissionGranted = remember(settingsState, refreshKey) { ShizukuConnectionManager.hasPermission(context) }
@@ -163,6 +186,12 @@ fun CallRecordingsContent(
     }
     var minDurationFilter by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_min_duration", 0)) }
     var bitrate by remember(settingsState) { mutableIntStateOf(prefs.getInt("call_recording_bitrate", 128000)) }
+    val customFolderUri by remember(settingsState) {
+        mutableStateOf(prefs.getCustomRecordingFolderUri())
+    }
+    val customFolderName by remember(settingsState) {
+        mutableStateOf(prefs.getCustomRecordingFolderName())
+    }
 
     val shareTitle = stringResource(R.string.call_recordings_share)
 
@@ -1099,6 +1128,47 @@ fun CallRecordingsContent(
                                 prefs.setInt("call_recording_min_duration", it)
                             }
                         )
+                    }
+                }
+
+                // 6. Storage & Location Section
+                item {
+                    RivoSectionHeader(
+                        title = stringResource(R.string.settings_recording_storage_title),
+                        icon = Icons.Outlined.Folder
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    RivoExpressiveCard(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
+                        val currentFolderText = customFolderName ?: stringResource(R.string.settings_recording_save_folder_default)
+
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_recording_save_folder),
+                            supporting = currentFolderText,
+                            leadingIcon = Icons.Outlined.FolderOpen,
+                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            onClick = { folderPickerLauncher.launch(null) }
+                        )
+
+                        if (!customFolderUri.isNullOrBlank()) {
+                            RivoDivider(Modifier.padding(horizontal = 16.dp))
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_recording_reset_folder),
+                                supporting = stringResource(R.string.settings_recording_reset_folder_supporting),
+                                leadingIcon = Icons.Outlined.Restore,
+                                onClick = {
+                                    prefs.resetCustomRecordingFolder()
+                                    refreshKey++
+                                    android.widget.Toast.makeText(
+                                        context,
+                                        context.getString(R.string.settings_recording_reset_folder_toast),
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            )
+                        }
                     }
                 }
             }

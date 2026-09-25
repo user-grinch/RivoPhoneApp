@@ -888,6 +888,15 @@
     <string name="contact_default_sim_supporting">Choose which SIM to use when calling this contact</string>
     <string name="sim_remember_for_contact">Always use this SIM for this contact</string>
 
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Storage &amp; Location</string>
+    <string name="settings_recording_save_folder">Save Location</string>
+    <string name="settings_recording_save_folder_default">Default (Recordings/Rivo Recordings)</string>
+    <string name="settings_recording_reset_folder">Reset to Default Folder</string>
+    <string name="settings_recording_reset_folder_supporting">Save recordings to the standard Rivo Recordings directory</string>
+    <string name="settings_recording_folder_changed">Save location updated: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Save location reset to default</string>
+
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Do Not Disturb during calls</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatically silence notifications and other interruptions while on a call</string>

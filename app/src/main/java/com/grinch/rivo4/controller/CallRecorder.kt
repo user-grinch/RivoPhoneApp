@@ -9,6 +9,8 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
+import androidx.documentfile.provider.DocumentFile
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -110,7 +112,69 @@ object CallRecorder {
         }.getOrDefault(false)
     }
 
+    fun getCustomRecordingDirectory(context: Context): File? {
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (e: Exception) { null }
+        val uriStr = prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null) ?: return null
+        return runCatching {
+            getFileFromTreeUri(Uri.parse(uriStr))
+        }.getOrNull()
+    }
+
+    fun getFileFromTreeUri(treeUri: Uri): File? {
+        return try {
+            val docId = DocumentsContract.getTreeDocumentId(treeUri)
+            if (docId.startsWith("primary:")) {
+                val relPath = docId.removePrefix("primary:").trim('/')
+                if (relPath.isEmpty()) {
+                    Environment.getExternalStorageDirectory()
+                } else {
+                    File(Environment.getExternalStorageDirectory(), relPath)
+                }
+            } else if (docId.contains(":")) {
+                val parts = docId.split(":", limit = 2)
+                val storageId = parts[0]
+                val relPath = parts.getOrNull(1)?.trim('/') ?: ""
+                val base = File("/storage/$storageId")
+                if (base.exists()) {
+                    if (relPath.isEmpty()) base else File(base, relPath)
+                } else null
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun getFolderDisplayName(context: Context, treeUri: Uri): String {
+        return try {
+            val docId = DocumentsContract.getTreeDocumentId(treeUri)
+            if (docId.startsWith("primary:")) {
+                val rel = docId.removePrefix("primary:").trim('/')
+                if (rel.isEmpty()) "Internal Storage" else rel
+            } else if (docId.contains(":")) {
+                val parts = docId.split(":", limit = 2)
+                val rel = parts.getOrNull(1)?.trim('/') ?: ""
+                if (rel.isEmpty()) parts[0] else "${parts[0]}/$rel"
+            } else {
+                DocumentFile.fromTreeUri(context, treeUri)?.name ?: "Custom Folder"
+            }
+        } catch (e: Exception) {
+            DocumentFile.fromTreeUri(context, treeUri)?.name ?: "Custom Folder"
+        }
+    }
+
     fun getRecordingsDirectory(context: Context): File {
+        // 0. Custom user-defined directory if writable
+        getCustomRecordingDirectory(context)?.let { customDir ->
+            if (isWritableDirectory(customDir)) {
+                return customDir
+            }
+        }
+
         // 1. If All Files Access is granted, allow direct root storage
         if (hasStoragePermission(context)) {
             val directInternal = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
@@ -155,6 +219,11 @@ object CallRecorder {
 
     fun getAllRecordingDirectories(context: Context): List<File> {
         val dirs = mutableListOf<File>()
+        getCustomRecordingDirectory(context)?.let { customDir ->
+            if (customDir.exists() && customDir.isDirectory) {
+                dirs.add(customDir)
+            }
+        }
         runCatching {
             val d = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
             if (d.exists() && d.isDirectory) dirs.add(d)
@@ -694,22 +763,67 @@ object CallRecorder {
         }
 
         val cleanName = saved.name.removePrefix("staging_")
-        val destinationDir = getRecordingsDirectory(ctx)
-        val finalTargetFile = File(destinationDir, cleanName)
+        val customUriStr = prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null)
+        val customDir = getCustomRecordingDirectory(ctx)
+        var destinationFile: File? = null
 
-        // Single move to the target destination
-        val effectiveFile = if (saved.absolutePath != finalTargetFile.absolutePath) {
+        if (customDir != null) {
             try {
-                destinationDir.mkdirs()
-                saved.copyTo(finalTargetFile, overwrite = true)
+                if (!customDir.exists()) customDir.mkdirs()
+                val target = File(customDir, cleanName)
+                saved.copyTo(target, overwrite = true)
                 saved.delete()
-                finalTargetFile
+                destinationFile = target
+                Log.i(TAG, "Recording saved directly to custom folder: ${target.absolutePath}")
             } catch (e: Exception) {
-                Log.w(TAG, "Could not move recording to $finalTargetFile: ${e.message}", e)
-                saved // Keep staging file if copy failed
+                Log.w(TAG, "Direct copy to custom folder failed: ${e.message}")
             }
+        }
+
+        if (destinationFile == null && !customUriStr.isNullOrBlank()) {
+            try {
+                val treeUri = Uri.parse(customUriStr)
+                val docDir = DocumentFile.fromTreeUri(ctx, treeUri)
+                if (docDir != null && docDir.canWrite()) {
+                    val mimeType = if (cleanName.endsWith(".m4a")) "audio/mp4" else "audio/*"
+                    val newDocFile = docDir.createFile(mimeType, cleanName)
+                    if (newDocFile != null) {
+                        ctx.contentResolver.openOutputStream(newDocFile.uri)?.use { out ->
+                            saved.inputStream().use { input -> input.copyTo(out) }
+                        }
+                        if (customDir != null) {
+                            val target = File(customDir, cleanName)
+                            if (target.exists()) {
+                                destinationFile = target
+                            }
+                        }
+                        saved.delete()
+                        Log.i(TAG, "Recording written via SAF DocumentFile to: ${newDocFile.uri}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed writing to custom DocumentFile: ${e.message}", e)
+            }
+        }
+
+        val effectiveFile = if (destinationFile != null && destinationFile.exists()) {
+            destinationFile
         } else {
-            saved
+            val destinationDir = getRecordingsDirectory(ctx)
+            val finalTargetFile = File(destinationDir, cleanName)
+            if (saved.exists() && saved.absolutePath != finalTargetFile.absolutePath) {
+                try {
+                    destinationDir.mkdirs()
+                    saved.copyTo(finalTargetFile, overwrite = true)
+                    saved.delete()
+                    finalTargetFile
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not move recording to $finalTargetFile: ${e.message}", e)
+                    saved
+                }
+            } else {
+                if (saved.exists()) saved else finalTargetFile
+            }
         }
 
         // Notify MediaScanner once on the physical output path

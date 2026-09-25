@@ -98,6 +98,29 @@ class PreferenceManager(context: Context) {
         return getFavoriteSim(contactId)
     }
 
+    fun getCustomRecordingFolderUri(): String? {
+        return getString(KEY_CALL_RECORDING_FOLDER_URI, null)
+    }
+
+    fun setCustomRecordingFolderUri(uri: String?) {
+        setString(KEY_CALL_RECORDING_FOLDER_URI, uri)
+    }
+
+    fun getCustomRecordingFolderName(): String? {
+        return getString(KEY_CALL_RECORDING_FOLDER_NAME, null)
+    }
+
+    fun setCustomRecordingFolderName(name: String?) {
+        setString(KEY_CALL_RECORDING_FOLDER_NAME, name)
+    }
+
+    fun resetCustomRecordingFolder() {
+        prefs.edit()
+            .remove(KEY_CALL_RECORDING_FOLDER_URI)
+            .remove(KEY_CALL_RECORDING_FOLDER_NAME)
+            .apply()
+    }
+
     fun setFavoriteEmail(contactId: String, email: String?) {
         prefs.edit().putString("favorite_email_$contactId", email).apply()
     }
@@ -325,6 +348,8 @@ class PreferenceManager(context: Context) {
         const val KEY_CALL_RECORDING_AUTO = "call_recording_auto"
         const val KEY_CALL_RECORDING_SHIZUKU = "call_recording_shizuku"
         const val KEY_CALL_RECORDING_FILTER = "call_recording_filter"
+        const val KEY_CALL_RECORDING_FOLDER_URI = "call_recording_folder_uri"
+        const val KEY_CALL_RECORDING_FOLDER_NAME = "call_recording_folder_name"
         const val RECORD_FILTER_ALL = 0
         const val RECORD_FILTER_INCOMING_ONLY = 1
         const val RECORD_FILTER_OUTGOING_ONLY = 2
