@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Forstyr ikke under opkald</string>
     <string name="settings_sound_dnd_during_calls_supporting">Gør notifikationer og andre afbrydelser automatisk lydløse under et opkald</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Ring Baggrunde</string>
+    <string name="settings_call_unknown_background">Ukendt Opkaldsbaggrund</string>
+    <string name="settings_call_unknown_background_set">Et brugerdefineret billede er vist for ukendte opkaldere</string>
+    <string name="settings_call_unknown_background_none">Ikke indstillet — bruger standardopkaldsbaggrund</string>
+    <string name="settings_call_unknown_background_supporting">Vist ved indgående opkald fra ukendte eller ikke-gemte telefonnumre.</string>
+    <string name="settings_call_background_no_preview">Ingen brugerdefineret baggrund</string>
+    <string name="settings_call_background_change_gallery">Skift billede</string>
+    <string name="settings_call_background_choose_gallery">Vælg fra galleri</string>
+    <string name="settings_call_background_remove">Fjern baggrund</string>
 </resources>

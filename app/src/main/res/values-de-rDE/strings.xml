@@ -99,7 +99,7 @@
     <string name="ads_disable_dialog_keep">Werbung weiter anzeigen</string>
     <!-- Default dialer prompt -->
     <string name="default_dialer_headline">Machen Sie Rivo zu Ihrer Standard-Telefon-App</string>
-    <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und vor Spam-Anrufen geschützt zu werden, muss Rivo zur Standard-Telefon-App gemacht werden.</string>
+    <string name="default_dialer_description">Um Anrufe zu tätigen und zu empfangen, Ihre Anrufliste zu verwalten und vor Spam-Anrufen zu schützen, muss Rivo als Standard-Telefon-App eingestellt werden.</string>
     <string name="default_dialer_denied_message">Rivo funktioniert nicht ohne diese Berechtigung. Bitte versuchen Sie es erneut.</string>
     <string name="default_dialer_set_as_default">Als Standard festlegen</string>
     <!-- Top bar / bottom navigation -->
@@ -109,7 +109,7 @@
     <string name="call_history_title">Anrufliste</string>
     <string name="call_history_with_contact">Verlauf mit %1$s</string>
     <string name="call_log_no_history_found">Keine Anrufliste gefunden</string>
-    <string name="call_log_no_filter_match">Keine Anrufe unter diesem Filter</string>
+    <string name="call_log_no_filter_match">Keine Anrufe mit diesem Filter</string>
     <plurals name="call_log_delete_confirm">
         <item quantity="one">Sind Sie sicher, dass Sie den ausgewählten %1$d Anruflisteneintrag löschen wollen?</item>
         <item quantity="other">Sind Sie sicher, dass Sie die ausgewählten %1$d Anruflisteneinträge löschen wollen?</item>
@@ -127,10 +127,10 @@
     <string name="content_desc_dialpad">Tastenfeld</string>
     <!-- Contacts list -->
     <string name="contact_filter_private">Privat</string>
-    <string name="contact_move_to_storage">In den Speicher verschieben</string>
+    <string name="contact_move_to_storage">In Speicher verschieben</string>
     <string name="contact_move_private_storage_title">Privater Speicher</string>
     <string name="contact_move_private_storage_supporting">App-spezifischer Speicher</string>
-    <string name="contact_move_local_memory_supporting">Nur Geräte-Speicher</string>
+    <string name="contact_move_local_memory_supporting">Nur Gerät</string>
     <string name="content_desc_move">Verschieben</string>
     <string name="contacts_empty_title">Keine Kontakte gefunden</string>
     <string name="contacts_permission_rationale">Rivo benötigt die Berechtigung für Ihre Kontakte, um die Kontaktliste anzuzeigen und eingehende Anrufe zu identifizieren.</string>
@@ -140,19 +140,19 @@
     <string name="contact_details_call">Anruf</string>
     <string name="contact_details_video">Video</string>
     <string name="contact_details_info_title">Kontakt-Informationen</string>
-    <string name="contact_bullet_favorite">" Favorit"</string>
-    <string name="contact_bullet_recent">" Zuletzt"</string>
+    <string name="contact_bullet_favorite">" • Favorit"</string>
+    <string name="contact_bullet_recent">" • Zuletzt"</string>
     <string name="content_desc_favorite">Favorit</string>
     <string name="contact_clear_favorite">Favoriten leeren</string>
     <string name="contact_set_as_favorite">Als Favorit festlegen</string>
-    <string name="contact_copy_to_clipboard">In die Zwischenablage kopieren</string>
+    <string name="contact_copy_to_clipboard">In Zwischenablage kopieren</string>
     <string name="contact_clear_default">Standard leeren</string>
     <string name="contact_set_as_default">Als Standard festlegen</string>
     <string name="contact_add_to_contacts">Zu Kontakten hinzufügen</string>
     <string name="contact_create_new">Neuen Kontakt erstellen</string>
     <string name="contact_create_new_desc">Als neuer Kontakt speichern</string>
     <string name="contact_add_to_existing">Zu vorhandenem Kontakt hinzufügen</string>
-    <string name="contact_add_to_existing_desc">Diese Nummer zu einem bestehenden Kontakt hinzufügen</string>
+    <string name="contact_add_to_existing_desc">Diese Nummer zu bestehendem Kontakt hinzufügen</string>
     <string name="contact_events_title">Ereignisse &amp; Mehr</string>
     <string name="contact_event_birthday">Geburtstag</string>
     <string name="contact_event_generic">Ereignis</string>
@@ -207,10 +207,10 @@
     <!-- Search -->
     <string name="search_contacts_placeholder">In Kontakten suchen</string>
     <string name="search_contacts_title">In Kontakten suchen</string>
-    <string name="search_type_to_start">Für Suche Name oder Telefonnummer eingeben</string>
+    <string name="search_type_to_start">Für Suche Name oder Nummer eingeben</string>
     <string name="search_no_results_title">Keine Ergebnisse</string>
     <string name="search_no_results_hint">Versuchen Sie einen anderen Namen oder eine andere Nummer</string>
-    <string name="search_results_header">In Ergebnissen suchen</string>
+    <string name="search_results_header">Suchergebnisse</string>
     <string name="search_contacts_permission_title">Berechtigung für Kontakte erforderlich</string>
     <string name="search_contacts_permission_description">Rivo benötigt Zugriff auf Ihre Kontakte, um diese zu durchsuchen und eingehende Anrufe zu identifizieren.</string>
     <!-- Call screen -->
@@ -237,7 +237,7 @@
     <string name="notif_blocked_call_text">Blockierter Anruf von %1$s</string>
     <string name="notif_missed_call_title">Verpasster Anruf</string>
     <string name="notif_missed_call_text">Verpasster Anruf von %1$s um %2$s</string>
-    <string name="notif_via_sim">via %1$s</string>
+    <string name="notif_via_sim">über %1$s</string>
     <string name="notif_active_call">Aktiver Anruf</string>
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Kontakte erfolgreich exportiert</string>
@@ -252,11 +252,11 @@
     <string name="settings_support_rivo_description">Helfen Sie uns, damit Rivo kostenlos und quelloffen bleibt</string>
     <string name="settings_donate">Spenden</string>
     <string name="settings_interface_headline">Benutzeroberfläche</string>
-    <string name="settings_interface_supporting">Designthema, Farben und Bedienung</string>
+    <string name="settings_interface_supporting">Thema, Farben und Bedienung</string>
     <string name="settings_sound_vibration_headline">Töne &amp; Vibration</string>
     <string name="settings_sound_vibration_supporting">Klingeltöne und Tastenfeldtöne</string>
     <string name="settings_call_settings_headline">Anruf-Einstellungen</string>
-    <string name="settings_call_settings_supporting">SIM-Karten verwalten, wählen und Wahlwiederholung</string>
+    <string name="settings_call_settings_supporting">SIMs, Wählen und Wahlwiederholung verwalten</string>
     <string name="settings_blocked_numbers_headline">Blockierte Nummern</string>
     <string name="settings_blocked_numbers_supporting">Blockierte Anrufe und Spam verwalten</string>
     <string name="settings_backup_restore_headline">Sichern &amp; Wiederherstellen</string>
@@ -271,9 +271,9 @@
     <string name="settings_group_avatars">Avatare</string>
     <string name="settings_group_shape_motion">Form &amp; Bewegung</string>
     <string name="settings_group_navigation">Navigation</string>
-    <string name="settings_interface_restart_required">Neustart erforderlich, um Designthema vollständig anzuwenden.</string>
+    <string name="settings_interface_restart_required">Neustart erforderlich, um Thema vollständig anzuwenden.</string>
     <string name="settings_interface_restart_action">Neustart</string>
-    <string name="settings_interface_material_you">Material You-Design</string>
+    <string name="settings_interface_material_you">Material You Thema</string>
     <string name="settings_interface_material_you_supporting">Hintergrund-basiertes Farbthema.</string>
     <string name="settings_interface_primary_color">Primärfarbe</string>
     <string name="settings_interface_amoled">Amoled Dark Mode</string>
@@ -304,7 +304,7 @@
     <string name="settings_interface_show_dividers">Trenner</string>
     <string name="settings_interface_show_dividers_supporting">Linien zwischen Listeneinträgen</string>
     <string name="settings_interface_expressive_cards">Expressive Cards benutzen</string>
-    <string name="settings_interface_expressive_cards_supporting">Listeneinträge in stilisierten Karten anordnen</string>
+    <string name="settings_interface_expressive_cards_supporting">Listeneinträge in stilisierten Karten anzeigen</string>
     <string name="settings_interface_transition_animation">Übergangs-Animationen</string>
     <string name="settings_interface_transition_animation_supporting">Animationsstil zwischen Bildschirmen</string>
     <string name="settings_interface_transition_slide">Streichen</string>
@@ -324,7 +324,7 @@
     <string name="settings_interface_default_bottom_bar">Standard-Tab</string>
     <string name="settings_interface_default_bottom_bar_supporting">Auswahl des Start-Tabs</string>
     <string name="settings_interface_flip_bottom_bar">Tauschen</string>
-    <string name="settings_interface_flip_bottom_bar_supporting">Tauscht die Tab-Position von \"Kontakte\" &amp; \"Zuletzt\"</string>
+    <string name="settings_interface_flip_bottom_bar_supporting">Tauscht Tab-Position von \"Kontakte\" &amp; \"Zuletzt\"</string>
     <string name="settings_interface_icon_only_bar">Nur Icons</string>
     <string name="settings_interface_icon_only_bar_supporting">Entfernt Text-Labels</string>
     <!-- Settings > Sound & Vibration -->
@@ -356,7 +356,7 @@
     <string name="settings_call_speed_dial">Kurzwahl</string>
     <string name="settings_call_enabled">Aktiviert</string>
     <string name="settings_call_disabled">Deaktiviert</string>
-    <string name="settings_call_default_sim">Standard-SIM-Karte</string>
+    <string name="settings_call_default_sim">Standard SIM-Karte</string>
     <string name="settings_call_calling_accounts">Anruf-Konten</string>
     <string name="settings_call_calling_accounts_supporting">Netzbetreiber-Einstellungen (Anklopfen, Weiterleitung...)</string>
     <string name="settings_call_t9_dialing">T9-Wählen</string>
@@ -364,7 +364,7 @@
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Anrufbildschirm bei Ohrnähe abschalten</string>
     <string name="settings_call_auto_speaker_proximity">Auto-Lautsprecher</string>
-    <string name="settings_call_auto_speaker_proximity_supporting">Lautsprecher bei Entfernung vom Ohr, Handgerät bei Nähe zum Ohr (bei verbundenen Ohrhörern unterdrückt)</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Lautsprecher wenn nicht am Ohr, Handgerät wenn am Ohr (bei verbundenen Ohrhörern unterdrückt)</string>
     <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
@@ -374,7 +374,7 @@
     <string name="settings_call_always_fullscreen">Immer Vollbildanzeige</string>
     <string name="settings_call_always_fullscreen_supporting">Bei Anruf immer Vollbildmodus. Falls deaktiviert werden Anrufe als schwebendes Banner angezeigt, während andere Apps benutzt werden.</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
-    <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Telefonwahl</string>
+    <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Tastenfelds</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
     <string name="settings_call_dialpad_style_classic">Klassisch</string>
     <string name="settings_call_dialpad_style_minimal">Minimal</string>
@@ -383,7 +383,7 @@
     <string name="settings_call_dialpad_layout_left">Links</string>
     <string name="settings_call_dialpad_layout_right">Rechts</string>
     <string name="settings_call_auto_redial">Autom. Wahlwiederholung</string>
-    <string name="settings_call_auto_redial_supporting">Bei \"Besetzt\" autom. Wahlwiederholung</string>
+    <string name="settings_call_auto_redial_supporting">Bei \"Besetzt\" Auto-Wahlwiederholung</string>
     <string name="settings_call_redial_attempts">Versuche der Wahlwiederholung</string>
     <string name="settings_call_redial_attempts_supporting">Maximale Zahl der Wahlwiederholungen</string>
     <string name="settings_call_redial_attempts_1">1 Versuch</string>
@@ -451,7 +451,7 @@
     <string name="settings_manage_merge_duplicates">Duplikate zusammenführen</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Kontakt-Sichtbarkeit</string>
-    <string name="settings_visibility_description">Auswahl, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
+    <string name="settings_visibility_description">Auswahl, welche Konten in Ihrer Kontaktliste sichtbar sind. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
     <string name="settings_visibility_accounts_header">Konten</string>
     <string name="settings_visibility_local_memory_supporting">Auf Gerät gespeichert</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
@@ -465,8 +465,8 @@
     <string name="settings_speed_dial_title">Kurzwahl</string>
     <string name="settings_speed_dial_enable">Kurzwahl aktivieren</string>
     <string name="settings_speed_dial_enable_supporting">Langer Tastendruck für Kurzwahl</string>
-    <string name="settings_speed_dial_assignments_header">Zuordnungen</string>
-    <string name="settings_speed_dial_not_assigned">Nicht zugeordnet</string>
+    <string name="settings_speed_dial_assignments_header">Belegung</string>
+    <string name="settings_speed_dial_not_assigned">Nicht belegt</string>
     <string name="content_desc_assign">Zuordnen</string>
     <string name="settings_speed_dial_search_contact">Kontakt suchen</string>
     <string name="settings_speed_dial_no_number">Keine Nummer</string>
@@ -538,8 +538,8 @@
     <string name="favorites_add_button">Favorit hinzufügen</string>
     <string name="favorites_collapse">Favoriten einklappen</string>
     <string name="favorites_expand">Favoriten ausklappen</string>
-    <string name="blocked_select_contact">Favorit auswählen</string>
-    <string name="blocked_search_contact_hint">Kontaktname oder -nummer suchen</string>
+    <string name="blocked_select_contact">Kontakt auswählen</string>
+    <string name="blocked_search_contact_hint">Kontaktname oder -nummer suchen...</string>
     <!-- Bottom navigation layout -->
     <string name="settings_bottom_nav_title">Konfiguration Tabs</string>
     <string name="settings_bottom_nav_supporting">Tabs anordnen, anzeigen oder verbergen</string>
@@ -589,7 +589,7 @@
     <string name="contact_call_background_preview">Vorschau des Hintergrunds des Anrufbildschirms</string>
     <!-- Call waiting -->
     <string name="settings_call_waiting">Anklopfen</string>
-    <string name="settings_call_waiting_supporting">Einen zweiten Anruf empfangen, während Sie bereits telefonieren</string>
+    <string name="settings_call_waiting_supporting">Bei aktivem Anruf zweiten Anruf empfangen</string>
     <string name="settings_call_waiting_description">Anklopfen ist ein Dienst des Netzbetreibers. Die Auswahl einer der unten stehenden Optionen wählt den Standard-Code auf Ihrer SIM-Karte.</string>
     <string name="settings_call_waiting_enable">Anklopfen aktivieren</string>
     <string name="settings_call_waiting_disable">Anklopfen deaktivieren</string>
@@ -600,7 +600,7 @@
     <string name="settings_call_recording">Anruf-Aufnahme</string>
     <string name="settings_call_recording_supporting">Aufnahme-Schaltfläche während Anrufen anzeigen</string>
     <string name="settings_call_recording_auto">Jeden Anruf aufnehmen</string>
-    <string name="settings_call_recording_auto_supporting">Aufnahme automatisch starten, wenn ein Anruf beginnt</string>
+    <string name="settings_call_recording_auto_supporting">Aufnahme automatisch starten, wenn Anruf beginnt</string>
     <string name="settings_call_recording_notice">Die Aufnahme von Anrufen könnte von Ihrem Gerät oder aufgrund von Gesetzen eingeschränkt sein. Stellen Sie sicher, dass die Aufnahme erlaubt ist, bevor Sie diese Funktion nutzen.</string>
     <string name="settings_call_default_background">Standard Anruf-Hintergrund</string>
     <string name="settings_call_default_background_set">Ein individuelles Bild wird bei jedem Anruf gezeigt</string>
@@ -613,7 +613,7 @@
     <string name="action_stop_recording">Stop</string>
     <string name="call_recording_in_progress">Wird aufgenommen</string>
     <string name="call_recordings_title">Aufnahmen</string>
-    <string name="call_recordings_supporting">Abspielen, teilen oder löschen von Aufnahmen</string>
+    <string name="call_recordings_supporting">Abspielen, Teilen oder Löschen von Aufnahmen</string>
     <string name="call_recordings_empty">Keine Aufnahmen</string>
     <string name="call_recordings_empty_description">Aufnahmen von Anrufen erscheinen hier.</string>
     <string name="call_recordings_play">Abspielen</string>
@@ -733,7 +733,7 @@
     <string name="settings_contact_management_card_supporting">Zeige über Kontakten Speicherübersicht, Bereinigungsstatus und Hinweise zu doppelten Kontakten</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Eckenradius der schwebenden Leiste</string>
-    <string name="settings_floating_bar_roundness_supporting">Die Ecken-Rundheit und die Form der schwebende Leiste anpassen</string>
+    <string name="settings_floating_bar_roundness_supporting">Ecken-Rundheit und Form der schwebende Leiste anpassen</string>
     <string name="settings_floating_bar_blur">Transparente Glas-Unschärfe</string>
     <string name="settings_floating_bar_blur_supporting">Aktiviert Milchglas-Unschärfe für alle Navigations- und Dialog-Popups (globale Einstellung)</string>
     <string name="settings_floating_bar_blur_warning">Ressourcen-intensiv auf älteren Geräten (Android 12+ empfohlen)</string>
@@ -742,7 +742,7 @@
     <string name="settings_ui_blur_title">Milchglas- &amp; Unschärfe</string>
     <string name="settings_ui_blur_supporting">Hinter Dialog-Popups, Tabellen und Navigationsleiste (Android 12+)</string>
     <string name="settings_ui_blur_active_hint">Aktiv für alle Popups, Tabellen &amp; Navigationsleisten</string>
-    <string name="settings_nav_blur_global_hint">Kontrolliert durch die globale UI-Unschärfe-Einstellung</string>
+    <string name="settings_nav_blur_global_hint">Kontrolliert durch globale UI-Unschärfe-Einstellung</string>
     <!-- Swipe Actions on Contacts & Call Logs -->
     <string name="settings_swipe_actions_title">Wischgesten</string>
     <string name="settings_swipe_actions_supporting">Wischgesten bei Kontakten und Anrufliste</string>
@@ -774,13 +774,13 @@
     <string name="notif_channel_calls_desc">Benachrichtigungen zu eingehenden, andauernden und verpassten Anrufen</string>
     <!-- Missed Call Card & Auto Decline -->
     <string name="settings_missed_call_card_title">Verpasste Anrufe-Popup</string>
-    <string name="settings_missed_call_card_supporting">Popup für Rückruf, SMS-Antworten und Messenger-Apps</string>
+    <string name="settings_missed_call_card_supporting">Popup für Rückruf, SMS und Messenger-Apps</string>
     <string name="missed_call_just_now">Gerade verpasster Anruf, klingelte %1$ds</string>
     <string name="missed_call_view_logs">Anrufliste anzeigen</string>
     <string name="missed_call_respond_with_message">Mit Nachricht antworten</string>
-    <string name="settings_auto_decline_unknown_title">Anrufe ablehnen: unterdrückte Nummer</string>
+    <string name="settings_auto_decline_unknown_title">Auto-Ablehnen: unterdrückte Nummer</string>
     <string name="settings_auto_decline_unknown_supporting">Private, unterdrückte oder beschränkte Nummern automatisch ablehnen</string>
-    <string name="settings_auto_decline_non_contacts_title">Anrufe ablehnen: Nicht-Kontakte</string>
+    <string name="settings_auto_decline_non_contacts_title">Auto-Ablehnen: Nicht-Kontakte</string>
     <string name="settings_auto_decline_non_contacts_supporting">Nicht als Kontakt gespeicherte Nummern automatisch ablehnen</string>
     <string name="missed_call_msg_call_me_back">Rufen Sie mich bitte zurück?</string>
     <string name="missed_call_msg_sorry_busy">Entschuldigung, ich bin gerade beschäftigt.</string>
@@ -812,14 +812,14 @@
     <string name="settings_call_log_limit_1000">1.000 Anrufe</string>
     <string name="settings_call_log_limit_unlimited">Unbegrenzt</string>
     <!-- Auto Paste Clipboard (#168) -->
-    <string name="settings_auto_paste_clipboard">Auto-Einfügen kopierter Nummern</string>
+    <string name="settings_auto_paste_clipboard">Auto-Einfügen: kopierte Nummer</string>
     <string name="settings_auto_paste_clipboard_supporting">Auto-Einfügen in Wahlfeld</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
     <string name="settings_contacts_launcher_icon">Eigenes App-Icon für Kontakte</string>
     <string name="settings_contacts_launcher_icon_supporting">Eigenes App-Icon für Kontakte auf Startbildschirm</string>
     <string name="app_name_contacts">Kontakte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
-    <string name="settings_call_waiting_system_settings">Systemanruf-Einstellungen</string>
+    <string name="settings_call_waiting_system_settings">Anruf-Einstellungen Netzbetreiber</string>
     <!-- Call Analytics & Tracking -->
     <string name="settings_call_analytics_title">Anruf-Statistik &amp; -Auswertung</string>
     <string name="settings_call_analytics_supporting">Werten Sie Anrufdaten, Gesprächszeit-Statistiken, Spitzenstunden und häufige Kontaktansichten aus</string>
@@ -831,18 +831,27 @@
     <string name="call_analytics_enable_action">Statistik &amp; Auswertungen aktivieren</string>
     <!-- Dual SIM per Contact -->
     <string name="contact_default_sim">Standard SIM-Karte</string>
-    <string name="contact_default_sim_supporting">Wählen Sie die SIM-Karte für den Anruf dieses Kontakts aus</string>
+    <string name="contact_default_sim_supporting">Wählen Sie die SIM-Karte für Anrufe an diesen Kontakt aus</string>
     <string name="sim_remember_for_contact">Diese SIM-Karte immer für diesen Kontakt verwenden</string>
     <!-- Call Recording Custom Save Folder -->
     <string name="settings_recording_storage_title">Speicherort &amp;</string>
     <string name="settings_recording_save_folder">Speicherort</string>
     <string name="settings_recording_save_folder_default">Standard (Aufzeichnungen/Rivo-Aufzeichnungen)</string>
     <string name="settings_recording_reset_folder">Auf Standardordner zurücksetzen</string>
-    <string name="settings_recording_reset_folder_supporting">Aufnahmen im Standard Rivo Recordings Verzeichnis speichern</string>
+    <string name="settings_recording_reset_folder_supporting">Aufnahmen im Standard Rivo Aufnahme-Verzeichnis speichern</string>
     <string name="settings_recording_folder_changed">Speicherort aktualisiert: %1$s</string>
-    <string name="settings_recording_reset_folder_toast">Standort auf Standard zurücksetzen</string>
+    <string name="settings_recording_reset_folder_toast">Speicherort auf Standard zurücksetzen</string>
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Bei Anrufen nicht stören</string>
-    <string name="settings_sound_dnd_during_calls_supporting">Benachrichtigungen und andere Unterbrechungen während eines Anrufs automatisch ausschalten</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Benachrichtigungen und andere Unterbrechungen während Anruf automatisch stummschalten</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Anrufhintergründe</string>
+    <string name="settings_call_unknown_background">Hintergrund für unbekannte Anrufer</string>
+    <string name="settings_call_unknown_background_set">Ein benutzerdefiniertes Bild wird für unbekannte Anrufer angezeigt</string>
+    <string name="settings_call_unknown_background_none">Nicht festgelegt — verwendet Standard-Anrufhintergrund</string>
+    <string name="settings_call_unknown_background_supporting">Wird bei eingehenden Anrufen von unbekannten oder ungespeicherten Telefonnummern angezeigt.</string>
+    <string name="settings_call_background_no_preview">Kein eigener Hintergrund</string>
+    <string name="settings_call_background_change_gallery">Bild ändern</string>
+    <string name="settings_call_background_choose_gallery">Aus Galerie auswählen</string>
+    <string name="settings_call_background_remove">Hintergrund entfernen</string>
 </resources>

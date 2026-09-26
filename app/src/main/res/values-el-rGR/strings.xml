@@ -101,4 +101,13 @@
     <string name="settings_sound_dnd_during_calls">Μην ενοχλείτε κατά τη διάρκεια κλήσεων</string>
     <string name="settings_sound_dnd_during_calls_supporting">Αυτόματη σίγαση ειδοποιήσεων και άλλων διακοπών κατά τη διάρκεια μιας κλήσης</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Φόντο Κλήσης</string>
+    <string name="settings_call_unknown_background">Άγνωστο Φόντο Κλήσεων</string>
+    <string name="settings_call_unknown_background_set">Εμφανίζεται μια προσαρμοσμένη εικόνα για άγνωστους καλούντες</string>
+    <string name="settings_call_unknown_background_none">Δεν έχει ρυθμιστεί - χρησιμοποιεί προεπιλεγμένο φόντο κλήσεων</string>
+    <string name="settings_call_unknown_background_supporting">Εμφανίζονται σε εισερχόμενες κλήσεις από άγνωστους ή μη αποθηκευμένους αριθμούς τηλεφώνου.</string>
+    <string name="settings_call_background_no_preview">Χωρίς προσαρμοσμένο φόντο</string>
+    <string name="settings_call_background_change_gallery">Αλλαγή εικόνας</string>
+    <string name="settings_call_background_choose_gallery">Επιλέξτε από τη συλλογή</string>
+    <string name="settings_call_background_remove">Αφαίρεση φόντου</string>
 </resources>

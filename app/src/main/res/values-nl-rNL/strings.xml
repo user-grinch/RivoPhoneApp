@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Niet storen tijdens gesprekken</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatisch meldingen en andere onderbrekingen tijdens een oproep negeren</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Achtergronden bellen</string>
+    <string name="settings_call_unknown_background">Onbekende gespreksachtergrond</string>
+    <string name="settings_call_unknown_background_set">Een aangepaste afbeelding wordt weergegeven voor onbekende bellers</string>
+    <string name="settings_call_unknown_background_none">Niet ingesteld — gebruikt standaard gespreksachtergrond</string>
+    <string name="settings_call_unknown_background_supporting">Wordt weergegeven op inkomende oproepen van onbekende of niet-opgeslagen telefoonnummers.</string>
+    <string name="settings_call_background_no_preview">Geen aangepaste achtergrond</string>
+    <string name="settings_call_background_change_gallery">Afbeelding wijzigen</string>
+    <string name="settings_call_background_choose_gallery">Kies uit gallerij</string>
+    <string name="settings_call_background_remove">Achtergrond verwijderen</string>
 </resources>

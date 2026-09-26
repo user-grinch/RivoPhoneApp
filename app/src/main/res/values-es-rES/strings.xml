@@ -584,4 +584,9 @@
     <string name="settings_call_unknown_background">Fondo de llamada desconocido</string>
     <string name="settings_call_unknown_background_set">Se muestra una imagen personalizada para llamadas desconocidas</string>
     <string name="settings_call_unknown_background_none">No establecido — utiliza el fondo de llamada por defecto</string>
+    <string name="settings_call_unknown_background_supporting">Mostrar en llamadas entrantes de números de teléfono desconocidos o no guardados.</string>
+    <string name="settings_call_background_no_preview">Sin fondo personalizado</string>
+    <string name="settings_call_background_change_gallery">Cambiar imagen</string>
+    <string name="settings_call_background_choose_gallery">Seleccionar de la galería</string>
+    <string name="settings_call_background_remove">Eliminar fondo</string>
 </resources>

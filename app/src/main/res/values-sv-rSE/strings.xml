@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Stör ej under samtal</string>
     <string name="settings_sound_dnd_during_calls_supporting">Tysta automatiskt aviseringar och andra avbrott under ett samtal</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Bakgrunder för samtal</string>
+    <string name="settings_call_unknown_background">Okänd samtalsbakgrund</string>
+    <string name="settings_call_unknown_background_set">En anpassad bild visas för okända uppringare</string>
+    <string name="settings_call_unknown_background_none">Inte angivet — använder standard samtalsbakgrund</string>
+    <string name="settings_call_unknown_background_supporting">Visas vid inkommande samtal från okända eller osparade telefonnummer.</string>
+    <string name="settings_call_background_no_preview">Ingen anpassad bakgrund</string>
+    <string name="settings_call_background_change_gallery">Ändra bild</string>
+    <string name="settings_call_background_choose_gallery">Välj från galleriet</string>
+    <string name="settings_call_background_remove">Ta bort bakgrund</string>
 </resources>

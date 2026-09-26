@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Não perturbe durante as chamadas</string>
     <string name="settings_sound_dnd_during_calls_supporting">Silenciar notificações e outras interrupções automaticamente durante uma chamada</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Fundos de chamada</string>
+    <string name="settings_call_unknown_background">Fundo de Chamada Desconhecida</string>
+    <string name="settings_call_unknown_background_set">Uma imagem personalizada é mostrada para autores de chamadas desconhecidos</string>
+    <string name="settings_call_unknown_background_none">Não definido — usa o plano de fundo padrão</string>
+    <string name="settings_call_unknown_background_supporting">Mostrado em chamadas recebidas de números desconhecidos ou não guardados</string>
+    <string name="settings_call_background_no_preview">Nenhum fundo personalizado</string>
+    <string name="settings_call_background_change_gallery">Alterar imagem</string>
+    <string name="settings_call_background_choose_gallery">Escolher da galeria</string>
+    <string name="settings_call_background_remove">Remover fundo</string>
 </resources>
