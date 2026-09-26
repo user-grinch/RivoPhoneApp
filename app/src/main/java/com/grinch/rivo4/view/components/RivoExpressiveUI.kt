@@ -181,10 +181,10 @@ fun RivoGroupedCardContainer(
 }
 
 class RivoGroupScope {
-    internal val items = mutableListOf<@Composable () -> Unit>()
+    internal val items = mutableListOf<Pair<Any?, @Composable () -> Unit>>()
 
-    fun item(content: @Composable () -> Unit) {
-        items.add(content)
+    fun item(key: Any? = null, content: @Composable () -> Unit) {
+        items.add(key to content)
     }
 }
 
@@ -219,14 +219,16 @@ fun RivoExpressiveGroup(
             )
         }
         val total = scope.items.size
-        scope.items.forEachIndexed { index, itemLambda ->
-            val shape = rivoGroupedItemShape(index, total)
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = shape,
-                color = containerColor
-            ) {
-                itemLambda()
+        scope.items.forEachIndexed { index, (itemKey, itemLambda) ->
+            key(itemKey ?: index) {
+                val shape = rivoGroupedItemShape(index, total)
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = shape,
+                    color = containerColor
+                ) {
+                    itemLambda()
+                }
             }
         }
     }
