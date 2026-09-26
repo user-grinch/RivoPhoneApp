@@ -337,55 +337,31 @@ fun DialPadScreen(
             if (searchResults.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 6.dp, bottom = 420.dp)
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    itemsIndexed(searchResults) { index, contact ->
+                    itemsIndexed(searchResults, key = { _, contact -> "dialpad_contact_${contact.id}" }) { index, contact ->
                         val contactNumber = contact.phoneNumbers.firstOrNull()
-                        val isFirst = index == 0
-                        val isLast = index == searchResults.size - 1
+                        val shape = rivoGroupedItemShape(index, searchResults.size)
 
                         Surface(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            shape = when {
-                                isFirst && isLast -> RoundedCornerShape(28.dp)
-                                isFirst -> RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
-                                isLast -> RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
-                                else -> androidx.compose.ui.graphics.RectangleShape
-                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
                             color = MaterialTheme.colorScheme.surfaceContainerLow
                         ) {
-                            Column(
-                                modifier = Modifier.padding(
-                                    top = if (isFirst) 8.dp else 0.dp,
-                                    bottom = if (isLast) 8.dp else 0.dp
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        RivoListItem(
-                                            headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder),
-                                            supporting = buildString {
-                                                contact.nickname?.let { append("$it • ") }
-                                                contactNumber?.let { append(formatPhoneNumber(it)) }
-                                            }.ifEmpty { null },
-                                            avatarName = contact.name,
-                                            photoUri = contact.photoUri,
-                                            onClick = {
-                                                navigator.navigate(
-                                                    ContactDetailsScreenDestination(
-                                                        contactId = contact.id
-                                                    )
-                                                )
-                                            }
-                                        )
-                                    }
+                            RivoListItem(
+                                headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder),
+                                supporting = buildString {
+                                    contact.nickname?.let { append("$it • ") }
+                                    contactNumber?.let { append(formatPhoneNumber(it)) }
+                                }.ifEmpty { null },
+                                avatarName = contact.name,
+                                photoUri = contact.photoUri,
+                                trailingContent = {
                                     contactNumber?.let { num ->
                                         IconButton(
                                             onClick = { performCall(num, contact.id) },
-                                            modifier = Modifier.padding(end = 8.dp)
+                                            modifier = Modifier.padding(end = 4.dp)
                                         ) {
                                             Icon(
                                                 Icons.Rounded.Call,
@@ -394,14 +370,15 @@ fun DialPadScreen(
                                             )
                                         }
                                     }
-                                }
-                                if (!isLast) {
-                                    RivoDivider(
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp),
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                },
+                                onClick = {
+                                    navigator.navigate(
+                                        ContactDetailsScreenDestination(
+                                            contactId = contact.id
+                                        )
                                     )
                                 }
-                            }
+                            )
                         }
                     }
                 }

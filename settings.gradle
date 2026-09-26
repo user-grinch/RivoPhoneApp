@@ -23,7 +23,10 @@ dependencyResolutionManagement {
 rootProject.name = "Rivo4"
 include ':app'
 
-def externalBuildDir = System.getenv("GRADLE_BUILD_DIR") ?: "${System.getProperty("user.home")}/.gradle-builds/${rootProject.name}"
+def externalBuildDir = System.getenv("GRADLE_BUILD_DIR")
+if (!externalBuildDir && System.getenv("CI") == null && System.getenv("GITHUB_ACTIONS") == null) {
+    externalBuildDir = "${System.getProperty("user.home")}/.gradle-builds/${rootProject.name}"
+}
 if (externalBuildDir) {
     gradle.beforeProject { proj ->
         if (proj == proj.rootProject) {

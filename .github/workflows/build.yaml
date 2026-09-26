@@ -54,14 +54,20 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
           PREVIEW_BUILD: ${{ github.ref == 'refs/heads/main' }}
           GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
+          GRADLE_BUILD_DIR: ""
         run: |
           sed -i '/org.gradle.java.home/d' gradle.properties
           ./gradlew assemblePlayRelease assembleFossRelease bundlePlayRelease
 
       - name: Collect outputs
         run: |
-          mkdir outputs
-          find . -type f \( -name "RivoPhone-*.apk" -o -name "RivoPhone-*.aab" \) -exec cp {} outputs/ \;
+          mkdir -p outputs
+          find . -type f \( -name "*.apk" -o -name "*.aab" \) -exec cp {} outputs/ \;
+          if [ -d "$HOME/.gradle-builds" ]; then
+            find "$HOME/.gradle-builds" -type f \( -name "*.apk" -o -name "*.aab" \) -exec cp {} outputs/ \;
+          fi
+          echo "Collected files in outputs/:"
+          ls -lah outputs/
 
       - name: Extract Signing Certificate Fingerprint
         run: |
@@ -75,7 +81,7 @@ jobs:
       - name: Generate SHA256 checksums
         run: |
           cd outputs
-          sha256sum * > SHA256SUMS.txt
+          sha256sum * > SHA256SUMS.txt || true
           for f in *; do
             # Don't generate a checksum of a checksum file
             if [[ "$f" != *.sha256 && "$f" != "SHA256SUMS.txt" ]]; then
@@ -87,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Release-Artifacts
-          path: outputs/*
+          path: outputs/
 
       # Only run these steps if the push/PR is to the main branch
       - name: Delete old release and tag

@@ -307,15 +307,8 @@ fun ContactSearchContent(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
-                            item {
-                                RivoSectionHeader(
-                                    title = stringResource(R.string.search_results_header),
-                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
-                                )
-                            }
-
                             item {
                                 com.grinch.rivo4.view.components.ad.BannerAd()
                             }
@@ -324,7 +317,8 @@ fun ContactSearchContent(
                                 item {
                                     RivoSectionHeader(
                                         title = stringResource(R.string.nav_contacts),
-                                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+                                        contentPadding = PaddingValues(horizontal = 4.dp)
                                     )
                                 }
 
@@ -369,7 +363,8 @@ fun ContactSearchContent(
                                 item {
                                     RivoSectionHeader(
                                         title = stringResource(R.string.nav_recents),
-                                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+                                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+                                        contentPadding = PaddingValues(horizontal = 4.dp)
                                     )
                                 }
 

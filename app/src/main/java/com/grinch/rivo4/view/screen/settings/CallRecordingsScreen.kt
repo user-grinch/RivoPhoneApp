@@ -19,6 +19,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -451,18 +452,27 @@ fun CallRecordingsContent(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Search & Filter Header
-                Column(
+                // Modern MD3 Expressive Search Surface
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shadowElevation = 0.dp
                 ) {
-                    OutlinedTextField(
+                    TextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Search recordings…") },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
@@ -470,73 +480,79 @@ fun CallRecordingsContent(
                                 }
                             }
                         },
-                        singleLine = true,
-                        shape = RoundedCornerShape(24.dp)
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                        ),
+                        singleLine = true
                     )
+                }
 
-                    Spacer(Modifier.height(8.dp))
+                // Filter Chips Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    DateFilterPreset.entries.forEach { preset ->
+                        FilterChip(
+                            selected = datePreset == preset,
+                            onClick = {
+                                datePreset = preset
+                                if (preset == DateFilterPreset.CUSTOM) {
+                                    showFromDatePicker = true
+                                }
+                            },
+                            label = { Text(dateFormatPresetLabel(preset)) },
+                            leadingIcon = if (datePreset == preset) {
+                                {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            } else null
+                        )
+                    }
+                }
 
+                if (uniqueCallerLabels.size > 1) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 2.dp)
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        DateFilterPreset.entries.forEach { preset ->
+                        FilterChip(
+                            selected = selectedFilterNumber == null,
+                            onClick = { selectedFilterNumber = null },
+                            label = { Text("All Contacts") }
+                        )
+                        uniqueCallerLabels.forEach { label ->
                             FilterChip(
-                                selected = datePreset == preset,
+                                selected = selectedFilterNumber == label,
                                 onClick = {
-                                    datePreset = preset
-                                    if (preset == DateFilterPreset.CUSTOM) {
-                                        showFromDatePicker = true
-                                    }
+                                    selectedFilterNumber = if (selectedFilterNumber == label) null else label
                                 },
-                                label = { Text(dateFormatPresetLabel(preset)) },
-                                leadingIcon = if (datePreset == preset) {
-                                    {
-                                        Icon(
-                                            Icons.Default.Check,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                } else null
+                                label = { Text(label) }
                             )
-                        }
-                    }
-
-                    if (uniqueCallerLabels.size > 1) {
-                        Spacer(Modifier.height(4.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState()),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            FilterChip(
-                                selected = selectedFilterNumber == null,
-                                onClick = { selectedFilterNumber = null },
-                                label = { Text("All Contacts") }
-                            )
-                            uniqueCallerLabels.forEach { label ->
-                                FilterChip(
-                                    selected = selectedFilterNumber == label,
-                                    onClick = {
-                                        selectedFilterNumber = if (selectedFilterNumber == label) null else label
-                                    },
-                                    label = { Text(label) }
-                                )
-                            }
                         }
                     }
                 }
 
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                Spacer(Modifier.height(4.dp))
 
                 if (isLoadingRecordings) {
-                    RivoLoadingIndicatorView(modifier = Modifier.fillMaxSize())
+                    RecordingLoadingIndicator(modifier = Modifier.fillMaxSize())
                 } else if (filteredRecordings.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -560,28 +576,28 @@ fun CallRecordingsContent(
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 80.dp),
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
-                        groupedRecordings.forEach { (header, itemsInGroup) ->
-                            item(key = "header_$header") {
-                                Text(
-                                    text = header,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(start = 4.dp, top = 8.dp, bottom = 4.dp)
+                        groupedRecordings.entries.forEachIndexed { groupIndex, (header, itemsInGroup) ->
+                            item(key = "header_${header}_$groupIndex") {
+                                RivoSectionHeader(
+                                    title = header,
+                                    modifier = Modifier.padding(top = if (groupIndex == 0) 4.dp else 16.dp, bottom = 4.dp),
+                                    contentPadding = PaddingValues(horizontal = 4.dp)
                                 )
                             }
 
-                            items(
+                            itemsIndexed(
                                 items = itemsInGroup,
-                                key = { it.file.absolutePath }
-                            ) { item ->
+                                key = { _, item -> item.file.absolutePath }
+                            ) { index, item ->
                                 val isCurrentActive = activePlayingFile?.absolutePath == item.file.absolutePath
+                                val shape = rivoGroupedItemShape(index, itemsInGroup.size)
 
                                 CallRecordEntryCard(
                                     item = item,
+                                    shape = shape,
                                     isCurrentActive = isCurrentActive,
                                     isPlaying = isCurrentActive && isRecordingPlaying,
                                     currentPositionMs = if (isCurrentActive) currentPositionMs else 0,
