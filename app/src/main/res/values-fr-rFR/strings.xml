@@ -302,6 +302,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Tonalité du clavier lors de la saisie</string>
     <string name="settings_sound_dialpad_vibration">Vibration du clavier</string>
     <string name="settings_sound_dialpad_vibration_supporting">Vibration du clavier lors de la saisie</string>
+    <string name="settings_sound_hold_zero_for_plus">Maintenir 0 pour +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Tapez + en maintenant le bouton 0 sur le pavé numérique</string>
     <string name="settings_sound_vibrate_on_answer">Vibrer au décrochage</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Vibrer lorsque le correspondant répond</string>
     <string name="settings_sound_vibrate_on_hangup">Vibrer au raccrochage</string>

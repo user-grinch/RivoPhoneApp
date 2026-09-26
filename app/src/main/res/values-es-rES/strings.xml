@@ -327,6 +327,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Tono de teclado que se reproduce durante la pulsación</string>
     <string name="settings_sound_dialpad_vibration">Vibración de marcador</string>
     <string name="settings_sound_dialpad_vibration_supporting">Vibración del marcador que se reproduce durante la pulsación</string>
+    <string name="settings_sound_hold_zero_for_plus">Mantén 0 para +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Escribe + manteniendo pulsado el botón 0 en el teclado</string>
     <string name="settings_sound_vibrate_on_answer">Vibrar al contestar</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Vibrar cuando la otra parte conteste</string>
     <string name="settings_sound_vibrate_on_hangup">Vibrar al colgar</string>
