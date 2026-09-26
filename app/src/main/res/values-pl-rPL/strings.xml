@@ -851,4 +851,13 @@
     <string name="settings_sound_dnd_during_calls">Nie przeszkadzać podczas połączeń</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatycznie wycisz powiadomienia i inne przerwy podczas połączenia</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Tła połączenia</string>
+    <string name="settings_call_unknown_background">Nieznane tło połączenia</string>
+    <string name="settings_call_unknown_background_set">Niestandardowy obraz jest wyświetlany dla nieznanych rozmówców</string>
+    <string name="settings_call_unknown_background_none">Nie ustawione — używa domyślnego tła połączenia</string>
+    <string name="settings_call_unknown_background_supporting">Pokazuj przy połączeniach przychodzących z nieznanych lub niezapisanych numerów telefonów.</string>
+    <string name="settings_call_background_no_preview">Brak niestandardowego tła</string>
+    <string name="settings_call_background_change_gallery">Zmień obraz</string>
+    <string name="settings_call_background_choose_gallery">Wybierz z galerii</string>
+    <string name="settings_call_background_remove">Usuń tło</string>
 </resources>

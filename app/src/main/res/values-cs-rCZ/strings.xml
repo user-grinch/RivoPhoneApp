@@ -107,4 +107,9 @@
     <string name="settings_call_unknown_background">Neznámé pozadí hovoru</string>
     <string name="settings_call_unknown_background_set">Vlastní obrázek je zobrazen pro neznámé volače</string>
     <string name="settings_call_unknown_background_none">Není nastaveno — používá výchozí pozadí hovoru</string>
+    <string name="settings_call_unknown_background_supporting">Zobrazeno při příchozích hovorech z neznámých nebo neuložených telefonních čísel.</string>
+    <string name="settings_call_background_no_preview">Žádné vlastní pozadí</string>
+    <string name="settings_call_background_change_gallery">Změnit obrázek</string>
+    <string name="settings_call_background_choose_gallery">Vybrat z galerie</string>
+    <string name="settings_call_background_remove">Odstranit pozadí</string>
 </resources>

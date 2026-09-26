@@ -100,4 +100,13 @@
     <string name="settings_sound_dnd_during_calls">通話中はマナーモードにする</string>
     <string name="settings_sound_dnd_during_calls_supporting">通話中に通知やその他の中断を自動的にサイレントにする</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">コールの背景</string>
+    <string name="settings_call_unknown_background">不明な通話の背景</string>
+    <string name="settings_call_unknown_background_set">不明な発信者のためのカスタム画像が表示されます</string>
+    <string name="settings_call_unknown_background_none">設定されていません — 既定の通話背景を使用します</string>
+    <string name="settings_call_unknown_background_supporting">不明または保存されていない電話番号からの着信時に表示されます。</string>
+    <string name="settings_call_background_no_preview">カスタムの背景がありません</string>
+    <string name="settings_call_background_change_gallery">画像の変更</string>
+    <string name="settings_call_background_choose_gallery">ギャラリーから選択</string>
+    <string name="settings_call_background_remove">背景を削除</string>
 </resources>

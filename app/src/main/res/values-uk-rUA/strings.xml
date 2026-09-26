@@ -101,4 +101,13 @@
     <string name="settings_sound_dnd_during_calls">Режим \"Не турбувати\" під час дзвінків</string>
     <string name="settings_sound_dnd_during_calls_supporting">Автоматично вимикати сповіщення та інші переривання під час дзвінка</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Набрати фони</string>
+    <string name="settings_call_unknown_background">Невідомий фон виклику</string>
+    <string name="settings_call_unknown_background_set">Зображення для невідомих абонентів показано на екрані блокування</string>
+    <string name="settings_call_unknown_background_none">Не встановлено — тло виклику за замовчуванням</string>
+    <string name="settings_call_unknown_background_supporting">Показані вхідні дзвінки з невідомих або незбережених телефонних номерів.</string>
+    <string name="settings_call_background_no_preview">Немає користувацького фону</string>
+    <string name="settings_call_background_change_gallery">Змінити зображення</string>
+    <string name="settings_call_background_choose_gallery">З галереї</string>
+    <string name="settings_call_background_remove">Видалити тло</string>
 </resources>

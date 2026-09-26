@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Ikke forstyrr under samtaler</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatisk dempe varsler og andre avbrudd på en samtale</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Omtale bakgrunner</string>
+    <string name="settings_call_unknown_background">Ukjent samtale-bakgrunn</string>
+    <string name="settings_call_unknown_background_set">Egendefinert bilde vises for ukjente oppringere</string>
+    <string name="settings_call_unknown_background_none">Ikke angitt — bruker standard samtalebakgrunn</string>
+    <string name="settings_call_unknown_background_supporting">Vist ved innkommende anrop fra ukjente eller ulagrede telefonnumre.</string>
+    <string name="settings_call_background_no_preview">Ingen tilpasset bakgrunn</string>
+    <string name="settings_call_background_change_gallery">Endre bilde</string>
+    <string name="settings_call_background_choose_gallery">Velg fra galleri</string>
+    <string name="settings_call_background_remove">Fjern bakgrunn</string>
 </resources>

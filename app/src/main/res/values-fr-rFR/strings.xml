@@ -541,4 +541,9 @@
     <string name="settings_call_unknown_background">Fond d\'appel inconnu</string>
     <string name="settings_call_unknown_background_set">Une image personnalisée est affichée pour les appelants inconnus</string>
     <string name="settings_call_unknown_background_none">Non défini — utilise l\'arrière-plan d\'appel par défaut</string>
+    <string name="settings_call_unknown_background_supporting">Affiché sur les appels entrants provenant de numéros de téléphone inconnus ou non enregistrés.</string>
+    <string name="settings_call_background_no_preview">Pas d\'arrière-plan personnalisé</string>
+    <string name="settings_call_background_change_gallery">Changer l\'image</string>
+    <string name="settings_call_background_choose_gallery">Choisir dans la galerie</string>
+    <string name="settings_call_background_remove">Supprimer l\'arrière-plan</string>
 </resources>

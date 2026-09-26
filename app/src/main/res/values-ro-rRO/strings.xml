@@ -108,4 +108,9 @@
     <string name="settings_call_unknown_background">Fundal apel necunoscut</string>
     <string name="settings_call_unknown_background_set">O imagine personalizată este afișată pentru apelanți necunoscuți</string>
     <string name="settings_call_unknown_background_none">Nu este setat — folosește fundalul de apel implicit</string>
+    <string name="settings_call_unknown_background_supporting">Afișat la apelurile primite de la numere de telefon necunoscute sau nesalvate.</string>
+    <string name="settings_call_background_no_preview">Fara fundal personalizat</string>
+    <string name="settings_call_background_change_gallery">Schimbă imaginea</string>
+    <string name="settings_call_background_choose_gallery">Alege din galerie</string>
+    <string name="settings_call_background_remove">Elimină fundal</string>
 </resources>

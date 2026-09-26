@@ -103,4 +103,13 @@
     <string name="settings_sound_dnd_during_calls">Älä häiritse puheluiden aikana</string>
     <string name="settings_sound_dnd_during_calls_supporting">Hiljennä ilmoitukset ja muut keskeytykset automaattisesti puhelun aikana</string>
     <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Soita Taustalle</string>
+    <string name="settings_call_unknown_background">Tuntematon Puhelun Tausta</string>
+    <string name="settings_call_unknown_background_set">Mukautettu kuva näytetään tuntemattomille soittajille</string>
+    <string name="settings_call_unknown_background_none">Ei asetettu, — käyttää oletuskutsutaustaa</string>
+    <string name="settings_call_unknown_background_supporting">Näytetään saapuvat puhelut tuntemattomista tai tallentamattomista puhelinnumeroista.</string>
+    <string name="settings_call_background_no_preview">Ei mukautettua taustaa</string>
+    <string name="settings_call_background_change_gallery">Vaihda kuva</string>
+    <string name="settings_call_background_choose_gallery">Valitse galleriasta</string>
+    <string name="settings_call_background_remove">Poista tausta</string>
 </resources>
