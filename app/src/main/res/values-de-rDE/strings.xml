@@ -51,7 +51,7 @@
     <string name="label_local_memory">Lokaler Speicher</string>
     <string name="option_standard">Standard</string>
     <string name="ringtone_default">Standard</string>
-    <string name="ringtone_custom">Individuell</string>
+    <string name="ringtone_custom">Benutzerdefiniert</string>
     <string name="empty_state_try_clearing_filters">Versuchen Sie, Ihre Filter zu entfernen, oder fügen Sie einen neuen Kontakt hinzu.</string>
     <string name="date_today">Heute</string>
     <string name="date_yesterday">Gestern</string>
@@ -159,7 +159,7 @@
     <string name="contact_recent_activity_title">Letzte Aktivität</string>
     <string name="contact_show_full_history">Gesamten Verlauf anzeigen</string>
     <string name="contact_settings_title">Kontakt-Einstellungen</string>
-    <string name="contact_custom_ringtone">Individueller Klingelton</string>
+    <string name="contact_custom_ringtone">Benutzerdefinierter Klingelton</string>
     <string name="contact_select_ringtone">Klingelton auswählen</string>
     <string name="contact_share">Kontaktdaten teilen</string>
     <string name="contact_share_description">Kontaktdaten versenden</string>
@@ -578,7 +578,7 @@
     <string name="settings_interface_hide_avatar_with_bg_supporting">Bei Hintergrund kein Anrufer-Avatar</string>
     <string name="settings_interface_use_cards">Expressive Cards benutzen</string>
     <string name="settings_interface_use_cards_supporting">Unter \"Zuletzt\" und \"Kontakte\"</string>
-    <string name="contact_call_background_set">Ausgewähltes individuelles Bild</string>
+    <string name="contact_call_background_set">Benutzerdefiniertes Bild ausgewählt</string>
     <string name="contact_call_background_none">Standard-Hintergrund verwenden</string>
     <string name="contact_call_background_choose">Bild auswählen</string>
     <string name="contact_call_background_change">Bild ändern</string>
@@ -603,8 +603,8 @@
     <string name="settings_call_recording_auto_supporting">Aufnahme automatisch starten, wenn Anruf beginnt</string>
     <string name="settings_call_recording_notice">Die Aufnahme von Anrufen könnte von Ihrem Gerät oder aufgrund von Gesetzen eingeschränkt sein. Stellen Sie sicher, dass die Aufnahme erlaubt ist, bevor Sie diese Funktion nutzen.</string>
     <string name="settings_call_default_background">Standard Anruf-Hintergrund</string>
-    <string name="settings_call_default_background_set">Ein individuelles Bild wird bei jedem Anruf gezeigt</string>
-    <string name="settings_call_default_background_none">Nicht festgelegt - Anrufe nutzen App-Design</string>
+    <string name="settings_call_default_background_set">Ein benutzerdefiniertes Bild wird bei jedem Anruf gezeigt</string>
+    <string name="settings_call_default_background_none">Nicht festgelegt — Standard-Anrufhintergrund wird verwendet</string>
     <string name="settings_call_default_background_choose">Bild auswählen</string>
     <string name="settings_call_default_background_change">Ändern</string>
     <string name="settings_call_default_background_supporting">Wird bei jedem eingehenden und ausgehenden Anruf gezeigt, es sei denn, ein Kontakt hat seinen eigenen Hintergrund.</string>
@@ -848,7 +848,7 @@
     <string name="settings_call_backgrounds_title">Anrufhintergründe</string>
     <string name="settings_call_unknown_background">Hintergrund für unbekannte Anrufer</string>
     <string name="settings_call_unknown_background_set">Ein benutzerdefiniertes Bild wird für unbekannte Anrufer angezeigt</string>
-    <string name="settings_call_unknown_background_none">Nicht festgelegt — verwendet Standard-Anrufhintergrund</string>
+    <string name="settings_call_unknown_background_none">Nicht festgelegt — Standard-Anrufhintergrund wird verwendet</string>
     <string name="settings_call_unknown_background_supporting">Wird bei eingehenden Anrufen von unbekannten oder ungespeicherten Telefonnummern angezeigt.</string>
     <string name="settings_call_background_no_preview">Kein eigener Hintergrund</string>
     <string name="settings_call_background_change_gallery">Bild ändern</string>

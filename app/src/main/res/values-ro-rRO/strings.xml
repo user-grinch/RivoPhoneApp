@@ -27,6 +27,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Țineți apăsat 0 pentru +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Scrie + prin apăsarea butonului 0 pe tastatura numerică</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Difuzor automat</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Comutaţi la difuzor atunci când nu sunteţi în ureche, căşti în apropierea urechii (suprimate atunci când sunt conectate căşti)</string>
