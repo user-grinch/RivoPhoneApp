@@ -140,8 +140,8 @@ fun AddToContactBottomSheet(
                 roundness = roundness,
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onDismissRequest()
                     onCreateNewContact()
+                    onDismissRequest()
                 }
             )
 
@@ -157,8 +157,8 @@ fun AddToContactBottomSheet(
                 roundness = roundness,
                 onClick = {
                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onDismissRequest()
                     onAddToExistingContact()
+                    onDismissRequest()
                 }
             )
 
@@ -241,12 +241,10 @@ private fun AddToContactOptionCard(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
-            Spacer(modifier = Modifier.width(8.dp))
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

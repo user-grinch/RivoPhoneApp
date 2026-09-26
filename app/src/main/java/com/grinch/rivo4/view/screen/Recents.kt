@@ -250,25 +250,24 @@ fun RecentScreenContent(
     }
 
     if (addToContactNumber != null) {
+        val targetPhone = addToContactNumber!!
         AddToContactBottomSheet(
-            phoneNumber = addToContactNumber!!,
+            phoneNumber = targetPhone,
             onDismissRequest = { addToContactNumber = null },
             onCreateNewContact = {
-                val num = addToContactNumber
                 addToContactNumber = null
                 navigator.navigate(
                     ContactEditScreenDestination(
-                        initialPhone = num
+                        initialPhone = targetPhone
                     )
                 )
             },
             onAddToExistingContact = {
-                val num = addToContactNumber
                 addToContactNumber = null
                 navigator.navigate(
                     ContactSelectionScreenDestination(
                         title = "Add to Existing Contact",
-                        initialPhoneToAssign = num
+                        initialPhoneToAssign = targetPhone
                     )
                 )
             }
