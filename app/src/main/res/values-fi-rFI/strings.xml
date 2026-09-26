@@ -88,5 +88,19 @@
     <string name="call_analytics_disabled_desc">Puhelun analytiikka ja puheajan seuranta on tällä hetkellä pois päältä. Ota tämä asetus käyttöön, jos haluat laskea puheajan, ruuhka-ajan ja yhteystietojen tallentamisen.</string>
     <string name="call_analytics_enable_action">Ota Analytics &amp; Seuranta Käyttöön</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Oletus SIM-kortti</string>
+    <string name="contact_default_sim_supporting">Valitse SIM-kortti käyttääksesi tätä yhteystietoa soitettaessa</string>
+    <string name="sim_remember_for_contact">Käytä aina tätä SIM-korttia tähän yhteystietoon</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Tallennustila &amp; Sijainti</string>
+    <string name="settings_recording_save_folder">Tallenna Sijainti</string>
+    <string name="settings_recording_save_folder_default">Oletus (Tallenteet/Rivo Tallenteet)</string>
+    <string name="settings_recording_reset_folder">Palauta oletuskansio</string>
+    <string name="settings_recording_reset_folder_supporting">Tallenna tallenteet tavalliseen Rivo Recordings -hakemistoon</string>
+    <string name="settings_recording_folder_changed">Tallenna sijainti päivitetty: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Tallenna sijainnin palautus oletukseksi</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Älä häiritse puheluiden aikana</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Hiljennä ilmoitukset ja muut keskeytykset automaattisesti puhelun aikana</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

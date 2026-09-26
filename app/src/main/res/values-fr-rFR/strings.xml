@@ -525,7 +525,20 @@
     <string name="contact_default_sim">Carte SIM par défaut</string>
     <string name="contact_default_sim_supporting">Choisissez la carte SIM à utiliser lors de l\'appel à ce contact</string>
     <string name="sim_remember_for_contact">Toujours utiliser cette carte SIM pour ce contact</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Stockage &amp; Localisation</string>
+    <string name="settings_recording_save_folder">Enregistrer l\'emplacement</string>
+    <string name="settings_recording_save_folder_default">Par défaut (Enregistrements/Enregistrements Rivos)</string>
+    <string name="settings_recording_reset_folder">Rétablir le dossier par défaut</string>
+    <string name="settings_recording_reset_folder_supporting">Enregistrer les enregistrements dans le répertoire des enregistrements Rivo standard</string>
+    <string name="settings_recording_folder_changed">Emplacement d\'enregistrement mis à jour : %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Enregistrer l\'emplacement réinitialisé à la valeur par défaut</string>
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Ne pas déranger pendant les appels</string>
     <string name="settings_sound_dnd_during_calls_supporting">Désactiver automatiquement les notifications et autres interruptions pendant un appel</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Arrière-plans des appels</string>
+    <string name="settings_call_unknown_background">Fond d\'appel inconnu</string>
+    <string name="settings_call_unknown_background_set">Une image personnalisée est affichée pour les appelants inconnus</string>
+    <string name="settings_call_unknown_background_none">Non défini — utilise l\'arrière-plan d\'appel par défaut</string>
 </resources>

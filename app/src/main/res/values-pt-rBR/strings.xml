@@ -88,5 +88,19 @@
     <string name="call_analytics_disabled_desc">O rastreamento do tempo de conversa e análise estão desativados no momento. Habilite esta opção para calcular o tempo de conversa, horas de pico e pontos de contato.</string>
     <string name="call_analytics_enable_action">Habilitar Análise &amp; Rastreamento</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Cartão SIM padrão</string>
+    <string name="contact_default_sim_supporting">Escolha qual SIM usar ao chamar este contato</string>
+    <string name="sim_remember_for_contact">Sempre usar este cartão SIM para este contato</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Armazenamento &amp; Localização</string>
+    <string name="settings_recording_save_folder">Salvar Local</string>
+    <string name="settings_recording_save_folder_default">Padrão (Gravações/Gravações de Rivo)</string>
+    <string name="settings_recording_reset_folder">Restaurar para a pasta padrão</string>
+    <string name="settings_recording_reset_folder_supporting">Salvar as gravações no diretório padrão Rivo Recordings</string>
+    <string name="settings_recording_folder_changed">Salvar localização atualizada: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Salvar a localização como padrão</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Não perturbe durante as chamadas</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Silenciar notificações e outras interrupções automaticamente durante uma chamada</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

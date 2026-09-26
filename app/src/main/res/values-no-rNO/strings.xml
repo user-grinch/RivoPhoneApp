@@ -88,5 +88,19 @@
     <string name="call_analytics_disabled_desc">Samtaletidssporing er slått av. Aktiver dette valget for å beregne tid, maks og kontakt innsikt.</string>
     <string name="call_analytics_enable_action">Aktiver Analytics &amp; sporing</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Standard SIM-kort</string>
+    <string name="contact_default_sim_supporting">Velg hvilket SIM du vil bruke når du ringer denne kontakten</string>
+    <string name="sim_remember_for_contact">Alltid bruk dette SIM-kortet for denne kontakten</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Lagringsplass &amp; Sted</string>
+    <string name="settings_recording_save_folder">Lagre plassering</string>
+    <string name="settings_recording_save_folder_default">Standard (Registreringer/Nagling-opptak)</string>
+    <string name="settings_recording_reset_folder">Tilbakestill til standard mappe</string>
+    <string name="settings_recording_reset_folder_supporting">Lagre opptak i standard mappen for opptak.</string>
+    <string name="settings_recording_folder_changed">Lagre stedsplassering oppdatert: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Lagre plassering tilbakestilt til standard</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Ikke forstyrr under samtaler</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Automatisk dempe varsler og andre avbrudd på en samtale</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

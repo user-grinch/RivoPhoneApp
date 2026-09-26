@@ -568,7 +568,20 @@
     <string name="contact_default_sim">Tarjeta SIM por defecto</string>
     <string name="contact_default_sim_supporting">Elige qué SIM usar al llamar a este contacto</string>
     <string name="sim_remember_for_contact">Usar siempre esta SIM para este contacto</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Almacenamiento &amp; Ubicación</string>
+    <string name="settings_recording_save_folder">Guardar ubicación</string>
+    <string name="settings_recording_save_folder_default">Por defecto (Grabaciones/Rivo Grabaciones)</string>
+    <string name="settings_recording_reset_folder">Restablecer carpeta predeterminada</string>
+    <string name="settings_recording_reset_folder_supporting">Guardar grabaciones en el directorio estándar de Rivo Recordings</string>
+    <string name="settings_recording_folder_changed">Guardar ubicación actualizada: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Guardar ubicación restablecida por defecto</string>
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">No molestar durante las llamadas</string>
     <string name="settings_sound_dnd_during_calls_supporting">Silenciar automáticamente las notificaciones y otras interrupciones durante una llamada</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Fondo de llamadas</string>
+    <string name="settings_call_unknown_background">Fondo de llamada desconocido</string>
+    <string name="settings_call_unknown_background_set">Se muestra una imagen personalizada para llamadas desconocidas</string>
+    <string name="settings_call_unknown_background_none">No establecido — utiliza el fondo de llamada por defecto</string>
 </resources>

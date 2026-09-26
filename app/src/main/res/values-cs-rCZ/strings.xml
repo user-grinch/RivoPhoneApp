@@ -91,7 +91,20 @@
     <string name="contact_default_sim">Výchozí SIM karta</string>
     <string name="contact_default_sim_supporting">Vyberte, která SIM karta má být použita při volání tohoto kontaktu</string>
     <string name="sim_remember_for_contact">Vždy použít tuto SIM kartu pro tento kontakt</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Umístění úložiště &amp;</string>
+    <string name="settings_recording_save_folder">Uložit umístění</string>
+    <string name="settings_recording_save_folder_default">Výchozí (záznamy/Rivo záznamy)</string>
+    <string name="settings_recording_reset_folder">Obnovit výchozí složku</string>
+    <string name="settings_recording_reset_folder_supporting">Uložit nahrávky do standardního adresáře Rivo nahrávek</string>
+    <string name="settings_recording_folder_changed">Uložení aktualizováno: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Uložit resetované umístění do výchozího nastavení</string>
     <!-- Do Not Disturb during calls -->
     <string name="settings_sound_dnd_during_calls">Režim Nerušit během hovorů</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automaticky ztlumit oznámení a další přerušení při hovoru</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
+    <string name="settings_call_backgrounds_title">Pozadí hovoru</string>
+    <string name="settings_call_unknown_background">Neznámé pozadí hovoru</string>
+    <string name="settings_call_unknown_background_set">Vlastní obrázek je zobrazen pro neznámé volače</string>
+    <string name="settings_call_unknown_background_none">Není nastaveno — používá výchozí pozadí hovoru</string>
 </resources>

@@ -87,5 +87,18 @@
     <string name="call_analytics_disabled_title">Аналітика викликів &amp; Відстеження вимкнено</string>
     <string name="call_analytics_disabled_desc">Викликати аналітику і відстежування часу розмови в даний час вимкнено. Увімкніть цю опцію для обчислення часу розмови, пікових годин і зверніться до особистої інформації.</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">SIM-карта за замовчуванням</string>
+    <string name="contact_default_sim_supporting">Виберіть, яку SIM-карту використовувати при дзвінках цього контакту</string>
+    <string name="sim_remember_for_contact">Завжди використовувати цю SIM-карту для цього контакту</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_save_folder">Зберегти розташування</string>
+    <string name="settings_recording_save_folder_default">Типовий (запис/Rivo записування)</string>
+    <string name="settings_recording_reset_folder">Відновити папку за замовчуванням</string>
+    <string name="settings_recording_reset_folder_supporting">Зберегти записи у стандартний каталог Rivo запис</string>
+    <string name="settings_recording_folder_changed">Зберегти оновлено: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Скинути налаштування місця розташування</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Режим \"Не турбувати\" під час дзвінків</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Автоматично вимикати сповіщення та інші переривання під час дзвінка</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

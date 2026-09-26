@@ -88,5 +88,19 @@
     <string name="call_analytics_disabled_desc">Samtalsanalys och taltidsmätning är för närvarande avstängda. Aktivera detta alternativ för att beräkna taltid, högtrafik och kontaktinsikter.</string>
     <string name="call_analytics_enable_action">Aktivera Analytics &amp; Spårning</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Standard SIM-kort</string>
+    <string name="contact_default_sim_supporting">Välj vilket SIM-kort som ska användas när du ringer denna kontakt</string>
+    <string name="sim_remember_for_contact">Använd alltid detta SIM-kort för denna kontakt</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Lagring &amp; Plats</string>
+    <string name="settings_recording_save_folder">Spara plats</string>
+    <string name="settings_recording_save_folder_default">Standard (Inspelningar/Rivo inspelningar)</string>
+    <string name="settings_recording_reset_folder">Återställ till standardmapp</string>
+    <string name="settings_recording_reset_folder_supporting">Spara inspelningar till standard Rivo Recordings katalog</string>
+    <string name="settings_recording_folder_changed">Spara plats uppdaterad: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Spara plats återställs till standard</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Stör ej under samtal</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Tysta automatiskt aviseringar och andra avbrott under ett samtal</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

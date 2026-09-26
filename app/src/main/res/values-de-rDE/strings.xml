@@ -144,7 +144,7 @@
     <string name="contact_bullet_recent">" Zuletzt"</string>
     <string name="content_desc_favorite">Favorit</string>
     <string name="contact_clear_favorite">Favoriten leeren</string>
-    <string name="contact_set_as_favorite">Als Favorit setzen</string>
+    <string name="contact_set_as_favorite">Als Favorit festlegen</string>
     <string name="contact_copy_to_clipboard">In die Zwischenablage kopieren</string>
     <string name="contact_clear_default">Standard leeren</string>
     <string name="contact_set_as_default">Als Standard festlegen</string>
@@ -321,7 +321,7 @@
     <string name="settings_interface_roundness_rounded">Gerundet</string>
     <string name="settings_interface_roundness_semi_square">Halb quadratisch</string>
     <string name="settings_interface_roundness_square">Quadratisch</string>
-    <string name="settings_interface_default_bottom_bar">Standard setzen</string>
+    <string name="settings_interface_default_bottom_bar">Standard-Tab</string>
     <string name="settings_interface_default_bottom_bar_supporting">Auswahl des Start-Tabs</string>
     <string name="settings_interface_flip_bottom_bar">Tauschen</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Tauscht die Tab-Position von \"Kontakte\" &amp; \"Zuletzt\"</string>
@@ -353,7 +353,7 @@
     <string name="number_copied_toast">Nummer in Zwischenablage kopiert</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_title">Anruf-Einstellungen</string>
-    <string name="settings_call_speed_dial">Schnellwahl</string>
+    <string name="settings_call_speed_dial">Kurzwahl</string>
     <string name="settings_call_enabled">Aktiviert</string>
     <string name="settings_call_disabled">Deaktiviert</string>
     <string name="settings_call_default_sim">Standard-SIM-Karte</string>
@@ -451,7 +451,7 @@
     <string name="settings_manage_merge_duplicates">Duplikate zusammenführen</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Kontakt-Sichtbarkeit</string>
-    <string name="settings_visibility_description">Auswählen, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
+    <string name="settings_visibility_description">Auswahl, welche Konten in Ihrer Kontaktliste sichtbar sein sollen. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
     <string name="settings_visibility_accounts_header">Konten</string>
     <string name="settings_visibility_local_memory_supporting">Auf Gerät gespeichert</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
@@ -462,9 +462,9 @@
     <string name="settings_private_empty">Keine Kontakte im privaten Speicher gefunden</string>
     <string name="settings_private_manage_hint">Kontakte im privaten Speicher verwalten</string>
     <!-- Settings > Speed dial -->
-    <string name="settings_speed_dial_title">Schnellwahl</string>
-    <string name="settings_speed_dial_enable">Schnellwahl aktivieren</string>
-    <string name="settings_speed_dial_enable_supporting">Langer Tastendruck um einen zugeordneten Kontakt anzurufen</string>
+    <string name="settings_speed_dial_title">Kurzwahl</string>
+    <string name="settings_speed_dial_enable">Kurzwahl aktivieren</string>
+    <string name="settings_speed_dial_enable_supporting">Langer Tastendruck für Kurzwahl</string>
     <string name="settings_speed_dial_assignments_header">Zuordnungen</string>
     <string name="settings_speed_dial_not_assigned">Nicht zugeordnet</string>
     <string name="content_desc_assign">Zuordnen</string>
@@ -700,7 +700,7 @@
     <!-- Contact Management & Duplicates -->
     <string name="settings_contacts_management_title">Kontakte &amp; Speicher</string>
     <string name="settings_contact_management_headline">Kontakt-Verwaltung</string>
-    <string name="settings_contact_management_supporting">Duplikate zusammenführen, Kontakte zwischen SIM-Karten, Gerät &amp; Konten transferieren</string>
+    <string name="settings_contact_management_supporting">Duplikate zusammenführen, Kontakte zwischen SIM, Gerät &amp; Konten transferieren</string>
     <string name="contact_management_title">Kontakt-Verwaltung</string>
     <string name="contact_management_storage_overview">Speicher-Übersicht</string>
     <string name="contact_management_duplicates_title">Doppelte Kontakte</string>
@@ -713,7 +713,7 @@
     <string name="contact_management_merge_group_btn">Zusammenführen</string>
     <string name="contact_management_ignore_btn">Verwerfen</string>
     <string name="contact_management_move_title">Kontakte transferieren</string>
-    <string name="contact_management_move_supporting">Kontakte zwischen SIM-Karten, Gerätespeicher, Konten und privatem Speicher verschieben</string>
+    <string name="contact_management_move_supporting">Kontakte zwischen SIM, Gerätespeicher, Konten und privatem Speicher verschieben</string>
     <string name="contact_management_move_from">Von</string>
     <string name="contact_management_move_to">Nach</string>
     <string name="contact_management_select_to_move">Zu verschiebende Kontakte auswählen</string>
@@ -830,5 +830,19 @@
     <string name="call_analytics_disabled_desc">Anrufstatistik und Gesprächszeit-Auswertung sind derzeit deaktiviert. Aktivieren Sie diese Option, um Gesprächszeiten, Spitzenstunden und Kontaktdaten auszuwerten.</string>
     <string name="call_analytics_enable_action">Statistik &amp; Auswertungen aktivieren</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Standard SIM-Karte</string>
+    <string name="contact_default_sim_supporting">Wählen Sie die SIM-Karte für den Anruf dieses Kontakts aus</string>
+    <string name="sim_remember_for_contact">Diese SIM-Karte immer für diesen Kontakt verwenden</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Speicherort &amp;</string>
+    <string name="settings_recording_save_folder">Speicherort</string>
+    <string name="settings_recording_save_folder_default">Standard (Aufzeichnungen/Rivo-Aufzeichnungen)</string>
+    <string name="settings_recording_reset_folder">Auf Standardordner zurücksetzen</string>
+    <string name="settings_recording_reset_folder_supporting">Aufnahmen im Standard Rivo Recordings Verzeichnis speichern</string>
+    <string name="settings_recording_folder_changed">Speicherort aktualisiert: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Standort auf Standard zurücksetzen</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Bei Anrufen nicht stören</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Benachrichtigungen und andere Unterbrechungen während eines Anrufs automatisch ausschalten</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>

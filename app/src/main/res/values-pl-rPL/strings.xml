@@ -836,5 +836,19 @@
     <string name="call_analytics_disabled_desc">Analityka połączeń i śledzenie czasu rozmów są obecnie wyłączone. Włącz tę opcję, aby obliczyć czas rozmowy, godziny szczytowe i spostrzeżenia kontaktów.</string>
     <string name="call_analytics_enable_action">Włącz analizę i śledzenie</string>
     <!-- Dual SIM per Contact -->
+    <string name="contact_default_sim">Domyślna karta SIM</string>
+    <string name="contact_default_sim_supporting">Wybierz, której karty SIM używać podczas dzwonienia do tego kontaktu</string>
+    <string name="sim_remember_for_contact">Zawsze używaj tej karty SIM dla tego kontaktu</string>
+    <!-- Call Recording Custom Save Folder -->
+    <string name="settings_recording_storage_title">Pamięć &amp; Lokalizacja</string>
+    <string name="settings_recording_save_folder">Zapisz lokalizację</string>
+    <string name="settings_recording_save_folder_default">Domyślne (Nagrywanie/Nagrywanie Rivo)</string>
+    <string name="settings_recording_reset_folder">Przywróć domyślny folder</string>
+    <string name="settings_recording_reset_folder_supporting">Zapisz nagrania do standardowego katalogu nagrań Rivo</string>
+    <string name="settings_recording_folder_changed">Zaktualizowano lokalizację: %1$s</string>
+    <string name="settings_recording_reset_folder_toast">Zapisz przywrócenie lokalizacji do domyślnego</string>
     <!-- Do Not Disturb during calls -->
+    <string name="settings_sound_dnd_during_calls">Nie przeszkadzać podczas połączeń</string>
+    <string name="settings_sound_dnd_during_calls_supporting">Automatycznie wycisz powiadomienia i inne przerwy podczas połączenia</string>
+    <!-- Unknown Call Background & Image Preview Strings -->
 </resources>
