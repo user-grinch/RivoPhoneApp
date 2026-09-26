@@ -673,7 +673,7 @@ fun CallLogFullContent(
                                         contentPadding = PaddingValues(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        itemsIndexed(favItems, key = { _, c -> c.id }) { index, contact ->
+                                        itemsIndexed(favItems, key = { _, c -> "${c.id}_${c.phoneNumbers.joinToString()}_" + c.name }) { index, contact ->
                                             val dragging = index == rowDragDropState.draggingItemIndex
                                             val itemModifier = if (dragging) {
                                                  Modifier

@@ -39,6 +39,7 @@ fun SoundVibrationScreen(
     
     var dtmfTone by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) }
     var dialpadVibration by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) }
+    var holdZeroForPlus by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HOLD_ZERO_FOR_PLUS, true)) }
     var vibrateOnAnswer by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, true)) }
     var vibrateOnHangup by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) }
     val settingsState by prefs.settingsChanged.collectAsState()
@@ -91,6 +92,18 @@ fun SoundVibrationScreen(
                             onCheckedChange = {
                                 dialpadVibration = it
                                 prefs.setBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, it)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_sound_hold_zero_for_plus),
+                            supporting = stringResource(R.string.settings_sound_hold_zero_for_plus_supporting),
+                            leadingIcon = Icons.Outlined.Add,
+                            checked = holdZeroForPlus,
+                            onCheckedChange = {
+                                holdZeroForPlus = it
+                                prefs.setBoolean(PreferenceManager.KEY_HOLD_ZERO_FOR_PLUS, it)
                             }
                         )
                     }

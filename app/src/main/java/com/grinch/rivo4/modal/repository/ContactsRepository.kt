@@ -665,14 +665,6 @@ class ContactsRepository(
 
             rawContactIds.forEach { rawContactId ->
                 ops.add(
-                    ContentProviderOperation.newUpdate(ContactsContract.RawContacts.CONTENT_URI)
-                        .withSelection("${ContactsContract.RawContacts._ID}=?", arrayOf(rawContactId))
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, contact.accountType)
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, contact.accountName)
-                        .build()
-                )
-
-                ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
                             "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
@@ -837,6 +829,12 @@ class ContactsRepository(
             contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+
+        // Keep favorite phone number preferences in sync if numbers were removed/modified
+        val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
+        if (currentFavNum != null && !effectivePhones.any { it.number == currentFavNum }) {
+            preferenceManager.setFavoriteNumber(contact.id, effectivePhones.firstOrNull()?.number)
         }
     }
 

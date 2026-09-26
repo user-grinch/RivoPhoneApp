@@ -470,14 +470,16 @@ fun DialPadScreen(
                                         context = context,
                                         onClick = onDigitClick,
                                         onLongClick = { digit ->
-                                            if (speedDialEnabled && number.isEmpty()) {
+                                            if (digit == "0") {
+                                                if (prefs.getBoolean(PreferenceManager.KEY_HOLD_ZERO_FOR_PLUS, true)) {
+                                                    onDigitClick("+")
+                                                }
+                                            } else if (speedDialEnabled && number.isEmpty()) {
                                                 val mapping = prefs.getString("speed_dial_$digit", null)
                                                 val speedNumber = mapping?.split("|")?.getOrNull(1)
                                                 if (speedNumber != null) {
                                                     callLauncher.dial(speedNumber, null)
                                                 }
-                                            } else if (digit == "0") {
-                                                onDigitClick("+")
                                             }
                                         }
                                     )
@@ -834,7 +836,14 @@ fun DialPadKey(
                     }
                     onClick(number)
                 },
-                onLongClick = onLongClick?.let { { it(number) } }
+                onLongClick = onLongClick?.let {
+                    {
+                        if (prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }
+                        it(number)
+                    }
+                }
             ),
         shape = RoundedCornerShape(cornerRadius),
         color = if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh

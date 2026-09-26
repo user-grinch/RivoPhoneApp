@@ -352,6 +352,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Dialpad tone that plays during keypress</string>
     <string name="settings_sound_dialpad_vibration">Dialpad vibration</string>
     <string name="settings_sound_dialpad_vibration_supporting">Dialpad vibration that plays during keypress</string>
+    <string name="settings_sound_hold_zero_for_plus">Hold 0 for +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Type + by holding the 0 button on the dialpad</string>
     <string name="settings_sound_vibrate_on_answer">Vibrate on Answer</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Vibrate when the other party answers</string>
     <string name="settings_sound_vibrate_on_hangup">Vibrate on Hang up</string>
