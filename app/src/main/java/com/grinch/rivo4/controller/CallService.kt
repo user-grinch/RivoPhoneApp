@@ -724,6 +724,7 @@ class CallService : InCallService() {
         if (calls.isEmpty()) {
             restoreDndIfEnabled()
             if (CallRecorder.isRecording.value) CallRecorder.stop()
+            com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
             removeForeground()
             cancelNotification()
         } else {

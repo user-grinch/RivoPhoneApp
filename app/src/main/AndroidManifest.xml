@@ -295,6 +295,11 @@
             android:foregroundServiceType="microphone"
             android:exported="false" />
 
+        <service
+            android:name=".controller.floating.FloatingCallService"
+            android:foregroundServiceType="phoneCall"
+            android:exported="false" />
+
 
         <receiver
             android:name=".controller.reminder.CallbackReminderReceiver"

@@ -196,10 +196,23 @@ object PermissionChecklistHelper {
     fun getRecommendedItems(context: Context): List<PermissionCheckItem> {
         val items = mutableListOf<PermissionCheckItem>()
 
-        if (com.grinch.rivo4.controller.util.OemPermissionHelper.isVivo()) {
+        if (com.grinch.rivo4.controller.util.OemPermissionHelper.isXiaomi()) {
             items.add(
                 PermissionCheckItem(
-                    id = "vivo_background_popup",
+                    id = "oem_lockscreen_popup",
+                    title = "MIUI Lock Screen & Pop-up",
+                    description = "Allow Rivo to show incoming calls on the lock screen and display pop-ups while running in background.",
+                    icon = Icons.Outlined.PictureInPicture,
+                    isGranted = hasOverlayPermission(context),
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Open Xiaomi Settings"
+                )
+            )
+        } else if (com.grinch.rivo4.controller.util.OemPermissionHelper.isVivo()) {
+            items.add(
+                PermissionCheckItem(
+                    id = "oem_lockscreen_popup",
                     title = "Vivo Background Pop-up",
                     description = "Allow Rivo to display incoming call screens and floating alerts over other apps on Vivo/iQOO devices.",
                     icon = Icons.Outlined.PictureInPicture,
@@ -207,6 +220,19 @@ object PermissionChecklistHelper {
                     isEssential = false,
                     actionType = PermissionActionType.SETTINGS,
                     actionLabel = "Open Vivo Settings"
+                )
+            )
+        } else if (com.grinch.rivo4.controller.util.OemPermissionHelper.isOemDevice()) {
+            items.add(
+                PermissionCheckItem(
+                    id = "oem_lockscreen_popup",
+                    title = "${com.grinch.rivo4.controller.util.OemPermissionHelper.getOemBrandDisplayName()} Permissions",
+                    description = "Allow Rivo to display incoming call screens on lockscreen and launch from background.",
+                    icon = Icons.Outlined.PictureInPicture,
+                    isGranted = hasOverlayPermission(context),
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Open OEM Settings"
                 )
             )
         }

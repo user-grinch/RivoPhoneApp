@@ -82,15 +82,35 @@ data class CallRecordingItem(
 )
 
 /**
+ * Extracts a human-friendly caller or contact label from a recording filename.
+ * Handles formats like:
+ * - ContactName_20260926_153000
+ * - +1234567890_20260926_153000
+ * - call_20260926_153000
+ * - Custom names or single tokens
+ */
+fun extractCallerLabel(nameWithoutExtension: String): String {
+    val parts = nameWithoutExtension.split('_')
+    return when {
+        parts.size >= 3 -> {
+            // Drop date and time parts at end (e.g. yyyyMMdd and HHmmss)
+            parts.dropLast(2).joinToString("_").ifBlank { nameWithoutExtension }
+        }
+        parts.size == 2 -> {
+            parts.first().ifBlank { nameWithoutExtension }
+        }
+        else -> nameWithoutExtension
+    }
+}
+
+/**
  * Converts a raw recording [File] into a pre-computed [CallRecordingItem].
  */
 fun File.toCallRecordingItem(context: Context): CallRecordingItem {
     val lastMod = this.lastModified()
     val kb = this.length() / 1024
     val sizeStr = if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
-    val caller = this.nameWithoutExtension
-        .substringBeforeLast('_')
-        .substringBeforeLast('_')
+    val caller = extractCallerLabel(this.nameWithoutExtension)
     val duration = AudioMetadataCache.getDurationMsSync(context, this)
 
     return CallRecordingItem(
@@ -239,9 +259,7 @@ fun CallRecordingsContent(
                 val lastMod = file.lastModified()
                 val kb = file.length() / 1024
                 val sizeStr = if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
-                val caller = file.nameWithoutExtension
-                    .substringBeforeLast('_')
-                    .substringBeforeLast('_')
+                val caller = extractCallerLabel(file.nameWithoutExtension)
                 val duration = AudioMetadataCache.getDurationMsSync(context, file)
 
                 CallRecordingItem(
@@ -361,14 +379,17 @@ fun CallRecordingsContent(
     }
 
     val filteredRecordings = remember(recordings, searchQuery, effectiveFrom, effectiveTo, selectedFilterNumber) {
+        val query = searchQuery.trim()
+        val filterNum = selectedFilterNumber?.trim()
         recordings.filter { item ->
             val timestamp = item.lastModified
             val matchesFrom = effectiveFrom == null || timestamp >= effectiveFrom
             val matchesTo = effectiveTo == null || timestamp <= effectiveTo
-            val matchesSearch =
-                searchQuery.isBlank() || item.nameWithoutExtension.contains(searchQuery, ignoreCase = true)
-            val matchesFilter =
-                selectedFilterNumber == null || item.callerLabel.equals(selectedFilterNumber, ignoreCase = true)
+            val matchesSearch = query.isBlank() ||
+                item.nameWithoutExtension.contains(query, ignoreCase = true) ||
+                item.callerLabel.contains(query, ignoreCase = true)
+            val matchesFilter = filterNum.isNullOrBlank() ||
+                item.callerLabel.equals(filterNum, ignoreCase = true)
             matchesFrom && matchesTo && matchesSearch && matchesFilter
         }
     }
@@ -558,7 +579,10 @@ fun CallRecordingsContent(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(24.dp)
+                        ) {
                             Icon(
                                 imageVector = Icons.Outlined.GraphicEq,
                                 contentDescription = null,
@@ -567,10 +591,40 @@ fun CallRecordingsContent(
                             )
                             Spacer(Modifier.height(12.dp))
                             Text(
-                                text = if (recordings.isEmpty()) stringResource(R.string.call_recordings_empty) else "No recordings found",
+                                text = if (recordings.isEmpty()) {
+                                    stringResource(R.string.call_recordings_empty)
+                                } else {
+                                    "No recordings match the active filter"
+                                },
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            if (recordings.isNotEmpty()) {
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    text = "${recordings.size} total recordings are saved on this device",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                FilledTonalButton(
+                                    onClick = {
+                                        searchQuery = ""
+                                        datePreset = DateFilterPreset.ALL
+                                        fromDateMillis = null
+                                        toDateMillis = null
+                                        selectedFilterNumber = null
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FilterAltOff,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("Reset Filters")
+                                }
+                            }
                         }
                     }
                 } else {
