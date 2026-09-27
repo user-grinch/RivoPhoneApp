@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Hold 0 for +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Type + ved at holde 0-knappen på opkaldsblokken nede</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk Højttalertelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Skift til højttaler, når den er væk fra øret, øreemnet når nær øret (undertrykket, når hovedtelefoner er tilsluttet)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Skift billede</string>
     <string name="settings_call_background_choose_gallery">Vælg fra galleri</string>
     <string name="settings_call_background_remove">Fjern baggrund</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

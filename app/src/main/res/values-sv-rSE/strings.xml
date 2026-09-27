@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Håll 0 i +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Skriv + genom att hålla 0 knappen på knappsatsen</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk högtalartelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Växla till högtalare när du är borta från örat, öronsnöre när du är nära örat (dämpad när hörlurar är anslutna)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Ändra bild</string>
     <string name="settings_call_background_choose_gallery">Välj från galleriet</string>
     <string name="settings_call_background_remove">Ta bort bakgrund</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

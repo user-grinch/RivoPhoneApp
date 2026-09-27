@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Κρατήστε 0 για +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Πληκτρολογήστε + κρατώντας πατημένο το κουμπί 0 στο πληκτρολόγιο κλήσης</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Αυτόματο Ηχείο</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Μετάβαση στο ηχείο όταν είναι μακριά από το αυτί, ακουστικό όταν είναι κοντά στο αυτί (καταστέλλεται όταν τα ακουστικά είναι συνδεδεμένα)</string>
@@ -110,4 +112,6 @@
     <string name="settings_call_background_change_gallery">Αλλαγή εικόνας</string>
     <string name="settings_call_background_choose_gallery">Επιλέξτε από τη συλλογή</string>
     <string name="settings_call_background_remove">Αφαίρεση φόντου</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

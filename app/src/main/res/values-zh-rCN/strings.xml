@@ -180,6 +180,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">按 0 键++</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">按住拨号键键盘上的 0 按钮键输入 +</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">自动扬声器</string>
     <string name="settings_call_auto_speaker_proximity_supporting">离开耳朵时切换到扬声器，靠近耳机时的耳机(耳机连接时被抑制)</string>
@@ -266,4 +268,6 @@
     <string name="settings_call_background_change_gallery">更改图像</string>
     <string name="settings_call_background_choose_gallery">从图库中选择</string>
     <string name="settings_call_background_remove">删除背景</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

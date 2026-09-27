@@ -333,6 +333,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
     <string name="settings_sound_dialpad_vibration_supporting">Vibration bei Tastendruck</string>
+    <string name="settings_sound_hold_zero_for_plus">Halten Sie 0 für +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Tippe + indem du die 0 Taste auf dem Wählfeld gedrückt hälst</string>
     <string name="settings_sound_vibrate_on_answer">Vibration bei Abnahme</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Bei Abnahme des Angerufenen vibrieren</string>
     <string name="settings_sound_vibrate_on_hangup">Vibration bei Anrufende</string>
@@ -854,4 +856,6 @@
     <string name="settings_call_background_change_gallery">Bild ändern</string>
     <string name="settings_call_background_choose_gallery">Aus Galerie auswählen</string>
     <string name="settings_call_background_remove">Hintergrund entfernen</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

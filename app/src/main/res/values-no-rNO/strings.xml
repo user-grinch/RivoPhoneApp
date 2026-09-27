@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Hold 0 til +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Skriv + ved å holde 0 knappen på talltastaturet</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk høyttalertelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Bytt til høyttaler når man ikke er fra øret, ørestykket når det er nær øret (undertrykkes når hodetelefoner kobles til)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Endre bilde</string>
     <string name="settings_call_background_choose_gallery">Velg fra galleri</string>
     <string name="settings_call_background_remove">Fjern bakgrunn</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

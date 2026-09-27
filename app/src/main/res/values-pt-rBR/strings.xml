@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Segure 0 para +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Digite + segurando o botão 0 no teclado de discagem</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Auto-viva-voz</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Alternar para o alto-falante quando estiver longe de ouvir, peça de ouvido quando perto (suprimido quando os fones de ouvido forem conectados)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Alterar imagem</string>
     <string name="settings_call_background_choose_gallery">Escolher da galeria</string>
     <string name="settings_call_background_remove">Remover fundo</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

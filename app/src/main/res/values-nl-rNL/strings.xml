@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Houd 0 voor +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Type + door de 0 knop op het dialoogblok ingedrukt te houden</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatische luidspreker</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Schakel over naar de luidspreker wanneer weg van oor, oortelefoon wanneer dichtbij oor staat (onderdrukt wanneer een koptelefoon is aangesloten)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Afbeelding wijzigen</string>
     <string name="settings_call_background_choose_gallery">Kies uit gallerij</string>
     <string name="settings_call_background_remove">Achtergrond verwijderen</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

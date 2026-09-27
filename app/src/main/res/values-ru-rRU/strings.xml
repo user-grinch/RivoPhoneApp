@@ -337,6 +337,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Звук клавиш при наборе номера</string>
     <string name="settings_sound_dialpad_vibration">Вибрация клавиатуры</string>
     <string name="settings_sound_dialpad_vibration_supporting">Вибрация при нажатии клавиш</string>
+    <string name="settings_sound_hold_zero_for_plus">Удерживайте 0 для +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Введите + удерживая кнопку 0 на панели набора номера</string>
     <string name="settings_sound_vibrate_on_answer">Вибрация при ответе</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Вибрация при ответе собеседника</string>
     <string name="settings_sound_vibrate_on_hangup">Вибрация при завершении вызова</string>
@@ -860,4 +862,6 @@
     <string name="settings_call_background_change_gallery">Изменить изображение</string>
     <string name="settings_call_background_choose_gallery">Выбрать из галереи</string>
     <string name="settings_call_background_remove">Удалить фон</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>
