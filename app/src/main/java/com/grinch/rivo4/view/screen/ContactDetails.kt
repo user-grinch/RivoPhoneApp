@@ -48,6 +48,8 @@ import androidx.compose.material.icons.outlined.SimCard
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.outlined.NotificationImportant
+import androidx.compose.material.icons.filled.NotificationImportant
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.view.components.AddCallNoteDialog
 import com.grinch.rivo4.view.components.CallbackReminderDialog
@@ -203,6 +205,7 @@ fun ContactDetailsScreen(
 
     var showQrDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showFullScreenPhoto by remember { mutableStateOf(false) }
     var showNumberSelectionDialog by remember { mutableStateOf(false) }
     var pendingSocialAction by remember { mutableStateOf<((String) -> Unit)?>(null) }
     var selectionTitle by remember { mutableStateOf("") }
@@ -234,11 +237,20 @@ fun ContactDetailsScreen(
         } else emptyList()
     }
 
+    var isPriorityContact by remember(fullContact?.id, phoneNumber) {
+        mutableStateOf(
+            fullContact?.let {
+                prefs.isPriorityContact(it.id, phoneNumber ?: it.phoneNumbers.firstOrNull())
+            } ?: false
+        )
+    }
+
     LaunchedEffect(fullContact) {
         fullContact?.id?.let {
             favoriteNumber = prefs.getFavoriteNumber(it)
             favoriteEmail = prefs.getFavoriteEmail(it)
             defaultSimId = prefs.getDefaultSimForContact(it)
+            isPriorityContact = prefs.isPriorityContact(it, phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull())
         }
     }
 
@@ -719,7 +731,10 @@ fun ContactDetailsScreen(
                             RivoAvatar(
                                 name = displayName,
                                 photoUri = fullContact?.photoUri,
-                                modifier = Modifier.size(92.dp),
+                                modifier = Modifier
+                                    .size(92.dp)
+                                    .clip(CircleShape)
+                                    .clickable { showFullScreenPhoto = true },
                                 textStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
@@ -1068,12 +1083,18 @@ fun ContactDetailsScreen(
                             ) {
                                 contactLogs.take(3).forEach { log ->
                                     item {
+                                        val callTypeLabel = when (log.type) {
+                                            android.provider.CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
+                                            android.provider.CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
+                                            android.provider.CallLog.Calls.MISSED_TYPE -> stringResource(R.string.call_type_missed)
+                                            android.provider.CallLog.Calls.REJECTED_TYPE -> stringResource(R.string.call_type_rejected)
+                                            android.provider.CallLog.Calls.BLOCKED_TYPE -> stringResource(R.string.call_type_blocked)
+                                            android.provider.CallLog.Calls.VOICEMAIL_TYPE -> stringResource(R.string.call_type_voicemail)
+                                            else -> stringResource(R.string.call_type_call)
+                                        }
                                         RivoListItem(
-                                            headline = formatPhoneNumber(log.number),
-                                            supporting = SimpleDateFormat(
-                                                "MMM d, yyyy HH:mm",
-                                                Locale.getDefault()
-                                            ).format(Date(log.date)),
+                                            headline = callTypeLabel,
+                                            supporting = formatRelativeCallDateTime(context, log.date),
                                             leadingIcon = when (log.type) {
                                                 android.provider.CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
                                                 android.provider.CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
@@ -1367,6 +1388,30 @@ fun ContactDetailsScreen(
                                         onClick = { showReminderDialog = true }
                                     )
                                 }
+
+                                // 4. Priority Contact
+                                item {
+                                    RivoListItem(
+                                        headline = stringResource(R.string.priority_contact_title),
+                                        supporting = stringResource(R.string.priority_contact_summary),
+                                        leadingIcon = if (isPriorityContact) Icons.Filled.NotificationImportant else Icons.Outlined.NotificationImportant,
+                                        isCompact = true,
+                                        trailingContent = {
+                                            Switch(
+                                                checked = isPriorityContact,
+                                                onCheckedChange = { checked ->
+                                                    isPriorityContact = checked
+                                                    prefs.setPriorityContact(fc.id, phoneNumber ?: fc.phoneNumbers.firstOrNull(), checked)
+                                                }
+                                            )
+                                        },
+                                        onClick = {
+                                            val newChecked = !isPriorityContact
+                                            isPriorityContact = newChecked
+                                            prefs.setPriorityContact(fc.id, phoneNumber ?: fc.phoneNumbers.firstOrNull(), newChecked)
+                                        }
+                                    )
+                                }
                             }
                         }
 
@@ -1510,6 +1555,72 @@ fun ContactDetailsScreen(
                     )
                 }
             )
+        }
+
+        if (showFullScreenPhoto) {
+            Dialog(
+                onDismissRequest = { showFullScreenPhoto = false },
+                properties = androidx.compose.ui.window.DialogProperties(
+                    usePlatformDefaultWidth = false,
+                    decorFitsSystemWindows = false
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                ) {
+                    if (fullContact?.photoUri != null) {
+                        AsyncImage(
+                            model = fullContact?.photoUri,
+                            contentDescription = displayName,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { showFullScreenPhoto = false },
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { showFullScreenPhoto = false },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            RivoAvatar(
+                                name = displayName,
+                                photoUri = null,
+                                modifier = Modifier.size(200.dp),
+                                textStyle = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { showFullScreenPhoto = false }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back),
+                                tint = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = displayName,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
         }
     }
 }

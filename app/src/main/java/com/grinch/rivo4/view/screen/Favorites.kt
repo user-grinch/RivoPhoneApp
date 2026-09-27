@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -247,36 +249,27 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                     }
                 }
 
-                FilledTonalButton(
+                FilledTonalIconButton(
                     onClick = {
                         if (isEditing) prefs.setFavoritesOrder(items.map { it.id })
                         isEditing = !isEditing
                     },
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.size(36.dp),
                     colors = if (isEditing) {
-                        ButtonDefaults.filledTonalButtonColors(
+                        IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        ButtonDefaults.filledTonalButtonColors(
+                        IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                         )
                     }
                 ) {
-                    if (isEditing) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                    }
-                    Text(
-                        text = if (isEditing) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
+                    Icon(
+                        imageVector = if (isEditing) Icons.Default.Check else Icons.Outlined.Edit,
+                        contentDescription = if (isEditing) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -332,7 +325,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                 }
             }
 
-            itemsIndexed(items, key = { _, contact -> "${contact.id}_${contact.phoneNumbers.joinToString()}_" + contact.name }) { index, contact ->
+            itemsIndexed(items, key = { index, contact -> "fav_${contact.id}_$index" }) { index, contact ->
                 val dragging = index == dragDropState.draggingItemIndex
                 val itemModifier = if (dragging) {
                     Modifier
@@ -828,7 +821,7 @@ private fun AddFavoriteBottomSheet(
                         .heightIn(max = 420.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(filteredContacts, key = { it.id }) { contact ->
+                    itemsIndexed(filteredContacts, key = { index, contact -> "sheet_fav_${contact.id}_$index" }) { _, contact ->
                         Surface(
                             onClick = {
                                 onAddFavorite(contact)

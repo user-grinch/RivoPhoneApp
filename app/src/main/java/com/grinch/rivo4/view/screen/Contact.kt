@@ -446,6 +446,7 @@ fun ContactContent(
     val contacts by contactsVM.filteredContacts.collectAsState()
     val groupedContacts by contactsVM.groupedContacts.collectAsState()
     val duplicateGroups by contactsVM.duplicateGroups.collectAsState()
+    val isMerging by contactsVM.isMerging.collectAsState()
 
     var showMergeAllDialog by remember { mutableStateOf(false) }
 
@@ -462,6 +463,7 @@ fun ContactContent(
         {
             ContactManagementTopCard(
                 duplicateGroups = duplicateGroups,
+                isMerging = isMerging,
                 onOpenManagement = {
                     navigator.navigate(ContactManagementScreenDestination)
                 },
@@ -513,7 +515,10 @@ fun ContactContent(
     if (showMergeAllDialog) {
         RivoConfirmationDialog(
             onDismissRequest = { showMergeAllDialog = false },
-            onConfirm = { contactsVM.mergeAllDuplicates() },
+            onConfirm = {
+                showMergeAllDialog = false
+                contactsVM.mergeAllDuplicates()
+            },
             title = stringResource(R.string.contact_management_merge_all_confirm_title),
             message = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
             confirmLabel = stringResource(R.string.contact_management_merge_all),
@@ -607,6 +612,7 @@ fun ContactManagementTopCard(
     onOpenManagement: () -> Unit,
     onMergeAll: () -> Unit,
     modifier: Modifier = Modifier,
+    isMerging: Boolean = false,
     onHideCard: (() -> Unit)? = null
 ) {
     val totalDuplicates = duplicateGroups.sumOf { it.size }
@@ -737,6 +743,7 @@ fun ContactManagementTopCard(
 
                     Button(
                         onClick = onMergeAll,
+                        enabled = !isMerging,
                         modifier = Modifier
                             .weight(1f)
                             .height(38.dp),
@@ -747,17 +754,25 @@ fun ContactManagementTopCard(
                             contentColor = MaterialTheme.colorScheme.onError
                         )
                     ) {
-                        Icon(
-                            Icons.Outlined.CallMerge,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(R.string.contact_management_merge_all),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (isMerging) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = MaterialTheme.colorScheme.onError,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                Icons.Outlined.CallMerge,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.contact_management_merge_all),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             } else {

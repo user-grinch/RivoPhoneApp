@@ -629,17 +629,29 @@ fun CallLogFullContent(
                                     }
 
                                     if (!isFavoritesCollapsed || isEditingFavorites) {
-                                        TextButton(onClick = {
-                                            if (isEditingFavorites) {
-                                                prefs.setFavoritesOrder(favItems.map { it.id })
+                                        FilledTonalIconButton(
+                                            onClick = {
+                                                if (isEditingFavorites) {
+                                                    prefs.setFavoritesOrder(favItems.map { it.id })
+                                                }
+                                                isEditingFavorites = !isEditingFavorites
+                                            },
+                                            modifier = Modifier.size(32.dp),
+                                            colors = if (isEditingFavorites) {
+                                                IconButtonDefaults.filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.primary,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                                )
+                                            } else {
+                                                IconButtonDefaults.filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                                                )
                                             }
-                                            isEditingFavorites = !isEditingFavorites
-                                        }) {
-                                            Text(
-                                                text = if (isEditingFavorites) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
-                                                style = MaterialTheme.typography.labelLarge,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.primary
+                                        ) {
+                                            Icon(
+                                                imageVector = if (isEditingFavorites) Icons.Default.Check else Icons.Outlined.Edit,
+                                                contentDescription = if (isEditingFavorites) stringResource(R.string.action_done) else stringResource(R.string.action_edit),
+                                                modifier = Modifier.size(16.dp)
                                             )
                                         }
                                     }
@@ -673,7 +685,7 @@ fun CallLogFullContent(
                                         contentPadding = PaddingValues(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        itemsIndexed(favItems, key = { _, c -> "${c.id}_${c.phoneNumbers.joinToString()}_" + c.name }) { index, contact ->
+                                        itemsIndexed(favItems, key = { index, c -> "recent_fav_${c.id}_$index" }) { index, contact ->
                                             val dragging = index == rowDragDropState.draggingItemIndex
                                             val itemModifier = if (dragging) {
                                                  Modifier

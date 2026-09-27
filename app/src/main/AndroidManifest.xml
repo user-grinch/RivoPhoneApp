@@ -304,6 +304,10 @@
         <receiver
             android:name=".controller.reminder.CallbackReminderReceiver"
             android:exported="false" />
+
+        <receiver
+            android:name=".controller.CallActionReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 class ContactsViewModel(
@@ -248,23 +249,27 @@ class ContactsViewModel(
 
     fun toggleFavorite(contact: Contact) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newFavStatus = !contact.isFavorite
-            contactsRepo.toggleFavorite(contact.id, newFavStatus)
-            
-            val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
-            if (newFavStatus) {
-                if (!currentOrder.contains(contact.id)) {
-                    currentOrder.add(contact.id)
-                    preferenceManager.setFavoritesOrder(currentOrder)
+            try {
+                val newFavStatus = !contact.isFavorite
+                contactsRepo.toggleFavorite(contact.id, newFavStatus)
+                
+                val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
+                if (newFavStatus) {
+                    if (!currentOrder.contains(contact.id)) {
+                        currentOrder.add(contact.id)
+                        preferenceManager.setFavoritesOrder(currentOrder)
+                    }
+                } else {
+                    if (currentOrder.contains(contact.id)) {
+                        currentOrder.remove(contact.id)
+                        preferenceManager.setFavoritesOrder(currentOrder)
+                    }
                 }
-            } else {
-                if (currentOrder.contains(contact.id)) {
-                    currentOrder.remove(contact.id)
-                    preferenceManager.setFavoritesOrder(currentOrder)
-                }
+                
+                fetchContacts()
+            } catch (e: Exception) {
+                android.util.Log.e("ContactsVM", "Error toggling favorite", e)
             }
-            
-            fetchContacts()
         }
     }
 
@@ -342,9 +347,14 @@ class ContactsViewModel(
     fun mergeContacts(targetId: String, sourceIds: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             _isMerging.value = true
-            contactsRepo.mergeContacts(targetId, sourceIds)
-            fetchContacts()
-            _isMerging.value = false
+            try {
+                contactsRepo.mergeContacts(targetId, sourceIds)
+                fetchContacts()
+            } catch (e: Exception) {
+                android.util.Log.e("ContactsVM", "Error merging contacts", e)
+            } finally {
+                _isMerging.value = false
+            }
         }
     }
 
@@ -355,16 +365,28 @@ class ContactsViewModel(
     fun mergeAllDuplicates() {
         viewModelScope.launch(Dispatchers.IO) {
             _isMerging.value = true
-            val currentDupes = contactsRepo.findDuplicates()
-            currentDupes.forEach { group ->
-                if (group.size > 1) {
-                    val primary = group.first()
-                    val sources = group.drop(1).map { it.id }
-                    contactsRepo.mergeContacts(primary.id, sources)
+            try {
+                val currentDupes = contactsRepo.findDuplicates()
+                for (group in currentDupes) {
+                    if (!isActive) break
+                    if (group.size > 1) {
+                        try {
+                            val primary = group.first()
+                            val sources = group.drop(1).map { it.id }
+                            contactsRepo.mergeContacts(primary.id, sources)
+                        } catch (e: Exception) {
+                            android.util.Log.e("ContactsVM", "Error merging group", e)
+                        }
+                        kotlinx.coroutines.delay(40)
+                    }
                 }
+                _duplicateGroups.value = emptyList()
+                fetchContacts()
+            } catch (e: Exception) {
+                android.util.Log.e("ContactsVM", "Error merging all duplicates", e)
+            } finally {
+                _isMerging.value = false
             }
-            fetchContacts()
-            _isMerging.value = false
         }
     }
 

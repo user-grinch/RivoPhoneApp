@@ -912,4 +912,18 @@
     <string name="settings_call_background_change_gallery">Change image</string>
     <string name="settings_call_background_choose_gallery">Choose from gallery</string>
     <string name="settings_call_background_remove">Remove background</string>
+    <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Rejected</string>
+    <string name="call_type_blocked">Blocked</string>
+    <string name="call_type_voicemail">Voicemail</string>
+    <string name="call_type_call">Call</string>
+
+    <!-- Priority Contacts -->
+    <string name="priority_contact_title">Priority Contact</string>
+    <string name="priority_contact_summary">Rings aloud even in Silent or Do Not Disturb mode</string>
+    <string name="priority_contacts_title">Priority Contacts</string>
+    <string name="priority_contacts_supporting">Manage contacts that bypass Silent and Do Not Disturb settings</string>
+    <string name="priority_contacts_empty_title">No Priority Contacts</string>
+    <string name="priority_contacts_empty_desc">Add contacts who can always reach you, even when Silent or Do Not Disturb is enabled.</string>
+    <string name="priority_contacts_add">Add Priority Contact</string>
 </resources>

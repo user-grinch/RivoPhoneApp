@@ -26,6 +26,7 @@ import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.generated.destinations.PriorityContactsScreenDestination
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -208,6 +209,14 @@ fun SoundVibrationScreen(
 
             item {
                 RivoExpressiveGroup(title = "Alerts & Ringtones") {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.priority_contacts_title),
+                            supporting = stringResource(R.string.priority_contacts_supporting),
+                            leadingIcon = Icons.Outlined.NotificationImportant,
+                            onClick = { navigator.navigate(PriorityContactsScreenDestination) }
+                        )
+                    }
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_missed_call_notifications),

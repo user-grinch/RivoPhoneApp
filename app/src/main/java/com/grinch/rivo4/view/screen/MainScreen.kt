@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,7 +95,9 @@ fun MainScreen(
         }
     }
 
-    val requestedTab = externalRequestedTab ?: initialTab ?: defaultTab
+    var savedTab by rememberSaveable { mutableStateOf<Int?>(null) }
+    val lastActiveTab = savedTab ?: prefs.getLastSelectedTab()
+    val requestedTab = externalRequestedTab ?: initialTab ?: lastActiveTab ?: defaultTab
     val startPage = visibleTabs.indexOf(requestedTab).coerceAtLeast(0)
 
     val pagerState = rememberPagerState(initialPage = startPage) { visibleTabs.size }
@@ -112,11 +115,41 @@ fun MainScreen(
         else -> false
     }
 
-    LaunchedEffect(initialTab, visibleTabs, externalRequestedTab) {
-        val target = visibleTabs.indexOf(requestedTab)
-        if (target >= 0 && pagerState.currentPage != target) {
-            pagerState.scrollToPage(target)
-        } else if (pagerState.currentPage > visibleTabs.lastIndex) {
+    var initialTabConsumed by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(pagerState.currentPage, visibleTabs) {
+        visibleTabs.getOrNull(pagerState.currentPage)?.let { tabId ->
+            savedTab = tabId
+            prefs.setLastSelectedTab(tabId)
+        }
+    }
+
+    LaunchedEffect(externalRequestedTab) {
+        if (externalRequestedTab != null) {
+            val target = visibleTabs.indexOf(externalRequestedTab)
+            if (target >= 0 && pagerState.currentPage != target) {
+                pagerState.scrollToPage(target)
+            }
+            savedTab = externalRequestedTab
+            prefs.setLastSelectedTab(externalRequestedTab)
+            requestedTabState.value = null
+        }
+    }
+
+    LaunchedEffect(initialTab) {
+        if (!initialTabConsumed && initialTab != null) {
+            val target = visibleTabs.indexOf(initialTab)
+            if (target >= 0 && pagerState.currentPage != target) {
+                pagerState.scrollToPage(target)
+            }
+            savedTab = initialTab
+            prefs.setLastSelectedTab(initialTab)
+            initialTabConsumed = true
+        }
+    }
+
+    LaunchedEffect(visibleTabs.size) {
+        if (pagerState.currentPage > visibleTabs.lastIndex) {
             pagerState.scrollToPage(visibleTabs.lastIndex.coerceAtLeast(0))
         }
     }

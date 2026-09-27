@@ -236,6 +236,14 @@ fun SettingsScreen(
                             onClick = { navigator.navigate(CallAnalyticsScreenDestination()) }
                         )
                     }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.priority_contacts_title),
+                            supporting = stringResource(R.string.priority_contacts_supporting),
+                            leadingIcon = Icons.Outlined.NotificationImportant,
+                            onClick = { navigator.navigate(PriorityContactsScreenDestination) }
+                        )
+                    }
                 }
             }
 

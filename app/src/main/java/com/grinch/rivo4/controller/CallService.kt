@@ -12,7 +12,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.media.AudioManager
 import android.os.PowerManager
+import com.grinch.rivo4.controller.util.PriorityRinger
 import android.provider.BlockedNumberContract
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -171,10 +173,23 @@ class CallService : InCallService() {
 
         fun mute(muted: Boolean) {
             instance?.setMuted(muted)
+            try {
+                val audioManager = instance?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+                audioManager?.isMicrophoneMute = muted
+            } catch (e: Exception) {
+                Log.w("CallService", "Failed to set audioManager microphone mute: ${e.message}")
+            }
+            _audioState.value?.let { current ->
+                _audioState.value = CallAudioState(muted, current.route, current.supportedRouteMask)
+            }
+            instance?.let { s ->
+                _currentCallSession.value?.call?.let { s.updateNotification(it) }
+            }
         }
 
         fun toggleMute() {
-            val currentMute = _audioState.value?.isMuted ?: false
+            val audioManager = instance?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+            val currentMute = _audioState.value?.isMuted ?: audioManager?.isMicrophoneMute ?: false
             mute(!currentMute)
         }
 
@@ -300,7 +315,11 @@ class CallService : InCallService() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        flipToSilenceManager = FlipToSilenceManager(this)
+        flipToSilenceManager = FlipToSilenceManager(this).apply {
+            setOnSilenceListener {
+                PriorityRinger.stopRinging()
+            }
+        }
         serviceScope.launch {
             isActivityVisible.collect {
                 _currentCallSession.value?.call?.let { currentCall ->
@@ -316,6 +335,7 @@ class CallService : InCallService() {
             updateCallState()
             
             if (state != Call.STATE_RINGING) {
+                com.grinch.rivo4.controller.util.PriorityRinger.stopRinging()
                 val hasRinging = getCalls()?.any { it.state == Call.STATE_RINGING } == true
                 if (!hasRinging) {
                     flipToSilenceManager?.stopListening()
@@ -324,6 +344,7 @@ class CallService : InCallService() {
             } else if (!callRingStartTimes.containsKey(call)) {
                 callRingStartTimes[call] = System.currentTimeMillis()
                 acquireScreenWakeLock()
+                checkAndStartPriorityRinger(call)
             }
 
             if (state == Call.STATE_ACTIVE) {
@@ -664,6 +685,7 @@ class CallService : InCallService() {
 
         if (call.state == Call.STATE_RINGING) {
             callRingStartTimes[call] = System.currentTimeMillis()
+            checkAndStartPriorityRinger(call)
         }
 
         applyDndIfEnabled()
@@ -713,6 +735,7 @@ class CallService : InCallService() {
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        com.grinch.rivo4.controller.util.PriorityRinger.stopRinging()
         call.unregisterCallback(callCallback)
         updateCallState()
         val calls = getCalls() ?: emptyList()
@@ -735,22 +758,24 @@ class CallService : InCallService() {
     override fun onCallAudioStateChanged(audioState: CallAudioState?) {
         super.onCallAudioStateChanged(audioState)
         _audioState.value = audioState
+        try {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+            if (audioState != null && audioManager?.isMicrophoneMute != audioState.isMuted) {
+                audioManager?.isMicrophoneMute = audioState.isMuted
+            }
+        } catch (e: Exception) {
+            Log.w("CallService", "Error syncing audioManager microphone mute", e)
+        }
         _currentCallSession.value?.call?.let { updateNotification(it) }
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            "ANSWER_CALL" -> {
-                answerCall()
-                val activityIntent = Intent(this, CallActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                }
-                startActivity(activityIntent)
-            }
-            "DECLINE_CALL" -> declineCall()
-            "TOGGLE_MUTE" -> toggleMute()
-            "TOGGLE_SPEAKER" -> cycleAudioRoute()
+            "ANSWER_CALL", CallActionReceiver.ACTION_ANSWER_CALL -> answerCall()
+            "DECLINE_CALL", CallActionReceiver.ACTION_DECLINE_CALL -> declineCall()
+            "TOGGLE_MUTE", CallActionReceiver.ACTION_TOGGLE_MUTE -> toggleMute()
+            "TOGGLE_SPEAKER", CallActionReceiver.ACTION_TOGGLE_SPEAKER -> cycleAudioRoute()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -824,17 +849,17 @@ class CallService : InCallService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val answerIntent = Intent(this, CallService::class.java).apply { action = "ANSWER_CALL" }
-        val answerPendingIntent = PendingIntent.getService(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val answerIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_ANSWER_CALL }
+        val answerPendingIntent = PendingIntent.getBroadcast(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val declineIntent = Intent(this, CallService::class.java).apply { action = "DECLINE_CALL" }
-        val declinePendingIntent = PendingIntent.getService(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val declineIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_DECLINE_CALL }
+        val declinePendingIntent = PendingIntent.getBroadcast(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val muteIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_MUTE" }
-        val mutePendingIntent = PendingIntent.getService(this, 3, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val muteIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_TOGGLE_MUTE }
+        val mutePendingIntent = PendingIntent.getBroadcast(this, 3, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val speakerIntent = Intent(this, CallService::class.java).apply { action = "TOGGLE_SPEAKER" }
-        val speakerPendingIntent = PendingIntent.getService(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val speakerIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_TOGGLE_SPEAKER }
+        val speakerPendingIntent = PendingIntent.getBroadcast(this, 4, speakerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val avatarBitmap = com.grinch.rivo4.controller.util.CallNotificationHelper.getAvatarBitmap(this, contactName, contactPhoto)
         val personBuilder = androidx.core.app.Person.Builder()
@@ -965,6 +990,31 @@ class CallService : InCallService() {
     private fun cancelNotification() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    private fun checkAndStartPriorityRinger(call: Call) {
+        if (call.state != Call.STATE_RINGING) return
+        val number = call.details.handle?.schemeSpecificPart ?: ""
+        serviceScope.launch(Dispatchers.IO) {
+            val contact = if (number.isNotBlank()) {
+                try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
+            } else null
+
+            val isPriority = preferenceManager.isPriorityContact(contact?.id, number)
+            if (isPriority) {
+                val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                val isSilentOrVibrate = audioManager?.ringerMode != AudioManager.RINGER_MODE_NORMAL
+                val isDnd = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val filter = notificationManager?.currentInterruptionFilter ?: NotificationManager.INTERRUPTION_FILTER_ALL
+                    filter != NotificationManager.INTERRUPTION_FILTER_ALL
+                } else false
+
+                if (isSilentOrVibrate || isDnd) {
+                    com.grinch.rivo4.controller.util.PriorityRinger.startRinging(this@CallService, contact?.customRingtone)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

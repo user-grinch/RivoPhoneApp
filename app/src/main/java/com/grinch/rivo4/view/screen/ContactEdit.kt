@@ -1,6 +1,7 @@
 package com.grinch.rivo4.view.screen
 
 import android.accounts.Account
+import android.provider.ContactsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,12 +49,33 @@ import com.grinch.rivo4.view.components.RivoDropdownMenu
 import com.grinch.rivo4.view.components.RivoDropdownMenuItem
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
+import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectionDialog
+import com.grinch.rivo4.view.components.rivoGroupedItemShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
+
+private data class EditablePhone(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val number: String,
+    val type: Int = ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
+    val label: String? = null
+)
+
+private data class EditableEmail(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val address: String,
+    val type: Int = ContactsContract.CommonDataKinds.Email.TYPE_HOME,
+    val label: String? = null
+)
+
+private data class EditableAddress(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val address: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -81,14 +103,14 @@ fun ContactEditScreen(
     val phones = remember {
         mutableStateListOf(
             if (!initialPhone.isNullOrBlank() && (contactId == null || contactId == "0" || contactId == "null")) {
-                PhoneNumberEntry(initialPhone)
+                EditablePhone(number = initialPhone)
             } else {
-                PhoneNumberEntry("")
+                EditablePhone(number = "")
             }
         )
     }
-    val emails = remember { mutableStateListOf(EmailEntry("")) }
-    val addresses = remember { mutableStateListOf<String>("") }
+    val emails = remember { mutableStateListOf(EditableEmail(address = "")) }
+    val addresses = remember { mutableStateListOf(EditableAddress(address = "")) }
 
     val displayName = listOfNotNull(
         givenName.trim().ifBlank { null },
@@ -99,10 +121,10 @@ fun ContactEditScreen(
     val scope = rememberCoroutineScope()
     var isSaving by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var isLoaded by rememberSaveable { mutableStateOf(false) }
+    var loadedContactId by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(contactId) {
-        if (!isLoaded && contactId != null && contactId != "0" && contactId != "null") {
+        if (loadedContactId != contactId && contactId != null && contactId != "0" && contactId != "null") {
             val existing = contactsVM.getFullContactById(contactId)
             if (existing != null) {
                 if (!existing.givenName.isNullOrBlank() || !existing.middleName.isNullOrBlank() || !existing.familyName.isNullOrBlank()) {
@@ -125,9 +147,11 @@ fun ContactEditScreen(
                     existing.phoneNumbers.map { PhoneNumberEntry(it) }
                 }
                 if (existingPhones.isNotEmpty()) {
-                    phones.addAll(existingPhones)
+                    phones.addAll(existingPhones.map {
+                        EditablePhone(number = it.number, type = it.type, label = it.label)
+                    })
                 } else {
-                    phones.add(PhoneNumberEntry(""))
+                    phones.add(EditablePhone(number = ""))
                 }
                 if (!initialPhone.isNullOrBlank()) {
                     val cleanInitial = initialPhone.replace(Regex("[^0-9+]"), "")
@@ -136,9 +160,9 @@ fun ContactEditScreen(
                     }
                     if (!alreadyPresent) {
                         if (phones.size == 1 && phones[0].number.isBlank()) {
-                            phones[0] = PhoneNumberEntry(initialPhone)
+                            phones[0] = EditablePhone(number = initialPhone)
                         } else {
-                            phones.add(PhoneNumberEntry(initialPhone))
+                            phones.add(EditablePhone(number = initialPhone))
                         }
                     }
                 }
@@ -148,18 +172,20 @@ fun ContactEditScreen(
                     existing.emails.map { EmailEntry(it) }
                 }
                 if (existingEmails.isNotEmpty()) {
-                    emails.addAll(existingEmails)
+                    emails.addAll(existingEmails.map {
+                        EditableEmail(address = it.address, type = it.type, label = it.label)
+                    })
                 } else {
-                    emails.add(EmailEntry(""))
+                    emails.add(EditableEmail(address = ""))
                 }
 
                 addresses.clear()
                 if (existing.addresses.isNotEmpty()) {
-                    addresses.addAll(existing.addresses)
+                    addresses.addAll(existing.addresses.map { EditableAddress(address = it) })
                 } else {
-                    addresses.add("")
+                    addresses.add(EditableAddress(address = ""))
                 }
-                isLoaded = true
+                loadedContactId = contactId
             }
         }
     }
@@ -225,8 +251,13 @@ fun ContactEditScreen(
                         onClick = {
                             isSaving = true
                             scope.launch {
-                                val savedPhones = phones.filter { it.number.isNotBlank() }
-                                val savedEmails = emails.filter { it.address.isNotBlank() }
+                                val savedPhones = phones.filter { it.number.isNotBlank() }.map {
+                                    PhoneNumberEntry(number = it.number.trim(), type = it.type, label = it.label)
+                                }
+                                val savedEmails = emails.filter { it.address.isNotBlank() }.map {
+                                    EmailEntry(address = it.address.trim(), type = it.type, label = it.label)
+                                }
+                                val savedAddresses = addresses.map { it.address.trim() }.filter { it.isNotBlank() }
                                 val contactToSave = Contact(
                                     id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
                                     name = displayName.ifBlank {
@@ -240,7 +271,7 @@ fun ContactEditScreen(
                                     emails = savedEmails.map { it.address },
                                     phones = savedPhones,
                                     emailEntries = savedEmails,
-                                    addresses = addresses.filter { it.isNotBlank() },
+                                    addresses = savedAddresses,
                                     photoUri = photoUri,
                                     accountName = if (isPrivate) null else selectedAccount?.name,
                                     accountType = if (isPrivate) null else selectedAccount?.type,
@@ -486,62 +517,81 @@ fun ContactEditScreen(
 
             // Phone Numbers Group (Segmented)
             item {
-                val phoneCount = phones.size
-                RivoExpressiveGroup(
-                    title = stringResource(R.string.contact_edit_phone_numbers_header),
-                    icon = Icons.Outlined.Phone
+                val total = phones.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    for (index in 0 until phoneCount) {
-                        val phone = phones[index]
-                        item(key = "phone_${System.identityHashCode(phone)}_$index") {
-                            RivoSegmentedTypedField(
-                                value = phone.number,
-                                onValueChange = { phones[index] = phones[index].copy(number = it) },
-                                label = stringResource(R.string.contact_edit_phone_field_label),
-                                icon = Icons.Outlined.Phone,
-                                typeValue = phone.type,
-                                typeOptions = ContactTypeLabels.phoneTypeOptions,
-                                typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
-                                onTypeChange = { phones[index] = phones[index].copy(type = it) },
-                                onDelete = if (phones.size > 1 || phone.number.isNotBlank()) {
-                                    {
-                                        if (phones.size > 1) {
-                                            phones.removeAt(index)
-                                        } else {
-                                            phones[0] = PhoneNumberEntry("")
-                                        }
-                                    }
-                                } else null,
-                                keyboardType = KeyboardType.Phone
-                            )
-                        }
-                    }
-                    item(key = "add_phone") {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { phones.add(PhoneNumberEntry("")) }
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier.size(24.dp),
-                                contentAlignment = Alignment.Center
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_phone_numbers_header),
+                        icon = Icons.Outlined.Phone,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    phones.forEachIndexed { index, phone ->
+                        key(phone.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
+                                RivoSegmentedTypedField(
+                                    value = phone.number,
+                                    onValueChange = { phones[index] = phones[index].copy(number = it) },
+                                    label = "${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}",
+                                    icon = Icons.Outlined.Phone,
+                                    indexBadge = index + 1,
+                                    typeValue = phone.type,
+                                    typeOptions = ContactTypeLabels.phoneTypeOptions,
+                                    typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
+                                    onTypeChange = { phones[index] = phones[index].copy(type = it) },
+                                    onDelete = if (phones.size > 1 || phone.number.isNotBlank()) {
+                                        {
+                                            if (phones.size > 1) {
+                                                phones.removeAt(index)
+                                            } else {
+                                                phones[0] = EditablePhone(number = "")
+                                            }
+                                        }
+                                    } else null,
+                                    keyboardType = KeyboardType.Phone
                                 )
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.contact_edit_add_phone),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Medium
-                            )
+                        }
+                    }
+                    key("add_phone") {
+                        val shape = rivoGroupedItemShape(phones.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { phones.add(EditablePhone(number = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_phone),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
                 }
@@ -549,62 +599,81 @@ fun ContactEditScreen(
 
             // Email Addresses Group (Segmented)
             item {
-                val emailCount = emails.size
-                RivoExpressiveGroup(
-                    title = stringResource(R.string.contact_edit_emails_header),
-                    icon = Icons.Outlined.Email
+                val total = emails.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    for (index in 0 until emailCount) {
-                        val email = emails[index]
-                        item(key = "email_${System.identityHashCode(email)}_$index") {
-                            RivoSegmentedTypedField(
-                                value = email.address,
-                                onValueChange = { emails[index] = emails[index].copy(address = it) },
-                                label = stringResource(R.string.label_email),
-                                icon = Icons.Outlined.Email,
-                                typeValue = email.type,
-                                typeOptions = ContactTypeLabels.emailTypeOptions,
-                                typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
-                                onTypeChange = { emails[index] = emails[index].copy(type = it) },
-                                onDelete = if (emails.size > 1 || email.address.isNotBlank()) {
-                                    {
-                                        if (emails.size > 1) {
-                                            emails.removeAt(index)
-                                        } else {
-                                            emails[0] = EmailEntry("")
-                                        }
-                                    }
-                                } else null,
-                                keyboardType = KeyboardType.Email
-                            )
-                        }
-                    }
-                    item(key = "add_email") {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { emails.add(EmailEntry("")) }
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier.size(24.dp),
-                                contentAlignment = Alignment.Center
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_emails_header),
+                        icon = Icons.Outlined.Email,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    emails.forEachIndexed { index, email ->
+                        key(email.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
+                                RivoSegmentedTypedField(
+                                    value = email.address,
+                                    onValueChange = { emails[index] = emails[index].copy(address = it) },
+                                    label = "${stringResource(R.string.label_email)} ${index + 1}",
+                                    icon = Icons.Outlined.Email,
+                                    indexBadge = index + 1,
+                                    typeValue = email.type,
+                                    typeOptions = ContactTypeLabels.emailTypeOptions,
+                                    typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
+                                    onTypeChange = { emails[index] = emails[index].copy(type = it) },
+                                    onDelete = if (emails.size > 1 || email.address.isNotBlank()) {
+                                        {
+                                            if (emails.size > 1) {
+                                                emails.removeAt(index)
+                                            } else {
+                                                emails[0] = EditableEmail(address = "")
+                                            }
+                                        }
+                                    } else null,
+                                    keyboardType = KeyboardType.Email
                                 )
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.contact_edit_add_email),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Medium
-                            )
+                        }
+                    }
+                    key("add_email") {
+                        val shape = rivoGroupedItemShape(emails.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { emails.add(EditableEmail(address = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_email),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
                 }
@@ -612,57 +681,76 @@ fun ContactEditScreen(
 
             // Addresses Group (Segmented)
             item {
-                val addressCount = addresses.size
-                RivoExpressiveGroup(
-                    title = stringResource(R.string.contact_edit_address_header),
-                    icon = Icons.Outlined.LocationOn
+                val total = addresses.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    for (index in 0 until addressCount) {
-                        val address = addresses[index]
-                        item(key = "address_${System.identityHashCode(address)}_$index") {
-                            RivoSegmentedRemovableField(
-                                value = address,
-                                onValueChange = { addresses[index] = it },
-                                label = stringResource(R.string.label_address),
-                                icon = Icons.Outlined.LocationOn,
-                                onDelete = if (addresses.size > 1 || address.isNotBlank()) {
-                                    {
-                                        if (addresses.size > 1) {
-                                            addresses.removeAt(index)
-                                        } else {
-                                            addresses[0] = ""
-                                        }
-                                    }
-                                } else null
-                            )
-                        }
-                    }
-                    item(key = "add_address") {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { addresses.add("") }
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier.size(24.dp),
-                                contentAlignment = Alignment.Center
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_address_header),
+                        icon = Icons.Outlined.LocationOn,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    addresses.forEachIndexed { index, addr ->
+                        key(addr.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
+                                RivoSegmentedRemovableField(
+                                    value = addr.address,
+                                    onValueChange = { addresses[index] = addresses[index].copy(address = it) },
+                                    label = "${stringResource(R.string.label_address)} ${index + 1}",
+                                    icon = Icons.Outlined.LocationOn,
+                                    indexBadge = index + 1,
+                                    onDelete = if (addresses.size > 1 || addr.address.isNotBlank()) {
+                                        {
+                                            if (addresses.size > 1) {
+                                                addresses.removeAt(index)
+                                            } else {
+                                                addresses[0] = EditableAddress(address = "")
+                                            }
+                                        }
+                                    } else null
                                 )
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = stringResource(R.string.contact_edit_add_address),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Medium
-                            )
+                        }
+                    }
+                    key("add_address") {
+                        val shape = rivoGroupedItemShape(addresses.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { addresses.add(EditableAddress(address = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_address),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     }
                 }
@@ -779,6 +867,7 @@ fun RivoSegmentedTypedField(
     typeOptions: List<Int>,
     typeLabel: (Int) -> String,
     onTypeChange: (Int) -> Unit,
+    indexBadge: Int? = null,
     onDelete: (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
@@ -799,12 +888,35 @@ fun RivoSegmentedTypedField(
                 label = { Text(label) },
                 modifier = Modifier.weight(1f),
                 leadingIcon = {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    Box(
+                        modifier = Modifier.size(36.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(30.dp),
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                if (indexBadge != null) {
+                                    Text(
+                                        text = "$indexBadge",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 },
                 trailingIcon = if (value.isNotEmpty()) {
                     {
@@ -907,6 +1019,7 @@ fun RivoSegmentedRemovableField(
     onValueChange: (String) -> Unit,
     label: String,
     icon: ImageVector,
+    indexBadge: Int? = null,
     onDelete: (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
@@ -922,12 +1035,35 @@ fun RivoSegmentedRemovableField(
             label = { Text(label) },
             modifier = Modifier.weight(1f),
             leadingIcon = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
+                Box(
+                    modifier = Modifier.size(36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        modifier = Modifier.size(30.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            if (indexBadge != null) {
+                                Text(
+                                    text = "$indexBadge",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
             },
             trailingIcon = if (value.isNotEmpty()) {
                 {

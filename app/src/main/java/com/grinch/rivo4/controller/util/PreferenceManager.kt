@@ -17,7 +17,7 @@ class PreferenceManager(context: Context) {
     val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME) {
+        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB) {
             _settingsChanged.value += 1
         }
     }
@@ -280,7 +280,54 @@ class PreferenceManager(context: Context) {
         setString(KEY_VISIBLE_ACCOUNTS, accounts.joinToString(","))
     }
 
+    fun getLastSelectedTab(): Int? {
+        return if (prefs.contains(KEY_LAST_SELECTED_TAB)) prefs.getInt(KEY_LAST_SELECTED_TAB, -1).takeIf { it != -1 } else null
+    }
+
+    fun setLastSelectedTab(tab: Int) {
+        prefs.edit().putInt(KEY_LAST_SELECTED_TAB, tab).apply()
+    }
+
+    fun getPriorityContacts(): Set<String> {
+        return try {
+            prefs.getStringSet(KEY_PRIORITY_CONTACTS, emptySet()) ?: emptySet()
+        } catch (e: Exception) {
+            emptySet()
+        }
+    }
+
+    fun isPriorityContact(contactId: String?, number: String?): Boolean {
+        val prioritySet = getPriorityContacts()
+        if (prioritySet.isEmpty()) return false
+        if (!contactId.isNullOrBlank() && prioritySet.contains(contactId)) return true
+        if (!number.isNullOrBlank()) {
+            val normalized = normalizePhoneNumber(number)
+            if (prioritySet.contains(normalized)) return true
+            if (prioritySet.contains(number.trim())) return true
+        }
+        return false
+    }
+
+    fun setPriorityContact(contactId: String, number: String?, isPriority: Boolean) {
+        val current = getPriorityContacts().toMutableSet()
+        if (isPriority) {
+            if (contactId.isNotBlank()) current.add(contactId)
+            if (!number.isNullOrBlank()) {
+                current.add(normalizePhoneNumber(number))
+            }
+        } else {
+            if (contactId.isNotBlank()) current.remove(contactId)
+            if (!number.isNullOrBlank()) {
+                current.remove(normalizePhoneNumber(number))
+            }
+        }
+        prefs.edit().putStringSet(KEY_PRIORITY_CONTACTS, current).apply()
+        _settingsChanged.value += 1
+    }
+
     companion object {
+        const val KEY_LAST_SELECTED_TAB = "last_selected_bottom_tab"
+        const val KEY_PRIORITY_CONTACTS = "priority_contacts_set"
         const val CONTACT_BACKGROUND_PREFIX = "contact_background_"
         const val CONTACT_BACKGROUND_NUMBER_PREFIX = "contact_background_num_"
 

@@ -81,6 +81,33 @@ fun formatDuration(durationSeconds: Long): String {
     return DateUtils.formatElapsedTime(durationSeconds)
 }
 
+fun formatRelativeCallDateTime(context: Context, timestamp: Long): String {
+    val time = formatTime(context, timestamp)
+    val now = System.currentTimeMillis()
+    val calNow = Calendar.getInstance().apply { timeInMillis = now }
+    val calTarget = Calendar.getInstance().apply { timeInMillis = timestamp }
+
+    return when {
+        DateUtils.isToday(timestamp) -> "${context.getString(R.string.date_today)}, $time"
+        isYesterday(timestamp) -> "${context.getString(R.string.date_yesterday)}, $time"
+        calNow.get(Calendar.YEAR) == calTarget.get(Calendar.YEAR) &&
+                calNow.get(Calendar.WEEK_OF_YEAR) == calTarget.get(Calendar.WEEK_OF_YEAR) -> {
+            val dayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timestamp))
+            "$dayName, $time"
+        }
+        now - timestamp in 0..(7 * DateUtils.DAY_IN_MILLIS) -> {
+            val dayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timestamp))
+            "Last $dayName, $time"
+        }
+        calNow.get(Calendar.YEAR) == calTarget.get(Calendar.YEAR) -> {
+            SimpleDateFormat("MMM d, ", Locale.getDefault()).format(Date(timestamp)) + time
+        }
+        else -> {
+            SimpleDateFormat("MMM d, yyyy, ", Locale.getDefault()).format(Date(timestamp)) + time
+        }
+    }
+}
+
 fun formatPhoneNumber(number: String): String {
     if (number.isBlank()) return number
     return formattedNumberCache.get(number) ?: run {
@@ -95,7 +122,12 @@ fun normalizePhoneNumber(number: String): String {
 }
 
 fun areNumbersEqual(num1: String?, num2: String?): Boolean {
-    if (num1 == null || num2 == null) return false
+    if (num1.isNullOrBlank() || num2.isNullOrBlank()) return false
+    val digits1 = num1.filter { it.isDigit() }
+    val digits2 = num2.filter { it.isDigit() }
+    if (digits1.length < 3 || digits2.length < 3) {
+        return digits1 == digits2 && digits1.isNotEmpty()
+    }
     return PhoneNumberUtils.compare(num1, num2)
 }
 

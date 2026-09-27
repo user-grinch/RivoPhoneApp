@@ -426,13 +426,22 @@ class ContactsRepository(
             }
             return
         }
-        val contentValue = ContentValues().apply {
-            put(ContactsContract.Contacts.STARRED, if (isFavorite) 1 else 0)
+        val resolvedId = if (contactId.toLongOrNull() != null) {
+            contactId
+        } else {
+            resolveLookupKey(contactId) ?: contactId
         }
-        val updateUri = ContactsContract.Contacts.CONTENT_URI.buildUpon()
-            .appendPath(contactId)
-            .build()
-        contentResolver.update(updateUri, contentValue, null, null)
+        try {
+            val contentValue = ContentValues().apply {
+                put(ContactsContract.Contacts.STARRED, if (isFavorite) 1 else 0)
+            }
+            val updateUri = ContactsContract.Contacts.CONTENT_URI.buildUpon()
+                .appendPath(resolvedId)
+                .build()
+            contentResolver.update(updateUri, contentValue, null, null)
+        } catch (e: Exception) {
+            android.util.Log.e("ContactsRepo", "Error toggling favorite for contactId ", e)
+        }
     }
 
     private fun getPhotoBytes(uriString: String): ByteArray? {
@@ -478,20 +487,32 @@ class ContactsRepository(
 
     private fun getRawContactIds(contactId: String): List<String> {
         val ids = mutableListOf<String>()
+        val resolvedId = if (contactId.toLongOrNull() != null) {
+            contactId
+        } else {
+            resolveLookupKey(contactId) ?: return emptyList()
+        }
         try {
             contentResolver.query(
                 ContactsContract.RawContacts.CONTENT_URI,
-                arrayOf(ContactsContract.RawContacts._ID),
-                "${ContactsContract.RawContacts.CONTACT_ID} = ?",
-                arrayOf(contactId),
+                arrayOf(ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_TYPE),
+                "${ContactsContract.RawContacts.CONTACT_ID} = ? AND ${ContactsContract.RawContacts.DELETED} = 0",
+                arrayOf(resolvedId),
                 null
             )?.use { cursor ->
                 val idIdx = cursor.getColumnIndex(ContactsContract.RawContacts._ID)
+                val typeIdx = cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE)
+                val allRaw = mutableListOf<Pair<String, String?>>()
                 while (cursor.moveToNext()) {
-                    ids.add(cursor.getString(idIdx))
+                    val id = cursor.getString(idIdx) ?: continue
+                    val type = if (typeIdx != -1) cursor.getString(typeIdx) else null
+                    allRaw.add(id to type)
                 }
+                val writable = allRaw.filter { !isSyncAdapterAccount(it.second) }
+                val targetList = if (writable.isNotEmpty()) writable else allRaw
+                ids.addAll(targetList.map { it.first })
             }
-        } catch (e: SecurityException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return ids
@@ -660,171 +681,192 @@ class ContactsRepository(
                 )
             }
         } else {
-            val rawContactIds = getRawContactIds(contact.id)
+            val resolvedId = if (contact.id.toLongOrNull() != null) {
+                contact.id
+            } else {
+                resolveLookupKey(contact.id) ?: contact.id
+            }
+            val rawContactIds = getRawContactIds(resolvedId)
             if (rawContactIds.isEmpty()) return
 
-            rawContactIds.forEach { rawContactId ->
+            val primaryRawContactId = rawContactIds.first()
+            val secondaryRawContactIds = rawContactIds.drop(1)
+
+            secondaryRawContactIds.forEach { secRawId ->
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE} IN (?, ?, ?)",
+                            arrayOf(
+                                secRawId,
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
+                            )
+                        )
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            ops.add(
+                ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                    .withValue(
+                        ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+                    )
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
+                    .build()
+            )
+
+            if (contact.photoUri == null) {
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                         .withSelection(
                             "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                            arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                        )
+                        .build()
+                )
+            } else if (photoBytes != null) {
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                            arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
                         )
                         .build()
                 )
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, photoBytes)
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            if (contact.nickname != null) {
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
+                        .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
+                        .build()
+            )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            if (contact.notes != null) {
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.Note.NOTE, contact.notes)
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            effectivePhones.forEach { entry ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
                         .withValue(
                             ContactsContract.Data.MIMETYPE,
-                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, entry.number)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, entry.type)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, entry.label)
                         .build()
                 )
+            }
 
-                if (contact.photoUri == null) {
-                    ops.add(
-                        ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                            .withSelection(
-                                "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                                arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                            )
-                            .build()
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                     )
-                } else if (photoBytes != null) {
-                    ops.add(
-                        ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                            .withSelection(
-                                "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                                arrayOf(rawContactId, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                            )
-                            .build()
-                    )
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, photoBytes)
-                            .build()
-                    )
-                }
-
+                    .build()
+            )
+            effectiveEmails.forEach { entry ->
                 ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
                         )
+                        .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, entry.address)
+                        .withValue(ContactsContract.CommonDataKinds.Email.TYPE, entry.type)
+                        .withValue(ContactsContract.CommonDataKinds.Email.LABEL, entry.label)
                         .build()
                 )
-                if (contact.nickname != null) {
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
-                            .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
-                            .build()
-                    )
-                }
+            }
 
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            contact.addresses.forEach { address ->
                 ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
+                        .withValue(
+                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
+                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
                         )
                         .build()
                 )
-                if (contact.notes != null) {
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.Note.NOTE, contact.notes)
-                            .build()
-                    )
-                }
-
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                effectivePhones.forEach { entry ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, entry.number)
-                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, entry.type)
-                            .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, entry.label)
-                            .build()
-                    )
-                }
-
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                effectiveEmails.forEach { entry ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, entry.address)
-                            .withValue(ContactsContract.CommonDataKinds.Email.TYPE, entry.type)
-                            .withValue(ContactsContract.CommonDataKinds.Email.LABEL, entry.label)
-                            .build()
-                    )
-                }
-
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                            arrayOf(rawContactId, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
-                        )
-                        .build()
-                )
-                contact.addresses.forEach { address ->
-                    ops.add(
-                        ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                            .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
-                            .withValue(
-                                ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
-                            )
-                            .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
-                            .withValue(
-                                ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
-                                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
-                            )
-                            .build()
-                    )
-                }
             }
         }
-
         try {
             contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
         } catch (e: Exception) {
@@ -833,8 +875,16 @@ class ContactsRepository(
 
         // Keep favorite phone number preferences in sync if numbers were removed/modified
         val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
-        if (currentFavNum != null && !effectivePhones.any { it.number == currentFavNum }) {
-            preferenceManager.setFavoriteNumber(contact.id, effectivePhones.firstOrNull()?.number)
+        if (currentFavNum != null) {
+            val stillExists = effectivePhones.any { areNumbersEqual(it.number, currentFavNum) }
+            if (!stillExists) {
+                val newPrimary = effectivePhones.firstOrNull()?.number
+                if (newPrimary != null) {
+                    preferenceManager.setFavoriteNumber(contact.id, newPrimary)
+                } else {
+                    preferenceManager.setFavoriteNumber(contact.id, null)
+                }
+            }
         }
     }
 
@@ -854,8 +904,17 @@ class ContactsRepository(
             privateContactDao.deleteById(id)
             return
         }
-        val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, contactId)
-        contentResolver.delete(uri, null, null)
+        val resolvedId = if (contactId.toLongOrNull() != null) {
+            contactId
+        } else {
+            resolveLookupKey(contactId) ?: return
+        }
+        try {
+            val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, resolvedId)
+            contentResolver.delete(uri, null, null)
+        } catch (e: Exception) {
+            android.util.Log.e("ContactsRepo", "Error deleting contact internal ", e)
+        }
     }
 
     override fun deleteContact(contactId: String) {
@@ -1051,39 +1110,40 @@ class ContactsRepository(
 
         allContacts.forEachIndexed { index, contact ->
             val cleanName = contact.name.trim().lowercase()
+            val validNumbers = contact.phoneNumbers.filter { it.filter { c -> c.isDigit() }.length >= 5 }
+            val validEmails = contact.emails.map { it.trim().lowercase() }.filter { it.length >= 5 && it.contains('@') }
+
             if (cleanName.isNotBlank() && cleanName != unknownLabel.lowercase() && cleanName != "(no name)") {
                 val existing = nameMap[cleanName]
                 if (existing != null) {
-                    union(index, existing)
+                    val other = allContacts[existing]
+                    val otherNumbers = other.phoneNumbers.filter { it.filter { c -> c.isDigit() }.length >= 5 }
+                    if (validNumbers.isEmpty() || otherNumbers.isEmpty()) {
+                        union(index, existing)
+                    }
                 } else {
                     nameMap[cleanName] = index
                 }
             }
 
-            contact.phoneNumbers.forEach { num ->
-                val cleanNum = num.trim()
-                if (cleanNum.isNotBlank()) {
-                    val normalized = com.grinch.rivo4.controller.util.normalizePhoneNumber(cleanNum)
-                    val bucketKey = if (normalized.length >= 7) normalized.takeLast(7) else normalized
-                    val bucket = phoneBuckets.getOrPut(bucketKey) { mutableListOf() }
-                    val match = bucket.find { areNumbersEqual(it.first, cleanNum) }
-                    if (match != null) {
-                        union(index, match.second)
-                    } else {
-                        bucket.add(Pair(cleanNum, index))
-                    }
+            validNumbers.forEach { cleanNum ->
+                val digits = cleanNum.filter { it.isDigit() }
+                val bucketKey = if (digits.length >= 7) digits.takeLast(7) else digits
+                val bucket = phoneBuckets.getOrPut(bucketKey) { mutableListOf() }
+                val match = bucket.find { areNumbersEqual(it.first, cleanNum) }
+                if (match != null) {
+                    union(index, match.second)
+                } else {
+                    bucket.add(Pair(cleanNum, index))
                 }
             }
 
-            contact.emails.forEach { email ->
-                val cleanEmail = email.trim().lowercase()
-                if (cleanEmail.isNotBlank()) {
-                    val existing = emailMap[cleanEmail]
-                    if (existing != null) {
-                        union(index, existing)
-                    } else {
-                        emailMap[cleanEmail] = index
-                    }
+            validEmails.forEach { cleanEmail ->
+                val existing = emailMap[cleanEmail]
+                if (existing != null) {
+                    union(index, existing)
+                } else {
+                    emailMap[cleanEmail] = index
                 }
             }
         }
@@ -1189,8 +1249,8 @@ class ContactsRepository(
             } else {
                 CallBackgroundStore.clearBlocking(context, source.id, source.phoneNumbers)
             }
-            deleteContactInternal(source.id, false)
         }
+        deleteContacts(sources.map { it.id })
     }
 
     override fun setCustomRingtone(contactId: String, ringtoneUri: String?) {

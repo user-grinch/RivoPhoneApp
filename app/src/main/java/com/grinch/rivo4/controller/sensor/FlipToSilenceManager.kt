@@ -24,9 +24,13 @@ class FlipToSilenceManager(private val context: Context) : SensorEventListener {
     private var isNear = false
     private var onSilenceCallback: (() -> Unit)? = null
 
+    fun setOnSilenceListener(listener: (() -> Unit)?) {
+        this.onSilenceCallback = listener
+    }
+
     fun startListening(onSilenced: (() -> Unit)? = null) {
         if (isListening || sensorManager == null || accelerometer == null) return
-        this.onSilenceCallback = onSilenced
+        if (onSilenced != null) this.onSilenceCallback = onSilenced
         hasBeenNonFaceDown = false
         isNear = false
         isListening = true
@@ -46,7 +50,6 @@ class FlipToSilenceManager(private val context: Context) : SensorEventListener {
         if (!isListening) return
         isListening = false
         hasBeenNonFaceDown = false
-        onSilenceCallback = null
         try {
             sensorManager?.unregisterListener(this)
             Log.d(TAG, "FlipToSilenceManager: Stopped listening")
