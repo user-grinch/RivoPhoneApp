@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">0を長押しして+にする</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">ダイヤルパッドの0ボタンを長押しして+と入力します</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">自動スピーカーフォン</string>
     <string name="settings_call_auto_speaker_proximity_supporting">耳から離れた時にスピーカーに切り替える（ヘッドホン接続時には消去）</string>
@@ -109,4 +111,6 @@
     <string name="settings_call_background_change_gallery">画像の変更</string>
     <string name="settings_call_background_choose_gallery">ギャラリーから選択</string>
     <string name="settings_call_background_remove">背景を削除</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

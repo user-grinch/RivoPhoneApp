@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Tieni premuto 0 per +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Digita + tenendo premuto il pulsante 0 sul tastierino</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Altoparlante Automatico</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Passare all\'altoparlante quando lontano dall\'orecchio, auricolare quando vicino all\'orecchio (soppresso quando le cuffie si sono collegate)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Cambia immagine</string>
     <string name="settings_call_background_choose_gallery">Scegli dalla galleria</string>
     <string name="settings_call_background_remove">Rimuovi sfondo</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

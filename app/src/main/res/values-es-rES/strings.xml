@@ -591,4 +591,12 @@
     <string name="settings_call_background_change_gallery">Cambiar imagen</string>
     <string name="settings_call_background_choose_gallery">Seleccionar de la galería</string>
     <string name="settings_call_background_remove">Eliminar fondo</string>
+    <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Rechazado</string>
+    <string name="call_type_blocked">Bloqueado</string>
+    <string name="call_type_voicemail">Correo de voz</string>
+    <string name="call_type_call">Llamar</string>
+    <!-- Priority Contacts -->
+    <string name="priority_contact_title">Contacto prioritario</string>
+    <string name="priority_contact_summary">Anillos en voz alta incluso en modo silencioso o no molestar</string>
 </resources>

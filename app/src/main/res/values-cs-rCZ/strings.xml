@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Držet 0 pro +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Napište + podržením tlačítka 0 na číselníku</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatický reproduktor</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Přepnout na reproduktor, když je mimo uš, sluchátka, když je poblíž ucha (potlačeno při připojení sluchátek)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Změnit obrázek</string>
     <string name="settings_call_background_choose_gallery">Vybrat z galerie</string>
     <string name="settings_call_background_remove">Odstranit pozadí</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

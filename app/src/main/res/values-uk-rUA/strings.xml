@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Утримуйте 0 для +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Тип + , утримуючи кнопку 0 на номеронабирачі</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Автоматичний гучний зв\'язок</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Динамік при відхиленні від вуха, елементи у режимі навушників (придушується при підключенні навушників)</string>
@@ -110,4 +112,6 @@
     <string name="settings_call_background_change_gallery">Змінити зображення</string>
     <string name="settings_call_background_choose_gallery">З галереї</string>
     <string name="settings_call_background_remove">Видалити тло</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

@@ -115,4 +115,12 @@
     <string name="settings_call_background_change_gallery">Schimbă imaginea</string>
     <string name="settings_call_background_choose_gallery">Alege din galerie</string>
     <string name="settings_call_background_remove">Elimină fundal</string>
+    <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Respins</string>
+    <string name="call_type_blocked">Blocat</string>
+    <string name="call_type_voicemail">Mesagerie vocală</string>
+    <string name="call_type_call">Apelați</string>
+    <!-- Priority Contacts -->
+    <string name="priority_contact_title">Contact prioritar</string>
+    <string name="priority_contact_summary">Sunete puternice chiar și în modul „Nu deranja”</string>
 </resources>

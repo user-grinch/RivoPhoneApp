@@ -548,4 +548,12 @@
     <string name="settings_call_background_change_gallery">Changer l\'image</string>
     <string name="settings_call_background_choose_gallery">Choisir dans la galerie</string>
     <string name="settings_call_background_remove">Supprimer l\'arrière-plan</string>
+    <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Rejeté</string>
+    <string name="call_type_blocked">Bloqué</string>
+    <string name="call_type_voicemail">Courriel vocal</string>
+    <string name="call_type_call">Appel</string>
+    <!-- Priority Contacts -->
+    <string name="priority_contact_title">Contact prioritaire</string>
+    <string name="priority_contact_summary">Sonnerie à haute voix même en mode silencieux ou Ne pas déranger</string>
 </resources>

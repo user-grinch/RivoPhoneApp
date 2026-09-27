@@ -26,6 +26,8 @@
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_sound_hold_zero_for_plus">Pidä 0 pohjassa +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Kirjoita + pitämällä 0-näppäintä painettuna valintaikkunassa</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automaattinen Kaiutinpuhelin</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Vaihda kaiuttimeen, kun se on poissa korvasta, kuuloke kun se on lähellä korvaa (sammutetaan kuulokkeet yhdistettynä)</string>
@@ -112,4 +114,6 @@
     <string name="settings_call_background_change_gallery">Vaihda kuva</string>
     <string name="settings_call_background_choose_gallery">Valitse galleriasta</string>
     <string name="settings_call_background_remove">Poista tausta</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>

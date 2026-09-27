@@ -337,6 +337,8 @@
     <string name="settings_sound_dtmf_tone_supporting">Dźwięki klawiatury podczas wybierania numeru</string>
     <string name="settings_sound_dialpad_vibration">Wibracje klawiatury</string>
     <string name="settings_sound_dialpad_vibration_supporting">Wibracja klawiatury podczas wybierania numeru</string>
+    <string name="settings_sound_hold_zero_for_plus">Przytrzymaj 0 aby +</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">Wpisz + przytrzymując przycisk 0 na klawiaturze</string>
     <string name="settings_sound_vibrate_on_answer">Wibracja przy odebraniu</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Wibruj, gdy rozmówca odbierze</string>
     <string name="settings_sound_vibrate_on_hangup">Wibracja przy rozłączeniu</string>
@@ -860,4 +862,6 @@
     <string name="settings_call_background_change_gallery">Zmień obraz</string>
     <string name="settings_call_background_choose_gallery">Wybierz z galerii</string>
     <string name="settings_call_background_remove">Usuń tło</string>
+    <!-- Call Types & Relative Dates -->
+    <!-- Priority Contacts -->
 </resources>
