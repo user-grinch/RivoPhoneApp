@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Velg fra galleri</string>
     <string name="settings_call_background_remove">Fjern bakgrunn</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Avvist</string>
+    <string name="call_type_blocked">Blokkert</string>
+    <string name="call_type_voicemail">Talepostkasse</string>
+    <string name="call_type_call">Ring</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioritert kontakt</string>
+    <string name="priority_contact_summary">Ringer høyt i stillemodus eller ikke forstyrr modus</string>
+    <string name="priority_contacts_title">Prioriterte kontakter</string>
+    <string name="priority_contacts_supporting">Administrere kontakter som omgår stillbilde og ikke forstyrr innstillinger</string>
+    <string name="priority_contacts_empty_title">Ingen prioriterte kontakter</string>
+    <string name="priority_contacts_empty_desc">Legg til kontakter som alltid kan nå deg, selv når stille eller ikke forstyrr er aktivert.</string>
+    <string name="priority_contacts_add">Legg til prioritet kontakt</string>
 </resources>

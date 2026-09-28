@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Vælg fra galleri</string>
     <string name="settings_call_background_remove">Fjern baggrund</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Afvist</string>
+    <string name="call_type_blocked">Blokeret</string>
+    <string name="call_type_voicemail">Telefonsvarer</string>
+    <string name="call_type_call">Opkald</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioriteret Kontakt</string>
+    <string name="priority_contact_summary">Ringe højt selv i lydløs tilstand eller Forstyr ikke tilstand</string>
+    <string name="priority_contacts_title">Prioriterede Kontakter</string>
+    <string name="priority_contacts_supporting">Administrer kontakter, der omgår tavse og Forstyr ikke indstillinger</string>
+    <string name="priority_contacts_empty_title">Ingen Prioriterede Kontakter</string>
+    <string name="priority_contacts_empty_desc">Tilføj kontakter, der altid kan nå dig, selv når Silent eller Forstyr Ikke er aktiveret.</string>
+    <string name="priority_contacts_add">Tilføj Prioriteret Kontakt</string>
 </resources>

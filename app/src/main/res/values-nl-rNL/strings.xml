@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Kies uit gallerij</string>
     <string name="settings_call_background_remove">Achtergrond verwijderen</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Geweigerd</string>
+    <string name="call_type_blocked">Geblokkeerd</string>
+    <string name="call_type_voicemail">Voicemail</string>
+    <string name="call_type_call">Oproepen</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioriteit contact</string>
+    <string name="priority_contact_summary">Duidelijk ringen, zelfs in Stille of Niet storen modus</string>
+    <string name="priority_contacts_title">Contacten met prioriteit</string>
+    <string name="priority_contacts_supporting">Contacten beheren die Stille en \'Niet storen\' instellingen omzeilen</string>
+    <string name="priority_contacts_empty_title">Geen voorkeurscontacten</string>
+    <string name="priority_contacts_empty_desc">Voeg contacten toe die u altijd kunnen bereiken, zelfs als Stil of Niet storen is ingeschakeld.</string>
+    <string name="priority_contacts_add">Prioriteit contact toevoegen</string>
 </resources>

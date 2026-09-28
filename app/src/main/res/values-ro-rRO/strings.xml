@@ -123,4 +123,9 @@
     <!-- Priority Contacts -->
     <string name="priority_contact_title">Contact prioritar</string>
     <string name="priority_contact_summary">Sunete puternice chiar și în modul „Nu deranja”</string>
+    <string name="priority_contacts_title">Contacte prioritare</string>
+    <string name="priority_contacts_supporting">Gestionați contactele care ocolesc tăcerea și Setările Nu deranja</string>
+    <string name="priority_contacts_empty_title">Fără contacte prioritare</string>
+    <string name="priority_contacts_empty_desc">Adăugați persoane de contact care vă pot contacta întotdeauna, chiar și atunci când silențios sau Nu deranja este activat.</string>
+    <string name="priority_contacts_add">Adăugare contact prioritar</string>
 </resources>

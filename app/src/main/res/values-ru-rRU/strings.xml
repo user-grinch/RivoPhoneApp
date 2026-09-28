@@ -863,5 +863,16 @@
     <string name="settings_call_background_choose_gallery">Выбрать из галереи</string>
     <string name="settings_call_background_remove">Удалить фон</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Отклонено</string>
+    <string name="call_type_blocked">Заблокирован</string>
+    <string name="call_type_voicemail">Голосовая почта</string>
+    <string name="call_type_call">Звонок</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Приоритетный контакт</string>
+    <string name="priority_contact_summary">Кольца вслух даже в беззвучном режиме или \"Не беспокоить\"</string>
+    <string name="priority_contacts_title">Приоритетные контакты</string>
+    <string name="priority_contacts_supporting">Управление контактами, которые обойти Настройки \"Без предупреждения\" и \"Не беспокоить\"</string>
+    <string name="priority_contacts_empty_title">Нет приоритетных контактов</string>
+    <string name="priority_contacts_empty_desc">Добавляйте контакты, которые всегда могут связаться с вами, даже если включен режим \"Без звонков\" или \"Не беспокоить\".</string>
+    <string name="priority_contacts_add">Добавить приоритетный контакт</string>
 </resources>

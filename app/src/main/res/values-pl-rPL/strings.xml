@@ -863,5 +863,16 @@
     <string name="settings_call_background_choose_gallery">Wybierz z galerii</string>
     <string name="settings_call_background_remove">Usuń tło</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Odrzucono</string>
+    <string name="call_type_blocked">Zablokowane</string>
+    <string name="call_type_voicemail">Wiadomość głosowa</string>
+    <string name="call_type_call">Połącz</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Kontakt priorytetowy</string>
+    <string name="priority_contact_summary">Dzwonek nawet w trybie Cichy lub tryb Nie przeszkadzać</string>
+    <string name="priority_contacts_title">Kontakty priorytetowe</string>
+    <string name="priority_contacts_supporting">Zarządzaj kontaktami, które omijają ustawienia cichego i nie przeszkadzać</string>
+    <string name="priority_contacts_empty_title">Brak kontaktów priorytetowych</string>
+    <string name="priority_contacts_empty_desc">Dodaj kontakty, które zawsze mogą się z Tobą skontaktować, nawet gdy wycisz lub tryb Nie przeszkadzać jest włączony.</string>
+    <string name="priority_contacts_add">Dodaj priorytet kontaktu</string>
 </resources>

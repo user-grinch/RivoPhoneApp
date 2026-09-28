@@ -556,4 +556,9 @@
     <!-- Priority Contacts -->
     <string name="priority_contact_title">Contact prioritaire</string>
     <string name="priority_contact_summary">Sonnerie à haute voix même en mode silencieux ou Ne pas déranger</string>
+    <string name="priority_contacts_title">Contacts prioritaires</string>
+    <string name="priority_contacts_supporting">Gérer les contacts qui contournent les paramètres silencieux et ne pas déranger</string>
+    <string name="priority_contacts_empty_title">Aucun contact prioritaire</string>
+    <string name="priority_contacts_empty_desc">Ajoutez des contacts qui peuvent toujours vous joindre, même si Silent ou Ne pas déranger est activé.</string>
+    <string name="priority_contacts_add">Ajouter un contact prioritaire</string>
 </resources>
