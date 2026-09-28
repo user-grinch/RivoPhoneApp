@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Valitse galleriasta</string>
     <string name="settings_call_background_remove">Poista tausta</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Hylätty</string>
+    <string name="call_type_blocked">Estetty</string>
+    <string name="call_type_voicemail">Vastaaja</string>
+    <string name="call_type_call">Soita</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioriteetti Yhteystieto</string>
+    <string name="priority_contact_summary">Renkaat äänekkäästi jopa hiljaisessa tai Älä häiritse -tilassa</string>
+    <string name="priority_contacts_title">Prioriteetin Yhteystiedot</string>
+    <string name="priority_contacts_supporting">Hallitse hiljaisten ja Älä häiritse -asetusten ohittavia yhteystietoja</string>
+    <string name="priority_contacts_empty_title">Ei Prioriteettiyhteystietoja</string>
+    <string name="priority_contacts_empty_desc">Lisää yhteystietoja, jotka voivat aina tavoittaa sinut, vaikka Hiljainen tai Älä häiritse -tila on käytössä.</string>
+    <string name="priority_contacts_add">Lisää Prioriteettiyhteystieto</string>
 </resources>

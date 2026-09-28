@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Välj från galleriet</string>
     <string name="settings_call_background_remove">Ta bort bakgrund</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Avvisad</string>
+    <string name="call_type_blocked">Blockerad</string>
+    <string name="call_type_voicemail">Röstbrevlåda</string>
+    <string name="call_type_call">Ring</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioriterad kontakt</string>
+    <string name="priority_contact_summary">Ringar högt även i tyst eller Stör ej-läge</string>
+    <string name="priority_contacts_title">Prioriterade kontakter</string>
+    <string name="priority_contacts_supporting">Hantera kontakter som kringgår inställningar för tyst och Stör ej</string>
+    <string name="priority_contacts_empty_title">Inga prioriterade kontakter</string>
+    <string name="priority_contacts_empty_desc">Lägg till kontakter som alltid kan nå dig, även när Tyst eller Stör ej är aktiverat.</string>
+    <string name="priority_contacts_add">Lägg till prioriterad kontakt</string>
 </resources>

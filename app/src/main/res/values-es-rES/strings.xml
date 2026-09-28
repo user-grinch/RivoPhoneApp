@@ -599,4 +599,9 @@
     <!-- Priority Contacts -->
     <string name="priority_contact_title">Contacto prioritario</string>
     <string name="priority_contact_summary">Anillos en voz alta incluso en modo silencioso o no molestar</string>
+    <string name="priority_contacts_title">Contactos prioritarios</string>
+    <string name="priority_contacts_supporting">Administrar contactos que eluden la configuración de Silencio y No molestar</string>
+    <string name="priority_contacts_empty_title">No hay contactos prioritarios</string>
+    <string name="priority_contacts_empty_desc">Añade contactos que siempre pueden comunicarte contigo, incluso cuando Silencio o No molestar.</string>
+    <string name="priority_contacts_add">Añadir contacto prioritario</string>
 </resources>

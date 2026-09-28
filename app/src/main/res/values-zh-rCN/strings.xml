@@ -269,5 +269,16 @@
     <string name="settings_call_background_choose_gallery">从图库中选择</string>
     <string name="settings_call_background_remove">删除背景</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">已拒绝</string>
+    <string name="call_type_blocked">已阻止</string>
+    <string name="call_type_voicemail">语音邮件</string>
+    <string name="call_type_call">来电</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">优先联系人</string>
+    <string name="priority_contact_summary">即使在静音或勿扰模式下响铃</string>
+    <string name="priority_contacts_title">优先联系人</string>
+    <string name="priority_contacts_supporting">管理绕过静音和勿扰设置的联系人</string>
+    <string name="priority_contacts_empty_title">没有优先联系人</string>
+    <string name="priority_contacts_empty_desc">添加可以随时联系您的联系人，即使静音或勿扰模式已启用。</string>
+    <string name="priority_contacts_add">添加优先联系人</string>
 </resources>

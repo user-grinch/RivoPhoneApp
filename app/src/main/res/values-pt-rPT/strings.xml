@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Escolher da galeria</string>
     <string name="settings_call_background_remove">Remover fundo</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Rejeitados</string>
+    <string name="call_type_blocked">Bloqueado</string>
+    <string name="call_type_voicemail">Correio</string>
+    <string name="call_type_call">Chamada</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Contato prioritário</string>
+    <string name="priority_contact_summary">Toques em voz alta mesmo no modo Silencioso ou Não perturbe</string>
+    <string name="priority_contacts_title">Contatos prioritários</string>
+    <string name="priority_contacts_supporting">Gerenciar contatos que ignoram as configurações Silenciosas e \"Não perturbe\"</string>
+    <string name="priority_contacts_empty_title">Sem Contatos Prioritários</string>
+    <string name="priority_contacts_empty_desc">Adicione contatos que sempre puderem te alcançar, mesmo quando o Silencioso ou o Não perturbe estiver ativado.</string>
+    <string name="priority_contacts_add">Adicionar prioridade ao contato</string>
 </resources>

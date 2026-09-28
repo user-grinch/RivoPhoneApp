@@ -113,5 +113,16 @@
     <string name="settings_call_background_choose_gallery">З галереї</string>
     <string name="settings_call_background_remove">Видалити тло</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Відхилено</string>
+    <string name="call_type_blocked">Заблоковано</string>
+    <string name="call_type_voicemail">Голосова пошта</string>
+    <string name="call_type_call">Дзвінок</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Пріоритетний контакт</string>
+    <string name="priority_contact_summary">Гучні кільця навіть у беззвучному режимі або режиму \"Не турбувати\"</string>
+    <string name="priority_contacts_title">Пріоритетні контакти</string>
+    <string name="priority_contacts_supporting">Керуйте контактами, що обходять беззвучний режим і налаштування режиму \"Не турбувати\"</string>
+    <string name="priority_contacts_empty_title">Немає пріоритетних контактів</string>
+    <string name="priority_contacts_empty_desc">Додати контакти, які завжди можуть зв’язатися з вами, навіть якщо ввімкнено беззвучний режим чи режим \"Не турбувати\".</string>
+    <string name="priority_contacts_add">Додати пріоритетний контакт</string>
 </resources>

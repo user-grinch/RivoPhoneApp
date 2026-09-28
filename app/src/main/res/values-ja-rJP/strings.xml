@@ -112,5 +112,16 @@
     <string name="settings_call_background_choose_gallery">ギャラリーから選択</string>
     <string name="settings_call_background_remove">背景を削除</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">拒否</string>
+    <string name="call_type_blocked">ブロック</string>
+    <string name="call_type_voicemail">ボイスメール</string>
+    <string name="call_type_call">電話</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">プライオリティ連絡先</string>
+    <string name="priority_contact_summary">サイレントモードまたはマナーモードでも着信音を鳴らす</string>
+    <string name="priority_contacts_title">優先連絡先</string>
+    <string name="priority_contacts_supporting">サイレント設定とマナーモード設定をバイパスする連絡先を管理します</string>
+    <string name="priority_contacts_empty_title">優先度の連絡先がありません</string>
+    <string name="priority_contacts_empty_desc">format@@0またはformat@@1が有効になっている場合でも、常に連絡先を追加できます。</string>
+    <string name="priority_contacts_add">プライオリティ連絡先を追加</string>
 </resources>

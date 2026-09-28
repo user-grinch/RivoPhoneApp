@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Vybrat z galerie</string>
     <string name="settings_call_background_remove">Odstranit pozadí</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Odmítnuto</string>
+    <string name="call_type_blocked">Blokované</string>
+    <string name="call_type_voicemail">Hlasová schránka</string>
+    <string name="call_type_call">Hovor</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioritní kontakt</string>
+    <string name="priority_contact_summary">Vyzvánění nahlas i v režimu Tichý nebo Nerušit</string>
+    <string name="priority_contacts_title">Prioritní kontakty</string>
+    <string name="priority_contacts_supporting">Spravovat kontakty, které obcházejí nastavení tichého režimu a režimu Nerušit</string>
+    <string name="priority_contacts_empty_title">Žádné kontakty s prioritou</string>
+    <string name="priority_contacts_empty_desc">Přidejte kontakty, které vás mohou vždy kontaktovat, i když je aktivní tichý režim nebo režim Nerušit.</string>
+    <string name="priority_contacts_add">Přidat Prioritní kontakt</string>
 </resources>

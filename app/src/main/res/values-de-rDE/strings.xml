@@ -50,7 +50,7 @@
     <string name="label_social_apps">Messenger Apps</string>
     <string name="label_local_memory">Lokaler Speicher</string>
     <string name="option_standard">Standard</string>
-    <string name="ringtone_default">Standard</string>
+    <string name="ringtone_default">Standard-Klingelton</string>
     <string name="ringtone_custom">Benutzerdefiniert</string>
     <string name="empty_state_try_clearing_filters">Versuchen Sie, Ihre Filter zu entfernen, oder fügen Sie einen neuen Kontakt hinzu.</string>
     <string name="date_today">Heute</string>
@@ -277,7 +277,7 @@
     <string name="settings_interface_material_you_supporting">Hintergrund-basiertes Farbthema.</string>
     <string name="settings_interface_primary_color">Primärfarbe</string>
     <string name="settings_interface_amoled">Amoled Dark Mode</string>
-    <string name="settings_interface_amoled_supporting">Komplett schwarz für UI-Elemente.</string>
+    <string name="settings_interface_amoled_supporting">Vollständig schwarz für UI-Elemente.</string>
     <string name="settings_interface_show_first_letter">Anfangsbuchstabe in Avatar</string>
     <string name="settings_interface_show_first_letter_supporting">Buchstabe anzeigen, wenn Bild fehlt</string>
     <string name="settings_interface_colorful_avatars">Farbige Avatare</string>
@@ -305,7 +305,7 @@
     <string name="settings_interface_show_dividers_supporting">Linien zwischen Listeneinträgen</string>
     <string name="settings_interface_expressive_cards">Expressive Cards benutzen</string>
     <string name="settings_interface_expressive_cards_supporting">Listeneinträge in stilisierten Karten anzeigen</string>
-    <string name="settings_interface_transition_animation">Übergangs-Animationen</string>
+    <string name="settings_interface_transition_animation">Animationen</string>
     <string name="settings_interface_transition_animation_supporting">Animationsstil zwischen Bildschirmen</string>
     <string name="settings_interface_transition_slide">Streichen</string>
     <string name="settings_interface_transition_fade">Verblassen</string>
@@ -341,8 +341,8 @@
     <string name="settings_sound_vibrate_on_hangup_supporting">Vibration bei Anrufende</string>
     <string name="settings_sound_haptic_scroll">Vibration beim Scrollen</string>
     <string name="settings_sound_haptic_scroll_supporting">Leichte Vibration beim Scrollen</string>
-    <string name="settings_sound_missed_call_notifications">Nachricht bei verpasstem Anruf</string>
-    <string name="settings_sound_missed_call_notifications_supporting">Nachricht bei verpasstem Anruf</string>
+    <string name="settings_sound_missed_call_notifications">Benachrichtigung bei verpasstem Anruf</string>
+    <string name="settings_sound_missed_call_notifications_supporting">Benachrichtigung bei verpasstem Anruf</string>
     <string name="settings_sound_ringtone_settings">Klingelton-Einstellungen</string>
     <string name="settings_sound_ringtone_settings_supporting">Sound-Systemeinstellungen öffnen</string>
     <string name="call_failed_airplane_mode">Anruf kann wegen Flugmodus nicht ausgeführt werden</string>
@@ -366,7 +366,7 @@
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Anrufbildschirm bei Ohrnähe abschalten</string>
     <string name="settings_call_auto_speaker_proximity">Auto-Lautsprecher</string>
-    <string name="settings_call_auto_speaker_proximity_supporting">Lautsprecher wenn nicht am Ohr, Handgerät wenn am Ohr (bei verbundenen Ohrhörern unterdrückt)</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Bei Nicht-Ohrnähe Lautsprecher, sonst Handgerät (unterdrückt bei verbundenen Ohrhörern)</string>
     <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Auswahl der Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
@@ -566,7 +566,7 @@
     <string name="blocked_add_number">Eine Nummer blockieren</string>
     <string name="blocked_add_number_hint">Telefonnummer</string>
     <string name="contact_block">Kontakt blockieren</string>
-    <string name="contact_block_supporting">Keine Anrufe mehr von diesem Kontakt empfangen</string>
+    <string name="contact_block_supporting">Anrufe von diesem Kontakt blockieren</string>
     <string name="contact_unblock">Kontakt nicht mehr blockieren</string>
     <string name="contact_unblock_supporting">Anrufe von diesem Kontakt wieder zulassen</string>
     <string name="call_log_block_title">Nummern blockieren?</string>
@@ -575,13 +575,13 @@
         <item quantity="other">Anrufe von den %1$d ausgewählten Einträgen werden künftig blockiert.</item>
     </plurals>
     <!-- Contact call screen background -->
-    <string name="contact_call_background">Hintergrund des Anrufbildschirms</string>
+    <string name="contact_call_background">Benutzerdefinierter Anrufbildschirm</string>
     <string name="settings_interface_hide_avatar_with_bg">Bei Hintergrund kein Kontaktbild</string>
     <string name="settings_interface_hide_avatar_with_bg_supporting">Bei Hintergrund kein Anrufer-Avatar</string>
     <string name="settings_interface_use_cards">Expressive Cards benutzen</string>
     <string name="settings_interface_use_cards_supporting">Unter \"Zuletzt\" und \"Kontakte\"</string>
     <string name="contact_call_background_set">Benutzerdefiniertes Bild ausgewählt</string>
-    <string name="contact_call_background_none">Standard-Hintergrund verwenden</string>
+    <string name="contact_call_background_none">Standard-Hintergrund</string>
     <string name="contact_call_background_choose">Bild auswählen</string>
     <string name="contact_call_background_change">Bild ändern</string>
     <string name="contact_call_background_remove">Bild entfernen</string>
@@ -606,10 +606,10 @@
     <string name="settings_call_recording_notice">Die Aufnahme von Anrufen könnte von Ihrem Gerät oder aufgrund von Gesetzen eingeschränkt sein. Stellen Sie sicher, dass die Aufnahme erlaubt ist, bevor Sie diese Funktion nutzen.</string>
     <string name="settings_call_default_background">Standard Anruf-Hintergrund</string>
     <string name="settings_call_default_background_set">Ein benutzerdefiniertes Bild wird bei jedem Anruf gezeigt</string>
-    <string name="settings_call_default_background_none">Nicht festgelegt — Standard-Anrufhintergrund wird verwendet</string>
+    <string name="settings_call_default_background_none">Nicht festgelegt — App-Thema wird verwendet</string>
     <string name="settings_call_default_background_choose">Bild auswählen</string>
     <string name="settings_call_default_background_change">Ändern</string>
-    <string name="settings_call_default_background_supporting">Wird bei jedem eingehenden und ausgehenden Anruf gezeigt, es sei denn, ein Kontakt hat seinen eigenen Hintergrund.</string>
+    <string name="settings_call_default_background_supporting">Wird bei jedem eingehenden und ausgehenden Anruf gezeigt, es sei denn, ein Kontakt hat einen benutzerdefinierten Hintergrund.</string>
     <string name="action_remove">Entfernen</string>
     <string name="action_record">Aufnehmen</string>
     <string name="action_stop_recording">Stop</string>
@@ -772,7 +772,7 @@
     <string name="call_is_ongoing_tap_to_return">Anruf läuft — Tippen um zurückzukehren</string>
     <string name="call_is_ongoing_with_time">Anruf läuft (%1$s) — Tippen um zurückzukehren</string>
     <string name="oem_vivo_popup_permission_title">Vivo Hintergrund-Popup</string>
-    <string name="oem_vivo_popup_permission_desc">Rivo erlauben, eingehende Anrufe und schwebende Benachrichtigungen auf Vivo-Geräten anzuzeigen.</string>
+    <string name="oem_vivo_popup_permission_desc">Rivo erlauben, eingehende Anrufe und schwebende Hinweise auf Vivo-Geräten anzuzeigen.</string>
     <string name="notif_channel_calls_desc">Benachrichtigungen zu eingehenden, andauernden und verpassten Anrufen</string>
     <!-- Missed Call Card & Auto Decline -->
     <string name="settings_missed_call_card_title">Verpasste Anrufe-Popup</string>
@@ -817,8 +817,8 @@
     <string name="settings_auto_paste_clipboard">Auto-Einfügen: kopierte Nummer</string>
     <string name="settings_auto_paste_clipboard_supporting">Auto-Einfügen in Wahlfeld</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
-    <string name="settings_contacts_launcher_icon">Eigenes App-Icon für Kontakte</string>
-    <string name="settings_contacts_launcher_icon_supporting">Eigenes App-Icon für Kontakte auf Startbildschirm</string>
+    <string name="settings_contacts_launcher_icon">Eigenes App-Symbol für Kontakte</string>
+    <string name="settings_contacts_launcher_icon_supporting">Eigenes App-Symbol für Kontakte auf Startbildschirm</string>
     <string name="app_name_contacts">Kontakte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
     <string name="settings_call_waiting_system_settings">Anruf-Einstellungen Netzbetreiber</string>
@@ -834,7 +834,7 @@
     <!-- Dual SIM per Contact -->
     <string name="contact_default_sim">Standard SIM-Karte</string>
     <string name="contact_default_sim_supporting">Wählen Sie die SIM-Karte für Anrufe an diesen Kontakt aus</string>
-    <string name="sim_remember_for_contact">Diese SIM-Karte immer für diesen Kontakt verwenden</string>
+    <string name="sim_remember_for_contact">Immer diese SIM-Karte für diesen Kontakt verwenden</string>
     <!-- Call Recording Custom Save Folder -->
     <string name="settings_recording_storage_title">Speicherort &amp;</string>
     <string name="settings_recording_save_folder">Speicherort</string>
@@ -844,7 +844,7 @@
     <string name="settings_recording_folder_changed">Speicherort aktualisiert: %1$s</string>
     <string name="settings_recording_reset_folder_toast">Speicherort auf Standard zurücksetzen</string>
     <!-- Do Not Disturb during calls -->
-    <string name="settings_sound_dnd_during_calls">Bei Anrufen nicht stören</string>
+    <string name="settings_sound_dnd_during_calls">\"Nicht stören\" bei Anrufen</string>
     <string name="settings_sound_dnd_during_calls_supporting">Benachrichtigungen und andere Unterbrechungen während Anruf automatisch stummschalten</string>
     <!-- Unknown Call Background & Image Preview Strings -->
     <string name="settings_call_backgrounds_title">Anrufhintergründe</string>
@@ -852,10 +852,21 @@
     <string name="settings_call_unknown_background_set">Ein benutzerdefiniertes Bild wird für unbekannte Anrufer angezeigt</string>
     <string name="settings_call_unknown_background_none">Nicht festgelegt — Standard-Anrufhintergrund wird verwendet</string>
     <string name="settings_call_unknown_background_supporting">Wird bei eingehenden Anrufen von unbekannten oder ungespeicherten Telefonnummern angezeigt.</string>
-    <string name="settings_call_background_no_preview">Kein eigener Hintergrund</string>
+    <string name="settings_call_background_no_preview">Kein benutzerdefinierter Hintergrund</string>
     <string name="settings_call_background_change_gallery">Bild ändern</string>
     <string name="settings_call_background_choose_gallery">Aus Galerie auswählen</string>
     <string name="settings_call_background_remove">Hintergrund entfernen</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Abgelehnt</string>
+    <string name="call_type_blocked">Blockiert</string>
+    <string name="call_type_voicemail">VoiceMail</string>
+    <string name="call_type_call">Anruf</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Prioritätskontakt</string>
+    <string name="priority_contact_summary">Klingelton laut selbst bei \"Lautlos\" oder \"Nicht stören\"</string>
+    <string name="priority_contacts_title">Prioritätskontakte</string>
+    <string name="priority_contacts_supporting">Kontakte verwalten, die \"Lautlos\" und \"Nicht stören\" umgehen</string>
+    <string name="priority_contacts_empty_title">Keine Prioritätskontakte</string>
+    <string name="priority_contacts_empty_desc">Fügen Sie Kontakte hinzu, die Sie immer erreichen können, selbst wenn \"Lautlos\" oder \"Nicht stören\" aktiviert ist.</string>
+    <string name="priority_contacts_add">Prioritätskontakt hinzufügen</string>
 </resources>

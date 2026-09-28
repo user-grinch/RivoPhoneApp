@@ -115,5 +115,16 @@
     <string name="settings_call_background_choose_gallery">Scegli dalla galleria</string>
     <string name="settings_call_background_remove">Rimuovi sfondo</string>
     <!-- Call Types & Relative Dates -->
+    <string name="call_type_rejected">Respinto</string>
+    <string name="call_type_blocked">Bloccato</string>
+    <string name="call_type_voicemail">Segreteria</string>
+    <string name="call_type_call">Chiama</string>
     <!-- Priority Contacts -->
+    <string name="priority_contact_title">Contatto Priorità</string>
+    <string name="priority_contact_summary">Anelli ad alta voce anche in modalità silenziosa o non disturbare</string>
+    <string name="priority_contacts_title">Contatti Priorità</string>
+    <string name="priority_contacts_supporting">Gestisce i contatti che bypassano le impostazioni silenziose e non disturbare</string>
+    <string name="priority_contacts_empty_title">Nessun Contatti Priorità</string>
+    <string name="priority_contacts_empty_desc">Aggiungi contatti che possono sempre raggiungerti, anche quando silenzioso o non disturbare è abilitato.</string>
+    <string name="priority_contacts_add">Aggiungi Contatto Priorità</string>
 </resources>
