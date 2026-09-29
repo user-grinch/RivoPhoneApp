@@ -985,13 +985,10 @@ class CallService : InCallService() {
         val showFullScreen = directFullScreen ?: (!isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
         val isActivityShowing = isActivityVisible.value
 
-        val shouldHeadsUp = isRinging && !isActivityShowing && !showFullScreen
-
-        val targetChannel = if (shouldHeadsUp) {
-            CHANNEL_ID
-        } else {
-            SILENT_CHANNEL_ID
-        }
+        // For incoming ringing calls, ALWAYS use CHANNEL_ID (IMPORTANCE_HIGH), PRIORITY_MAX, and fullScreenIntent.
+        // On OEM devices (MIUI/HyperOS, Vivo/Funtouch OS, ColorOS, OneUI), demoting ringing calls to SILENT_CHANNEL_ID
+        // or PRIORITY_MIN prevents heads-up popups and blocks lockscreen wake/full-screen activity display!
+        val targetChannel = if (isRinging) CHANNEL_ID else SILENT_CHANNEL_ID
 
         val notifColor = com.grinch.rivo4.controller.util.CallNotificationHelper.getNotificationColor(this)
 
@@ -1011,13 +1008,11 @@ class CallService : InCallService() {
 
         if (isRinging) {
             builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
-            if (shouldHeadsUp) {
-                builder.setPriority(NotificationCompat.PRIORITY_MAX)
-                builder.setFullScreenIntent(fullScreenPendingIntent, true)
-                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
-            } else {
-                builder.setPriority(NotificationCompat.PRIORITY_MIN)
-                builder.setSilent(true)
+            builder.setPriority(NotificationCompat.PRIORITY_MAX)
+            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            if (isActivityShowing) {
+                // When in-app UI is already visible, suppress duplicate alert sound/vibration but preserve notification
                 builder.setOnlyAlertOnce(true)
             }
         } else {

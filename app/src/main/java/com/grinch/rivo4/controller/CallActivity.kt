@@ -559,6 +559,28 @@ class CallActivity : ComponentActivity() {
         super.onResume()
         turnScreenOnAndShowWhileLocked()
         com.grinch.rivo4.controller.floating.FloatingCallService.stop(this)
+
+        // Automatically Resume the Previous Call:
+        // When returning to CallActivity (e.g. after attempting to add a call or returning from dialpad/reminders),
+        // if no active, dialing, or connecting call exists and a call is on hold, automatically resume the held call.
+        val calls = CallService.allCalls.value
+        val hasActiveOrConnecting = calls.any {
+            it.state == Call.STATE_ACTIVE ||
+            it.state == Call.STATE_DIALING ||
+            it.state == Call.STATE_CONNECTING ||
+            it.state == Call.STATE_RINGING
+        }
+        if (!hasActiveOrConnecting) {
+            val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+            if (heldCall != null) {
+                try {
+                    heldCall.unhold()
+                    CallService.setPreferredCall(heldCall)
+                } catch (e: Exception) {
+                    android.util.Log.e("CallActivity", "Error auto-resuming held call in onResume: ${e.message}")
+                }
+            }
+        }
     }
 
     override fun onUserLeaveHint() {

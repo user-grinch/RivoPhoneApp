@@ -547,6 +547,19 @@ fun CallLogFullContent(
             filteredLogs.groupBy { formatDateHeader(context, it.date) }
         }
 
+        // Precompute contact matches for all displayed call logs to prevent expensive
+        // phone number normalization and string operations on every LazyColumn frame during scrolling
+        val contactsByLogId = remember(filteredLogs, contactsById, contactsByNumber) {
+            filteredLogs.associate { lg ->
+                val matched = lg.contactId?.let { contactsById[it] } ?: run {
+                    val norm = normalizePhoneNumber(lg.number)
+                    val key = if (norm.length >= 10) norm.takeLast(10) else norm
+                    if (key.isNotEmpty()) contactsByNumber[key] else null
+                }
+                lg.id to matched
+            }
+        }
+
         val pullToRefreshState = rememberPullToRefreshState()
 
         if (showAddFavoriteDialog) {
@@ -803,13 +816,7 @@ fun CallLogFullContent(
                                                 } else Modifier
                                             )
                                     ) {
-                                    val matchedContact = remember(lg, contactsById, contactsByNumber) {
-                                        lg.contactId?.let { contactsById[it] } ?: run {
-                                            val norm = normalizePhoneNumber(lg.number)
-                                            val key = if (norm.length >= 10) norm.takeLast(10) else norm
-                                            if (key.isNotEmpty()) contactsByNumber[key] else null
-                                        }
-                                    }
+                                    val matchedContact = contactsByLogId[lg.id]
                                     CallLogTile(
                                         log = lg,
                                         contact = matchedContact,

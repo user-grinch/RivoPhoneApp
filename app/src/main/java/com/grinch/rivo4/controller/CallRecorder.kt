@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
+import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
 import android.util.Log
 import android.widget.Toast
@@ -291,13 +292,19 @@ object CallRecorder {
             val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), DIRECTORY_NAME)
             if (d.exists() && d.isDirectory) dirs.add(d)
         }
-        // Known OEM call recording directories
+        // Known OEM call recording directories (including Vivo, Xiaomi, Samsung, Oppo, OnePlus)
         val oemPaths = listOf(
             "MIUI/sound_recorder/call_rec",
             "Sounds/CallRecord",
             "Record/Call",
+            "Recordings/Call",
+            "Record/Phone",
+            "vivo/Record/Call",
+            "vivo/Record",
             "Recordings/Call Recordings",
             "Recordings/Phone",
+            "Recordings",
+            "Record",
             "Audio/CallRecordings",
             "CallRecordings"
         )
@@ -997,6 +1004,45 @@ object CallRecorder {
                     }
                 }
                 ?.let { files.addAll(it) }
+        }
+
+        // 4. Query MediaStore to discover recordings on modern Android (including Vivo & OEM dialer recordings)
+        runCatching {
+            val projection = arrayOf(
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.DATE_MODIFIED
+            )
+            val selection = buildString {
+                append("(")
+                val callKeywords = listOf("call", "record", "rec_", "phone", "vivo")
+                callKeywords.forEachIndexed { i, kw ->
+                    if (i > 0) append(" OR ")
+                    append("${MediaStore.Audio.Media.DATA} LIKE '%$kw%'")
+                    append(" OR ${MediaStore.Audio.Media.DISPLAY_NAME} LIKE '%$kw%'")
+                }
+                append(")")
+            }
+            context.contentResolver.query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null
+            )?.use { cursor ->
+                val dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+                while (cursor.moveToNext()) {
+                    if (dataIndex >= 0) {
+                        val filePath = cursor.getString(dataIndex)
+                        if (!filePath.isNullOrBlank()) {
+                            val f = File(filePath)
+                            if (f.exists() && f.isFile && f.length() > 0 && supportedExts.any { f.name.endsWith(it, ignoreCase = true) }) {
+                                files.add(f)
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Return distinct files sorted newest to oldest

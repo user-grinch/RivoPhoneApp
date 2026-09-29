@@ -72,18 +72,28 @@ fun RivoSwipeToActionBox(
 
     val isArmed = abs(currentOffset) >= thresholdPx
 
-    val animatedElevation by animateDpAsState(
-        targetValue = if (isDragging) 6.dp else 0.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "swipeElevation"
-    )
+    val hasMoved = abs(currentOffset) > 0.5f
 
-    val slidingCornerRadius by animateDpAsState(
-        targetValue = if (isDragging) 16.dp else 0.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "slidingCorner"
-    )
-    val slidingShape = RoundedCornerShape(slidingCornerRadius)
+    val animatedElevation by if (hasMoved) {
+        animateDpAsState(
+            targetValue = if (isDragging) 6.dp else 0.dp,
+            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+            label = "swipeElevation"
+        )
+    } else {
+        remember { mutableStateOf(0.dp) }
+    }
+
+    val slidingCornerRadius by if (hasMoved) {
+        animateDpAsState(
+            targetValue = if (isDragging) 16.dp else 0.dp,
+            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+            label = "slidingCorner"
+        )
+    } else {
+        remember { mutableStateOf(0.dp) }
+    }
+    val slidingShape = if (hasMoved) RoundedCornerShape(slidingCornerRadius) else RoundedCornerShape(0.dp)
 
     Box(
         modifier = modifier
