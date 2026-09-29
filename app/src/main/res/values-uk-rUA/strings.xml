@@ -163,4 +163,22 @@
     <string name="settings_group_style_appearance">Стиль &amp; Вигляд</string>
     <string name="priority_contacts_select_title">Вибрати пріоритет контакту</string>
     <string name="action_add">Додати</string>
+    <string name="filter_reset_filters">Скинути фільтри</string>
+    <string name="action_continue_anyway">Все одно продовжити</string>
+    <string name="blocked_action_block_contact">Блокувати контакт</string>
+    <string name="blocked_action_add_number">Додати номер</string>
+    <string name="blocked_action_import_csv">Імпортувати CSV</string>
+    <string name="blocked_action_export_csv">Експортувати в CSV</string>
+    <string name="settings_display_banner_ads">Відображення реклами банерів</string>
+    <string name="settings_display_banner_ads_supporting">Показ реклами банера в списках для підтримки розробки</string>
+    <string name="settings_rate_google_play">Оцінити в Google Play</string>
+    <string name="settings_rate_google_play_supporting">Підтримка Rivo у магазині Google Play</string>
+    <string name="settings_about_rivo">Про Rivo</string>
+    <string name="settings_about_rivo_supporting">Версія, відкриті ліцензії &amp; учасники</string>
+    <string name="blocked_title_block_numbers">Заблокувати Номери або Контакти</string>
+    <string name="settings_group_call_screening">Екранування виклику</string>
+    <string name="settings_group_blocking_behavior">Блокування поведінки</string>
+    <string name="settings_group_system_integration">Інтеграція з Системою</string>
+    <string name="settings_blocked_system_supporting">Управління заблокованими номерами Андроїду</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

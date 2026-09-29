@@ -319,4 +319,25 @@
     <string name="settings_group_style_appearance">样式 &amp; 外观</string>
     <string name="priority_contacts_select_title">选择优先级联系人</string>
     <string name="action_add">添加</string>
+    <string name="filter_reset_filters">重置过滤器</string>
+    <string name="action_continue_anyway">仍然继续</string>
+    <string name="blocked_action_block_contact">屏蔽联系人</string>
+    <string name="blocked_action_add_number">添加号码</string>
+    <string name="blocked_action_import_csv">导入 CSV</string>
+    <string name="blocked_action_export_csv">导出CSV</string>
+    <string name="blocked_search_placeholder">搜索被阻止的号码…</string>
+    <string name="settings_group_support_about">关于支持 &amp;</string>
+    <string name="settings_display_banner_ads">显示横幅广告</string>
+    <string name="settings_display_banner_ads_supporting">在列表中显示非侵入式横幅广告以支持开发</string>
+    <string name="settings_rate_google_play">在 Google Play 上评分</string>
+    <string name="settings_rate_google_play_supporting">在 Google Play 商店支持 Rivo</string>
+    <string name="settings_about_rivo">关于 Rivo</string>
+    <string name="settings_about_rivo_supporting">版本，开源许可证 &amp; 贡献者</string>
+    <string name="settings_group_alerts_ringtones">警报 &amp; 铃声</string>
+    <string name="blocked_title_block_numbers">阻止号码或联系人</string>
+    <string name="settings_group_call_screening">呼叫屏幕中</string>
+    <string name="settings_group_blocking_behavior">屏蔽行为</string>
+    <string name="settings_group_system_integration">系统集成</string>
+    <string name="settings_blocked_system_supporting">打开 Android 系统被阻止的号码管理器</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

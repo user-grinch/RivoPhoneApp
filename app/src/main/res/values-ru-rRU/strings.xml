@@ -915,4 +915,25 @@
     <string name="settings_group_style_appearance">Стиль &amp; внешний вид</string>
     <string name="priority_contacts_select_title">Выберите приоритетный контакт</string>
     <string name="action_add">Добавить</string>
+    <string name="filter_reset_filters">Сбросить фильтры</string>
+    <string name="action_continue_anyway">Все равно продолжить</string>
+    <string name="blocked_action_block_contact">Блокировать контакт</string>
+    <string name="blocked_action_add_number">Добавить номер</string>
+    <string name="blocked_action_import_csv">Импорт CSV</string>
+    <string name="blocked_action_export_csv">Экспорт CSV</string>
+    <string name="blocked_search_placeholder">Поиск заблокированных номеров…</string>
+    <string name="settings_group_support_about">Поддержка &amp; О программе</string>
+    <string name="settings_display_banner_ads">Отображать баннер рекламы</string>
+    <string name="settings_display_banner_ads_supporting">Показывать ненавязчивую баннерную рекламу в списках для поддержки разработки</string>
+    <string name="settings_rate_google_play">Оценить на Google Play</string>
+    <string name="settings_rate_google_play_supporting">Поддержка Rivo в Google Play Store</string>
+    <string name="settings_about_rivo">О Риво</string>
+    <string name="settings_about_rivo_supporting">Версия, лицензии с открытым исходным кодом &amp; участников</string>
+    <string name="settings_group_alerts_ringtones">Оповещения &amp; Мелодии звонков</string>
+    <string name="blocked_title_block_numbers">Блокировать номера или контакты</string>
+    <string name="settings_group_call_screening">Показ звонков</string>
+    <string name="settings_group_blocking_behavior">Поведение блокировки</string>
+    <string name="settings_group_system_integration">Интеграция системы</string>
+    <string name="settings_blocked_system_supporting">Откройте систему Android заблокировал менеджер номеров</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

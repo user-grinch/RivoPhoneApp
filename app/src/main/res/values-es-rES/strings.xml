@@ -650,4 +650,20 @@
     <string name="blocked_action_block_contact">Bloquear contacto</string>
     <string name="blocked_action_add_number">Añadir número</string>
     <string name="blocked_action_import_csv">Importar CSV</string>
+    <string name="blocked_action_export_csv">Exportar CSV</string>
+    <string name="blocked_search_placeholder">Buscar números bloqueados…</string>
+    <string name="settings_group_support_about">Soporte &amp; Acerca</string>
+    <string name="settings_display_banner_ads">Mostrar anuncios de banner</string>
+    <string name="settings_display_banner_ads_supporting">Mostrar banners no intrusivos dentro de listas para apoyar el desarrollo</string>
+    <string name="settings_rate_google_play">Valorar en Google Play</string>
+    <string name="settings_rate_google_play_supporting">Soporte a Rivo en Google Play Store</string>
+    <string name="settings_about_rivo">Acerca de Rivo</string>
+    <string name="settings_about_rivo_supporting">Versión, licencias de código abierto &amp; colaboradores</string>
+    <string name="settings_group_alerts_ringtones">Alertas &amp; tonos de llamada</string>
+    <string name="blocked_title_block_numbers">Bloquear números o contactos</string>
+    <string name="settings_group_call_screening">Captura de llamadas</string>
+    <string name="settings_group_blocking_behavior">Comportamiento de bloqueo</string>
+    <string name="settings_group_system_integration">Integración del sistema</string>
+    <string name="settings_blocked_system_supporting">Abrir el gestor de números bloqueados del sistema Android</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

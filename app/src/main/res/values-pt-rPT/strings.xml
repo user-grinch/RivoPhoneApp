@@ -169,4 +169,25 @@
     <string name="settings_group_style_appearance">Estilo &amp; Aparência</string>
     <string name="priority_contacts_select_title">Selecione o contato prioritário</string>
     <string name="action_add">Adicionar</string>
+    <string name="filter_reset_filters">Redefinir filtros</string>
+    <string name="action_continue_anyway">Continuar mesmo assim</string>
+    <string name="blocked_action_block_contact">Bloquear Contato</string>
+    <string name="blocked_action_add_number">Adicionar Número</string>
+    <string name="blocked_action_import_csv">Importar CSV</string>
+    <string name="blocked_action_export_csv">Exportar como CSV</string>
+    <string name="blocked_search_placeholder">Pesquisar números bloqueados…</string>
+    <string name="settings_group_support_about">Suporte &amp; Sobre</string>
+    <string name="settings_display_banner_ads">Mostrar anúncios de banner</string>
+    <string name="settings_display_banner_ads_supporting">Mostrar anúncios de banners não-intrusivos dentro de listas para apoiar o desenvolvimento</string>
+    <string name="settings_rate_google_play">Avaliar no Google Play</string>
+    <string name="settings_rate_google_play_supporting">Apoie o Rivo na Google Play Store</string>
+    <string name="settings_about_rivo">Sobre a Rivo</string>
+    <string name="settings_about_rivo_supporting">Versão, licenças de código aberto &amp; colaboradores</string>
+    <string name="settings_group_alerts_ringtones">Alertas &amp; Toques</string>
+    <string name="blocked_title_block_numbers">Bloquear números ou contatos</string>
+    <string name="settings_group_call_screening">Tela de chamada</string>
+    <string name="settings_group_blocking_behavior">Comportamento de bloqueio</string>
+    <string name="settings_group_system_integration">Integração do Sistema</string>
+    <string name="settings_blocked_system_supporting">Abrir o gerenciador de números bloqueados pelo sistema Android</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

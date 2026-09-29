@@ -169,4 +169,25 @@
     <string name="settings_group_style_appearance">Stil &amp; Utseende</string>
     <string name="priority_contacts_select_title">Velg prioritet kontakt</string>
     <string name="action_add">Legg til</string>
+    <string name="filter_reset_filters">Tilbakestill filtre</string>
+    <string name="action_continue_anyway">Fortsett likevel</string>
+    <string name="blocked_action_block_contact">Blokker kontakt</string>
+    <string name="blocked_action_add_number">Legg til nummer</string>
+    <string name="blocked_action_import_csv">Importere CSV -</string>
+    <string name="blocked_action_export_csv">Eksportere CSV</string>
+    <string name="blocked_search_placeholder">Søk blokkerte numre…</string>
+    <string name="settings_group_support_about">Støtt &amp; Om</string>
+    <string name="settings_display_banner_ads">Vis bannerannonser</string>
+    <string name="settings_display_banner_ads_supporting">Vis ikke-påtrengende bannerannonser inne i lister for å støtte utvikling</string>
+    <string name="settings_rate_google_play">Vurder den på Google Play</string>
+    <string name="settings_rate_google_play_supporting">Støtt Rivo på Google Play Store</string>
+    <string name="settings_about_rivo">Om Nagle</string>
+    <string name="settings_about_rivo_supporting">Versjon, åpne kildekode-lisenser &amp; bidragsytere</string>
+    <string name="settings_group_alerts_ringtones">Varsler &amp; Ringetoner</string>
+    <string name="blocked_title_block_numbers">Blokk nummer eller kontakter</string>
+    <string name="settings_group_call_screening">Anropsskjerm (Automatic Translation)</string>
+    <string name="settings_group_blocking_behavior">Blokkere oppførsel</string>
+    <string name="settings_group_system_integration">System integrasjon</string>
+    <string name="settings_blocked_system_supporting">Åpne Android-systemet blokkerte nummerbehandling</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

@@ -165,4 +165,23 @@
     <string name="settings_group_style_appearance">スタイル &amp; 外観</string>
     <string name="priority_contacts_select_title">優先連絡先を選択</string>
     <string name="action_add">追加</string>
+    <string name="filter_reset_filters">フィルタをリセット</string>
+    <string name="action_continue_anyway">それでも続ける</string>
+    <string name="blocked_action_block_contact">連絡先をブロック</string>
+    <string name="blocked_action_add_number">番号を追加</string>
+    <string name="blocked_action_import_csv">CSVをインポート</string>
+    <string name="blocked_action_export_csv">CSVエクスポート</string>
+    <string name="settings_display_banner_ads">バナー広告を表示</string>
+    <string name="settings_display_banner_ads_supporting">開発をサポートするための非侵入型バナー広告をリスト内に表示する</string>
+    <string name="settings_rate_google_play">Google Playで評価</string>
+    <string name="settings_rate_google_play_supporting">Google Play ストアで Rivo をサポート</string>
+    <string name="settings_about_rivo">Rivo について</string>
+    <string name="settings_about_rivo_supporting">バージョン、オープンソースライセンス &amp; 貢献者</string>
+    <string name="settings_group_alerts_ringtones">アラート &amp; 着信音</string>
+    <string name="blocked_title_block_numbers">番号または連絡先をブロック</string>
+    <string name="settings_group_call_screening">通話スクリーニング中</string>
+    <string name="settings_group_blocking_behavior">ブロックの動作</string>
+    <string name="settings_group_system_integration">システム統合</string>
+    <string name="settings_blocked_system_supporting">Androidシステムブロックされた番号マネージャーを開く</string>
+    <!-- Multi-call & Conference Management -->
 </resources>
