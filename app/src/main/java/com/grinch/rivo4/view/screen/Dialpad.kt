@@ -611,10 +611,6 @@ fun DialPadScreen(
                             if (dualSimButtonsEnabled) {
                                 val sim1Handle = phoneAccounts.getOrNull(0)
                                 val sim2Handle = phoneAccounts.getOrNull(1)
-                                val sim1Account = sim1Handle?.let { runCatching { telecomManager.getPhoneAccount(it) }.getOrNull() }
-                                val sim2Account = sim2Handle?.let { runCatching { telecomManager.getPhoneAccount(it) }.getOrNull() }
-                                val sim1Label = sim1Account?.label?.toString()?.takeIf { it.isNotBlank() } ?: "SIM 1"
-                                val sim2Label = sim2Account?.label?.toString()?.takeIf { it.isNotBlank() } ?: "SIM 2"
 
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -623,13 +619,11 @@ fun DialPadScreen(
                                     DialerSimActionExpressive(
                                         onClick = { performCallWithSim(number, sim1Handle) },
                                         simNumber = 1,
-                                        simLabel = sim1Label,
                                         modifier = Modifier.width(dimensions.simButtonWidth).height(dimensions.simButtonHeight)
                                     )
                                     DialerSimActionExpressive(
                                         onClick = { performCallWithSim(number, sim2Handle) },
                                         simNumber = 2,
-                                        simLabel = sim2Label,
                                         modifier = Modifier.width(dimensions.simButtonWidth).height(dimensions.simButtonHeight)
                                     )
                                 }
@@ -816,7 +810,6 @@ fun DialerActionExpressive(
 fun DialerSimActionExpressive(
     onClick: () -> Unit,
     simNumber: Int,
-    simLabel: String,
     modifier: Modifier = Modifier.width(76.dp).height(68.dp),
     containerColor: Color = if (simNumber == 1) MaterialTheme.callColors.answer else MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = if (simNumber == 1) MaterialTheme.callColors.onAnswer else MaterialTheme.colorScheme.onPrimaryContainer
@@ -852,46 +845,34 @@ fun DialerSimActionExpressive(
         contentColor = contentColor,
         tonalElevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Call,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(22.dp)
                 )
                 Surface(
                     shape = CircleShape,
                     color = contentColor.copy(alpha = 0.22f),
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "$simNumber",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             color = contentColor
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = simLabel,
-                style = MaterialTheme.typography.labelSmall,
-                fontSize = 10.5.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
         }
     }
 }
