@@ -78,7 +78,8 @@ fun AZListScroll(
         if (grouped != null) return@remember grouped
         
         val mainGroups = contacts.groupBy {
-            val firstChar = it.name.firstOrNull()?.uppercaseChar() ?: '#'
+            val sortKey = ContactUtils.getContactSortKey(it, displayOrder)
+            val firstChar = sortKey.firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 

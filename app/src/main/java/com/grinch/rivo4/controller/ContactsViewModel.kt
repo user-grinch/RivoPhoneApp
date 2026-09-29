@@ -120,7 +120,7 @@ class ContactsViewModel(
                     !contact.givenName.isNullOrBlank() -> contact.givenName
                     else -> contact.name.split(" ").lastOrNull() ?: contact.name
                 }
-                sortKey.lowercase()
+                ContactUtils.stripTitlePrefix(sortKey).lowercase()
             }
         } else {
             baseFiltered.sortedBy { contact ->
@@ -128,7 +128,7 @@ class ContactsViewModel(
                     !contact.givenName.isNullOrBlank() -> contact.givenName
                     else -> contact.name
                 }
-                sortKey.lowercase()
+                ContactUtils.stripTitlePrefix(sortKey).lowercase()
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -147,7 +147,7 @@ class ContactsViewModel(
                     else -> contact.name
                 }
             }
-            val firstChar = nameToUse.trim().firstOrNull()?.uppercaseChar() ?: '#'
+            val firstChar = ContactUtils.stripTitlePrefix(nameToUse).firstOrNull()?.uppercaseChar() ?: '#'
             if (firstChar.isLetter()) firstChar else '#'
         }.toMutableMap()
 

@@ -986,4 +986,12 @@
     <string name="settings_group_blocking_behavior">Blocking Behavior</string>
     <string name="settings_group_system_integration">System Integration</string>
     <string name="settings_blocked_system_supporting">Open the Android system blocked numbers manager</string>
+    <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Swap</string>
+    <string name="action_swap_calls">Swap calls</string>
+    <string name="conference_manage">Manage</string>
+    <string name="conference_participants">Conference Participants (%1$d)</string>
+    <string name="conference_empty">No participants in conference</string>
+    <string name="conference_split">Separate</string>
+    <string name="conference_remove_participant">Drop</string>
 </resources>

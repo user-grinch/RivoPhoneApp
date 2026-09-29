@@ -132,9 +132,9 @@ object ContactUtils {
         val prefix = contact.prefix?.trim()
         if (!prefix.isNullOrBlank() && contact.name.startsWith(prefix, ignoreCase = true)) {
             val withoutPrefix = contact.name.substring(prefix.length).trim()
-            if (withoutPrefix.isNotEmpty()) return withoutPrefix
+            if (withoutPrefix.isNotEmpty()) return stripTitlePrefix(withoutPrefix)
         }
-        return contact.name.trim()
+        return stripTitlePrefix(contact.name)
     }
 
     fun getContactInitial(contact: Contact, displayOrder: Int): String {
@@ -152,5 +152,35 @@ object ContactUtils {
         val n2 = formatContactName(c2, displayOrder)
         val res2 = n1.compareTo(n2, ignoreCase = true)
         return if (res2 != 0) res2 else c1.name.compareTo(c2.name, ignoreCase = true)
+    }
+    private val COMMON_NAME_PREFIXES = setOf(
+        "dr", "prof", "professor", "mr", "mrs", "ms", "miss", "sir", "madam",
+        "dame", "lord", "lady", "rev", "reverend", "pastor", "father", "fr",
+        "rabbi", "imam", "sheikh", "shaikh", "general", "gen", "col", "colonel",
+        "maj", "major", "capt", "captain", "lt", "lieutenant", "sgt", "sergeant",
+        "officer", "ofc", "judge", "justice", "hon", "honorable", "senator", "sen",
+        "rep", "representative", "gov", "governor", "pres", "president", "amb",
+        "ambassador", "eng", "engineer", "arch", "architect", "atty", "attorney", "doc"
+    )
+
+    fun stripTitlePrefix(name: String): String {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return ""
+        val parts = trimmed.split(Regex("\\s+"))
+        var index = 0
+        while (index < parts.size - 1) {
+            val word = parts[index]
+            val cleaned = word.lowercase().trimEnd('.', ':', ',')
+            if (cleaned in COMMON_NAME_PREFIXES) {
+                index++
+            } else {
+                break
+            }
+        }
+        return if (index > 0 && index < parts.size) {
+            parts.drop(index).joinToString(" ")
+        } else {
+            trimmed
+        }
     }
 }

@@ -22,6 +22,7 @@ import android.widget.Toast
 import java.util.Calendar
 import com.grinch.rivo4.controller.reminder.CallbackReminderManager
 import com.grinch.rivo4.view.components.CallNotesSheet
+import com.grinch.rivo4.view.components.ConferenceManagementSheet
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -136,6 +137,20 @@ fun ExpressiveCallScreen(
         @Suppress("DEPRECATION")
         allCalls.find { it != call && it.state != Call.STATE_DISCONNECTED }
     }
+
+    val isConference = remember(call, allCalls) {
+        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && call.details.hasProperty(Call.Details.PROPERTY_CONFERENCE)) ||
+            call.children.isNotEmpty() ||
+            allCalls.any { it.parent == call }
+    }
+    val conferenceParticipants = remember(call, allCalls) {
+        val directChildren = call.children ?: emptyList()
+        if (directChildren.isNotEmpty()) directChildren else allCalls.filter { it.parent == call }
+    }
+    val hasConference = isConference || conferenceParticipants.isNotEmpty()
+
+    val canSwap = (call.state == Call.STATE_ACTIVE && otherCall?.state == Call.STATE_HOLDING) ||
+        (call.state == Call.STATE_HOLDING && otherCall?.state == Call.STATE_ACTIVE)
 
     val accountHandle = call.details.accountHandle
     val simLabelFallback = accountHandle?.let { stringResource(R.string.call_screen_sim_label, it.id) }
@@ -286,6 +301,7 @@ fun ExpressiveCallScreen(
     val hasBluetooth = ((audioState?.supportedRouteMask ?: 0) and CallAudioState.ROUTE_BLUETOOTH) != 0
     var showQuickResponsesSheet by remember { mutableStateOf(false) }
     var showCallNotesSheet by remember { mutableStateOf(false) }
+    var showConferenceSheet by remember { mutableStateOf(false) }
     val reminderManager = org.koin.compose.koinInject<CallbackReminderManager>()
     val scope = rememberCoroutineScope()
 
@@ -402,6 +418,16 @@ fun ExpressiveCallScreen(
                         }
                         IconButton(onClick = {
                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            CallService.swapCalls()
+                        }) {
+                            Icon(
+                                Icons.Default.SwapCalls,
+                                contentDescription = stringResource(R.string.action_swap),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        IconButton(onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                             CallService.mergeCalls()
                         }) {
                             Icon(
@@ -465,24 +491,59 @@ fun ExpressiveCallScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Surface(
-                color = when (callState) {
-                    Call.STATE_ACTIVE -> MaterialTheme.colorScheme.primaryContainer
-                    Call.STATE_HOLDING -> MaterialTheme.colorScheme.tertiaryContainer
-                    else -> MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
-                },
-                shape = CircleShape
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.titleSmallEmphasized,
+                Surface(
                     color = when (callState) {
-                        Call.STATE_ACTIVE -> MaterialTheme.colorScheme.onPrimaryContainer
-                        Call.STATE_HOLDING -> MaterialTheme.colorScheme.onTertiaryContainer
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        Call.STATE_ACTIVE -> MaterialTheme.colorScheme.primaryContainer
+                        Call.STATE_HOLDING -> MaterialTheme.colorScheme.tertiaryContainer
+                        else -> MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
                     },
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
-                )
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = statusText,
+                        style = MaterialTheme.typography.titleSmallEmphasized,
+                        color = when (callState) {
+                            Call.STATE_ACTIVE -> MaterialTheme.colorScheme.onPrimaryContainer
+                            Call.STATE_HOLDING -> MaterialTheme.colorScheme.onTertiaryContainer
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
+                    )
+                }
+
+                if (hasConference) {
+                    Surface(
+                        onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                            showConferenceSheet = true
+                        },
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.secondaryContainer
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Groups,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Text(
+                                text = stringResource(R.string.conference_manage),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
             }
 
             if (isRecording) {
@@ -547,9 +608,19 @@ fun ExpressiveCallScreen(
             isRecording = isRecording,
             compact = compact,
             canMerge = canMerge,
+            canSwap = canSwap,
+            hasConference = hasConference,
             onMergeCalls = {
                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 CallService.mergeCalls()
+            },
+            onSwapCalls = {
+                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                CallService.swapCalls()
+            },
+            onManageConference = {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                showConferenceSheet = true
             },
             onToggleMute = { CallService.mute(!isMuted) },
             onToggleKeypad = { showKeypad = !showKeypad },
@@ -803,6 +874,20 @@ fun ExpressiveCallScreen(
                 phoneNumber = phoneNumber,
                 contactName = contactName,
                 onDismiss = { showCallNotesSheet = false }
+            )
+        }
+
+        if (showConferenceSheet) {
+            ConferenceManagementSheet(
+                participants = conferenceParticipants,
+                onDisconnect = { participant ->
+                    CallService.removeConferenceParticipant(participant)
+                },
+                onSeparate = { participant ->
+                    CallService.splitConferenceParticipant(participant)
+                    showConferenceSheet = false
+                },
+                onDismiss = { showConferenceSheet = false }
             )
         }
     }

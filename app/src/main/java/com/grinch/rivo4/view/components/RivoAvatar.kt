@@ -1,5 +1,7 @@
 package com.grinch.rivo4.view.components
 
+import com.grinch.rivo4.controller.util.ContactUtils
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -196,10 +198,11 @@ private fun gradientAvatarBrush(name: String, dark: Boolean): Brush {
 private val WHITESPACE_REGEX = Regex("\\s+")
 
 private fun contactInitials(name: String, useTwo: Boolean): String {
-    val letters = name.filter { it.isLetter() }
+    val cleanName = ContactUtils.stripTitlePrefix(name)
+    val letters = cleanName.filter { it.isLetter() }
     if (letters.isEmpty()) return ""
     if (!useTwo) return letters.first().uppercase()
-    val words = name.trim().split(WHITESPACE_REGEX).filter { it.any { c -> c.isLetter() } }
+    val words = cleanName.trim().split(WHITESPACE_REGEX).filter { it.any { c -> c.isLetter() } }
     return if (words.size >= 2) {
         words.take(2).joinToString("") { word ->
             word.first { it.isLetter() }.uppercase()

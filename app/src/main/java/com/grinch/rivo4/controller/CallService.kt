@@ -232,12 +232,40 @@ class CallService : InCallService() {
             }
         }
 
+        fun swapCalls() {
+            val inst = instance ?: return
+            val calls = inst.getCalls() ?: return
+            val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
+            val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+
+            try {
+                if (activeCall != null && heldCall != null) {
+                    activeCall.hold()
+                    heldCall.unhold()
+                    setPreferredCall(heldCall)
+                } else if (activeCall != null) {
+                    val other = calls.firstOrNull { it != activeCall && it.state != Call.STATE_DISCONNECTED }
+                    if (other != null) {
+                        activeCall.hold()
+                        other.unhold()
+                        setPreferredCall(other)
+                    }
+                } else if (heldCall != null) {
+                    heldCall.unhold()
+                    setPreferredCall(heldCall)
+                }
+            } catch (e: Exception) {
+                Log.e("CallService", "Error swapping calls: ${e.message}", e)
+            }
+        }
+
         fun mergeCalls() {
             val inst = instance ?: return
             val calls = inst.getCalls() ?: return
             val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
             val heldCall = calls.find { it.state == Call.STATE_HOLDING }
 
+            // 1. Try native mergeConference capability if present on the active call
             try {
                 if (activeCall != null && activeCall.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)) {
                     activeCall.mergeConference()
@@ -247,14 +275,49 @@ class CallService : InCallService() {
                 Log.w("CallService", "mergeConference failed: ${e.message}")
             }
 
+            // 2. Try conferenceableCalls list if reported by Telecom
+            try {
+                if (activeCall != null) {
+                    val confCandidate = activeCall.conferenceableCalls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
+                    if (confCandidate != null) {
+                        activeCall.conference(confCandidate)
+                        return
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("CallService", "conferenceableCalls merge failed: ${e.message}")
+            }
+
+            // 3. Fallback: conference active call with held call or any other active/held call
             try {
                 if (activeCall != null && heldCall != null) {
                     activeCall.conference(heldCall)
                 } else if (calls.size >= 2) {
-                    calls[0].conference(calls[1])
+                    val primary = activeCall ?: calls[0]
+                    val secondary = calls.firstOrNull { it != primary && it.state != Call.STATE_DISCONNECTED }
+                    if (secondary != null) {
+                        primary.conference(secondary)
+                    }
                 }
             } catch (e: Exception) {
-                Log.e("CallService", "Error conferencing calls: ${e.message}")
+                Log.e("CallService", "Error conferencing calls: ${e.message}", e)
+            }
+        }
+
+        fun removeConferenceParticipant(participant: Call) {
+            try {
+                participant.disconnect()
+            } catch (e: Exception) {
+                Log.e("CallService", "Failed to disconnect conference participant: ${e.message}", e)
+            }
+        }
+
+        fun splitConferenceParticipant(participant: Call) {
+            try {
+                participant.splitFromConference()
+                setPreferredCall(participant)
+            } catch (e: Exception) {
+                Log.e("CallService", "Failed to split conference participant: ${e.message}", e)
             }
         }
 
@@ -446,6 +509,22 @@ class CallService : InCallService() {
         val wasNeverConnected = !wasConnected
         val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
         val isOutgoing = call.details.callDirection == Call.Details.DIRECTION_OUTGOING
+
+        // Automatically Resume the Previous Call:
+        // When adding a new call or if an outgoing/unconnected call disconnects and a held call exists, resume the held call.
+        val callsNow = getCalls() ?: emptyList()
+        val hasActiveRemaining = callsNow.any { it != call && it.state == Call.STATE_ACTIVE }
+        if (!hasActiveRemaining) {
+            val heldCall = callsNow.find { it != call && it.state == Call.STATE_HOLDING }
+            if (heldCall != null) {
+                try {
+                    heldCall.unhold()
+                    setPreferredCall(heldCall)
+                } catch (e: Exception) {
+                    Log.e("CallService", "Error auto-resuming held call: ${e.message}")
+                }
+            }
+        }
 
         val wasUserRejected = isCallRejectedByUser(call) ||
                 cause?.code == DisconnectCause.REJECTED ||

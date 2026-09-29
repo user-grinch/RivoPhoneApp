@@ -76,7 +76,7 @@ object CallNotificationHelper {
             paint.color = bgColor
             canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
 
-            val cleanName = name.trim()
+            val cleanName = ContactUtils.stripTitlePrefix(name)
             val isGenericUnknown = cleanName.isBlank() || cleanName == context.getString(R.string.label_unknown_number)
             val initial = if (!isGenericUnknown) cleanName.firstOrNull { it.isLetter() }?.uppercaseChar() else null
 
