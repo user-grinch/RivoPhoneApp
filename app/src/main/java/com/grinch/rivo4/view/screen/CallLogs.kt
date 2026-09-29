@@ -307,16 +307,7 @@ fun CallLogFullScreen(
                                     key = { _, lg -> lg.id },
                                     contentType = { _, _ -> "call_log" }
                                 ) { index, lg ->
-                                    val isFirst = index == 0
-                                    val isLast = index == logsInGroup.size - 1
-                                    val isSingle = logsInGroup.size == 1
-
-                                    val shape = when {
-                                        isSingle -> RoundedCornerShape(20.dp)
-                                        isFirst -> RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
-                                        isLast -> RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
-                                        else -> RoundedCornerShape(4.dp)
-                                    }
+                                    val shape = rivoGroupedItemShape(index, logsInGroup.size)
 
                                     val handleCall: () -> Unit = {
                                         val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
@@ -449,13 +440,22 @@ fun CallLogFullScreen(
                                             if (key.isNotEmpty()) contactsByNumber[key] else null
                                         }
 
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clip(shape)
-                                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                        val showCards = surfaceStyle.showCards
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            CallLogTileSimple(
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .then(
+                                                        if (showCards) {
+                                                            Modifier
+                                                                .clip(shape)
+                                                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                                        } else Modifier
+                                                    )
+                                            ) {
+                                                CallLogTileSimple(
                                                 log = lg,
                                                 contact = itemContact,
                                                 displayOrder = displayOrder,
@@ -485,6 +485,13 @@ fun CallLogFullScreen(
                                                     }
                                                 }
                                             )
+                                            }
+                                            if (!showCards && index < logsInGroup.size - 1) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                                )
+                                            }
                                         }
                                     }
                                 }

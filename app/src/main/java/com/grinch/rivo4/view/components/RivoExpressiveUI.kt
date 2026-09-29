@@ -144,6 +144,22 @@ fun rivoGroupedItemShape(
 }
 
 /**
+ * Dynamic grouped item shape that scales its outer and inner corner radii with [LocalCardRoundness].
+ */
+@Composable
+fun rivoGroupedItemShape(
+    index: Int,
+    total: Int,
+    roundness: Int = LocalCardRoundness.current,
+    baseCorner: Int = 20,
+    innerCorner: Int = 4
+): Shape {
+    val outerDp = rivoCornerDp(baseCorner, roundness)
+    val innerDp = rivoCornerDp(innerCorner, roundness)
+    return rivoGroupedItemShape(index, total, outerDp, innerDp)
+}
+
+/**
  * Reusable container for grouped card items matching the Recents M3 Expressive design.
  */
 @Composable
@@ -152,8 +168,8 @@ fun RivoGroupedCardContainer(
     total: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
-    cornerRadius: Dp = 20.dp,
-    innerCorner: Dp = 4.dp,
+    cornerRadius: Dp = rivoCornerDp(20, LocalCardRoundness.current),
+    innerCorner: Dp = rivoCornerDp(4, LocalCardRoundness.current),
     content: @Composable BoxScope.() -> Unit
 ) {
     val shape = rivoGroupedItemShape(index, total, cornerRadius, innerCorner)
@@ -208,9 +224,12 @@ fun RivoExpressiveGroup(
     scope.content()
     if (scope.items.isEmpty() && title == null && icon == null) return
 
+    val surfaceStyle = rivoSurfaceStyle()
+    val roundness = LocalCardRoundness.current
+
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(3.dp)
+        verticalArrangement = Arrangement.spacedBy(if (surfaceStyle.showCards) 3.dp else 0.dp)
     ) {
         if (title != null || icon != null) {
             RivoSectionHeader(
@@ -223,13 +242,25 @@ fun RivoExpressiveGroup(
         val total = scope.items.size
         scope.items.forEachIndexed { index, (itemKey, itemLambda) ->
             key(itemKey ?: index) {
-                val shape = rivoGroupedItemShape(index, total)
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = shape,
-                    color = containerColor
-                ) {
-                    itemLambda()
+                if (surfaceStyle.showCards) {
+                    val shape = rivoGroupedItemShape(index, total, roundness)
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = shape,
+                        color = containerColor
+                    ) {
+                        itemLambda()
+                    }
+                } else {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        itemLambda()
+                        if (index < total - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -294,7 +325,8 @@ fun RivoExpressiveCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val cardsEnabled = showCards ?: rivoSurfaceStyle().showCards
-    val resolvedShape = shape ?: RoundedCornerShape(20.dp)
+    val roundness = LocalCardRoundness.current
+    val resolvedShape = shape ?: RoundedCornerShape(rivoCornerDp(20, roundness))
 
     Column(
         modifier = modifier.fillMaxWidth(),

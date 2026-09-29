@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.grinch.rivo4.view.components.rivoGroupedItemShape
+import com.grinch.rivo4.view.components.rivoSurfaceStyle
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -303,6 +305,7 @@ fun ContactSearchContent(
                         }
                     }
                     3 -> {
+                        val surfaceStyle = rivoSurfaceStyle()
                         LazyColumn(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
@@ -322,39 +325,48 @@ fun ContactSearchContent(
                                     )
                                 }
 
+                                val showCards = surfaceStyle.showCards
                                 itemsIndexed(filteredContacts, key = { _, c -> "contact_${c.id}" }) { index, contact ->
                                     val shape = rivoGroupedItemShape(index, filteredContacts.size)
-                                    Surface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = shape,
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow
-                                    ) {
-                                        RivoListItem(
-                                            headline = contact.name,
-                                            supporting = buildString {
-                                                contact.nickname?.let { append("$it • ") }
-                                                contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
-                                            }.ifEmpty { null },
-                                            avatarName = contact.name,
-                                            photoUri = contact.photoUri,
-                                            onClick = {
-                                                navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                                            },
-                                            trailingContent = {
-                                                contact.phoneNumbers.firstOrNull()?.let { num ->
-                                                    IconButton(
-                                                        onClick = { callLauncher.dial(num, contact) }
-                                                    ) {
-                                                        Icon(
-                                                            Icons.Rounded.Call,
-                                                            contentDescription = stringResource(R.string.action_call),
-                                                            tint = MaterialTheme.colorScheme.primary,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Surface(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = if (showCards) shape else androidx.compose.ui.graphics.RectangleShape,
+                                            color = if (showCards) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent
+                                        ) {
+                                            RivoListItem(
+                                                headline = contact.name,
+                                                supporting = buildString {
+                                                    contact.nickname?.let { append("$it • ") }
+                                                    contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
+                                                }.ifEmpty { null },
+                                                avatarName = contact.name,
+                                                photoUri = contact.photoUri,
+                                                onClick = {
+                                                    navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                },
+                                                trailingContent = {
+                                                    contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                        IconButton(
+                                                            onClick = { callLauncher.dial(num, contact) }
+                                                        ) {
+                                                            Icon(
+                                                                Icons.Rounded.Call,
+                                                                contentDescription = stringResource(R.string.action_call),
+                                                                tint = MaterialTheme.colorScheme.primary,
+                                                                modifier = Modifier.size(20.dp)
+                                                            )
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        )
+                                            )
+                                        }
+                                        if (!showCards && index < filteredContacts.size - 1) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.padding(horizontal = 16.dp),
+                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -368,27 +380,36 @@ fun ContactSearchContent(
                                     )
                                 }
 
+                                val showCards = surfaceStyle.showCards
                                 itemsIndexed(filteredCallLogs, key = { _, lg -> "call_${lg.id}_${lg.date}" }) { index, lg ->
                                     val shape = rivoGroupedItemShape(index, filteredCallLogs.size)
-                                    Surface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = shape,
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow
-                                    ) {
-                                        CallLogTileSimple(
-                                            log = lg,
-                                            onClick = {
-                                                navigator.navigate(
-                                                    ContactDetailsScreenDestination(
-                                                        contactId = lg.contactId,
-                                                        phoneNumber = lg.number
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Surface(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = if (showCards) shape else androidx.compose.ui.graphics.RectangleShape,
+                                            color = if (showCards) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent
+                                        ) {
+                                            CallLogTileSimple(
+                                                log = lg,
+                                                onClick = {
+                                                    navigator.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = lg.contactId,
+                                                            phoneNumber = lg.number
+                                                        )
                                                     )
-                                                )
-                                            },
-                                            onCallClick = {
-                                                callLauncher.dial(lg.number, null)
-                                            }
-                                        )
+                                                },
+                                                onCallClick = {
+                                                    callLauncher.dial(lg.number, null)
+                                                }
+                                            )
+                                        }
+                                        if (!showCards && index < filteredCallLogs.size - 1) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.padding(horizontal = 16.dp),
+                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -153,29 +153,36 @@ fun AZListScroll(
                     key = { _, contact -> contact.id },
                     contentType = { _, _ -> "contact" }
                 ) { index, contact ->
-                    val isFirst = index == 0
-                    val isLast = index == contactsForChar.size - 1
-                    val isSingle = contactsForChar.size == 1
+                    val surfaceStyle = rivoSurfaceStyle()
+                    val showCards = surfaceStyle.showCards
+                    val shape = rivoGroupedItemShape(index, contactsForChar.size)
 
-                    val shape = when {
-                        isSingle -> RoundedCornerShape(20.dp)
-                        isFirst -> RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
-                        isLast -> RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
-                        else -> RoundedCornerShape(4.dp)
-                    }
-
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .clip(shape)
-                            .background(
-                                if (selectedIds.contains(contact.id))
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                else
-                                    MaterialTheme.colorScheme.surfaceContainerLow
-                            )
+                            .then(if (showCards) Modifier.padding(horizontal = 16.dp) else Modifier)
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(
+                                    if (showCards) {
+                                        Modifier
+                                            .clip(shape)
+                                            .background(
+                                                if (selectedIds.contains(contact.id))
+                                                    MaterialTheme.colorScheme.secondaryContainer
+                                                else
+                                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                            )
+                                    } else {
+                                        if (selectedIds.contains(contact.id))
+                                            Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                                        else
+                                            Modifier
+                                    }
+                                )
+                        ) {
                         val displayName = if (contact.name.isNotBlank()) {
                             ContactUtils.formatContactName(contact, displayOrder)
                         } else {
@@ -238,6 +245,13 @@ fun AZListScroll(
                                 },
                                 selected = selectedIds.contains(contact.id),
                                 isCompact = false
+                            )
+                        }
+                        }
+                        if (!showCards && index < contactsForChar.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
                             )
                         }
                     }
