@@ -142,6 +142,8 @@ fun AZListScroll(
                     RivoSectionHeader(
                         title = initial.toString(),
                         modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
                             top = if (groupIndex == 0 && header == null) 4.dp else 16.dp,
                             bottom = 4.dp
                         )

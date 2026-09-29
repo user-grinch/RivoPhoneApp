@@ -770,7 +770,12 @@ fun CallLogFullContent(
                             item(key = "header_${header}_$groupIndex", contentType = "header") {
                                 RivoSectionHeader(
                                     title = header,
-                                    modifier = Modifier.padding(top = if (groupIndex == 0) 4.dp else 16.dp, bottom = 4.dp)
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = if (groupIndex == 0) 4.dp else 16.dp,
+                                        bottom = 4.dp
+                                    )
                                 )
                             }
 
