@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -60,13 +61,9 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.about_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.about_title),
+                navigator = navigator
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -169,7 +166,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(22.dp), tint = Color(0xFFFFB300))
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Rate on Google Play",
+                    text = stringResource(R.string.about_rate_on_google_play),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -217,7 +214,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isSupporter) "Supporter ⭐" else stringResource(R.string.about_patreon),
+                        text = if (isSupporter) stringResource(R.string.about_supporter_badge) else stringResource(R.string.about_patreon),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )

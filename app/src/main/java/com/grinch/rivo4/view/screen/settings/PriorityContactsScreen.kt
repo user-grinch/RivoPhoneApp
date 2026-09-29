@@ -1,5 +1,7 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
+import com.grinch.rivo4.controller.util.ContactUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,9 +47,11 @@ fun PriorityContactsScreen(
     navigator: DestinationsNavigator,
     resultRecipient: ResultRecipient<ContactSelectionScreenDestination, String>
 ) {
+    val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val allContacts by contactsVM.allContacts.collectAsState()
+    val displayOrder by contactsVM.displayOrder.collectAsState()
     val settingsState by prefs.settingsChanged.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
@@ -84,20 +88,21 @@ fun PriorityContactsScreen(
         }
     }
 
-    val priorityContactsList = remember(allContacts, settingsState) {
+    val priorityContactsList = remember(allContacts, settingsState, displayOrder) {
         val prioritySet = prefs.getPriorityContacts()
         allContacts.filter { contact ->
             prefs.isPriorityContact(contact.id, contact.phoneNumbers.firstOrNull())
-        }
+        }.sortedWith { c1, c2 -> ContactUtils.compareContacts(c1, c2, displayOrder) }
     }
 
-    val filteredContacts = remember(priorityContactsList, searchQuery) {
+    val filteredContacts = remember(priorityContactsList, searchQuery, displayOrder) {
         if (searchQuery.isBlank()) {
             priorityContactsList
         } else {
             val q = searchQuery.trim().lowercase()
             priorityContactsList.filter {
                 it.name.lowercase().contains(q) ||
+                        ContactUtils.formatContactName(it, displayOrder).lowercase().contains(q) ||
                         it.phoneNumbers.any { num -> num.contains(q) }
             }
         }
@@ -105,16 +110,9 @@ fun PriorityContactsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.priority_contacts_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.priority_contacts_title),
+                navigator = navigator
             )
         }
     ) { padding ->
@@ -172,11 +170,13 @@ fun PriorityContactsScreen(
             item {
                 Button(
                     onClick = {
+                        val selectTitle = context.getString(R.string.priority_contacts_select_title)
+                        val addAction = context.getString(R.string.action_add)
                         navigator.navigate(
                             ContactSelectionScreenDestination(
-                                title = "Select Priority Contact",
+                                title = selectTitle,
                                 isMultiSelect = true,
-                                actionButtonText = "Add"
+                                actionButtonText = addAction
                             )
                         )
                     },
@@ -280,15 +280,16 @@ fun PriorityContactsScreen(
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            val formattedName = ContactUtils.formatContactName(contact, displayOrder)
                             RivoAvatar(
-                                name = contact.name,
+                                name = formattedName,
                                 photoUri = contact.photoUri,
                                 modifier = Modifier.size(44.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = contact.name,
+                                    text = formattedName,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.SemiBold
                                 )

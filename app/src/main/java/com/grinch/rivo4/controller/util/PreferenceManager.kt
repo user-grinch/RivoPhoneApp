@@ -361,6 +361,17 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_DIVIDERS = "show_dividers"
         const val KEY_TRANSITION_STYLE = "transition_animation_style"
         const val KEY_DIALPAD_STYLE = "dialpad_style"
+        const val DIALPAD_STYLE_MODERN = 0
+        const val DIALPAD_STYLE_CIRCLE = 1
+        const val DIALPAD_STYLE_ORGANIC = 2
+        const val DIALPAD_STYLE_OUTLINED = 3
+        const val DIALPAD_STYLE_UNIFIED = 4
+        const val DIALPAD_STYLE_MINIMAL = 5
+
+        const val KEY_DIALPAD_SIZE = "dialpad_size"
+        const val DIALPAD_SIZE_COMPACT = 0
+        const val DIALPAD_SIZE_MEDIUM = 1
+        const val DIALPAD_SIZE_LARGE = 2
         const val KEY_VOICEMAIL_NUMBER = "voicemail_number"
         const val KEY_VOICEMAIL_VIBRATION = "voicemail_vibration"
         const val KEY_VOICEMAIL_RINGTONE = "voicemail_ringtone"
@@ -558,6 +569,12 @@ class PreferenceManager(context: Context) {
 
     fun isAutoDeclineNonContactsEnabled(): Boolean = getBoolean(KEY_AUTO_DECLINE_NON_CONTACTS, false)
     fun setAutoDeclineNonContactsEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_DECLINE_NON_CONTACTS, enabled)
+
+    fun getDialpadStyle(): Int = getInt(KEY_DIALPAD_STYLE, DIALPAD_STYLE_MODERN)
+    fun setDialpadStyle(style: Int) = setInt(KEY_DIALPAD_STYLE, style)
+
+    fun getDialpadSize(): Int = getInt(KEY_DIALPAD_SIZE, DIALPAD_SIZE_MEDIUM)
+    fun setDialpadSize(size: Int) = setInt(KEY_DIALPAD_SIZE, size)
 
     fun isDualSimDialpadButtonsEnabled(): Boolean = getBoolean(KEY_DUAL_SIM_DIALPAD_BUTTONS, false)
     fun setDualSimDialpadButtonsEnabled(enabled: Boolean) = setBoolean(KEY_DUAL_SIM_DIALPAD_BUTTONS, enabled)

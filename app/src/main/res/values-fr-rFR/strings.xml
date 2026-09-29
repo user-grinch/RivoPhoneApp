@@ -42,7 +42,7 @@
     <string name="label_address">Adresse</string>
     <string name="label_notes">Notes</string>
     <string name="label_social_apps">Applications sociales</string>
-    <string name="label_local_memory">Mémoire locale</string>
+    <string name="label_local_memory">Appareil</string>
     <string name="option_standard">Standard</string>
     <string name="ringtone_default">Par défaut</string>
     <string name="ringtone_custom">Personnalisée</string>

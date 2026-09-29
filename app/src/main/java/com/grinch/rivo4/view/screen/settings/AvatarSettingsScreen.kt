@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,21 +53,9 @@ fun AvatarSettingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Avatars & Contact Cards",
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_avatars_title),
+                navigator = navigator
             )
         },
         containerColor = MaterialTheme.colorScheme.surface

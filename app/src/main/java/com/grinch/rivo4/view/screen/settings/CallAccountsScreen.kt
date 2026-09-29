@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.CircleShape
@@ -140,15 +141,12 @@ fun CallAccountsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_call_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_call_title),
+                navigator = navigator
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         Box(
             modifier = Modifier
@@ -163,7 +161,7 @@ fun CallAccountsScreen(
             ) {
                 item {
                     val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)
-                    RivoExpressiveGroup(title = "SIM & Calling Preferences", icon = Icons.Outlined.SimCard) {
+                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_sim_calling_prefs), icon = Icons.Outlined.SimCard) {
                         item {
                             RivoListItem(
                                 headline = stringResource(R.string.settings_call_speed_dial),
@@ -218,7 +216,7 @@ fun CallAccountsScreen(
                 }
 
                 item {
-                    RivoExpressiveGroup(title = "Dialer & Screen Experience", icon = Icons.Outlined.Dialpad) {
+                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialer_screen_exp), icon = Icons.Outlined.Dialpad) {
                         item {
                             RivoSwitchListItem(
                                 headline = stringResource(R.string.settings_call_t9_dialing),
@@ -372,7 +370,7 @@ fun CallAccountsScreen(
                 }
 
                 item {
-                    RivoExpressiveGroup(title = "Call Screening & Protection", icon = Icons.Outlined.Security) {
+                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_call_screening_prot), icon = Icons.Outlined.Security) {
                         item {
                             RivoSwitchListItem(
                                 headline = stringResource(R.string.settings_auto_decline_unknown_title),
@@ -401,7 +399,7 @@ fun CallAccountsScreen(
                 }
 
                 item {
-                    RivoExpressiveGroup(title = "Auto Redial", icon = Icons.Outlined.Replay) {
+                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_auto_redial), icon = Icons.Outlined.Replay) {
                         item {
                             RivoSwitchListItem(
                                 headline = stringResource(R.string.settings_call_auto_redial),

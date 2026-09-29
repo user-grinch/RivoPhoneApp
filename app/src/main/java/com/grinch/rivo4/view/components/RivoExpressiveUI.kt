@@ -215,6 +215,7 @@ fun RivoExpressiveGroup(
             RivoSectionHeader(
                 title = title.orEmpty(),
                 icon = icon,
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                 modifier = Modifier.padding(headerPadding)
             )
         }
@@ -302,6 +303,7 @@ fun RivoExpressiveCard(
             RivoSectionHeader(
                 title = title.orEmpty(),
                 icon = icon,
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                 modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
             )
         }
@@ -342,7 +344,7 @@ fun RivoSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
     trailingContent: @Composable (() -> Unit)? = null
 ) {
     Row(

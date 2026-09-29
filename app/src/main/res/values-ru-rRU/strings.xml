@@ -50,7 +50,7 @@
     <string name="label_address">Адрес</string>
     <string name="label_notes">Заметки</string>
     <string name="label_social_apps">Социальные сети и мессенджеры</string>
-    <string name="label_local_memory">Внутренняя память</string>
+    <string name="label_local_memory">Устройство</string>
     <string name="option_standard">Стандарт</string>
     <string name="ringtone_default">По умолчанию</string>
     <string name="ringtone_custom">Пользовательский</string>
@@ -721,7 +721,7 @@
     <string name="contact_management_merge_group_btn">Объединить</string>
     <string name="contact_management_ignore_btn">Отменить</string>
     <string name="contact_management_move_title">Управление контактами</string>
-    <string name="contact_management_move_supporting">Перемещайте контакты между SIM-картой, локальной памятью, аккаунтами и личным хранилищем</string>
+    <string name="contact_management_move_supporting">Перемещайте контакты между SIM-картой, устройством, аккаунтами и личным хранилищем</string>
     <string name="contact_management_move_from">От</string>
     <string name="contact_management_move_to">В</string>
     <string name="contact_management_select_to_move">Выберите контакты для перемещения</string>

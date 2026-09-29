@@ -13,9 +13,28 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.grinch.rivo4.R
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
+@Composable
+fun MenuTopAppBar(
+    text: String,
+    navigator: DestinationsNavigator,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    actions: @Composable RowScope.() -> Unit = {}
+) {
+    MenuTopAppBar(
+        text = text,
+        onBackClick = { navigator.navigateUp() },
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+        actions = actions
+    )
+}
 
 @Composable
 fun MenuTopAppBar(
@@ -25,18 +44,36 @@ fun MenuTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
+    MenuTopAppBar(
+        text = text,
+        onBackClick = { navController.popBackStack() },
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+        actions = actions
+    )
+}
+
+@Composable
+fun MenuTopAppBar(
+    text: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    actions: @Composable RowScope.() -> Unit = {}
+) {
     TopAppBar(
         title = {
             Text(
                 text = text,
-                style = MaterialTheme.typography.titleLargeEmphasized,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
         modifier = modifier,
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.action_back)

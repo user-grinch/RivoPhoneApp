@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Context
 import android.content.Intent
@@ -67,7 +68,11 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.*
+import androidx.compose.ui.unit.TextUnit
+import com.grinch.rivo4.view.theme.RivoMaterialShapes
+import com.grinch.rivo4.view.theme.RivoMotion
 import com.grinch.rivo4.view.theme.callColors
+import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -81,6 +86,76 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
+
+data class DialpadDimensions(
+    val keyWidth: androidx.compose.ui.unit.Dp,
+    val keyHeight: androidx.compose.ui.unit.Dp,
+    val circleKeySize: androidx.compose.ui.unit.Dp,
+    val rowSpacing: androidx.compose.ui.unit.Dp,
+    val numberFontSize: TextUnit,
+    val lettersFontSize: TextUnit,
+    val actionButtonSize: androidx.compose.ui.unit.Dp,
+    val callButtonWidth: androidx.compose.ui.unit.Dp,
+    val callButtonHeight: androidx.compose.ui.unit.Dp,
+    val simButtonWidth: androidx.compose.ui.unit.Dp,
+    val simButtonHeight: androidx.compose.ui.unit.Dp,
+    val topPadding: androidx.compose.ui.unit.Dp,
+    val bottomSheetBottomPadding: androidx.compose.ui.unit.Dp,
+    val contentBottomPadding: androidx.compose.ui.unit.Dp
+) {
+    companion object {
+        fun forSize(size: Int): DialpadDimensions = when (size) {
+            PreferenceManager.DIALPAD_SIZE_COMPACT -> DialpadDimensions(
+                keyWidth = 84.dp,
+                keyHeight = 52.dp,
+                circleKeySize = 54.dp,
+                rowSpacing = 5.dp,
+                numberFontSize = 24.sp,
+                lettersFontSize = 10.sp,
+                actionButtonSize = 54.dp,
+                callButtonWidth = 84.dp,
+                callButtonHeight = 58.dp,
+                simButtonWidth = 70.dp,
+                simButtonHeight = 58.dp,
+                topPadding = 14.dp,
+                bottomSheetBottomPadding = 8.dp,
+                contentBottomPadding = 350.dp
+            )
+            PreferenceManager.DIALPAD_SIZE_LARGE -> DialpadDimensions(
+                keyWidth = 106.dp,
+                keyHeight = 72.dp,
+                circleKeySize = 72.dp,
+                rowSpacing = 10.dp,
+                numberFontSize = 36.sp,
+                lettersFontSize = 12.5.sp,
+                actionButtonSize = 72.dp,
+                callButtonWidth = 114.dp,
+                callButtonHeight = 76.dp,
+                simButtonWidth = 84.dp,
+                simButtonHeight = 76.dp,
+                topPadding = 24.dp,
+                bottomSheetBottomPadding = 16.dp,
+                contentBottomPadding = 480.dp
+            )
+            else -> DialpadDimensions(
+                keyWidth = 96.dp,
+                keyHeight = 62.dp,
+                circleKeySize = 64.dp,
+                rowSpacing = 8.dp,
+                numberFontSize = 30.sp,
+                lettersFontSize = 11.sp,
+                actionButtonSize = 64.dp,
+                callButtonWidth = 100.dp,
+                callButtonHeight = 68.dp,
+                simButtonWidth = 76.dp,
+                simButtonHeight = 68.dp,
+                topPadding = 20.dp,
+                bottomSheetBottomPadding = 12.dp,
+                contentBottomPadding = 420.dp
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalComposeUiApi::class
@@ -147,6 +222,15 @@ fun DialPadScreen(
     }
     val displayOrder by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
+    }
+    val dialpadStyle by remember(settingsState) {
+        mutableIntStateOf(prefs.getDialpadStyle())
+    }
+    val dialpadSize by remember(settingsState) {
+        mutableIntStateOf(prefs.getDialpadSize())
+    }
+    val dimensions = remember(dialpadSize) {
+        DialpadDimensions.forSize(dialpadSize)
     }
 
     val isKnownSecretCode = remember {
@@ -275,22 +359,18 @@ fun DialPadScreen(
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surface,
             topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.dialpad_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                },
-                actions = {
-                    if (number.isNotEmpty()) {
-                        IconButton(onClick = { showSocialDialog = true }) {
-                            Icon(Icons.AutoMirrored.Filled.Chat, stringResource(R.string.label_social_apps))
+                MenuTopAppBar(
+                    text = stringResource(R.string.dialpad_title),
+                    navigator = navigator,
+                    actions = {
+                        if (number.isNotEmpty()) {
+                            IconButton(onClick = { showSocialDialog = true }) {
+                                Icon(Icons.AutoMirrored.Filled.Chat, stringResource(R.string.label_social_apps))
+                            }
                         }
                     }
-                }
-            )
-        }
+                )
+            }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -301,7 +381,7 @@ fun DialPadScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 420.dp),
+                        .padding(bottom = dimensions.contentBottomPadding),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -337,7 +417,7 @@ fun DialPadScreen(
             if (searchResults.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 420.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = dimensions.contentBottomPadding),
                     verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     itemsIndexed(searchResults, key = { _, contact -> "dialpad_contact_${contact.id}" }) { index, contact ->
@@ -395,7 +475,7 @@ fun DialPadScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp),
+                        .padding(top = dimensions.topPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     InterceptPlatformTextInput(
@@ -443,7 +523,7 @@ fun DialPadScreen(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp, start = 4.dp, end = 4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(dimensions.rowSpacing)
                     ) {
                         val keys = listOf(
                             listOf("1", "2", "3"),
@@ -468,6 +548,8 @@ fun DialPadScreen(
                                         letters = subKeys[key] ?: "",
                                         toneGenerator = toneGenerator,
                                         context = context,
+                                        dialpadStyle = dialpadStyle,
+                                        dimensions = dimensions,
                                         onClick = onDigitClick,
                                         onLongClick = { digit ->
                                             if (digit == "0") {
@@ -487,12 +569,12 @@ fun DialPadScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensions.rowSpacing))
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 24.dp, end = 24.dp, bottom = 12.dp),
+                                .padding(start = 24.dp, end = 24.dp, bottom = dimensions.bottomSheetBottomPadding),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
@@ -505,7 +587,8 @@ fun DialPadScreen(
                                     },
                                     icon = Icons.Default.PersonAdd,
                                     contentDescription = stringResource(R.string.action_add_contact),
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    modifier = Modifier.size(dimensions.actionButtonSize)
                                 )
                             }
 
@@ -524,12 +607,14 @@ fun DialPadScreen(
                                     DialerSimActionExpressive(
                                         onClick = { performCallWithSim(number, sim1Handle) },
                                         simNumber = 1,
-                                        simLabel = sim1Label
+                                        simLabel = sim1Label,
+                                        modifier = Modifier.width(dimensions.simButtonWidth).height(dimensions.simButtonHeight)
                                     )
                                     DialerSimActionExpressive(
                                         onClick = { performCallWithSim(number, sim2Handle) },
                                         simNumber = 2,
-                                        simLabel = sim2Label
+                                        simLabel = sim2Label,
+                                        modifier = Modifier.width(dimensions.simButtonWidth).height(dimensions.simButtonHeight)
                                     )
                                 }
                             } else {
@@ -539,7 +624,7 @@ fun DialPadScreen(
                                     contentDescription = stringResource(R.string.action_call),
                                     containerColor = MaterialTheme.callColors.answer,
                                     contentColor = MaterialTheme.callColors.onAnswer,
-                                    modifier = Modifier.width(100.dp).height(72.dp),
+                                    modifier = Modifier.width(dimensions.callButtonWidth).height(dimensions.callButtonHeight),
                                     isLarge = true
                                 )
                             }
@@ -569,7 +654,8 @@ fun DialPadScreen(
                                     },
                                     icon = Icons.AutoMirrored.Filled.Backspace,
                                     contentDescription = stringResource(R.string.content_desc_backspace),
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    modifier = Modifier.size(dimensions.actionButtonSize)
                                 )
                             }
                         }
@@ -801,6 +887,8 @@ fun DialPadKey(
     letters: String,
     toneGenerator: ToneGenerator,
     context: Context,
+    dialpadStyle: Int = PreferenceManager.DIALPAD_STYLE_MODERN,
+    dimensions: DialpadDimensions = DialpadDimensions.forSize(PreferenceManager.DIALPAD_SIZE_MEDIUM),
     onClick: (String) -> Unit,
     onLongClick: ((String) -> Unit)? = null
 ) {
@@ -809,20 +897,109 @@ fun DialPadKey(
     val prefs = koinInject<PreferenceManager>()
     val haptic = LocalHapticFeedback.current
 
-    val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) 16.dp else 28.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-        label = "KeyCornerRadius"
-    )
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.94f else 1f,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        targetValue = if (isPressed) 0.93f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "KeyScale"
     )
 
+    val morphProgress by animateFloatAsState(
+        targetValue = if (isPressed) 1f else 0f,
+        animationSpec = RivoMotion.shapeMorph(),
+        label = "KeyMorphProgress"
+    )
+
+    val modernCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 16.dp else 28.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "ModernKeyCorner"
+    )
+
+    val outlinedCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 14.dp else 22.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "OutlinedKeyCorner"
+    )
+
+    val keyShape: androidx.compose.ui.graphics.Shape = when (dialpadStyle) {
+        PreferenceManager.DIALPAD_STYLE_CIRCLE -> {
+            rememberRivoMorphShape(RivoMaterialShapes.Circle, RivoMaterialShapes.Cookie9Sided) { morphProgress }
+        }
+        PreferenceManager.DIALPAD_STYLE_ORGANIC -> {
+            rememberRivoMorphShape(RivoMaterialShapes.Cookie9Sided, RivoMaterialShapes.Circle) { morphProgress }
+        }
+        PreferenceManager.DIALPAD_STYLE_OUTLINED -> {
+            RoundedCornerShape(outlinedCornerRadius)
+        }
+        PreferenceManager.DIALPAD_STYLE_UNIFIED -> {
+            RoundedCornerShape(if (isPressed) 10.dp else 14.dp)
+        }
+        PreferenceManager.DIALPAD_STYLE_MINIMAL -> {
+            RoundedCornerShape(if (isPressed) 18.dp else 24.dp)
+        }
+        else -> {
+            RoundedCornerShape(modernCornerRadius)
+        }
+    }
+
+    val containerColor: Color = when (dialpadStyle) {
+        PreferenceManager.DIALPAD_STYLE_CIRCLE -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
+        }
+        PreferenceManager.DIALPAD_STYLE_ORGANIC -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
+        }
+        PreferenceManager.DIALPAD_STYLE_OUTLINED -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f) else MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.4f)
+        }
+        PreferenceManager.DIALPAD_STYLE_UNIFIED -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f)
+        }
+        PreferenceManager.DIALPAD_STYLE_MINIMAL -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color.Transparent
+        }
+        else -> {
+            if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
+        }
+    }
+
+    val contentColor: Color = when (dialpadStyle) {
+        PreferenceManager.DIALPAD_STYLE_MINIMAL -> {
+            if (isPressed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        }
+        else -> {
+            if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+        }
+    }
+
+    val border: BorderStroke? = when (dialpadStyle) {
+        PreferenceManager.DIALPAD_STYLE_OUTLINED -> {
+            BorderStroke(
+                width = if (isPressed) 2.dp else 1.5.dp,
+                color = if (isPressed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
+            )
+        }
+        PreferenceManager.DIALPAD_STYLE_ORGANIC -> {
+            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
+        }
+        PreferenceManager.DIALPAD_STYLE_UNIFIED -> {
+            BorderStroke(0.75.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+        }
+        else -> null
+    }
+
+    val keyModifier = when (dialpadStyle) {
+        PreferenceManager.DIALPAD_STYLE_CIRCLE,
+        PreferenceManager.DIALPAD_STYLE_ORGANIC -> {
+            Modifier.size(dimensions.circleKeySize)
+        }
+        else -> {
+            Modifier.size(width = dimensions.keyWidth, height = dimensions.keyHeight)
+        }
+    }
+
     Surface(
-        modifier = Modifier
-            .size(width = 96.dp, height = 64.dp)
+        modifier = keyModifier
             .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
@@ -845,8 +1022,10 @@ fun DialPadKey(
                     }
                 }
             ),
-        shape = RoundedCornerShape(cornerRadius),
-        color = if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
+        shape = keyShape,
+        color = containerColor,
+        border = border,
+        tonalElevation = if (dialpadStyle == PreferenceManager.DIALPAD_STYLE_MODERN || dialpadStyle == PreferenceManager.DIALPAD_STYLE_CIRCLE) 1.dp else 0.dp
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -855,16 +1034,21 @@ fun DialPadKey(
         ) {
             Text(
                 text = number,
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.displaySmall.copy(
+                    fontSize = dimensions.numberFontSize,
+                    lineHeight = dimensions.numberFontSize
+                ),
                 fontWeight = FontWeight.Bold,
-                color = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                color = contentColor
             )
             if (letters.isNotBlank()) {
                 Text(
                     text = letters,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                    letterSpacing = 2.sp
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = dimensions.lettersFontSize,
+                        letterSpacing = 2.sp
+                    ),
+                    color = if (isPressed) contentColor.copy(alpha = 0.85f) else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

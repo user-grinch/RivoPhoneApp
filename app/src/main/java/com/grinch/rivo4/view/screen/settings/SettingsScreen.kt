@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -69,13 +70,9 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_title),
+                navigator = navigator
             )
         },
         containerColor = MaterialTheme.colorScheme.surface

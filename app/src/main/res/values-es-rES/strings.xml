@@ -48,7 +48,7 @@
     <string name="label_address">Dirección</string>
     <string name="label_notes">Notas</string>
     <string name="label_social_apps">Redes sociales</string>
-    <string name="label_local_memory">Memoria local</string>
+    <string name="label_local_memory">Dispositivo</string>
     <string name="option_standard">Estándar</string>
     <string name="ringtone_default">Predeterminado</string>
     <string name="ringtone_custom">Personalizado</string>

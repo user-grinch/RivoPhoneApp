@@ -39,6 +39,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -206,12 +207,8 @@ fun RecentScreenContent(
         floatingActionButton = {
             if (selectedEntries.isEmpty()) {
                 val fabBottomPadding = LocalScrollToTopBottomPadding.current
-                FloatingActionButton(
+                RivoFloatingActionButton(
                     onClick = { navigator.navigate(DialPadScreenDestination()) },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp, pressedElevation = 6.dp),
                     modifier = Modifier.padding(bottom = fabBottomPadding)
                 ) {
                     Icon(Icons.Default.Dialpad, stringResource(R.string.content_desc_dialpad))
@@ -334,7 +331,7 @@ fun FavoriteCircleItem(
             }
         }
         Text(
-            text = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact.name, displayOrder).split(" ").firstOrNull() ?: "",
+            text = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder).split(" ").firstOrNull() ?: "",
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -347,6 +344,7 @@ fun FavoriteCircleItem(
 @Composable
 fun AddFavoriteDialog(
     allContacts: List<Contact>,
+    displayOrder: Int = 0,
     onDismissRequest: () -> Unit,
     onContactSelected: (Contact) -> Unit
 ) {
@@ -394,10 +392,11 @@ fun AddFavoriteDialog(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 availableContacts.take(40).forEach { contact ->
+                    val formatted = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder)
                     RivoListItem(
-                        headline = contact.name,
+                        headline = formatted,
                         supporting = contact.phoneNumbers.firstOrNull() ?: "",
-                        avatarName = contact.name,
+                        avatarName = formatted,
                         photoUri = contact.photoUri,
                         onClick = {
                             onContactSelected(contact)
@@ -514,6 +513,17 @@ fun CallLogFullContent(
             )
         }
         val contactsById = remember(allContacts) { allContacts.associateBy { it.id } }
+        val contactsByNumber = remember(allContacts) {
+            val map = mutableMapOf<String, Contact>()
+            for (c in allContacts) {
+                for (p in c.phoneNumbers) {
+                    val norm = normalizePhoneNumber(p)
+                    val key = if (norm.length >= 10) norm.takeLast(10) else norm
+                    if (key.isNotEmpty()) map[key] = c
+                }
+            }
+            map
+        }
         val favoriteContactIds = remember(favorites) { favorites.map { it.id }.toSet() }
         val surfaceStyle = rememberRivoSurfaceStyle(prefs)
 
@@ -538,6 +548,7 @@ fun CallLogFullContent(
         if (showAddFavoriteDialog) {
             AddFavoriteDialog(
                 allContacts = allContacts,
+                displayOrder = displayOrder,
                 onDismissRequest = { showAddFavoriteDialog = false },
                 onContactSelected = { contact ->
                     contactsVM.toggleFavorite(contact)
@@ -782,8 +793,16 @@ fun CallLogFullContent(
                                         .clip(shape)
                                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                 ) {
+                                    val matchedContact = remember(lg, contactsById, contactsByNumber) {
+                                        lg.contactId?.let { contactsById[it] } ?: run {
+                                            val norm = normalizePhoneNumber(lg.number)
+                                            val key = if (norm.length >= 10) norm.takeLast(10) else norm
+                                            if (key.isNotEmpty()) contactsByNumber[key] else null
+                                        }
+                                    }
                                     CallLogTile(
                                         log = lg,
+                                        contact = matchedContact,
                                         displayOrder = displayOrder,
                                         showSim = callLogConfig.showSim,
                                         isFavorite = lg.contactId != null && lg.contactId in favoriteContactIds,
@@ -803,7 +822,7 @@ fun CallLogFullContent(
                                             }
                                         },
                                         onButtonClick = { log ->
-                                            val contact = contactsById[log.contactId]
+                                            val contact = matchedContact ?: contactsById[log.contactId]
                                             callLauncher.dial(log.number, contact)
                                         },
                                         onLongClick = { log ->

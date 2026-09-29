@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Intent
 import android.provider.Settings
@@ -53,15 +54,12 @@ fun SoundVibrationScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_sound_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_sound_title),
+                navigator = navigator
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -71,7 +69,7 @@ fun SoundVibrationScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-                RivoExpressiveGroup(title = "Dialpad & Tones") {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialpad_tones)) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_dtmf_tone),
@@ -112,7 +110,7 @@ fun SoundVibrationScreen(
             }
 
             item {
-                RivoExpressiveGroup(title = "Call Vibration & Haptics") {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_call_vibration_haptics)) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_vibrate_on_answer),
@@ -153,7 +151,7 @@ fun SoundVibrationScreen(
             }
 
             item {
-                RivoExpressiveGroup(title = "Gestures & Do Not Disturb") {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_gestures_dnd)) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_flip_to_silence),

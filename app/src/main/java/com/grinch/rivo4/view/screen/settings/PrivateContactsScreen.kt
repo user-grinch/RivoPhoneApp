@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.accounts.Account
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -184,13 +185,9 @@ fun PrivateContactsScreen(
                     )
                 )
             } else {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.settings_private_title), fontWeight = FontWeight.Bold) },
-                    navigationIcon = {
-                        IconButton(onClick = { navigator.navigateUp() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                        }
-                    },
+                MenuTopAppBar(
+                    text = stringResource(R.string.settings_private_title),
+                    navigator = navigator,
                     actions = {
                         if (filteredPrivateContacts.isNotEmpty()) {
                             IconButton(
@@ -198,11 +195,11 @@ fun PrivateContactsScreen(
                                     selectedContactIds = filteredPrivateContacts.map { it.id }.toSet()
                                 }
                             ) {
-                                Icon(Icons.Outlined.SelectAll, contentDescription = "Select All")
+                                Icon(Icons.Outlined.SelectAll, contentDescription = stringResource(R.string.action_select_all))
                             }
                         }
                         IconButton(onClick = { showSecurityDialog = true }) {
-                            Icon(Icons.Outlined.Password, contentDescription = "Secret Dialpad Code")
+                            Icon(Icons.Outlined.Password, contentDescription = stringResource(R.string.settings_private_secret_code))
                         }
                     }
                 )
@@ -473,7 +470,7 @@ fun PrivateContactsScreen(
                 } else {
                     item {
                         RivoSectionHeader(
-                            title = "Secured Contacts (${filteredPrivateContacts.size})",
+                            title = stringResource(R.string.settings_private_contacts_count, filteredPrivateContacts.size),
                             icon = Icons.Outlined.Lock,
                             modifier = Modifier.padding(top = 14.dp, bottom = 4.dp)
                         )

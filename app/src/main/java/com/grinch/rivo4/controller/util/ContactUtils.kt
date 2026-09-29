@@ -17,7 +17,11 @@ object ContactUtils {
         return t.contains("whatsapp") || t.contains("telegram") || t.contains("viber") || t.contains("skype")
     }
 
-    fun isLocalAccount(accountType: String?, accountName: String?, availableAccounts: List<Account> = emptyList()): Boolean {
+    fun isLocalAccount(
+        accountType: String?,
+        accountName: String?,
+        availableAccounts: List<Account> = emptyList()
+    ): Boolean {
         if (accountType == null || accountName == null) return true
         if (accountType.isBlank() || accountName.isBlank()) return true
         val typeLower = accountType.lowercase()
@@ -26,7 +30,8 @@ object ContactUtils {
             typeLower.contains("default") || typeLower.contains("sec.contact") ||
             typeLower.contains("miui.contact") || typeLower == "com.android.contacts" ||
             typeLower.startsWith("com.google.android.gms.null") ||
-            nameLower == "phone" || nameLower == "device" || nameLower == "default" || nameLower == "local") {
+            nameLower == "phone" || nameLower == "device" || nameLower == "default" || nameLower == "local"
+        ) {
             return true
         }
         if (isSyncAdapterType(accountType)) {
@@ -34,7 +39,12 @@ object ContactUtils {
         }
         val nonSyncAccounts = availableAccounts.filter { !isSyncAdapterType(it.type) }
         if (nonSyncAccounts.isEmpty()) return true
-        return nonSyncAccounts.none { it.type.equals(accountType, ignoreCase = true) && it.name.equals(accountName, ignoreCase = true) }
+        return nonSyncAccounts.none {
+            it.type.equals(accountType, ignoreCase = true) && it.name.equals(
+                accountName,
+                ignoreCase = true
+            )
+        }
     }
 
     /**
@@ -49,8 +59,8 @@ object ContactUtils {
             acc.type != null && !isSyncAdapterType(acc.type) && !isLocalAccount(acc.type, acc.name, availableAccounts)
         }
         val primaryIsCloud = contact.accountType != null &&
-            !isSyncAdapterType(contact.accountType) &&
-            !isLocalAccount(contact.accountType, contact.accountName, availableAccounts)
+                !isSyncAdapterType(contact.accountType) &&
+                !isLocalAccount(contact.accountType, contact.accountName, availableAccounts)
 
         return !hasCloudAccount && !primaryIsCloud
     }
@@ -83,6 +93,7 @@ object ContactUtils {
         }
         return name
     }
+
     fun formatContactName(contact: Contact, displayOrder: Int): String {
         return if (displayOrder == 1) {
             if (!contact.familyName.isNullOrBlank()) {
@@ -106,5 +117,40 @@ object ContactUtils {
         } else {
             contact.name
         }
+    }
+
+    fun getContactSortKey(contact: Contact, displayOrder: Int): String {
+        if (displayOrder == 1) {
+            if (!contact.familyName.isNullOrBlank()) {
+                return contact.familyName.trim()
+            }
+            val parts = contact.name.trim().split(Regex("\\s+"))
+            if (parts.size > 1) {
+                return parts.last()
+            }
+        }
+        val prefix = contact.prefix?.trim()
+        if (!prefix.isNullOrBlank() && contact.name.startsWith(prefix, ignoreCase = true)) {
+            val withoutPrefix = contact.name.substring(prefix.length).trim()
+            if (withoutPrefix.isNotEmpty()) return withoutPrefix
+        }
+        return contact.name.trim()
+    }
+
+    fun getContactInitial(contact: Contact, displayOrder: Int): String {
+        val key = getContactSortKey(contact, displayOrder)
+        val firstChar = key.firstOrNull()?.uppercaseChar() ?: '#'
+        return if (firstChar in 'A'..'Z') firstChar.toString() else "#"
+    }
+
+    fun compareContacts(c1: Contact, c2: Contact, displayOrder: Int): Int {
+        val key1 = getContactSortKey(c1, displayOrder)
+        val key2 = getContactSortKey(c2, displayOrder)
+        val res = key1.compareTo(key2, ignoreCase = true)
+        if (res != 0) return res
+        val n1 = formatContactName(c1, displayOrder)
+        val n2 = formatContactName(c2, displayOrder)
+        val res2 = n1.compareTo(n2, ignoreCase = true)
+        return if (res2 != 0) res2 else c1.name.compareTo(c2.name, ignoreCase = true)
     }
 }

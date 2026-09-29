@@ -48,7 +48,7 @@
     <string name="label_address">Adresse</string>
     <string name="label_notes">Notizen</string>
     <string name="label_social_apps">Messenger Apps</string>
-    <string name="label_local_memory">Lokaler Speicher</string>
+    <string name="label_local_memory">Gerät</string>
     <string name="option_standard">Standard</string>
     <string name="ringtone_default">Standard-Klingelton</string>
     <string name="ringtone_custom">Benutzerdefiniert</string>
@@ -715,7 +715,7 @@
     <string name="contact_management_merge_group_btn">Zusammenführen</string>
     <string name="contact_management_ignore_btn">Verwerfen</string>
     <string name="contact_management_move_title">Kontakte transferieren</string>
-    <string name="contact_management_move_supporting">Kontakte zwischen SIM, Gerätespeicher, Konten und privatem Speicher verschieben</string>
+    <string name="contact_management_move_supporting">Kontakte zwischen SIM, Gerät, Konten und privatem Speicher verschieben</string>
     <string name="contact_management_move_from">Von</string>
     <string name="contact_management_move_to">Nach</string>
     <string name="contact_management_select_to_move">Zu verschiebende Kontakte auswählen</string>

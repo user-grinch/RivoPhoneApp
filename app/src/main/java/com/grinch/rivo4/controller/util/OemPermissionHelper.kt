@@ -13,6 +13,48 @@ object OemPermissionHelper {
 
     private const val TAG = "OemPermissionHelper"
 
+    const val OP_AUTO_START = 10008
+    const val OP_SHOW_WHEN_LOCKED = 10020
+    const val OP_BACKGROUND_START_ACTIVITY = 10021
+
+    fun checkAppOp(context: Context, op: Int): Boolean {
+        return try {
+            val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as? android.app.AppOpsManager ?: return false
+            val method = appOps.javaClass.getMethod("checkOpNoThrow", Int::class.javaPrimitiveType, Int::class.javaPrimitiveType, String::class.java)
+            val result = method.invoke(appOps, op, android.os.Process.myUid(), context.packageName) as Int
+            result == android.app.AppOpsManager.MODE_ALLOWED
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun isXiaomiLockScreenGranted(context: Context): Boolean = checkAppOp(context, OP_SHOW_WHEN_LOCKED)
+    fun isXiaomiBackgroundPopupGranted(context: Context): Boolean = checkAppOp(context, OP_BACKGROUND_START_ACTIVITY)
+    fun isXiaomiAutostartGranted(context: Context): Boolean = checkAppOp(context, OP_AUTO_START)
+
+    fun openXiaomiLockscreenSettings(context: Context): Boolean {
+        val intents = mutableListOf<Intent>()
+        intents.add(
+            Intent("miui.intent.action.APP_PERM_EDITOR").apply {
+                setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity")
+                putExtra("extra_pkgname", context.packageName)
+            }
+        )
+        intents.add(
+            Intent("miui.intent.action.APP_PERM_EDITOR").apply {
+                setPackage("com.miui.securitycenter")
+                putExtra("extra_pkgname", context.packageName)
+            }
+        )
+        intents.add(
+            Intent().apply {
+                setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity")
+                putExtra("extra_pkgname", context.packageName)
+            }
+        )
+        return if (launchFirstWorkingIntent(context, intents)) true else openOemPermissions(context)
+    }
+
     fun isXiaomi(): Boolean {
         val m = Build.MANUFACTURER.lowercase()
         val b = Build.BRAND.lowercase()

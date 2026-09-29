@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.RivoFloatingActionButton
 
 import android.Manifest
 import android.accounts.Account
@@ -160,14 +161,10 @@ fun ContactScreenContent(
         floatingActionButton = {
             if (selectedIds.isEmpty()) {
                 val fabBottomPadding = LocalScrollToTopBottomPadding.current
-                FloatingActionButton(
+                RivoFloatingActionButton(
                     onClick = {
                         navigator.navigate(ContactEditScreenDestination())
                     },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp, pressedElevation = 6.dp),
                     modifier = Modifier.padding(bottom = fabBottomPadding)
                 ) {
                     Icon(Icons.Default.PersonAdd, stringResource(R.string.action_add_contact))

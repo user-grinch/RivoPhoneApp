@@ -232,10 +232,19 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                 settingsLauncher.launch(PermissionChecklistHelper.getBatteryOptimizationIntent(context))
             }
             PermissionActionType.SETTINGS -> {
-                if (item.id == "vivo_background_popup") {
-                    com.grinch.rivo4.controller.util.OemPermissionHelper.openBackgroundPopupPermission(context)
-                } else {
-                    settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                when (item.id) {
+                    "xiaomi_lockscreen", "xiaomi_background_popup" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openXiaomiLockscreenSettings(context)
+                    }
+                    "oem_autostart" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openAutostartSettings(context)
+                    }
+                    "vivo_background_popup", "oem_lockscreen_popup" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openBackgroundPopupPermission(context)
+                    }
+                    else -> {
+                        settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                    }
                 }
             }
             PermissionActionType.RUNTIME -> {
@@ -281,33 +290,9 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
     }
 
     fun enableRecommended() {
-        val ungrantedRuntime = mutableListOf<String>()
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
-            !PermissionChecklistHelper.hasNotificationPermission(context)
-        ) {
-            ungrantedRuntime.add(android.Manifest.permission.POST_NOTIFICATIONS)
-        }
-        if (!PermissionChecklistHelper.hasAudioRecordPermission(context)) {
-            ungrantedRuntime.add(android.Manifest.permission.RECORD_AUDIO)
-        }
-
-        if (ungrantedRuntime.isNotEmpty()) {
-            singleRuntimeLauncher.launch(ungrantedRuntime.toTypedArray())
-        } else if (!PermissionChecklistHelper.hasOverlayPermission(context)) {
-            settingsLauncher.launch(PermissionChecklistHelper.getOverlayIntent(context))
-        } else if (!PermissionChecklistHelper.isBatteryOptimizationIgnored(context)) {
-            settingsLauncher.launch(PermissionChecklistHelper.getBatteryOptimizationIntent(context))
-        } else if (PermissionChecklistHelper.isShizukuRunning() && !PermissionChecklistHelper.hasShizukuPermission(context)) {
-            ShizukuConnectionManager.requestPermission()
-        } else if (!PermissionChecklistHelper.isShizukuInstalled(context)) {
-            showShizukuInstallDialog = true
-        } else if (!PermissionChecklistHelper.isShizukuRunning()) {
-            val launchIntent = context.packageManager.getLaunchIntentForPackage(PermissionChecklistHelper.SHIZUKU_PACKAGE)
-            if (launchIntent != null) {
-                context.startActivity(launchIntent)
-            } else {
-                showShizukuInstallDialog = true
-            }
+        val nextUngranted = recommendedItems.firstOrNull { !it.isGranted && it.isEnabled }
+        if (nextUngranted != null) {
+            handlePermissionItemClick(nextUngranted)
         }
     }
 
@@ -417,7 +402,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceContainerLow
+        color = MaterialTheme.colorScheme.surface
     ) {
         AnimatedContent(
             targetState = currentStage,

@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.Manifest
 import android.content.Intent
@@ -149,10 +150,19 @@ fun PermissionsChecklistScreen(
                 settingsLauncher.launch(PermissionChecklistHelper.getBatteryOptimizationIntent(context))
             }
             PermissionActionType.SETTINGS -> {
-                if (item.id == "vivo_background_popup" || item.id == "oem_lockscreen_popup") {
-                    com.grinch.rivo4.controller.util.OemPermissionHelper.openBackgroundPopupPermission(context)
-                } else {
-                    settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                when (item.id) {
+                    "xiaomi_lockscreen", "xiaomi_background_popup" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openXiaomiLockscreenSettings(context)
+                    }
+                    "oem_autostart" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openAutostartSettings(context)
+                    }
+                    "vivo_background_popup", "oem_lockscreen_popup" -> {
+                        com.grinch.rivo4.controller.util.OemPermissionHelper.openBackgroundPopupPermission(context)
+                    }
+                    else -> {
+                        settingsLauncher.launch(PermissionChecklistHelper.getAppSettingsIntent(context))
+                    }
                 }
             }
             PermissionActionType.RUNTIME -> {
@@ -292,24 +302,12 @@ fun PermissionsChecklistScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Permissions & App Setup",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_permissions_app_setup_title),
+                navigator = navigator
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -336,13 +334,13 @@ fun PermissionsChecklistScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "System Permissions Overview",
+                                text = stringResource(R.string.settings_permissions_overview_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Manage runtime permissions and system integrations required for seamless calling.",
+                                text = stringResource(R.string.settings_permissions_overview_desc),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -353,7 +351,7 @@ fun PermissionsChecklistScreen(
 
             item {
                 RivoSectionHeader(
-                    title = "Essential Permissions",
+                    title = stringResource(R.string.settings_permissions_essential_title),
                     icon = Icons.Outlined.Shield,
                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                 )
@@ -368,7 +366,7 @@ fun PermissionsChecklistScreen(
 
             item {
                 RivoSectionHeader(
-                    title = "Recommended & Advanced Features",
+                    title = stringResource(R.string.settings_permissions_recommended_title),
                     icon = Icons.Outlined.Stars,
                     modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                 )
@@ -383,7 +381,7 @@ fun PermissionsChecklistScreen(
 
             item {
                 RivoSectionHeader(
-                    title = "System",
+                    title = stringResource(R.string.settings_permissions_system_title),
                     icon = Icons.Outlined.Settings,
                     modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                 )

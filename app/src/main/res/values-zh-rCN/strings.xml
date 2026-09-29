@@ -42,7 +42,7 @@
     <string name="label_address">地址</string>
     <string name="label_notes">备注</string>
     <string name="label_social_apps">社交网络</string>
-    <string name="label_local_memory">本机存储</string>
+    <string name="label_local_memory">设备</string>
     <string name="ringtone_default">默认</string>
     <string name="ringtone_custom">自定义</string>
     <string name="empty_state_try_clearing_filters">尝试清除筛选或添加一个新的联系人。</string>

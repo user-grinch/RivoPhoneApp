@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.PictureInPicture
 import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material.icons.outlined.FolderSpecial
@@ -199,27 +200,63 @@ object PermissionChecklistHelper {
         if (com.grinch.rivo4.controller.util.OemPermissionHelper.isXiaomi()) {
             items.add(
                 PermissionCheckItem(
-                    id = "oem_lockscreen_popup",
-                    title = "MIUI Lock Screen & Pop-up",
-                    description = "Allow Rivo to show incoming calls on the lock screen and display pop-ups while running in background.",
-                    icon = Icons.Outlined.PictureInPicture,
-                    isGranted = hasOverlayPermission(context),
+                    id = "xiaomi_lockscreen",
+                    title = "Show on Lock Screen",
+                    description = "Required on Xiaomi (MIUI / HyperOS) to display incoming and ongoing call screens when your device is locked.",
+                    icon = Icons.Outlined.Lock,
+                    isGranted = com.grinch.rivo4.controller.util.OemPermissionHelper.isXiaomiLockScreenGranted(context),
                     isEssential = false,
                     actionType = PermissionActionType.SETTINGS,
-                    actionLabel = "Open Xiaomi Settings"
+                    actionLabel = "Allow"
+                )
+            )
+            items.add(
+                PermissionCheckItem(
+                    id = "xiaomi_background_popup",
+                    title = "Background Pop-up Windows",
+                    description = "Allows Rivo to display call heads-up notifications and incoming alert banners while using other apps.",
+                    icon = Icons.Outlined.PictureInPicture,
+                    isGranted = com.grinch.rivo4.controller.util.OemPermissionHelper.isXiaomiBackgroundPopupGranted(context),
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Allow"
+                )
+            )
+            items.add(
+                PermissionCheckItem(
+                    id = "oem_autostart",
+                    title = "Auto-start & Background Protection",
+                    description = "Prevents MIUI / HyperOS from closing background phone services and missing calls after restart.",
+                    icon = Icons.Outlined.BatteryChargingFull,
+                    isGranted = com.grinch.rivo4.controller.util.OemPermissionHelper.isXiaomiAutostartGranted(context),
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Manage"
                 )
             )
         } else if (com.grinch.rivo4.controller.util.OemPermissionHelper.isVivo()) {
             items.add(
                 PermissionCheckItem(
-                    id = "oem_lockscreen_popup",
+                    id = "vivo_background_popup",
                     title = "Vivo Background Pop-up",
                     description = "Allow Rivo to display incoming call screens and floating alerts over other apps on Vivo/iQOO devices.",
                     icon = Icons.Outlined.PictureInPicture,
                     isGranted = hasOverlayPermission(context),
                     isEssential = false,
                     actionType = PermissionActionType.SETTINGS,
-                    actionLabel = "Open Vivo Settings"
+                    actionLabel = "Settings"
+                )
+            )
+            items.add(
+                PermissionCheckItem(
+                    id = "oem_autostart",
+                    title = "Vivo Auto-start Whitelist",
+                    description = "Keeps Rivo active in the background for prompt call reception on Funtouch OS / OriginOS.",
+                    icon = Icons.Outlined.BatteryChargingFull,
+                    isGranted = false,
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Manage"
                 )
             )
         } else if (com.grinch.rivo4.controller.util.OemPermissionHelper.isOemDevice()) {
@@ -232,7 +269,19 @@ object PermissionChecklistHelper {
                     isGranted = hasOverlayPermission(context),
                     isEssential = false,
                     actionType = PermissionActionType.SETTINGS,
-                    actionLabel = "Open OEM Settings"
+                    actionLabel = "Settings"
+                )
+            )
+            items.add(
+                PermissionCheckItem(
+                    id = "oem_autostart",
+                    title = "${com.grinch.rivo4.controller.util.OemPermissionHelper.getOemBrandDisplayName()} Auto-start",
+                    description = "Allow Rivo to start automatically and keep background calling services alive.",
+                    icon = Icons.Outlined.BatteryChargingFull,
+                    isGranted = false,
+                    isEssential = false,
+                    actionType = PermissionActionType.SETTINGS,
+                    actionLabel = "Manage"
                 )
             )
         }

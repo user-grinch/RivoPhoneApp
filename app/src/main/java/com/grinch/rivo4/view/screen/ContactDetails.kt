@@ -1,5 +1,7 @@
 package com.grinch.rivo4.view.screen
 
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
 import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
@@ -218,6 +220,7 @@ fun ContactDetailsScreen(
     var addToContactNumber by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val roundness = LocalCardRoundness.current
 
     var defaultSimId by remember { mutableStateOf<String?>(null) }
     var showSimSelectDialog by remember { mutableStateOf(false) }
@@ -1492,26 +1495,28 @@ fun ContactDetailsScreen(
                         }
 
                         item {
-                            OutlinedButton(
+                            Button(
                                 onClick = { showDeleteDialog = true },
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .height(56.dp)
                                     .padding(horizontal = 4.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
                                 ),
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
-                                shape = MaterialTheme.shapes.large
+                                shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
+                                contentPadding = PaddingValues(horizontal = 24.dp)
                             ) {
                                 Icon(
                                     Icons.Default.Delete,
                                     contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(20.dp)
                                 )
-                                Spacer(Modifier.width(8.dp))
+                                Spacer(Modifier.width(10.dp))
                                 Text(
                                     text = stringResource(R.string.action_delete),
-                                    style = MaterialTheme.typography.labelLarge,
+                                    style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )
                             }

@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
@@ -79,14 +80,11 @@ fun ContributorsScreen(
 ) {
     val context = LocalContext.current
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.contributors_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.contributors_title),
+                navigator = navigator
             )
         }
     ) { padding ->

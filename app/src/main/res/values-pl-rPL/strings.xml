@@ -50,7 +50,7 @@
     <string name="label_address">Adres</string>
     <string name="label_notes">Notatki</string>
     <string name="label_social_apps">Aplikacje społecznościowe</string>
-    <string name="label_local_memory">Pamięć lokalna</string>
+    <string name="label_local_memory">Urządzenie</string>
     <string name="option_standard">Standardowy</string>
     <string name="ringtone_default">Domyślny</string>
     <string name="ringtone_custom">Własny</string>
@@ -721,7 +721,7 @@
     <string name="contact_management_merge_group_btn">Scal</string>
     <string name="contact_management_ignore_btn">Odrzuć</string>
     <string name="contact_management_move_title">Przenieś kontakty</string>
-    <string name="contact_management_move_supporting">Przenoszenie kontaktów między kartą SIM, pamięcią lokalną, kontami i pamięcią prywatną</string>
+    <string name="contact_management_move_supporting">Przenoszenie kontaktów między kartą SIM, urządzeniem, kontami i pamięcią prywatną</string>
     <string name="contact_management_move_from">Z</string>
     <string name="contact_management_move_to">Do</string>
     <string name="contact_management_select_to_move">Wybierz kontakty do przeniesienia</string>

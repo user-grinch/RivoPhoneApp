@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Context
 import android.content.Intent
@@ -419,27 +420,13 @@ fun CallRecordingsContent(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             if (showTopBar) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(R.string.call_recordings_title),
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                if (showingRecordingsList && !initialShowList) {
-                                    showingRecordingsList = false
-                                } else {
-                                    onNavigateBack()
-                                }
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.action_back)
-                            )
+                MenuTopAppBar(
+                    text = stringResource(R.string.call_recordings_title),
+                    onBackClick = {
+                        if (showingRecordingsList && !initialShowList) {
+                            showingRecordingsList = false
+                        } else {
+                            onNavigateBack()
                         }
                     },
                     actions = {

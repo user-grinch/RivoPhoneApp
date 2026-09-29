@@ -52,7 +52,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -61,7 +61,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TopAppBar
+import com.grinch.rivo4.view.components.MenuTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -175,31 +175,17 @@ fun FakeCallSchedulerScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (isCreatingSchedule) {
-                            stringResource(R.string.fake_call_new_schedule)
-                        } else {
-                            stringResource(R.string.fake_call_title)
-                        },
-                        fontWeight = FontWeight.Bold
-                    )
+            MenuTopAppBar(
+                text = if (isCreatingSchedule) {
+                    stringResource(R.string.fake_call_new_schedule)
+                } else {
+                    stringResource(R.string.fake_call_title)
                 },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (isCreatingSchedule) {
-                                isCreatingSchedule = false
-                            } else {
-                                navigator.navigateUp()
-                            }
-                        }
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
+                onBackClick = {
+                    if (isCreatingSchedule) {
+                        isCreatingSchedule = false
+                    } else {
+                        navigator.navigateUp()
                     }
                 },
                 actions = {
@@ -290,7 +276,9 @@ fun FakeCallSchedulerScreen(
                         icon = Icons.Outlined.Person
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
                             Row(
@@ -774,10 +762,10 @@ fun FakeCallSchedulerScreen(
                     val countdownStr = if (mins > 0) "${mins}m ${secs}s" else "${secs}s"
                     val formattedDate = SimpleDateFormat("EEE, d MMM • HH:mm", Locale.getDefault()).format(Date(itemSchedule.triggerTimestampMillis))
 
-                    OutlinedCard(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(18.dp),
-                        colors = CardDefaults.outlinedCardColors(
+                        colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                         )
                     ) {

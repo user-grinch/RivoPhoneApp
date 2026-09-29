@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -55,13 +56,9 @@ fun SwipeActionsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_swipe_actions_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_swipe_actions_title),
+                navigator = navigator
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -71,7 +68,7 @@ fun SwipeActionsScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
                 Text(

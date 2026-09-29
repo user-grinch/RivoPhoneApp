@@ -1,0 +1,23 @@
+[
+  {
+    "label": "Build & Install Play Release APK",
+    "command": "$ZED_WORKTREE_ROOT/install-release-play.sh",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "Build Play Release APK (assemblePlayRelease)",
+    "command": "export JAVA_HOME=/home/inan/.jdks/jbr-21.0.11 && export PATH=\"/home/inan/Android/Sdk/platform-tools:$JAVA_HOME/bin:$PATH\" && ./gradlew assemblePlayRelease",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "Install Play Release APK on Device (adb install)",
+    "command": "export PATH=\"/home/inan/Android/Sdk/platform-tools:$PATH\" && APK=$(find /home/inan/.gradle-builds/Rivo4/app/outputs/apk/play/release -maxdepth 1 -name \"*.apk\" | head -n 1) && [ -n \"$APK\" ] && adb install -r -d -g \"$APK\" || (echo 'Release APK not found! Build it first.' && exit 1)",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]

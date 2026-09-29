@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,13 +52,9 @@ fun SpeedDialScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_speed_dial_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_speed_dial_title),
+                navigator = navigator
             )
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -89,6 +86,7 @@ fun SpeedDialScreen(
             item {
                 RivoSectionHeader(
                     title = stringResource(R.string.settings_speed_dial_assignments_header),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
                     modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
                 )
             }

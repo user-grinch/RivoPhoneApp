@@ -45,7 +45,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.grinch.rivo4.view.components.MenuTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -115,13 +115,9 @@ fun AppLockScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("App Lock") },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            MenuTopAppBar(
+                text = "App Lock",
+                navigator = navigator
             )
         }
     ) { innerPadding ->

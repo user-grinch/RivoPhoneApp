@@ -158,6 +158,11 @@ class CallLogRepository(
         } else {
             emptyList()
         }
+        val blockedNumbers = try {
+            com.grinch.rivo4.controller.util.BlockedNumbersManager.getAll(context).map { normalizePhoneNumber(it.originalNumber) }.toSet()
+        } catch (e: Exception) {
+            emptySet()
+        }
 
         while (cursor.moveToNext()) {
             if (limit > 0 && tempLogs.size >= limit) {
@@ -174,7 +179,7 @@ class CallLogRepository(
             
             var simLabel = if (labelIdx != -1) cursor.getString(labelIdx) else null
             
-            val isBlocked = type == CallLog.Calls.BLOCKED_TYPE
+            val isBlocked = type == CallLog.Calls.BLOCKED_TYPE || (number != unknownLabel && blockedNumbers.contains(normalizePhoneNumber(number)))
             
             if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
                 val accountId = cursor.getString(accountIdIdx)
@@ -209,7 +214,8 @@ class CallLogRepository(
             if (lastEntry != null && lastEntry.number == number) {
                 tempLogs[tempLogs.size - 1] = lastEntry.copy(
                     types = lastEntry.types + type,
-                    ids = lastEntry.ids + callId
+                    ids = lastEntry.ids + callId,
+                    isBlocked = lastEntry.isBlocked || isBlocked
                 )
             } else {
                 tempLogs.add(

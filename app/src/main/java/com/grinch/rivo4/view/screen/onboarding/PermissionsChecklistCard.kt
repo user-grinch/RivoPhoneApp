@@ -7,26 +7,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,19 +38,19 @@ fun PermissionsChecklistCard(
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(3.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items.forEachIndexed { index, item ->
             val shape = com.grinch.rivo4.view.components.rivoGroupedItemShape(
                 index = index,
                 total = items.size,
                 cornerRadius = rivoCornerDp(20, roundness),
-                innerCorner = rivoCornerDp(4, roundness)
+                innerCorner = rivoCornerDp(6, roundness)
             )
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = shape,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = 1.dp
             ) {
                 PermissionItemRow(
@@ -104,43 +90,45 @@ fun PermissionItemRow(
         label = "iconTintColor"
     )
 
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp)
-            .alpha(if (!item.isEnabled && !item.isGranted) 0.65f else 1f),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 13.dp)
+            .alpha(if (!item.isEnabled && !item.isGranted) 0.65f else 1f)
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(rivoCornerDp(14, roundness)))
-                .background(iconBgColor),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = item.icon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = iconTintColor
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(rivoCornerDp(12, roundness)))
+                    .background(iconBgColor),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                    tint = iconTintColor
+                )
+            }
 
-        Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = item.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 if (item.statusNote != null && !item.isGranted) {
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Surface(
                         shape = RoundedCornerShape(rivoCornerDp(6, roundness)),
                         color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -156,72 +144,76 @@ fun PermissionItemRow(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(2.dp))
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            AnimatedContent(
+                targetState = item.isGranted,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "statusBadge"
+            ) { isGranted ->
+                if (isGranted) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color(0xFF386A20),
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Granted",
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                } else {
+                    val label = item.actionLabel ?: when (item.actionType) {
+                        PermissionActionType.ROLE_DIALER -> "Set"
+                        PermissionActionType.OVERLAY -> "Enable"
+                        PermissionActionType.BATTERY_OPTIMIZATION -> "Allow"
+                        PermissionActionType.STORAGE -> "Allow"
+                        PermissionActionType.SHIZUKU -> "Grant"
+                        else -> "Grant"
+                    }
+                    FilledTonalButton(
+                        onClick = onClick,
+                        shape = RoundedCornerShape(rivoCornerDp(12, roundness)),
+                        contentPadding = PaddingValues(
+                            horizontal = 14.dp,
+                            vertical = 6.dp
+                        ),
+                        colors = if (!item.isEnabled) {
+                            ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        } else {
+                            ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+
+        if (item.description.isNotBlank()) {
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = item.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 16.sp
+                lineHeight = 16.sp,
+                modifier = Modifier.padding(start = 52.dp, end = 4.dp)
             )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        AnimatedContent(
-            targetState = item.isGranted,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            label = "statusBadge"
-        ) { isGranted ->
-            if (isGranted) {
-                Surface(
-                    shape = CircleShape,
-                    color = Color(0xFF386A20),
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Granted",
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            } else {
-                val label = item.actionLabel ?: when (item.actionType) {
-                    PermissionActionType.ROLE_DIALER -> "Set"
-                    PermissionActionType.OVERLAY -> "Enable"
-                    PermissionActionType.BATTERY_OPTIMIZATION -> "Allow"
-                    PermissionActionType.STORAGE -> "Allow"
-                    PermissionActionType.SHIZUKU -> "Grant"
-                    else -> "Grant"
-                }
-                FilledTonalButton(
-                    onClick = onClick,
-                    shape = RoundedCornerShape(rivoCornerDp(12, roundness)),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                        horizontal = 12.dp,
-                        vertical = 6.dp
-                    ),
-                    colors = if (!item.isEnabled) {
-                        ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    } else {
-                        ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                ) {
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
         }
     }
 }

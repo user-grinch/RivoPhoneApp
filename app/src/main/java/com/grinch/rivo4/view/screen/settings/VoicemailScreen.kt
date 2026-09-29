@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Intent
 import android.media.RingtoneManager
@@ -87,15 +88,12 @@ fun VoicemailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_voicemail_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                }
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_voicemail_title),
+                navigator = navigator
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -207,9 +205,10 @@ fun VoicemailScreen(
                     icon = Icons.Outlined.Voicemail
                 ) {
                     Text(
-                        stringResource(R.string.settings_voicemail_visual_description),
+                        text = stringResource(R.string.settings_voicemail_visual_description),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }

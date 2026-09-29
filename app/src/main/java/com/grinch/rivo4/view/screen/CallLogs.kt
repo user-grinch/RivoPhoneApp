@@ -1,5 +1,16 @@
 package com.grinch.rivo4.view.screen
 
+import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.ContactUtils
+import com.grinch.rivo4.controller.util.formatTime
+import com.grinch.rivo4.modal.data.Contact
+import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.material.icons.automirrored.filled.CallMissed
+import androidx.compose.material.icons.automirrored.filled.CallReceived
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.rounded.Call
+import org.koin.compose.viewmodel.koinActivityViewModel
+
 import android.content.Context
 import android.provider.CallLog
 import android.telecom.TelecomManager
@@ -94,6 +105,35 @@ fun CallLogFullScreen(
     var pendingNumber by remember { mutableStateOf<String?>(null) }
     var pendingContactId by remember { mutableStateOf<String?>(null) }
 
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val allContacts by contactsVM.allContacts.collectAsState()
+    val displayOrder by contactsVM.displayOrder.collectAsState()
+
+    val contactsById = remember(allContacts) { allContacts.associateBy { it.id } }
+    val contactsByNumber = remember(allContacts) {
+        val map = mutableMapOf<String, Contact>()
+        for (c in allContacts) {
+            for (p in c.phoneNumbers) {
+                val norm = normalizePhoneNumber(p)
+                val key = if (norm.length >= 10) norm.takeLast(10) else norm
+                if (key.isNotEmpty()) map[key] = c
+            }
+        }
+        map
+    }
+
+    val matchedContact = remember(contactId, phoneNumber, allContacts, contactsById, contactsByNumber) {
+        if (contactId != null && contactId != "null") {
+            contactsById[contactId]
+        } else if (phoneNumber != null) {
+            val norm = normalizePhoneNumber(phoneNumber)
+            val key = if (norm.length >= 10) norm.takeLast(10) else norm
+            if (key.isNotEmpty()) contactsByNumber[key] else null
+        } else null
+    }
+
+    val isHistoryWithContact = (contactId != null && contactId != "null") || phoneNumber != null
+
     val filteredLogsByContact = remember(allLogs, contactId, phoneNumber) {
         if (contactId == null && phoneNumber == null) allLogs
         else allLogs.filter { log ->
@@ -102,8 +142,12 @@ fun CallLogFullScreen(
         }
     }
 
-    val contactName = remember(filteredLogsByContact) {
-        filteredLogsByContact.firstOrNull { it.name != null && it.name != it.number }?.name ?: (if (phoneNumber != null) formatPhoneNumber(phoneNumber) else null)
+    val contactName = remember(matchedContact, filteredLogsByContact, displayOrder) {
+        matchedContact?.let { ContactUtils.formatContactName(it, displayOrder) }
+            ?: filteredLogsByContact.firstOrNull { it.name != null && it.name != it.number }?.let {
+                ContactUtils.formatContactName(it.name!!, displayOrder)
+            }
+            ?: (if (phoneNumber != null) formatPhoneNumber(phoneNumber) else null)
     }
 
     if (showSimPicker && pendingNumber != null) {
@@ -132,7 +176,7 @@ fun CallLogFullScreen(
             swipeEnabled = prefs.isSwipeActionsEnabled() && selectedEntries.isEmpty(),
             swipeRightAction = SwipeActionType.fromId(prefs.getSwipeRightAction()),
             swipeLeftAction = SwipeActionType.fromId(prefs.getSwipeLeftAction()),
-            displayOrder = 0
+            displayOrder = displayOrder
         )
     }
 
@@ -274,64 +318,174 @@ fun CallLogFullScreen(
                                         else -> RoundedCornerShape(4.dp)
                                     }
 
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(shape)
-                                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                    ) {
-                                        CallLogTileSimple(
-                                            log = lg,
-                                            showSim = callLogConfig.showSim,
-                                            swipeEnabled = callLogConfig.swipeEnabled,
-                                            swipeRightAction = callLogConfig.swipeRightAction,
-                                            swipeLeftAction = callLogConfig.swipeLeftAction,
-                                            onClick = {
-                                                if (selectedEntries.isNotEmpty()) {
-                                                    selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
-                                                        selectedEntries.filter { it.id != lg.id }.toSet()
-                                                    } else {
-                                                        selectedEntries + lg
-                                                    }
-                                                }
-                                            },
-                                            onLongClick = {
-                                                if (selectedEntries.none { it.id == lg.id }) {
-                                                    selectedEntries = selectedEntries + lg
-                                                }
-                                            },
-                                            onCallClick = {
-                                                val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
-                                                    context,
-                                                    android.Manifest.permission.READ_PHONE_STATE
-                                                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                                    val handleCall: () -> Unit = {
+                                        val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                            context,
+                                            android.Manifest.permission.READ_PHONE_STATE
+                                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
-                                                val targetContactId = lg.contactId ?: contactId
+                                        val targetContactId = lg.contactId ?: contactId
 
-                                                if (hasPermission) {
-                                                    val accounts = telecomManager.callCapablePhoneAccounts
-                                                    val favSim = targetContactId?.let { prefs.getDefaultSimForContact(it) }
-                                                    val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
-                                                    if (preferredHandle != null) {
-                                                        makeCall(context, lg.number, preferredHandle, contactId = targetContactId)
-                                                    } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
-                                                        pendingNumber = lg.number
-                                                        pendingContactId = targetContactId
-                                                        showSimPicker = true
-                                                    } else {
-                                                        makeCall(context, lg.number, contactId = targetContactId)
-                                                    }
-                                                } else {
-                                                    makeCall(context, lg.number, contactId = targetContactId)
+                                        if (hasPermission) {
+                                            val accounts = telecomManager.callCapablePhoneAccounts
+                                            val favSim = targetContactId?.let { prefs.getDefaultSimForContact(it) }
+                                            val preferredHandle = if (favSim != null) accounts.find { it.id == favSim } else null
+                                            if (preferredHandle != null) {
+                                                makeCall(context, lg.number, preferredHandle, contactId = targetContactId)
+                                            } else if (accounts.size > 1 && prefs.getInt("default_sim", 0) == 0) {
+                                                pendingNumber = lg.number
+                                                pendingContactId = targetContactId
+                                                showSimPicker = true
+                                            } else {
+                                                makeCall(context, lg.number, contactId = targetContactId)
+                                            }
+                                        } else {
+                                            makeCall(context, lg.number, contactId = targetContactId)
+                                        }
+                                    }
+
+                                    if (isHistoryWithContact) {
+                                        val isSelected = selectedEntries.any { it.id == lg.id }
+                                        val isBlocked = lg.isBlocked || lg.type == CallLog.Calls.BLOCKED_TYPE
+                                        val isMissedOrRejected = lg.type == CallLog.Calls.MISSED_TYPE || lg.type == CallLog.Calls.REJECTED_TYPE
+
+                                        val callTypeLabel = when {
+                                            isBlocked -> stringResource(R.string.call_type_blocked)
+                                            lg.type == CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
+                                            lg.type == CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
+                                            lg.type == CallLog.Calls.MISSED_TYPE -> stringResource(R.string.call_type_missed)
+                                            lg.type == CallLog.Calls.REJECTED_TYPE -> stringResource(R.string.call_type_rejected)
+                                            lg.type == CallLog.Calls.VOICEMAIL_TYPE -> stringResource(R.string.call_type_voicemail)
+                                            else -> stringResource(R.string.call_type_call)
+                                        }
+
+                                        val leadingIcon = when {
+                                            isBlocked -> Icons.Default.Block
+                                            lg.type == CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+                                            lg.type == CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+                                            lg.type == CallLog.Calls.MISSED_TYPE || lg.type == CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+                                            else -> Icons.AutoMirrored.Filled.CallReceived
+                                        }
+
+                                        val iconTint = when {
+                                            isBlocked || isMissedOrRejected -> MaterialTheme.colorScheme.error
+                                            lg.type == CallLog.Calls.OUTGOING_TYPE -> MaterialTheme.colorScheme.primary
+                                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
+
+                                        val supportingText = buildString {
+                                            append(formatTime(context, lg.date))
+                                            if (lg.duration > 0) {
+                                                append(" • ${android.text.format.DateUtils.formatElapsedTime(lg.duration)}")
+                                            }
+                                            if (callLogConfig.showSim && lg.simLabel != null) {
+                                                append(" • ${lg.simLabel}")
+                                            }
+                                            if (lg.count > 1) {
+                                                append(" (${lg.count})")
+                                            }
+                                        }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(shape)
+                                                .background(if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Box(modifier = Modifier.weight(1f)) {
+                                                    RivoListItem(
+                                                        headline = callTypeLabel,
+                                                        headlineColor = if (isBlocked || isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified,
+                                                        supporting = supportingText,
+                                                        leadingContent = {
+                                                            Icon(
+                                                                imageVector = leadingIcon,
+                                                                contentDescription = null,
+                                                                tint = iconTint,
+                                                                modifier = Modifier.size(24.dp)
+                                                            )
+                                                        },
+                                                        selected = isSelected,
+                                                        onClick = {
+                                                            if (selectedEntries.isNotEmpty()) {
+                                                                selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
+                                                                    selectedEntries.filter { it.id != lg.id }.toSet()
+                                                                } else {
+                                                                    selectedEntries + lg
+                                                                }
+                                                            }
+                                                        },
+                                                        onLongClick = {
+                                                            if (selectedEntries.none { it.id == lg.id }) {
+                                                                selectedEntries = selectedEntries + lg
+                                                            }
+                                                        }
+                                                    )
                                                 }
-                                            },
-                                            selected = selectedEntries.any { it.id == lg.id },
-                                            onSwipeAction = { action, log ->
-                                                if (action == SwipeActionType.DELETE) {
-                                                    viewModel.deleteCallLogsByIds(log.ids)
+
+                                                if (!isSelected) {
+                                                    IconButton(
+                                                        onClick = handleCall,
+                                                        modifier = Modifier.padding(end = 10.dp)
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Rounded.Call,
+                                                            contentDescription = stringResource(R.string.action_call),
+                                                            tint = MaterialTheme.colorScheme.primary,
+                                                            modifier = Modifier.size(22.dp)
+                                                        )
+                                                    }
                                                 }
                                             }
-                                        )
+                                        }
+                                    } else {
+                                        val itemContact = lg.contactId?.let { contactsById[it] } ?: run {
+                                            val norm = normalizePhoneNumber(lg.number)
+                                            val key = if (norm.length >= 10) norm.takeLast(10) else norm
+                                            if (key.isNotEmpty()) contactsByNumber[key] else null
+                                        }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(shape)
+                                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                        ) {
+                                            CallLogTileSimple(
+                                                log = lg,
+                                                contact = itemContact,
+                                                displayOrder = displayOrder,
+                                                showSim = callLogConfig.showSim,
+                                                swipeEnabled = callLogConfig.swipeEnabled,
+                                                swipeRightAction = callLogConfig.swipeRightAction,
+                                                swipeLeftAction = callLogConfig.swipeLeftAction,
+                                                onClick = {
+                                                    if (selectedEntries.isNotEmpty()) {
+                                                        selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
+                                                            selectedEntries.filter { it.id != lg.id }.toSet()
+                                                        } else {
+                                                            selectedEntries + lg
+                                                        }
+                                                    }
+                                                },
+                                                onLongClick = {
+                                                    if (selectedEntries.none { it.id == lg.id }) {
+                                                        selectedEntries = selectedEntries + lg
+                                                    }
+                                                },
+                                                onCallClick = handleCall,
+                                                selected = selectedEntries.any { it.id == lg.id },
+                                                onSwipeAction = { action, log ->
+                                                    if (action == SwipeActionType.DELETE) {
+                                                        viewModel.deleteCallLogsByIds(log.ids)
+                                                    }
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }

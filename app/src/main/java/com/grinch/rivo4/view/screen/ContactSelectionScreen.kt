@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
 import com.grinch.rivo4.view.theme.*
@@ -56,6 +57,7 @@ fun ContactSelectionScreen(
     val view = LocalView.current
     val viewModel: ContactsViewModel = koinActivityViewModel()
     val allContacts by viewModel.allContacts.collectAsState()
+    val displayOrder by viewModel.displayOrder.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val roundness = LocalCardRoundness.current
     val avatarStyle = rememberRivoAvatarStyle()
@@ -70,7 +72,7 @@ fun ContactSelectionScreen(
         viewModel.fetchContacts()
     }
 
-    val filteredContacts = remember(allContacts, searchQuery, selectedFilterTab) {
+    val filteredContacts = remember(allContacts, searchQuery, selectedFilterTab, displayOrder) {
         var list = when (selectedFilterTab) {
             1 -> allContacts.filter { it.isFavorite }
             2 -> allContacts.filter { it.isPrivate }
@@ -80,16 +82,16 @@ fun ContactSelectionScreen(
             val cleanSearch = searchQuery.trim()
             list = list.filter {
                 it.name.contains(cleanSearch, ignoreCase = true) ||
+                ContactUtils.formatContactName(it, displayOrder).contains(cleanSearch, ignoreCase = true) ||
                 it.phoneNumbers.any { num -> num.contains(cleanSearch) }
             }
         }
-        list.sortedBy { it.name.lowercase() }
+        list.sortedWith { c1, c2 -> ContactUtils.compareContacts(c1, c2, displayOrder) }
     }
 
-    val groupedContacts = remember(filteredContacts) {
+    val groupedContacts = remember(filteredContacts, displayOrder) {
         filteredContacts.groupBy { contact ->
-            val first = contact.name.trim().firstOrNull()?.uppercaseChar() ?: '#'
-            if (first in 'A'..'Z') first.toString() else "#"
+            ContactUtils.getContactInitial(contact, displayOrder)
         }
     }
 
@@ -585,8 +587,9 @@ fun ContactSelectionScreen(
                                     shape = shape,
                                     color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f) else MaterialTheme.colorScheme.surfaceContainerLow
                                 ) {
+                                    val formattedName = ContactUtils.formatContactName(contact, displayOrder)
                                     RivoListItem(
-                                        headline = contact.name,
+                                        headline = formattedName,
                                         supporting = if (contact.phoneNumbers.isNotEmpty()) {
                                             if (contact.phoneNumbers.size > 1) {
                                                 "${formatPhoneNumber(primaryNumber)} (+${contact.phoneNumbers.size - 1} more)"
@@ -594,7 +597,7 @@ fun ContactSelectionScreen(
                                                 formatPhoneNumber(primaryNumber)
                                             }
                                         } else null,
-                                        avatarName = contact.name,
+                                        avatarName = formattedName,
                                         photoUri = contact.photoUri,
                                         badgeIcon = if (contact.isFavorite) Icons.Outlined.Star else if (contact.isPrivate) Icons.Outlined.Lock else null,
                                         badgeColor = if (contact.isFavorite) MaterialTheme.colorScheme.primary else null,

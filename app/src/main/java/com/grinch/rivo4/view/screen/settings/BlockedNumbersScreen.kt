@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Context
 import android.telecom.TelecomManager
@@ -184,13 +185,9 @@ fun BlockedNumbersScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_blocked_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                },
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_blocked_title),
+                navigator = navigator,
                 actions = {
                     IconButton(onClick = { showAddManualDialog = true }) {
                         Icon(Icons.Default.Add, contentDescription = stringResource(R.string.blocked_add_number))
