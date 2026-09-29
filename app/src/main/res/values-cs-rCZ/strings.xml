@@ -169,4 +169,25 @@
     <string name="settings_group_style_appearance">Vzhled stylu &amp;</string>
     <string name="priority_contacts_select_title">Vybrat Prioritní kontakt</string>
     <string name="action_add">Přidat</string>
+    <string name="filter_reset_filters">Resetovat filtry</string>
+    <string name="action_continue_anyway">Přesto pokračovat</string>
+    <string name="blocked_action_block_contact">Blokovat kontakt</string>
+    <string name="blocked_action_add_number">Přidat číslo</string>
+    <string name="blocked_action_import_csv">Importovat CSV</string>
+    <string name="blocked_action_export_csv">Exportovat CSV</string>
+    <string name="blocked_search_placeholder">Hledat blokovaná čísla…</string>
+    <string name="settings_group_support_about">Podpora &amp; O</string>
+    <string name="settings_display_banner_ads">Zobrazit reklamy na banneru</string>
+    <string name="settings_display_banner_ads_supporting">Zobrazit nerušivé reklamy bannerů v seznamech pro podporu vývoje</string>
+    <string name="settings_rate_google_play">Ohodnoťte na Google Play</string>
+    <string name="settings_rate_google_play_supporting">Podpořte Rivo v Google Play Store</string>
+    <string name="settings_about_rivo">O společnosti Rivo</string>
+    <string name="settings_about_rivo_supporting">Verze, open source licence &amp; přispěvatelé</string>
+    <string name="settings_group_alerts_ringtones">Upozornění &amp; vyzvánění</string>
+    <string name="blocked_title_block_numbers">Blokovat čísla nebo kontakty</string>
+    <string name="settings_group_call_screening">Screening hovorů</string>
+    <string name="settings_group_blocking_behavior">Chování blokování</string>
+    <string name="settings_group_system_integration">Systémová integrace</string>
+    <string name="settings_blocked_system_supporting">Otevřít systém Android blokovaný správce čísel</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

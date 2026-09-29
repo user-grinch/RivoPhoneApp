@@ -175,4 +175,20 @@
     <string name="blocked_action_block_contact">Blochează contact</string>
     <string name="blocked_action_add_number">Adaugă număr</string>
     <string name="blocked_action_import_csv">Importă CSV</string>
+    <string name="blocked_action_export_csv">Exportă CSV</string>
+    <string name="blocked_search_placeholder">Căutare numere blocate…</string>
+    <string name="settings_group_support_about">Suport &amp; Despre</string>
+    <string name="settings_display_banner_ads">Afişare anunţuri banner</string>
+    <string name="settings_display_banner_ads_supporting">Arată anunțuri banner neintrusive în liste pentru a sprijini dezvoltarea</string>
+    <string name="settings_rate_google_play">Evaluează pe Google Play</string>
+    <string name="settings_rate_google_play_supporting">Susțineți Rivo pe Google Play Store</string>
+    <string name="settings_about_rivo">Despre Rivo</string>
+    <string name="settings_about_rivo_supporting">Versiune, licență open source &amp; contributori</string>
+    <string name="settings_group_alerts_ringtones">Alerte &amp; Tonuri</string>
+    <string name="blocked_title_block_numbers">Numere bloc sau contacte</string>
+    <string name="settings_group_call_screening">Ecran de apel</string>
+    <string name="settings_group_blocking_behavior">Comportament blocare</string>
+    <string name="settings_group_system_integration">Integrare Sistem</string>
+    <string name="settings_blocked_system_supporting">Deschide managerul de numere blocat de sistemul Android</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

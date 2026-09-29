@@ -169,4 +169,25 @@
     <string name="settings_group_style_appearance">Stil &amp; Utseende</string>
     <string name="priority_contacts_select_title">Välj Prioriterad kontakt</string>
     <string name="action_add">Lägg till</string>
+    <string name="filter_reset_filters">Återställ filter</string>
+    <string name="action_continue_anyway">Fortsätt ändå</string>
+    <string name="blocked_action_block_contact">Blockera kontakt</string>
+    <string name="blocked_action_add_number">Lägg till nummer</string>
+    <string name="blocked_action_import_csv">Importera CSV</string>
+    <string name="blocked_action_export_csv">Exportera CSV</string>
+    <string name="blocked_search_placeholder">Sök blockerade nummer…</string>
+    <string name="settings_group_support_about">Support &amp; Om</string>
+    <string name="settings_display_banner_ads">Visa banner-annonser</string>
+    <string name="settings_display_banner_ads_supporting">Visa icke-störande bannerannonser inuti listor för att stödja utvecklingen</string>
+    <string name="settings_rate_google_play">Betygsätt på Google Play</string>
+    <string name="settings_rate_google_play_supporting">Stöd Rivo på Google Play Store</string>
+    <string name="settings_about_rivo">Om Rivo</string>
+    <string name="settings_about_rivo_supporting">Version, open source-licenser &amp; bidragsgivare</string>
+    <string name="settings_group_alerts_ringtones">Varningar &amp; Ringsignaler</string>
+    <string name="blocked_title_block_numbers">Blockera nummer eller kontakter</string>
+    <string name="settings_group_call_screening">Skärm av samtal</string>
+    <string name="settings_group_blocking_behavior">Blockera beteende</string>
+    <string name="settings_group_system_integration">Systemintegration</string>
+    <string name="settings_blocked_system_supporting">Öppna Android-systemet blockerade nummer manager</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

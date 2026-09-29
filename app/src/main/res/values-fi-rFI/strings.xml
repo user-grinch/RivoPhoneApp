@@ -168,4 +168,25 @@
     <string name="settings_group_style_appearance">Tyyli &amp; Ulkonäkö</string>
     <string name="priority_contacts_select_title">Valitse Prioriteettiyhteystieto</string>
     <string name="action_add">Lisää</string>
+    <string name="filter_reset_filters">Nollaa Suodattimet</string>
+    <string name="action_continue_anyway">Jatka joka tapauksessa</string>
+    <string name="blocked_action_block_contact">Estä Yhteystieto</string>
+    <string name="blocked_action_add_number">Lisää Numero</string>
+    <string name="blocked_action_import_csv">Tuo CSV</string>
+    <string name="blocked_action_export_csv">Vie CSV</string>
+    <string name="blocked_search_placeholder">Etsi estetty numerot…</string>
+    <string name="settings_group_support_about">Tuki &amp; Tietoja</string>
+    <string name="settings_display_banner_ads">Näytä Mainospalkit</string>
+    <string name="settings_display_banner_ads_supporting">Näytä ei-häiritsevät mainospalkin mainokset listojen sisällä tukemaan kehitystä</string>
+    <string name="settings_rate_google_play">Arvostele Google Playssa</string>
+    <string name="settings_rate_google_play_supporting">Tue Rivoa Google Play Kaupassa</string>
+    <string name="settings_about_rivo">Tietoja Rivosta</string>
+    <string name="settings_about_rivo_supporting">Versio, avoimen lähdekoodin lisenssit &amp; osallistujat</string>
+    <string name="settings_group_alerts_ringtones">Hälytykset &amp; Soittoäänet</string>
+    <string name="blocked_title_block_numbers">Lohko numerot tai yhteystiedot</string>
+    <string name="settings_group_call_screening">Puhelun Seulonta</string>
+    <string name="settings_group_blocking_behavior">Estää Käyttäytymistä</string>
+    <string name="settings_group_system_integration">Järjestelmän Integraatio</string>
+    <string name="settings_blocked_system_supporting">Avaa Android-järjestelmä estetty numeronhallinta</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

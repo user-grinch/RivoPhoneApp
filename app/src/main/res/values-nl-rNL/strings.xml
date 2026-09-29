@@ -168,4 +168,24 @@
     <string name="settings_group_style_appearance">Stijl &amp; Uiterlijk</string>
     <string name="priority_contacts_select_title">Prioriteitscontact selecteren</string>
     <string name="action_add">Toevoegen</string>
+    <string name="filter_reset_filters">Filters resetten</string>
+    <string name="action_continue_anyway">Toch doorgaan</string>
+    <string name="blocked_action_block_contact">Contact blokkeren</string>
+    <string name="blocked_action_add_number">Nummer toevoegen</string>
+    <string name="blocked_action_import_csv">Importeer CSV</string>
+    <string name="blocked_action_export_csv">Exporteren als CSV</string>
+    <string name="settings_group_support_about">Ondersteuning &amp; Over</string>
+    <string name="settings_display_banner_ads">Banner advertenties weergeven</string>
+    <string name="settings_display_banner_ads_supporting">Toon niet-opdringerige banneradvertenties binnen lijsten om de ontwikkeling te ondersteunen</string>
+    <string name="settings_rate_google_play">Beoordeel op Google Play</string>
+    <string name="settings_rate_google_play_supporting">Steun Rivo in de Google Play Store</string>
+    <string name="settings_about_rivo">Over Rivo</string>
+    <string name="settings_about_rivo_supporting">Versie, open source licenties &amp; bijdragers</string>
+    <string name="settings_group_alerts_ringtones">Waarschuwingen &amp; Ringtonen</string>
+    <string name="blocked_title_block_numbers">Nummers of contacten blokkeren</string>
+    <string name="settings_group_call_screening">Bellen schermen</string>
+    <string name="settings_group_blocking_behavior">Blokkeren van gedrag</string>
+    <string name="settings_group_system_integration">Integratie met systeem</string>
+    <string name="settings_blocked_system_supporting">Open de Android systeem geblokkeerde nummers manager</string>
+    <!-- Multi-call & Conference Management -->
 </resources>

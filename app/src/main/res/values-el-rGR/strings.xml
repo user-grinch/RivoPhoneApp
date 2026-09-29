@@ -164,4 +164,24 @@
     <string name="settings_group_style_appearance">Στυλ &amp; Εμφάνιση</string>
     <string name="priority_contacts_select_title">Επιλογή Επαφής Προτεραιότητας</string>
     <string name="action_add">Προσθήκη</string>
+    <string name="filter_reset_filters">Επαναφορά Φίλτρων</string>
+    <string name="action_continue_anyway">Συνεχίστε οπωσδήποτε</string>
+    <string name="blocked_action_block_contact">Αποκλεισμός Επαφής</string>
+    <string name="blocked_action_add_number">Προσθήκη Αριθμού</string>
+    <string name="blocked_action_import_csv">Εισαγωγή CSV</string>
+    <string name="blocked_action_export_csv">Εξαγωγή CSV</string>
+    <string name="settings_group_support_about">Υποστήριξη &amp; Σχετικά</string>
+    <string name="settings_display_banner_ads">Εμφάνιση Διαφημίσεων Banner</string>
+    <string name="settings_display_banner_ads_supporting">Εμφάνιση μη παρεμβατικών διαφημίσεων μέσα σε λίστες για την υποστήριξη ανάπτυξης</string>
+    <string name="settings_rate_google_play">Βαθμολογήστε στο Google Play</string>
+    <string name="settings_rate_google_play_supporting">Υποστηρίξτε το Rivo στο Google Play Store</string>
+    <string name="settings_about_rivo">Σχετικά Με Rivo</string>
+    <string name="settings_about_rivo_supporting">Έκδοση, άδειες ανοικτού κώδικα &amp; συνεισφέροντες</string>
+    <string name="settings_group_alerts_ringtones">Ειδοποιήσεις &amp; Ringtones</string>
+    <string name="blocked_title_block_numbers">Μπλοκάρισμα αριθμών ή επαφών</string>
+    <string name="settings_group_call_screening">Διαλογή Κλήσεων</string>
+    <string name="settings_group_blocking_behavior">Συμπεριφορά Αποκλεισμού</string>
+    <string name="settings_group_system_integration">Ενσωμάτωση Συστήματος</string>
+    <string name="settings_blocked_system_supporting">Άνοιγμα του διαχειριστή μπλοκαρισμένων αριθμών συστήματος Android</string>
+    <!-- Multi-call & Conference Management -->
 </resources>
