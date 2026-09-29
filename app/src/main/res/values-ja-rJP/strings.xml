@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">通話をマージ</string>
     <string name="conference_call">電話会議</string>
+    <string name="label_local_memory">デバイス</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">自動スピーカーフォン</string>
     <string name="settings_call_auto_speaker_proximity_supporting">耳から離れた時にスピーカーに切り替える（ヘッドホン接続時には消去）</string>
+    <string name="settings_call_dialpad_style_circle">円</string>
+    <string name="settings_call_dialpad_style_organic">Organic</string>
+    <string name="settings_call_dialpad_style_outlined">Outlined</string>
+    <string name="settings_call_dialpad_style_unified">統合された</string>
+    <string name="settings_call_dialpad_size">ダイヤルパッドのサイズ</string>
+    <string name="settings_call_dialpad_size_supporting">キーディメンション、テキストスケール、ダイヤラーの高さを調整する</string>
+    <string name="settings_call_dialpad_size_compact">コンパクト化</string>
+    <string name="settings_call_dialpad_size_medium">標準</string>
+    <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">SIM、デバイス、アカウント、プライベートストレージ間で連絡先を移動</string>
     <string name="settings_contact_management_card">連絡先管理カードを表示</string>
     <string name="settings_contact_management_card_supporting">連絡先の上にストレージの概要、クリーンアップステータス、重複した連絡先アラートを表示します</string>
     <!-- Floating Bar Customization & Blur -->
@@ -124,4 +135,34 @@
     <string name="priority_contacts_empty_title">優先度の連絡先がありません</string>
     <string name="priority_contacts_empty_desc">format@@0またはformat@@1が有効になっている場合でも、常に連絡先を追加できます。</string>
     <string name="priority_contacts_add">プライオリティ連絡先を追加</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_gestures_dnd">ジェスチャー &amp; Do Not Disturb</string>
+    <string name="settings_group_sim_calling_prefs">SIM &amp; 通話設定</string>
+    <string name="settings_group_dialer_screen_exp">ダイヤラー &amp; スクリーンエクスペリエンス</string>
+    <string name="settings_group_call_screening_prot">通話スクリーニング &amp; 保護</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">表示オプション</string>
+    <string name="settings_group_behavior_defaults">ビヘイビア &amp; デフォルト</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">缶詰の応答 (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">デフォルトにリセット</string>
+    <string name="settings_quick_responses_no_responses">クイック返信が設定されていません</string>
+    <string name="settings_permissions_overview_title">システム権限の概要</string>
+    <string name="settings_permissions_overview_desc">シームレスな通話に必要なランタイムパーミッションとシステムインテグレーションを管理します。</string>
+    <string name="settings_permissions_essential_title">基本的な権限</string>
+    <string name="settings_avatars_title">アバター &amp; コンタクトカード</string>
+    <string name="settings_permissions_app_setup_title">&amp; アプリの設定</string>
+    <string name="settings_quick_responses_title">クイック回答</string>
+    <string name="settings_quick_responses_add">回答を追加</string>
+    <string name="settings_permissions_recommended_title">おすすめ &amp; 高度な機能</string>
+    <string name="settings_permissions_system_title">システム</string>
+    <string name="settings_private_contacts_count">保護された連絡先 (%1$d)</string>
+    <string name="action_select_all">すべて選択</string>
+    <string name="settings_private_secret_code">シークレットダイヤルパッドコード</string>
+    <string name="about_rate_on_google_play">Google Playで評価</string>
+    <string name="about_supporter_badge">Supporter ⭐</string>
+    <string name="settings_group_style_appearance">スタイル &amp; 外観</string>
+    <string name="priority_contacts_select_title">優先連絡先を選択</string>
+    <string name="action_add">追加</string>
 </resources>

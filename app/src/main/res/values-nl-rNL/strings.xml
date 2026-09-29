@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Oproepen samenvoegen</string>
     <string name="conference_call">Telefonische vergadering</string>
+    <string name="label_local_memory">Apparaat</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatische luidspreker</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Schakel over naar de luidspreker wanneer weg van oor, oortelefoon wanneer dichtbij oor staat (onderdrukt wanneer een koptelefoon is aangesloten)</string>
+    <string name="settings_call_dialpad_style_circle">Cirkel</string>
+    <string name="settings_call_dialpad_style_organic">Biologisch</string>
+    <string name="settings_call_dialpad_style_outlined">Omlijnd</string>
+    <string name="settings_call_dialpad_style_unified">Gecombineerd</string>
+    <string name="settings_call_dialpad_size">Grootte toetsblok</string>
+    <string name="settings_call_dialpad_size_supporting">Belangrijke afmetingen, tekstschaal en kiezerhoogte aanpassen</string>
+    <string name="settings_call_dialpad_size_compact">Compacte</string>
+    <string name="settings_call_dialpad_size_medium">Standaard</string>
+    <string name="settings_call_dialpad_size_large">Ruime</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Verplaats contacten tussen SIM, apparaat, accounts en Privé opslag</string>
     <string name="settings_contact_management_card">Toon contactenbeheerkaart</string>
     <string name="settings_contact_management_card_supporting">Toon opslagoverzicht, status opschonen en dubbele waarschuwingen voor contactpersonen</string>
     <!-- Floating Bar Customization & Blur -->
@@ -127,4 +138,34 @@
     <string name="priority_contacts_empty_title">Geen voorkeurscontacten</string>
     <string name="priority_contacts_empty_desc">Voeg contacten toe die u altijd kunnen bereiken, zelfs als Stil of Niet storen is ingeschakeld.</string>
     <string name="priority_contacts_add">Prioriteit contact toevoegen</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Bel trilling &amp; Haptiek</string>
+    <string name="settings_group_sim_calling_prefs">SIM &amp; Instellingen voor bellen</string>
+    <string name="settings_group_dialer_screen_exp">Dialer &amp; Schermervaring</string>
+    <string name="settings_group_call_screening_prot">Oproep scherm &amp; Bescherming</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Weergave opties</string>
+    <string name="settings_group_behavior_defaults">Gedrag &amp; Standaard</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Standaard antwoorden (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Standaardinstellingen herstellen</string>
+    <string name="settings_quick_responses_no_responses">Geen snelle antwoorden ingesteld</string>
+    <string name="settings_permissions_overview_title">Overzicht van systeemrechten</string>
+    <string name="settings_permissions_overview_desc">Beheer runtime permissies en systeemintegraties nodig voor naadloos bellen.</string>
+    <string name="settings_permissions_essential_title">Noodzakelijke rechten</string>
+    <string name="settings_avatars_title">Avatars &amp; Contactkaarten</string>
+    <string name="settings_permissions_app_setup_title">Machtigingen &amp; App Setup</string>
+    <string name="settings_quick_responses_title">Snelle antwoorden</string>
+    <string name="settings_quick_responses_add">Antwoord toevoegen</string>
+    <string name="settings_permissions_recommended_title">Aanbevolen &amp; Geavanceerde functies</string>
+    <string name="settings_permissions_system_title">Systeem</string>
+    <string name="settings_private_contacts_count">Beveiligde contacten (%1$d)</string>
+    <string name="action_select_all">Alles selecteren</string>
+    <string name="settings_private_secret_code">Geheim toetsenbord code</string>
+    <string name="about_rate_on_google_play">Beoordeel op Google Play</string>
+    <string name="about_supporter_badge">Supporter ⭐</string>
+    <string name="settings_group_style_appearance">Stijl &amp; Uiterlijk</string>
+    <string name="priority_contacts_select_title">Prioriteitscontact selecteren</string>
+    <string name="action_add">Toevoegen</string>
 </resources>

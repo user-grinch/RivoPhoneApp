@@ -372,7 +372,16 @@
     <string name="settings_call_dialpad_style_supporting">Apariencia visual del marcador del teléfono</string>
     <string name="settings_call_dialpad_style_modern">Moderna</string>
     <string name="settings_call_dialpad_style_classic">Clásica</string>
+    <string name="settings_call_dialpad_style_circle">Círculo</string>
+    <string name="settings_call_dialpad_style_organic">Orgánico</string>
+    <string name="settings_call_dialpad_style_outlined">Fuera de línea</string>
+    <string name="settings_call_dialpad_style_unified">Unificado</string>
     <string name="settings_call_dialpad_style_minimal">Minimalista</string>
+    <string name="settings_call_dialpad_size">Tamaño de marcador</string>
+    <string name="settings_call_dialpad_size_supporting">Ajustar dimensiones clave, escala de texto y altura del marcador</string>
+    <string name="settings_call_dialpad_size_compact">Compacto</string>
+    <string name="settings_call_dialpad_size_medium">Estándar</string>
+    <string name="settings_call_dialpad_size_large">Espacioso</string>
     <string name="settings_call_dialpad_layout">Diseño del marcador</string>
     <string name="settings_call_dialpad_layout_supporting">Alineación para uso a una sola mano</string>
     <string name="settings_call_dialpad_layout_left">Izquierda</string>
@@ -531,6 +540,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Mover contactos entre SIM, Dispositivo, Cuentas y almacenamiento privado</string>
     <string name="settings_contact_management_card">Mostrar tarjeta de gestión de contactos</string>
     <string name="settings_contact_management_card_supporting">Mostrar la vista general, el estado de limpieza y las alertas de contactos duplicadas sobre los contactos</string>
     <!-- Floating Bar Customization & Blur -->
@@ -604,4 +614,40 @@
     <string name="priority_contacts_empty_title">No hay contactos prioritarios</string>
     <string name="priority_contacts_empty_desc">Añade contactos que siempre pueden comunicarte contigo, incluso cuando Silencio o No molestar.</string>
     <string name="priority_contacts_add">Añadir contacto prioritario</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Vibración de llamada &amp; Haptics</string>
+    <string name="settings_group_gestures_dnd">Gestos &amp; No molestar</string>
+    <string name="settings_group_sim_calling_prefs">SIM &amp; Preferencias de llamada</string>
+    <string name="settings_group_dialer_screen_exp">Marcador &amp; Experiencia de pantalla</string>
+    <string name="settings_group_call_screening_prot">Pantalla de llamada &amp; Protección</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Mostrar opciones</string>
+    <string name="settings_group_behavior_defaults">Comportamiento &amp; Por defecto</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Respuestas predefinidas (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Restablecer valores por defecto</string>
+    <string name="settings_quick_responses_no_responses">No hay respuestas rápidas configuradas</string>
+    <string name="settings_permissions_overview_title">Resumen de permisos del sistema</string>
+    <string name="settings_permissions_overview_desc">Gestione los permisos de ejecución y las integraciones del sistema necesarias para realizar llamadas sin problemas.</string>
+    <string name="settings_permissions_essential_title">Permisos esenciales</string>
+    <string name="settings_avatars_title">Avatares &amp; Tarjetas de contacto</string>
+    <string name="settings_permissions_app_setup_title">Permisos &amp; Configuración de la aplicación</string>
+    <string name="settings_quick_responses_title">Respuestas rápidas</string>
+    <string name="settings_quick_responses_add">Añadir respuesta</string>
+    <string name="settings_permissions_recommended_title">Recomendado &amp; Características Avanzadas</string>
+    <string name="settings_permissions_system_title">Sistema</string>
+    <string name="settings_private_contacts_count">Contactos asegurados (%1$d)</string>
+    <string name="action_select_all">Seleccionar todo</string>
+    <string name="settings_private_secret_code">Código de marcador secreto</string>
+    <string name="about_rate_on_google_play">Valorar en Google Play</string>
+    <string name="about_supporter_badge">Apoyador ⭐</string>
+    <string name="settings_group_style_appearance">Estilo &amp; Apariencia</string>
+    <string name="priority_contacts_select_title">Seleccionar contacto prioritario</string>
+    <string name="action_add">Añadir</string>
+    <string name="filter_reset_filters">Reiniciar filtros</string>
+    <string name="action_continue_anyway">Continuar de todos modos</string>
+    <string name="blocked_action_block_contact">Bloquear contacto</string>
+    <string name="blocked_action_add_number">Añadir número</string>
+    <string name="blocked_action_import_csv">Importar CSV</string>
 </resources>

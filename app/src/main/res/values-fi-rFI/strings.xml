@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Yhdistä puhelut</string>
     <string name="conference_call">Konferenssi puhelu</string>
+    <string name="label_local_memory">Laite</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automaattinen Kaiutinpuhelin</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Vaihda kaiuttimeen, kun se on poissa korvasta, kuuloke kun se on lähellä korvaa (sammutetaan kuulokkeet yhdistettynä)</string>
+    <string name="settings_call_dialpad_style_circle">Ympyrä</string>
+    <string name="settings_call_dialpad_style_organic">Orgaaninen</string>
+    <string name="settings_call_dialpad_style_outlined">Ääriviivattu</string>
+    <string name="settings_call_dialpad_style_unified">Yhdistetty</string>
+    <string name="settings_call_dialpad_size">Näppäimistön Koko</string>
+    <string name="settings_call_dialpad_size_supporting">Säädä avainten mitat, tekstin skaalaus ja numeronäppäimen korkeus</string>
+    <string name="settings_call_dialpad_size_compact">Kompakti</string>
+    <string name="settings_call_dialpad_size_medium">Normaali</string>
+    <string name="settings_call_dialpad_size_large">Tilava</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Siirrä yhteystietoja SIM-, laite-, tili- ja yksityistallennustilan välillä</string>
     <string name="settings_contact_management_card">Näytä Yhteystiedon Hallintakortti</string>
     <string name="settings_contact_management_card_supporting">Näytä tallennustilan yleiskatsaus, siivota tila ja kopioi yhteystietojen yläpuolella olevia yhteystietoja</string>
     <!-- Floating Bar Customization & Blur -->
@@ -127,4 +138,34 @@
     <string name="priority_contacts_empty_title">Ei Prioriteettiyhteystietoja</string>
     <string name="priority_contacts_empty_desc">Lisää yhteystietoja, jotka voivat aina tavoittaa sinut, vaikka Hiljainen tai Älä häiritse -tila on käytössä.</string>
     <string name="priority_contacts_add">Lisää Prioriteettiyhteystieto</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Soita Värinä &amp; Haptics</string>
+    <string name="settings_group_gestures_dnd">Eleet &amp; Älä Häiritse</string>
+    <string name="settings_group_sim_calling_prefs">SIM &amp; Soittamisen Asetukset</string>
+    <string name="settings_group_dialer_screen_exp">Puhelin &amp; Näytön Kokemus</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Näytön Asetukset</string>
+    <string name="settings_group_behavior_defaults">Käyttäytyminen &amp; Oletukset</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Canned Responses (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Palauta oletukset</string>
+    <string name="settings_quick_responses_no_responses">Nopeita vastauksia ei määritetty</string>
+    <string name="settings_permissions_overview_title">Järjestelmän Käyttöoikeuksien Yleiskatsaus</string>
+    <string name="settings_permissions_overview_desc">Hallitse ajon käyttöoikeuksia ja järjestelmäintegraatioita, joita tarvitaan saumattomaan soittoon.</string>
+    <string name="settings_permissions_essential_title">Olennaiset Käyttöoikeudet</string>
+    <string name="settings_avatars_title">Hahmot &amp; Yhteydenottokortit</string>
+    <string name="settings_permissions_app_setup_title">Käyttöoikeudet &amp; Sovelluksen Asetukset</string>
+    <string name="settings_quick_responses_title">Nopeat Vastaukset</string>
+    <string name="settings_quick_responses_add">Lisää Vastaus</string>
+    <string name="settings_permissions_recommended_title">Suositeltava &amp; Edistyneet Ominaisuudet</string>
+    <string name="settings_permissions_system_title">Järjestelmä</string>
+    <string name="settings_private_contacts_count">Suojatut Yhteystiedot (%1$d)</string>
+    <string name="action_select_all">Valitse Kaikki</string>
+    <string name="settings_private_secret_code">Salainen Näppäimistön Koodi</string>
+    <string name="about_rate_on_google_play">Arvostele Google Playssa</string>
+    <string name="about_supporter_badge">Tukija ⭐</string>
+    <string name="settings_group_style_appearance">Tyyli &amp; Ulkonäkö</string>
+    <string name="priority_contacts_select_title">Valitse Prioriteettiyhteystieto</string>
+    <string name="action_add">Lisää</string>
 </resources>

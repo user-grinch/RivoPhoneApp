@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Об’єдн. дзвінки</string>
     <string name="conference_call">Конференц-виклик</string>
+    <string name="label_local_memory">Пристрій</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Автоматичний гучний зв\'язок</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Динамік при відхиленні від вуха, елементи у режимі навушників (придушується при підключенні навушників)</string>
+    <string name="settings_call_dialpad_style_circle">Коло</string>
+    <string name="settings_call_dialpad_style_organic">Органіка</string>
+    <string name="settings_call_dialpad_style_outlined">З контуром</string>
+    <string name="settings_call_dialpad_style_unified">Уніфікований</string>
+    <string name="settings_call_dialpad_size">Розмір клавіатури</string>
+    <string name="settings_call_dialpad_size_supporting">Регулювання розмірів, масштабу тексту і висоти номеронабирача</string>
+    <string name="settings_call_dialpad_size_compact">Компактний</string>
+    <string name="settings_call_dialpad_size_medium">Стандартна</string>
+    <string name="settings_call_dialpad_size_large">Специус</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Перемістіть контакти між SIM, пристроєм, обліковими записами та приватним сховищем</string>
     <string name="settings_contact_management_card">Показати карту управління контактами</string>
     <string name="settings_contact_management_card_supporting">Відображати статус зберігання даних і повторювані контактні сповіщення над контактами</string>
     <!-- Floating Bar Customization & Blur -->
@@ -125,4 +136,31 @@
     <string name="priority_contacts_empty_title">Немає пріоритетних контактів</string>
     <string name="priority_contacts_empty_desc">Додати контакти, які завжди можуть зв’язатися з вами, навіть якщо ввімкнено беззвучний режим чи режим \"Не турбувати\".</string>
     <string name="priority_contacts_add">Додати пріоритетний контакт</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_gestures_dnd">Жести &amp; Режим \"Не турбувати\"</string>
+    <string name="settings_group_sim_calling_prefs">Налаштування SIM &amp; телефона</string>
+    <string name="settings_group_dialer_screen_exp">Телефон &amp; Екран досвіду</string>
+    <string name="settings_group_call_screening_prot">&amp; Захист від виклику</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Параметри відображення</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Швидкі відповіді (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Відновити параметри за замовчуванням</string>
+    <string name="settings_quick_responses_no_responses">Не налаштовано швидких відповідей</string>
+    <string name="settings_permissions_overview_title">Огляд системних прав</string>
+    <string name="settings_permissions_overview_desc">Керуйте дозволами на виконання та системними інтеграціями, необхідними для безшовних викликів.</string>
+    <string name="settings_permissions_essential_title">Істотні права доступу</string>
+    <string name="settings_avatars_title">Аватарки &amp; Контактні картки</string>
+    <string name="settings_permissions_app_setup_title">Дозволи &amp; налаштування програми</string>
+    <string name="settings_quick_responses_title">Швидкі відповіді</string>
+    <string name="settings_quick_responses_add">Добавити відповідь</string>
+    <string name="settings_permissions_system_title">Система</string>
+    <string name="action_select_all">Виділити все</string>
+    <string name="settings_private_secret_code">Код секретної клавіатури</string>
+    <string name="about_rate_on_google_play">Оцінити в Google Play</string>
+    <string name="about_supporter_badge">Підтримка ⭐</string>
+    <string name="settings_group_style_appearance">Стиль &amp; Вигляд</string>
+    <string name="priority_contacts_select_title">Вибрати пріоритет контакту</string>
+    <string name="action_add">Додати</string>
 </resources>
