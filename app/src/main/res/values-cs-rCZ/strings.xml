@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Sloučit hovory</string>
     <string name="conference_call">Konferenční hovor</string>
+    <string name="label_local_memory">Zařízení</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatický reproduktor</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Přepnout na reproduktor, když je mimo uš, sluchátka, když je poblíž ucha (potlačeno při připojení sluchátek)</string>
+    <string name="settings_call_dialpad_style_circle">Kruh</string>
+    <string name="settings_call_dialpad_style_organic">Organické</string>
+    <string name="settings_call_dialpad_style_outlined">Označeno</string>
+    <string name="settings_call_dialpad_style_unified">Sjednocené</string>
+    <string name="settings_call_dialpad_size">Velikost číselníku</string>
+    <string name="settings_call_dialpad_size_supporting">Nastavení velikosti klíče, měřítka textu a výšky číselníku</string>
+    <string name="settings_call_dialpad_size_compact">Kompaktní</string>
+    <string name="settings_call_dialpad_size_medium">Standardní</string>
+    <string name="settings_call_dialpad_size_large">Prostor</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Přesunout kontakty mezi SIM, zařízením, účty a soukromým úložištěm</string>
     <string name="settings_contact_management_card">Zobrazit kartu pro správu kontaktů</string>
     <string name="settings_contact_management_card_supporting">Zobrazit přehled, vyčištění stavu úložiště a duplicitní upozornění kontaktu nad kontakty</string>
     <!-- Floating Bar Customization & Blur -->
@@ -127,4 +138,35 @@
     <string name="priority_contacts_empty_title">Žádné kontakty s prioritou</string>
     <string name="priority_contacts_empty_desc">Přidejte kontakty, které vás mohou vždy kontaktovat, i když je aktivní tichý režim nebo režim Nerušit.</string>
     <string name="priority_contacts_add">Přidat Prioritní kontakt</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Zavolat vibrace &amp; Hapiky</string>
+    <string name="settings_group_gestures_dnd">Gesta &amp; Režim Nerušit</string>
+    <string name="settings_group_sim_calling_prefs">Nastavení volání SIM &amp;</string>
+    <string name="settings_group_dialer_screen_exp">Dialer &amp; Zkušenost se obrazovkou</string>
+    <string name="settings_group_call_screening_prot">Detekční kontrola volání &amp; Ochrana</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Možnosti zobrazení</string>
+    <string name="settings_group_behavior_defaults">Výchozí nastavení chování &amp;</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Konzervované odpovědi (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Obnovit výchozí nastavení</string>
+    <string name="settings_quick_responses_no_responses">Žádné rychlé odpovědi nakonfigurovány</string>
+    <string name="settings_permissions_overview_title">Přehled systémových oprávnění</string>
+    <string name="settings_permissions_overview_desc">Spravovat oprávnění běhu a systémové integrace potřebné pro plynulé volání.</string>
+    <string name="settings_permissions_essential_title">Základní oprávnění</string>
+    <string name="settings_avatars_title">Avatary &amp; Kontaktní karty</string>
+    <string name="settings_permissions_app_setup_title">Oprávnění &amp; Nastavení aplikací</string>
+    <string name="settings_quick_responses_title">Rychlé odpovědi</string>
+    <string name="settings_quick_responses_add">Přidat odpověď</string>
+    <string name="settings_permissions_recommended_title">Doporučené &amp; Pokročilé funkce</string>
+    <string name="settings_permissions_system_title">Systém</string>
+    <string name="settings_private_contacts_count">Zabezpečené kontakty (%1$d)</string>
+    <string name="action_select_all">Vybrat vše</string>
+    <string name="settings_private_secret_code">Tajný kód číselníku</string>
+    <string name="about_rate_on_google_play">Ohodnoťte na Google Play</string>
+    <string name="about_supporter_badge">Podporovatel ⭐</string>
+    <string name="settings_group_style_appearance">Vzhled stylu &amp;</string>
+    <string name="priority_contacts_select_title">Vybrat Prioritní kontakt</string>
+    <string name="action_add">Přidat</string>
 </resources>

@@ -379,7 +379,16 @@
     <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Tastenfelds</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
     <string name="settings_call_dialpad_style_classic">Klassisch</string>
+    <string name="settings_call_dialpad_style_circle">Kreis</string>
+    <string name="settings_call_dialpad_style_organic">Bio</string>
+    <string name="settings_call_dialpad_style_outlined">Umriss</string>
+    <string name="settings_call_dialpad_style_unified">Einheitlich</string>
     <string name="settings_call_dialpad_style_minimal">Minimal</string>
+    <string name="settings_call_dialpad_size">Wählfeldgröße</string>
+    <string name="settings_call_dialpad_size_supporting">Tastendimensionen, Textmaßstab und Wählerhöhe anpassen</string>
+    <string name="settings_call_dialpad_size_compact">Kompakt</string>
+    <string name="settings_call_dialpad_size_medium">Standard</string>
+    <string name="settings_call_dialpad_size_large">Geräumig</string>
     <string name="settings_call_dialpad_layout">Tastenfeld-Layout</string>
     <string name="settings_call_dialpad_layout_supporting">Ausrichtung für Einhand-Nutzung</string>
     <string name="settings_call_dialpad_layout_left">Links</string>
@@ -817,7 +826,7 @@
     <string name="settings_auto_paste_clipboard">Auto-Einfügen: kopierte Nummer</string>
     <string name="settings_auto_paste_clipboard_supporting">Auto-Einfügen in Wahlfeld</string>
     <!-- Separate Contacts Home Screen Icon (#167) -->
-    <string name="settings_contacts_launcher_icon">Eigenes App-Symbol für Kontakte</string>
+    <string name="settings_contacts_launcher_icon">App-Symbol für Kontakte</string>
     <string name="settings_contacts_launcher_icon_supporting">Eigenes App-Symbol für Kontakte auf Startbildschirm</string>
     <string name="app_name_contacts">Kontakte</string>
     <!-- Call Waiting Carrier Settings (#62) -->
@@ -869,4 +878,35 @@
     <string name="priority_contacts_empty_title">Keine Prioritätskontakte</string>
     <string name="priority_contacts_empty_desc">Fügen Sie Kontakte hinzu, die Sie immer erreichen können, selbst wenn \"Lautlos\" oder \"Nicht stören\" aktiviert ist.</string>
     <string name="priority_contacts_add">Prioritätskontakt hinzufügen</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Aufruf-Vibration &amp; Haptik</string>
+    <string name="settings_group_gestures_dnd">Gesten &amp; Nicht stören</string>
+    <string name="settings_group_sim_calling_prefs">SIM &amp; Anrufeinstellungen</string>
+    <string name="settings_group_dialer_screen_exp">Wählen Sie &amp; Bildschirm Erfahrung</string>
+    <string name="settings_group_call_screening_prot">Anruf-Screening &amp; Schutz</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Anzeigeoptionen</string>
+    <string name="settings_group_behavior_defaults">Verhalten &amp; Standardwerte</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Vordefinierte Antworten (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Auf Standard zurücksetzen</string>
+    <string name="settings_quick_responses_no_responses">Keine Schnellantworten konfiguriert</string>
+    <string name="settings_permissions_overview_title">Übersicht der Systemberechtigungen</string>
+    <string name="settings_permissions_overview_desc">Verwalten Sie Laufzeitberechtigungen und Systemintegrationen, die für nahtlose Anrufe erforderlich sind.</string>
+    <string name="settings_permissions_essential_title">Notwendige Berechtigungen</string>
+    <string name="settings_avatars_title">Avatare &amp; Kontaktkarten</string>
+    <string name="settings_permissions_app_setup_title">Berechtigungen &amp; App-Setup</string>
+    <string name="settings_quick_responses_title">Schnellantworten</string>
+    <string name="settings_quick_responses_add">Antwort hinzufügen</string>
+    <string name="settings_permissions_recommended_title">Empfohlene &amp; erweiterte Funktionen</string>
+    <string name="settings_permissions_system_title">System</string>
+    <string name="settings_private_contacts_count">Gesicherte Kontakte (%1$d)</string>
+    <string name="action_select_all">Alle auswählen</string>
+    <string name="settings_private_secret_code">Geheimer Dialpad-Code</string>
+    <string name="about_rate_on_google_play">Bei Google Play bewerten</string>
+    <string name="about_supporter_badge">Unterstützer ⭐</string>
+    <string name="settings_group_style_appearance">Stil &amp; Aussehen</string>
+    <string name="priority_contacts_select_title">Prioritätskontakt auswählen</string>
+    <string name="action_add">Neu</string>
 </resources>

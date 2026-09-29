@@ -185,6 +185,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">自动扬声器</string>
     <string name="settings_call_auto_speaker_proximity_supporting">离开耳朵时切换到扬声器，靠近耳机时的耳机(耳机连接时被抑制)</string>
+    <string name="settings_call_dialpad_style_circle">圆圈</string>
+    <string name="settings_call_dialpad_style_organic">有机的</string>
+    <string name="settings_call_dialpad_style_outlined">外观</string>
+    <string name="settings_call_dialpad_style_unified">统一的</string>
+    <string name="settings_call_dialpad_size">拨号键盘大小</string>
+    <string name="settings_call_dialpad_size_supporting">调整密钥尺寸、文本尺寸和拨号器高度</string>
+    <string name="settings_call_dialpad_size_compact">紧凑的</string>
+    <string name="settings_call_dialpad_size_medium">标准的</string>
+    <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -208,6 +217,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">在 SIM 卡、 设备、 账户和私有存储之间移动联系人</string>
     <string name="settings_contact_management_card">显示联系人管理卡</string>
     <string name="settings_contact_management_card_supporting">显示存储概览、清理状态以及联系人上方的重复联系通知</string>
     <!-- Floating Bar Customization & Blur -->
@@ -281,4 +291,32 @@
     <string name="priority_contacts_empty_title">没有优先联系人</string>
     <string name="priority_contacts_empty_desc">添加可以随时联系您的联系人，即使静音或勿扰模式已启用。</string>
     <string name="priority_contacts_add">添加优先联系人</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_sim_calling_prefs">SIM 卡 &amp; 调用首选项</string>
+    <string name="settings_group_dialer_screen_exp">拨号器 &amp; 屏幕体验</string>
+    <string name="settings_group_call_screening_prot">呼叫屏幕正在进行 &amp; 保护</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">显示选项</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">预设回应 (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">重置为默认值</string>
+    <string name="settings_quick_responses_no_responses">未配置快速响应</string>
+    <string name="settings_permissions_overview_title">系统权限概述</string>
+    <string name="settings_permissions_overview_desc">管理无缝调用所需的运行时间权限和系统集成。</string>
+    <string name="settings_permissions_essential_title">基本权限</string>
+    <string name="settings_avatars_title">头像 &amp; 联系卡</string>
+    <string name="settings_permissions_app_setup_title">权限 &amp; 应用设置</string>
+    <string name="settings_quick_responses_title">快速回复</string>
+    <string name="settings_quick_responses_add">添加响应</string>
+    <string name="settings_permissions_recommended_title">推荐的 &amp; 高级功能</string>
+    <string name="settings_permissions_system_title">系统</string>
+    <string name="settings_private_contacts_count">已加密联系人 (%1$d)</string>
+    <string name="action_select_all">选择所有</string>
+    <string name="settings_private_secret_code">密钥拨号键盘</string>
+    <string name="about_rate_on_google_play">在 Google Play 上评分</string>
+    <string name="about_supporter_badge">支持者:star：</string>
+    <string name="settings_group_style_appearance">样式 &amp; 外观</string>
+    <string name="priority_contacts_select_title">选择优先级联系人</string>
+    <string name="action_add">添加</string>
 </resources>

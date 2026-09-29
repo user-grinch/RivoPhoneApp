@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Συγχώνευση κλήσεων</string>
     <string name="conference_call">Κλήση συνδιάσκεψης</string>
+    <string name="label_local_memory">Συσκευή</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Αυτόματο Ηχείο</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Μετάβαση στο ηχείο όταν είναι μακριά από το αυτί, ακουστικό όταν είναι κοντά στο αυτί (καταστέλλεται όταν τα ακουστικά είναι συνδεδεμένα)</string>
+    <string name="settings_call_dialpad_style_circle">Κύκλος</string>
+    <string name="settings_call_dialpad_style_organic">Βιολογικά</string>
+    <string name="settings_call_dialpad_style_outlined">Περίγραμμα</string>
+    <string name="settings_call_dialpad_style_unified">Ενοποιημένο</string>
+    <string name="settings_call_dialpad_size">Μέγεθος Τηλεφώνου</string>
+    <string name="settings_call_dialpad_size_supporting">Προσαρμόστε τις διαστάσεις κλειδιών, την κλίμακα κειμένου και το ύψος τηλεφώνου</string>
+    <string name="settings_call_dialpad_size_compact">Συμπαγής</string>
+    <string name="settings_call_dialpad_size_medium">Τυπικό</string>
+    <string name="settings_call_dialpad_size_large">Ευρύχωρο</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Μετακίνηση επαφών μεταξύ SIM, συσκευής, λογαριασμών και ιδιωτικού χώρου αποθήκευσης</string>
     <string name="settings_contact_management_card">Εμφάνιση Κάρτας Διαχείρισης Επαφών</string>
     <string name="settings_contact_management_card_supporting">Εμφάνιση επισκόπησης αποθήκευσης, κατάσταση εκκαθάρισης και διπλότυπες ειδοποιήσεις επαφής πάνω από τις επαφές</string>
     <!-- Floating Bar Customization & Blur -->
@@ -125,4 +136,32 @@
     <string name="priority_contacts_empty_title">Καμία Προτεραιότητα Επαφών</string>
     <string name="priority_contacts_empty_desc">Προσθήκη επαφών που μπορούν πάντα να επικοινωνήσουν μαζί σας, ακόμα και όταν είναι ενεργοποιημένο το Silent ή το Do Not Disturb.</string>
     <string name="priority_contacts_add">Προσθήκη Επαφής Προτεραιότητας</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Κλήση Δόνησης &amp; Haptics</string>
+    <string name="settings_group_sim_calling_prefs">Προτιμήσεις SIM &amp; Κλήσης</string>
+    <string name="settings_group_call_screening_prot">Διαλογή Κλήσεων &amp; Προστασία</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Επιλογές Προβολής</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Κονσερβοποιημένες Απαντήσεις (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Επαναφορά προεπιλογών</string>
+    <string name="settings_quick_responses_no_responses">Δεν έχουν ρυθμιστεί γρήγορες απαντήσεις</string>
+    <string name="settings_permissions_overview_title">Επισκόπηση Δικαιωμάτων Συστήματος</string>
+    <string name="settings_permissions_overview_desc">Διαχείριση δικαιωμάτων runtime και ενσωμάτωσης συστήματος που απαιτούνται για απρόσκοπτη κλήση.</string>
+    <string name="settings_permissions_essential_title">Βασικά Δικαιώματα</string>
+    <string name="settings_avatars_title">Avatars &amp; Κάρτες Επαφής</string>
+    <string name="settings_permissions_app_setup_title">Ρύθμιση Δικαιωμάτων &amp; App</string>
+    <string name="settings_quick_responses_title">Γρήγορες Απαντήσεις</string>
+    <string name="settings_quick_responses_add">Προσθήκη Απάντησης</string>
+    <string name="settings_permissions_recommended_title">Προτεινόμενα Χαρακτηριστικά &amp; Advanced</string>
+    <string name="settings_permissions_system_title">Σύστημα</string>
+    <string name="settings_private_contacts_count">Ασφαλισμένες Επαφές (%1$d)</string>
+    <string name="action_select_all">Επιλογή Όλων</string>
+    <string name="settings_private_secret_code">Μυστικός Κωδικός Πληκτρολόγησης</string>
+    <string name="about_rate_on_google_play">Βαθμολογήστε στο Google Play</string>
+    <string name="about_supporter_badge">Υποστηρικτής ⭐</string>
+    <string name="settings_group_style_appearance">Στυλ &amp; Εμφάνιση</string>
+    <string name="priority_contacts_select_title">Επιλογή Επαφής Προτεραιότητας</string>
+    <string name="action_add">Προσθήκη</string>
 </resources>

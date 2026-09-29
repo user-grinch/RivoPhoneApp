@@ -3,6 +3,7 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Flet opkald</string>
     <string name="conference_call">Opkald på konference</string>
+    <string name="label_local_memory">Enhed</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -31,6 +32,15 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk Højttalertelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Skift til højttaler, når den er væk fra øret, øreemnet når nær øret (undertrykket, når hovedtelefoner er tilsluttet)</string>
+    <string name="settings_call_dialpad_style_circle">Cirkel</string>
+    <string name="settings_call_dialpad_style_organic">Økologisk</string>
+    <string name="settings_call_dialpad_style_outlined">Gennemstreget</string>
+    <string name="settings_call_dialpad_style_unified">Forenet</string>
+    <string name="settings_call_dialpad_size">Dialpad Størrelse</string>
+    <string name="settings_call_dialpad_size_supporting">Justér nøgledimensioner, tekstskala, og opkaldshøjde</string>
+    <string name="settings_call_dialpad_size_compact">Kompakt</string>
+    <string name="settings_call_dialpad_size_medium">Standard</string>
+    <string name="settings_call_dialpad_size_large">Rummelig</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
@@ -54,6 +64,7 @@
     <!-- Fake Call feature -->
     <!-- Navigation Bar Style -->
     <!-- Contact Management & Duplicates -->
+    <string name="contact_management_move_supporting">Flytte kontakter mellem SIM, Enhed, Konti og privat lagerplads</string>
     <string name="settings_contact_management_card">Vis Kontaktstyringskort</string>
     <string name="settings_contact_management_card_supporting">Vis lagerplads, oprydningsstatus og duplikere kontaktadvarsler over kontakter</string>
     <!-- Floating Bar Customization & Blur -->
@@ -127,4 +138,35 @@
     <string name="priority_contacts_empty_title">Ingen Prioriterede Kontakter</string>
     <string name="priority_contacts_empty_desc">Tilføj kontakter, der altid kan nå dig, selv når Silent eller Forstyr Ikke er aktiveret.</string>
     <string name="priority_contacts_add">Tilføj Prioriteret Kontakt</string>
+    <!-- Settings Expressive Groups & Titles -->
+    <string name="settings_group_dialpad_tones">Dialpad &amp; Tones</string>
+    <string name="settings_group_call_vibration_haptics">Ring Til Vibration &amp; Haptics</string>
+    <string name="settings_group_gestures_dnd">Bevægelser &amp; Forstyr Ikke</string>
+    <string name="settings_group_sim_calling_prefs">SIM-kort &amp; Indstillinger For Opkald</string>
+    <string name="settings_group_dialer_screen_exp">Opkalds- &amp; Skærmoplevelse</string>
+    <string name="settings_group_call_screening_prot">Opkalds Screening &amp; Beskyttelse</string>
+    <string name="settings_group_auto_redial">Auto Redial</string>
+    <string name="settings_group_display_options">Vis Indstillinger</string>
+    <string name="settings_group_behavior_defaults">Adfærd &amp; Standard</string>
+    <string name="settings_group_dialpad_calling">Dialpad &amp; Calling</string>
+    <string name="settings_group_canned_responses">Dannelsessvar (%1$d)</string>
+    <string name="settings_quick_responses_reset_tooltip">Nulstil til standardindstillinger</string>
+    <string name="settings_quick_responses_no_responses">Ingen hurtige svar konfigureret</string>
+    <string name="settings_permissions_overview_title">Oversigt Over Systemtilladelser</string>
+    <string name="settings_permissions_overview_desc">Administrer runtime tilladelser og systemintegrationer, der kræves for problemfri opkald.</string>
+    <string name="settings_permissions_essential_title">Væsentlige Tilladelser</string>
+    <string name="settings_avatars_title">Avatars &amp; Kontaktkort</string>
+    <string name="settings_permissions_app_setup_title">Tilladelser &amp; App Opsætning</string>
+    <string name="settings_quick_responses_title">Hurtige Svar</string>
+    <string name="settings_quick_responses_add">Tilføj Svar</string>
+    <string name="settings_permissions_recommended_title">Anbefalet &amp; Avancerede Funktioner</string>
+    <string name="settings_permissions_system_title">System</string>
+    <string name="settings_private_contacts_count">Sikrede kontakter (%1$d)</string>
+    <string name="action_select_all">Vælg Alle</string>
+    <string name="settings_private_secret_code">Hemmelig Dialpad Kode</string>
+    <string name="about_rate_on_google_play">Bedøm på Google Play</string>
+    <string name="about_supporter_badge">Støtter ⭐</string>
+    <string name="settings_group_style_appearance">Stil &amp; Udseende</string>
+    <string name="priority_contacts_select_title">Vælg Prioriteret Kontakt</string>
+    <string name="action_add">Tilføj</string>
 </resources>
