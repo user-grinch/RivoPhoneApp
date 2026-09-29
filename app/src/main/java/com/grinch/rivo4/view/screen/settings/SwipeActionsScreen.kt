@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.RivoResetButton
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.widget.Toast
@@ -235,20 +236,16 @@ fun SwipeActionsScreen(
 
             // Reset Button
             item {
-                OutlinedButton(
+                RivoResetButton(
                     onClick = {
                         prefs.resetSwipeActions()
                         enabled = prefs.isSwipeActionsEnabled()
                         rightActionId = prefs.getSwipeRightAction()
                         leftActionId = prefs.getSwipeLeftAction()
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Icon(Icons.Outlined.Restore, null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.settings_swipe_actions_reset))
-                }
+                    text = stringResource(R.string.settings_swipe_actions_reset),
+                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                )
             }
 
             item {

@@ -1,4 +1,8 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.accounts.Account
@@ -248,7 +252,7 @@ fun ContactManagementScreen(
             item {
                 RivoExpressiveCard(
                     title = stringResource(R.string.contact_management_duplicates_title),
-                    icon = Icons.Outlined.CallMerge
+                    icon = Icons.AutoMirrored.Outlined.CallMerge
                 ) {
                     Column(
                         modifier = Modifier
@@ -320,7 +324,7 @@ fun ContactManagementScreen(
                                 if (isMerging) {
                                     CircularProgressIndicator(modifier = Modifier.size(18.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
                                 } else {
-                                    Icon(Icons.Outlined.CallMerge, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Icon(Icons.AutoMirrored.Outlined.CallMerge, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(Modifier.width(6.dp))
                                     Text(stringResource(R.string.contact_management_merge_all))
                                 }
@@ -646,7 +650,7 @@ fun ContactManagementScreen(
             message = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
             confirmLabel = stringResource(R.string.contact_management_merge_all),
             dismissLabel = stringResource(R.string.action_cancel),
-            icon = Icons.Outlined.CallMerge
+            icon = Icons.AutoMirrored.Outlined.CallMerge
         )
     }
 
@@ -894,9 +898,10 @@ fun StorageTargetCard(
     val morph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.35f }
 
     Box(modifier = modifier.fillMaxWidth()) {
+        val roundness = LocalCardRoundness.current
         Surface(
             onClick = { expanded = true },
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(rivoCornerDp(20, roundness)),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = Modifier.fillMaxWidth()
         ) {

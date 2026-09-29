@@ -1,4 +1,7 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -257,9 +260,10 @@ fun CallAnalyticsScreen(
 
 @Composable
 private fun HeroTalkTimeCard(analytics: CallAnalyticsSummary) {
+    val roundness = LocalCardRoundness.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
         color = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     ) {

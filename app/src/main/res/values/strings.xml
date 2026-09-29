@@ -966,4 +966,24 @@
     <string name="settings_group_style_appearance">Style &amp; Appearance</string>
     <string name="priority_contacts_select_title">Select Priority Contact</string>
     <string name="action_add">Add</string>
+    <string name="filter_reset_filters">Reset Filters</string>
+    <string name="action_continue_anyway">Continue anyway</string>
+    <string name="blocked_action_block_contact">Block Contact</string>
+    <string name="blocked_action_add_number">Add Number</string>
+    <string name="blocked_action_import_csv">Import CSV</string>
+    <string name="blocked_action_export_csv">Export CSV</string>
+    <string name="blocked_search_placeholder">Search blocked numbers…</string>
+    <string name="settings_group_support_about">Support &amp; About</string>
+    <string name="settings_display_banner_ads">Display Banner Ads</string>
+    <string name="settings_display_banner_ads_supporting">Show non-intrusive banner ads inside lists to support development</string>
+    <string name="settings_rate_google_play">Rate on Google Play</string>
+    <string name="settings_rate_google_play_supporting">Support Rivo on Google Play Store</string>
+    <string name="settings_about_rivo">About Rivo</string>
+    <string name="settings_about_rivo_supporting">Version, open source licenses &amp; contributors</string>
+    <string name="settings_group_alerts_ringtones">Alerts &amp; Ringtones</string>
+    <string name="blocked_title_block_numbers">Block Numbers or Contacts</string>
+    <string name="settings_group_call_screening">Call Screening</string>
+    <string name="settings_group_blocking_behavior">Blocking Behavior</string>
+    <string name="settings_group_system_integration">System Integration</string>
+    <string name="settings_blocked_system_supporting">Open the Android system blocked numbers manager</string>
 </resources>

@@ -9,6 +9,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
+
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -188,7 +192,7 @@ fun SettingsScreen(
                         RivoListItem(
                             headline = stringResource(R.string.settings_sound_vibration_headline),
                             supporting = stringResource(R.string.settings_sound_vibration_supporting),
-                            leadingIcon = Icons.Outlined.VolumeUp,
+                            leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
                             onClick = { navigator.navigate(SoundVibrationScreenDestination) }
                         )
                     }
@@ -279,7 +283,7 @@ fun SettingsScreen(
                         RivoListItem(
                             headline = stringResource(R.string.fake_call_title),
                             supporting = stringResource(R.string.fake_call_subtitle),
-                            leadingIcon = Icons.Outlined.PhoneCallback,
+                            leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
                             onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
                         )
                     }
@@ -340,14 +344,14 @@ fun SettingsScreen(
             // 5. Support & About
             item {
                 RivoExpressiveGroup(
-                    title = "Support & About",
-                    icon = Icons.Outlined.HelpOutline
+                    title = stringResource(R.string.settings_group_support_about),
+                    icon = Icons.AutoMirrored.Outlined.HelpOutline
                 ) {
                     if (IS_ADS_SUPPORTED) {
                         item {
                             RivoSwitchListItem(
-                                headline = "Display Banner Ads",
-                                supporting = "Show non-intrusive banner ads inside lists to support development",
+                                headline = stringResource(R.string.settings_display_banner_ads),
+                                supporting = stringResource(R.string.settings_display_banner_ads_supporting),
                                 leadingIcon = Icons.Outlined.AdUnits,
                                 checked = enableAds,
                                 onCheckedChange = { checked ->
@@ -371,16 +375,16 @@ fun SettingsScreen(
                     }
                     item {
                         RivoListItem(
-                            headline = "Rate on Google Play",
-                            supporting = "Support Rivo on Google Play Store",
+                            headline = stringResource(R.string.settings_rate_google_play),
+                            supporting = stringResource(R.string.settings_rate_google_play_supporting),
                             leadingIcon = Icons.Default.Star,
                             onClick = { openLink(context, PLAY_STORE_URL) }
                         )
                     }
                     item {
                         RivoListItem(
-                            headline = "About Rivo",
-                            supporting = "Version, open source licenses & contributors",
+                            headline = stringResource(R.string.settings_about_rivo),
+                            supporting = stringResource(R.string.settings_about_rivo_supporting),
                             leadingIcon = Icons.Outlined.Info,
                             onClick = { navigator.navigate(AboutScreenDestination) }
                         )

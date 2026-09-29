@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import androidx.compose.material.icons.automirrored.filled.CallMissed
 
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.rivoCornerDp
@@ -1101,7 +1102,7 @@ fun ContactDetailsScreen(
                                             leadingIcon = when (log.type) {
                                                 android.provider.CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
                                                 android.provider.CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
-                                                android.provider.CallLog.Calls.MISSED_TYPE -> Icons.Default.CallMissed
+                                                android.provider.CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
                                                 else -> Icons.Default.Call
                                             },
                                             isCompact = true,

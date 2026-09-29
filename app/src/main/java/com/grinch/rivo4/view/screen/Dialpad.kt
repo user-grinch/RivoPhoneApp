@@ -1,4 +1,6 @@
 package com.grinch.rivo4.view.screen
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Context
@@ -176,6 +178,7 @@ fun DialPadScreen(
     val allContacts by contactsVM.allContacts.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue(initialNumber ?: "")) }
+    var dialpadHeightPx by remember { mutableIntStateOf(0) }
     val number = textFieldValue.text
 
     LaunchedEffect(Unit) {
@@ -231,6 +234,9 @@ fun DialPadScreen(
     }
     val dimensions = remember(dialpadSize) {
         DialpadDimensions.forSize(dialpadSize)
+    }
+    val dialpadHeightDp = with(LocalDensity.current) {
+        if (dialpadHeightPx > 0) dialpadHeightPx.toDp() else dimensions.contentBottomPadding
     }
 
     val isKnownSecretCode = remember {
@@ -378,46 +384,53 @@ fun DialPadScreen(
         ) {
 
             if (number.isEmpty()) {
-                Column(
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = dimensions.contentBottomPadding),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .padding(bottom = dialpadHeightDp)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(36.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        modifier = Modifier.size(120.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(horizontal = 24.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                Icons.Default.Dialpad,
-                                null,
-                                modifier = Modifier.size(48.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                        Surface(
+                            shape = RoundedCornerShape(24.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            modifier = Modifier.size(72.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Default.Dialpad,
+                                    null,
+                                    modifier = Modifier.size(36.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            stringResource(R.string.dialpad_start_dialing),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            stringResource(R.string.dialpad_start_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        stringResource(R.string.dialpad_start_dialing),
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        stringResource(R.string.dialpad_start_hint),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
 
             if (searchResults.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = dimensions.contentBottomPadding),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = dialpadHeightDp + 16.dp),
                     verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     itemsIndexed(searchResults, key = { _, contact -> "dialpad_contact_${contact.id}" }) { index, contact ->
@@ -467,7 +480,10 @@ fun DialPadScreen(
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        dialpadHeightPx = coordinates.size.height
+                    },
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shadowElevation = 16.dp,
                 shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)

@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import androidx.compose.material.icons.automirrored.outlined.Message
 import com.grinch.rivo4.view.components.RivoFloatingActionButton
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
@@ -127,7 +128,7 @@ fun QuickResponsesScreen(
                 item {
                     RivoExpressiveCard(
                         title = stringResource(R.string.settings_group_canned_responses, 0),
-                        icon = Icons.Outlined.Message
+                        icon = Icons.AutoMirrored.Outlined.Message
                     ) {
                         Box(
                             modifier = Modifier
@@ -147,7 +148,7 @@ fun QuickResponsesScreen(
                 item {
                     RivoExpressiveGroup(
                         title = stringResource(R.string.settings_group_canned_responses, responses.size),
-                        icon = Icons.Outlined.Message
+                        icon = Icons.AutoMirrored.Outlined.Message
                     ) {
                         responses.forEachIndexed { index, responseText ->
                             item {

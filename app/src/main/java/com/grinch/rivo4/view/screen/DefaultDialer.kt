@@ -177,7 +177,7 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                     }
                 ) {
                     Text(
-                        text = "Continue anyway",
+                        text = stringResource(R.string.action_continue_anyway),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

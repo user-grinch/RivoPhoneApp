@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import androidx.compose.material.icons.automirrored.outlined.CompareArrows
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -284,7 +285,7 @@ fun InterfaceScreen(
                                 ) { value, selected ->
                                     val icon = when (value) {
                                         0 -> Icons.Outlined.Animation
-                                        1 -> Icons.Outlined.CompareArrows
+                                        1 -> Icons.AutoMirrored.Outlined.CompareArrows
                                         2 -> Icons.Outlined.AutoAwesome
                                         else -> Icons.Outlined.Block
                                     }

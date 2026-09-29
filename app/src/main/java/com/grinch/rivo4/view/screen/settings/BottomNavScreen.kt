@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.RivoResetButton
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.layout.*
@@ -220,24 +221,19 @@ fun BottomNavScreen(
                             }
                         }
                     }
-                    item {
-                        Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
-                            OutlinedButton(
-                                onClick = {
-                                    prefs.resetBottomNavLayout()
-                                    order = prefs.getBottomNavOrder()
-                                    hidden = prefs.getHiddenBottomNavTabs()
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.large
-                            ) {
-                                Icon(Icons.Outlined.Restore, null)
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.settings_bottom_nav_reset))
-                            }
-                        }
-                    }
                 }
+            }
+
+            item {
+                RivoResetButton(
+                    onClick = {
+                        prefs.resetBottomNavLayout()
+                        order = prefs.getBottomNavOrder()
+                        hidden = prefs.getHiddenBottomNavTabs()
+                    },
+                    text = stringResource(R.string.settings_bottom_nav_reset),
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
             }
 
             // 3. Behavior & Defaults

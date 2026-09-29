@@ -1,4 +1,8 @@
 package com.grinch.rivo4.view.screen
+import androidx.compose.material.icons.automirrored.filled.PhoneMissed
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
 
 import android.Manifest
 import android.provider.CallLog
@@ -875,20 +879,21 @@ fun CallLogFullContent(
 
 @Composable
 fun EmptyCallLogsState() {
+    val roundness = LocalCardRoundness.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            shape = RoundedCornerShape(32.dp),
+            shape = RoundedCornerShape(rivoCornerDp(32, roundness)),
             color = MaterialTheme.colorScheme.surfaceContainer,
             modifier = Modifier.size(120.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     modifier = Modifier.size(64.dp),
-                    imageVector = Icons.Default.PhoneMissed,
+                    imageVector = Icons.AutoMirrored.Filled.PhoneMissed,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -1019,12 +1024,13 @@ private fun DailyStatCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val roundness = LocalCardRoundness.current
     Surface(
         modifier = modifier
             .width(104.dp)
             .height(100.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(rivoCornerDp(22, roundness)),
         color = containerColor
     ) {
         Box(

@@ -39,6 +39,8 @@ import com.grinch.rivo4.controller.util.BlockedNumbersManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.*
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
@@ -222,9 +224,10 @@ fun BlockedNumbersScreen(
         ) {
             // 1. Protection Hero Card
             item {
+                val roundness = LocalCardRoundness.current
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(rivoCornerDp(24, roundness)),
                     color = MaterialTheme.colorScheme.surfaceContainerLow
                 ) {
                     Column(
@@ -292,9 +295,9 @@ fun BlockedNumbersScreen(
                                 onClick = {
                                     navigator.navigate(
                                         ContactSelectionScreenDestination(
-                                            title = "Block Numbers or Contacts",
+                                            title = context.getString(R.string.blocked_title_block_numbers),
                                             isMultiSelect = true,
-                                            actionButtonText = "Block"
+                                            actionButtonText = context.getString(R.string.action_block)
                                         )
                                     )
                                 },
@@ -304,7 +307,7 @@ fun BlockedNumbersScreen(
                             ) {
                                 Icon(Icons.Outlined.PersonSearch, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(6.dp))
-                                Text("Block Contact", style = MaterialTheme.typography.labelLarge)
+                                Text(stringResource(R.string.blocked_action_block_contact), style = MaterialTheme.typography.labelLarge)
                             }
 
                             FilledTonalButton(
@@ -318,7 +321,7 @@ fun BlockedNumbersScreen(
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(4.dp))
-                                Text("Add Number", style = MaterialTheme.typography.labelMedium)
+                                Text(stringResource(R.string.blocked_action_add_number), style = MaterialTheme.typography.labelMedium)
                             }
                         }
 
@@ -339,7 +342,7 @@ fun BlockedNumbersScreen(
                             ) {
                                 Icon(Icons.Outlined.FileUpload, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(6.dp))
-                                Text("Import CSV", style = MaterialTheme.typography.labelMedium)
+                                Text(stringResource(R.string.blocked_action_import_csv), style = MaterialTheme.typography.labelMedium)
                             }
                             OutlinedButton(
                                 onClick = {
@@ -352,7 +355,7 @@ fun BlockedNumbersScreen(
                             ) {
                                 Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(6.dp))
-                                Text("Export CSV", style = MaterialTheme.typography.labelMedium)
+                                Text(stringResource(R.string.blocked_action_export_csv), style = MaterialTheme.typography.labelMedium)
                             }
                         }
                     }
@@ -368,7 +371,7 @@ fun BlockedNumbersScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = 4.dp),
-                        placeholder = { Text("Search blocked numbers...") },
+                        placeholder = { Text(stringResource(R.string.blocked_search_placeholder)) },
                         leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
@@ -378,7 +381,7 @@ fun BlockedNumbersScreen(
                             }
                         },
                         singleLine = true,
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(rivoCornerDp(20, LocalCardRoundness.current)),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -396,7 +399,7 @@ fun BlockedNumbersScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(rivoCornerDp(24, LocalCardRoundness.current)),
                         color = MaterialTheme.colorScheme.surfaceContainerLow
                     ) {
                         Column(
@@ -534,7 +537,7 @@ fun BlockedNumbersScreen(
             // 4. Call Screening Section
             item {
                 RivoExpressiveGroup(
-                    title = "Call Screening",
+                    title = stringResource(R.string.settings_group_call_screening),
                     icon = Icons.Outlined.PhoneDisabled
                 ) {
                     item {
@@ -567,7 +570,7 @@ fun BlockedNumbersScreen(
             // 5. Blocking Behavior Section
             item {
                 RivoExpressiveGroup(
-                    title = "Blocking Behavior",
+                    title = stringResource(R.string.settings_group_blocking_behavior),
                     icon = Icons.Outlined.Gavel
                 ) {
                     item {
@@ -620,13 +623,13 @@ fun BlockedNumbersScreen(
             // 6. System Integration Section
             item {
                 RivoExpressiveGroup(
-                    title = "System Integration",
+                    title = stringResource(R.string.settings_group_system_integration),
                     icon = Icons.Outlined.SettingsSuggest
                 ) {
                     item {
                         RivoListItem(
                             headline = stringResource(R.string.settings_blocked_system_button),
-                            supporting = "Open the Android system blocked numbers manager",
+                            supporting = stringResource(R.string.settings_blocked_system_supporting),
                             leadingIcon = Icons.AutoMirrored.Outlined.List,
                             trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             onClick = {

@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.components
+import androidx.compose.material.icons.outlined.Restore
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -375,6 +376,46 @@ fun RivoSectionHeader(
         if (trailingContent != null) {
             trailingContent()
         }
+    }
+}
+
+
+@Composable
+fun RivoResetButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector = Icons.Outlined.Restore,
+    enabled: Boolean = true
+) {
+    val roundness = LocalCardRoundness.current
+    val shape = RoundedCornerShape(rivoCornerDp(16, roundness))
+
+    FilledTonalButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        shape = shape,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 

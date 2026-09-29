@@ -1,4 +1,8 @@
 package com.grinch.rivo4.view.screen
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.automirrored.outlined.Send
+
 
 import android.os.Build
 
@@ -401,7 +405,7 @@ fun ExpressiveCallScreen(
                             CallService.mergeCalls()
                         }) {
                             Icon(
-                                Icons.Outlined.CallMerge,
+                                Icons.AutoMirrored.Outlined.CallMerge,
                                 contentDescription = stringResource(R.string.action_merge_calls),
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -919,7 +923,7 @@ fun QuickResponsesBottomSheet(
                 }
                 IconButton(onClick = onOpenSmsApp) {
                     Icon(
-                        Icons.Outlined.OpenInNew,
+                        Icons.AutoMirrored.Outlined.OpenInNew,
                         contentDescription = "Open SMS app",
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -942,7 +946,7 @@ fun QuickResponsesBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            Icons.Outlined.Send,
+                            Icons.AutoMirrored.Outlined.Send,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
@@ -992,7 +996,7 @@ fun QuickResponsesBottomSheet(
                         enabled = customText.isNotBlank()
                     ) {
                         Icon(
-                            Icons.Outlined.Send,
+                            Icons.AutoMirrored.Outlined.Send,
                             contentDescription = "Send",
                             tint = if (customText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                         )

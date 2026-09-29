@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.outlined.PhoneMissed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -206,7 +207,7 @@ fun SoundVibrationScreen(
             }
 
             item {
-                RivoExpressiveGroup(title = "Alerts & Ringtones") {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_alerts_ringtones)) {
                     item {
                         RivoListItem(
                             headline = stringResource(R.string.priority_contacts_title),
@@ -219,7 +220,7 @@ fun SoundVibrationScreen(
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_missed_call_notifications),
                             supporting = stringResource(R.string.settings_sound_missed_call_notifications_supporting),
-                            leadingIcon = Icons.Outlined.PhoneMissed,
+                            leadingIcon = Icons.AutoMirrored.Outlined.PhoneMissed,
                             checked = missedCallNotifications,
                             onCheckedChange = {
                                 missedCallNotifications = it
@@ -240,12 +241,7 @@ fun SoundVibrationScreen(
                 }
             }
             
-            item {
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
-            }
+
         }
     }
 }

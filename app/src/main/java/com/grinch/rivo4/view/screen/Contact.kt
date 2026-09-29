@@ -1,4 +1,8 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import com.grinch.rivo4.view.components.RivoFloatingActionButton
 
 import android.Manifest
@@ -520,20 +524,21 @@ fun ContactContent(
             message = stringResource(R.string.contact_management_merge_all_confirm_msg, duplicateGroups.size),
             confirmLabel = stringResource(R.string.contact_management_merge_all),
             dismissLabel = stringResource(R.string.action_cancel),
-            icon = Icons.Outlined.CallMerge
+            icon = Icons.AutoMirrored.Outlined.CallMerge
         )
     }
 }
 
 @Composable
 fun EmptyContactsState() {
+    val roundness = LocalCardRoundness.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            shape = RoundedCornerShape(32.dp),
+            shape = RoundedCornerShape(rivoCornerDp(32, roundness)),
             color = MaterialTheme.colorScheme.surfaceContainer,
             modifier = Modifier.size(120.dp)
         ) {
@@ -647,7 +652,7 @@ fun ContactManagementTopCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (hasDuplicates) Icons.Outlined.CallMerge else Icons.Outlined.CheckCircle,
+                        imageVector = if (hasDuplicates) Icons.AutoMirrored.Outlined.CallMerge else Icons.Outlined.CheckCircle,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
                         tint = if (hasDuplicates) MaterialTheme.colorScheme.onErrorContainer
@@ -759,7 +764,7 @@ fun ContactManagementTopCard(
                             )
                         } else {
                             Icon(
-                                Icons.Outlined.CallMerge,
+                                Icons.AutoMirrored.Outlined.CallMerge,
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )

@@ -1,6 +1,7 @@
 package com.grinch.rivo4.modal.data
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Chat
@@ -43,7 +44,7 @@ enum class SwipeActionType(
     WHATSAPP(
         id = PreferenceManager.SWIPE_ACTION_WHATSAPP,
         titleRes = R.string.swipe_action_whatsapp,
-        icon = Icons.Default.Chat
+        icon = Icons.AutoMirrored.Filled.Chat
     ),
     COPY_NUMBER(
         id = PreferenceManager.SWIPE_ACTION_COPY_NUMBER,

@@ -1,4 +1,8 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.RivoFloatingActionButton
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
 
 import android.text.format.DateFormat
 import android.widget.Toast
@@ -243,18 +247,30 @@ fun FakeCallSchedulerScreen(
         },
         floatingActionButton = {
             if (!isCreatingSchedule && schedules.isNotEmpty()) {
-                ExtendedFloatingActionButton(
+                val roundness = LocalCardRoundness.current
+                RivoFloatingActionButton(
                     onClick = {
                         resetNewScheduleForm()
                         isCreatingSchedule = true
                     },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    text = { Text(stringResource(R.string.fake_call_new_schedule), fontWeight = FontWeight.SemiBold) },
+                    shape = RoundedCornerShape(rivoCornerDp(20, roundness)),
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp),
-                    shape = RoundedCornerShape(20.dp)
-                )
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(22.dp))
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = stringResource(R.string.fake_call_new_schedule),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -762,9 +778,10 @@ fun FakeCallSchedulerScreen(
                     val countdownStr = if (mins > 0) "${mins}m ${secs}s" else "${secs}s"
                     val formattedDate = SimpleDateFormat("EEE, d MMM • HH:mm", Locale.getDefault()).format(Date(itemSchedule.triggerTimestampMillis))
 
+                    val roundness = LocalCardRoundness.current
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp),
+                        shape = RoundedCornerShape(rivoCornerDp(18, roundness)),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                         )

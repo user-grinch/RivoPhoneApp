@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 
 import android.telecom.Call
 import android.telecom.CallAudioState
@@ -385,7 +386,7 @@ fun ActiveCallControls(
             )
             if (canMerge) {
                 CallActionButton(
-                    icon = Icons.Outlined.CallMerge,
+                    icon = Icons.AutoMirrored.Outlined.CallMerge,
                     isActive = false,
                     label = stringResource(R.string.action_merge_calls),
                     compact = compact,

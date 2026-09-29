@@ -1,4 +1,7 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+
 
 import android.Manifest
 import android.view.HapticFeedbackConstants
@@ -381,9 +384,12 @@ private fun ExpressiveFavoriteCard(
         label = "wiggle"
     )
 
+    val roundness = LocalCardRoundness.current
+    val cardShape = RoundedCornerShape(rivoCornerDp(20, roundness))
+
     Card(
         onClick = { if (!isEditing) onOpen() },
-        shape = RoundedCornerShape(20.dp),
+        shape = cardShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
@@ -513,14 +519,15 @@ private fun EmptyFavoritesState(onAddClick: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val roundness = LocalCardRoundness.current
         Surface(
-            shape = RoundedCornerShape(32.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            modifier = Modifier.size(112.dp)
+            shape = RoundedCornerShape(rivoCornerDp(32, roundness)),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.size(120.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    modifier = Modifier.size(56.dp),
+                    modifier = Modifier.size(64.dp),
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
