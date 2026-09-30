@@ -210,30 +210,37 @@ class CallLogRepository(
                 contactIdFromLookupUri(it)
             }
 
+            val singleEntry = CallLogEntry(
+                id = callId,
+                number = number,
+                name = displayName ?: number,
+                type = type,
+                date = date,
+                duration = duration,
+                photoUri = photoUri,
+                contactId = contactId,
+                simLabel = simLabel,
+                isBlocked = isBlocked,
+                types = listOf(type),
+                ids = listOf(callId)
+            )
+
             val lastEntry = tempLogs.lastOrNull()
-            if (lastEntry != null && lastEntry.number == number) {
+            val sameContact = if (lastEntry != null) {
+                (contactId != null && lastEntry.contactId == contactId) ||
+                areNumbersEqual(lastEntry.number, number)
+            } else false
+
+            if (lastEntry != null && sameContact) {
+                val currentSubLogs = if (lastEntry.subLogs.isEmpty()) listOf(lastEntry) else lastEntry.subLogs
                 tempLogs[tempLogs.size - 1] = lastEntry.copy(
                     types = lastEntry.types + type,
                     ids = lastEntry.ids + callId,
-                    isBlocked = lastEntry.isBlocked || isBlocked
+                    isBlocked = lastEntry.isBlocked || isBlocked,
+                    subLogs = currentSubLogs + singleEntry
                 )
             } else {
-                tempLogs.add(
-                    CallLogEntry(
-                        id = callId,
-                        number = number,
-                        name = displayName ?: number,
-                        type = type,
-                        date = date,
-                        duration = duration,
-                        photoUri = photoUri,
-                        contactId = contactId,
-                        simLabel = simLabel,
-                        isBlocked = isBlocked,
-                        types = listOf(type),
-                        ids = listOf(callId)
-                    )
-                )
+                tempLogs.add(singleEntry)
             }
         }
         callLogs.addAll(tempLogs)

@@ -2,6 +2,16 @@ package com.grinch.rivo4.view.components
 
 import com.grinch.rivo4.R
 import android.provider.CallLog
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 import androidx.compose.material.icons.automirrored.filled.CallReceived
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.*
@@ -95,9 +107,7 @@ fun CallLogTileSimple(
         }
     }
 
-    val headlineText = remember(displayName, log.count) {
-        if (log.count > 1) "$displayName (${log.count})" else displayName
-    }
+    val headlineText = displayName
 
     val context = LocalContext.current
     val callTypeLabel = when {
@@ -197,9 +207,18 @@ fun CallLogTile(
     val isBlocked = log.isBlocked || log.type == CallLog.Calls.BLOCKED_TYPE
     val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
 
-    val icon = remember(log.type, isBlocked) {
+    val isMergedMixed = remember(log.types) {
+        if (log.types.size > 1) {
+            val distinctTypes = log.types.toSet()
+            distinctTypes.size > 1
+        } else false
+    }
+
+    val icon = remember(log.type, isBlocked, isMergedMixed) {
         if (isBlocked) {
             Icons.Default.Block
+        } else if (isMergedMixed) {
+            Icons.AutoMirrored.Outlined.CallMerge
         } else {
             when (log.type) {
                 CallLog.Calls.MISSED_TYPE, CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
@@ -231,27 +250,25 @@ fun CallLogTile(
         }
     }
 
-    val headlineText = remember(displayName, log.count) {
-        if (log.count > 1) "$displayName (${log.count})" else displayName
-    }
+    val headlineText = displayName
 
     val context = LocalContext.current
-    val timeSimText = remember(log.date, log.duration, log.simLabel, showSim) {
+    val timeSimText = remember(log.date, log.simLabel, showSim) {
         buildString {
             if (showSim && log.simLabel != null) {
                 append(log.simLabel)
                 append(" • ")
             }
             append(formatTime(context, log.date))
-            if (log.duration > 0) {
-                append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
-            }
         }
     }
 
+    val isStacked = log.count > 1
+    var isExpanded by remember { mutableStateOf(false) }
+
     @Composable
     fun ContentBox() {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
@@ -266,10 +283,76 @@ fun CallLogTile(
                         headline = headlineText,
                         supporting = timeSimText,
                         supporting2 = null,
-                        avatarName = displayName,
-                        photoUri = log.photoUri,
-                        badgeIcon = icon,
-                        badgeColor = badgeColor,
+                        avatarName = if (isStacked) null else displayName,
+                        photoUri = if (isStacked) null else log.photoUri,
+                        badgeIcon = if (isStacked) null else icon,
+                        badgeColor = if (isStacked) null else badgeColor,
+                        leadingContent = if (isStacked) {
+                            {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(bottom = 6.dp)
+                                        .size(RivoListItemDefaults.AvatarSize)
+                                        .clickable { isExpanded = !isExpanded }
+                                ) {
+                                    RivoAvatar(
+                                        name = displayName,
+                                        photoUri = log.photoUri,
+                                        badgeIcon = null,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    Surface(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomStart)
+                                            .offset(x = (-4).dp, y = 8.dp)
+                                            .height(20.dp)
+                                            .widthIn(min = 28.dp),
+                                        shape = RoundedCornerShape(10.dp),
+                                        color = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        shadowElevation = RivoElevation.Raised
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 5.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = "${log.count}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 10.sp,
+                                                color = if (isExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Spacer(modifier = Modifier.width(1.dp))
+                                            Icon(
+                                                imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(12.dp),
+                                                tint = if (isExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                    Surface(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomEnd)
+                                            .offset(x = 4.dp, y = 8.dp)
+                                            .size(20.dp),
+                                        shape = CircleShape,
+                                        color = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        shadowElevation = RivoElevation.Raised
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = icon,
+                                                contentDescription = null,
+                                                tint = if (isExpanded) MaterialTheme.colorScheme.onPrimary else badgeColor,
+                                                modifier = Modifier.size(13.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        } else null,
                         headlineColor = headlineColor,
                         trailingIcon = if (isFavorite) Icons.Default.Star else null,
                         onClick = { onTileClick(log) },
@@ -288,6 +371,87 @@ fun CallLogTile(
                             contentDescription = stringResource(R.string.action_call),
                             tint = MaterialTheme.colorScheme.primary
                         )
+                    }
+                }
+            }
+
+            AnimatedVisibility(
+                visible = isExpanded && !selected,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                val subItems = if (log.subLogs.isNotEmpty()) log.subLogs else listOf(log)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 72.dp, end = 16.dp, top = 2.dp, bottom = 8.dp)
+                ) {
+                    subItems.forEachIndexed { idx, subLog ->
+                        val subBlocked = subLog.isBlocked || subLog.type == CallLog.Calls.BLOCKED_TYPE
+                        val subMissed = subLog.type == CallLog.Calls.MISSED_TYPE || subLog.type == CallLog.Calls.REJECTED_TYPE
+                        val subIcon = when {
+                            subBlocked -> Icons.Default.Block
+                            subLog.type == CallLog.Calls.MISSED_TYPE || subLog.type == CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+                            subLog.type == CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+                            subLog.type == CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+                            else -> Icons.Default.Call
+                        }
+                        val subColor = when {
+                            subBlocked || subMissed -> MaterialTheme.colorScheme.error
+                            else -> MaterialTheme.colorScheme.primary
+                        }
+                        val subTypeLabel = when {
+                            subBlocked -> stringResource(R.string.call_type_blocked)
+                            subLog.type == CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.call_type_incoming)
+                            subLog.type == CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.call_type_outgoing)
+                            subMissed -> stringResource(R.string.call_type_missed)
+                            else -> stringResource(R.string.action_call)
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { onTileClick(subLog) }
+                                .padding(vertical = 5.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = subIcon,
+                                contentDescription = null,
+                                tint = subColor,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = subTypeLabel,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                color = subColor
+                            )
+                            if (showSim && !subLog.simLabel.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "•  ${subLog.simLabel}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = formatTime(context, subLog.date),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (subLog.duration > 0) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "(${android.text.format.DateUtils.formatElapsedTime(subLog.duration)})",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
                     }
                 }
             }
