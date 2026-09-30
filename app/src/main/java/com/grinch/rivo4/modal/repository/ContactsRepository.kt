@@ -15,6 +15,8 @@ import com.grinch.rivo4.modal.data.EmailEntry
 import com.grinch.rivo4.modal.data.PhoneNumberEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.db.PrivateContactDao
+import com.grinch.rivo4.modal.db.TrashedContactDao
+import com.grinch.rivo4.modal.db.TrashedContactEntity
 import com.grinch.rivo4.modal.db.PrivateContactEntity
 import com.grinch.rivo4.modal.data.AccountEntry
 import com.grinch.rivo4.controller.util.ContactUtils
@@ -34,7 +36,8 @@ private data class StructuredNameData(
 
 class ContactsRepository(
     private val context: Context,
-    private val privateContactDao: PrivateContactDao
+    private val privateContactDao: PrivateContactDao,
+    private val trashedContactDao: TrashedContactDao
 ) : IContactsRepository {
 
     private val contentResolver: ContentResolver = context.contentResolver
@@ -62,7 +65,6 @@ class ContactsRepository(
         val cloud = rawList.find { !isSyncAdapterAccount(it.type) }
         if (cloud != null) return Pair(cloud.name, cloud.type)
 
-        // If only sync adapters exist (e.g. WhatsApp), do not prioritize WhatsApp over Device storage!
         return Pair(null, null)
     }
 
@@ -873,7 +875,6 @@ class ContactsRepository(
             e.printStackTrace()
         }
 
-        // Keep favorite phone number preferences in sync if numbers were removed/modified
         val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
         if (currentFavNum != null) {
             val stillExists = effectivePhones.any { areNumbersEqual(it.number, currentFavNum) }
@@ -952,12 +953,10 @@ class ContactsRepository(
                 } else {
                     val contact = getContactById(id) ?: return@forEach
                     if (contact.isPrivate) {
-                        // Move from private to system account
                         saveContact(contact.copy(id = "", accountName = accountName, accountType = accountType, isPrivate = false))
                         val lid = id.substring(1).toLongOrNull()
                         if (lid != null) privateContactDao.deleteById(lid)
                     } else {
-                        // Move between system accounts: create copy in target account and delete original
                         saveContact(contact.copy(id = "", accountName = accountName, accountType = accountType, isPrivate = false))
                         deleteContactInternal(id, clearBackground = false)
                     }
@@ -1172,7 +1171,6 @@ class ContactsRepository(
         val sources = sourceContactIds.filter { it != targetContactId }.mapNotNull { getContactById(it) }
         if (sources.isEmpty()) return
 
-        // 1. Merge phone numbers
         val mergedNumbers = targetContact.phoneNumbers.toMutableList()
         val mergedPhones = targetContact.phones.toMutableList()
         sources.forEach { source ->
@@ -1188,7 +1186,6 @@ class ContactsRepository(
             }
         }
 
-        // 2. Merge emails
         val mergedEmails = targetContact.emails.toMutableList()
         val mergedEmailEntries = targetContact.emailEntries.toMutableList()
         sources.forEach { source ->
@@ -1204,7 +1201,6 @@ class ContactsRepository(
             }
         }
 
-        // 3. Merge addresses
         val mergedAddresses = targetContact.addresses.toMutableList()
         sources.forEach { source ->
             source.addresses.forEach { addr ->
@@ -1214,7 +1210,6 @@ class ContactsRepository(
             }
         }
 
-        // 4. Merge notes
         val notesList = mutableListOf<String>()
         if (!targetContact.notes.isNullOrBlank()) notesList.add(targetContact.notes)
         sources.forEach { source ->
@@ -1224,7 +1219,6 @@ class ContactsRepository(
         }
         val mergedNotes = if (notesList.isNotEmpty()) notesList.joinToString("\n---\n") else null
 
-        // 5. Photo & Favorites
         val mergedPhoto = targetContact.photoUri ?: sources.firstNotNullOfOrNull { it.photoUri }
         val isFav = targetContact.isFavorite || sources.any { it.isFavorite }
 
@@ -1239,10 +1233,8 @@ class ContactsRepository(
             isFavorite = isFav
         )
 
-        // Save target
         saveContact(updatedTarget)
 
-        // Delete sources & handle call background
         sources.forEach { source ->
             if (targetContact.photoUri == null && source.photoUri != null) {
                 CallBackgroundStore.carryBlocking(context, source.id, targetContactId, source.phoneNumbers)
@@ -1425,5 +1417,39 @@ class ContactsRepository(
         if (number.isBlank()) return false
         val clean = number.replace(" ", "")
         return getHiddenNumbers().any { areNumbersEqual(it, clean) }
+    }
+
+    override fun getTrashedContacts(): List<TrashedContactEntity> {
+        pruneOldTrash()
+        return try {
+            trashedContactDao.getAll()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override fun restoreTrashedContact(localId: Long): Boolean {
+        val entry = trashedContactDao.getById(localId) ?: return false
+        val contact = entry.toContact() ?: return false
+        saveContact(contact.copy(id = "0"))
+        trashedContactDao.deleteById(localId)
+        return true
+    }
+
+    override fun permanentlyDeleteTrashedContact(localId: Long) {
+        trashedContactDao.deleteById(localId)
+    }
+
+    override fun emptyTrash() {
+        trashedContactDao.deleteAll()
+    }
+
+    override fun pruneOldTrash() {
+        val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000L)
+        try {
+            trashedContactDao.pruneOlderThan(thirtyDaysAgo)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

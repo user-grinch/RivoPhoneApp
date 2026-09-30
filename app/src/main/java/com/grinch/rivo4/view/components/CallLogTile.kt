@@ -236,13 +236,16 @@ fun CallLogTile(
     }
 
     val context = LocalContext.current
-    val timeSimText = remember(log.date, log.simLabel, showSim) {
+    val timeSimText = remember(log.date, log.duration, log.simLabel, showSim) {
         buildString {
             if (showSim && log.simLabel != null) {
                 append(log.simLabel)
                 append(" • ")
             }
             append(formatTime(context, log.date))
+            if (log.duration > 0) {
+                append(" • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}")
+            }
         }
     }
 

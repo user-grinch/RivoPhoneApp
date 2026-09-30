@@ -994,4 +994,20 @@
     <string name="conference_empty">No participants in conference</string>
     <string name="conference_split">Separate</string>
     <string name="conference_remove_participant">Drop</string>
+
+    <string name="contacts_trash_title">Trash</string>
+    <string name="contacts_trash_empty_title">Trash is empty</string>
+    <string name="contacts_trash_empty_desc">Contacts deleted with Trash enabled will appear here for 30 days before being permanently removed.</string>
+    <string name="contacts_trash_header_hint">Items in Trash are permanently deleted after 30 days</string>
+    <string name="contacts_trash_restore_action">Restore</string>
+    <string name="contacts_trash_delete_action">Delete permanently</string>
+    <string name="contacts_trash_empty_all">Empty Trash</string>
+    <string name="contacts_trash_empty_all_confirm_title">Empty Trash?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">All %1$d contacts in Trash will be permanently deleted. This action cannot be undone.</string>
+    <string name="contacts_trash_restored_toast">Restored %1$s</string>
+    <string name="settings_contacts_trash_title">Trash for Deleted Contacts</string>
+    <string name="settings_contacts_trash_supporting">Keep deleted contacts in Trash for 30 days before permanently removing them</string>
+    <string name="settings_contacts_trash_view">View Trash</string>
+    <string name="settings_contacts_trash_view_supporting">View and restore deleted contacts (%1$d in Trash)</string>
+    <string name="shortcut_dial_contact">Call %1$s</string>
 </resources>

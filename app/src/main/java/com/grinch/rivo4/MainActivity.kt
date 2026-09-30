@@ -341,8 +341,9 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                     val number = android.net.Uri.decode(rawNumber) ?: rawNumber
                     val cleanNumber = number.replace(" ", "")
                     val isSecretOrImei = cleanNumber == "*#06#" || cleanNumber.startsWith("*#*#") || cleanNumber.startsWith("##") || (cleanNumber.startsWith("*#") && cleanNumber.endsWith("#"))
+                    val contactIdExtra = intent.getStringExtra("contact_id")
                     if (action == Intent.ACTION_CALL && isAlreadyDefaultDialer(this) && !isSecretOrImei) {
-                        makeCall(this, number)
+                        makeCall(this, number, contactId = contactIdExtra)
                     } else {
                         navController.navigate(DialPadScreenDestination(initialNumber = number).route)
                     }
@@ -351,6 +352,8 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                     if (id != null) {
                         navController.navigate(ContactDetailsScreenDestination(contactId = id).route)
                     }
+                } else if (action == Intent.ACTION_DIAL) {
+                    navController.navigate(DialPadScreenDestination().route)
                 }
             }
             Intent.ACTION_INSERT -> {

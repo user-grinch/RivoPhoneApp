@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.db.TrashedContactDao
+import com.grinch.rivo4.modal.db.TrashedContactEntity
 import com.grinch.rivo4.controller.util.ContactUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,9 @@ import kotlinx.coroutines.withContext
 
 class ContactsViewModel(
     private val contactsRepo: IContactsRepository,
-    private val preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager,
+    private val trashedContactDao: TrashedContactDao,
+    private val context: android.content.Context
 ) : ViewModel() {
 
     private val _allContacts = MutableStateFlow<List<Contact>>(emptyList())
@@ -29,6 +33,9 @@ class ContactsViewModel(
 
     private val _duplicateGroups = MutableStateFlow<List<List<Contact>>>(emptyList())
     val duplicateGroups: StateFlow<List<List<Contact>>> = _duplicateGroups.asStateFlow()
+
+    private val _trashedContacts = MutableStateFlow<List<TrashedContactEntity>>(emptyList())
+    val trashedContacts: StateFlow<List<TrashedContactEntity>> = _trashedContacts.asStateFlow()
 
     private val _isMerging = MutableStateFlow(false)
     val isMerging: StateFlow<Boolean> = _isMerging.asStateFlow()
@@ -167,6 +174,16 @@ class ContactsViewModel(
         fetchAccounts()
     }
 
+    fun syncFavoriteShortcuts() {
+        val favContacts = _allContacts.value.filter { it.isFavorite }
+        val order = preferenceManager.getFavoritesOrder()
+        val sortedFavs = favContacts.sortedWith(compareBy<Contact> { contact ->
+            val index = order.indexOf(contact.id)
+            if (index != -1) index else Int.MAX_VALUE
+        }.thenBy { it.name })
+        com.grinch.rivo4.controller.util.DynamicShortcutManager.updateDynamicShortcuts(context, sortedFavs)
+    }
+
     fun fetchContacts() {
         viewModelScope.launch(Dispatchers.IO) {
             if (_allContacts.value.isEmpty()) {
@@ -176,6 +193,7 @@ class ContactsViewModel(
             _allContacts.value = result
             _isLoading.value = false
             refreshDuplicates()
+            syncFavoriteShortcuts()
         }
     }
 
@@ -294,8 +312,48 @@ class ContactsViewModel(
         }
     }
 
+    fun fetchTrashedContacts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _trashedContacts.value = contactsRepo.getTrashedContacts()
+        }
+    }
+
+    fun restoreTrashedContact(localId: Long, onDone: (() -> Unit)? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.restoreTrashedContact(localId)
+            _trashedContacts.value = contactsRepo.getTrashedContacts()
+            fetchContacts()
+            withContext(Dispatchers.Main) {
+                onDone?.invoke()
+            }
+        }
+    }
+
+    fun permanentlyDeleteTrashedContact(localId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.permanentlyDeleteTrashedContact(localId)
+            _trashedContacts.value = contactsRepo.getTrashedContacts()
+        }
+    }
+
+    fun emptyTrash(onDone: (() -> Unit)? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactsRepo.emptyTrash()
+            _trashedContacts.value = emptyList()
+            withContext(Dispatchers.Main) {
+                onDone?.invoke()
+            }
+        }
+    }
+
     fun deleteContact(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (preferenceManager.isContactsTrashEnabled()) {
+                val fullContact = contactsRepo.getContactById(contactId)
+                if (fullContact != null) {
+                    trashedContactDao.insert(TrashedContactEntity.fromContact(fullContact))
+                }
+            }
             contactsRepo.deleteContact(contactId)
             
             val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
@@ -305,11 +363,18 @@ class ContactsViewModel(
             }
             
             fetchContacts()
+            fetchTrashedContacts()
         }
     }
 
     fun deleteContacts(contactIds: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (preferenceManager.isContactsTrashEnabled()) {
+                val toTrash = contactIds.mapNotNull { contactsRepo.getContactById(it) }
+                if (toTrash.isNotEmpty()) {
+                    trashedContactDao.insertAll(toTrash.map { TrashedContactEntity.fromContact(it) })
+                }
+            }
             contactsRepo.deleteContacts(contactIds)
             
             val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
@@ -325,6 +390,7 @@ class ContactsViewModel(
             }
             
             fetchContacts()
+            fetchTrashedContacts()
         }
     }
 

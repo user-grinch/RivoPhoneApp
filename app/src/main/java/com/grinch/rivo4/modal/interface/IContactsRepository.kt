@@ -26,4 +26,10 @@ interface IContactsRepository {
     fun importPrivateContacts(uri: Uri)
     fun isNumberHidden(number: String): Boolean
     fun getHiddenNumbers(): List<String>
+
+    fun getTrashedContacts(): List<com.grinch.rivo4.modal.db.TrashedContactEntity>
+    fun restoreTrashedContact(localId: Long): Boolean
+    fun permanentlyDeleteTrashedContact(localId: Long)
+    fun emptyTrash()
+    fun pruneOldTrash()
 }

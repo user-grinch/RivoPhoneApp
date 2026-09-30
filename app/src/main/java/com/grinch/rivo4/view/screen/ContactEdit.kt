@@ -11,6 +11,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -218,6 +221,7 @@ fun ContactEditScreen(
     )
 
     Scaffold(
+        contentWindowInsets = WindowInsets.systemBars,
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             TopAppBar(
@@ -321,9 +325,10 @@ fun ContactEditScreen(
 
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 48.dp),
+                .imePadding(),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Expressive Avatar & Photo Picker
@@ -803,6 +808,7 @@ fun splitDisplayName(full: String): NameComponents {
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun RivoSegmentedTextField(
     value: String,
@@ -814,11 +820,23 @@ fun RivoSegmentedTextField(
     singleLine: Boolean = true,
     minLines: Int = 1
 ) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
     TextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .onFocusEvent { focusState ->
+                if (focusState.isFocused) {
+                    coroutineScope.launch {
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            },
         leadingIcon = icon?.let {
             {
                 Icon(
@@ -857,6 +875,7 @@ fun RivoSegmentedTextField(
     )
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun RivoSegmentedTypedField(
     value: String,
@@ -872,6 +891,8 @@ fun RivoSegmentedTypedField(
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
     var showTypeMenu by remember { mutableStateOf(false) }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -886,7 +907,16 @@ fun RivoSegmentedTypedField(
                 value = value,
                 onValueChange = onValueChange,
                 label = { Text(label) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                bringIntoViewRequester.bringIntoView()
+                            }
+                        }
+                    },
                 leadingIcon = {
                     Box(
                         modifier = Modifier.size(36.dp),

@@ -48,6 +48,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactVisibilityScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.TrashContactsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
@@ -588,6 +589,33 @@ fun ContactManagementScreen(
                             supporting = "Manage secret local contacts stored strictly in app database",
                             leadingIcon = Icons.Outlined.Lock,
                             onClick = { navigator.navigate(PrivateContactsScreenDestination) }
+                        )
+                    }
+
+                    item {
+                        var trashEnabled by remember(settingsState) { mutableStateOf(prefs.isContactsTrashEnabled()) }
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_contacts_trash_title),
+                            supporting = stringResource(R.string.settings_contacts_trash_supporting),
+                            leadingIcon = Icons.Outlined.Delete,
+                            checked = trashEnabled,
+                            onCheckedChange = { enabled ->
+                                trashEnabled = enabled
+                                prefs.setContactsTrashEnabled(enabled)
+                            }
+                        )
+                    }
+
+                    item {
+                        val trashedContacts by contactsVM.trashedContacts.collectAsState()
+                        LaunchedEffect(Unit) {
+                            contactsVM.fetchTrashedContacts()
+                        }
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_contacts_trash_view),
+                            supporting = stringResource(R.string.settings_contacts_trash_view_supporting, trashedContacts.size),
+                            leadingIcon = Icons.Outlined.RestoreFromTrash,
+                            onClick = { navigator.navigate(TrashContactsScreenDestination) }
                         )
                     }
 
