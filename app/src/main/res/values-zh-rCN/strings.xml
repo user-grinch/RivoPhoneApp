@@ -340,4 +340,11 @@
     <string name="settings_group_system_integration">系统集成</string>
     <string name="settings_blocked_system_supporting">打开 Android 系统被阻止的号码管理器</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">切换</string>
+    <string name="action_swap_calls">交换来电</string>
+    <string name="conference_manage">管理</string>
+    <string name="conference_participants">与会者(%1$d)</string>
+    <string name="conference_empty">没有与会者参加会议</string>
+    <string name="conference_split">隔开</string>
+    <string name="conference_remove_participant">放下</string>
 </resources>

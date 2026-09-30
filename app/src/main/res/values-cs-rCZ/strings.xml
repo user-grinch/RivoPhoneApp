@@ -190,4 +190,11 @@
     <string name="settings_group_system_integration">Systémová integrace</string>
     <string name="settings_blocked_system_supporting">Otevřít systém Android blokovaný správce čísel</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Prohodit</string>
+    <string name="action_swap_calls">Prohodit hovory</string>
+    <string name="conference_manage">Spravovat</string>
+    <string name="conference_participants">Konferenční účastníci (%1$d)</string>
+    <string name="conference_empty">Žádní účastníci konference</string>
+    <string name="conference_split">Oddělit</string>
+    <string name="conference_remove_participant">Zahodit</string>
 </resources>

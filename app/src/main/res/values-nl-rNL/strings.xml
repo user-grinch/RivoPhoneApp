@@ -188,4 +188,11 @@
     <string name="settings_group_system_integration">Integratie met systeem</string>
     <string name="settings_blocked_system_supporting">Open de Android systeem geblokkeerde nummers manager</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Wisselen</string>
+    <string name="action_swap_calls">Oproepen omwisselen</string>
+    <string name="conference_manage">Beheren</string>
+    <string name="conference_participants">Deelnemers aan de conferentie (%1$d)</string>
+    <string name="conference_empty">Geen deelnemers aan conferentie</string>
+    <string name="conference_split">Scheiden</string>
+    <string name="conference_remove_participant">Weggooien</string>
 </resources>

@@ -181,4 +181,10 @@
     <string name="settings_group_system_integration">Інтеграція з Системою</string>
     <string name="settings_blocked_system_supporting">Управління заблокованими номерами Андроїду</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Поміняти</string>
+    <string name="action_swap_calls">Поміняти дзвінки</string>
+    <string name="conference_manage">Керування</string>
+    <string name="conference_empty">Немає учасників конференції</string>
+    <string name="conference_split">Відокремити</string>
+    <string name="conference_remove_participant">Крапля</string>
 </resources>

@@ -191,4 +191,11 @@
     <string name="settings_group_system_integration">Integrare Sistem</string>
     <string name="settings_blocked_system_supporting">Deschide managerul de numere blocat de sistemul Android</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Schimbă</string>
+    <string name="action_swap_calls">Schimbă apelurile</string>
+    <string name="conference_manage">Gestionează</string>
+    <string name="conference_participants">Participanții la conferință (%1$d)</string>
+    <string name="conference_empty">Niciun participant în conferință</string>
+    <string name="conference_split">Separat</string>
+    <string name="conference_remove_participant">Sterge</string>
 </resources>

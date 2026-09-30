@@ -190,4 +190,11 @@
     <string name="settings_group_system_integration">Integrazione Di Sistema</string>
     <string name="settings_blocked_system_supporting">Apri il gestore dei numeri bloccati dal sistema Android</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Scambia</string>
+    <string name="action_swap_calls">Scambia chiamate</string>
+    <string name="conference_manage">Gestisci</string>
+    <string name="conference_participants">Partecipanti Alla Conferenza (%1$d)</string>
+    <string name="conference_empty">Nessun partecipante alla conferenza</string>
+    <string name="conference_split">Separa</string>
+    <string name="conference_remove_participant">Rilascia</string>
 </resources>
