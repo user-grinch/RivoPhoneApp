@@ -198,4 +198,10 @@
     <string name="conference_empty">Niciun participant în conferință</string>
     <string name="conference_split">Separat</string>
     <string name="conference_remove_participant">Sterge</string>
+    <string name="contacts_trash_title">Gunoi</string>
+    <string name="contacts_trash_empty_title">Gunoiul este gol</string>
+    <string name="contacts_trash_empty_desc">Contactele șterse cu gunoiul activat vor apărea aici pentru 30 de zile înainte de a fi șterse definitiv.</string>
+    <string name="contacts_trash_header_hint">Elementele din gunoi sunt șterse permanent după 30 de zile</string>
+    <string name="contacts_trash_restore_action">Restaurează</string>
+    <string name="contacts_trash_delete_action">Șterge permanent</string>
 </resources>

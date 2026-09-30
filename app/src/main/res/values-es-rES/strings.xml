@@ -673,4 +673,10 @@
     <string name="conference_empty">No hay participantes en la conferencia</string>
     <string name="conference_split">Separar</string>
     <string name="conference_remove_participant">Soltar</string>
+    <string name="contacts_trash_title">Basura</string>
+    <string name="contacts_trash_empty_title">La papelera está vacía</string>
+    <string name="contacts_trash_empty_desc">Los contactos eliminados con la papelera activada aparecerán aquí durante 30 días antes de ser eliminados permanentemente.</string>
+    <string name="contacts_trash_header_hint">Los artículos en la papelera se eliminan permanentemente después de 30 días</string>
+    <string name="contacts_trash_restore_action">Restaurar</string>
+    <string name="contacts_trash_delete_action">Eliminar permanentemente</string>
 </resources>
