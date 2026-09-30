@@ -937,4 +937,10 @@
     <string name="conference_empty">Aucun participant à la conférence</string>
     <string name="conference_split">Séparer</string>
     <string name="conference_remove_participant">Laisser tomber</string>
+    <string name="contacts_trash_title">Corbeille</string>
+    <string name="contacts_trash_empty_title">La corbeille est vide</string>
+    <string name="contacts_trash_empty_desc">Les contacts supprimés avec la corbeille apparaîtront ici pendant 30 jours avant d\'être définitivement supprimés.</string>
+    <string name="contacts_trash_header_hint">Les éléments dans la corbeille sont définitivement supprimés après 30 jours</string>
+    <string name="contacts_trash_restore_action">Restaurer</string>
+    <string name="contacts_trash_delete_action">Supprimer définitivement</string>
 </resources>
