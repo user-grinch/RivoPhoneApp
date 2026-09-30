@@ -184,4 +184,11 @@
     <string name="settings_group_system_integration">Ενσωμάτωση Συστήματος</string>
     <string name="settings_blocked_system_supporting">Άνοιγμα του διαχειριστή μπλοκαρισμένων αριθμών συστήματος Android</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Εναλλαγή</string>
+    <string name="action_swap_calls">Εναλλαγή κλήσεων</string>
+    <string name="conference_manage">Διαχείριση</string>
+    <string name="conference_participants">Συμμετέχοντες Στο Συνέδριο (%1$d)</string>
+    <string name="conference_empty">Δεν υπάρχουν συμμετέχοντες στη συνδιάσκεψη</string>
+    <string name="conference_split">Διαχωρισμός</string>
+    <string name="conference_remove_participant">Απόθεση</string>
 </resources>

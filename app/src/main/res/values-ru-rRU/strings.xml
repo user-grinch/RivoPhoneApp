@@ -936,4 +936,11 @@
     <string name="settings_group_system_integration">Интеграция системы</string>
     <string name="settings_blocked_system_supporting">Откройте систему Android заблокировал менеджер номеров</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Поменять</string>
+    <string name="action_swap_calls">Поменять местами вызовы</string>
+    <string name="conference_manage">Управлять</string>
+    <string name="conference_participants">Участники конференции (%1$d)</string>
+    <string name="conference_empty">Нет участников конференции</string>
+    <string name="conference_split">Разделить</string>
+    <string name="conference_remove_participant">Выброс</string>
 </resources>

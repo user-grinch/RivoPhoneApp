@@ -189,4 +189,11 @@
     <string name="settings_group_system_integration">Järjestelmän Integraatio</string>
     <string name="settings_blocked_system_supporting">Avaa Android-järjestelmä estetty numeronhallinta</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Vaihda</string>
+    <string name="action_swap_calls">Vaihda puheluita</string>
+    <string name="conference_manage">Hallitse</string>
+    <string name="conference_participants">Konferenssiosallistujat (%1$d)</string>
+    <string name="conference_empty">Ei osallistujia konferenssiin</string>
+    <string name="conference_split">Erota</string>
+    <string name="conference_remove_participant">Pudota</string>
 </resources>

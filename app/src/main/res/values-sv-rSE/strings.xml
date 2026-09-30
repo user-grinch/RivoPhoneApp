@@ -190,4 +190,11 @@
     <string name="settings_group_system_integration">Systemintegration</string>
     <string name="settings_blocked_system_supporting">Öppna Android-systemet blockerade nummer manager</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Byt</string>
+    <string name="action_swap_calls">Byt samtal</string>
+    <string name="conference_manage">Hantera</string>
+    <string name="conference_participants">Konferensdeltagare (%1$d)</string>
+    <string name="conference_empty">Inga deltagare i konferensen</string>
+    <string name="conference_split">Separat</string>
+    <string name="conference_remove_participant">Släpp</string>
 </resources>

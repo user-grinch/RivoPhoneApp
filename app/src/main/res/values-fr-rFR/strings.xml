@@ -930,4 +930,11 @@
     <string name="settings_group_system_integration">Intégration du système</string>
     <string name="settings_blocked_system_supporting">Ouvrir le gestionnaire de numéros bloqués dans le système Android</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Permuter</string>
+    <string name="action_swap_calls">Permuter les appels</string>
+    <string name="conference_manage">Gérer</string>
+    <string name="conference_participants">Participants à la conférence (%1$d)</string>
+    <string name="conference_empty">Aucun participant à la conférence</string>
+    <string name="conference_split">Séparer</string>
+    <string name="conference_remove_participant">Laisser tomber</string>
 </resources>

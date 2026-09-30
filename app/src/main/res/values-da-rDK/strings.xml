@@ -190,4 +190,11 @@
     <string name="settings_group_system_integration">System Integration</string>
     <string name="settings_blocked_system_supporting">Åbn Android system blokerede numre manager</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Byt</string>
+    <string name="action_swap_calls">Byt opkald</string>
+    <string name="conference_manage">Administrer</string>
+    <string name="conference_participants">Konferencefamilier (%1$d)</string>
+    <string name="conference_empty">Ingen deltagere i konference</string>
+    <string name="conference_split">Separat</string>
+    <string name="conference_remove_participant">Drop</string>
 </resources>

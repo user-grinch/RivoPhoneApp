@@ -666,4 +666,11 @@
     <string name="settings_group_system_integration">Integración del sistema</string>
     <string name="settings_blocked_system_supporting">Abrir el gestor de números bloqueados del sistema Android</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">Intercambiar</string>
+    <string name="action_swap_calls">Llamadas de intercambio</string>
+    <string name="conference_manage">Gestionar</string>
+    <string name="conference_participants">Participantes de la conferencia (%1$d)</string>
+    <string name="conference_empty">No hay participantes en la conferencia</string>
+    <string name="conference_split">Separar</string>
+    <string name="conference_remove_participant">Soltar</string>
 </resources>

@@ -184,4 +184,11 @@
     <string name="settings_group_system_integration">システム統合</string>
     <string name="settings_blocked_system_supporting">Androidシステムブロックされた番号マネージャーを開く</string>
     <!-- Multi-call & Conference Management -->
+    <string name="action_swap">入れ替え</string>
+    <string name="action_swap_calls">通話の入れ替え</string>
+    <string name="conference_manage">管理</string>
+    <string name="conference_participants">会議参加者 (%1$d)</string>
+    <string name="conference_empty">会議に参加者がいません</string>
+    <string name="conference_split">分離する</string>
+    <string name="conference_remove_participant">ドロップ</string>
 </resources>
