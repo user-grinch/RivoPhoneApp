@@ -79,15 +79,15 @@ fun CallActionButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val buttonSize = if (compact) 54.dp else 64.dp
+    val buttonHeight = if (compact) 68.dp else 80.dp
     val iconSize = if (compact) 24.dp else 28.dp
 
-    // Morph shape: Circle when inactive/disabled, Squircle when active or pressed
+    // Morph shape: MD3 squircle container like Google Phone (corner radius ~28dp idle, ~20dp pressed/active)
     val cornerRadius by animateDpAsState(
         targetValue = when {
-            isActive && enabled -> if (compact) 16.dp else 20.dp
             isPressed && enabled -> if (compact) 16.dp else 20.dp
-            else -> buttonSize / 2
+            isActive && enabled -> if (compact) 20.dp else 24.dp
+            else -> if (compact) 24.dp else 28.dp
         },
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "CallActionCornerRadius"
@@ -99,7 +99,7 @@ fun CallActionButton(
             isDanger -> MaterialTheme.callColors.decline
             isActive -> MaterialTheme.colorScheme.primary
             isPressed -> MaterialTheme.colorScheme.primaryContainer
-            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
+            else -> MaterialTheme.colorScheme.surfaceContainerHigh
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "btnBg"
@@ -111,55 +111,52 @@ fun CallActionButton(
             isDanger -> MaterialTheme.callColors.onDecline
             isActive -> MaterialTheme.colorScheme.onPrimary
             isPressed -> MaterialTheme.colorScheme.onPrimaryContainer
-            else -> MaterialTheme.colorScheme.onSurfaceVariant
+            else -> MaterialTheme.colorScheme.onSurface
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "btnFg"
     )
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Surface(
-            onClick = {
-                if (enabled) {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onClick()
-                }
-            },
-            enabled = enabled,
-            shape = RoundedCornerShape(cornerRadius),
-            color = containerColor,
-            tonalElevation = if (isActive || isDanger) 6.dp else 1.dp,
-            interactionSource = interactionSource,
-            modifier = Modifier.size(buttonSize)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                    tint = contentColor,
-                    modifier = Modifier.size(iconSize)
-                )
+    Surface(
+        onClick = {
+            if (enabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                onClick()
             }
+        },
+        enabled = enabled,
+        shape = RoundedCornerShape(cornerRadius),
+        color = containerColor,
+        tonalElevation = if (isActive || isDanger) 6.dp else 2.dp,
+        interactionSource = interactionSource,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(buttonHeight)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 6.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(iconSize)
+            )
+            Spacer(modifier = Modifier.height(if (compact) 4.dp else 6.dp))
+            Text(
+                text = label,
+                style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
+                color = contentColor,
+                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
         }
-        Spacer(modifier = Modifier.height(if (compact) 4.dp else 6.dp))
-        Text(
-            text = label,
-            style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.bodySmall,
-            color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface.copy(
-                alpha = 0.38f
-            ),
-            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
-        )
     }
 }
 
@@ -179,14 +176,13 @@ fun AuxiliaryPillButton(
             view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             onClick()
         },
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         interactionSource = interactionSource,
         modifier = modifier.height(if (compact) 32.dp else 36.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = if (compact) 12.dp else 14.dp),
+            modifier = Modifier.padding(horizontal = if (compact) 14.dp else 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -194,7 +190,7 @@ fun AuxiliaryPillButton(
                 imageVector = icon,
                 contentDescription = label,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(if (compact) 14.dp else 16.dp)
+                modifier = Modifier.size(if (compact) 16.dp else 18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
@@ -230,19 +226,27 @@ fun EndCallButton(
 ) {
     val view = LocalView.current
     val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) (if (compact) 24.dp else 28.dp) else (if (compact) 32.dp else 36.dp),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "endCallCorner"
+    )
 
     Surface(
         onClick = {
             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
             onEndCall()
         },
-        shape = CircleShape,
-        color = MaterialTheme.callColors.decline,
+        shape = RoundedCornerShape(cornerRadius),
+        color = MaterialTheme.callColors.declineContainer,
+        contentColor = MaterialTheme.callColors.onDeclineContainer,
         tonalElevation = 6.dp,
         interactionSource = interactionSource,
         modifier = modifier
-            .fillMaxWidth(if (compact) 0.65f else 0.72f)
-            .height(if (compact) 56.dp else 64.dp)
+            .fillMaxWidth()
+            .height(if (compact) 60.dp else 68.dp)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -251,8 +255,8 @@ fun EndCallButton(
             Icon(
                 imageVector = Icons.Default.CallEnd,
                 contentDescription = stringResource(R.string.action_end_call),
-                modifier = Modifier.size(if (compact) 26.dp else 30.dp),
-                tint = MaterialTheme.callColors.onDecline
+                modifier = Modifier.size(if (compact) 28.dp else 32.dp),
+                tint = MaterialTheme.callColors.onDeclineContainer
             )
         }
     }
