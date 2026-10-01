@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 
 import android.accounts.Account
 import android.provider.ContactsContract
@@ -230,26 +231,38 @@ fun ContactEditScreen(
                         if (contactId == null || contactId == "0") stringResource(R.string.contact_create_title) else stringResource(
                             R.string.contact_edit_title
                         ),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 6.dp)
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
+                    Surface(
+                        onClick = { navigator.navigateUp() },
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 },
                 actions = {
                     if (contactId != null && contactId != "0") {
-                        IconButton(
+                        RivoTopBarIconButton(
                             onClick = { showDeleteDialog = true },
-                            modifier = Modifier.padding(end = 8.dp),
-                            shape = RoundedCornerShape(24.dp),
-                        ) {
-                            Icon(Icons.Default.Delete, null)
-                        }
+                            icon = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.action_delete),
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
                     Button(
                         onClick = {
@@ -288,7 +301,7 @@ fun ContactEditScreen(
                         },
                         enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() }) && !isSaving,
                         modifier = Modifier.padding(end = 8.dp),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(14.dp),
                         elevation = ButtonDefaults.buttonElevation(0.dp)
                     ) {
                         if (isSaving) {

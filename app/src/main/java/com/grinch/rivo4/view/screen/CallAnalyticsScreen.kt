@@ -1,4 +1,6 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.MenuTopAppBar
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.rivoCornerDp
 
@@ -60,18 +62,16 @@ fun CallAnalyticsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_call_analytics_title), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                    }
-                },
+            MenuTopAppBar(
+                text = stringResource(R.string.settings_call_analytics_title),
+                navigator = navigator,
                 actions = {
                     if (isTrackingEnabled) {
-                        IconButton(onClick = { viewModel.loadAnalytics(forceRefresh = true) }) {
-                            Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
-                        }
+                        RivoTopBarIconButton(
+                            onClick = { viewModel.loadAnalytics(forceRefresh = true) },
+                            icon = Icons.Outlined.Refresh,
+                            contentDescription = "Refresh"
+                        )
                     }
                 }
             )

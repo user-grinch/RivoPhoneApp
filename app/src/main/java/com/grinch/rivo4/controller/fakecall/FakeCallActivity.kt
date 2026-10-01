@@ -27,6 +27,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
+import androidx.core.view.WindowCompat
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -204,6 +208,14 @@ class FakeCallActivity : ComponentActivity() {
 
         setContent {
             Rivo4Theme {
+                val darkTheme = isSystemInDarkTheme()
+                DisposableEffect(darkTheme) {
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    insetsController.isAppearanceLightStatusBars = !darkTheme
+                    insetsController.isAppearanceLightNavigationBars = !darkTheme
+                    onDispose { }
+                }
+
                 FakeCallScreenContent(
                     callerName = callerName,
                     phoneNumber = phoneNumber,

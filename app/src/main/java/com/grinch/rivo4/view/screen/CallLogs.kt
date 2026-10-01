@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
@@ -195,19 +196,9 @@ fun CallLogFullScreen(
                 label = "TopBarTransition"
             ) { isSelecting ->
                 if (!isSelecting) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                if (contactName != null) stringResource(R.string.call_history_with_contact, contactName) else stringResource(R.string.call_history_title),
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = { navigator.navigateUp() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-                            }
-                        }
+                    MenuTopAppBar(
+                        text = if (contactName != null) stringResource(R.string.call_history_with_contact, contactName) else stringResource(R.string.call_history_title),
+                        navigator = navigator
                     )
                 } else {
                     BatchCallLogActionBar(

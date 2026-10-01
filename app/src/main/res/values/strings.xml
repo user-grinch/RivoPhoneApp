@@ -1010,4 +1010,6 @@
     <string name="settings_contacts_trash_view">View Trash</string>
     <string name="settings_contacts_trash_view_supporting">View and restore deleted contacts (%1$d in Trash)</string>
     <string name="shortcut_dial_contact">Call %1$s</string>
+    <string name="settings_search_placeholder">Search settings…</string>
+    <string name="settings_search_no_results">No settings found matching \"%1$s\"</string>
 </resources>

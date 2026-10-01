@@ -6,7 +6,7 @@ export JAVA_HOME="${JAVA_HOME:-/home/inan/.jdks/jbr-21.0.11}"
 export ANDROID_HOME="${ANDROID_HOME:-/home/inan/Android/Sdk}"
 export PATH="${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${PATH}"
 
-PROJECT_DIR="/mnt/m3/Projects/RivoPhoneApp"
+PROJECT_DIR="/mnt/deb/Projects/RivoPhoneApp"
 APK_DIR="/home/inan/.gradle-builds/Rivo4/app/outputs/apk/play/release"
 
 echo "==> Building Play Release APK..."
