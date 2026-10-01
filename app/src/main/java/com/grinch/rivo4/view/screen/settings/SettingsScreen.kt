@@ -397,6 +397,14 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
+                title = "Show Country Code",
+                supporting = "Display country code prefix in phone numbers throughout the app and call screen",
+                category = "Calling & Behavior",
+                icon = Icons.Outlined.Public,
+                keywords = listOf("country code", "phone format", "international number", "hide country code", "show country code", "prefix", "number formatting"),
+                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "T9 Dialing Search",
                 supporting = "Search contacts by spelling names with dialpad number keys",
                 category = "Calling & Behavior",

@@ -291,14 +291,15 @@ class ContactsViewModel(
         }
     }
 
-    suspend fun saveContact(contact: Contact) {
-        withContext(Dispatchers.IO) {
-            contactsRepo.saveContact(contact)
-            
-            preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_NAME, contact.accountName)
-            preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_TYPE, contact.accountType)
-            
-            fetchContacts()
+    suspend fun saveContact(contact: Contact): Boolean {
+        return withContext(Dispatchers.IO) {
+            val success = contactsRepo.saveContact(contact)
+            if (success) {
+                preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_NAME, contact.accountName)
+                preferenceManager.setString(PreferenceManager.KEY_LAST_USED_ACCOUNT_TYPE, contact.accountType)
+                fetchContacts()
+            }
+            success
         }
     }
     

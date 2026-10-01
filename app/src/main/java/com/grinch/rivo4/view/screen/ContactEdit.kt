@@ -3,6 +3,7 @@ import com.grinch.rivo4.view.components.RivoTopBarIconButton
 
 import android.accounts.Account
 import android.provider.ContactsContract
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -295,8 +296,13 @@ fun ContactEditScreen(
                                     isPrivate = isPrivate,
                                     notes = notes.ifBlank { null }
                                 )
-                                contactsVM.saveContact(contactToSave)
-                                navigator.navigateUp()
+                                val success = contactsVM.saveContact(contactToSave)
+                                if (success) {
+                                    navigator.navigateUp()
+                                } else {
+                                    isSaving = false
+                                    Toast.makeText(context, "Failed to save contact", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
                         enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() }) && !isSaving,

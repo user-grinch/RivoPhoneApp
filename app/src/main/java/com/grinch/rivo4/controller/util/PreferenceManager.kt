@@ -506,6 +506,7 @@ class PreferenceManager(context: Context) {
         const val KEY_SEPARATE_CONTACTS_ICON = "separate_contacts_icon"
         const val KEY_CALL_ANALYTICS_TRACKING = "call_analytics_tracking"
         const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
+        const val KEY_SHOW_COUNTRY_CODE = "show_country_code"
     }
 
     fun getCallLogLimit(): Int = getInt(KEY_CALL_LOG_LIMIT, CALL_LOG_LIMIT_DEFAULT)
@@ -590,5 +591,11 @@ class PreferenceManager(context: Context) {
         setBoolean(KEY_SWIPE_ACTIONS_ENABLED, false)
         setInt(KEY_SWIPE_RIGHT_ACTION, SWIPE_ACTION_CALL)
         setInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
+    }
+
+    fun isShowCountryCodeEnabled(): Boolean = getBoolean(KEY_SHOW_COUNTRY_CODE, true)
+    fun setShowCountryCodeEnabled(enabled: Boolean) {
+        setBoolean(KEY_SHOW_COUNTRY_CODE, enabled)
+        clearFormattedNumberCache()
     }
 }

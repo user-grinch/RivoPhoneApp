@@ -1012,4 +1012,8 @@
     <string name="shortcut_dial_contact">Call %1$s</string>
     <string name="settings_search_placeholder">Search settings…</string>
     <string name="settings_search_no_results">No settings found matching \"%1$s\"</string>
+
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Show country code</string>
+    <string name="settings_show_country_code_supporting">Display country code prefix in phone numbers throughout the app and call screen</string>
 </resources>
