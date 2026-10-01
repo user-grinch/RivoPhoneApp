@@ -151,7 +151,6 @@ object CallRecorder {
     fun isWritableDirectory(dir: File): Boolean {
         return runCatching {
             if (!dir.exists() && !dir.mkdirs()) return false
-            if (dir.canWrite()) return true
             val testFile = File(dir, ".probe_${System.currentTimeMillis()}")
             val created = testFile.createNewFile()
             if (created) {
@@ -222,14 +221,7 @@ object CallRecorder {
         }
     }
 
-    fun getRecordingsDirectory(context: Context): File {
-        // 0. Custom user-defined directory if writable
-        getCustomRecordingDirectory(context)?.let { customDir ->
-            if (isWritableDirectory(customDir)) {
-                return customDir
-            }
-        }
-
+    fun getStandardRecordingsDirectory(context: Context): File {
         // 1. If All Files Access is granted, allow direct root storage
         if (hasStoragePermission(context)) {
             val directInternal = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
@@ -270,6 +262,16 @@ object CallRecorder {
         val internalDir = File(context.filesDir, DIRECTORY_NAME)
         if (!internalDir.exists()) internalDir.mkdirs()
         return internalDir
+    }
+
+    fun getRecordingsDirectory(context: Context): File {
+        // 0. Custom user-defined directory if directly writable
+        getCustomRecordingDirectory(context)?.let { customDir ->
+            if (isWritableDirectory(customDir)) {
+                return customDir
+            }
+        }
+        return getStandardRecordingsDirectory(context)
     }
 
     fun getAllRecordingDirectories(context: Context): List<File> {
@@ -569,15 +571,11 @@ object CallRecorder {
                 return false
             }
 
-            val recordFile = try {
-                targetFile.parentFile?.mkdirs()
-                if (!targetFile.exists()) targetFile.createNewFile()
-                targetFile
-            } catch (e: Exception) {
-                File(context.cacheDir, "staging_${targetFile.name}").apply {
-                    createNewFile()
-                }
+            val stagingFile = File(context.cacheDir, "staging_${targetFile.nameWithoutExtension}.m4a").apply {
+                if (exists()) delete()
+                createNewFile()
             }
+            val recordFile = stagingFile
 
             val muxer = ScrcpyAudioMuxer(recordFile)
             muxer.initialize(ScrcpyAudioCodec.AAC)
@@ -618,6 +616,7 @@ object CallRecorder {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start Shizuku recording: ${e.message}", e)
             cleanupShizuku()
+            runCatching { File(context.cacheDir, "staging_${targetFile.nameWithoutExtension}.m4a").delete() }
             if (targetFile.exists()) targetFile.delete()
             false
         }
@@ -858,43 +857,66 @@ object CallRecorder {
         }
 
         val cleanName = saved.name.removePrefix("staging_")
+        val baseName = cleanName.substringBeforeLast(".")
+        val extension = cleanName.substringAfterLast(".", "m4a")
+        val mimeType = if (extension.equals("m4a", ignoreCase = true)) "audio/mp4" else "audio/*"
+
         val customUriStr =
             prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null)
         val customDir = getCustomRecordingDirectory(ctx)
         var destinationFile: File? = null
+        var wroteToCustom = false
 
-        if (customDir != null) {
+        // Attempt 1: Direct File copy if customDir is a writable filesystem directory
+        if (customDir != null && isWritableDirectory(customDir)) {
             try {
                 if (!customDir.exists()) customDir.mkdirs()
                 val target = File(customDir, cleanName)
-                saved.copyTo(target, overwrite = true)
-                saved.delete()
-                destinationFile = target
-                Log.i(TAG, "Recording saved directly to custom folder: ${target.absolutePath}")
+                if (saved.canonicalPath != target.canonicalPath) {
+                    saved.copyTo(target, overwrite = true)
+                }
+                if (target.exists() && target.length() > 0L) {
+                    destinationFile = target
+                    wroteToCustom = true
+                    Log.i(TAG, "Recording saved directly to custom folder: ${target.absolutePath}")
+                }
             } catch (e: Exception) {
                 Log.w(TAG, "Direct copy to custom folder failed: ${e.message}")
             }
         }
 
-        if (destinationFile == null && !customUriStr.isNullOrBlank()) {
+        // Attempt 2: SAF DocumentFile write if direct copy failed or directory requires SAF
+        if (!wroteToCustom && !customUriStr.isNullOrBlank()) {
             try {
                 val treeUri = Uri.parse(customUriStr)
                 val docDir = DocumentFile.fromTreeUri(ctx, treeUri)
                 if (docDir != null && docDir.canWrite()) {
-                    val mimeType = if (cleanName.endsWith(".m4a")) "audio/mp4" else "audio/*"
-                    val newDocFile = docDir.createFile(mimeType, cleanName)
+                    docDir.findFile(cleanName)?.delete()
+                    docDir.findFile("$baseName.$extension")?.delete()
+
+                    // DocumentFile.createFile automatically appends the extension based on mimeType.
+                    // Passing baseName without extension prevents creating double extensions like .m4a.m4a.
+                    val newDocFile = docDir.createFile(mimeType, baseName)
                     if (newDocFile != null) {
-                        ctx.contentResolver.openOutputStream(newDocFile.uri)?.use { out ->
-                            saved.inputStream().use { input -> input.copyTo(out) }
-                        }
-                        if (customDir != null) {
-                            val target = File(customDir, cleanName)
-                            if (target.exists()) {
-                                destinationFile = target
+                        var bytesWritten = 0L
+                        ctx.contentResolver.openOutputStream(newDocFile.uri, "wt")?.use { out ->
+                            saved.inputStream().use { input ->
+                                bytesWritten = input.copyTo(out)
                             }
                         }
-                        saved.delete()
-                        Log.i(TAG, "Recording written via SAF DocumentFile to: ${newDocFile.uri}")
+                        if (bytesWritten > 0L) {
+                            wroteToCustom = true
+                            Log.i(TAG, "Recording ($bytesWritten bytes) written via SAF DocumentFile to: ${newDocFile.uri}")
+                            if (customDir != null) {
+                                val target = File(customDir, newDocFile.name ?: cleanName)
+                                if (target.exists() && target.length() > 0L) {
+                                    destinationFile = target
+                                }
+                            }
+                        } else {
+                            newDocFile.delete()
+                            Log.w(TAG, "DocumentFile write wrote 0 bytes, deleted empty document")
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -902,23 +924,27 @@ object CallRecorder {
             }
         }
 
-        val effectiveFile = if (destinationFile != null && destinationFile.exists()) {
+        // Always ensure a valid local File exists in standard directory so MediaScanner, MediaPlayer,
+        // and listRecordings() have a reliable zero-latency playback target
+        val standardDir = getStandardRecordingsDirectory(ctx)
+        val standardTargetFile = File(standardDir, cleanName)
+
+        val effectiveFile: File = if (destinationFile != null && destinationFile.exists() && destinationFile.length() > 0L) {
+            if (saved.canonicalPath != destinationFile.canonicalPath) {
+                saved.delete()
+            }
             destinationFile
         } else {
-            val destinationDir = getRecordingsDirectory(ctx)
-            val finalTargetFile = File(destinationDir, cleanName)
-            if (saved.exists() && saved.absolutePath != finalTargetFile.absolutePath) {
-                try {
-                    destinationDir.mkdirs()
-                    saved.copyTo(finalTargetFile, overwrite = true)
+            try {
+                standardDir.mkdirs()
+                if (saved.canonicalPath != standardTargetFile.canonicalPath) {
+                    saved.copyTo(standardTargetFile, overwrite = true)
                     saved.delete()
-                    finalTargetFile
-                } catch (e: Exception) {
-                    Log.w(TAG, "Could not move recording to $finalTargetFile: ${e.message}", e)
-                    saved
                 }
-            } else {
-                if (saved.exists()) saved else finalTargetFile
+                standardTargetFile
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not move recording to $standardTargetFile: ${e.message}", e)
+                saved
             }
         }
 
@@ -927,7 +953,7 @@ object CallRecorder {
             MediaScannerConnection.scanFile(
                 ctx,
                 arrayOf(effectiveFile.absolutePath),
-                arrayOf("audio/*")
+                arrayOf(mimeType)
             ) { path, uri ->
                 Log.d(TAG, "Scanned $path: uri=$uri")
             }
@@ -967,8 +993,10 @@ object CallRecorder {
                     try {
                         val recoveredName = staging.name.removePrefix("staging_")
                         val recoveredFile = File(destinationDir, recoveredName)
-                        staging.copyTo(recoveredFile, overwrite = true)
-                        staging.delete()
+                        if (staging.canonicalPath != recoveredFile.canonicalPath) {
+                            staging.copyTo(recoveredFile, overwrite = true)
+                            staging.delete()
+                        }
                     } catch (e: Exception) {
                         Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
                     }
@@ -992,11 +1020,51 @@ object CallRecorder {
                 ?.let { files.addAll(it) }
         }
 
+        // 2.5 Scan custom SAF tree directory if set
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (e: Exception) {
+            null
+        }
+        val customUriStr = prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null)
+        if (!customUriStr.isNullOrBlank()) {
+            runCatching {
+                val treeUri = Uri.parse(customUriStr)
+                val docDir = DocumentFile.fromTreeUri(context, treeUri)
+                val customDir = getCustomRecordingDirectory(context)
+                val standardDir = getStandardRecordingsDirectory(context)
+                docDir?.listFiles()?.forEach { docFile ->
+                    val name = docFile.name ?: return@forEach
+                    if (docFile.isFile && docFile.length() > 0L && supportedExts.any { name.endsWith(it, ignoreCase = true) }) {
+                        val directFile = if (customDir != null) File(customDir, name) else null
+                        if (directFile != null && directFile.exists() && directFile.length() > 0L) {
+                            files.add(directFile)
+                        } else {
+                            // Ensure mirror in standardDir exists so MediaPlayer & cache have direct access
+                            val mirrorFile = File(standardDir, name)
+                            if (!mirrorFile.exists() || mirrorFile.length() != docFile.length()) {
+                                runCatching {
+                                    standardDir.mkdirs()
+                                    context.contentResolver.openInputStream(docFile.uri)?.use { inStream ->
+                                        mirrorFile.outputStream().use { outStream -> inStream.copyTo(outStream) }
+                                    }
+                                }
+                            }
+                            if (mirrorFile.exists() && mirrorFile.length() > 0L) {
+                                files.add(mirrorFile)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // 3. Scan cacheDir for direct audio fallback files
         runCatching {
             context.cacheDir.listFiles()
                 ?.filter { file ->
-                    file.isFile && file.length() > 0 && supportedExts.any { ext ->
+                    file.isFile && file.length() > 0 && !file.name.startsWith("staging_") && supportedExts.any { ext ->
                         file.name.endsWith(
                             ext,
                             ignoreCase = true
@@ -1051,8 +1119,36 @@ object CallRecorder {
             .sortedByDescending { it.lastModified() }
     }
 
+    fun delete(context: Context, file: File): Boolean {
+        AudioMetadataCache.evict(file)
+        var deletedSaf = false
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (_: Exception) {
+            null
+        }
+        val customUriStr = prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null)
+        if (!customUriStr.isNullOrBlank()) {
+            runCatching {
+                val treeUri = Uri.parse(customUriStr)
+                val docDir = DocumentFile.fromTreeUri(context, treeUri)
+                val doc = docDir?.findFile(file.name)
+                if (doc != null && doc.exists()) {
+                    deletedSaf = doc.delete()
+                }
+            }
+        }
+        val deletedLocal = file.delete()
+        return deletedLocal || deletedSaf
+    }
+
     fun delete(file: File): Boolean {
         AudioMetadataCache.evict(file)
+        val ctx = activeContext
+        if (ctx != null) {
+            return delete(ctx, file)
+        }
         return file.delete()
     }
 
