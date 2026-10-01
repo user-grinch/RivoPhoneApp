@@ -197,4 +197,19 @@
     <string name="conference_empty">Žádní účastníci konference</string>
     <string name="conference_split">Oddělit</string>
     <string name="conference_remove_participant">Zahodit</string>
+    <string name="contacts_trash_title">Koš</string>
+    <string name="contacts_trash_empty_title">Koš je prázdný</string>
+    <string name="contacts_trash_empty_desc">Kontakty odstraněné s povoleným košem se zobrazí zde po dobu 30 dní před trvalým odstraněním.</string>
+    <string name="contacts_trash_header_hint">Položky v koši jsou trvale odstraněny po 30 dnech</string>
+    <string name="contacts_trash_restore_action">Obnovit</string>
+    <string name="contacts_trash_delete_action">Trvale odstranit</string>
+    <string name="contacts_trash_empty_all">Vyprázdnit koš</string>
+    <string name="contacts_trash_empty_all_confirm_title">Vyprázdnit koš?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Všechny %1$d kontakty v koši budou trvale odstraněny. Tuto akci nelze vrátit zpět.</string>
+    <string name="contacts_trash_restored_toast">Obnoveno %1$s</string>
+    <string name="settings_contacts_trash_title">Koš pro smazané kontakty</string>
+    <string name="settings_contacts_trash_supporting">Udržovat smazané kontakty v koši 30 dní před jejich trvalým odstraněním</string>
+    <string name="settings_contacts_trash_view">Zobrazit koš</string>
+    <string name="settings_contacts_trash_view_supporting">Zobrazit a obnovit odstraněné kontakty (%1$d v koši)</string>
+    <string name="shortcut_dial_contact">Zavolat %1$s</string>
 </resources>

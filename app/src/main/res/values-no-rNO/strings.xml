@@ -197,4 +197,17 @@
     <string name="conference_empty">Ingen deltakere på konferansen</string>
     <string name="conference_split">Del</string>
     <string name="conference_remove_participant">Slipp</string>
+    <string name="contacts_trash_title">Papirkurv</string>
+    <string name="contacts_trash_empty_title">Papirkurv er tom</string>
+    <string name="contacts_trash_empty_desc">Kontakter slettet med aktivert papirkurv vil vises her i 30 dager før de fjernes permanent.</string>
+    <string name="contacts_trash_header_hint">Elementer i papirkurven er slettet permanent etter 30 dager</string>
+    <string name="contacts_trash_restore_action">Gjenopprett</string>
+    <string name="contacts_trash_delete_action">Slett permanent</string>
+    <string name="contacts_trash_empty_all">Tøm papirkurv</string>
+    <string name="contacts_trash_empty_all_confirm_title">Tøm papirkurv?</string>
+    <string name="settings_contacts_trash_title">Papirkurv for slettede kontakter</string>
+    <string name="settings_contacts_trash_supporting">Hold kontaktene i papirkurv i 30 dager før du fjerner dem permanent</string>
+    <string name="settings_contacts_trash_view">Vis papirkurv</string>
+    <string name="settings_contacts_trash_view_supporting">Se og gjenopprett slettede kontakter (%1$d i papirkurven)</string>
+    <string name="shortcut_dial_contact">Ring %1$s</string>
 </resources>

@@ -64,4 +64,18 @@
     <!-- Priority Contacts -->
     <!-- Settings Expressive Groups & Titles -->
     <!-- Multi-call & Conference Management -->
+    <string name="contacts_trash_title">Kosz</string>
+    <string name="contacts_trash_empty_title">Kosz jest pusty</string>
+    <string name="contacts_trash_empty_desc">Kontakty usunięte z włączonym kosziem pojawią się tutaj przez 30 dni zanim zostaną trwale usunięte.</string>
+    <string name="contacts_trash_header_hint">Elementy w koszu są trwale usuwane po 30 dniach</string>
+    <string name="contacts_trash_restore_action">Przywróć</string>
+    <string name="contacts_trash_delete_action">Usuń trwale</string>
+    <string name="contacts_trash_empty_all">Opróżnij kosz</string>
+    <string name="contacts_trash_empty_all_confirm_title">Opróżnij kosz?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Wszystkie kontakty %1$d w koszu zostaną trwale usunięte. Tej czynności nie można cofnąć.</string>
+    <string name="contacts_trash_restored_toast">Przywrócony %1$s</string>
+    <string name="settings_contacts_trash_title">Kosz dla usuniętych kontaktów</string>
+    <string name="settings_contacts_trash_supporting">Zachowaj usunięte kontakty w koszu przez 30 dni przed trwałym usunięciem ich</string>
+    <string name="settings_contacts_trash_view">Zobacz kosza</string>
+    <string name="settings_contacts_trash_view_supporting">Zobacz i przywracaj usunięte kontakty (%1$d w koszu)</string>
 </resources>

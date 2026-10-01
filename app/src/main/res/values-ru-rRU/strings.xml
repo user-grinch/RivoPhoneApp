@@ -943,4 +943,19 @@
     <string name="conference_empty">Нет участников конференции</string>
     <string name="conference_split">Разделить</string>
     <string name="conference_remove_participant">Выброс</string>
+    <string name="contacts_trash_title">Корзина</string>
+    <string name="contacts_trash_empty_title">Корзина пуста</string>
+    <string name="contacts_trash_empty_desc">Контакты, удаленные из Корзины, появятся здесь за 30 дней до окончательного удаления.</string>
+    <string name="contacts_trash_header_hint">Товары в корзине окончательно удаляются после 30 дней</string>
+    <string name="contacts_trash_restore_action">Восстановить</string>
+    <string name="contacts_trash_delete_action">Удалить навсегда</string>
+    <string name="contacts_trash_empty_all">Очистить корзину</string>
+    <string name="contacts_trash_empty_all_confirm_title">Очистить корзину?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Все контакты %1$d в Корзине будут удалены навсегда. Это действие не может быть отменено.</string>
+    <string name="contacts_trash_restored_toast">Восстановлено %1$s</string>
+    <string name="settings_contacts_trash_title">Корзина для удаленных контактов</string>
+    <string name="settings_contacts_trash_supporting">Оставлять удаленные контакты в корзину за 30 дней, прежде чем удалить их навсегда</string>
+    <string name="settings_contacts_trash_view">Корзина</string>
+    <string name="settings_contacts_trash_view_supporting">Просмотр и восстановление удаленных контактов (%1$d в корзине)</string>
+    <string name="shortcut_dial_contact">Позвонить %1$s</string>
 </resources>
