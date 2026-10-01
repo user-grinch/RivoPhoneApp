@@ -204,4 +204,13 @@
     <string name="contacts_trash_header_hint">Elementele din gunoi sunt șterse permanent după 30 de zile</string>
     <string name="contacts_trash_restore_action">Restaurează</string>
     <string name="contacts_trash_delete_action">Șterge permanent</string>
+    <string name="contacts_trash_empty_all">Golește gunoiul</string>
+    <string name="contacts_trash_empty_all_confirm_title">Golire gunoi?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Toate contactele %1$d din gunoi vor fi șterse definitiv. Această acțiune nu poate fi anulată.</string>
+    <string name="contacts_trash_restored_toast">Restaurat %1$s</string>
+    <string name="settings_contacts_trash_title">Gunoi pentru contacte șterse</string>
+    <string name="settings_contacts_trash_supporting">Păstrați contactele șterse în gunoi timp de 30 de zile înainte de a le elimina definitiv</string>
+    <string name="settings_contacts_trash_view">Vezi gunoi</string>
+    <string name="settings_contacts_trash_view_supporting">Vizualizați și restaurați contactele șterse (%1$d în gunoi)</string>
+    <string name="shortcut_dial_contact">Apel %1$s</string>
 </resources>

@@ -197,4 +197,19 @@
     <string name="conference_empty">Nenhum participante na conferência</string>
     <string name="conference_split">Separar</string>
     <string name="conference_remove_participant">Eliminar</string>
+    <string name="contacts_trash_title">Descartar</string>
+    <string name="contacts_trash_empty_title">A lixeira está vazia</string>
+    <string name="contacts_trash_empty_desc">Contatos apagados com a Lixeira ativada aparecerão aqui por 30 dias antes de serem removidos permanentemente.</string>
+    <string name="contacts_trash_header_hint">Itens na Lixeira são excluídos permanentemente após 30 dias</string>
+    <string name="contacts_trash_restore_action">RESTAURAR</string>
+    <string name="contacts_trash_delete_action">Excluir permanentemente</string>
+    <string name="contacts_trash_empty_all">Esvaziar a lixeira</string>
+    <string name="contacts_trash_empty_all_confirm_title">Esvaziar a Lixeira?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Todos os contatos %1$d na Lixeira serão excluídos permanentemente. Esta ação não pode ser desfeita.</string>
+    <string name="contacts_trash_restored_toast">%1$s restaurado</string>
+    <string name="settings_contacts_trash_title">Lixeira para Contatos Excluídos</string>
+    <string name="settings_contacts_trash_supporting">Manter contatos excluídos na Lixeira por 30 dias antes de removê-los permanentemente</string>
+    <string name="settings_contacts_trash_view">Ver Lixeira</string>
+    <string name="settings_contacts_trash_view_supporting">Ver e restaurar contatos excluídos (%1$d na Lixeira)</string>
+    <string name="shortcut_dial_contact">Ligar para %1$s</string>
 </resources>

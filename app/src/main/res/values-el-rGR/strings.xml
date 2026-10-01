@@ -191,4 +191,19 @@
     <string name="conference_empty">Δεν υπάρχουν συμμετέχοντες στη συνδιάσκεψη</string>
     <string name="conference_split">Διαχωρισμός</string>
     <string name="conference_remove_participant">Απόθεση</string>
+    <string name="contacts_trash_title">Απορρίμματα</string>
+    <string name="contacts_trash_empty_title">Ο κάδος απορριμμάτων είναι άδειος</string>
+    <string name="contacts_trash_empty_desc">Οι επαφές που διαγράφονται με ενεργοποιημένο τον κάδο απορριμμάτων θα εμφανιστούν εδώ για 30 ημέρες προτού αφαιρεθούν οριστικά.</string>
+    <string name="contacts_trash_header_hint">Τα στοιχεία στον κάδο απορριμμάτων διαγράφονται οριστικά μετά από 30 ημέρες</string>
+    <string name="contacts_trash_restore_action">Επαναφορά</string>
+    <string name="contacts_trash_delete_action">Οριστική διαγραφή</string>
+    <string name="contacts_trash_empty_all">Άδειασμα Απορριμμάτων</string>
+    <string name="contacts_trash_empty_all_confirm_title">Άδειασμα Απορριμμάτων?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Όλες οι %1$d επαφές στον κάδο απορριμμάτων θα διαγραφούν οριστικά. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
+    <string name="contacts_trash_restored_toast">Επαναφορά %1$s</string>
+    <string name="settings_contacts_trash_title">Απορρίμματα για Διαγραμμένες Επαφές</string>
+    <string name="settings_contacts_trash_supporting">Διατήρηση διαγραμμένων επαφών στον κάδο απορριμμάτων για 30 ημέρες πριν την μόνιμη αφαίρεση τους</string>
+    <string name="settings_contacts_trash_view">Προβολή Κάδου Απορριμμάτων</string>
+    <string name="settings_contacts_trash_view_supporting">Προβολή και επαναφορά διαγραμμένων επαφών (%1$d στον κάδο απορριμμάτων)</string>
+    <string name="shortcut_dial_contact">Κλήση %1$s</string>
 </resources>

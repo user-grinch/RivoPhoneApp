@@ -196,4 +196,19 @@
     <string name="conference_empty">Ei osallistujia konferenssiin</string>
     <string name="conference_split">Erota</string>
     <string name="conference_remove_participant">Pudota</string>
+    <string name="contacts_trash_title">Roskaa</string>
+    <string name="contacts_trash_empty_title">Roskakori on tyhjä</string>
+    <string name="contacts_trash_empty_desc">Yhteystiedot, jotka on poistettu käytöstä roskakorissa, näkyvät täällä 30 päivän ajan ennen kuin ne poistetaan pysyvästi.</string>
+    <string name="contacts_trash_header_hint">Roskakorin nimikkeet poistetaan pysyvästi 30 päivän jälkeen</string>
+    <string name="contacts_trash_restore_action">Palauta</string>
+    <string name="contacts_trash_delete_action">Poista pysyvästi</string>
+    <string name="contacts_trash_empty_all">Tyhjennä Roskakori</string>
+    <string name="contacts_trash_empty_all_confirm_title">Tyhjennä Roskakori?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Kaikki roskakorissa olevat %1$d yhteystiedot poistetaan pysyvästi. Tätä toimintoa ei voi peruuttaa.</string>
+    <string name="contacts_trash_restored_toast">Palautettu %1$s</string>
+    <string name="settings_contacts_trash_title">Poista käytöstä poistetuille yhteystiedoille</string>
+    <string name="settings_contacts_trash_supporting">Pidä poistetut yhteystiedot roskakorissa 30 päivän ajan ennen kuin poistat ne pysyvästi.</string>
+    <string name="settings_contacts_trash_view">Näytä Roskakori</string>
+    <string name="settings_contacts_trash_view_supporting">Näytä ja palauta poistetut yhteystiedot (%1$d roskakorissa)</string>
+    <string name="shortcut_dial_contact">Soita %1$s</string>
 </resources>

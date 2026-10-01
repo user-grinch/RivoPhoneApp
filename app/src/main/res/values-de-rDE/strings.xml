@@ -937,4 +937,19 @@
     <string name="conference_empty">Keine Teilnehmer an der Konferenz</string>
     <string name="conference_split">Getrennt</string>
     <string name="conference_remove_participant">Entfernen</string>
+    <string name="contacts_trash_title">Papierkorb</string>
+    <string name="contacts_trash_empty_title">Papierkorb ist leer</string>
+    <string name="contacts_trash_empty_desc">Kontakte, die mit aktiviertem Papierkorb gelöscht wurden, werden 30 Tage lang hier angezeigt, bevor sie endgültig entfernt werden.</string>
+    <string name="contacts_trash_header_hint">Objekte im Papierkorb werden nach 30 Tagen dauerhaft gelöscht</string>
+    <string name="contacts_trash_restore_action">Wiederherstellen</string>
+    <string name="contacts_trash_delete_action">Endgültig löschen</string>
+    <string name="contacts_trash_empty_all">Papierkorb leeren</string>
+    <string name="contacts_trash_empty_all_confirm_title">Papierkorb leeren?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Alle %1$d Kontakte im Papierkorb werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="contacts_trash_restored_toast">Wiederhergestellt %1$s</string>
+    <string name="settings_contacts_trash_title">Papierkorb für gelöschte Kontakte</string>
+    <string name="settings_contacts_trash_supporting">Gelöschte Kontakte 30 Tage im Papierkorb behalten, bevor sie endgültig entfernt werden</string>
+    <string name="settings_contacts_trash_view">Papierkorb anzeigen</string>
+    <string name="settings_contacts_trash_view_supporting">Gelöschte Kontakte anzeigen und wiederherstellen (%1$d im Papierkorb)</string>
+    <string name="shortcut_dial_contact">Anruf %1$s</string>
 </resources>

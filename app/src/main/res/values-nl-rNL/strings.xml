@@ -195,4 +195,19 @@
     <string name="conference_empty">Geen deelnemers aan conferentie</string>
     <string name="conference_split">Scheiden</string>
     <string name="conference_remove_participant">Weggooien</string>
+    <string name="contacts_trash_title">Prullenbak</string>
+    <string name="contacts_trash_empty_title">Prullenbak is leeg</string>
+    <string name="contacts_trash_empty_desc">Contactpersonen verwijderd met prullenbak ingeschakeld zullen hier 30 dagen verschijnen voordat ze permanent verwijderd worden.</string>
+    <string name="contacts_trash_header_hint">Items in prullenbak worden na 30 dagen permanent verwijderd</string>
+    <string name="contacts_trash_restore_action">Herstellen</string>
+    <string name="contacts_trash_delete_action">Permanent verwijderen</string>
+    <string name="contacts_trash_empty_all">Prullenbak leegmaken</string>
+    <string name="contacts_trash_empty_all_confirm_title">Prullenbak leegmaken?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Alle %1$d contacten in de prullenbak zullen permanent worden verwijderd. Deze actie kan niet ongedaan worden gemaakt.</string>
+    <string name="contacts_trash_restored_toast">Hersteld %1$s</string>
+    <string name="settings_contacts_trash_title">Prullenbak voor verwijderde contacten</string>
+    <string name="settings_contacts_trash_supporting">Laat verwijderde contacten 30 dagen in de prullenbak voordat ze definitief worden verwijderd</string>
+    <string name="settings_contacts_trash_view">Prullenbak weergeven</string>
+    <string name="settings_contacts_trash_view_supporting">Bekijk en herstel verwijderde contacten (%1$d in Prullenbak)</string>
+    <string name="shortcut_dial_contact">Oproep %1$s</string>
 </resources>

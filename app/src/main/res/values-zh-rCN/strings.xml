@@ -347,4 +347,18 @@
     <string name="conference_empty">没有与会者参加会议</string>
     <string name="conference_split">隔开</string>
     <string name="conference_remove_participant">放下</string>
+    <string name="contacts_trash_title">回收站</string>
+    <string name="contacts_trash_empty_title">垃圾桶为空</string>
+    <string name="contacts_trash_empty_desc">已启用回收站的联系人已删除，将在永久移除之前在这里显示30天。</string>
+    <string name="contacts_trash_header_hint">回收站中的项目在 30 天后被永久删除</string>
+    <string name="contacts_trash_restore_action">恢复</string>
+    <string name="contacts_trash_delete_action">永久删除</string>
+    <string name="contacts_trash_empty_all">清空回收站</string>
+    <string name="contacts_trash_empty_all_confirm_title">清空回收站？</string>
+    <string name="contacts_trash_empty_all_confirm_msg">垃圾箱中的所有 %1$d 联系人将被永久删除。此操作不能撤消。</string>
+    <string name="settings_contacts_trash_title">已删除联系人的回收站</string>
+    <string name="settings_contacts_trash_supporting">在回收站保留删除的联系人30天后永久移除它</string>
+    <string name="settings_contacts_trash_view">查看回收站</string>
+    <string name="settings_contacts_trash_view_supporting">查看并还原已删除的联系人 (%1$d 在回收站)</string>
+    <string name="shortcut_dial_contact">呼叫 %1$s</string>
 </resources>
