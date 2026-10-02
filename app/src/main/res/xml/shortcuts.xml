@@ -7,11 +7,18 @@
         android:shortcutShortLabel="@string/action_keypad"
         android:shortcutLongLabel="@string/action_keypad">
         <intent
-            android:action="android.intent.action.VIEW"
+            android:action="android.intent.action.DIAL"
             android:targetPackage="com.grinch.rivo4"
             android:targetClass="com.grinch.rivo4.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_contacts"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_contacts"
+        android:shortcutShortLabel="@string/app_name_contacts"
+        android:shortcutLongLabel="@string/app_name_contacts">
         <intent
-            android:action="android.intent.action.DIAL"
+            android:action="com.grinch.rivo4.ACTION_VIEW_CONTACTS"
             android:targetPackage="com.grinch.rivo4"
             android:targetClass="com.grinch.rivo4.MainActivity" />
     </shortcut>
@@ -21,10 +28,6 @@
         android:icon="@drawable/ic_shortcut_add_contact"
         android:shortcutShortLabel="@string/action_add_contact"
         android:shortcutLongLabel="@string/contact_create_title">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.grinch.rivo4"
-            android:targetClass="com.grinch.rivo4.MainActivity" />
         <intent
             android:action="android.intent.action.INSERT"
             android:targetPackage="com.grinch.rivo4"

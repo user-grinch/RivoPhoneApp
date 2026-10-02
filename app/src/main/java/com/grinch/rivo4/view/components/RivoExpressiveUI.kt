@@ -559,6 +559,8 @@ fun RivoListItem(
     onLongClickLabel: String? = null,
     containerColor: Color = Color.Unspecified,
     headlineStyle: TextStyle = RivoListItemDefaults.headlineStyle(),
+    headlineMaxLines: Int = 3,
+    supportingMaxLines: Int = Int.MAX_VALUE,
     leadingContent: (@Composable () -> Unit)? = null,
     supportingContent: (@Composable ColumnScope.() -> Unit)? = null,
     trailingContent: (@Composable RowScope.() -> Unit)? = null
@@ -699,7 +701,7 @@ fun RivoListItem(
                     text = headline,
                     style = headlineStyle,
                     color = headlineColor,
-                    maxLines = 2,
+                    maxLines = headlineMaxLines,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (!supporting.isNullOrBlank()) {
@@ -707,8 +709,8 @@ fun RivoListItem(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = supportingMaxLines,
+                        overflow = if (supportingMaxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis
                     )
                 }
                 if (!supporting2.isNullOrBlank()) {
@@ -749,7 +751,9 @@ fun RivoSwitchListItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    headlineMaxLines: Int = 3,
+    supportingMaxLines: Int = Int.MAX_VALUE
 ) {
     RivoListItem(
         headline = headline,
@@ -760,6 +764,8 @@ fun RivoSwitchListItem(
         enabled = enabled,
         toggled = checked,
         role = Role.Switch,
+        headlineMaxLines = headlineMaxLines,
+        supportingMaxLines = supportingMaxLines,
         trailingContent = {
             Switch(
                 checked = checked,
@@ -780,7 +786,9 @@ fun RivoSelectListItem(
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    preview: (@Composable (Int) -> Unit)? = null
+    preview: (@Composable (Int) -> Unit)? = null,
+    headlineMaxLines: Int = 3,
+    supportingMaxLines: Int = Int.MAX_VALUE
 ) {
     var showSelectionScreen by remember { mutableStateOf(false) }
 
@@ -791,6 +799,8 @@ fun RivoSelectListItem(
         onClick = { showSelectionScreen = true },
         modifier = modifier,
         enabled = enabled,
+        headlineMaxLines = headlineMaxLines,
+        supportingMaxLines = supportingMaxLines,
         trailingContent = {
             if (preview != null) {
                 preview(selectedValue)
@@ -982,16 +992,14 @@ fun RivoOptionRow(
                 Text(
                     text = headline,
                     style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 2,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
                     Text(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -1163,16 +1171,14 @@ fun RivoAvatarShapeSelectorRow(
                 Text(
                     text = headline,
                     style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
                     Text(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -1265,16 +1271,14 @@ fun RivoVisualOptionSelectorRow(
                 Text(
                     text = headline,
                     style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
                     Text(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -1418,16 +1422,14 @@ fun RivoSliderListItem(
                 Text(
                     text = headline,
                     style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 2,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (supporting != null) {
                     Text(
                         text = supporting,
                         style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

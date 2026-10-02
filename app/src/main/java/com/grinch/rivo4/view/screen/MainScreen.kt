@@ -79,9 +79,12 @@ fun MainScreen(
     val requestedTabState = LocalRequestedTab.current
     val externalRequestedTab = requestedTabState.value
 
-    val visibleTabs = remember(settingsState, externalRequestedTab) {
+    var savedTab by rememberSaveable { mutableStateOf<Int?>(null) }
+
+    val visibleTabs = remember(settingsState, externalRequestedTab, initialTab, savedTab) {
         val tabs = prefs.getVisibleBottomNavTabs().toMutableList()
-        if (externalRequestedTab == PreferenceManager.TAB_CONTACTS && !tabs.contains(PreferenceManager.TAB_CONTACTS)) {
+        val targetTab = externalRequestedTab ?: initialTab ?: savedTab
+        if (targetTab == PreferenceManager.TAB_CONTACTS && !tabs.contains(PreferenceManager.TAB_CONTACTS)) {
             tabs.add(PreferenceManager.TAB_CONTACTS)
         }
         tabs.toList()
@@ -95,7 +98,6 @@ fun MainScreen(
         }
     }
 
-    var savedTab by rememberSaveable { mutableStateOf<Int?>(null) }
     val lastActiveTab = savedTab ?: prefs.getLastSelectedTab()
     val requestedTab = externalRequestedTab ?: initialTab ?: lastActiveTab ?: defaultTab
     val startPage = visibleTabs.indexOf(requestedTab).coerceAtLeast(0)
@@ -115,8 +117,6 @@ fun MainScreen(
         else -> false
     }
 
-    var initialTabConsumed by rememberSaveable { mutableStateOf(false) }
-
     LaunchedEffect(pagerState.currentPage, visibleTabs) {
         visibleTabs.getOrNull(pagerState.currentPage)?.let { tabId ->
             savedTab = tabId
@@ -127,24 +127,27 @@ fun MainScreen(
     LaunchedEffect(externalRequestedTab) {
         if (externalRequestedTab != null) {
             val target = visibleTabs.indexOf(externalRequestedTab)
-            if (target >= 0 && pagerState.currentPage != target) {
-                pagerState.scrollToPage(target)
+            if (target >= 0) {
+                if (pagerState.currentPage != target) {
+                    pagerState.scrollToPage(target)
+                }
+                savedTab = externalRequestedTab
+                prefs.setLastSelectedTab(externalRequestedTab)
             }
-            savedTab = externalRequestedTab
-            prefs.setLastSelectedTab(externalRequestedTab)
             requestedTabState.value = null
         }
     }
 
     LaunchedEffect(initialTab) {
-        if (!initialTabConsumed && initialTab != null) {
+        if (initialTab != null) {
             val target = visibleTabs.indexOf(initialTab)
-            if (target >= 0 && pagerState.currentPage != target) {
-                pagerState.scrollToPage(target)
+            if (target >= 0) {
+                if (pagerState.currentPage != target) {
+                    pagerState.scrollToPage(target)
+                }
+                savedTab = initialTab
+                prefs.setLastSelectedTab(initialTab)
             }
-            savedTab = initialTab
-            prefs.setLastSelectedTab(initialTab)
-            initialTabConsumed = true
         }
     }
 
@@ -268,7 +271,7 @@ fun MainScreen(
                     visibleTabs = visibleTabs,
                     onPageSelected = { page ->
                         scope.launch {
-                            pagerState.animateScrollToPage(page)
+                            pagerState.scrollToPage(page)
                         }
                     }
                 )
@@ -291,7 +294,7 @@ fun MainScreen(
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
-                    beyondViewportPageCount = 1,
+                    beyondViewportPageCount = visibleTabs.size.coerceAtLeast(1),
                     userScrollEnabled = !isSwipeActionsEnabled
                 ) { page ->
                     when (visibleTabs.getOrNull(page)) {
@@ -357,7 +360,7 @@ fun MainScreen(
                             visibleTabs = visibleTabs,
                             onPageSelected = { page ->
                                 scope.launch {
-                                    pagerState.animateScrollToPage(page)
+                                    pagerState.scrollToPage(page)
                                 }
                             }
                         )

@@ -80,10 +80,25 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
     private val requestRoleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ -> }
     protected var intentState by mutableStateOf<Intent?>(null)
     private var isAppLocked by mutableStateOf(false)
+    private var currentRequestedTab: MutableState<Int?>? = null
+
+    fun isContactsIntent(intent: Intent?): Boolean {
+        intent ?: return false
+        val data = intent.data
+        val action = intent.action
+        val componentName = intent.component?.className
+        return componentName?.endsWith("ContactsAliasActivity") == true ||
+                action == "com.grinch.rivo4.ACTION_VIEW_CONTACTS" ||
+                intent.hasCategory(Intent.CATEGORY_APP_CONTACTS) ||
+                intent.type == "vnd.android.cursor.dir/contact" ||
+                intent.type == "vnd.android.cursor.dir/person" ||
+                data == ContactsContract.Contacts.CONTENT_URI ||
+                data?.toString() == "content://contacts/people" ||
+                data?.toString() == "content://com.android.contacts/contacts"
+    }
 
     open val isContactsOnlyEntry: Boolean
-        get() = intentState?.component?.className?.endsWith("ContactsAliasActivity") == true ||
-                intent?.component?.className?.endsWith("ContactsAliasActivity") == true
+        get() = isContactsIntent(intentState) || isContactsIntent(intent)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -109,6 +124,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val requestedTab = remember {
                     mutableStateOf<Int?>(if (isContactsOnlyEntry) PreferenceManager.TAB_CONTACTS else null)
                 }
+                currentRequestedTab = requestedTab
 
                 CompositionLocalProvider(
                     LocalRequestedTab provides requestedTab
@@ -252,7 +268,10 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 }
 
                     LaunchedEffect(Unit) {
-                        val isContacts = isContactsOnlyEntry || intentState?.component?.className?.endsWith("ContactsAliasActivity") == true
+                        val isContacts = isContactsOnlyEntry ||
+                                intentState?.component?.className?.endsWith("ContactsAliasActivity") == true ||
+                                intentState?.action == "com.grinch.rivo4.ACTION_VIEW_CONTACTS" ||
+                                intentState?.hasCategory(Intent.CATEGORY_APP_CONTACTS) == true
                         if (!isContacts && !isAlreadyDefaultDialer(this@MainActivity)) {
                             navController.navigate(DefaultDialerScreenDestination.route) {
                                 popUpTo(MainScreenDestination.route) {
@@ -293,6 +312,9 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         intentState = intent
+        if (isContactsIntent(intent)) {
+            currentRequestedTab?.value = PreferenceManager.TAB_CONTACTS
+        }
     }
 
     private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController, requestedTab: MutableState<Int?>? = null) {
@@ -301,12 +323,25 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         val action = intent.action
         val componentName = intent.component?.className
 
-        if (componentName?.endsWith("ContactsAliasActivity") == true || isContactsOnlyEntry) {
+        val isContactsAction = isContactsIntent(intent)
+
+        if (isContactsAction) {
             requestedTab?.value = PreferenceManager.TAB_CONTACTS
-            try {
-                navController.popBackStack(MainScreenDestination.route, inclusive = false)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            if (navController.currentDestination?.route != MainScreenDestination.route) {
+                try {
+                    navController.popBackStack(MainScreenDestination.route, inclusive = false)
+                } catch (e: Exception) {
+                    try {
+                        navController.navigate(MainScreenDestination(initialTab = PreferenceManager.TAB_CONTACTS).route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    } catch (e2: Exception) {
+                        e2.printStackTrace()
+                    }
+                }
             }
             return
         }
@@ -347,10 +382,30 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                     } else {
                         navController.navigate(DialPadScreenDestination(initialNumber = number).route)
                     }
-                } else if (data?.toString()?.contains("contacts") == true || data?.toString()?.contains("com.android.contacts") == true || intent.hasExtra("contact_id")) {
+                } else if ((data?.toString()?.contains("contacts") == true || data?.toString()?.contains("com.android.contacts") == true || intent.hasExtra("contact_id"))
+                    && data?.toString() != "content://contacts/people"
+                    && data?.toString() != "content://com.android.contacts/contacts"
+                    && data != ContactsContract.Contacts.CONTENT_URI
+                    && intent.type != "vnd.android.cursor.dir/contact"
+                    && intent.type != "vnd.android.cursor.dir/person"
+                ) {
                     val id = data?.lastPathSegment ?: intent.getStringExtra("contact_id")
-                    if (id != null) {
+                    if (id != null && id != "contacts" && id != "people") {
                         navController.navigate(ContactDetailsScreenDestination(contactId = id).route)
+                    } else {
+                        requestedTab?.value = PreferenceManager.TAB_CONTACTS
+                        if (navController.currentDestination?.route != MainScreenDestination.route) {
+                            try {
+                                navController.popBackStack(MainScreenDestination.route, inclusive = false)
+                            } catch (e: Exception) {
+                                navController.navigate(MainScreenDestination(initialTab = PreferenceManager.TAB_CONTACTS).route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
                     }
                 } else if (action == Intent.ACTION_DIAL) {
                     navController.navigate(DialPadScreenDestination().route)

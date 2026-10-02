@@ -172,7 +172,7 @@ fun BottomBar(
             ) {
                 tabs.forEach { tab ->
                     val isSelected = if (pagerState != null) {
-                        pagerState.currentPage == tab.value
+                        pagerState.targetPage == tab.value || pagerState.currentPage == tab.value
                     } else {
                         currentDestination?.hierarchy?.any { it.route == tab.route } == true
                     }
@@ -182,12 +182,12 @@ fun BottomBar(
                             if (isBlurEnabled) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.85f)
                             else MaterialTheme.colorScheme.secondaryContainer
                         } else Color.Transparent,
-                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
                         label = "expressiveIndicatorColor"
                     )
                     val iconColor by animateColorAsState(
                         targetValue = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
                         label = "expressiveIconColor"
                     )
 
@@ -226,8 +226,8 @@ fun BottomBar(
                         if (!iconOnly) {
                             AnimatedVisibility(
                                 visible = isSelected,
-                                enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) + expandHorizontally(spring(stiffness = Spring.StiffnessMediumLow)),
-                                exit = fadeOut(spring(stiffness = Spring.StiffnessMediumLow)) + shrinkHorizontally(spring(stiffness = Spring.StiffnessMediumLow))
+                                enter = fadeIn(spring(stiffness = Spring.StiffnessMedium)) + expandHorizontally(spring(stiffness = Spring.StiffnessMedium)),
+                                exit = fadeOut(spring(stiffness = Spring.StiffnessMedium)) + shrinkHorizontally(spring(stiffness = Spring.StiffnessMedium))
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Spacer(modifier = Modifier.width(6.dp))
@@ -265,7 +265,7 @@ fun BottomBar(
         ) {
             tabs.forEach { tab ->
                 val isSelected = if (pagerState != null) {
-                    pagerState.currentPage == tab.value
+                    pagerState.targetPage == tab.value || pagerState.currentPage == tab.value
                 } else {
                     currentDestination?.hierarchy?.any { it.route == tab.route } == true
                 }
