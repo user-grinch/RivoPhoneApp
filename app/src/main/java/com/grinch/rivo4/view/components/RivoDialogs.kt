@@ -79,6 +79,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
@@ -113,17 +114,17 @@ data class RivoDialogAction(
     val dismissOnClick: Boolean = true
 )
 
-private val DialogMaxWidth = 460.dp
-private val DialogActionHeight = 48.dp
-private val DialogHeaderTileSize = 52.dp
-private val DialogHeaderIconSize = 26.dp
-private val SelectionTileSize = 42.dp
-private val SelectionIconSize = 22.dp
+private val DialogMaxWidth = 440.dp
+private val DialogActionHeight = 50.dp
+private val DialogHeaderTileSize = 64.dp
+private val DialogHeaderIconSize = 30.dp
+private val SelectionTileSize = 44.dp
+private val SelectionIconSize = 24.dp
 private val SelectionPreviewSize = 52.dp
-private const val ScrimAlpha = 0.38f
-private const val DialogEnterScale = 0.72f
-private const val DialogExitScale = 0.80f
-private const val DialogExitDurationMs = 180
+private const val ScrimAlpha = 0.40f
+private const val DialogEnterScale = 0.82f
+private const val DialogExitScale = 0.88f
+private const val DialogExitDurationMs = 200
 
 @Composable
 fun ApplyDialogBlurBehind() {
@@ -287,7 +288,7 @@ fun RivoDialog(
                 }
 
                 val roundness = LocalCardRoundness.current
-                val dialogCornerDp = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness)
+                val dialogCornerDp = rivoCornerDp(32, roundness).coerceAtLeast(24.dp)
 
                 Surface(
                     modifier = modifier
@@ -304,7 +305,8 @@ fun RivoDialog(
                     shape = RoundedCornerShape(dialogCornerDp),
                     color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     contentColor = MaterialTheme.colorScheme.onSurface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f))
+                    shadowElevation = 6.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.22f))
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         // Top-Right Window Close Button
@@ -350,7 +352,7 @@ fun RivoDialog(
                                             shape = headerMorph,
                                             color = headerContainer,
                                             contentColor = headerContent,
-                                            shadowElevation = 1.dp
+                                            shadowElevation = 2.dp
                                         ) {
                                             Box(contentAlignment = Alignment.Center) {
                                                 Icon(
@@ -365,7 +367,8 @@ fun RivoDialog(
                                     if (title != null) {
                                         Text(
                                             text = title,
-                                            style = MaterialTheme.typography.titleLargeEmphasized,
+                                            style = MaterialTheme.typography.headlineSmallEmphasized,
+                                            fontWeight = FontWeight.SemiBold,
                                             color = MaterialTheme.colorScheme.onSurface,
                                             textAlign = TextAlign.Center
                                         )
@@ -393,20 +396,16 @@ fun RivoDialog(
                                 content = content
                             )
 
-                            // Actions / Buttons: Cancel button is removed in favor of the top-right window close button
-                            val cancelStrings = setOf("cancel", "close", "dismiss")
-                            val isDismissPureCancel = dismissAction != null && dismissAction.label.lowercase().trim() in cancelStrings
-
-                            if (confirmAction != null || (dismissAction != null && !isDismissPureCancel)) {
+                            if (confirmAction != null || dismissAction != null) {
                                 val hasConfirm = confirmAction != null
-                                val hasDismiss = dismissAction != null && !isDismissPureCancel
+                                val hasDismiss = dismissAction != null
 
                                 if (hasConfirm && hasDismiss) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(start = 22.dp, end = 22.dp, top = 8.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            .padding(start = 24.dp, end = 24.dp, top = 12.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RivoDialogActionButton(
@@ -426,28 +425,28 @@ fun RivoDialog(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(start = 22.dp, end = 22.dp, top = 8.dp),
+                                            .padding(start = 24.dp, end = 24.dp, top = 12.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         RivoDialogActionButton(
                                             action = confirmAction!!,
                                             prominent = true,
                                             onTrigger = dismissWithAnimation,
-                                            modifier = Modifier.widthIn(min = 160.dp, max = 240.dp)
+                                            modifier = Modifier.widthIn(min = 180.dp, max = 260.dp)
                                         )
                                     }
                                 } else if (hasDismiss) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(start = 22.dp, end = 22.dp, top = 8.dp),
+                                            .padding(start = 24.dp, end = 24.dp, top = 12.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         RivoDialogActionButton(
                                             action = dismissAction!!,
                                             prominent = false,
                                             onTrigger = dismissWithAnimation,
-                                            modifier = Modifier.widthIn(min = 160.dp, max = 240.dp)
+                                            modifier = Modifier.widthIn(min = 180.dp, max = 260.dp)
                                         )
                                     }
                                 }
@@ -455,8 +454,8 @@ fun RivoDialog(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 22.dp, end = 22.dp, top = 8.dp),
-                                    horizontalArrangement = Arrangement.Center,
+                                        .padding(start = 24.dp, end = 24.dp, top = 12.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     if (dismissButton != null) {
@@ -483,7 +482,7 @@ private fun RivoDialogActionButton(
     onTrigger: ((() -> Unit) -> Unit)? = null
 ) {
     val roundness = LocalCardRoundness.current
-    val buttonCornerDp = rivoCornerDp(RivoShapeDefaults.BaseLarge, roundness).coerceAtMost(20.dp)
+    val buttonCornerDp = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness).coerceAtLeast(22.dp)
     val buttonShape = RoundedCornerShape(buttonCornerDp)
 
     val handleClick = {
@@ -506,8 +505,12 @@ private fun RivoDialogActionButton(
                     contentColor = MaterialTheme.colorScheme.onError
                 )
             } else {
-                ButtonDefaults.buttonColors()
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             },
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Text(
@@ -548,7 +551,7 @@ fun RivoConfirmationDialog(
     title: String,
     message: String,
     confirmLabel: String = stringResource(R.string.action_confirm),
-    dismissLabel: String? = null,
+    dismissLabel: String = stringResource(R.string.action_cancel),
     icon: ImageVector? = null,
     isDestructive: Boolean = false
 ) {
@@ -560,16 +563,20 @@ fun RivoConfirmationDialog(
             label = confirmLabel,
             onClick = onConfirm,
             destructive = isDestructive
+        ),
+        dismissAction = RivoDialogAction(
+            label = dismissLabel,
+            onClick = onDismissRequest
         )
     ) {
         Text(
             text = message,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp)
+                .padding(horizontal = 12.dp, vertical = 6.dp)
         )
     }
 }
@@ -592,7 +599,10 @@ fun <T> RivoSelectionDialog(
     RivoDialog(
         onDismissRequest = onDismissRequest,
         title = title,
-        icon = icon
+        icon = icon,
+        dismissAction = dismissLabel?.let {
+            RivoDialogAction(label = it, onClick = onDismissRequest)
+        }
     ) {
         Column(
             modifier = Modifier
@@ -654,7 +664,7 @@ fun RivoSelectionRow(
         targetValue = if (selected) {
             MaterialTheme.colorScheme.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surfaceContainerLow
+            MaterialTheme.colorScheme.surfaceContainer
         },
         animationSpec = RivoMotion.colorChange(),
         label = "RivoSelectionRowContainer"
@@ -670,7 +680,7 @@ fun RivoSelectionRow(
     )
     val supportingColor by animateColorAsState(
         targetValue = if (selected) {
-            MaterialTheme.colorScheme.onPrimaryContainer
+            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
         } else {
             MaterialTheme.colorScheme.onSurfaceVariant
         },
@@ -775,18 +785,26 @@ fun RivoSelectionRow(
 
             if (selection > 0f) {
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    tint = content,
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(24.dp)
                         .graphicsLayer {
                             scaleX = selection
                             scaleY = selection
                             alpha = selection
                         }
-                )
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
         }
     }

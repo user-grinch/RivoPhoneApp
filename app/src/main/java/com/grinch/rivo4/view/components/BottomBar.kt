@@ -172,7 +172,7 @@ fun BottomBar(
             ) {
                 tabs.forEach { tab ->
                     val isSelected = if (pagerState != null) {
-                        pagerState.targetPage == tab.value || pagerState.currentPage == tab.value
+                        pagerState.targetPage == tab.value
                     } else {
                         currentDestination?.hierarchy?.any { it.route == tab.route } == true
                     }
@@ -265,7 +265,7 @@ fun BottomBar(
         ) {
             tabs.forEach { tab ->
                 val isSelected = if (pagerState != null) {
-                    pagerState.targetPage == tab.value || pagerState.currentPage == tab.value
+                    pagerState.targetPage == tab.value
                 } else {
                     currentDestination?.hierarchy?.any { it.route == tab.route } == true
                 }

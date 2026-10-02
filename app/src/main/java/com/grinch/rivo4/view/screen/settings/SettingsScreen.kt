@@ -163,6 +163,14 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
+                title = "Carrier Names in Recents",
+                supporting = "Show or hide carrier and SIM card names in call history and recents",
+                category = "Calling & SIM Accounts",
+                icon = Icons.Outlined.SimCard,
+                keywords = listOf("carrier", "carrier name", "recents carrier", "sim", "hide carrier", "show carrier", "call log carrier", "recents sim"),
+                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "Dialpad Dual SIM Buttons",
                 supporting = "Show separate SIM 1 and SIM 2 call buttons directly on dialpad",
                 category = "Personalization & Display",

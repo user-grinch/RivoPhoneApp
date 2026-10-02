@@ -77,6 +77,7 @@ fun CallAccountsScreen(
     
     val settingsState by prefs.settingsChanged.collectAsState()
     var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
+    var showCarrierInRecents by remember(settingsState) { mutableStateOf(prefs.isShowCarrierInRecents()) }
     var showCountryCode by remember(settingsState) { mutableStateOf(prefs.isShowCountryCodeEnabled()) }
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
@@ -173,6 +174,18 @@ fun CallAccountsScreen(
                                 supporting = if (speedDial) stringResource(R.string.settings_call_enabled) else stringResource(R.string.settings_call_disabled),
                                 leadingIcon = Icons.Outlined.Speed,
                                 onClick = { navigator.navigate(SpeedDialScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_show_carrier_in_recents),
+                                supporting = stringResource(R.string.settings_show_carrier_in_recents_supporting),
+                                leadingIcon = Icons.Outlined.SimCard,
+                                checked = showCarrierInRecents,
+                                onCheckedChange = {
+                                    showCarrierInRecents = it
+                                    prefs.setShowCarrierInRecents(it)
+                                }
                             )
                         }
                         item {

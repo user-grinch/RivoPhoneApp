@@ -4,6 +4,7 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.ContentProviderOperation
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
@@ -728,18 +729,23 @@ class ContactsRepository(
     }
 
     override fun saveContact(contact: Contact): Boolean {
+        return saveContactWithResult(contact).first
+    }
+
+    override fun saveContactWithResult(contact: Contact): Pair<Boolean, String?> {
         if (contact.isPrivate) {
             return try {
                 val entity = PrivateContactEntity.fromContact(contact)
-                if (entity.localId == 0L) {
+                val id = if (entity.localId == 0L) {
                     privateContactDao.insert(entity)
                 } else {
                     privateContactDao.update(entity)
+                    entity.localId
                 }
-                true
+                Pair(true, "p$id")
             } catch (e: Exception) {
                 android.util.Log.e("ContactsRepo", "Error saving private contact", e)
-                false
+                Pair(false, null)
             }
         }
         val isSim = contact.accountType?.contains("sim", ignoreCase = true) == true
@@ -1050,8 +1056,45 @@ class ContactsRepository(
             }
         }
 
+        var createdContactId: String? = null
         val success = try {
-            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+            val results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+            if (resolvedContactId == null || existingRawContactIds.isEmpty()) {
+                val newRawUri = results.getOrNull(0)?.uri
+                if (newRawUri != null) {
+                    val rawId = try { ContentUris.parseId(newRawUri) } catch (e: Exception) { null }
+                    if (rawId != null) {
+                        for (i in 0..5) {
+                            try {
+                                contentResolver.query(
+                                    ContactsContract.RawContacts.CONTENT_URI,
+                                    arrayOf(ContactsContract.RawContacts.CONTACT_ID),
+                                    "${ContactsContract.RawContacts._ID} = ?",
+                                    arrayOf(rawId.toString()),
+                                    null
+                                )?.use { cursor ->
+                                    if (cursor.moveToFirst()) {
+                                        val idx = cursor.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID)
+                                        if (idx != -1) {
+                                            val cid = cursor.getString(idx)
+                                            if (!cid.isNullOrBlank()) {
+                                                createdContactId = cid
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (e: Exception) {}
+                            if (createdContactId != null) break
+                            Thread.sleep(40)
+                        }
+                        if (createdContactId == null) {
+                            createdContactId = rawId.toString()
+                        }
+                    }
+                }
+            } else {
+                createdContactId = resolvedContactId
+            }
             true
         } catch (e: Exception) {
             android.util.Log.e("ContactsRepo", "Error applying batch operations for contact save", e)
@@ -1059,20 +1102,21 @@ class ContactsRepository(
         }
 
         if (success) {
-            val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
+            val targetId = createdContactId ?: contact.id
+            val currentFavNum = preferenceManager.getFavoriteNumber(targetId)
             if (currentFavNum != null) {
                 val stillExists = effectivePhones.any { areNumbersEqual(it.number, currentFavNum) }
                 if (!stillExists) {
                     val newPrimary = effectivePhones.firstOrNull()?.number
                     if (newPrimary != null) {
-                        preferenceManager.setFavoriteNumber(contact.id, newPrimary)
+                        preferenceManager.setFavoriteNumber(targetId, newPrimary)
                     } else {
-                        preferenceManager.setFavoriteNumber(contact.id, null)
+                        preferenceManager.setFavoriteNumber(targetId, null)
                     }
                 }
             }
         }
-        return success
+        return Pair(success, createdContactId)
     }
     private fun clearCallBackground(contactId: String) {
         val numbers: List<String> = try {
@@ -1093,13 +1137,79 @@ class ContactsRepository(
         val resolvedId = if (contactId.toLongOrNull() != null) {
             contactId
         } else {
-            resolveLookupKey(contactId) ?: return
+            resolveLookupKey(contactId) ?: contactId
         }
+
+        // 1. Delete all raw contacts associated with this contact by CONTACT_ID
         try {
-            val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, resolvedId)
-            contentResolver.delete(uri, null, null)
+            contentResolver.delete(
+                ContactsContract.RawContacts.CONTENT_URI,
+                "${ContactsContract.RawContacts.CONTACT_ID} = ?",
+                arrayOf(resolvedId)
+            )
         } catch (t: Throwable) {
-            android.util.Log.e("ContactsRepo", "Error deleting contact internal: $contactId", t)
+            android.util.Log.e("ContactsRepo", "Error deleting raw contacts by CONTACT_ID $resolvedId", t)
+        }
+
+        // 2. Query any explicit raw contact IDs and delete each
+        try {
+            val rawIds = getRawContactIds(contactId).toMutableSet()
+            if (resolvedId != contactId) {
+                rawIds.addAll(getRawContactIds(resolvedId))
+            }
+            for (rawId in rawIds) {
+                try {
+                    val rawUri = ContentUris.withAppendedId(ContactsContract.RawContacts.CONTENT_URI, rawId.toLong())
+                    contentResolver.delete(rawUri, null, null)
+                } catch (e: Exception) {
+                    android.util.Log.e("ContactsRepo", "Error deleting raw contact uri $rawId", e)
+                }
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error querying and deleting raw contacts for: $contactId", t)
+        }
+
+        // 3. In case resolvedId is directly a raw contact _ID
+        try {
+            contentResolver.delete(
+                ContactsContract.RawContacts.CONTENT_URI,
+                "${ContactsContract.RawContacts._ID} = ?",
+                arrayOf(resolvedId)
+            )
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error deleting raw contact by _ID: $resolvedId", t)
+        }
+
+        // 4. Delete Data rows linked to this contact
+        try {
+            contentResolver.delete(
+                ContactsContract.Data.CONTENT_URI,
+                "${ContactsContract.Data.CONTACT_ID} = ? OR ${ContactsContract.Data.RAW_CONTACT_ID} = ?",
+                arrayOf(resolvedId, resolvedId)
+            )
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error deleting data rows for: $resolvedId", t)
+        }
+
+        // 5. Delete aggregate contact URI
+        try {
+            if (resolvedId.toLongOrNull() != null) {
+                val uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, resolvedId.toLong())
+                contentResolver.delete(uri, null, null)
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error deleting contact uri $resolvedId", t)
+        }
+
+        // 6. Delete via lookup URI
+        try {
+            val lookupUri = Uri.withAppendedPath(
+                ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                Uri.encode(contactId)
+            )
+            contentResolver.delete(lookupUri, null, null)
+        } catch (t: Throwable) {
+            // Ignore
         }
     }
 
@@ -1108,7 +1218,7 @@ class ContactsRepository(
     }
 
     override fun deleteContacts(contactIds: List<String>) {
-        contactIds.chunked(100).forEach { chunk ->
+        contactIds.chunked(50).forEach { chunk ->
             val ops = ArrayList<ContentProviderOperation>()
             chunk.forEach { id ->
                 clearCallBackground(id)
@@ -1118,14 +1228,36 @@ class ContactsRepository(
                     return@forEach
                 }
                 val resolvedId = if (id.toLongOrNull() != null) id else (resolveLookupKey(id) ?: id)
-                val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, resolvedId)
-                ops.add(ContentProviderOperation.newDelete(uri).build())
+
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.RawContacts.CONTACT_ID} = ? OR ${ContactsContract.RawContacts._ID} = ?",
+                            arrayOf(resolvedId, resolvedId)
+                        )
+                        .build()
+                )
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.CONTACT_ID} = ? OR ${ContactsContract.Data.RAW_CONTACT_ID} = ?",
+                            arrayOf(resolvedId, resolvedId)
+                        )
+                        .build()
+                )
+                if (resolvedId.toLongOrNull() != null) {
+                    val uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, resolvedId.toLong())
+                    ops.add(ContentProviderOperation.newDelete(uri).build())
+                }
             }
             if (ops.isNotEmpty()) {
                 try {
                     contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
                 } catch (t: Throwable) {
-                    android.util.Log.e("ContactsRepo", "Error batch deleting contacts", t)
+                    android.util.Log.e("ContactsRepo", "Error batch deleting contacts with applyBatch, fallback to single delete", t)
+                    chunk.forEach { id ->
+                        deleteContactInternal(id, clearBackground = false)
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
@@ -129,7 +130,10 @@ fun MainScreen(
             val target = visibleTabs.indexOf(externalRequestedTab)
             if (target >= 0) {
                 if (pagerState.currentPage != target) {
-                    pagerState.scrollToPage(target)
+                    pagerState.animateScrollToPage(
+                        page = target,
+                        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
+                    )
                 }
                 savedTab = externalRequestedTab
                 prefs.setLastSelectedTab(externalRequestedTab)
@@ -143,7 +147,10 @@ fun MainScreen(
             val target = visibleTabs.indexOf(initialTab)
             if (target >= 0) {
                 if (pagerState.currentPage != target) {
-                    pagerState.scrollToPage(target)
+                    pagerState.animateScrollToPage(
+                        page = target,
+                        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
+                    )
                 }
                 savedTab = initialTab
                 prefs.setLastSelectedTab(initialTab)
@@ -271,7 +278,15 @@ fun MainScreen(
                     visibleTabs = visibleTabs,
                     onPageSelected = { page ->
                         scope.launch {
-                            pagerState.scrollToPage(page)
+                            if (pagerState.currentPage != page) {
+                                pagerState.animateScrollToPage(
+                                    page = page,
+                                    animationSpec = tween(
+                                        durationMillis = 280,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                )
+                            }
                         }
                     }
                 )
@@ -360,7 +375,15 @@ fun MainScreen(
                             visibleTabs = visibleTabs,
                             onPageSelected = { page ->
                                 scope.launch {
-                                    pagerState.scrollToPage(page)
+                                    if (pagerState.currentPage != page) {
+                                        pagerState.animateScrollToPage(
+                                            page = page,
+                                            animationSpec = tween(
+                                                durationMillis = 280,
+                                                easing = FastOutSlowInEasing
+                                            )
+                                        )
+                                    }
                                 }
                             }
                         )

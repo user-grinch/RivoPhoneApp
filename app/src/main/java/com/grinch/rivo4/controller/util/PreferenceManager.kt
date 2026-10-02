@@ -593,6 +593,11 @@ class PreferenceManager(context: Context) {
         setInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     }
 
+    fun isShowCarrierInRecents(): Boolean = getBoolean(KEY_SHOW_SIM_ICON_HISTORY, true)
+    fun setShowCarrierInRecents(enabled: Boolean) {
+        setBoolean(KEY_SHOW_SIM_ICON_HISTORY, enabled)
+    }
+
     fun isShowCountryCodeEnabled(): Boolean = getBoolean(KEY_SHOW_COUNTRY_CODE, true)
     fun setShowCountryCodeEnabled(enabled: Boolean) {
         setBoolean(KEY_SHOW_COUNTRY_CODE, enabled)

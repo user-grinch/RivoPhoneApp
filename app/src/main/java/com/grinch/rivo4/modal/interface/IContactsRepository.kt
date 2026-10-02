@@ -10,6 +10,7 @@ interface IContactsRepository {
     fun getContactByNumber(number: String): Contact?
     fun toggleFavorite(contactId: String, isFavorite: Boolean)
     fun saveContact(contact: Contact): Boolean
+    fun saveContactWithResult(contact: Contact): Pair<Boolean, String?> = Pair(saveContact(contact), null)
     fun deleteContact(contactId: String)
     fun deleteContacts(contactIds: List<String>)
     fun moveContacts(contactIds: List<String>, accountName: String?, accountType: String?)

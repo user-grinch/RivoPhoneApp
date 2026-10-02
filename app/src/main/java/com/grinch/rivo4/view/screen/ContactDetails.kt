@@ -174,10 +174,44 @@ fun ContactDetailsScreen(
         }
     }
 
+    val allContacts by contactsViewModel.allContacts.collectAsState()
+
     LaunchedEffect(contactId, phoneNumber) {
         isFullLoading = true
         fullContact = loadContact()
         isFullLoading = false
+    }
+
+    LaunchedEffect(allContacts) {
+        val targetId = fullContact?.id?.takeIf { it.isNotBlank() } ?: contactId
+        if (targetId != null && targetId != "null") {
+            val matching = allContacts.find { it.id == targetId }
+            if (matching != null) {
+                val current = fullContact
+                if (current != null) {
+                    fullContact = current.copy(
+                        name = matching.name,
+                        givenName = matching.givenName,
+                        middleName = matching.middleName,
+                        familyName = matching.familyName,
+                        nickname = matching.nickname,
+                        photoUri = matching.photoUri,
+                        isFavorite = matching.isFavorite,
+                        phoneNumbers = matching.phoneNumbers,
+                        phones = if (matching.phones.isNotEmpty()) matching.phones else current.phones,
+                        emails = if (matching.emails.isNotEmpty()) matching.emails else current.emails,
+                        emailEntries = if (matching.emailEntries.isNotEmpty()) matching.emailEntries else current.emailEntries,
+                        accountName = matching.accountName,
+                        accountType = matching.accountType
+                    )
+                } else {
+                    fullContact = matching
+                }
+            } else if (allContacts.isNotEmpty() && contactId != null && contactId != "null") {
+                // Contact was deleted, return up
+                navigator.navigateUp()
+            }
+        }
     }
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
