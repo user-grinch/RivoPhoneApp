@@ -66,8 +66,18 @@ data class Contact(
             )
             return if (parts.isNotEmpty()) {
                 parts.joinToString(" ")
-            } else {
+            } else if (name.isNotBlank() && name != "Unnamed" && name != "Unknown") {
                 name
+            } else if (!nickname.isNullOrBlank()) {
+                nickname
+            } else if (emails.isNotEmpty()) {
+                emails.first()
+            } else if (emailEntries.isNotEmpty()) {
+                emailEntries.first().address
+            } else if (phoneNumbers.isNotEmpty()) {
+                phoneNumbers.first()
+            } else {
+                name.ifBlank { "Unnamed" }
             }
         }
 }

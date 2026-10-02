@@ -565,7 +565,7 @@ fun PrivateContactsScreen(
             onItemSelected = { selected ->
                 val ids = targetContactsToMove.map { contact -> contact.id }
                 if (selected.first == "public") {
-                    ids.forEach { id -> viewModel.makeContactPublic(id) }
+                    viewModel.moveContacts(ids, null)
                 } else {
                     val targetAcc = availableAccounts.find { acc -> acc.name == selected.first }
                     if (targetAcc != null) {

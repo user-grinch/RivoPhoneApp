@@ -137,7 +137,12 @@ fun ContactEditScreen(
                     middleName = existing.middleName ?: ""
                     familyName = existing.familyName ?: ""
                 } else {
-                    val split = splitDisplayName(existing.name)
+                    val rawName = if (existing.name.isNotBlank() && existing.name != "Unnamed" && existing.name != "Unknown") {
+                        existing.name
+                    } else {
+                        existing.emails.firstOrNull() ?: existing.emailEntries.firstOrNull()?.address ?: ""
+                    }
+                    val split = splitDisplayName(rawName)
                     givenName = split.givenName
                     middleName = split.middleName
                     familyName = split.familyName
@@ -276,12 +281,24 @@ fun ContactEditScreen(
                                     EmailEntry(address = it.address.trim(), type = it.type, label = it.label)
                                 }
                                 val savedAddresses = addresses.map { it.address.trim() }.filter { it.isNotBlank() }
+
+                                val fallbackName = nickname.trim().ifBlank {
+                                    savedPhones.firstOrNull()?.number ?: savedEmails.firstOrNull()?.address ?: "Unnamed"
+                                }
+                                val finalName = displayName.ifBlank { fallbackName }
+
+                                val finalGivenName = givenName.trim().ifBlank {
+                                    if (displayName.isBlank() && nickname.isBlank() && savedPhones.isEmpty() && savedEmails.isNotEmpty()) {
+                                        savedEmails.first().address
+                                    } else {
+                                        null
+                                    }
+                                }
+
                                 val contactToSave = Contact(
                                     id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
-                                    name = displayName.ifBlank {
-                                        nickname.trim().ifBlank { savedPhones.firstOrNull()?.number ?: "Unnamed" }
-                                    },
-                                    givenName = givenName.trim().ifBlank { null },
+                                    name = finalName,
+                                    givenName = finalGivenName,
                                     middleName = middleName.trim().ifBlank { null },
                                     familyName = familyName.trim().ifBlank { null },
                                     nickname = nickname.ifBlank { null },
@@ -305,7 +322,7 @@ fun ContactEditScreen(
                                 }
                             }
                         },
-                        enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() }) && !isSaving,
+                        enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() } || emails.any { it.address.isNotBlank() }) && !isSaving,
                         modifier = Modifier.padding(end = 8.dp),
                         shape = RoundedCornerShape(14.dp),
                         elevation = ButtonDefaults.buttonElevation(0.dp)
@@ -505,10 +522,12 @@ fun ContactEditScreen(
                     icon = Icons.Outlined.Person
                 ) {
                     item {
+                        val firstEmail = emails.firstOrNull { it.address.isNotBlank() }?.address
                         RivoSegmentedTextField(
                             value = givenName,
                             onValueChange = { givenName = it },
                             label = stringResource(R.string.contact_edit_first_name),
+                            placeholder = if (displayName.isBlank()) firstEmail else null,
                             icon = Icons.Outlined.Person
                         )
                     }
@@ -833,6 +852,7 @@ fun RivoSegmentedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
+    placeholder: String? = null,
     icon: ImageVector? = null,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -846,6 +866,7 @@ fun RivoSegmentedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
+        placeholder = placeholder?.let { { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) } },
         modifier = modifier
             .fillMaxWidth()
             .bringIntoViewRequester(bringIntoViewRequester)

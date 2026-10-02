@@ -95,6 +95,11 @@ object ContactUtils {
     }
 
     fun formatContactName(contact: Contact, displayOrder: Int): String {
+        val baseName = if (contact.name.isNotBlank() && contact.name != "Unnamed") {
+            contact.name
+        } else {
+            contact.emails.firstOrNull() ?: contact.phoneNumbers.firstOrNull() ?: contact.name
+        }
         return if (displayOrder == 1) {
             if (!contact.familyName.isNullOrBlank()) {
                 val prefixPart = contact.prefix?.trim()?.ifBlank { null }
@@ -110,12 +115,12 @@ object ContactUtils {
                     else -> contact.familyName
                 }
             } else if (!contact.givenName.isNullOrBlank()) {
-                contact.name
+                baseName
             } else {
-                formatContactName(contact.name, displayOrder)
+                formatContactName(baseName, displayOrder)
             }
         } else {
-            contact.name
+            baseName
         }
     }
 
@@ -129,12 +134,17 @@ object ContactUtils {
                 return parts.last()
             }
         }
+        val effectiveName = if (contact.name.isNotBlank() && contact.name != "Unnamed") {
+            contact.name
+        } else {
+            contact.emails.firstOrNull() ?: contact.phoneNumbers.firstOrNull() ?: contact.name
+        }
         val prefix = contact.prefix?.trim()
-        if (!prefix.isNullOrBlank() && contact.name.startsWith(prefix, ignoreCase = true)) {
-            val withoutPrefix = contact.name.substring(prefix.length).trim()
+        if (!prefix.isNullOrBlank() && effectiveName.startsWith(prefix, ignoreCase = true)) {
+            val withoutPrefix = effectiveName.substring(prefix.length).trim()
             if (withoutPrefix.isNotEmpty()) return stripTitlePrefix(withoutPrefix)
         }
-        return stripTitlePrefix(contact.name)
+        return stripTitlePrefix(effectiveName)
     }
 
     fun getContactInitial(contact: Contact, displayOrder: Int): String {

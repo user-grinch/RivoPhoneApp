@@ -690,9 +690,12 @@ fun ContactManagementScreen(
             is StorageTarget.SimCard -> Pair(dest.account.name, dest.account.type)
             is StorageTarget.CloudAccount -> Pair(dest.account.name, dest.account.type)
         }
+        val count = sourceContacts.size
+        val destName = selectedDestStorage.displayName
         RivoConfirmationDialog(
             onDismissRequest = { showMoveAllConfirmDialog = false },
             onConfirm = {
+                showMoveAllConfirmDialog = false
                 contactsVM.moveContactsToStorage(
                     contactIds = sourceContacts.map { it.id },
                     accountName = targetAccount.first,
@@ -702,8 +705,8 @@ fun ContactManagementScreen(
                         snackbarHostState.showSnackbar(
                             context.getString(
                                 R.string.contact_management_move_success,
-                                sourceContacts.size,
-                                selectedDestStorage.displayName
+                                count,
+                                destName
                             )
                         )
                     }

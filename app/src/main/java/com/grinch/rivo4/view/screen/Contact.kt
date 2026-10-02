@@ -120,7 +120,10 @@ fun ContactScreenContent(
                 selectedIds = emptySet()
             },
             onMoveToPrivate = {
-                selectedIds.forEach { contactsVM.makeContactPrivate(it) }
+                contactsVM.moveContacts(
+                    selectedIds.toList(),
+                    android.accounts.Account("private", "com.grinch.rivo4.private")
+                )
                 selectedIds = emptySet()
             },
             availableAccounts = availableAccounts
