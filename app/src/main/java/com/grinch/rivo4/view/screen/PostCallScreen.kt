@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import android.provider.ContactsContract
 import com.grinch.rivo4.MainActivity
 import com.grinch.rivo4.view.components.AddToContactBottomSheet
@@ -246,9 +247,10 @@ fun PostCallScreen(
                                         "Call ended"
                                     }
 
+                                    val formattedPhone = remember(phoneNumber) { formatPhoneNumber(phoneNumber) }
                                     Text(
                                         text = if (displayName != phoneNumber && phoneNumber.isNotEmpty()) {
-                                            "$phoneNumber • $durationText"
+                                            "$formattedPhone • $durationText"
                                         } else {
                                             durationText
                                         },

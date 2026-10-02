@@ -108,12 +108,43 @@ fun formatRelativeCallDateTime(context: Context, timestamp: Long): String {
     }
 }
 
-fun formatPhoneNumber(number: String): String {
+fun clearFormattedNumberCache() {
+    formattedNumberCache.evictAll()
+}
+
+fun formatPhoneNumber(number: String, showCountryCode: Boolean? = null): String {
     if (number.isBlank()) return number
-    return formattedNumberCache.get(number) ?: run {
-        val formatted = PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
-        formattedNumberCache.put(number, formatted)
-        formatted
+
+    val shouldShowCountryCode = showCountryCode ?: runCatching {
+        org.koin.java.KoinJavaComponent.getKoin().get<PreferenceManager>().isShowCountryCodeEnabled()
+    }.getOrDefault(true)
+
+    val cacheKey = "${shouldShowCountryCode}_$number"
+    return formattedNumberCache.get(cacheKey) ?: run {
+        val defaultCountry = Locale.getDefault().country.ifEmpty { "US" }
+        val formattedStandard = PhoneNumberUtils.formatNumber(number, defaultCountry) ?: number
+        
+        val result = if (shouldShowCountryCode) {
+            formattedStandard
+        } else {
+            // Strip leading "+" and country calling code if present
+            var stripped = formattedStandard.trim()
+            if (stripped.startsWith("+")) {
+                // Remove the plus and the country dialing code (1 to 4 digits followed by space/separator)
+                // Examples: +1 (555) 123-4567 -> (555) 123-4567
+                // +44 20 7946 0958 -> 020 7946 0958 or 20 7946 0958
+                // +91 98765 43210 -> 98765 43210
+                stripped = stripped.replace(Regex("^\\+\\d{1,4}[\\s\\-]"), "")
+                if (stripped.startsWith("+")) {
+                    stripped = stripped.replace(Regex("^\\+\\d{1,4}"), "")
+                }
+            } else if (stripped.startsWith("00")) {
+                stripped = stripped.replace(Regex("^00\\d{1,4}[\\s\\-]"), "")
+            }
+            stripped.ifBlank { formattedStandard }
+        }
+        formattedNumberCache.put(cacheKey, result)
+        result
     }
 }
 

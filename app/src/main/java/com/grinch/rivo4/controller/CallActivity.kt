@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.view.WindowCompat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -188,9 +189,7 @@ class CallActivity : ComponentActivity() {
                 }
 
                 val darkTheme = isSystemInDarkTheme()
-                val lightSystemBarIcons = darkTheme ||
-                        identity?.backgroundUri != null ||
-                        identity?.photoUri != null
+                val lightSystemBarIcons = darkTheme
 
                 DisposableEffect(lightSystemBarIcons) {
                     applySystemBarStyle(lightSystemBarIcons)
@@ -461,6 +460,9 @@ class CallActivity : ComponentActivity() {
             SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         }
         enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = !lightIcons
+        insetsController.isAppearanceLightNavigationBars = !lightIcons
     }
 
     private fun setupProximitySensor() {

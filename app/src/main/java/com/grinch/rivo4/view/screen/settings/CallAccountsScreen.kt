@@ -77,6 +77,7 @@ fun CallAccountsScreen(
     
     val settingsState by prefs.settingsChanged.collectAsState()
     var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
+    var showCountryCode by remember(settingsState) { mutableStateOf(prefs.isShowCountryCodeEnabled()) }
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var autoSpeakerProximity by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, false)) }
@@ -221,6 +222,18 @@ fun CallAccountsScreen(
 
                 item {
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialer_screen_exp), icon = Icons.Outlined.Dialpad) {
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_show_country_code),
+                                supporting = stringResource(R.string.settings_show_country_code_supporting),
+                                leadingIcon = Icons.Outlined.Public,
+                                checked = showCountryCode,
+                                onCheckedChange = {
+                                    showCountryCode = it
+                                    prefs.setShowCountryCodeEnabled(it)
+                                }
+                            )
+                        }
                         item {
                             RivoSwitchListItem(
                                 headline = stringResource(R.string.settings_call_t9_dialing),

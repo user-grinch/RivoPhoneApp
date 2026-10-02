@@ -108,12 +108,28 @@ fun ContactSelectionScreen(
                             } else {
                                 title
                             },
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 6.dp)
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { navigator.navigateUp() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                        Surface(
+                            onClick = { navigator.navigateUp() },
+                            shape = RoundedCornerShape(14.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(start = 12.dp)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = stringResource(R.string.action_back),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
                     },
                     actions = {
@@ -140,12 +156,15 @@ fun ContactSelectionScreen(
                                 )
                             }
                         }
-                        IconButton(onClick = { navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign)) }) {
-                            Icon(Icons.Outlined.PersonAdd, contentDescription = stringResource(R.string.contact_create_new))
-                        }
+                        RivoTopBarIconButton(
+                            onClick = { navigator.navigate(ContactEditScreenDestination(initialPhone = initialPhoneToAssign)) },
+                            icon = Icons.Outlined.PersonAdd,
+                            contentDescription = stringResource(R.string.contact_create_new)
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     )
                 )
             },

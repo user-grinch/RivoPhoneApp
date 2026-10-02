@@ -186,10 +186,13 @@ fun AZListScroll(
                                     }
                                 )
                         ) {
-                        val displayName = if (contact.name.isNotBlank()) {
+                        val displayName = if (contact.name.isNotBlank() && contact.name != stringResource(R.string.label_unknown) && contact.name != "Unnamed") {
                             ContactUtils.formatContactName(contact, displayOrder)
                         } else {
-                            contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) } ?: stringResource(R.string.label_unknown)
+                            contact.emails.firstOrNull()
+                                ?: contact.emailEntries.firstOrNull()?.address
+                                ?: contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) }
+                                ?: contact.name.ifBlank { stringResource(R.string.label_unknown) }
                         }
 
                         RivoSwipeToActionBox(
@@ -217,7 +220,11 @@ fun AZListScroll(
                             RivoListItem(
                                 headline = displayName,
                                 supporting = null,
-                                avatarName = contact.name,
+                                avatarName = if (contact.name.isNotBlank() && contact.name != stringResource(R.string.label_unknown) && contact.name != "Unnamed") {
+                                    contact.name
+                                } else {
+                                    contact.emails.firstOrNull() ?: contact.phoneNumbers.firstOrNull() ?: ""
+                                },
                                 photoUri = contact.photoUri,
                                 trailingContent = {
                                     if (contact.isHidden) {

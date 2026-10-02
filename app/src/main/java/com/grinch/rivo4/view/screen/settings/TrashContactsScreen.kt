@@ -1,4 +1,6 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.MenuTopAppBar
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 
 import android.widget.Toast
 import androidx.compose.animation.*
@@ -58,35 +60,19 @@ fun TrashContactsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.contacts_trash_title),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
-                    }
-                },
+            MenuTopAppBar(
+                text = stringResource(R.string.contacts_trash_title),
+                navigator = navigator,
                 actions = {
                     if (trashedContacts.isNotEmpty()) {
-                        IconButton(onClick = { showEmptyTrashDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Outlined.DeleteSweep,
-                                contentDescription = stringResource(R.string.contacts_trash_empty_all),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
+                        RivoTopBarIconButton(
+                            onClick = { showEmptyTrashDialog = true },
+                            icon = Icons.Outlined.DeleteSweep,
+                            contentDescription = stringResource(R.string.contacts_trash_empty_all),
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.surface

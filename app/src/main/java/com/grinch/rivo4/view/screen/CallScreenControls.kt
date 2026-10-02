@@ -6,7 +6,7 @@ import android.telecom.Call
 import android.telecom.CallAudioState
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.BorderStroke
@@ -53,7 +53,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -80,10 +79,18 @@ fun CallActionButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.90f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        label = "btnScale"
+    val buttonHeight = if (compact) 68.dp else 80.dp
+    val iconSize = if (compact) 24.dp else 28.dp
+
+    // Morph shape: MD3 squircle container like Google Phone (corner radius ~28dp idle, ~20dp pressed/active)
+    val cornerRadius by animateDpAsState(
+        targetValue = when {
+            isPressed && enabled -> if (compact) 16.dp else 20.dp
+            isActive && enabled -> if (compact) 20.dp else 24.dp
+            else -> if (compact) 24.dp else 28.dp
+        },
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "CallActionCornerRadius"
     )
 
     val containerColor by animateColorAsState(
@@ -91,7 +98,8 @@ fun CallActionButton(
             !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
             isDanger -> MaterialTheme.callColors.decline
             isActive -> MaterialTheme.colorScheme.primary
-            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
+            isPressed -> MaterialTheme.colorScheme.primaryContainer
+            else -> MaterialTheme.colorScheme.surfaceContainerHigh
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "btnBg"
@@ -102,60 +110,53 @@ fun CallActionButton(
             !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             isDanger -> MaterialTheme.callColors.onDecline
             isActive -> MaterialTheme.colorScheme.onPrimary
-            else -> MaterialTheme.colorScheme.onSurfaceVariant
+            isPressed -> MaterialTheme.colorScheme.onPrimaryContainer
+            else -> MaterialTheme.colorScheme.onSurface
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "btnFg"
     )
 
-    val buttonSize = if (compact) 54.dp else 64.dp
-    val iconSize = if (compact) 24.dp else 28.dp
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Surface(
-            onClick = {
-                if (enabled) {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                    onClick()
-                }
-            },
-            enabled = enabled,
-            shape = CircleShape,
-            color = containerColor,
-            tonalElevation = if (isActive || isDanger) 6.dp else 1.dp,
-            interactionSource = interactionSource,
-            modifier = Modifier
-                .size(buttonSize)
-                .scale(scale)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                    tint = contentColor,
-                    modifier = Modifier.size(iconSize)
-                )
+    Surface(
+        onClick = {
+            if (enabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                onClick()
             }
+        },
+        enabled = enabled,
+        shape = RoundedCornerShape(cornerRadius),
+        color = containerColor,
+        tonalElevation = if (isActive || isDanger) 6.dp else 2.dp,
+        interactionSource = interactionSource,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(buttonHeight)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 6.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(iconSize)
+            )
+            Spacer(modifier = Modifier.height(if (compact) 4.dp else 6.dp))
+            Text(
+                text = label,
+                style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
+                color = contentColor,
+                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
         }
-        Spacer(modifier = Modifier.height(if (compact) 4.dp else 6.dp))
-        Text(
-            text = label,
-            style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.bodySmall,
-            color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface.copy(
-                alpha = 0.38f
-            ),
-            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
-        )
     }
 }
 
@@ -169,29 +170,19 @@ fun AuxiliaryPillButton(
 ) {
     val view = LocalView.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.92f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        label = "pillScale"
-    )
 
     Surface(
         onClick = {
             view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             onClick()
         },
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         interactionSource = interactionSource,
-        modifier = modifier
-            .scale(scale)
-            .height(if (compact) 32.dp else 36.dp)
+        modifier = modifier.height(if (compact) 32.dp else 36.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = if (compact) 12.dp else 14.dp),
+            modifier = Modifier.padding(horizontal = if (compact) 14.dp else 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -199,7 +190,7 @@ fun AuxiliaryPillButton(
                 imageVector = icon,
                 contentDescription = label,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(if (compact) 14.dp else 16.dp)
+                modifier = Modifier.size(if (compact) 16.dp else 18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
@@ -237,10 +228,10 @@ fun EndCallButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.94f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        label = "endScale"
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) (if (compact) 24.dp else 28.dp) else (if (compact) 32.dp else 36.dp),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "endCallCorner"
     )
 
     Surface(
@@ -248,14 +239,14 @@ fun EndCallButton(
             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
             onEndCall()
         },
-        shape = CircleShape,
-        color = MaterialTheme.callColors.decline,
+        shape = RoundedCornerShape(cornerRadius),
+        color = MaterialTheme.callColors.declineContainer,
+        contentColor = MaterialTheme.callColors.onDeclineContainer,
         tonalElevation = 6.dp,
         interactionSource = interactionSource,
         modifier = modifier
-            .fillMaxWidth(if (compact) 0.65f else 0.72f)
-            .height(if (compact) 56.dp else 64.dp)
-            .scale(scale)
+            .fillMaxWidth()
+            .height(if (compact) 60.dp else 68.dp)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -264,8 +255,8 @@ fun EndCallButton(
             Icon(
                 imageVector = Icons.Default.CallEnd,
                 contentDescription = stringResource(R.string.action_end_call),
-                modifier = Modifier.size(if (compact) 26.dp else 30.dp),
-                tint = MaterialTheme.callColors.onDecline
+                modifier = Modifier.size(if (compact) 28.dp else 32.dp),
+                tint = MaterialTheme.callColors.onDeclineContainer
             )
         }
     }
@@ -349,100 +340,95 @@ fun ActiveCallControls(
 
         // Main 6-button Grid: Row 1 (Mute, Keypad, Audio)
         Row(
-        modifier = Modifier.fillMaxWidth(), 
-        horizontalArrangement = Arrangement.spacedBy(cellSpacing), 
-        verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-        
-        CallActionButton(
-        icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic, 
-        isActive = isMuted, 
-        label = stringResource(R.string.action_mute), 
-        compact = compact, 
-        modifier = Modifier.weight(1f), 
-        onClick = onToggleMute
-        )
-        CallActionButton(
-        icon = Icons.Default.Dialpad, 
-        isActive = showKeypad, 
-        label = stringResource(R.string.action_keypad), 
-        compact = compact, 
-        modifier = Modifier.weight(1f), 
-        onClick = onToggleKeypad
-        )
-        CallActionButton(
-        icon = callAudioRouteIcon(audioRoute), 
-        isActive = audioActive, 
-        label = callAudioRouteLabel(audioRoute), 
-        compact = compact, 
-        modifier = Modifier.weight(1f), 
-        onClick = onAudioClick
-        )
-    }
-        
-        Spacer(modifier = Modifier.height(cellSpacing))
-        
-        // Main 6-button Grid: Row 2 (Record, Hold, Add/Merge/Swap Call)
-        Row(
-        modifier = Modifier.fillMaxWidth(), 
-        horizontalArrangement = Arrangement.spacedBy(cellSpacing), 
-        verticalAlignment = Alignment.CenterVertically
-        ) {
-        
-        CallActionButton(
-        icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord, 
-        isActive = isRecording, 
-        isDanger = isRecording, 
-        enabled = recordingEnabled, 
-        label =
-            if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record), 
-        compact = compact, 
-        modifier = Modifier.weight(1f), 
-        onClick = onToggleRecording
-        )
-        CallActionButton(
-        icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause, 
-        isActive = isHolding, 
-        label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold), 
-        compact = compact, 
-        modifier = Modifier.weight(1f), 
-        onClick = onToggleHold
-        )
-        if (canMerge) {
-            
             CallActionButton(
-            icon = Icons.AutoMirrored.Outlined.CallMerge, 
-            isActive = false, 
-            label = stringResource(R.string.action_merge_calls), 
-            compact = compact, 
-            modifier = Modifier.weight(1f), 
-            onClick = onMergeCalls
+                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                isActive = isMuted,
+                label = stringResource(R.string.action_mute),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleMute
             )
-        } else if (canSwap) {
-            
             CallActionButton(
-            icon = Icons.Default.SwapCalls, 
-            isActive = false, 
-            label = stringResource(R.string.action_swap), 
-            compact = compact, 
-            modifier = Modifier.weight(1f), 
-            onClick = onSwapCalls
+                icon = Icons.Default.Dialpad,
+                isActive = showKeypad,
+                label = stringResource(R.string.action_keypad),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleKeypad
             )
-        } else {
-            
             CallActionButton(
-            icon = Icons.Default.Add, 
-            isActive = false, 
-            label = stringResource(R.string.action_add_call), 
-            compact = compact, 
-            modifier = Modifier.weight(1f), 
-            onClick = onAddCall
+                icon = callAudioRouteIcon(audioRoute),
+                isActive = audioActive,
+                label = callAudioRouteLabel(audioRoute),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onAudioClick
             )
         }
-    }
-        
+
+        Spacer(modifier = Modifier.height(cellSpacing))
+
+        // Main 6-button Grid: Row 2 (Record, Hold, Add/Merge/Swap Call)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CallActionButton(
+                icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
+                isActive = isRecording,
+                isDanger = isRecording,
+                enabled = recordingEnabled,
+                label =
+                    if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleRecording
+            )
+            CallActionButton(
+                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
+                isActive = isHolding,
+                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                compact = compact,
+                modifier = Modifier.weight(1f),
+                onClick = onToggleHold
+            )
+            if (canMerge) {
+                CallActionButton(
+                    icon = Icons.AutoMirrored.Outlined.CallMerge,
+                    isActive = false,
+                    label = stringResource(R.string.action_merge_calls),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onMergeCalls
+                )
+            } else if (canSwap) {
+                CallActionButton(
+                    icon = Icons.Default.SwapCalls,
+                    isActive = false,
+                    label = stringResource(R.string.action_swap),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onSwapCalls
+                )
+            } else {
+                CallActionButton(
+                    icon = Icons.Default.Add,
+                    isActive = false,
+                    label = stringResource(R.string.action_add_call),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onAddCall
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(if (compact) 16.dp else 22.dp))
-        
+
         // Bottom: Google Dialer style wide End Call pill
         EndCallButton(compact = compact, onEndCall = onEndCall)
     }

@@ -197,4 +197,19 @@
     <string name="conference_empty">Nessun partecipante alla conferenza</string>
     <string name="conference_split">Separa</string>
     <string name="conference_remove_participant">Rilascia</string>
+    <string name="contacts_trash_title">Cestino</string>
+    <string name="contacts_trash_empty_title">Il cestino è vuoto</string>
+    <string name="contacts_trash_empty_desc">I contatti eliminati con il cestino abilitato appariranno qui per 30 giorni prima di essere definitivamente rimossi.</string>
+    <string name="contacts_trash_header_hint">Gli elementi nel cestino vengono eliminati definitivamente dopo 30 giorni</string>
+    <string name="contacts_trash_restore_action">Ripristina</string>
+    <string name="contacts_trash_delete_action">Elimina permanentemente</string>
+    <string name="contacts_trash_empty_all">Svuota Cestino</string>
+    <string name="contacts_trash_empty_all_confirm_title">Svuotare Il Cestino?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Tutti i contatti %1$d nel Cestino verranno eliminati definitivamente. Questa azione non può essere annullata.</string>
+    <string name="contacts_trash_restored_toast">Ripristinato %1$s</string>
+    <string name="settings_contacts_trash_title">Cestino per contatti eliminati</string>
+    <string name="settings_contacts_trash_supporting">Mantieni i contatti eliminati nel cestino per 30 giorni prima di rimuoverli definitivamente</string>
+    <string name="settings_contacts_trash_view">Visualizza Cestino</string>
+    <string name="settings_contacts_trash_view_supporting">Visualizza e ripristina i contatti eliminati (%1$d nel cestino)</string>
+    <string name="shortcut_dial_contact">Chiama %1$s</string>
 </resources>

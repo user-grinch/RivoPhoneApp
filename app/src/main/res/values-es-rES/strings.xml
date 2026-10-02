@@ -679,4 +679,12 @@
     <string name="contacts_trash_header_hint">Los artículos en la papelera se eliminan permanentemente después de 30 días</string>
     <string name="contacts_trash_restore_action">Restaurar</string>
     <string name="contacts_trash_delete_action">Eliminar permanentemente</string>
+    <string name="contacts_trash_empty_all">Vaciar Papelera</string>
+    <string name="contacts_trash_empty_all_confirm_title">¿Vaciar papelera?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Todos los contactos %1$d en la papelera se eliminarán permanentemente. Esta acción no se puede deshacer.</string>
+    <string name="contacts_trash_restored_toast">Restaurado %1$s</string>
+    <string name="settings_contacts_trash_title">Papelera para contactos eliminados</string>
+    <string name="settings_contacts_trash_supporting">Mantener contactos borrados en la papelera durante 30 días antes de eliminarlos permanentemente</string>
+    <string name="settings_contacts_trash_view">Ver Papelera</string>
+    <string name="settings_contacts_trash_view_supporting">Ver y restaurar contactos eliminados (%1$d en la papelera)</string>
 </resources>

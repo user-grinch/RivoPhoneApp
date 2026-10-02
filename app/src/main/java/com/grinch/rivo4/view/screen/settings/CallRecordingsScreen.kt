@@ -219,11 +219,12 @@ fun CallRecordingsContent(
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
             }
-            prefs.saveCustomRecordingFolder(uri.toString())
+            val displayName = CallRecorder.getFolderDisplayName(context, uri)
+            prefs.saveCustomRecordingFolder(uri.toString(), displayName)
             refreshKey++
             android.widget.Toast.makeText(
                 context,
-                "Save folder updated",
+                context.getString(R.string.settings_recording_folder_changed, displayName),
                 android.widget.Toast.LENGTH_SHORT
             ).show()
         }
@@ -1014,7 +1015,7 @@ fun CallRecordingsContent(
                 if (activePlayingFile?.absolutePath == file.absolutePath) {
                     activePlayingFile = null
                 }
-                CallRecorder.delete(file)
+                CallRecorder.delete(context, file)
                 pendingDelete = null
                 refreshKey++
             },
@@ -1031,7 +1032,7 @@ fun CallRecordingsContent(
             onDismissRequest = { showDeleteAllConfirm = false },
             onConfirm = {
                 activePlayingFile = null
-                recordings.forEach { item -> CallRecorder.delete(item.file) }
+                recordings.forEach { item -> CallRecorder.delete(context, item.file) }
                 showDeleteAllConfirm = false
                 refreshKey++
             },

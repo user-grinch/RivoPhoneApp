@@ -187,4 +187,19 @@
     <string name="conference_empty">Немає учасників конференції</string>
     <string name="conference_split">Відокремити</string>
     <string name="conference_remove_participant">Крапля</string>
+    <string name="contacts_trash_title">Кошик</string>
+    <string name="contacts_trash_empty_title">Кошик порожній</string>
+    <string name="contacts_trash_empty_desc">Контакти з увімкненим Кошиком з\'являтимуться тут протягом 30 днів до остаточного видалення.</string>
+    <string name="contacts_trash_header_hint">Позиції в Кошику будуть остаточно видалені через 30 днів</string>
+    <string name="contacts_trash_restore_action">Відновити</string>
+    <string name="contacts_trash_delete_action">Видалити назавжди</string>
+    <string name="contacts_trash_empty_all">Очистити корзину</string>
+    <string name="contacts_trash_empty_all_confirm_title">Очистити кошик?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Всі контакти %1$d в Кошику буде вилучено. Цю дію не можна скасувати.</string>
+    <string name="contacts_trash_restored_toast">Відновлено %1$s</string>
+    <string name="settings_contacts_trash_title">Кошик для видалених контактів</string>
+    <string name="settings_contacts_trash_supporting">Зберігати видалені контакти в Кошику на 30 днів до їх остаточного видалення</string>
+    <string name="settings_contacts_trash_view">Дивитись кошик</string>
+    <string name="settings_contacts_trash_view_supporting">Переглянути і відновити видалені контакти (%1$d в кошику)</string>
+    <string name="shortcut_dial_contact">Подзвонити %1$s</string>
 </resources>

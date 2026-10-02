@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 
 import com.grinch.rivo4.view.theme.LocalCardRoundness
@@ -653,64 +654,77 @@ fun ContactDetailsScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
+                    Surface(
+                        onClick = { navigator.navigateUp() },
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 },
                 actions = {
                     if (fullContact != null) {
-                        IconButton(onClick = { showQrDialog = true }) {
-                            Icon(
-                                Icons.Outlined.QrCode2,
-                                contentDescription = stringResource(R.string.contact_qr_code)
-                            )
-                        }
-                        IconButton(onClick = shareContact) {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = shareContactLabel
-                            )
-                        }
-                        IconButton(onClick = {
-                            fullContact?.let { contact ->
-                                val newFavorite = !contact.isFavorite
-                                fullContact = contact.copy(isFavorite = newFavorite)
-                                contactsViewModel.toggleFavorite(contact)
-                            }
-                        }) {
-                            Icon(
-                                if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
-                                contentDescription = stringResource(R.string.content_desc_favorite),
-                                tint = if (isFavorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
-                            )
-                        }
-                        IconButton(onClick = {
-                            fullContact?.let {
-                                navigator.navigate(ContactEditScreenDestination(contactId = it.id))
-                            }
-                        }) {
-                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
-                        }
+                        RivoTopBarIconButton(
+                            onClick = { showQrDialog = true },
+                            icon = Icons.Outlined.QrCode2,
+                            contentDescription = stringResource(R.string.contact_qr_code)
+                        )
+                        RivoTopBarIconButton(
+                            onClick = shareContact,
+                            icon = Icons.Default.Share,
+                            contentDescription = shareContactLabel
+                        )
+                        RivoTopBarIconButton(
+                            onClick = {
+                                fullContact?.let { contact ->
+                                    val newFavorite = !contact.isFavorite
+                                    fullContact = contact.copy(isFavorite = newFavorite)
+                                    contactsViewModel.toggleFavorite(contact)
+                                }
+                            },
+                            icon = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+                            contentDescription = stringResource(R.string.content_desc_favorite),
+                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        )
+                        RivoTopBarIconButton(
+                            onClick = {
+                                fullContact?.let {
+                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                }
+                            },
+                            icon = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.action_edit)
+                        )
                     } else if (phoneNumber != null && phoneNumber != unknownLabel) {
-                        IconButton(onClick = shareContact) {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = shareContactLabel
-                            )
-                        }
-                        IconButton(onClick = {
-                            navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
-                        }) {
-                            Icon(
-                                Icons.Default.PersonAdd,
-                                contentDescription = stringResource(R.string.action_add_contact)
-                            )
-                        }
+                        RivoTopBarIconButton(
+                            onClick = shareContact,
+                            icon = Icons.Default.Share,
+                            contentDescription = shareContactLabel
+                        )
+                        RivoTopBarIconButton(
+                            onClick = {
+                                navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
+                            },
+                            icon = Icons.Default.PersonAdd,
+                            contentDescription = stringResource(R.string.action_add_contact)
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
         }
     ) { innerPadding ->

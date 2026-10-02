@@ -1,7 +1,9 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 
 import android.accounts.Account
 import android.provider.ContactsContract
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -135,7 +137,12 @@ fun ContactEditScreen(
                     middleName = existing.middleName ?: ""
                     familyName = existing.familyName ?: ""
                 } else {
-                    val split = splitDisplayName(existing.name)
+                    val rawName = if (existing.name.isNotBlank() && existing.name != "Unnamed" && existing.name != "Unknown") {
+                        existing.name
+                    } else {
+                        existing.emails.firstOrNull() ?: existing.emailEntries.firstOrNull()?.address ?: ""
+                    }
+                    val split = splitDisplayName(rawName)
                     givenName = split.givenName
                     middleName = split.middleName
                     familyName = split.familyName
@@ -230,26 +237,38 @@ fun ContactEditScreen(
                         if (contactId == null || contactId == "0") stringResource(R.string.contact_create_title) else stringResource(
                             R.string.contact_edit_title
                         ),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 6.dp)
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back)
-                        )
+                    Surface(
+                        onClick = { navigator.navigateUp() },
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 },
                 actions = {
                     if (contactId != null && contactId != "0") {
-                        IconButton(
+                        RivoTopBarIconButton(
                             onClick = { showDeleteDialog = true },
-                            modifier = Modifier.padding(end = 8.dp),
-                            shape = RoundedCornerShape(24.dp),
-                        ) {
-                            Icon(Icons.Default.Delete, null)
-                        }
+                            icon = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.action_delete),
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
                     Button(
                         onClick = {
@@ -262,12 +281,24 @@ fun ContactEditScreen(
                                     EmailEntry(address = it.address.trim(), type = it.type, label = it.label)
                                 }
                                 val savedAddresses = addresses.map { it.address.trim() }.filter { it.isNotBlank() }
+
+                                val fallbackName = nickname.trim().ifBlank {
+                                    savedPhones.firstOrNull()?.number ?: savedEmails.firstOrNull()?.address ?: "Unnamed"
+                                }
+                                val finalName = displayName.ifBlank { fallbackName }
+
+                                val finalGivenName = givenName.trim().ifBlank {
+                                    if (displayName.isBlank() && nickname.isBlank() && savedPhones.isEmpty() && savedEmails.isNotEmpty()) {
+                                        savedEmails.first().address
+                                    } else {
+                                        null
+                                    }
+                                }
+
                                 val contactToSave = Contact(
                                     id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
-                                    name = displayName.ifBlank {
-                                        nickname.trim().ifBlank { savedPhones.firstOrNull()?.number ?: "Unnamed" }
-                                    },
-                                    givenName = givenName.trim().ifBlank { null },
+                                    name = finalName,
+                                    givenName = finalGivenName,
                                     middleName = middleName.trim().ifBlank { null },
                                     familyName = familyName.trim().ifBlank { null },
                                     nickname = nickname.ifBlank { null },
@@ -282,13 +313,18 @@ fun ContactEditScreen(
                                     isPrivate = isPrivate,
                                     notes = notes.ifBlank { null }
                                 )
-                                contactsVM.saveContact(contactToSave)
-                                navigator.navigateUp()
+                                val success = contactsVM.saveContact(contactToSave)
+                                if (success) {
+                                    navigator.navigateUp()
+                                } else {
+                                    isSaving = false
+                                    Toast.makeText(context, "Failed to save contact", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
-                        enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() }) && !isSaving,
+                        enabled = (displayName.isNotBlank() || nickname.isNotBlank() || phones.any { it.number.isNotBlank() } || emails.any { it.address.isNotBlank() }) && !isSaving,
                         modifier = Modifier.padding(end = 8.dp),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(14.dp),
                         elevation = ButtonDefaults.buttonElevation(0.dp)
                     ) {
                         if (isSaving) {
@@ -486,10 +522,12 @@ fun ContactEditScreen(
                     icon = Icons.Outlined.Person
                 ) {
                     item {
+                        val firstEmail = emails.firstOrNull { it.address.isNotBlank() }?.address
                         RivoSegmentedTextField(
                             value = givenName,
                             onValueChange = { givenName = it },
                             label = stringResource(R.string.contact_edit_first_name),
+                            placeholder = if (displayName.isBlank()) firstEmail else null,
                             icon = Icons.Outlined.Person
                         )
                     }
@@ -814,6 +852,7 @@ fun RivoSegmentedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
+    placeholder: String? = null,
     icon: ImageVector? = null,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -827,6 +866,7 @@ fun RivoSegmentedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
+        placeholder = placeholder?.let { { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) } },
         modifier = modifier
             .fillMaxWidth()
             .bringIntoViewRequester(bringIntoViewRequester)

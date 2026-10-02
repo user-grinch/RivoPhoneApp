@@ -943,4 +943,13 @@
     <string name="contacts_trash_header_hint">Les éléments dans la corbeille sont définitivement supprimés après 30 jours</string>
     <string name="contacts_trash_restore_action">Restaurer</string>
     <string name="contacts_trash_delete_action">Supprimer définitivement</string>
+    <string name="contacts_trash_empty_all">Vider la corbeille</string>
+    <string name="contacts_trash_empty_all_confirm_title">Vider la corbeille?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Tous les contacts %1$d dans la corbeille seront définitivement supprimés. Cette action ne peut pas être annulée.</string>
+    <string name="contacts_trash_restored_toast">%1$s restauré</string>
+    <string name="settings_contacts_trash_title">Corbeille pour les contacts supprimés</string>
+    <string name="settings_contacts_trash_supporting">Garder les contacts supprimés dans la corbeille pendant 30 jours avant de les supprimer définitivement</string>
+    <string name="settings_contacts_trash_view">Voir la corbeille</string>
+    <string name="settings_contacts_trash_view_supporting">Voir et restaurer les contacts supprimés (%1$d dans la corbeille)</string>
+    <string name="shortcut_dial_contact">Appeler %1$s</string>
 </resources>

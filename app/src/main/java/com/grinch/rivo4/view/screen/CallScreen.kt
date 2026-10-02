@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import coil.compose.AsyncImage
 import com.grinch.rivo4.controller.CallRecorder
 import com.grinch.rivo4.controller.CallService
@@ -365,7 +366,7 @@ fun ExpressiveCallScreen(
                     val number = oc.details.handle?.schemeSpecificPart ?: ""
                     if (number.isNotEmpty()) {
                         val contact = try { contactsRepo.getContactByNumber(number) } catch (_: Exception) { null }
-                        if (contact != null) ocName = (contact as? com.grinch.rivo4.modal.data.Contact)?.name ?: number
+                        if (contact != null) ocName = (contact as? com.grinch.rivo4.modal.data.Contact)?.name ?: formatPhoneNumber(number)
                     }
                 }
 
@@ -479,9 +480,10 @@ fun ExpressiveCallScreen(
                     .basicMarquee()
             )
 
+            val formattedNumber = remember(phoneNumber) { formatPhoneNumber(phoneNumber) }
             if (phoneNumber.isNotEmpty() && phoneNumber != contactName) {
                 Text(
-                    text = phoneNumber,
+                    text = formattedNumber,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center,

@@ -1,9 +1,15 @@
 package com.grinch.rivo4.view.screen
 
 import android.view.HapticFeedbackConstants
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material3.Icon
@@ -21,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -167,14 +171,38 @@ private fun InCallKeypadKey(
     onAccessibleTap: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     val keyLabel = stringResource(R.string.callkp_digit_desc, key.toString())
+
+    val keySize = if (compact) 52.dp else 72.dp
+
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) {
+            if (compact) 14.dp else 18.dp
+        } else {
+            keySize / 2
+        },
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "InCallKeyCorner"
+    )
+
+    val containerColor by animateColorAsState(
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "InCallKeyBg"
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "InCallKeyFg"
+    )
 
     Box(
         modifier = Modifier
-            .size(if (compact) 52.dp else 72.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .indication(interactionSource, ripple())
+            .size(keySize)
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(containerColor)
             .pointerInput(key) {
                 detectTapGestures(
                     onPress = { position ->
@@ -211,7 +239,7 @@ private fun InCallKeypadKey(
             } else {
                 MaterialTheme.typography.headlineMediumEmphasized
             },
-            color = MaterialTheme.colorScheme.onSurface
+            color = contentColor
         )
     }
 }

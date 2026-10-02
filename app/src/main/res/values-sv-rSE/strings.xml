@@ -197,4 +197,19 @@
     <string name="conference_empty">Inga deltagare i konferensen</string>
     <string name="conference_split">Separat</string>
     <string name="conference_remove_participant">Släpp</string>
+    <string name="contacts_trash_title">Papperskorg</string>
+    <string name="contacts_trash_empty_title">Papperskorgen är tom</string>
+    <string name="contacts_trash_empty_desc">Kontakter som tagits bort med papperskorgen aktiverade visas här i 30 dagar innan de tas bort permanent.</string>
+    <string name="contacts_trash_header_hint">Objekt i papperskorgen raderas permanent efter 30 dagar</string>
+    <string name="contacts_trash_restore_action">Återställ</string>
+    <string name="contacts_trash_delete_action">Radera permanent</string>
+    <string name="contacts_trash_empty_all">Töm papperskorgen</string>
+    <string name="contacts_trash_empty_all_confirm_title">Töm papperskorgen?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Alla %1$d kontakter i papperskorgen tas bort permanent. Denna åtgärd kan inte ångras.</string>
+    <string name="contacts_trash_restored_toast">Återställd %1$s</string>
+    <string name="settings_contacts_trash_title">Papperskorgen för borttagna kontakter</string>
+    <string name="settings_contacts_trash_supporting">Håll raderade kontakter i papperskorgen i 30 dagar innan du tar bort dem permanent</string>
+    <string name="settings_contacts_trash_view">Visa papperskorgen</string>
+    <string name="settings_contacts_trash_view_supporting">Visa och återställ raderade kontakter (%1$d i papperskorgen)</string>
+    <string name="shortcut_dial_contact">Ring %1$s</string>
 </resources>

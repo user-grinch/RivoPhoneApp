@@ -39,6 +39,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.*
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -370,8 +371,23 @@ fun DialPadScreen(
                     navigator = navigator,
                     actions = {
                         if (number.isNotEmpty()) {
-                            IconButton(onClick = { showSocialDialog = true }) {
-                                Icon(Icons.AutoMirrored.Filled.Chat, stringResource(R.string.label_social_apps))
+                            Surface(
+                                onClick = { showSocialDialog = true },
+                                shape = RoundedCornerShape(14.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                contentColor = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.padding(end = 12.dp)
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.size(40.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Chat,
+                                        contentDescription = stringResource(R.string.label_social_apps),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -766,31 +782,21 @@ fun DialerActionExpressive(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.92f else 1.0f,
+    val actionCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 16.dp else (if (isLarge) 32.dp else 24.dp),
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "ButtonScale"
-    )
-
-    val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) (if (isLarge) 24.dp else 20.dp) else (if (isLarge) 34.dp else 30.dp),
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "ButtonShape"
+        label = "ActionCorner"
     )
 
     Surface(
         modifier = modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick,
                 interactionSource = interactionSource,
                 indication = null
             ),
-        shape = RoundedCornerShape(cornerRadius),
+        shape = RoundedCornerShape(actionCornerRadius),
         color = containerColor,
         contentColor = contentColor,
         tonalElevation = if (isLarge) 6.dp else 0.dp
@@ -817,30 +823,20 @@ fun DialerSimActionExpressive(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.92f else 1.0f,
+    val simCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 14.dp else 24.dp,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "SimButtonScale"
-    )
-
-    val cornerRadius by animateDpAsState(
-        targetValue = if (isPressed) 20.dp else 28.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "SimButtonShape"
+        label = "SimCorner"
     )
 
     Surface(
         modifier = modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
             .combinedClickable(
                 onClick = onClick,
                 interactionSource = interactionSource,
                 indication = null
             ),
-        shape = RoundedCornerShape(cornerRadius),
+        shape = RoundedCornerShape(simCornerRadius),
         color = containerColor,
         contentColor = contentColor,
         tonalElevation = 4.dp
@@ -894,45 +890,39 @@ fun DialPadKey(
     val prefs = koinInject<PreferenceManager>()
     val haptic = LocalHapticFeedback.current
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.93f else 1f,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "KeyScale"
-    )
-
-    val morphProgress by animateFloatAsState(
-        targetValue = if (isPressed) 1f else 0f,
-        animationSpec = RivoMotion.shapeMorph(),
-        label = "KeyMorphProgress"
-    )
-
     val modernCornerRadius by animateDpAsState(
         targetValue = if (isPressed) 16.dp else 28.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "ModernKeyCorner"
     )
 
     val outlinedCornerRadius by animateDpAsState(
         targetValue = if (isPressed) 14.dp else 22.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "OutlinedKeyCorner"
+    )
+
+    val circleCornerRadius by animateDpAsState(
+        targetValue = if (isPressed) 16.dp else (dimensions.circleKeySize / 2),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "CircleKeyCorner"
     )
 
     val keyShape: androidx.compose.ui.graphics.Shape = when (dialpadStyle) {
         PreferenceManager.DIALPAD_STYLE_CIRCLE -> {
-            rememberRivoMorphShape(RivoMaterialShapes.Circle, RivoMaterialShapes.Cookie9Sided) { morphProgress }
+            RoundedCornerShape(circleCornerRadius)
         }
         PreferenceManager.DIALPAD_STYLE_ORGANIC -> {
-            rememberRivoMorphShape(RivoMaterialShapes.Cookie9Sided, RivoMaterialShapes.Circle) { morphProgress }
+            rememberRivoMorphShape(RivoMaterialShapes.Cookie9Sided, RivoMaterialShapes.Circle) { if (isPressed) 0.85f else 0.2f }
         }
         PreferenceManager.DIALPAD_STYLE_OUTLINED -> {
             RoundedCornerShape(outlinedCornerRadius)
         }
         PreferenceManager.DIALPAD_STYLE_UNIFIED -> {
-            RoundedCornerShape(if (isPressed) 10.dp else 14.dp)
+            RoundedCornerShape(if (isPressed) 8.dp else 14.dp)
         }
         PreferenceManager.DIALPAD_STYLE_MINIMAL -> {
-            RoundedCornerShape(if (isPressed) 18.dp else 24.dp)
+            RoundedCornerShape(if (isPressed) 16.dp else 24.dp)
         }
         else -> {
             RoundedCornerShape(modernCornerRadius)
@@ -997,7 +987,6 @@ fun DialPadKey(
 
     Surface(
         modifier = keyModifier
-            .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,

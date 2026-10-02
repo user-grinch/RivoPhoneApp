@@ -191,4 +191,19 @@
     <string name="conference_empty">会議に参加者がいません</string>
     <string name="conference_split">分離する</string>
     <string name="conference_remove_participant">ドロップ</string>
+    <string name="contacts_trash_title">ごみ箱に入れる</string>
+    <string name="contacts_trash_empty_title">ゴミ箱は空です</string>
+    <string name="contacts_trash_empty_desc">ゴミ箱を有効にして削除された連絡先は30日間ここに表示されます。</string>
+    <string name="contacts_trash_header_hint">ゴミ箱のアイテムは30日後に完全に削除されます</string>
+    <string name="contacts_trash_restore_action">復元</string>
+    <string name="contacts_trash_delete_action">完全に削除</string>
+    <string name="contacts_trash_empty_all">ごみ箱を空にする</string>
+    <string name="contacts_trash_empty_all_confirm_title">ごみ箱を空にしますか？</string>
+    <string name="contacts_trash_empty_all_confirm_msg">ゴミ箱のすべての %1$d 連絡先は完全に削除されます。この操作は元に戻せません。</string>
+    <string name="contacts_trash_restored_toast">%1$s を復元しました</string>
+    <string name="settings_contacts_trash_title">削除された連絡先のゴミ箱に移動する</string>
+    <string name="settings_contacts_trash_supporting">削除された連絡先を30日間ゴミ箱に保管してください。</string>
+    <string name="settings_contacts_trash_view">ゴミ箱を表示</string>
+    <string name="settings_contacts_trash_view_supporting">削除された連絡先の表示と復元 ( ゴミ箱で%1$d)</string>
+    <string name="shortcut_dial_contact">%1$s に発信</string>
 </resources>

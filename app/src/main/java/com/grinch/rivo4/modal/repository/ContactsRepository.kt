@@ -109,18 +109,63 @@ class ContactsRepository(
         } catch (e: Exception) {
         }
 
-        val projection = arrayOf(
+        try {
+            contentResolver.query(
+                ContactsContract.Contacts.CONTENT_URI,
+                arrayOf(
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                    ContactsContract.Contacts.PHOTO_URI,
+                    ContactsContract.Contacts.STARRED
+                ),
+                null,
+                null,
+                "${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} ASC"
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.Contacts._ID)
+                val nameIdx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+                val photoIdx = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_URI)
+                val starredIdx = cursor.getColumnIndex(ContactsContract.Contacts.STARRED)
+
+                while (cursor.moveToNext()) {
+                    val id = cursor.getString(idIdx) ?: continue
+                    if (contactsMap.containsKey(id)) continue
+                    val rawName = cursor.getString(nameIdx)
+                    val linked = rawAccountsMap[id] ?: emptyList()
+                    val (primaryName, primaryType) = pickPrimaryAccount(linked, availableAccountsList)
+                    contactsMap[id] = Contact(
+                        id = id,
+                        name = formatName(rawName?.ifBlank { null } ?: unknownLabel),
+                        photoUri = cursor.getString(photoIdx),
+                        isFavorite = cursor.getInt(starredIdx) == 1,
+                        phoneNumbers = mutableListOf(),
+                        phones = emptyList(),
+                        emails = emptyList(),
+                        emailEntries = emptyList(),
+                        accountName = primaryName,
+                        accountType = primaryType,
+                        linkedAccounts = linked
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ContactsRepo", "Error querying Contacts.CONTENT_URI", e)
+        }
+
+        val phoneProjection = arrayOf(
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY,
             ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
+            ContactsContract.CommonDataKinds.Phone.TYPE,
+            ContactsContract.CommonDataKinds.Phone.LABEL,
             ContactsContract.CommonDataKinds.Phone.STARRED
         )
 
         try {
             contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection,
+                phoneProjection,
                 null,
                 null,
                 "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY} ASC"
@@ -129,18 +174,27 @@ class ContactsRepository(
                 val nameIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY)
                 val photoIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
                 val numberIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                val typeIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)
+                val labelIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL)
                 val starredIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.STARRED)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idIdx) ?: continue
                     val number = cursor.getString(numberIdx) ?: continue
+                    val type = if (typeIdx != -1) cursor.getInt(typeIdx) else 2
+                    val label = if (labelIdx != -1) cursor.getString(labelIdx) else null
 
                     val existingContact = contactsMap[id]
                     if (existingContact != null) {
                         val numbers = existingContact.phoneNumbers.toMutableList()
-                        if (numbers.none { areNumbersEqual(it, number) } && numbers.size < 5) {
+                        val phones = existingContact.phones.toMutableList()
+                        if (numbers.none { areNumbersEqual(it, number) }) {
                             numbers.add(number)
-                            contactsMap[id] = existingContact.copy(phoneNumbers = numbers)
+                            phones.add(PhoneNumberEntry(number = number, type = type, label = label))
+                            contactsMap[id] = existingContact.copy(
+                                phoneNumbers = numbers,
+                                phones = phones
+                            )
                         }
                     } else {
                         val linked = rawAccountsMap[id] ?: emptyList()
@@ -151,6 +205,7 @@ class ContactsRepository(
                             photoUri = cursor.getString(photoIdx),
                             isFavorite = cursor.getInt(starredIdx) == 1,
                             phoneNumbers = mutableListOf(number),
+                            phones = listOf(PhoneNumberEntry(number = number, type = type, label = label)),
                             accountName = primaryName,
                             accountType = primaryType,
                             linkedAccounts = linked
@@ -159,8 +214,61 @@ class ContactsRepository(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("ContactsRepo", "Error querying Phone.CONTENT_URI", e)
         }
+
+        val emailProjection = arrayOf(
+            ContactsContract.CommonDataKinds.Email.CONTACT_ID,
+            ContactsContract.CommonDataKinds.Email.ADDRESS,
+            ContactsContract.CommonDataKinds.Email.TYPE,
+            ContactsContract.CommonDataKinds.Email.LABEL
+        )
+
+        try {
+            contentResolver.query(
+                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                emailProjection,
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                val idIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)
+                val addrIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)
+                val typeIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE)
+                val labelIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.LABEL)
+
+                while (cursor.moveToNext()) {
+                    val id = cursor.getString(idIdx) ?: continue
+                    val address = cursor.getString(addrIdx) ?: continue
+                    val type = if (typeIdx != -1) cursor.getInt(typeIdx) else 1
+                    val label = if (labelIdx != -1) cursor.getString(labelIdx) else null
+
+                    val existingContact = contactsMap[id]
+                    if (existingContact != null) {
+                        val emails = existingContact.emails.toMutableList()
+                        val emailEntries = existingContact.emailEntries.toMutableList()
+                        if (!emails.contains(address)) {
+                            emails.add(address)
+                            emailEntries.add(EmailEntry(address = address, type = type, label = label))
+                            val currentName = existingContact.name
+                            val updatedName = if (currentName.isBlank() || currentName == unknownLabel || currentName == "Unnamed") {
+                                address
+                            } else {
+                                currentName
+                            }
+                            contactsMap[id] = existingContact.copy(
+                                name = updatedName,
+                                emails = emails,
+                                emailEntries = emailEntries
+                            )
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ContactsRepo", "Error querying Email.CONTENT_URI", e)
+        }
+
         val list = contactsMap.values.toList()
         
         val nicknameMap = mutableMapOf<String, String>()
@@ -224,7 +332,27 @@ class ContactsRepository(
         val finalList = list.map { contact ->
             val nameData = structuredNameMap[contact.id]
             val nickname = nicknameMap[contact.id]
+
+            val constructedName = listOfNotNull(
+                nameData?.prefix?.trim()?.ifBlank { null },
+                nameData?.givenName?.trim()?.ifBlank { null },
+                nameData?.middleName?.trim()?.ifBlank { null },
+                nameData?.familyName?.trim()?.ifBlank { null },
+                nameData?.suffix?.trim()?.ifBlank { null }
+            ).joinToString(" ").ifBlank { null }
+
+            val resolvedName = when {
+                constructedName != null -> constructedName
+                contact.name.isNotBlank() && contact.name != unknownLabel && contact.name != "Unnamed" -> contact.name
+                nickname?.isNotBlank() == true -> nickname
+                contact.phoneNumbers.isNotEmpty() -> contact.phoneNumbers.first()
+                contact.emails.isNotEmpty() -> contact.emails.first()
+                contact.emailEntries.isNotEmpty() -> contact.emailEntries.first().address
+                else -> contact.name
+            }
+
             contact.copy(
+                name = resolvedName,
                 prefix = nameData?.prefix ?: contact.prefix,
                 givenName = nameData?.givenName ?: contact.givenName,
                 middleName = nameData?.middleName ?: contact.middleName,
@@ -417,7 +545,15 @@ class ContactsRepository(
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
-        return contact
+        val finalContact = contact?.let { c ->
+            val resolvedName = if (c.name.isBlank() || c.name == unknownLabel || c.name == "Unnamed") {
+                c.emails.firstOrNull() ?: c.phoneNumbers.firstOrNull() ?: c.name
+            } else {
+                c.name
+            }
+            c.copy(name = resolvedName)
+        }
+        return finalContact
     }
 
     override fun toggleFavorite(contactId: String, isFavorite: Boolean) {
@@ -455,7 +591,7 @@ class ContactsRepository(
 
             if (bitmap == null) return null
 
-            val maxSize = 720
+            val maxSize = 480
             val width = bitmap.width
             val height = bitmap.height
 
@@ -472,7 +608,7 @@ class ContactsRepository(
             }
 
             val outputStream = java.io.ByteArrayOutputStream()
-            finalBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, outputStream)
+            finalBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, outputStream)
             val bytes = outputStream.toByteArray()
 
             if (finalBitmap != bitmap) {
@@ -481,8 +617,8 @@ class ContactsRepository(
             bitmap.recycle()
 
             bytes
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error decoding photo bytes", t)
             null
         }
     }
@@ -492,7 +628,7 @@ class ContactsRepository(
         val resolvedId = if (contactId.toLongOrNull() != null) {
             contactId
         } else {
-            resolveLookupKey(contactId) ?: return emptyList()
+            resolveLookupKey(contactId) ?: contactId
         }
         try {
             contentResolver.query(
@@ -514,8 +650,43 @@ class ContactsRepository(
                 val targetList = if (writable.isNotEmpty()) writable else allRaw
                 ids.addAll(targetList.map { it.first })
             }
+
+            // Fallback 1: Query RawContacts directly by _ID if resolvedId is a raw contact ID
+            if (ids.isEmpty() && resolvedId.toLongOrNull() != null) {
+                contentResolver.query(
+                    ContactsContract.RawContacts.CONTENT_URI,
+                    arrayOf(ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_TYPE),
+                    "${ContactsContract.RawContacts._ID} = ? AND ${ContactsContract.RawContacts.DELETED} = 0",
+                    arrayOf(resolvedId),
+                    null
+                )?.use { cursor ->
+                    val idIdx = cursor.getColumnIndex(ContactsContract.RawContacts._ID)
+                    if (cursor.moveToNext()) {
+                        cursor.getString(idIdx)?.let { ids.add(it) }
+                    }
+                }
+            }
+
+            // Fallback 2: Look up RAW_CONTACT_ID via ContactsContract.Data
+            if (ids.isEmpty()) {
+                contentResolver.query(
+                    ContactsContract.Data.CONTENT_URI,
+                    arrayOf(ContactsContract.Data.RAW_CONTACT_ID),
+                    "${ContactsContract.Data.CONTACT_ID} = ?",
+                    arrayOf(resolvedId),
+                    null
+                )?.use { cursor ->
+                    val rawCol = cursor.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID)
+                    while (cursor.moveToNext()) {
+                        val rawId = cursor.getString(rawCol)
+                        if (!rawId.isNullOrBlank() && !ids.contains(rawId)) {
+                            ids.add(rawId)
+                        }
+                    }
+                }
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("ContactsRepo", "Error querying raw contact ids for contactId: $contactId", e)
         }
         return ids
     }
@@ -556,31 +727,64 @@ class ContactsRepository(
         return getAccountInfoWithLinked(contactId).first
     }
 
-    override fun saveContact(contact: Contact) {
+    override fun saveContact(contact: Contact): Boolean {
         if (contact.isPrivate) {
-            val entity = PrivateContactEntity.fromContact(contact)
-            if (entity.localId == 0L) {
-                privateContactDao.insert(entity)
-            } else {
-                privateContactDao.update(entity)
+            return try {
+                val entity = PrivateContactEntity.fromContact(contact)
+                if (entity.localId == 0L) {
+                    privateContactDao.insert(entity)
+                } else {
+                    privateContactDao.update(entity)
+                }
+                true
+            } catch (e: Exception) {
+                android.util.Log.e("ContactsRepo", "Error saving private contact", e)
+                false
             }
-            return
         }
+        val isSim = contact.accountType?.contains("sim", ignoreCase = true) == true
         val ops = ArrayList<ContentProviderOperation>()
-        val photoBytes = contact.photoUri?.let { getPhotoBytes(it) }
+        val photoBytes = if (isSim) null else contact.photoUri?.let { getPhotoBytes(it) }
 
         val effectivePhones = if (contact.phones.isNotEmpty()) {
             contact.phones
         } else {
             contact.phoneNumbers.map { PhoneNumberEntry(it) }
         }
-        val effectiveEmails = if (contact.emailEntries.isNotEmpty()) {
-            contact.emailEntries
+        val effectiveEmails = if (isSim) emptyList() else {
+            if (contact.emailEntries.isNotEmpty()) {
+                contact.emailEntries
+            } else {
+                contact.emails.map { EmailEntry(it) }
+            }
+        }
+        val effectiveAddresses = if (isSim) emptyList() else contact.addresses
+
+        val effectiveName = if (contact.name.isNotBlank() && contact.name != "Unnamed" && contact.name != unknownLabel) {
+            contact.name
         } else {
-            contact.emails.map { EmailEntry(it) }
+            effectiveEmails.firstOrNull()?.address ?: effectivePhones.firstOrNull()?.number ?: contact.name
+        }
+        val effectiveGivenName = if (!contact.givenName.isNullOrBlank()) {
+            contact.givenName
+        } else if (contact.familyName.isNullOrBlank() && contact.middleName.isNullOrBlank()) {
+            effectiveName
+        } else {
+            null
         }
 
-        if (contact.id.isEmpty() || contact.id == "0") {
+        val resolvedContactId = if (contact.id.isEmpty() || contact.id == "0") {
+            null
+        } else if (contact.id.toLongOrNull() != null) {
+            contact.id
+        } else {
+            resolveLookupKey(contact.id) ?: contact.id
+        }
+
+        val existingRawContactIds = resolvedContactId?.let { getRawContactIds(it) } ?: emptyList()
+
+        if (resolvedContactId == null || existingRawContactIds.isEmpty()) {
+            // New contact or fallback creation of raw contact
             val rawContactIndex = ops.size
             ops.add(
                 ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -596,9 +800,9 @@ class ContactsRepository(
                         ContactsContract.Data.MIMETYPE,
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
                     )
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, effectiveName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, effectiveGivenName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
@@ -615,7 +819,7 @@ class ContactsRepository(
                 )
             }
 
-            if (contact.nickname != null) {
+            if (!isSim && contact.nickname != null) {
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -626,7 +830,7 @@ class ContactsRepository(
                 )
             }
 
-            if (contact.notes != null) {
+            if (!isSim && contact.notes != null) {
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -666,7 +870,7 @@ class ContactsRepository(
                 )
             }
 
-            contact.addresses.forEach { address ->
+            effectiveAddresses.forEach { address ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -683,32 +887,8 @@ class ContactsRepository(
                 )
             }
         } else {
-            val resolvedId = if (contact.id.toLongOrNull() != null) {
-                contact.id
-            } else {
-                resolveLookupKey(contact.id) ?: contact.id
-            }
-            val rawContactIds = getRawContactIds(resolvedId)
-            if (rawContactIds.isEmpty()) return
-
-            val primaryRawContactId = rawContactIds.first()
-            val secondaryRawContactIds = rawContactIds.drop(1)
-
-            secondaryRawContactIds.forEach { secRawId ->
-                ops.add(
-                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(
-                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE} IN (?, ?, ?)",
-                            arrayOf(
-                                secRawId,
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
-                                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
-                            )
-                        )
-                        .build()
-                )
-            }
+            // Update existing contact targeting primary raw contact
+            val primaryRawContactId = existingRawContactIds.first()
 
             ops.add(
                 ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
@@ -725,9 +905,9 @@ class ContactsRepository(
                         ContactsContract.Data.MIMETYPE,
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
                     )
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contact.name)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, effectiveName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contact.givenName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, effectiveGivenName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
@@ -777,7 +957,7 @@ class ContactsRepository(
                         .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, contact.nickname)
                         .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, ContactsContract.CommonDataKinds.Nickname.TYPE_DEFAULT)
                         .build()
-            )
+                )
             }
 
             ops.add(
@@ -852,7 +1032,7 @@ class ContactsRepository(
                     )
                     .build()
             )
-            contact.addresses.forEach { address ->
+            effectiveAddresses.forEach { address ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
@@ -869,26 +1049,31 @@ class ContactsRepository(
                 )
             }
         }
-        try {
+
+        val success = try {
             contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+            true
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("ContactsRepo", "Error applying batch operations for contact save", e)
+            false
         }
 
-        val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
-        if (currentFavNum != null) {
-            val stillExists = effectivePhones.any { areNumbersEqual(it.number, currentFavNum) }
-            if (!stillExists) {
-                val newPrimary = effectivePhones.firstOrNull()?.number
-                if (newPrimary != null) {
-                    preferenceManager.setFavoriteNumber(contact.id, newPrimary)
-                } else {
-                    preferenceManager.setFavoriteNumber(contact.id, null)
+        if (success) {
+            val currentFavNum = preferenceManager.getFavoriteNumber(contact.id)
+            if (currentFavNum != null) {
+                val stillExists = effectivePhones.any { areNumbersEqual(it.number, currentFavNum) }
+                if (!stillExists) {
+                    val newPrimary = effectivePhones.firstOrNull()?.number
+                    if (newPrimary != null) {
+                        preferenceManager.setFavoriteNumber(contact.id, newPrimary)
+                    } else {
+                        preferenceManager.setFavoriteNumber(contact.id, null)
+                    }
                 }
             }
         }
+        return success
     }
-
     private fun clearCallBackground(contactId: String) {
         val numbers: List<String> = try {
             getContactById(contactId)?.phoneNumbers ?: emptyList()
@@ -913,8 +1098,8 @@ class ContactsRepository(
         try {
             val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, resolvedId)
             contentResolver.delete(uri, null, null)
-        } catch (e: Exception) {
-            android.util.Log.e("ContactsRepo", "Error deleting contact internal ", e)
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error deleting contact internal: $contactId", t)
         }
     }
 
@@ -923,21 +1108,26 @@ class ContactsRepository(
     }
 
     override fun deleteContacts(contactIds: List<String>) {
-        val ops = ArrayList<ContentProviderOperation>()
-        contactIds.forEach { id ->
-            clearCallBackground(id)
-            if (id.startsWith("p")) {
-                val lid = id.substring(1).toLongOrNull()
-                if (lid != null) privateContactDao.deleteById(lid)
-                return@forEach
+        contactIds.chunked(100).forEach { chunk ->
+            val ops = ArrayList<ContentProviderOperation>()
+            chunk.forEach { id ->
+                clearCallBackground(id)
+                if (id.startsWith("p")) {
+                    val lid = id.substring(1).toLongOrNull()
+                    if (lid != null) privateContactDao.deleteById(lid)
+                    return@forEach
+                }
+                val resolvedId = if (id.toLongOrNull() != null) id else (resolveLookupKey(id) ?: id)
+                val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, resolvedId)
+                ops.add(ContentProviderOperation.newDelete(uri).build())
             }
-            val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, id)
-            ops.add(ContentProviderOperation.newDelete(uri).build())
-        }
-        try {
-            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            if (ops.isNotEmpty()) {
+                try {
+                    contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
+                } catch (t: Throwable) {
+                    android.util.Log.e("ContactsRepo", "Error batch deleting contacts", t)
+                }
+            }
         }
     }
 
@@ -952,17 +1142,26 @@ class ContactsRepository(
                     }
                 } else {
                     val contact = getContactById(id) ?: return@forEach
-                    if (contact.isPrivate) {
-                        saveContact(contact.copy(id = "", accountName = accountName, accountType = accountType, isPrivate = false))
-                        val lid = id.substring(1).toLongOrNull()
-                        if (lid != null) privateContactDao.deleteById(lid)
+                    val targetContact = contact.copy(
+                        id = "",
+                        accountName = accountName,
+                        accountType = accountType,
+                        isPrivate = false
+                    )
+                    val saved = saveContact(targetContact)
+                    if (saved) {
+                        if (contact.isPrivate) {
+                            val lid = id.substring(1).toLongOrNull()
+                            if (lid != null) privateContactDao.deleteById(lid)
+                        } else {
+                            deleteContactInternal(id, clearBackground = false)
+                        }
                     } else {
-                        saveContact(contact.copy(id = "", accountName = accountName, accountType = accountType, isPrivate = false))
-                        deleteContactInternal(id, clearBackground = false)
+                        android.util.Log.e("ContactsRepo", "Failed to save moved contact: ${contact.name} (id: $id) to $accountName/$accountType")
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (t: Throwable) {
+                android.util.Log.e("ContactsRepo", "Error moving contact $id", t)
             }
         }
     }
@@ -1308,29 +1507,38 @@ class ContactsRepository(
     }
 
     override fun makeContactPrivate(contactId: String) {
-        val contact = getContactById(contactId) ?: return
-        if (contact.isPrivate) return
+        try {
+            val contact = getContactById(contactId) ?: return
+            if (contact.isPrivate) return
 
-        val privateContact = contact.copy(isPrivate = true)
-        val localId = privateContactDao.insert(PrivateContactEntity.fromContact(privateContact))
+            val privateContact = contact.copy(isPrivate = true)
+            val localId = privateContactDao.insert(PrivateContactEntity.fromContact(privateContact))
 
-        deleteContactInternal(contactId, false)
-
-        CallBackgroundStore.carryBlocking(context, contactId, "p$localId", contact.phoneNumbers)
+            if (localId > 0) {
+                deleteContactInternal(contactId, false)
+                CallBackgroundStore.carryBlocking(context, contactId, "p$localId", contact.phoneNumbers)
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error making contact private: $contactId", t)
+        }
     }
 
     override fun makeContactPublic(contactId: String) {
-        val contact = getContactById(contactId) ?: return
-        if (!contact.isPrivate) return
+        try {
+            val contact = getContactById(contactId) ?: return
+            if (!contact.isPrivate) return
 
-        saveContact(contact.copy(id = "", isPrivate = false))
-
-        deleteContactInternal(contactId, false)
-
-        val newId = contact.phoneNumbers.firstNotNullOfOrNull { number ->
-            getContactByNumber(number)?.id?.takeIf { it.isNotBlank() && !it.startsWith("p") }
+            val saved = saveContact(contact.copy(id = "", isPrivate = false))
+            if (saved) {
+                deleteContactInternal(contactId, false)
+                val newId = contact.phoneNumbers.firstNotNullOfOrNull { number ->
+                    getContactByNumber(number)?.id?.takeIf { it.isNotBlank() && !it.startsWith("p") }
+                }
+                CallBackgroundStore.carryBlocking(context, contactId, newId, contact.phoneNumbers)
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("ContactsRepo", "Error making contact public: $contactId", t)
         }
-        CallBackgroundStore.carryBlocking(context, contactId, newId, contact.phoneNumbers)
     }
 
     override fun exportPrivateContacts(uri: Uri) {
