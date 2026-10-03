@@ -211,4 +211,12 @@
     <string name="settings_contacts_trash_view">Näytä Roskakori</string>
     <string name="settings_contacts_trash_view_supporting">Näytä ja palauta poistetut yhteystiedot (%1$d roskakorissa)</string>
     <string name="shortcut_dial_contact">Soita %1$s</string>
+    <string name="settings_search_placeholder">Etsi asetuksia…</string>
+    <string name="settings_search_no_results">Vastaavia asetuksia ei löytynyt \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Näytä toimitustavan nimet viimeaikaisissa</string>
+    <string name="settings_show_carrier_in_recents_supporting">Näytä operaattorin ja SIM-kortin nimet puheluhistoriassa ja viimeisimmissä versioissa</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Näytä maakoodi</string>
+    <string name="settings_show_country_code_supporting">Näytä maakoodin etuliite puhelinnumeroissa koko sovelluksen ajan ja puhelun näyttö</string>
 </resources>

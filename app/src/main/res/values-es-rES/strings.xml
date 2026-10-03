@@ -687,4 +687,12 @@
     <string name="settings_contacts_trash_supporting">Mantener contactos borrados en la papelera durante 30 días antes de eliminarlos permanentemente</string>
     <string name="settings_contacts_trash_view">Ver Papelera</string>
     <string name="settings_contacts_trash_view_supporting">Ver y restaurar contactos eliminados (%1$d en la papelera)</string>
+    <string name="settings_search_placeholder">Ajustes de búsqueda…</string>
+    <string name="settings_search_no_results">No se encontraron ajustes que coincidan con \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Mostrar nombres de transportistas en recientes</string>
+    <string name="settings_show_carrier_in_recents_supporting">Mostrar nombres de operador y tarjeta SIM en el historial de llamadas y recientes</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Mostrar código de país</string>
+    <string name="settings_show_country_code_supporting">Mostrar prefijo de código de país en los números de teléfono de toda la aplicación y llamar a la pantalla</string>
 </resources>

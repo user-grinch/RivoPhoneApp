@@ -213,4 +213,12 @@
     <string name="settings_contacts_trash_view">Vezi gunoi</string>
     <string name="settings_contacts_trash_view_supporting">Vizualizați și restaurați contactele șterse (%1$d în gunoi)</string>
     <string name="shortcut_dial_contact">Apel %1$s</string>
+    <string name="settings_search_placeholder">Setări căutare…</string>
+    <string name="settings_search_no_results">Nicio setare găsită pentru \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Arată numele curierilor în recente</string>
+    <string name="settings_show_carrier_in_recents_supporting">Afișează numele operatorului și numele cardului SIM în istoricul apelurilor și în aplicațiile recente</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Arată codul țării</string>
+    <string name="settings_show_country_code_supporting">Afișează prefixul codului de țară în numărul de telefon în toată aplicația și în ecranul de apel</string>
 </resources>

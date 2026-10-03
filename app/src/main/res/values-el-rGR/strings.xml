@@ -206,4 +206,11 @@
     <string name="settings_contacts_trash_view">Προβολή Κάδου Απορριμμάτων</string>
     <string name="settings_contacts_trash_view_supporting">Προβολή και επαναφορά διαγραμμένων επαφών (%1$d στον κάδο απορριμμάτων)</string>
     <string name="shortcut_dial_contact">Κλήση %1$s</string>
+    <string name="settings_search_no_results">Δεν βρέθηκαν ρυθμίσεις που να ταιριάζουν στο \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Εμφάνιση ονομάτων παρόχων στα πρόσφατα</string>
+    <string name="settings_show_carrier_in_recents_supporting">Εμφάνιση ονομάτων παρόχου και κάρτας SIM στο ιστορικό κλήσεων και προσφάτων</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Εμφάνιση κωδικού χώρας</string>
+    <string name="settings_show_country_code_supporting">Εμφάνιση προθέματος κωδικού χώρας σε αριθμούς τηλεφώνου σε όλη την εφαρμογή και την οθόνη κλήσεων</string>
 </resources>

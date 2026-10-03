@@ -206,4 +206,11 @@
     <string name="settings_contacts_trash_view">ゴミ箱を表示</string>
     <string name="settings_contacts_trash_view_supporting">削除された連絡先の表示と復元 ( ゴミ箱で%1$d)</string>
     <string name="shortcut_dial_contact">%1$s に発信</string>
+    <string name="settings_search_no_results">\"%1$s\" に一致する設定が見つかりません</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">履歴にキャリア名を表示する</string>
+    <string name="settings_show_carrier_in_recents_supporting">携帯通信会社とSIMカード名を通話履歴とアプリ履歴に表示する</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">国コードを表示</string>
+    <string name="settings_show_country_code_supporting">アプリと通話画面を通じて国コードのプレフィックスを電話番号に表示する</string>
 </resources>

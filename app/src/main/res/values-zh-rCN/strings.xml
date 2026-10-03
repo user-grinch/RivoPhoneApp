@@ -361,4 +361,12 @@
     <string name="settings_contacts_trash_view">查看回收站</string>
     <string name="settings_contacts_trash_view_supporting">查看并还原已删除的联系人 (%1$d 在回收站)</string>
     <string name="shortcut_dial_contact">呼叫 %1$s</string>
+    <string name="settings_search_placeholder">搜索设置…</string>
+    <string name="settings_search_no_results">没有找到匹配 \"%1$s \" 的设置</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">在最近任务中显示运营商名称</string>
+    <string name="settings_show_carrier_in_recents_supporting">在通话历史和最近任务中显示运营商和 SIM 卡名称</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">显示国家代码</string>
+    <string name="settings_show_country_code_supporting">在整个应用程序和通话屏幕中在电话号码中显示国家代码前缀</string>
 </resources>
