@@ -210,4 +210,12 @@
     <string name="settings_contacts_trash_view">Vis papirkurv</string>
     <string name="settings_contacts_trash_view_supporting">Se og gjenopprett slettede kontakter (%1$d i papirkurven)</string>
     <string name="shortcut_dial_contact">Ring %1$s</string>
+    <string name="settings_search_placeholder">Søk etter innstillinger…</string>
+    <string name="settings_search_no_results">Ingen innstillinger funnet som samsvarer med \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Vis transportørnavn i nylige</string>
+    <string name="settings_show_carrier_in_recents_supporting">Vis transportør og SIM-kortnavn i samtalelogg og nylige</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Vis landskode</string>
+    <string name="settings_show_country_code_supporting">Vis landskodeprefiks i telefonnummer i appen og ring skjerm</string>
 </resources>

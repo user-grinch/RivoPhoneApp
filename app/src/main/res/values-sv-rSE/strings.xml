@@ -212,4 +212,12 @@
     <string name="settings_contacts_trash_view">Visa papperskorgen</string>
     <string name="settings_contacts_trash_view_supporting">Visa och återställ raderade kontakter (%1$d i papperskorgen)</string>
     <string name="shortcut_dial_contact">Ring %1$s</string>
+    <string name="settings_search_placeholder">Sök inställningar…</string>
+    <string name="settings_search_no_results">Inga inställningar hittades som matchar \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Visa operatörsnamn i senaste</string>
+    <string name="settings_show_carrier_in_recents_supporting">Visa operatörs- och SIM-kortsnamn i samtalshistorik och senaste</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Visa landskod</string>
+    <string name="settings_show_country_code_supporting">Visa landskodsprefix i telefonnummer i hela appen och skärmen för samtal</string>
 </resources>

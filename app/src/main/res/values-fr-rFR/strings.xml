@@ -952,4 +952,12 @@
     <string name="settings_contacts_trash_view">Voir la corbeille</string>
     <string name="settings_contacts_trash_view_supporting">Voir et restaurer les contacts supprimés (%1$d dans la corbeille)</string>
     <string name="shortcut_dial_contact">Appeler %1$s</string>
+    <string name="settings_search_placeholder">Rechercher dans les paramètres…</string>
+    <string name="settings_search_no_results">Aucun paramètre correspondant à \"%1$s \" trouvé</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Afficher les noms des transporteurs dans les applications récentes</string>
+    <string name="settings_show_carrier_in_recents_supporting">Afficher les noms de l\'opérateur et de la carte SIM dans l\'historique des appels et les applications récentes</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Afficher l\'indicatif du pays</string>
+    <string name="settings_show_country_code_supporting">Afficher le préfixe de l\'indicatif du pays dans les numéros de téléphone dans l\'application et l\'écran d\'appel</string>
 </resources>

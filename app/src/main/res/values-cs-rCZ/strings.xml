@@ -212,4 +212,12 @@
     <string name="settings_contacts_trash_view">Zobrazit koš</string>
     <string name="settings_contacts_trash_view_supporting">Zobrazit a obnovit odstraněné kontakty (%1$d v koši)</string>
     <string name="shortcut_dial_contact">Zavolat %1$s</string>
+    <string name="settings_search_placeholder">Nastavení hledání…</string>
+    <string name="settings_search_no_results">Nebyla nalezena žádná nastavení odpovídající \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Zobrazit názvy operátorů v nedávných aplikacích</string>
+    <string name="settings_show_carrier_in_recents_supporting">Zobrazit názvy operátora a SIM karet v historii hovorů a nedávných</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Zobrazit kód země</string>
+    <string name="settings_show_country_code_supporting">Zobrazit předponu kódu země v telefonních číslech v celé aplikaci a obrazovce volání</string>
 </resources>
