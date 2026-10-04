@@ -58,7 +58,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -387,8 +386,7 @@ fun ExpressiveCallScreen(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    shadowElevation = if (isDark) 0.dp else 2.dp
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),
@@ -1256,7 +1254,6 @@ fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
     Box(
         modifier = Modifier
             .size(size)
-            .shadow(if (isDark) 0.dp else 4.dp, avatarShape)
             .clip(avatarShape)
             .background(if (isDark) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest),
         contentAlignment = Alignment.Center
@@ -1413,7 +1410,6 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     scaleX = 1f + (handlePulseScale - 1f) * idleFactor
                     scaleY = 1f + (handlePulseScale - 1f) * idleFactor
                 }
-                .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                 .width(handleWidth)
                 .height(handleHeight)
                 .clip(CircleShape)
@@ -1581,7 +1577,6 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         scaleX = 1f + (pulseScale - 1f) * idleFactor
                         scaleY = 1f + (pulseScale - 1f) * idleFactor
                     }
-                    .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                     .size(handleSize)
                     .clip(CircleShape)
                     .background(handleBgColor)
@@ -1679,7 +1674,6 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     onClick = onDecline,
                     modifier = Modifier
                         .size(if (isLandscape) 48.dp else 60.dp)
-                        .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                         .background(
                             MaterialTheme.callColors.decline, 
                             CircleShape
@@ -1706,7 +1700,6 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     onClick = onMessage,
                     modifier = Modifier
                         .size(if (isLandscape) 48.dp else 60.dp)
-                        .shadow(if (isDark) 0.dp else 2.dp, CircleShape)
                         .background(
                             MaterialTheme.colorScheme.surfaceContainerHighest,
                             CircleShape
@@ -1767,7 +1760,6 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 modifier = Modifier
                     .padding(start = handlePadding)
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                    .shadow(if (isDark) 2.dp else 4.dp, CircleShape)
                     .size(handleSize)
                     .clip(CircleShape)
                     .background(MaterialTheme.callColors.answer)
@@ -1820,8 +1812,7 @@ fun CallWaitingButtons(
             onClick = onAnswerHold,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .shadow(if (isDark) 0.dp else 3.dp, CircleShape),
+                .height(56.dp),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.callColors.answer,
@@ -1837,8 +1828,7 @@ fun CallWaitingButtons(
             onClick = onEndAndAnswer,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .shadow(if (isDark) 0.dp else 2.dp, CircleShape),
+                .height(56.dp),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -1905,9 +1895,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     containerColor = declineColor,
                     contentColor = onDeclineColor
                 ),
-                modifier = Modifier
-                    .size(buttonSize)
-                    .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
+                modifier = Modifier.size(buttonSize)
             ) {
                 Icon(
                     Icons.Default.CallEnd,
@@ -1943,7 +1931,6 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     modifier = Modifier
                         .size(buttonSize)
                         .scale(scale)
-                        .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                 ) {
                     Icon(
                         Icons.Default.Call,
