@@ -1322,8 +1322,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     )
 
     val hintAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 0.9f,
+        initialValue = if (isDark) 0.45f else 0.75f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(1500, easing = LinearOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -1333,6 +1333,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val answerGreen = MaterialTheme.callColors.answer
     val declineRed = MaterialTheme.callColors.decline
+    val answerTextColor = if (isDark) answerGreen else Color(0xFF137333)
+    val declineTextColor = if (isDark) declineRed else Color(0xFFB3261E)
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
@@ -1379,7 +1381,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = declineRed,
+                color = declineTextColor,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1394,7 +1396,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = answerGreen,
+                color = answerTextColor,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1490,6 +1492,8 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val answerGreen = MaterialTheme.callColors.answer
     val declineRed = MaterialTheme.callColors.decline
+    val answerTextColor = if (isDark) answerGreen else Color(0xFF137333)
+    val declineTextColor = if (isDark) declineRed else Color(0xFFB3261E)
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
@@ -1536,14 +1540,14 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 Icon(
                     Icons.Default.KeyboardArrowUp,
                     contentDescription = null,
-                    tint = answerGreen,
+                    tint = answerTextColor,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
                     stringResource(R.string.action_answer),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = answerGreen
+                    color = answerTextColor
                 )
             }
 
@@ -1558,12 +1562,12 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     stringResource(R.string.action_decline),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = declineRed
+                    color = declineTextColor
                 )
                 Icon(
                     Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = declineRed,
+                    tint = declineTextColor,
                     modifier = Modifier.size(24.dp)
                 )
             }
