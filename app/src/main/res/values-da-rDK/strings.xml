@@ -212,4 +212,12 @@
     <string name="settings_contacts_trash_view">Se Papirkurven</string>
     <string name="settings_contacts_trash_view_supporting">Vis og gendan slettede kontakter (%1$d i papirkurven)</string>
     <string name="shortcut_dial_contact">Ring Til %1$s</string>
+    <string name="settings_search_placeholder">Søge indstillinger…</string>
+    <string name="settings_search_no_results">Ingen indstillinger fundet matchende \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Vis forsendelsesfirmanavne i seneste</string>
+    <string name="settings_show_carrier_in_recents_supporting">Vis navne på forsendelsesfirmaer og SIM-kort i opkaldshistorik og seneste</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Vis landekode</string>
+    <string name="settings_show_country_code_supporting">Vis landekode præfiks i telefonnumre i hele app\'en og opkaldsskærmen</string>
 </resources>

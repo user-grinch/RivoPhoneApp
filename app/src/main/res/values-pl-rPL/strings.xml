@@ -1014,12 +1014,19 @@
     <string name="contacts_trash_restore_action">Przywróć</string>
     <string name="contacts_trash_delete_action">Usuń trwale</string>
     <string name="contacts_trash_empty_all">Opróżnij kosz</string>
-    <string name="contacts_trash_empty_all_confirm_title">Opróżnić kosz?</string>
-    <string name="contacts_trash_empty_all_confirm_msg">Wszystkie kontakty w koszu (%1$d) zostaną trwale usunięte. Tej operacji nie można cofnąć.</string>
-    <string name="contacts_trash_restored_toast">Przywrócono: %1$s</string>
-    <string name="settings_contacts_trash_title">Kosz na usunięte kontakty</string>
-    <string name="settings_contacts_trash_supporting">Przechowuj usunięte kontakty w koszu przez 30 dni przed ich trwałym usunięciem</string>
-    <string name="settings_contacts_trash_view">Zobacz kosz</string>
-    <string name="settings_contacts_trash_view_supporting">Przeglądaj i przywracaj usunięte kontakty (w koszu: %1$d)</string>
-    <string name="shortcut_dial_contact">Zadzwoń do: %1$s</string>
+    <string name="contacts_trash_empty_all_confirm_title">Opróżnij kosz?</string>
+    <string name="contacts_trash_empty_all_confirm_msg">Wszystkie kontakty %1$d w koszu zostaną trwale usunięte. Tej czynności nie można cofnąć.</string>
+    <string name="contacts_trash_restored_toast">Przywrócony %1$s</string>
+    <string name="settings_contacts_trash_title">Kosz dla usuniętych kontaktów</string>
+    <string name="settings_contacts_trash_supporting">Zachowaj usunięte kontakty w koszu przez 30 dni przed trwałym usunięciem ich</string>
+    <string name="settings_contacts_trash_view">Zobacz kosza</string>
+    <string name="settings_contacts_trash_view_supporting">Zobacz i przywracaj usunięte kontakty (%1$d w koszu)</string>
+    <string name="settings_search_placeholder">Szukaj w ustawieniach…</string>
+    <string name="settings_search_no_results">Nie znaleziono ustawień pasujących do \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Pokaż nazwy przewoźników w ostatnich aplikacjach</string>
+    <string name="settings_show_carrier_in_recents_supporting">Wyświetlaj nazwy przewoźników i kart SIM w historii połączeń i ostatnio używanych</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Pokaż kod kraju</string>
+    <string name="settings_show_country_code_supporting">Wyświetlaj prefiks kodu kraju w numerach telefonów w aplikacji i ekranie połączeń</string>
 </resources>

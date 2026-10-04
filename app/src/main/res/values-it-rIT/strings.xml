@@ -212,4 +212,12 @@
     <string name="settings_contacts_trash_view">Visualizza Cestino</string>
     <string name="settings_contacts_trash_view_supporting">Visualizza e ripristina i contatti eliminati (%1$d nel cestino)</string>
     <string name="shortcut_dial_contact">Chiama %1$s</string>
+    <string name="settings_search_placeholder">Impostazioni di ricerca…</string>
+    <string name="settings_search_no_results">Nessuna impostazione trovata corrispondente \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Mostra i nomi degli operatori nei recenti</string>
+    <string name="settings_show_carrier_in_recents_supporting">Visualizza i nomi dell\'operatore e della scheda SIM nella cronologia chiamate e nelle app recenti</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Mostra prefisso nazionale</string>
+    <string name="settings_show_country_code_supporting">Visualizza prefisso prefisso del codice paese nei numeri di telefono durante l\'applicazione e la schermata di chiamata</string>
 </resources>
