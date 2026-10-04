@@ -146,8 +146,9 @@ class CallService : InCallService() {
     companion object {
         private const val CHANNEL_ID = "call_channel_v2"
         private const val LEGACY_CHANNEL_ID = "call_channel"
-        private const val SILENT_CHANNEL_ID = "call_silent_channel_v2"
-        private const val LEGACY_SILENT_CHANNEL_ID = "call_silent_channel"
+        private const val SILENT_CHANNEL_ID = "call_silent_channel_v3"
+        private const val LEGACY_SILENT_CHANNEL_ID = "call_silent_channel_v2"
+        private const val LEGACY_SILENT_CHANNEL_V1_ID = "call_silent_channel"
         private const val MISSED_CHANNEL_ID = "missed_call_channel"
         private const val NOTIFICATION_ID = 101
 
@@ -900,6 +901,7 @@ class CallService : InCallService() {
         try {
             notificationManager.deleteNotificationChannel(LEGACY_CHANNEL_ID)
             notificationManager.deleteNotificationChannel(LEGACY_SILENT_CHANNEL_ID)
+            notificationManager.deleteNotificationChannel(LEGACY_SILENT_CHANNEL_V1_ID)
         } catch (_: Exception) {}
 
         val channel = NotificationChannel(
@@ -918,7 +920,7 @@ class CallService : InCallService() {
         val silentChannel = NotificationChannel(
             SILENT_CHANNEL_ID,
             getString(R.string.notif_channel_calls),
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_MIN
         ).apply {
             description = getString(R.string.notif_channel_calls_desc)
             lockscreenVisibility = Notification.VISIBILITY_SECRET

@@ -51,12 +51,13 @@ object FakeCallNotificationManager {
         val silentChannel = NotificationChannel(
             SILENT_CHANNEL_ID,
             context.getString(R.string.fake_call_incoming_channel_title),
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_MIN
         ).apply {
             description = context.getString(R.string.fake_call_incoming_channel_desc)
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            lockscreenVisibility = Notification.VISIBILITY_SECRET
             enableVibration(false)
             setSound(null, null)
+            setShowBadge(false)
         }
         notificationManager.createNotificationChannel(silentChannel)
     }
@@ -158,21 +159,22 @@ object FakeCallNotificationManager {
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setContentIntent(contentPendingIntent)
                 .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setVisibility(if (silentBackground) NotificationCompat.VISIBILITY_SECRET else NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(false)
                 .setTimeoutAfter(45_000L)
-                .setFullScreenIntent(contentPendingIntent, true)
                 .setColorized(true)
                 .setColor(notifColor)
                 .setLargeIcon(avatarBitmap)
-                .setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
 
             if (silentBackground) {
-                // When full-screen call UI is displayed, keep notification silent in background
-                builder.setPriority(NotificationCompat.PRIORITY_LOW)
+                // When device is locked or full-screen call UI is displayed, do NOT set fullScreenIntent or CallStyle on notification.
+                // Keep notification silent and MIN priority so ONLY the full-screen activity is shown.
+                builder.setPriority(NotificationCompat.PRIORITY_MIN)
                 builder.setSilent(true)
                 builder.setOnlyAlertOnce(true)
             } else {
+                builder.setFullScreenIntent(contentPendingIntent, true)
+                builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
                 // Heads-Up Mode: show prominent floating notification banner
                 builder.setPriority(NotificationCompat.PRIORITY_MAX)
                 builder.setSilent(false)
