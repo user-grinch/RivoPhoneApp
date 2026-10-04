@@ -9,7 +9,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -210,11 +209,6 @@ private fun InCallKeypadKey(
             .size(keySize)
             .clip(RoundedCornerShape(cornerRadius))
             .background(containerColor)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.2f else 0.45f),
-                RoundedCornerShape(cornerRadius)
-            )
             .pointerInput(key) {
                 detectTapGestures(
                     onPress = { position ->

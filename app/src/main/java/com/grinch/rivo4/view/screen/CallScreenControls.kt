@@ -9,7 +9,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -130,10 +129,6 @@ fun CallActionButton(
         enabled = enabled,
         shape = RoundedCornerShape(cornerRadius),
         color = containerColor,
-        border = if (isActive || isDanger || !enabled) null else BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.25f else 0.45f)
-        ),
         tonalElevation = if (isActive || isDanger) 6.dp else 2.dp,
         shadowElevation = if (isDark) 0.dp else if (isActive || isDanger) 3.dp else 1.dp,
         interactionSource = interactionSource,
@@ -187,7 +182,6 @@ fun AuxiliaryPillButton(
         },
         shape = CircleShape,
         color = if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainerHighest,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.2f else 0.45f)),
         shadowElevation = if (isDark) 0.dp else 1.dp,
         interactionSource = interactionSource,
         modifier = modifier.height(if (compact) 32.dp else 36.dp)
