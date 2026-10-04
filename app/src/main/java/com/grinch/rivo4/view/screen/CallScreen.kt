@@ -1333,8 +1333,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val answerGreen = MaterialTheme.callColors.answer
     val declineRed = MaterialTheme.callColors.decline
-    val answerTextColor = if (isDark) answerGreen else Color(0xFF137333)
-    val declineTextColor = if (isDark) declineRed else Color(0xFFB3261E)
+    val answerTextColor = if (isDark) answerGreen else Color(0xFF0D652D)
+    val declineTextColor = if (isDark) declineRed else Color(0xFFA50E0E)
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
@@ -1492,8 +1492,8 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val answerGreen = MaterialTheme.callColors.answer
     val declineRed = MaterialTheme.callColors.decline
-    val answerTextColor = if (isDark) answerGreen else Color(0xFF137333)
-    val declineTextColor = if (isDark) declineRed else Color(0xFFB3261E)
+    val answerTextColor = if (isDark) answerGreen else Color(0xFF0D652D)
+    val declineTextColor = if (isDark) declineRed else Color(0xFFA50E0E)
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
@@ -1534,7 +1534,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 10.dp)
-                    .alpha((0.4f + (dragProgress.value * -1.5f)).coerceIn(0.15f, 1f)),
+                    .alpha(((if (isDark) 0.5f else 0.9f) + (dragProgress.value * -1.5f)).coerceIn(0.2f, 1f)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
@@ -1545,7 +1545,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 )
                 Text(
                     stringResource(R.string.action_answer),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = answerTextColor
                 )
@@ -1555,12 +1555,12 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 10.dp)
-                    .alpha((0.4f + (dragProgress.value * 1.5f)).coerceIn(0.15f, 1f)),
+                    .alpha(((if (isDark) 0.5f else 0.9f) + (dragProgress.value * 1.5f)).coerceIn(0.2f, 1f)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     stringResource(R.string.action_decline),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = declineTextColor
                 )
