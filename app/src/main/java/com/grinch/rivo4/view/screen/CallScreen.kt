@@ -3,7 +3,6 @@ import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.automirrored.outlined.Send
 
-
 import android.os.Build
 
 import android.Manifest
@@ -200,6 +199,7 @@ fun ExpressiveCallScreen(
     
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isDark = isSystemInDarkTheme()
 
     LaunchedEffect(callState, call.details.connectTimeMillis, initialConnectTime) {
         if (callState == Call.STATE_ACTIVE) {
@@ -388,8 +388,9 @@ fun ExpressiveCallScreen(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
-                    tonalElevation = 4.dp
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    shadowElevation = if (isDark) 0.dp else 2.dp
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),
@@ -408,6 +409,7 @@ fun ExpressiveCallScreen(
                                 Text(
                                     text = ocName,
                                     style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold,
                                     maxLines = 1,
                                     modifier = Modifier.basicMarquee()
                                 )
@@ -493,7 +495,7 @@ fun ExpressiveCallScreen(
                 Text(
                     text = formattedNumber,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -509,9 +511,11 @@ fun ExpressiveCallScreen(
                     color = when (callState) {
                         Call.STATE_ACTIVE -> MaterialTheme.colorScheme.primaryContainer
                         Call.STATE_HOLDING -> MaterialTheme.colorScheme.tertiaryContainer
-                        else -> MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
+                        Call.STATE_RINGING -> MaterialTheme.colorScheme.secondaryContainer
+                        else -> MaterialTheme.colorScheme.surfaceContainerHighest
                     },
-                    shape = CircleShape
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 ) {
                     Text(
                         text = statusText,
@@ -519,7 +523,8 @@ fun ExpressiveCallScreen(
                         color = when (callState) {
                             Call.STATE_ACTIVE -> MaterialTheme.colorScheme.onPrimaryContainer
                             Call.STATE_HOLDING -> MaterialTheme.colorScheme.onTertiaryContainer
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            Call.STATE_RINGING -> MaterialTheme.colorScheme.onSecondaryContainer
+                            else -> MaterialTheme.colorScheme.onSurface
                         },
                         modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
                     )
@@ -532,7 +537,8 @@ fun ExpressiveCallScreen(
                             showConferenceSheet = true
                         },
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.secondaryContainer
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -571,6 +577,7 @@ fun ExpressiveCallScreen(
                     Text(
                         text = stringResource(R.string.call_recording_in_progress),
                         style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.callColors.decline
                     )
                 }
@@ -578,14 +585,16 @@ fun ExpressiveCallScreen(
 
             if (simLabel != null) {
                 Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     Text(
                         text = simLabel,
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                     )
                 }
@@ -821,7 +830,15 @@ fun ExpressiveCallScreen(
                     Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(32.dp))
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                        .background(
+                            if (isDark) MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                            else MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.75f)
+                        )
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.3f else 0.5f),
+                            RoundedCornerShape(32.dp)
+                        )
                         .padding(horizontal = 12.dp, vertical = 14.dp)
                 } else {
                     Modifier
@@ -1244,12 +1261,19 @@ fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
 
     val size = heroAvatarSize(isLandscape)
     val iconSize = size * 0.6f
+    val isDark = isSystemInDarkTheme()
 
     Box(
         modifier = Modifier
             .size(size)
+            .shadow(if (isDark) 0.dp else 4.dp, avatarShape)
             .clip(avatarShape)
-            .background(MaterialTheme.colorScheme.secondaryContainer),
+            .background(if (isDark) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .border(
+                if (isDark) 1.dp else 1.5.dp,
+                if (isDark) MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                avatarShape
+            ),
         contentAlignment = Alignment.Center
     ) {
         if (!photoUri.isNullOrEmpty()) {
@@ -1264,7 +1288,7 @@ fun HeroAvatar(photoUri: String?, isLandscape: Boolean = false) {
                 Icons.Default.Person,
                 contentDescription = null,
                 modifier = Modifier.size(iconSize),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                tint = if (isDark) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -1316,8 +1340,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     )
 
     val hintAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.8f,
+        initialValue = 0.4f,
+        targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
             animation = tween(1500, easing = LinearOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -1327,21 +1351,22 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val answerGreen = MaterialTheme.callColors.answer
     val declineRed = MaterialTheme.callColors.decline
-    val idleColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f) 
-                   else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
             dragProgress.value > 0.1f -> answerGreen
             dragProgress.value < -0.1f -> declineRed
-            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
+            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
         },
         label = "handleColor"
     )
 
     val iconTint by animateColorAsState(
-        targetValue = if (dragNormal.value > 0.1f) MaterialTheme.callColors.onAnswer
-                     else if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer,
+        targetValue = when {
+            dragProgress.value > 0.1f -> MaterialTheme.callColors.onAnswer
+            dragProgress.value < -0.1f -> MaterialTheme.callColors.onDecline
+            else -> if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+        },
         label = "iconTint"
     )
     
@@ -1356,8 +1381,16 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .padding(horizontal = 16.dp)
             .onSizeChanged { trackWidthPx = it.width.toFloat() }
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f), CircleShape)
+            .background(
+                if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.85f)
+            )
+            .border(
+                1.dp,
+                if (isDark) MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                CircleShape
+            )
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -1370,7 +1403,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = declineRed.copy(alpha = 0.8f),
+                color = declineRed,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1385,7 +1418,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = answerGreen.copy(alpha = 0.8f),
+                color = answerGreen,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1401,10 +1434,16 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     scaleX = 1f + (handlePulseScale - 1f) * idleFactor
                     scaleY = 1f + (handlePulseScale - 1f) * idleFactor
                 }
+                .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                 .width(handleWidth)
                 .height(handleHeight)
                 .clip(CircleShape)
                 .background(handleBgColor)
+                .border(
+                    if (isDark) 0.dp else 1.dp,
+                    if (isDark) Color.Transparent else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                    CircleShape
+                )
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
@@ -1486,7 +1525,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         targetValue = when {
             dragProgress.value < -0.15f -> answerGreen
             dragProgress.value > 0.15f -> declineRed
-            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
+            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
         },
         label = "vertHandleBg"
     )
@@ -1495,7 +1534,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         targetValue = when {
             dragProgress.value < -0.15f -> MaterialTheme.callColors.onAnswer
             dragProgress.value > 0.15f -> MaterialTheme.callColors.onDecline
-            else -> if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
+            else -> if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
         },
         label = "vertIconTint"
     )
@@ -1511,8 +1550,16 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .width(trackWidth)
                 .height(trackHeight)
                 .clip(RoundedCornerShape(42.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f), RoundedCornerShape(42.dp)),
+                .background(
+                    if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                    else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.85f)
+                )
+                .border(
+                    1.dp,
+                    if (isDark) MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
+                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                    RoundedCornerShape(42.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -1566,9 +1613,15 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         scaleX = 1f + (pulseScale - 1f) * idleFactor
                         scaleY = 1f + (pulseScale - 1f) * idleFactor
                     }
+                    .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                     .size(handleSize)
                     .clip(CircleShape)
                     .background(handleBgColor)
+                    .border(
+                        if (isDark) 0.dp else 1.dp,
+                        if (isDark) Color.Transparent else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                        CircleShape
+                    )
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragEnd = {
@@ -1663,22 +1716,24 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     onClick = onDecline,
                     modifier = Modifier
                         .size(if (isLandscape) 48.dp else 60.dp)
+                        .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f), 
+                            MaterialTheme.callColors.decline, 
                             CircleShape
                         )
                 ) {
                     Icon(
                         Icons.Default.CallEnd,
                         contentDescription = stringResource(R.string.action_decline),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = MaterialTheme.callColors.onDecline,
                         modifier = Modifier.size(24.dp)
                     )
                 }
                 Text(
                     stringResource(R.string.action_decline),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -1688,8 +1743,14 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     onClick = onMessage,
                     modifier = Modifier
                         .size(if (isLandscape) 48.dp else 60.dp)
+                        .shadow(if (isDark) 0.dp else 2.dp, CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.15f else 0.1f),
+                            MaterialTheme.colorScheme.surfaceContainerHighest,
+                            CircleShape
+                        )
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                             CircleShape
                         )
                 ) {
@@ -1703,7 +1764,8 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 Text(
                     stringResource(R.string.action_message),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -1714,16 +1776,21 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 .width(if (isLandscape) 280.dp else trackWidth)
                 .height(if (isLandscape) 72.dp else trackHeight)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (isDark) 0.3f else 0.5f))
+                .background(
+                    if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                    else MaterialTheme.colorScheme.surfaceContainerHighest
+                )
                 .border(
                     1.dp, 
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), 
+                    if (isDark) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f), 
                     CircleShape
                 ),
             contentAlignment = Alignment.CenterStart
         ) {
             val baseTextColor = MaterialTheme.colorScheme.onSurface
-            val shimmerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+            val shimmerColor = if (isDark) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                               else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             
             val brush = Brush.linearGradient(
                 colors = listOf(shimmerColor, baseTextColor, shimmerColor),
@@ -1739,7 +1806,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                     .graphicsLayer { alpha = (1f - (offsetX.value / maxDrag)).coerceIn(0f, 1f) },
                 style = MaterialTheme.typography.titleMedium.copy(
                     brush = brush,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.SemiBold
                 ),
                 textAlign = TextAlign.Start
             )
@@ -1748,9 +1815,10 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 modifier = Modifier
                     .padding(start = handlePadding)
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .shadow(if (isDark) 2.dp else 4.dp, CircleShape)
                     .size(handleSize)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(MaterialTheme.callColors.answer)
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onDragEnd = {
@@ -1776,7 +1844,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 Icon(
                     Icons.Default.Call,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    tint = MaterialTheme.callColors.onAnswer,
                     modifier = Modifier.size(36.dp)
                 )
             }
@@ -1790,6 +1858,7 @@ fun CallWaitingButtons(
     onEndAndAnswer: () -> Unit,
     onDecline: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -1797,7 +1866,10 @@ fun CallWaitingButtons(
     ) {
         Button(
             onClick = onAnswerHold,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .shadow(if (isDark) 0.dp else 3.dp, CircleShape),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.callColors.answer,
@@ -1811,8 +1883,12 @@ fun CallWaitingButtons(
 
         Button(
             onClick = onEndAndAnswer,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .shadow(if (isDark) 0.dp else 2.dp, CircleShape),
             shape = CircleShape,
+            border = if (isDark) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -1840,6 +1916,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val answerColor = MaterialTheme.callColors.answer
     val onDeclineColor = MaterialTheme.callColors.onDecline
     val onAnswerColor = MaterialTheme.callColors.onAnswer
+    val isDark = isSystemInDarkTheme()
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
@@ -1877,7 +1954,9 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     containerColor = declineColor,
                     contentColor = onDeclineColor
                 ),
-                modifier = Modifier.size(buttonSize)
+                modifier = Modifier
+                    .size(buttonSize)
+                    .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
             ) {
                 Icon(
                     Icons.Default.CallEnd,
@@ -1889,6 +1968,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Text(
                 text = stringResource(R.string.action_decline),
                 color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLargeEmphasized
             )
         }
@@ -1909,7 +1989,10 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
                         containerColor = answerColor,
                         contentColor = onAnswerColor
                     ),
-                    modifier = Modifier.size(buttonSize).scale(scale)
+                    modifier = Modifier
+                        .size(buttonSize)
+                        .scale(scale)
+                        .shadow(if (isDark) 0.dp else 4.dp, CircleShape)
                 ) {
                     Icon(
                         Icons.Default.Call,
@@ -1922,6 +2005,7 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Text(
                 text = stringResource(R.string.action_answer),
                 color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLargeEmphasized
             )
         }

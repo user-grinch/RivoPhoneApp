@@ -10,6 +10,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -93,13 +94,15 @@ fun CallActionButton(
         label = "CallActionCornerRadius"
     )
 
+    val isDark = isSystemInDarkTheme()
+
     val containerColor by animateColorAsState(
         targetValue = when {
             !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
             isDanger -> MaterialTheme.callColors.decline
             isActive -> MaterialTheme.colorScheme.primary
             isPressed -> MaterialTheme.colorScheme.primaryContainer
-            else -> MaterialTheme.colorScheme.surfaceContainerHigh
+            else -> if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainerHighest
         },
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "btnBg"
@@ -127,7 +130,12 @@ fun CallActionButton(
         enabled = enabled,
         shape = RoundedCornerShape(cornerRadius),
         color = containerColor,
+        border = if (isActive || isDanger || !enabled) null else BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.25f else 0.45f)
+        ),
         tonalElevation = if (isActive || isDanger) 6.dp else 2.dp,
+        shadowElevation = if (isDark) 0.dp else if (isActive || isDanger) 3.dp else 1.dp,
         interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
@@ -151,7 +159,7 @@ fun CallActionButton(
                 text = label,
                 style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
                 color = contentColor,
-                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
@@ -169,6 +177,7 @@ fun AuxiliaryPillButton(
     onClick: () -> Unit
 ) {
     val view = LocalView.current
+    val isDark = isSystemInDarkTheme()
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
@@ -177,7 +186,9 @@ fun AuxiliaryPillButton(
             onClick()
         },
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        color = if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainerHighest,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (isDark) 0.2f else 0.45f)),
+        shadowElevation = if (isDark) 0.dp else 1.dp,
         interactionSource = interactionSource,
         modifier = modifier.height(if (compact) 32.dp else 36.dp)
     ) {
@@ -189,15 +200,15 @@ fun AuxiliaryPillButton(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(if (compact) 16.dp else 18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -232,15 +243,18 @@ fun EndCallButton(
         label = "endCallCorner"
     )
 
+    val isDark = isSystemInDarkTheme()
+
     Surface(
         onClick = {
             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
             onEndCall()
         },
         shape = RoundedCornerShape(cornerRadius),
-        color = MaterialTheme.callColors.declineContainer,
-        contentColor = MaterialTheme.callColors.onDeclineContainer,
+        color = MaterialTheme.callColors.decline,
+        contentColor = MaterialTheme.callColors.onDecline,
         tonalElevation = 6.dp,
+        shadowElevation = if (isDark) 0.dp else 4.dp,
         interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
@@ -254,7 +268,7 @@ fun EndCallButton(
                 imageVector = Icons.Default.CallEnd,
                 contentDescription = stringResource(R.string.action_end_call),
                 modifier = Modifier.size(if (compact) 28.dp else 32.dp),
-                tint = MaterialTheme.callColors.onDeclineContainer
+                tint = MaterialTheme.callColors.onDecline
             )
         }
     }

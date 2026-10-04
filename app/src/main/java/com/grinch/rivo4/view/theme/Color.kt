@@ -400,10 +400,10 @@ fun rivoCallColors(colorScheme: ColorScheme, darkTheme: Boolean): CallColors {
             onAnswer = toneColor(20f, ANSWER_CHROMA, hue),
             answerContainer = toneColor(30f, ANSWER_CHROMA, hue),
             onAnswerContainer = toneColor(90f, ANSWER_CHROMA, hue),
-            decline = colorScheme.error,
-            onDecline = colorScheme.onError,
-            declineContainer = colorScheme.errorContainer,
-            onDeclineContainer = colorScheme.onErrorContainer,
+            decline = Color(0xFFF2B8B5),
+            onDecline = Color(0xFF601410),
+            declineContainer = Color(0xFF8C1D18),
+            onDeclineContainer = Color(0xFFF9DEDC),
             hold = colorScheme.tertiary,
             onHold = colorScheme.onTertiary,
             holdContainer = colorScheme.tertiaryContainer,
@@ -411,14 +411,14 @@ fun rivoCallColors(colorScheme: ColorScheme, darkTheme: Boolean): CallColors {
         )
     } else {
         CallColors(
-            answer = toneColor(40f, ANSWER_CHROMA, hue),
-            onAnswer = toneColor(100f, ANSWER_CHROMA, hue),
-            answerContainer = toneColor(90f, ANSWER_CHROMA, hue),
-            onAnswerContainer = toneColor(10f, ANSWER_CHROMA, hue),
-            decline = colorScheme.error,
-            onDecline = colorScheme.onError,
-            declineContainer = colorScheme.errorContainer,
-            onDeclineContainer = colorScheme.onErrorContainer,
+            answer = Color(0xFF1E8E3E), // Crisp vibrant Material phone green
+            onAnswer = Color(0xFFFFFFFF),
+            answerContainer = Color(0xFFCEEAD6),
+            onAnswerContainer = Color(0xFF0D652D),
+            decline = Color(0xFFD93025), // Crisp vibrant Material phone red
+            onDecline = Color(0xFFFFFFFF),
+            declineContainer = Color(0xFFFAD2CF),
+            onDeclineContainer = Color(0xFFA50E0E),
             hold = colorScheme.tertiary,
             onHold = colorScheme.onTertiary,
             holdContainer = colorScheme.tertiaryContainer,
