@@ -53,6 +53,7 @@ class CallService : InCallService() {
     private var redialCount = 0
     private val callStartTimes = mutableMapOf<Call, Long>()
     private val callRingStartTimes = mutableMapOf<Call, Long>()
+    private val callInitialLockedState = java.util.concurrent.ConcurrentHashMap<Call, Boolean>()
     private val cachedContactNames = java.util.concurrent.ConcurrentHashMap<String, String>()
     private var flipToSilenceManager: FlipToSilenceManager? = null
     private var screenWakeLock: PowerManager.WakeLock? = null
@@ -805,6 +806,10 @@ class CallService : InCallService() {
 
         updateCallState()
 
+        // Capture whether device is locked or screen off (blacked / not being used) BEFORE wake lock or screen-on occurs
+        val wasDeviceLockedOrScreenOff = CallUiHelper.isDeviceLocked(this)
+        callInitialLockedState[call] = wasDeviceLockedOrScreenOff
+
         val isIncoming = call.state == Call.STATE_RINGING
         if (isIncoming) {
             acquireScreenWakeLock()
@@ -813,7 +818,7 @@ class CallService : InCallService() {
             }
         }
 
-        val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
+        val showFullScreen = !isIncoming || wasDeviceLockedOrScreenOff || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
         if (showFullScreen) {
             val intent = Intent(this, CallActivity::class.java).apply {
@@ -833,6 +838,7 @@ class CallService : InCallService() {
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        callInitialLockedState.remove(call)
         com.grinch.rivo4.controller.util.PriorityRinger.stopRinging()
         call.unregisterCallback(callCallback)
         updateCallState()
@@ -925,6 +931,7 @@ class CallService : InCallService() {
             description = getString(R.string.notif_channel_calls_desc)
             lockscreenVisibility = Notification.VISIBILITY_SECRET
             enableVibration(false)
+            vibrationPattern = null
             setSound(null, null)
             setShowBadge(false)
         }
@@ -1018,12 +1025,13 @@ class CallService : InCallService() {
             ?: System.currentTimeMillis()
 
         val isRinging = call.state == Call.STATE_RINGING
-        val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
-        val isLocked = CallUiHelper.isDeviceLocked(this)
-        val showFullScreen = directFullScreen ?: (!isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
+        val isIncoming = call.state == Call.STATE_RINGING || call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        val wasLockedWhenArrived = callInitialLockedState[call] ?: false
+        val isLocked = wasLockedWhenArrived || CallUiHelper.isDeviceLocked(this)
+        val showFullScreen = directFullScreen ?: (!isIncoming || isLocked || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
         val isActivityShowing = isActivityVisible.value
 
-        // Heads-up floating popup banner should ONLY show when call is ringing AND phone is unlocked AND CallActivity is NOT showing full-screen
+        // Heads-up floating popup banner should ONLY show when call is ringing AND phone is actively being used (unlocked & interactive) AND CallActivity is NOT showing full-screen
         val showHeadsUp = isRinging && !isLocked && !showFullScreen && !isActivityShowing
         val targetChannel = if (showHeadsUp) CHANNEL_ID else SILENT_CHANNEL_ID
 
@@ -1049,21 +1057,24 @@ class CallService : InCallService() {
                 builder.setPriority(NotificationCompat.PRIORITY_MAX)
                 builder.setFullScreenIntent(fullScreenPendingIntent, false)
                 builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
-            } else if (isLocked || showFullScreen || isActivityShowing) {
-                // On lockscreen or when full screen is displayed, do NOT apply incoming CallStyle or high priority heads-up.
-                // Keep notification silent and minimized so ONLY CallActivity is shown on lockscreen.
+            } else {
+                // When device is locked, screen is blacked/off, or full screen is displayed:
+                // Keep notification completely silent, MIN priority, secret on lockscreen,
+                // and do not attach incoming CallStyle or fullScreenIntent to prevent duplicate popups.
                 builder.setPriority(NotificationCompat.PRIORITY_MIN)
                 builder.setSilent(true)
-                builder.setOnlyAlertOnce(true)
-            } else {
-                builder.setPriority(NotificationCompat.PRIORITY_LOW)
-                builder.setSilent(true)
+                builder.setSound(null)
+                builder.setVibrate(null)
+                builder.setDefaults(0)
                 builder.setOnlyAlertOnce(true)
             }
         } else {
             builder.setStyle(NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent))
             builder.setPriority(NotificationCompat.PRIORITY_LOW)
             builder.setSilent(true)
+            builder.setSound(null)
+            builder.setVibrate(null)
+            builder.setDefaults(0)
             builder.setOnlyAlertOnce(true)
         }
 

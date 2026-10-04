@@ -16,7 +16,7 @@ object CallUiHelper {
     private const val TAG = "CallUiHelper"
 
     /**
-     * Checks whether the device is currently locked or the screen is off.
+     * Checks whether the device is currently locked or the screen is off (blacked).
      */
     fun isDeviceLocked(context: Context): Boolean {
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
@@ -43,7 +43,12 @@ object CallUiHelper {
             return true
         }
 
-        Log.d(TAG, "Heads-up notification only: user is actively using the phone")
+        if (isHomeScreenForeground(context)) {
+            Log.d(TAG, "Full-screen: launcher/home screen is in foreground (device not in active app use)")
+            return true
+        }
+
+        Log.d(TAG, "Heads-up notification only: user is actively using an app on the phone")
         return false
     }
 
