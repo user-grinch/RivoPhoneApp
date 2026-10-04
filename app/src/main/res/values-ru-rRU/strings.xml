@@ -369,7 +369,7 @@
     <string name="settings_call_t9_dialing_supporting">Предиктивный ввод с цифровой клавиатуры</string>
     <string name="settings_call_proximity_sensor">Датчик приближения</string>
     <string name="settings_call_proximity_sensor_supporting">Датчик приближения во время вызова</string>
-    <string name="settings_call_auto_speaker_proximity">Автодинамик</string>
+    <string name="settings_call_auto_speaker_proximity">Включать громкую связь автоматически</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Переключаться на динамик при отключении от уха и уха при приближении уха (подавление при подключении наушников)</string>
     <string name="settings_call_incoming_ui">Интерфейс входящего вызова</string>
     <string name="settings_call_incoming_ui_supporting">Выберите способ ответа на входящие вызовы</string>
@@ -958,4 +958,12 @@
     <string name="settings_contacts_trash_view">Корзина</string>
     <string name="settings_contacts_trash_view_supporting">Просмотр и восстановление удаленных контактов (%1$d в корзине)</string>
     <string name="shortcut_dial_contact">Позвонить %1$s</string>
+    <string name="settings_search_placeholder">Настройки поиска…</string>
+    <string name="settings_search_no_results">Не найдено настроек, соответствующих \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Показывать имена операторов в недавних</string>
+    <string name="settings_show_carrier_in_recents_supporting">Показывать имена операторов связи и SIM-карт в истории звонков и недавних</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Показать код страны</string>
+    <string name="settings_show_country_code_supporting">Отображать префикс страны на телефонных номерах во всем приложении и звонить на экран</string>
 </resources>

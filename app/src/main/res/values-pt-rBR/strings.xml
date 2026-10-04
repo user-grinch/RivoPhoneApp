@@ -212,4 +212,12 @@
     <string name="settings_contacts_trash_view">Ver Lixeira</string>
     <string name="settings_contacts_trash_view_supporting">Ver e restaurar contatos excluídos (%1$d na Lixeira)</string>
     <string name="shortcut_dial_contact">Ligar para %1$s</string>
+    <string name="settings_search_placeholder">Configurações de pesquisa…</string>
+    <string name="settings_search_no_results">Nenhuma configuração encontrada correspondente a \"%1$s\"</string>
+    <!-- Carrier in Recents -->
+    <string name="settings_show_carrier_in_recents">Mostrar nomes das operadoras nos recentes</string>
+    <string name="settings_show_carrier_in_recents_supporting">Mostrar nomes de cartões SIM e operadora no histórico de chamadas e recentes</string>
+    <!-- Standardized Phone Number Formatting & Country Code -->
+    <string name="settings_show_country_code">Mostrar código do país</string>
+    <string name="settings_show_country_code_supporting">Exibir prefixo de código de país nos números de telefone em toda a aplicação e tela de chamadas</string>
 </resources>
