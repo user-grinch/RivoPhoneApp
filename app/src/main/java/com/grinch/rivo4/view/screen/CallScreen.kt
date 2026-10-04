@@ -707,12 +707,10 @@ fun ExpressiveCallScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        CallActionButton(
+                        AuxiliaryPillButton(
                             icon = Icons.AutoMirrored.Filled.Message,
-                            isActive = false,
                             label = stringResource(R.string.action_message),
-                            compact = compact,
-                            modifier = Modifier.width(if (compact) 108.dp else 132.dp)
+                            compact = compact
                         ) {
                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             showQuickResponsesSheet = true
@@ -1290,21 +1288,18 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
 
-    val trackHeight = 96.dp
-    val maxHandleWidth = 110.dp
-    val handleHeight = 72.dp
+    val trackHeight = 80.dp
+    val handleSize = 64.dp
+    val handleSizePx = with(density) { handleSize.toPx() }
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
-    val trackWidth = with(density) { trackWidthPx.toDp() }
-    val handleWidth = if (trackWidthPx > 0f) (trackWidth * 0.32f).coerceAtMost(maxHandleWidth) else maxHandleWidth
-    val handleWidthPx = with(density) { handleWidth.toPx() }
 
-    val maxDrag by remember(trackWidthPx, handleWidthPx) {
+    val maxDrag by remember(trackWidthPx, handleSizePx) {
         derivedStateOf {
-            if (trackWidthPx > 0f) (trackWidthPx / 2f) - (handleWidthPx / 2f) - with(density) { 12.dp.toPx() }
+            if (trackWidthPx > 0f) (trackWidthPx / 2f) - (handleSizePx / 2f) - with(density) { 8.dp.toPx() }
             else 0f
         }
     }
-    val triggerThreshold = maxDrag * 0.85f
+    val triggerThreshold = maxDrag * 0.78f
 
     val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX.value / maxDrag else 0f } }
     val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
@@ -1322,8 +1317,8 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     )
 
     val hintAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 0.9f,
+        initialValue = 0.5f,
+        targetValue = 0.95f,
         animationSpec = infiniteRepeatable(
             animation = tween(1500, easing = LinearOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -1336,19 +1331,21 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
 
     val handleBgColor by animateColorAsState(
         targetValue = when {
-            dragProgress.value > 0.1f -> answerGreen
-            dragProgress.value < -0.1f -> declineRed
-            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
+            dragProgress.value > 0.12f -> answerGreen
+            dragProgress.value < -0.12f -> declineRed
+            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLowest
         },
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "handleColor"
     )
 
     val iconTint by animateColorAsState(
         targetValue = when {
-            dragProgress.value > 0.1f -> MaterialTheme.callColors.onAnswer
-            dragProgress.value < -0.1f -> MaterialTheme.callColors.onDecline
+            dragProgress.value > 0.12f -> MaterialTheme.callColors.onAnswer
+            dragProgress.value < -0.12f -> MaterialTheme.callColors.onDecline
             else -> if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
         },
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "iconTint"
     )
     
@@ -1364,41 +1361,56 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             .onSizeChanged { trackWidthPx = it.width.toFloat() }
             .clip(CircleShape)
             .background(
-                if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
-                else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.85f)
+                if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                else MaterialTheme.colorScheme.surfaceContainerHigh
             )
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                stringResource(R.string.action_decline),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 modifier = Modifier
-                    .weight(1f)
-                    .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = declineRed,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+                    .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha)
+            ) {
+                Icon(
+                    Icons.Default.CallEnd,
+                    contentDescription = null,
+                    tint = declineRed,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    stringResource(R.string.action_decline),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = declineRed
+                )
+            }
 
-            Spacer(modifier = Modifier.width(handleWidth))
-
-            Text(
-                stringResource(R.string.action_answer),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 modifier = Modifier
-                    .weight(1f)
-                    .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = answerGreen,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+                    .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha)
+            ) {
+                Text(
+                    stringResource(R.string.action_answer),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = answerGreen
+                )
+                Icon(
+                    Icons.Default.Call,
+                    contentDescription = null,
+                    tint = answerGreen,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
         Box(
@@ -1410,8 +1422,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     scaleX = 1f + (handlePulseScale - 1f) * idleFactor
                     scaleY = 1f + (handlePulseScale - 1f) * idleFactor
                 }
-                .width(handleWidth)
-                .height(handleHeight)
+                .size(handleSize)
                 .clip(CircleShape)
                 .background(handleBgColor)
                 .pointerInput(Unit) {
@@ -1495,7 +1506,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         targetValue = when {
             dragProgress.value < -0.15f -> answerGreen
             dragProgress.value > 0.15f -> declineRed
-            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
+            else -> if (isDark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLowest
         },
         label = "vertHandleBg"
     )
@@ -1521,8 +1532,8 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .height(trackHeight)
                 .clip(RoundedCornerShape(42.dp))
                 .background(
-                    if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
-                    else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.85f)
+                    if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                    else MaterialTheme.colorScheme.surfaceContainerHigh
                 ),
             contentAlignment = Alignment.Center
         ) {
