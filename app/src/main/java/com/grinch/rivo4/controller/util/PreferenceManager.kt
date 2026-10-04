@@ -408,6 +408,7 @@ class PreferenceManager(context: Context) {
         const val KEY_VISIBLE_ACCOUNTS = "visible_accounts"
         const val KEY_CONTACT_SORT_ORDER = "contact_sort_order"
         const val KEY_CONTACT_DISPLAY_ORDER = "contact_display_order"
+        const val KEY_SHOW_CONTACT_SECTION_HEADERS = "show_contact_section_headers"
         const val KEY_PATREON_PROMPT_SHOWN = "patreon_prompt_shown"
         const val KEY_CALL_RECORDING = "call_recording"
         const val KEY_CALL_RECORDING_AUTO = "call_recording_auto"
@@ -602,5 +603,10 @@ class PreferenceManager(context: Context) {
     fun setShowCountryCodeEnabled(enabled: Boolean) {
         setBoolean(KEY_SHOW_COUNTRY_CODE, enabled)
         clearFormattedNumberCache()
+    }
+
+    fun isShowContactSectionHeaders(): Boolean = getBoolean(KEY_SHOW_CONTACT_SECTION_HEADERS, true)
+    fun setShowContactSectionHeaders(enabled: Boolean) {
+        setBoolean(KEY_SHOW_CONTACT_SECTION_HEADERS, enabled)
     }
 }

@@ -204,18 +204,16 @@ fun AuxiliaryPillButton(
 }
 
 private fun callAudioRouteIcon(route: Int): ImageVector = when (route) {
-    CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
     CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
     CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
-    else -> Icons.Default.Phone
+    else -> Icons.AutoMirrored.Filled.VolumeUp
 }
 
 @Composable
 private fun callAudioRouteLabel(route: Int): String = when (route) {
-    CallAudioState.ROUTE_SPEAKER -> stringResource(R.string.audio_route_speaker)
     CallAudioState.ROUTE_BLUETOOTH -> stringResource(R.string.audio_route_bluetooth)
     CallAudioState.ROUTE_WIRED_HEADSET -> stringResource(R.string.audio_route_headset)
-    else -> stringResource(R.string.audio_route_handset)
+    else -> stringResource(R.string.audio_route_speaker)
 }
 
 @Composable
@@ -289,8 +287,12 @@ fun ActiveCallControls(
     modifier: Modifier = Modifier
 ) {
     val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
-    val audioActive = audioRoute == CallAudioState.ROUTE_SPEAKER ||
-            audioRoute == CallAudioState.ROUTE_BLUETOOTH
+    val audioActive = when (audioRoute) {
+        CallAudioState.ROUTE_SPEAKER -> true
+        CallAudioState.ROUTE_BLUETOOTH -> true
+        CallAudioState.ROUTE_WIRED_HEADSET -> true
+        else -> false // Earpiece (handset) is the disabled state of the Speaker button
+    }
     val isHolding = callState == Call.STATE_HOLDING
 
     val cellSpacing = if (compact) 8.dp else 12.dp
@@ -318,12 +320,12 @@ fun ActiveCallControls(
                 compact = compact,
                 onClick = onMessage
             )
-            if (canSwap) {
+            if (canSwap && canMerge) {
                 AuxiliaryPillButton(
-                    icon = Icons.Default.SwapCalls,
-                    label = stringResource(R.string.action_swap),
+                    icon = Icons.AutoMirrored.Outlined.CallMerge,
+                    label = stringResource(R.string.action_merge_calls),
                     compact = compact,
-                    onClick = onSwapCalls
+                    onClick = onMergeCalls
                 )
             }
             if (hasConference) {
@@ -397,16 +399,7 @@ fun ActiveCallControls(
                 modifier = Modifier.weight(1f),
                 onClick = onToggleHold
             )
-            if (canMerge) {
-                CallActionButton(
-                    icon = Icons.AutoMirrored.Outlined.CallMerge,
-                    isActive = false,
-                    label = stringResource(R.string.action_merge_calls),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onMergeCalls
-                )
-            } else if (canSwap) {
+            if (canSwap) {
                 CallActionButton(
                     icon = Icons.Default.SwapCalls,
                     isActive = false,
@@ -414,6 +407,15 @@ fun ActiveCallControls(
                     compact = compact,
                     modifier = Modifier.weight(1f),
                     onClick = onSwapCalls
+                )
+            } else if (canMerge) {
+                CallActionButton(
+                    icon = Icons.AutoMirrored.Outlined.CallMerge,
+                    isActive = false,
+                    label = stringResource(R.string.action_merge_calls),
+                    compact = compact,
+                    modifier = Modifier.weight(1f),
+                    onClick = onMergeCalls
                 )
             } else {
                 CallActionButton(

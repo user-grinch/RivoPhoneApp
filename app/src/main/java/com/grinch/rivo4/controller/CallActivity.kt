@@ -56,6 +56,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 
 private data class CallIdentity(
     val number: String,
@@ -148,6 +151,20 @@ class CallActivity : ComponentActivity() {
         }
 
         setupProximitySensor()
+        lifecycleScope.launch {
+            CallService.audioState.collect { audioState ->
+                val activeCalls = CallService.allCalls.value
+                val hasActive = activeCalls.any { it.state == Call.STATE_ACTIVE || it.state == Call.STATE_DIALING }
+                if (hasActive) {
+                    val route = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+                    if (route == CallAudioState.ROUTE_EARPIECE) {
+                        acquireProximityLock()
+                    } else {
+                        releaseProximityLock()
+                    }
+                }
+            }
+        }
         applySystemBarStyle(isNightMode())
 
         setContent {
@@ -361,7 +378,7 @@ class CallActivity : ComponentActivity() {
 
         var identity by remember(number, unknownLabel) {
             val base = cachedIdentity(number, settingsState)
-                ?: CallIdentity(number, number.ifEmpty { unknownLabel }, null, null)
+                ?: CallIdentity(number, if (number.isNotEmpty()) formatPhoneNumber(number) else unknownLabel, null, null)
             val initialBg = if (base.backgroundUri == null) {
                 if (number.isEmpty()) {
                     CallBackgroundStore.unknownModel(context) ?: CallBackgroundStore.defaultModel(context)
@@ -423,7 +440,7 @@ class CallActivity : ComponentActivity() {
                 } else {
                     contact?.name?.takeIf { it.isNotBlank() }
                         ?: identity.name.takeIf { contactFailed && it.isNotBlank() }
-                        ?: number.ifEmpty { unknownLabel }
+                        ?: (if (number.isNotEmpty()) formatPhoneNumber(number) else unknownLabel)
                 },
                 photoUri = if (isConference) null else contact?.photoUri ?: identity.photoUri.takeIf { contactFailed },
                 backgroundUri = background
@@ -616,8 +633,13 @@ class CallActivity : ComponentActivity() {
     private fun acquireProximityLock() {
         if (preferenceManager.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) {
             try {
+                val route = CallService.audioState.value?.route ?: CallAudioState.ROUTE_EARPIECE
+                if (route != CallAudioState.ROUTE_EARPIECE) {
+                    releaseProximityLock()
+                    return
+                }
                 proximityWakeLock?.let {
-                    if (!it.isHeld) it.acquire(10 * 60 * 1000L) // 10 min safety timeout
+                    if (!it.isHeld) it.acquire()
                 }
             } catch (e: Exception) {
                 Log.e("CallActivity", "Failed to acquire proximity lock", e)

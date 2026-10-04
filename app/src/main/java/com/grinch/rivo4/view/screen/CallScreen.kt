@@ -151,7 +151,8 @@ fun ExpressiveCallScreen(
     val hasConference = isConference || conferenceParticipants.isNotEmpty()
 
     val canSwap = (call.state == Call.STATE_ACTIVE && otherCall?.state == Call.STATE_HOLDING) ||
-        (call.state == Call.STATE_HOLDING && otherCall?.state == Call.STATE_ACTIVE)
+        (call.state == Call.STATE_HOLDING && otherCall?.state == Call.STATE_ACTIVE) ||
+        (otherCall != null && (call.state == Call.STATE_ACTIVE || call.state == Call.STATE_HOLDING))
 
     val accountHandle = call.details.accountHandle
     val simLabelFallback = accountHandle?.let { stringResource(R.string.call_screen_sim_label, it.id) }
@@ -468,8 +469,15 @@ fun ExpressiveCallScreen(
                 }
             }
 
+            val displayName = remember(contactName, phoneNumber) {
+                if (contactName.isBlank() || contactName == phoneNumber) {
+                    if (phoneNumber.isNotEmpty()) formatPhoneNumber(phoneNumber) else ""
+                } else {
+                    contactName
+                }
+            }
             Text(
-                text = contactName,
+                text = displayName,
                 style = if (isLandscape) MaterialTheme.typography.headlineMediumEmphasized else MaterialTheme.typography.displaySmallEmphasized,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
@@ -481,7 +489,7 @@ fun ExpressiveCallScreen(
             )
 
             val formattedNumber = remember(phoneNumber) { formatPhoneNumber(phoneNumber) }
-            if (phoneNumber.isNotEmpty() && phoneNumber != contactName) {
+            if (phoneNumber.isNotEmpty() && formattedNumber != displayName && phoneNumber != displayName) {
                 Text(
                     text = formattedNumber,
                     style = MaterialTheme.typography.titleMedium,

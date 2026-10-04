@@ -67,6 +67,9 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.CallLogViewModel
+import com.grinch.rivo4.modal.data.CallLogEntry
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.controller.util.formatPhoneNumber
@@ -173,6 +176,8 @@ fun DialPadScreen(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val callLogVM: CallLogViewModel = koinActivityViewModel()
+    val allCallLogs by callLogVM.allCallLogs.collectAsState()
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
 
@@ -276,14 +281,18 @@ fun DialPadScreen(
     val avatarStyle = rememberRivoAvatarStyle()
 
     var searchResults by remember { mutableStateOf<List<Contact>>(emptyList()) }
+    var searchRecentNumbers by remember { mutableStateOf<List<CallLogEntry>>(emptyList()) }
 
-    LaunchedEffect(number, allContacts, t9Enabled) {
+    LaunchedEffect(number, allContacts, allCallLogs, t9Enabled) {
         if (number.isEmpty()) {
             searchResults = emptyList()
+            searchRecentNumbers = emptyList()
         } else {
-            searchResults = withContext(Dispatchers.Default) {
+            val (contacts, recents) = withContext(Dispatchers.Default) {
                 val cleanQuery = number.replace(" ", "")
-                allContacts.asSequence()
+                val cleanDigits = cleanQuery.filter { it.isDigit() }
+
+                val matchedContacts = allContacts.asSequence()
                     .filter { contact ->
                         val matchesNumber = contact.phoneNumbers.any { it.replace(" ", "").contains(cleanQuery) }
                         val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, cleanQuery)
@@ -292,7 +301,38 @@ fun DialPadScreen(
                     }
                     .take(50)
                     .toList()
+
+                val savedNumbersSet = allContacts.flatMap { it.phoneNumbers }
+                    .map { normalizePhoneNumber(it) }
+                    .filter { it.isNotEmpty() }
+                    .toSet()
+
+                val matchedRecents = if (cleanDigits.isNotEmpty()) {
+                    allCallLogs.asSequence()
+                        .filter { entry ->
+                            val entryClean = entry.number.replace(" ", "")
+                            val entryDigits = entryClean.filter { it.isDigit() }
+                            val norm = normalizePhoneNumber(entry.number)
+                            val isUnsaved = (entry.contactId.isNullOrBlank() || entry.contactId == "0") &&
+                                (entry.name.isNullOrBlank() || entry.name == entry.number) &&
+                                !savedNumbersSet.contains(norm)
+                            isUnsaved && (entryDigits.contains(cleanDigits) || entryClean.contains(cleanQuery))
+                        }
+                        .distinctBy { normalizePhoneNumber(it.number) }
+                        .sortedWith(compareBy<CallLogEntry> { entry ->
+                            val norm = normalizePhoneNumber(entry.number).filter { it.isDigit() }
+                            if (norm.startsWith(cleanDigits)) 0 else 1
+                        }.thenByDescending { it.date })
+                        .take(20)
+                        .toList()
+                } else {
+                    emptyList()
+                }
+
+                matchedContacts to matchedRecents
             }
+            searchResults = contacts
+            searchRecentNumbers = recents
         }
     }
 
@@ -443,7 +483,8 @@ fun DialPadScreen(
                 }
             }
 
-            if (searchResults.isNotEmpty()) {
+            val totalResults = searchResults.size + searchRecentNumbers.size
+            if (totalResults > 0) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = dialpadHeightDp + 16.dp),
@@ -451,7 +492,7 @@ fun DialPadScreen(
                 ) {
                     itemsIndexed(searchResults, key = { _, contact -> "dialpad_contact_${contact.id}" }) { index, contact ->
                         val contactNumber = contact.phoneNumbers.firstOrNull()
-                        val shape = rivoGroupedItemShape(index, searchResults.size)
+                        val shape = rivoGroupedItemShape(index, totalResults)
 
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -486,6 +527,59 @@ fun DialPadScreen(
                                             contactId = contact.id
                                         )
                                     )
+                                }
+                            )
+                        }
+                    }
+
+                    itemsIndexed(searchRecentNumbers, key = { _, entry -> "dialpad_recent_${entry.id}_${entry.number}" }) { index, entry ->
+                        val itemIndex = searchResults.size + index
+                        val shape = rivoGroupedItemShape(itemIndex, totalResults)
+
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            RivoListItem(
+                                headline = formatPhoneNumber(entry.number),
+                                supporting = buildString {
+                                    append(stringResource(R.string.nav_recents))
+                                    if (!entry.simLabel.isNullOrBlank()) {
+                                        append(" • ")
+                                        append(entry.simLabel)
+                                    }
+                                },
+                                leadingContent = {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                Icons.Default.History,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    }
+                                },
+                                trailingContent = {
+                                    IconButton(
+                                        onClick = { performCall(entry.number, null) },
+                                        modifier = Modifier.padding(end = 4.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.Call,
+                                            contentDescription = stringResource(R.string.action_call),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    performCall(entry.number, null)
                                 }
                             )
                         }

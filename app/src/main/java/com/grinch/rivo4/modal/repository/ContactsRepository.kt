@@ -779,12 +779,12 @@ class ContactsRepository(
             null
         }
 
-        val resolvedContactId = if (contact.id.isEmpty() || contact.id == "0") {
+        val resolvedContactId = if (contact.id.isBlank() || contact.id == "0" || contact.id == "null") {
             null
         } else if (contact.id.toLongOrNull() != null) {
             contact.id
         } else {
-            resolveLookupKey(contact.id) ?: contact.id
+            resolveLookupKey(contact.id)
         }
 
         val existingRawContactIds = resolvedContactId?.let { getRawContactIds(it) } ?: emptyList()
@@ -894,7 +894,11 @@ class ContactsRepository(
             }
         } else {
             // Update existing contact targeting primary raw contact
-            val primaryRawContactId = existingRawContactIds.first()
+            val primaryRawContactId = existingRawContactIds.firstOrNull()?.takeIf { it.isNotBlank() && it != "0" && it != "null" }
+            if (primaryRawContactId == null) {
+                android.util.Log.e("ContactsRepo", "Cannot update contact: primaryRawContactId is invalid for contact ID: " + contact.id)
+                return Pair(false, null)
+            }
 
             ops.add(
                 ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
@@ -1128,6 +1132,10 @@ class ContactsRepository(
     }
 
     private fun deleteContactInternal(contactId: String, clearBackground: Boolean) {
+        if (contactId.isBlank() || contactId == "0" || contactId == "null") {
+            android.util.Log.w("ContactsRepo", "Aborted deleteContactInternal: invalid contactId '$contactId'")
+            return
+        }
         if (clearBackground) clearCallBackground(contactId)
         if (contactId.startsWith("p")) {
             val id = contactId.substring(1).toLongOrNull() ?: return
@@ -1137,7 +1145,12 @@ class ContactsRepository(
         val resolvedId = if (contactId.toLongOrNull() != null) {
             contactId
         } else {
-            resolveLookupKey(contactId) ?: contactId
+            resolveLookupKey(contactId)
+        }
+
+        if (resolvedId.isNullOrBlank() || resolvedId == "0" || resolvedId == "null") {
+            android.util.Log.w("ContactsRepo", "Aborted deleteContactInternal: cannot safely resolve ID for '$contactId'")
+            return
         }
 
         // 1. Delete all raw contacts associated with this contact by CONTACT_ID
@@ -1158,11 +1171,13 @@ class ContactsRepository(
                 rawIds.addAll(getRawContactIds(resolvedId))
             }
             for (rawId in rawIds) {
-                try {
-                    val rawUri = ContentUris.withAppendedId(ContactsContract.RawContacts.CONTENT_URI, rawId.toLong())
-                    contentResolver.delete(rawUri, null, null)
-                } catch (e: Exception) {
-                    android.util.Log.e("ContactsRepo", "Error deleting raw contact uri $rawId", e)
+                if (rawId.isNotBlank() && rawId != "0" && rawId != "null") {
+                    try {
+                        val rawUri = ContentUris.withAppendedId(ContactsContract.RawContacts.CONTENT_URI, rawId.toLong())
+                        contentResolver.delete(rawUri, null, null)
+                    } catch (e: Exception) {
+                        android.util.Log.e("ContactsRepo", "Error deleting raw contact uri $rawId", e)
+                    }
                 }
             }
         } catch (t: Throwable) {
@@ -1201,13 +1216,15 @@ class ContactsRepository(
             android.util.Log.e("ContactsRepo", "Error deleting contact uri $resolvedId", t)
         }
 
-        // 6. Delete via lookup URI
+        // 6. Delete via lookup URI (only if contactId is a valid non-numeric string and not empty/blank)
         try {
-            val lookupUri = Uri.withAppendedPath(
-                ContactsContract.Contacts.CONTENT_LOOKUP_URI,
-                Uri.encode(contactId)
-            )
-            contentResolver.delete(lookupUri, null, null)
+            if (contactId.isNotBlank() && contactId != "0" && contactId != "null" && contactId.toLongOrNull() == null) {
+                val lookupUri = Uri.withAppendedPath(
+                    ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                    Uri.encode(contactId)
+                )
+                contentResolver.delete(lookupUri, null, null)
+            }
         } catch (t: Throwable) {
             // Ignore
         }
@@ -1218,7 +1235,9 @@ class ContactsRepository(
     }
 
     override fun deleteContacts(contactIds: List<String>) {
-        contactIds.chunked(50).forEach { chunk ->
+        val validIds = contactIds.filter { it.isNotBlank() && it != "0" && it != "null" }
+        if (validIds.isEmpty()) return
+        validIds.chunked(50).forEach { chunk ->
             val ops = ArrayList<ContentProviderOperation>()
             chunk.forEach { id ->
                 clearCallBackground(id)
@@ -1227,7 +1246,10 @@ class ContactsRepository(
                     if (lid != null) privateContactDao.deleteById(lid)
                     return@forEach
                 }
-                val resolvedId = if (id.toLongOrNull() != null) id else (resolveLookupKey(id) ?: id)
+                val resolvedId = if (id.toLongOrNull() != null) id else resolveLookupKey(id)
+                if (resolvedId.isNullOrBlank() || resolvedId == "0" || resolvedId == "null") {
+                    return@forEach
+                }
 
                 ops.add(
                     ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
@@ -1438,12 +1460,13 @@ class ContactsRepository(
         val phoneBuckets = mutableMapOf<String, MutableList<Pair<String, Int>>>()
         val emailMap = mutableMapOf<String, Int>()
 
+        val invalidNames = setOf("", "unnamed", "(no name)", "no name", unknownLabel.lowercase(), "unknown", "null")
         allContacts.forEachIndexed { index, contact ->
             val cleanName = contact.name.trim().lowercase()
             val validNumbers = contact.phoneNumbers.filter { it.filter { c -> c.isDigit() }.length >= 5 }
             val validEmails = contact.emails.map { it.trim().lowercase() }.filter { it.length >= 5 && it.contains('@') }
 
-            if (cleanName.isNotBlank() && cleanName != unknownLabel.lowercase() && cleanName != "(no name)") {
+            if (cleanName.isNotBlank() && !invalidNames.contains(cleanName)) {
                 val existing = nameMap[cleanName]
                 if (existing != null) {
                     val other = allContacts[existing]

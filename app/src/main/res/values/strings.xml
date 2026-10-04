@@ -473,6 +473,8 @@
     <string name="settings_manage_name_format_supporting">Choose how names are displayed</string>
     <string name="settings_manage_name_format_first_first">First Name First</string>
     <string name="settings_manage_name_format_last_first">Last Name First</string>
+    <string name="settings_contact_section_headers">Show alphabetical section headers</string>
+    <string name="settings_contact_section_headers_supporting">Display letter headers (A, B, C) separating contact groups in the list</string>
     <string name="settings_manage_storage">Storage</string>
     <string name="settings_manage_private_contacts">Private Storage</string>
     <string name="settings_manage_private_contacts_supporting">Manage contacts stored in private app storage</string>

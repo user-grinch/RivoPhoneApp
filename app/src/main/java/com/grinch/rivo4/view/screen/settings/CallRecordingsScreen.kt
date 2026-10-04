@@ -1,4 +1,6 @@
 package com.grinch.rivo4.view.screen.settings
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import com.grinch.rivo4.view.components.RivoResetButton
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
@@ -252,18 +254,22 @@ fun CallRecordingsContent(
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
 
-    // Async recordings discovery off main thread
+    // Fast async recordings discovery with instant cache display and background duration resolution
     LaunchedEffect(refreshKey) {
         isLoadingRecordings = true
-        recordings = withContext(Dispatchers.IO) {
-            val rawFiles = CallRecorder.listRecordings(context)
-            val dateFormat = SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault())
+        val rawFiles = withContext(Dispatchers.IO) {
+            CallRecorder.listRecordings(context)
+        }
+
+        // 1. Immediately display the list with cached durations (or 0L if not yet cached)
+        val initialItems = withContext(Dispatchers.Default) {
             rawFiles.map { file ->
                 val lastMod = file.lastModified()
                 val kb = file.length() / 1024
                 val sizeStr = if (kb > 1024) String.format(Locale.US, "%.1f MB", kb / 1024f) else "$kb KB"
                 val caller = extractCallerLabel(file.nameWithoutExtension)
-                val duration = AudioMetadataCache.getDurationMsSync(context, file)
+                val duration = AudioMetadataCache.getCachedDurationMs(context, file) ?: 0L
 
                 CallRecordingItem(
                     file = file,
@@ -277,7 +283,38 @@ fun CallRecordingsContent(
                 )
             }
         }
+        recordings = initialItems
         isLoadingRecordings = false
+
+        // 2. Resolve any missing durations in background coroutines without blocking page load
+        val unCached = initialItems.filter { it.durationMs <= 0L }
+        if (unCached.isNotEmpty()) {
+            withContext(Dispatchers.IO) {
+                val updatedDurations = java.util.concurrent.ConcurrentHashMap<String, Long>()
+                unCached.chunked(8).forEach { chunk ->
+                    chunk.map { item ->
+                        async {
+                            val dur = AudioMetadataCache.getDurationMs(context, item.file)
+                            if (dur > 0L) {
+                                updatedDurations[item.file.absolutePath] = dur
+                            }
+                        }
+                    }.awaitAll()
+                }
+                if (updatedDurations.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        recordings = recordings.map { item ->
+                            val resolvedDur = updatedDurations[item.file.absolutePath]
+                            if (resolvedDur != null && resolvedDur > 0L) {
+                                item.copy(durationMs = resolvedDur)
+                            } else {
+                                item
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Managed MediaPlayer Lifecycle

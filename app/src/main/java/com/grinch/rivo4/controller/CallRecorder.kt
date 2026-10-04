@@ -45,15 +45,44 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 object AudioMetadataCache {
     private val durationCache = ConcurrentHashMap<String, Long>()
+    @Volatile
+    private var prefs: android.content.SharedPreferences? = null
+
+    private fun getPrefs(context: Context): android.content.SharedPreferences {
+        var p = prefs
+        if (p == null) {
+            synchronized(this) {
+                p = prefs
+                if (p == null) {
+                    p = context.applicationContext.getSharedPreferences("call_recording_durations_cache", Context.MODE_PRIVATE)
+                    prefs = p
+                }
+            }
+        }
+        return p!!
+    }
 
     fun getCachedDurationMs(file: File): Long? {
         val key = "${file.absolutePath}_${file.lastModified()}"
         return durationCache[key]
     }
 
+    fun getCachedDurationMs(context: Context, file: File): Long? {
+        val key = "${file.absolutePath}_${file.lastModified()}"
+        durationCache[key]?.let { return it }
+        try {
+            val persisted = getPrefs(context).getLong(key, -1L)
+            if (persisted >= 0L) {
+                durationCache[key] = persisted
+                return persisted
+            }
+        } catch (_: Exception) {}
+        return null
+    }
+
     suspend fun getDurationMs(context: Context, file: File): Long = withContext(Dispatchers.IO) {
         val key = "${file.absolutePath}_${file.lastModified()}"
-        durationCache[key]?.let { return@withContext it }
+        getCachedDurationMs(context, file)?.let { return@withContext it }
         val dur = runCatching {
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(context, Uri.fromFile(file))
@@ -62,12 +91,15 @@ object AudioMetadataCache {
             durationStr?.toLongOrNull() ?: 0L
         }.getOrDefault(0L)
         durationCache[key] = dur
+        try {
+            getPrefs(context).edit().putLong(key, dur).apply()
+        } catch (_: Exception) {}
         dur
     }
 
     fun getDurationMsSync(context: Context, file: File): Long {
         val key = "${file.absolutePath}_${file.lastModified()}"
-        durationCache[key]?.let { return it }
+        getCachedDurationMs(context, file)?.let { return it }
         val dur = runCatching {
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(context, Uri.fromFile(file))
@@ -76,6 +108,9 @@ object AudioMetadataCache {
             durationStr?.toLongOrNull() ?: 0L
         }.getOrDefault(0L)
         durationCache[key] = dur
+        try {
+            getPrefs(context).edit().putLong(key, dur).apply()
+        } catch (_: Exception) {}
         return dur
     }
 

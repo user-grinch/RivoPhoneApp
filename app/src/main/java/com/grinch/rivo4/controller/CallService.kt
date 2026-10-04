@@ -262,45 +262,45 @@ class CallService : InCallService() {
         fun mergeCalls() {
             val inst = instance ?: return
             val calls = inst.getCalls() ?: return
-            val activeCall = calls.find { it.state == Call.STATE_ACTIVE }
-            val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+            val activeCall = calls.find { it.state == Call.STATE_ACTIVE } ?: calls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
+            val otherCalls = calls.filter { it != activeCall && it.state != Call.STATE_DISCONNECTED }
 
+            if (activeCall == null || otherCalls.isEmpty()) return
+
+            var mergedNative = false
             // 1. Try native mergeConference capability if present on the active call
             try {
-                if (activeCall != null && activeCall.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)) {
+                if (activeCall.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE)) {
                     activeCall.mergeConference()
-                    return
+                    mergedNative = true
                 }
             } catch (e: Exception) {
                 Log.w("CallService", "mergeConference failed: ${e.message}")
             }
 
-            // 2. Try conferenceableCalls list if reported by Telecom
-            try {
-                if (activeCall != null) {
-                    val confCandidate = activeCall.conferenceableCalls.firstOrNull { it.state != Call.STATE_DISCONNECTED }
-                    if (confCandidate != null) {
-                        activeCall.conference(confCandidate)
-                        return
+            if (!mergedNative) {
+                // 2. Loop through conferenceableCalls if available
+                try {
+                    val confCandidates = activeCall.conferenceableCalls.filter { it.state != Call.STATE_DISCONNECTED }
+                    for (candidate in confCandidates) {
+                        try {
+                            activeCall.conference(candidate)
+                        } catch (e: Exception) {
+                            Log.w("CallService", "conference candidate failed: ${e.message}")
+                        }
                     }
+                } catch (e: Exception) {
+                    Log.w("CallService", "conferenceableCalls merge failed: ${e.message}")
                 }
-            } catch (e: Exception) {
-                Log.w("CallService", "conferenceableCalls merge failed: ${e.message}")
-            }
 
-            // 3. Fallback: conference active call with held call or any other active/held call
-            try {
-                if (activeCall != null && heldCall != null) {
-                    activeCall.conference(heldCall)
-                } else if (calls.size >= 2) {
-                    val primary = activeCall ?: calls[0]
-                    val secondary = calls.firstOrNull { it != primary && it.state != Call.STATE_DISCONNECTED }
-                    if (secondary != null) {
-                        primary.conference(secondary)
+                // 3. Fallback: conference remaining calls with activeCall
+                for (other in otherCalls) {
+                    try {
+                        activeCall.conference(other)
+                    } catch (e: Exception) {
+                        Log.e("CallService", "Error conferencing calls: ${e.message}", e)
                     }
                 }
-            } catch (e: Exception) {
-                Log.e("CallService", "Error conferencing calls: ${e.message}", e)
             }
         }
 
@@ -711,6 +711,24 @@ class CallService : InCallService() {
 
         val activePreferred = if (preferred != null && preferred.state != Call.STATE_DISCONNECTED && preferred.state != Call.STATE_HOLDING) preferred else null
 
+        val hasActiveOrConnecting = calls.any {
+            it.state == Call.STATE_ACTIVE ||
+            it.state == Call.STATE_DIALING ||
+            it.state == Call.STATE_CONNECTING ||
+            it.state == Call.STATE_RINGING
+        }
+        if (!hasActiveOrConnecting) {
+            val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+            if (heldCall != null) {
+                try {
+                    heldCall.unhold()
+                    _preferredCall.value = heldCall
+                } catch (e: Exception) {
+                    Log.e("CallService", "Failed to auto-resume held call in updateCallState: ${e.message}")
+                }
+            }
+        }
+
         val priorityCall = calls.find { it.state == Call.STATE_RINGING }
             ?: activePreferred
             ?: calls.find { it.state == Call.STATE_DIALING || it.state == Call.STATE_CONNECTING }
@@ -796,8 +814,6 @@ class CallService : InCallService() {
 
         val showFullScreen = !isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager)
 
-        updateNotification(call, showFullScreen)
-
         if (showFullScreen) {
             val intent = Intent(this, CallActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -810,6 +826,8 @@ class CallService : InCallService() {
         } else {
             Log.i("CallService", "User is actively using phone; presenting heads-up incoming call notification only.")
         }
+
+        updateNotification(call, showFullScreen)
     }
 
     override fun onCallRemoved(call: Call) {
@@ -830,6 +848,23 @@ class CallService : InCallService() {
             removeForeground()
             cancelNotification()
         } else {
+            val hasActiveOrConnecting = calls.any {
+                it.state == Call.STATE_ACTIVE ||
+                it.state == Call.STATE_DIALING ||
+                it.state == Call.STATE_CONNECTING ||
+                it.state == Call.STATE_RINGING
+            }
+            if (!hasActiveOrConnecting) {
+                val heldCall = calls.find { it.state == Call.STATE_HOLDING }
+                if (heldCall != null) {
+                    try {
+                        heldCall.unhold()
+                        _preferredCall.value = heldCall
+                    } catch (e: Exception) {
+                        Log.e("CallService", "Failed to auto-resume held call on call removed: ${e.message}")
+                    }
+                }
+            }
             _currentCallSession.value?.call?.let { updateNotification(it) }
         }
     }
@@ -982,13 +1017,13 @@ class CallService : InCallService() {
 
         val isRinging = call.state == Call.STATE_RINGING
         val isIncoming = call.details.callDirection == Call.Details.DIRECTION_INCOMING
+        val isLocked = CallUiHelper.isDeviceLocked(this)
         val showFullScreen = directFullScreen ?: (!isIncoming || CallUiHelper.shouldShowFullScreen(this, preferenceManager))
         val isActivityShowing = isActivityVisible.value
 
-        // For incoming ringing calls, ALWAYS use CHANNEL_ID (IMPORTANCE_HIGH), PRIORITY_MAX, and fullScreenIntent.
-        // On OEM devices (MIUI/HyperOS, Vivo/Funtouch OS, ColorOS, OneUI), demoting ringing calls to SILENT_CHANNEL_ID
-        // or PRIORITY_MIN prevents heads-up popups and blocks lockscreen wake/full-screen activity display!
-        val targetChannel = if (isRinging) CHANNEL_ID else SILENT_CHANNEL_ID
+        // Heads-up floating popup banner should ONLY show when call is ringing AND phone is unlocked AND CallActivity is NOT showing full-screen
+        val showHeadsUp = isRinging && !isLocked && !showFullScreen && !isActivityShowing
+        val targetChannel = if (showHeadsUp) CHANNEL_ID else SILENT_CHANNEL_ID
 
         val notifColor = com.grinch.rivo4.controller.util.CallNotificationHelper.getNotificationColor(this)
 
@@ -999,7 +1034,7 @@ class CallService : InCallService() {
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentIntent(fullScreenPendingIntent)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(if (isLocked) NotificationCompat.VISIBILITY_SECRET else NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
             .setColorized(true)
             .setColor(notifColor)
@@ -1007,12 +1042,20 @@ class CallService : InCallService() {
             .addPerson(person)
 
         if (isRinging) {
-            builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
-            builder.setPriority(NotificationCompat.PRIORITY_MAX)
-            builder.setFullScreenIntent(fullScreenPendingIntent, true)
-            builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
-            if (isActivityShowing) {
-                // When in-app UI is already visible, suppress duplicate alert sound/vibration but preserve notification
+            if (showHeadsUp) {
+                builder.setStyle(NotificationCompat.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent))
+                builder.setPriority(NotificationCompat.PRIORITY_MAX)
+                builder.setFullScreenIntent(fullScreenPendingIntent, false)
+                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
+            } else if (isLocked || showFullScreen || isActivityShowing) {
+                // On lockscreen or when full screen is displayed, do NOT apply incoming CallStyle or high priority heads-up.
+                // Keep notification silent and minimized so ONLY CallActivity is shown on lockscreen.
+                builder.setPriority(NotificationCompat.PRIORITY_MIN)
+                builder.setSilent(true)
+                builder.setOnlyAlertOnce(true)
+            } else {
+                builder.setPriority(NotificationCompat.PRIORITY_LOW)
+                builder.setSilent(true)
                 builder.setOnlyAlertOnce(true)
             }
         } else {

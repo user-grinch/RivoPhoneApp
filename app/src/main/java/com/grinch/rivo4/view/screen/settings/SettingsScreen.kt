@@ -897,6 +897,14 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
             ),
             SettingSearchItem(
+                title = "Contact Section Headers",
+                supporting = "Show or hide alphabetical A-Z letter headers in contact list",
+                category = "Contacts & Data",
+                icon = Icons.Outlined.SortByAlpha,
+                keywords = listOf("section headers", "alphabet headers", "abc headers", "contact headers", "letter dividers"),
+                onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "Filter Accounts & Contact Sources",
                 supporting = "Show or hide contacts from specific Google accounts, SIM, or device memory",
                 category = "Contacts & Data",

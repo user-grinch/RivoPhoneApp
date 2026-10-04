@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.theme.callColors
 import org.koin.compose.koinInject
 
@@ -234,7 +235,7 @@ private fun ConferenceParticipantItem(
                 )
                 if (number.isNotEmpty() && number != contactName) {
                     Text(
-                        text = number,
+                        text = formatPhoneNumber(number),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,

@@ -433,6 +433,10 @@ class ContactsViewModel(
     }
 
     fun deleteContact(contactId: String) {
+        if (contactId.isBlank() || contactId == "0" || contactId == "null") {
+            android.util.Log.w("ContactsVM", "Ignored deleteContact for invalid ID: ''")
+            return
+        }
         recentlyDeletedIds.add(contactId)
         _allContacts.value = _allContacts.value.filter { it.id != contactId && !recentlyDeletedIds.contains(it.id) }
 
@@ -466,7 +470,8 @@ class ContactsViewModel(
     }
 
     fun deleteContacts(contactIds: List<String>) {
-        val idSet = contactIds.toSet()
+        val idSet = contactIds.filter { it.isNotBlank() && it != "0" && it != "null" }.toSet()
+        if (idSet.isEmpty()) return
         recentlyDeletedIds.addAll(idSet)
         _allContacts.value = _allContacts.value.filter { it.id !in idSet && !recentlyDeletedIds.contains(it.id) }
 

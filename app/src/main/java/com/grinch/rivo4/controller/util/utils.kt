@@ -122,7 +122,14 @@ fun formatPhoneNumber(number: String, showCountryCode: Boolean? = null): String 
     val cacheKey = "${shouldShowCountryCode}_$number"
     return formattedNumberCache.get(cacheKey) ?: run {
         val defaultCountry = Locale.getDefault().country.ifEmpty { "US" }
-        val formattedStandard = PhoneNumberUtils.formatNumber(number, defaultCountry) ?: number
+        val digitsOnly = number.filter { it.isDigit() }
+        val e164 = if (shouldShowCountryCode && !number.startsWith("+") && digitsOnly.length in 7..15 && !number.contains("*") && !number.contains("#")) {
+            PhoneNumberUtils.formatNumberToE164(number, defaultCountry)
+        } else {
+            null
+        }
+        val numberToFormat = e164 ?: number
+        val formattedStandard = PhoneNumberUtils.formatNumber(numberToFormat, defaultCountry) ?: numberToFormat
         
         val result = if (shouldShowCountryCode) {
             formattedStandard

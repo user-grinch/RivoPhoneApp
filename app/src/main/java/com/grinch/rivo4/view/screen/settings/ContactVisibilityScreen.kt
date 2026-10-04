@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
@@ -43,6 +44,9 @@ fun ContactVisibilityScreen(
     val visibleAccounts by viewModel.visibleAccountsFlow.collectAsState()
     val sortOrderState by viewModel.sortOrder.collectAsState()
     val displayOrderState by viewModel.displayOrder.collectAsState()
+    val prefs = org.koin.compose.koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val showSectionHeaders = remember(settingsState) { prefs.isShowContactSectionHeaders() }
 
     val currentVisible = remember(visibleAccounts, accounts) {
         visibleAccounts ?: (accounts.map { "${it.type}|${it.name}" } + "local|local").toSet()
@@ -130,6 +134,17 @@ fun ContactVisibilityScreen(
                                 )
                             }
                         }
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_contact_section_headers),
+                            supporting = stringResource(R.string.settings_contact_section_headers_supporting),
+                            leadingIcon = Icons.Outlined.SortByAlpha,
+                            checked = showSectionHeaders,
+                            onCheckedChange = { isChecked: Boolean ->
+                                prefs.setShowContactSectionHeaders(isChecked)
+                            }
+                        )
                     }
                 }
             }
