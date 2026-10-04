@@ -438,6 +438,8 @@
     <string name="settings_manage_name_format_supporting">Elige cómo se muestran las nombres</string>
     <string name="settings_manage_name_format_first_first">Nombre primero</string>
     <string name="settings_manage_name_format_last_first">Apellido primero</string>
+    <string name="settings_contact_section_headers">Mostrar cabeceras de sección alfabética</string>
+    <string name="settings_contact_section_headers_supporting">Mostrar las cabeceras de las letras (A, B, C) separando grupos de contacto en la lista</string>
     <string name="settings_manage_storage">Almacenamiento</string>
     <string name="settings_manage_private_contacts">Almacenamiento privado</string>
     <string name="settings_manage_quick_fixes">Correcciones rápidas</string>
