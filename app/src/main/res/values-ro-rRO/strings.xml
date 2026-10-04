@@ -45,6 +45,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Arată anteturile secţiunilor alfabetice</string>
+    <string name="settings_contact_section_headers_supporting">Afișează antetele literelor (A, B, C) separând grupurile de contacte din listă</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

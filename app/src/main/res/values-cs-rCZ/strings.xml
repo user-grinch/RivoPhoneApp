@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Zobrazit abecední záhlaví sekcí</string>
+    <string name="settings_contact_section_headers_supporting">Zobrazit záhlaví písmen (A, B, C) oddělující skupiny kontaktů v seznamu</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

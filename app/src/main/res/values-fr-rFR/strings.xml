@@ -449,6 +449,8 @@
     <string name="settings_manage_name_format_supporting">Choisissez comment les noms sont affichés</string>
     <string name="settings_manage_name_format_first_first">Prénom en premier</string>
     <string name="settings_manage_name_format_last_first">Nom en premier</string>
+    <string name="settings_contact_section_headers">Afficher les en-têtes des sections par ordre alphabétique</string>
+    <string name="settings_contact_section_headers_supporting">Afficher les en-têtes de lettre (A, B, C) séparant les groupes de contacts dans la liste</string>
     <string name="settings_manage_storage">Stockage</string>
     <string name="settings_manage_private_contacts">Stockage privé</string>
     <string name="settings_manage_private_contacts_supporting">Gérer les contacts enregistrés dans le stockage privé</string>
