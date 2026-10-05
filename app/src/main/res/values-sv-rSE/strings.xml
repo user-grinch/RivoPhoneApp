@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Visa alfabetisk sektion rubriker</string>
+    <string name="settings_contact_section_headers_supporting">Visa bokstavsrubriker (A, B, C) som separerar kontaktgrupper i listan</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

@@ -334,7 +334,7 @@
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
     <string name="settings_sound_dialpad_vibration_supporting">Vibration bei Tastendruck</string>
     <string name="settings_sound_hold_zero_for_plus">\"0\" gedrückt halten für \"+\"</string>
-    <string name="settings_sound_hold_zero_for_plus_supporting">\"0\" auf Tastenfeld gedrückt halten für \"+\"</string>
+    <string name="settings_sound_hold_zero_for_plus_supporting">\"0\" gedrückt halten für \"+\"</string>
     <string name="settings_sound_vibrate_on_answer">Vibration bei Abnahme</string>
     <string name="settings_sound_vibrate_on_answer_supporting">Bei Abnahme des Angerufenen vibrieren</string>
     <string name="settings_sound_vibrate_on_hangup">Vibration bei Anrufende</string>
@@ -366,15 +366,15 @@
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Anrufbildschirm bei Ohrnähe abschalten</string>
     <string name="settings_call_auto_speaker_proximity">Auto-Lautsprecher</string>
-    <string name="settings_call_auto_speaker_proximity_supporting">Auto-Umschalten: Bei Nicht-Ohrnähe Lautsprecher, sonst Handgerät (unterdrückt bei verbundenen Ohrhörern)</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Bei Nicht-Ohrnähe laut, sonst leise (deaktiviert bei verbundenen Ohrhörern)</string>
     <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
     <string name="settings_call_incoming_ui_buttons">Schaltflächen</string>
     <string name="settings_call_incoming_ui_slide_ios">Streichen zur Annahme (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertikales Wischen</string>
-    <string name="settings_call_always_fullscreen">Immer Vollbildanzeige</string>
-    <string name="settings_call_always_fullscreen_supporting">Bei Anruf immer Vollbildmodus. Falls deaktiviert werden Anrufe als schwebendes Banner angezeigt, während andere Apps benutzt werden.</string>
+    <string name="settings_call_always_fullscreen">Bei Anruf stets Vollbildanzeige</string>
+    <string name="settings_call_always_fullscreen_supporting">Bei Anruf stets Vollbildanzeige. Falls deaktiviert Anzeige als schwebendes Banner, während andere Apps benutzt werden.</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
     <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Tastenfelds</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
@@ -421,7 +421,7 @@
     <string name="settings_blocked_log_visibility_supporting">Blockierte Anrufe unter \"Zuletzt\" anzeigen oder verbergen</string>
     <string name="settings_blocked_log_hide">In Anrufliste verbergen</string>
     <string name="settings_blocked_log_show">In Anrufliste anzeigen</string>
-    <string name="settings_blocked_notifications">Benachrichtigungen blockieren</string>
+    <string name="settings_blocked_notifications">Benachrichtigung bei Blockieren</string>
     <string name="settings_blocked_notifications_supporting">Hinweis bei blockierten Anrufen zeigen</string>
     <string name="settings_blocked_system_button">Systemweit blockierte Nummern</string>
     <!-- Settings > Backup & Restore -->
@@ -449,6 +449,8 @@
     <string name="settings_manage_name_format_supporting">Auswählen, wie Namen angezeigt werden</string>
     <string name="settings_manage_name_format_first_first">Vorname zuerst</string>
     <string name="settings_manage_name_format_last_first">Nachname zuerst</string>
+    <string name="settings_contact_section_headers">alphabetische Kopfzeilen anzeigen</string>
+    <string name="settings_contact_section_headers_supporting">Zeige Kopfzeilen (A, B, C) an, die Kontaktgruppen in der Liste trennen</string>
     <string name="settings_manage_storage">Speicher</string>
     <string name="settings_manage_private_contacts">Privater Speicher</string>
     <string name="settings_manage_private_contacts_supporting">Kontakte im privaten App-Speicher verwalten</string>
@@ -735,13 +737,13 @@
     <string name="contact_management_same_source_dest">Ursprung und Zielspeicher müssen unterschiedlich sein</string>
     <string name="contact_management_tools_title">Adressbuch-Werkzeuge</string>
     <string name="contact_management_standardize_numbers">Telefonnummern standardisieren</string>
-    <string name="contact_management_standardize_supporting">Überflüssige Leerzeichen entfernen und internationales Format anwenden</string>
+    <string name="contact_management_standardize_supporting">Überflüssige Leerzeichen entfernen und internat. Format anwenden</string>
     <string name="contact_management_card_review">Prüfen &amp; Zusammenführen</string>
     <string name="contact_management_card_clean">Adressbuch bereinigen</string>
     <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen, um Speicher zu verwalten</string>
     <string name="contact_management_card_dup_sub">Tippen, um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
     <string name="settings_contact_management_card">Kontaktverwaltungskarte anzeigen</string>
-    <string name="settings_contact_management_card_supporting">Speicherübersicht, Bereinigungsstatus und Hinweise zu doppelten Kontakten anzeigen</string>
+    <string name="settings_contact_management_card_supporting">Speicherübersicht, Bereinigungsstatus und Hinweise zu doppelten Kontakten</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Eckenradius der schwebenden Leiste</string>
     <string name="settings_floating_bar_roundness_supporting">Ecken-Rundheit und Form der schwebende Leiste anpassen</string>
@@ -790,9 +792,9 @@
     <string name="missed_call_view_logs">Anrufliste anzeigen</string>
     <string name="missed_call_respond_with_message">Mit Nachricht antworten</string>
     <string name="settings_auto_decline_unknown_title">Auto-Ablehnen: Anrufer mit unterdrückter Nummer</string>
-    <string name="settings_auto_decline_unknown_supporting">Private, unterdrückte oder beschränkte Nummern automatisch ablehnen</string>
+    <string name="settings_auto_decline_unknown_supporting">Private, unterdrückte oder beschränkte Nummern ablehnen</string>
     <string name="settings_auto_decline_non_contacts_title">Auto-Ablehnen: Anrufe von Nicht-Kontakten</string>
-    <string name="settings_auto_decline_non_contacts_supporting">Anrufe von nicht als Kontakt gespeicherten Nummern automatisch ablehnen</string>
+    <string name="settings_auto_decline_non_contacts_supporting">Anrufe von nicht als Kontakt gespeicherten Nummern ablehnen</string>
     <string name="missed_call_msg_call_me_back">Rufen Sie mich bitte zurück?</string>
     <string name="missed_call_msg_sorry_busy">Entschuldigung, ich bin gerade beschäftigt.</string>
     <string name="missed_call_msg_call_right_back">Ich rufe gleich zurück</string>
@@ -816,7 +818,7 @@
     <string name="settings_interface_dual_sim_buttons_supporting">Auf Tastenfeld SIM 1 und 2 anzeigen</string>
     <!-- Call Log Limit (#161) -->
     <string name="settings_call_log_limit">Limit für Anrufliste</string>
-    <string name="settings_call_log_limit_supporting">Zahl der letzten Anrufe begrenzen, um Ladegeschwindigkeit und Leistung zu verbessern</string>
+    <string name="settings_call_log_limit_supporting">Zahl der Einträge begrenzen, um Leistung zu verbessern</string>
     <string name="settings_call_log_limit_100">100 Anrufe</string>
     <string name="settings_call_log_limit_250">250 Anrufe</string>
     <string name="settings_call_log_limit_500">500 Anrufe (Standard)</string>
@@ -928,13 +930,13 @@
     <string name="settings_group_call_screening">Anruf-Filter</string>
     <string name="settings_group_blocking_behavior">Blockierungsverhalten</string>
     <string name="settings_group_system_integration">Systemintegration</string>
-    <string name="settings_blocked_system_supporting">Android System-Verwaltung für blockierte Nummern öffnen</string>
+    <string name="settings_blocked_system_supporting">System-Verwaltung für blockierte Nummern (Android)</string>
     <!-- Multi-call & Conference Management -->
     <string name="action_swap">Tauschen</string>
     <string name="action_swap_calls">Anrufe tauschen</string>
     <string name="conference_manage">Verwalten</string>
     <string name="conference_participants">Konferenz-Teilnehmer (%1$d)</string>
-    <string name="conference_empty">Keine Teilnehmer an der Konferenz</string>
+    <string name="conference_empty">Keine Teilnehmer an Konferenz</string>
     <string name="conference_split">Getrennt</string>
     <string name="conference_remove_participant">Entfernen</string>
     <string name="contacts_trash_title">Papierkorb</string>
@@ -948,16 +950,16 @@
     <string name="contacts_trash_empty_all_confirm_msg">Alle %1$d Kontakte im Papierkorb werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="contacts_trash_restored_toast">Wiederhergestellt %1$s</string>
     <string name="settings_contacts_trash_title">Papierkorb für gelöschte Kontakte</string>
-    <string name="settings_contacts_trash_supporting">Gelöschte Kontakte 30 Tage im Papierkorb behalten, bevor sie endgültig entfernt werden</string>
+    <string name="settings_contacts_trash_supporting">Vor endgültiger Löschung Kontakte 30 Tage im Papierkorb behalten</string>
     <string name="settings_contacts_trash_view">Papierkorb anzeigen</string>
     <string name="settings_contacts_trash_view_supporting">Gelöschte Kontakte anzeigen und wiederherstellen (%1$d im Papierkorb)</string>
     <string name="shortcut_dial_contact">Anruf %1$s</string>
     <string name="settings_search_placeholder">Sucheinstellungen…</string>
     <string name="settings_search_no_results">Keine Einstellungen gefunden, die mit \"%1$s \" übereinstimmen</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Netzbetreibernamen im Verlauf anzeigen</string>
-    <string name="settings_show_carrier_in_recents_supporting">Netzbetreiber- und SIM-Kartennamen in Anrufliste und Verlauf anzeigen</string>
+    <string name="settings_show_carrier_in_recents">Netzbetreiber-Name anzeigen</string>
+    <string name="settings_show_carrier_in_recents_supporting">Netzbetreiber- und SIM-Karten-Name in Anrufliste und Verlauf</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Landesvorwahl anzeigen</string>
-    <string name="settings_show_country_code_supporting">Landesvorwahl in Telefonnummern in App und Anrufbildschirm anzeigen</string>
+    <string name="settings_show_country_code_supporting">Landesvorwahl in Telefonnummern anzeigen</string>
 </resources>

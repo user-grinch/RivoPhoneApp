@@ -453,6 +453,8 @@
     <string name="settings_manage_name_format_supporting">Выбрать способ отображения имен</string>
     <string name="settings_manage_name_format_first_first">Сначала имя, потом фамилия</string>
     <string name="settings_manage_name_format_last_first">Сначала фамилия, потом имя</string>
+    <string name="settings_contact_section_headers">Показывать заголовки алфавитных секций</string>
+    <string name="settings_contact_section_headers_supporting">Отображать заголовки букв (A, B, C) разделение групп контактов в списке</string>
     <string name="settings_manage_storage">Хранилище</string>
     <string name="settings_manage_private_contacts">Личное хранилище</string>
     <string name="settings_manage_private_contacts_supporting">Управление контактами, хранящимися в личном хранилище приложений</string>

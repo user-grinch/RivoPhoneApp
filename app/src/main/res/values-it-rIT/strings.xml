@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Mostra intestazioni di sezione alfabetiche</string>
+    <string name="settings_contact_section_headers_supporting">Mostra intestazioni lettere (A, B, C) separando i gruppi di contatti nell\'elenco</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

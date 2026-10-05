@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Näytä aakkosnumeeriset otsikot</string>
+    <string name="settings_contact_section_headers_supporting">Näytä kirjainten otsikot (A, B, C) erottamalla yhteysryhmät luettelosta</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

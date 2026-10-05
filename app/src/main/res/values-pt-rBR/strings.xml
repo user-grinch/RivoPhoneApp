@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Mostrar cabeçalhos de seção alfabética</string>
+    <string name="settings_contact_section_headers_supporting">Exibir cabeçalhos da letra (A, B, C) separando os grupos de contato na lista</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

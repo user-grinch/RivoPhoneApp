@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Toon alfabetische sectie-headers</string>
+    <string name="settings_contact_section_headers_supporting">Toon letter headers (A, B, C) scheidende contactgroepen in de lijst</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

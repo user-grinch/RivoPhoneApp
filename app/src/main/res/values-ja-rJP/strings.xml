@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">セクションヘッダーをアルファベット順に表示</string>
+    <string name="settings_contact_section_headers_supporting">リスト内の連絡先グループを分離する文字ヘッダー (A, B, C) を表示する</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

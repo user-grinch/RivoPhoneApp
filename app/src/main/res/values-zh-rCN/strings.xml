@@ -197,6 +197,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">显示按字母顺序排列的部分标题</string>
+    <string name="settings_contact_section_headers_supporting">在列表中显示字母标题 (A, B, C) 分隔联系人组</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->

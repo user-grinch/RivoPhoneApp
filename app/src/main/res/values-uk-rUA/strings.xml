@@ -44,6 +44,8 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Показувати заголовки алфавітного розділу</string>
+    <string name="settings_contact_section_headers_supporting">Показувати заголовки літер (A, B, C) розділяючи групи контактів зі списком</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
