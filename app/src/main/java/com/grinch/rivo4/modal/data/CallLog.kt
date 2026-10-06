@@ -13,6 +13,7 @@ data class CallLogEntry(
     val photoUri: String?,
     val contactId: String?,
     val simLabel: String? = null,
+    val simNumber: Int? = null,
     val isBlocked: Boolean = false,
     val types: List<Int> = emptyList(),
     val ids: List<Long> = emptyList(),

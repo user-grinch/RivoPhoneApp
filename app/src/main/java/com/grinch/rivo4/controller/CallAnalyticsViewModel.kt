@@ -176,7 +176,7 @@ class CallAnalyticsViewModel(
             hourly[hour] = (hourly[hour] ?: 0) + callCount
 
             // SIM usage
-            val sim = entry.simLabel ?: "Primary SIM"
+            val sim = entry.simNumber?.let { "SIM $it" } ?: entry.simLabel ?: "Primary SIM"
             simMap[sim] = (simMap[sim] ?: 0L) + entry.duration
 
             // Contact aggregation

@@ -1018,8 +1018,8 @@
     <string name="settings_search_no_results">No settings found matching \"%1$s\"</string>
 
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Show carrier names in recents</string>
-    <string name="settings_show_carrier_in_recents_supporting">Display carrier and SIM card names in call history and recents</string>
+    <string name="settings_show_carrier_in_recents">Show SIM indicator in recents</string>
+    <string name="settings_show_carrier_in_recents_supporting">Display SIM 1 and SIM 2 badges in call history and recents</string>
 
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Show country code</string>

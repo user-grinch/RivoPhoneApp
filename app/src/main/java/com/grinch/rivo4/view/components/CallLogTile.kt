@@ -29,8 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.outlined.SimCard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
@@ -54,6 +56,65 @@ data class CallLogTileConfig(
 
 val LocalCallLogTileConfig: ProvidableCompositionLocal<CallLogTileConfig> =
     staticCompositionLocalOf { CallLogTileConfig() }
+
+fun resolveSimNumber(log: CallLogEntry): Int? {
+    if (log.simNumber != null) return log.simNumber
+    val label = log.simLabel ?: return null
+    val lower = label.lowercase()
+    return when {
+        lower.contains("sim 1") || lower.contains("sim1") || lower.contains("slot 1") || lower.contains("[1]") -> 1
+        lower.contains("sim 2") || lower.contains("sim2") || lower.contains("slot 2") || lower.contains("[2]") -> 2
+        lower.contains("1") && !lower.contains("2") -> 1
+        lower.contains("2") && !lower.contains("1") -> 2
+        else -> 1
+    }
+}
+
+@Composable
+fun SimBadge(
+    simNumber: Int,
+    modifier: Modifier = Modifier
+) {
+    val isSim1 = simNumber == 1
+    val containerColor = if (isSim1) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.tertiaryContainer
+    }
+    val contentColor = if (isSim1) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onTertiaryContainer
+    }
+
+    Surface(
+        shape = RoundedCornerShape(5.dp),
+        color = containerColor,
+        contentColor = contentColor,
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.SimCard,
+                contentDescription = if (isSim1) stringResource(R.string.sim_slot_1) else stringResource(R.string.sim_slot_2),
+                modifier = Modifier.size(11.dp)
+            )
+            Spacer(modifier = Modifier.width(2.5.dp))
+            Text(
+                text = "$simNumber",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp,
+                    lineHeight = 10.sp
+                )
+            )
+        }
+    }
+}
 
 @Composable
 fun CallLogTileSimple(
@@ -129,6 +190,8 @@ fun CallLogTileSimple(
         }
     }
 
+    val resolvedSimNumber = log.simNumber ?: resolveSimNumber(log)
+
     @Composable
     fun ContentBox() {
         Box(
@@ -144,8 +207,26 @@ fun CallLogTileSimple(
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
                         headline = headlineText,
-                        supporting = supportingText,
-                        supporting2 = if (showSim) log.simLabel else null,
+                        supporting = if (!showSim || resolvedSimNumber == null) supportingText else null,
+                        supportingContent = if (showSim && resolvedSimNumber != null) {
+                            {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(top = 1.dp)
+                                ) {
+                                    SimBadge(simNumber = resolvedSimNumber)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = supportingText,
+                                        style = RivoListItemDefaults.supportingStyle(),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        } else null,
+                        supporting2 = null,
                         avatarName = displayName,
                         photoUri = log.photoUri,
                         badgeIcon = icon,
@@ -253,15 +334,10 @@ fun CallLogTile(
     val headlineText = displayName
 
     val context = LocalContext.current
-    val timeSimText = remember(log.date, log.simLabel, showSim) {
-        buildString {
-            if (showSim && log.simLabel != null) {
-                append(log.simLabel)
-                append(" • ")
-            }
-            append(formatTime(context, log.date))
-        }
+    val timeText = remember(log.date) {
+        formatTime(context, log.date)
     }
+    val resolvedSimNumber = log.simNumber ?: resolveSimNumber(log)
 
     val isStacked = log.count > 1
     var isExpanded by remember { mutableStateOf(false) }
@@ -281,7 +357,23 @@ fun CallLogTile(
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
                         headline = headlineText,
-                        supporting = timeSimText,
+                        supporting = if (!showSim || resolvedSimNumber == null) timeText else null,
+                        supportingContent = if (showSim && resolvedSimNumber != null) {
+                            {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(top = 1.dp)
+                                ) {
+                                    SimBadge(simNumber = resolvedSimNumber)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = timeText,
+                                        style = RivoListItemDefaults.supportingStyle(),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        } else null,
                         supporting2 = null,
                         avatarName = if (isStacked) null else displayName,
                         photoUri = if (isStacked) null else log.photoUri,
@@ -429,13 +521,10 @@ fun CallLogTile(
                                 fontWeight = FontWeight.Medium,
                                 color = subColor
                             )
-                            if (showSim && !subLog.simLabel.isNullOrBlank()) {
+                            val subSimNumber = subLog.simNumber ?: resolveSimNumber(subLog)
+                            if (showSim && subSimNumber != null) {
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "•  ${subLog.simLabel}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                SimBadge(simNumber = subSimNumber)
                             }
                             Spacer(modifier = Modifier.weight(1f))
                             Text(

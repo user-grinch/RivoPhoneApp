@@ -541,15 +541,27 @@ fun DialPadScreen(
                             shape = shape,
                             color = MaterialTheme.colorScheme.surfaceContainerLow
                         ) {
+                            val entrySimNumber = entry.simNumber ?: resolveSimNumber(entry)
+                            val recentsLabel = stringResource(R.string.nav_recents)
                             RivoListItem(
                                 headline = formatPhoneNumber(entry.number),
-                                supporting = buildString {
-                                    append(stringResource(R.string.nav_recents))
-                                    if (!entry.simLabel.isNullOrBlank()) {
-                                        append(" • ")
-                                        append(entry.simLabel)
+                                supporting = if (entrySimNumber == null) recentsLabel else null,
+                                supportingContent = if (entrySimNumber != null) {
+                                    {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(top = 1.dp)
+                                        ) {
+                                            SimBadge(simNumber = entrySimNumber)
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = recentsLabel,
+                                                style = RivoListItemDefaults.supportingStyle(),
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                     }
-                                },
+                                } else null,
                                 leadingContent = {
                                     Surface(
                                         shape = CircleShape,

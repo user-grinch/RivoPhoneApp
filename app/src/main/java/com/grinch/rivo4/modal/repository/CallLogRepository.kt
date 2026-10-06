@@ -11,6 +11,10 @@ import android.telecom.TelecomManager
 import android.content.Context
 import android.content.ComponentName
 import android.content.ContentValues
+import android.telephony.SubscriptionManager
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
@@ -136,6 +140,46 @@ class CallLogRepository(
         }
     }
 
+    private fun resolveSimSlotNumber(
+        accountId: String?,
+        componentStr: String?,
+        rawLabel: String?,
+        accountSimMap: Map<String, Int>,
+        labelSimMap: Map<String, Int>
+    ): Int? {
+        if (!accountId.isNullOrEmpty()) {
+            accountSimMap[accountId]?.let { return it }
+            if (!componentStr.isNullOrEmpty()) {
+                accountSimMap["$componentStr/$accountId"]?.let { return it }
+            }
+        }
+        if (!rawLabel.isNullOrBlank()) {
+            labelSimMap[rawLabel.trim().lowercase()]?.let { return it }
+        }
+        if (!accountId.isNullOrEmpty()) {
+            val lowerId = accountId.lowercase()
+            when {
+                lowerId == "0" || lowerId.endsWith("_0") || lowerId.contains("sim1") || lowerId.contains("slot0") || lowerId.contains("sub0") -> return 1
+                lowerId == "1" && accountSimMap.containsKey("0") -> return 2
+                lowerId == "1" -> return 1
+                lowerId == "2" || lowerId.endsWith("_1") || lowerId.contains("sim2") || lowerId.contains("slot1") || lowerId.contains("sub1") -> return 2
+            }
+        }
+        if (!rawLabel.isNullOrBlank()) {
+            val lower = rawLabel.lowercase()
+            when {
+                lower.contains("sim 1") || lower.contains("sim1") || lower.contains("slot 1") || lower.contains("[1]") -> return 1
+                lower.contains("sim 2") || lower.contains("sim2") || lower.contains("slot 2") || lower.contains("[2]") -> return 2
+                lower.contains("1") && !lower.contains("2") -> return 1
+                lower.contains("2") && !lower.contains("1") -> return 2
+            }
+        }
+        if ((!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) && (accountSimMap.size == 1 || labelSimMap.size == 1)) {
+            return 1
+        }
+        return if (!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) 1 else null
+    }
+
     private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>, limit: Int = 0) {
         val idIdx = cursor.getColumnIndex(CallLog.Calls._ID)
         val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
@@ -149,6 +193,47 @@ class CallLogRepository(
         val labelIdx = cursor.getColumnIndex("phone_account_label")
         val accountIdIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID)
         val componentNameIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
+
+        val accountSimMap = mutableMapOf<String, Int>()
+        val labelSimMap = mutableMapOf<String, Int>()
+
+        try {
+            val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                subscriptionManager?.activeSubscriptionInfoList?.forEach { sub ->
+                    val slotNum = sub.simSlotIndex + 1
+                    accountSimMap[sub.subscriptionId.toString()] = slotNum
+                    sub.iccId?.takeIf { it.isNotEmpty() }?.let { accountSimMap[it] = slotNum }
+                    sub.displayName?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                        labelSimMap[it.lowercase()] = slotNum
+                    }
+                    sub.carrierName?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                        labelSimMap[it.lowercase()] = slotNum
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            // ignore
+        }
+
+        try {
+            val phoneAccounts = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                telecomManager?.callCapablePhoneAccounts ?: emptyList()
+            } else emptyList()
+
+            phoneAccounts.forEachIndexed { index, handle ->
+                val simNum = index + 1
+                accountSimMap.putIfAbsent(handle.id, simNum)
+                handle.componentName?.flattenToString()?.let { compStr ->
+                    accountSimMap.putIfAbsent("$compStr/${handle.id}", simNum)
+                }
+                telecomManager?.getPhoneAccount(handle)?.label?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let { label ->
+                    labelSimMap.putIfAbsent(label.lowercase(), simNum)
+                }
+            }
+        } catch (e: Exception) {
+            // ignore
+        }
 
         val tempLogs = mutableListOf<CallLogEntry>()
         val simCache = mutableMapOf<String, String>()
@@ -177,28 +262,34 @@ class CallLogRepository(
             val date = cursor.getLong(dateIdx)
             val duration = cursor.getLong(durationIdx)
             
+            val accountId = if (accountIdIdx != -1) cursor.getString(accountIdIdx) else null
+            val componentStr = if (componentNameIdx != -1) cursor.getString(componentNameIdx) else null
+
             var simLabel = if (labelIdx != -1) cursor.getString(labelIdx) else null
             
             val isBlocked = type == CallLog.Calls.BLOCKED_TYPE || (number != unknownLabel && blockedNumbers.contains(normalizePhoneNumber(number)))
             
-            if (simLabel.isNullOrEmpty() && accountIdIdx != -1 && componentNameIdx != -1) {
-                val accountId = cursor.getString(accountIdIdx)
-                val componentStr = cursor.getString(componentNameIdx)
-                
-                if (!accountId.isNullOrEmpty() && !componentStr.isNullOrEmpty()) {
-                    simLabel = simCache.getOrPut("$componentStr/$accountId") {
-                        try {
-                            val componentName = ComponentName.unflattenFromString(componentStr)
-                            if (componentName != null) {
-                                val handle = PhoneAccountHandle(componentName, accountId)
-                                telecomManager?.getPhoneAccount(handle)?.label?.toString() ?: ""
-                            } else ""
-                        } catch (e: Exception) { "" }
-                    }
+            if (simLabel.isNullOrEmpty() && !accountId.isNullOrEmpty() && !componentStr.isNullOrEmpty()) {
+                simLabel = simCache.getOrPut("$componentStr/$accountId") {
+                    try {
+                        val componentName = ComponentName.unflattenFromString(componentStr)
+                        if (componentName != null) {
+                            val handle = PhoneAccountHandle(componentName, accountId)
+                            telecomManager?.getPhoneAccount(handle)?.label?.toString() ?: ""
+                        } else ""
+                    } catch (e: Exception) { "" }
                 }
             }
 
             if (simLabel?.isEmpty() == true) simLabel = null
+
+            val simNumber = resolveSimSlotNumber(
+                accountId = accountId,
+                componentStr = componentStr,
+                rawLabel = simLabel,
+                accountSimMap = accountSimMap,
+                labelSimMap = labelSimMap
+            )
 
             val normalizedNum = normalizePhoneNumber(number)
             val lookupKey = if (normalizedNum.length >= 10) normalizedNum.takeLast(10) else normalizedNum
@@ -220,6 +311,7 @@ class CallLogRepository(
                 photoUri = photoUri,
                 contactId = contactId,
                 simLabel = simLabel,
+                simNumber = simNumber,
                 isBlocked = isBlocked,
                 types = listOf(type),
                 ids = listOf(callId)
@@ -237,6 +329,7 @@ class CallLogRepository(
                     types = lastEntry.types + type,
                     ids = lastEntry.ids + callId,
                     isBlocked = lastEntry.isBlocked || isBlocked,
+                    simNumber = lastEntry.simNumber ?: simNumber,
                     subLogs = currentSubLogs + singleEntry
                 )
             } else {

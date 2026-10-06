@@ -24,6 +24,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.grinch.rivo4.view.components.CallLogTileConfig
 import com.grinch.rivo4.view.components.LocalCallLogTileConfig
+import com.grinch.rivo4.view.components.SimBadge
+import com.grinch.rivo4.view.components.resolveSimNumber
+import com.grinch.rivo4.view.components.RivoListItemDefaults
 import com.grinch.rivo4.view.components.LocalRivoSurfaceStyle
 import com.grinch.rivo4.view.components.rememberRivoSurfaceStyle
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -360,13 +363,12 @@ fun CallLogFullScreen(
                                             if (lg.duration > 0) {
                                                 append(" • ${android.text.format.DateUtils.formatElapsedTime(lg.duration)}")
                                             }
-                                            if (callLogConfig.showSim && lg.simLabel != null) {
-                                                append(" • ${lg.simLabel}")
-                                            }
                                             if (lg.count > 1) {
                                                 append(" (${lg.count})")
                                             }
                                         }
+
+                                        val lgSimNumber = lg.simNumber ?: resolveSimNumber(lg)
 
                                         Box(
                                             modifier = Modifier
@@ -382,7 +384,23 @@ fun CallLogFullScreen(
                                                     RivoListItem(
                                                         headline = callTypeLabel,
                                                         headlineColor = if (isBlocked || isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified,
-                                                        supporting = supportingText,
+                                                        supporting = if (!callLogConfig.showSim || lgSimNumber == null) supportingText else null,
+                                                        supportingContent = if (callLogConfig.showSim && lgSimNumber != null) {
+                                                            {
+                                                                Row(
+                                                                    verticalAlignment = Alignment.CenterVertically,
+                                                                    modifier = Modifier.padding(top = 1.dp)
+                                                                ) {
+                                                                    SimBadge(simNumber = lgSimNumber)
+                                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                                    Text(
+                                                                        text = supportingText,
+                                                                        style = RivoListItemDefaults.supportingStyle(),
+                                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                                    )
+                                                                }
+                                                            }
+                                                        } else null,
                                                         leadingContent = {
                                                             Icon(
                                                                 imageVector = leadingIcon,
