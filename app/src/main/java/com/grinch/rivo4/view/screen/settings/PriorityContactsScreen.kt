@@ -74,11 +74,11 @@ fun PriorityContactsScreen(
                         if (matchingContact != null) {
                             prefs.setPriorityContact(
                                 matchingContact.id,
-                                matchingContact.phoneNumbers.firstOrNull() ?: trimmed,
+                                matchingContact.phoneNumbers.ifEmpty { listOf(trimmed) },
                                 true
                             )
                         } else {
-                            prefs.setPriorityContact(trimmed, trimmed, true)
+                            prefs.setPriorityContact(trimmed, listOf(trimmed), true)
                         }
                     }
                 }
@@ -304,7 +304,7 @@ fun PriorityContactsScreen(
                             }
                             IconButton(
                                 onClick = {
-                                    prefs.setPriorityContact(contact.id, contact.phoneNumbers.firstOrNull(), false)
+                                    prefs.setPriorityContact(contact.id, contact.phoneNumbers, false)
                                 }
                             ) {
                                 Icon(

@@ -2,9 +2,11 @@ package com.grinch.rivo4.view.screen
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.getValue
@@ -86,7 +88,7 @@ fun InCallKeypad(
             .fillMaxWidth()
             .padding(horizontal = if (compact) 8.dp else 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 12.dp)
+        verticalArrangement = Arrangement.spacedBy(if (compact) 4.dp else 8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -176,7 +178,7 @@ private fun InCallKeypadKey(
     val isPressed by interactionSource.collectIsPressedAsState()
     val keyLabel = stringResource(R.string.callkp_digit_desc, key.toString())
 
-    val keySize = if (compact) 52.dp else 72.dp
+    val keySize = if (compact) 48.dp else 62.dp
 
     val cornerRadius by animateDpAsState(
         targetValue = if (isPressed) {
@@ -184,7 +186,7 @@ private fun InCallKeypadKey(
         } else {
             keySize / 2
         },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioNoBouncy),
         label = "InCallKeyCorner"
     )
 
@@ -194,13 +196,13 @@ private fun InCallKeypadKey(
         targetValue = if (isPressed) MaterialTheme.colorScheme.primaryContainer
                       else if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh
                       else MaterialTheme.colorScheme.surfaceContainerHighest,
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        animationSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
         label = "InCallKeyBg"
     )
 
     val contentColor by animateColorAsState(
         targetValue = if (isPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        animationSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
         label = "InCallKeyFg"
     )
 

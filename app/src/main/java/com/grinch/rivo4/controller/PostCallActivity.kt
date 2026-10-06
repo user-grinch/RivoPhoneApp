@@ -39,6 +39,10 @@ class PostCallActivity : ComponentActivity() {
         val phoneNumber = intent.getStringExtra(EXTRA_PHONE_NUMBER) ?: ""
         val photoUri = intent.getStringExtra(EXTRA_PHOTO_URI)
         val durationSeconds = intent.getLongExtra(EXTRA_DURATION_SECONDS, 0L)
+        val recordingPath = intent.getStringExtra(EXTRA_RECORDING_PATH)
+            ?: com.grinch.rivo4.controller.CallRecorder.lastRecordedFile?.takeIf {
+                it.exists() && System.currentTimeMillis() - com.grinch.rivo4.controller.CallRecorder.lastRecordedTimeMillis < 20000
+            }?.absolutePath
 
         if (durationSeconds <= 0L) {
             finish()
@@ -52,6 +56,7 @@ class PostCallActivity : ComponentActivity() {
                     phoneNumber = phoneNumber,
                     photoUri = photoUri,
                     durationSeconds = durationSeconds,
+                    recordingPath = recordingPath,
                     onDismiss = {
                         finish()
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -81,13 +86,15 @@ class PostCallActivity : ComponentActivity() {
         const val EXTRA_PHONE_NUMBER = "extra_phone_number"
         const val EXTRA_PHOTO_URI = "extra_photo_uri"
         const val EXTRA_DURATION_SECONDS = "extra_duration_seconds"
+        const val EXTRA_RECORDING_PATH = "extra_recording_path"
 
         fun start(
             context: Context,
             contactName: String,
             phoneNumber: String,
             photoUri: String?,
-            durationSeconds: Long
+            durationSeconds: Long,
+            recordingPath: String? = null
         ) {
             if (durationSeconds <= 0L) {
                 return
@@ -97,6 +104,12 @@ class PostCallActivity : ComponentActivity() {
                 putExtra(EXTRA_PHONE_NUMBER, phoneNumber)
                 putExtra(EXTRA_PHOTO_URI, photoUri)
                 putExtra(EXTRA_DURATION_SECONDS, durationSeconds)
+                val path = recordingPath ?: com.grinch.rivo4.controller.CallRecorder.lastRecordedFile?.takeIf {
+                    it.exists() && System.currentTimeMillis() - com.grinch.rivo4.controller.CallRecorder.lastRecordedTimeMillis < 20000
+                }?.absolutePath
+                if (path != null) {
+                    putExtra(EXTRA_RECORDING_PATH, path)
+                }
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NO_ANIMATION)
             }
             context.startActivity(intent)

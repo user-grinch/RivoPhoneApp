@@ -1453,14 +1453,14 @@ fun ContactDetailsScreen(
                                                 checked = isPriorityContact,
                                                 onCheckedChange = { checked ->
                                                     isPriorityContact = checked
-                                                    prefs.setPriorityContact(fc.id, phoneNumber ?: fc.phoneNumbers.firstOrNull(), checked)
+                                                    prefs.setPriorityContact(fc.id, fc.phoneNumbers.ifEmpty { listOfNotNull(phoneNumber) }, checked)
                                                 }
                                             )
                                         },
                                         onClick = {
                                             val newChecked = !isPriorityContact
                                             isPriorityContact = newChecked
-                                            prefs.setPriorityContact(fc.id, phoneNumber ?: fc.phoneNumbers.firstOrNull(), newChecked)
+                                            prefs.setPriorityContact(fc.id, fc.phoneNumbers.ifEmpty { listOfNotNull(phoneNumber) }, newChecked)
                                         }
                                     )
                                 }

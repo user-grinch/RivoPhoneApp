@@ -6,9 +6,12 @@ import android.telecom.Call
 import android.telecom.CallAudioState
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -89,7 +92,7 @@ fun CallActionButton(
             isActive && enabled -> if (compact) 20.dp else 24.dp
             else -> if (compact) 24.dp else 28.dp
         },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioNoBouncy),
         label = "CallActionCornerRadius"
     )
 
@@ -103,7 +106,7 @@ fun CallActionButton(
             isPressed -> MaterialTheme.colorScheme.primaryContainer
             else -> if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainerHighest
         },
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing),
         label = "btnBg"
     )
 
@@ -115,7 +118,7 @@ fun CallActionButton(
             isPressed -> MaterialTheme.colorScheme.onPrimaryContainer
             else -> MaterialTheme.colorScheme.onSurface
         },
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing),
         label = "btnFg"
     )
 
@@ -213,10 +216,22 @@ private fun callAudioRouteIcon(route: Int): ImageVector = when (route) {
 }
 
 @Composable
-private fun callAudioRouteLabel(route: Int): String = when (route) {
-    CallAudioState.ROUTE_BLUETOOTH -> stringResource(R.string.audio_route_bluetooth)
-    CallAudioState.ROUTE_WIRED_HEADSET -> stringResource(R.string.audio_route_headset)
-    else -> stringResource(R.string.audio_route_speaker)
+private fun callAudioRouteLabel(route: Int, audioState: CallAudioState? = null): String {
+    val bluetoothFallback = stringResource(R.string.audio_route_bluetooth)
+    val speakerLabel = stringResource(R.string.audio_route_speaker)
+    val headsetLabel = stringResource(R.string.audio_route_headset)
+    return when (route) {
+        CallAudioState.ROUTE_BLUETOOTH -> {
+            val devName = try {
+                audioState?.activeBluetoothDevice?.name
+            } catch (_: Exception) {
+                null
+            }
+            devName ?: bluetoothFallback
+        }
+        CallAudioState.ROUTE_WIRED_HEADSET -> headsetLabel
+        else -> speakerLabel
+    }
 }
 
 @Composable
@@ -231,7 +246,7 @@ fun EndCallButton(
 
     val cornerRadius by animateDpAsState(
         targetValue = if (isPressed) (if (compact) 24.dp else 28.dp) else (if (compact) 32.dp else 36.dp),
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioNoBouncy),
         label = "endCallCorner"
     )
 
@@ -370,7 +385,7 @@ fun ActiveCallControls(
             CallActionButton(
                 icon = callAudioRouteIcon(audioRoute),
                 isActive = audioActive,
-                label = callAudioRouteLabel(audioRoute),
+                label = callAudioRouteLabel(audioRoute, audioState),
                 compact = compact,
                 modifier = Modifier.weight(1f),
                 onClick = onAudioClick

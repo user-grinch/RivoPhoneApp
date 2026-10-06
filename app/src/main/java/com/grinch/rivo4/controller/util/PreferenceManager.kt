@@ -304,26 +304,38 @@ class PreferenceManager(context: Context) {
             val normalized = normalizePhoneNumber(number)
             if (prioritySet.contains(normalized)) return true
             if (prioritySet.contains(number.trim())) return true
+            for (p in prioritySet) {
+                if (areNumbersEqual(p, number)) return true
+            }
         }
         return false
     }
 
-    fun setPriorityContact(contactId: String, number: String?, isPriority: Boolean) {
+    fun setPriorityContact(contactId: String, numbers: List<String>?, isPriority: Boolean) {
         val current = getPriorityContacts().toMutableSet()
         if (isPriority) {
             if (contactId.isNotBlank()) current.add(contactId)
-            if (!number.isNullOrBlank()) {
-                current.add(normalizePhoneNumber(number))
+            numbers?.forEach { num ->
+                if (num.isNotBlank()) {
+                    current.add(normalizePhoneNumber(num))
+                    current.add(num.trim())
+                }
             }
         } else {
             if (contactId.isNotBlank()) current.remove(contactId)
-            if (!number.isNullOrBlank()) {
-                current.remove(normalizePhoneNumber(number))
+            numbers?.forEach { num ->
+                if (num.isNotBlank()) {
+                    current.remove(normalizePhoneNumber(num))
+                    current.remove(num.trim())
+                }
             }
         }
         prefs.edit().putStringSet(KEY_PRIORITY_CONTACTS, current).apply()
         _settingsChanged.value += 1
     }
+
+    fun setPriorityContact(contactId: String, number: String?, isPriority: Boolean) =
+        setPriorityContact(contactId, if (number != null) listOf(number) else null, isPriority)
 
     companion object {
         const val KEY_LAST_SELECTED_TAB = "last_selected_bottom_tab"

@@ -47,7 +47,9 @@ import com.grinch.rivo4.controller.util.ContactTypeLabels
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.modal.data.EmailEntry
+import android.net.Uri
 import com.grinch.rivo4.modal.data.PhoneNumberEntry
+import com.grinch.rivo4.view.components.AvatarCropDialog
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import com.grinch.rivo4.view.components.RivoDropdownMenu
@@ -222,9 +224,11 @@ fun ContactEditScreen(
         }
     }
 
+    var cropTargetUriString by rememberSaveable { mutableStateOf<String?>(null) }
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> if (uri != null) photoUri = uri.toString() }
+        onResult = { uri -> if (uri != null) cropTargetUriString = uri.toString() }
     )
 
     Scaffold(
@@ -359,6 +363,25 @@ fun ContactEditScreen(
             )
         }
 
+        if (cropTargetUriString != null) {
+            val targetUri = remember(cropTargetUriString) {
+                val str = cropTargetUriString!!
+                if (str.startsWith("/")) {
+                    Uri.fromFile(java.io.File(str))
+                } else {
+                    Uri.parse(str)
+                }
+            }
+            AvatarCropDialog(
+                imageUri = targetUri,
+                onDismiss = { cropTargetUriString = null },
+                onCropSuccess = { croppedUri ->
+                    photoUri = croppedUri.toString()
+                    cropTargetUriString = null
+                }
+            )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -399,6 +422,22 @@ fun ContactEditScreen(
                                     Icon(
                                         imageVector = Icons.Default.Delete,
                                         contentDescription = stringResource(R.string.action_delete),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+
+                                FilledTonalIconButton(
+                                    onClick = { cropTargetUriString = photoUri },
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    ),
+                                    shape = CircleShape,
+                                    modifier = Modifier.size(38.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Crop,
+                                        contentDescription = stringResource(R.string.action_crop),
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }

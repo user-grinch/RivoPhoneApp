@@ -321,6 +321,9 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
 
     private fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController, requestedTab: MutableState<Int?>? = null) {
         intent ?: return
+        if ((intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
+            return
+        }
         val data = intent.data
         val action = intent.action
         val componentName = intent.component?.className
@@ -417,6 +420,8 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME)
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
                 navController.navigate(ContactEditScreenDestination(initialName = name, initialPhone = phone).route)
+                intent.action = null
+                intentState = null
             }
             "com.grinch.rivo4.ACTION_ADD_TO_EXISTING_CONTACT" -> {
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
@@ -426,16 +431,22 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                         initialPhoneToAssign = phone
                     ).route
                 )
+                intent.action = null
+                intentState = null
             }
             Intent.ACTION_INSERT_OR_EDIT -> {
                 val name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME)
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
                 navController.navigate(ContactEditScreenDestination(initialName = name, initialPhone = phone).route)
+                intent.action = null
+                intentState = null
             }
             Intent.ACTION_EDIT -> {
                 val id = data?.lastPathSegment
                 if (id != null) {
                     navController.navigate(ContactEditScreenDestination(contactId = id).route)
+                    intent.action = null
+                    intentState = null
                 }
             }
         }

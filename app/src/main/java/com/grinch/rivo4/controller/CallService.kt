@@ -1134,7 +1134,8 @@ class CallService : InCallService() {
             if (isPriority) {
                 val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val isSilentOrVibrate = audioManager?.ringerMode != AudioManager.RINGER_MODE_NORMAL
+                val ringVolume = audioManager?.getStreamVolume(AudioManager.STREAM_RING) ?: 1
+                val isSilentOrVibrate = audioManager?.ringerMode != AudioManager.RINGER_MODE_NORMAL || ringVolume == 0
                 val isDnd = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val filter = notificationManager?.currentInterruptionFilter ?: NotificationManager.INTERRUPTION_FILTER_ALL
                     filter != NotificationManager.INTERRUPTION_FILTER_ALL

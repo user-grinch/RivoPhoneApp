@@ -670,6 +670,8 @@
     <string name="call_recordings_share">Share recording</string>
     <string name="call_recordings_delete_title">Delete recording?</string>
     <string name="call_recordings_delete_message">This recording will be permanently removed from your device.</string>
+    <string name="call_recording_saved">Call recording saved</string>
+    <string name="call_recording_deleted">Recording deleted</string>
 
     <!-- Video calling app picker -->
     <string name="video_call_title">Video Call</string>
@@ -1022,4 +1024,10 @@
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Show country code</string>
     <string name="settings_show_country_code_supporting">Display country code prefix in phone numbers throughout the app and call screen</string>
+
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Crop Avatar</string>
+    <string name="action_crop">Crop</string>
+    <string name="action_rotate">Rotate</string>
+    <string name="action_reset">Reset</string>
 </resources>

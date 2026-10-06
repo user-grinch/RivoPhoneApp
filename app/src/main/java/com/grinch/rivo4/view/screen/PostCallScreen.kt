@@ -40,8 +40,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import android.text.format.Formatter
 import android.provider.ContactsContract
 import com.grinch.rivo4.MainActivity
+import com.grinch.rivo4.controller.CallRecorder
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Delete
+import com.grinch.rivo4.view.components.RivoConfirmationDialog
+import java.io.File
 import com.grinch.rivo4.view.components.AddToContactBottomSheet
 import com.grinch.rivo4.view.components.CallNotesSheet
 import com.grinch.rivo4.view.components.ad.PostCallNativeAd
@@ -53,11 +61,16 @@ fun PostCallScreen(
     phoneNumber: String,
     photoUri: String?,
     durationSeconds: Long,
+    recordingPath: String? = null,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     var showNoteSheet by remember { mutableStateOf(false) }
     var showAddToContactSheet by remember { mutableStateOf(false) }
+    var showDeleteRecordingDialog by remember { mutableStateOf(false) }
+    var activeRecordingFile by remember(recordingPath) {
+        mutableStateOf(recordingPath?.let { File(it) }?.takeIf { it.exists() })
+    }
     var isVisible by remember { mutableStateOf(false) }
 
     val isUnsaved = remember(contactName, phoneNumber) {
@@ -363,6 +376,150 @@ fun PostCallScreen(
                         }
                     }
 
+                    // Dedicated Call Recording Card
+                    AnimatedVisibility(
+                        visible = activeRecordingFile?.exists() == true,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        val recFile = activeRecordingFile
+                        if (recFile != null && recFile.exists()) {
+                            Column {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(20.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        width = 0.5.dp,
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Surface(
+                                            shape = RoundedCornerShape(12.dp),
+                                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f),
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Mic,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                        }
+
+                                        Spacer(modifier = Modifier.width(12.dp))
+
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                            ) {
+                                                Text(
+                                                    text = stringResource(R.string.call_recording_saved),
+                                                    style = MaterialTheme.typography.titleSmall,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = MaterialTheme.colorScheme.onSurface,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Surface(
+                                                    shape = RoundedCornerShape(4.dp),
+                                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f)
+                                                ) {
+                                                    Text(
+                                                        text = "REC",
+                                                        style = MaterialTheme.typography.labelSmall.copy(
+                                                            fontSize = 9.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            letterSpacing = 0.5.sp
+                                                        ),
+                                                        color = MaterialTheme.colorScheme.error,
+                                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            Spacer(modifier = Modifier.height(2.dp))
+
+                                            val fileSize = remember(recFile.length()) {
+                                                Formatter.formatFileSize(context, recFile.length())
+                                            }
+                                            Text(
+                                                text = "$fileSize • ${recFile.name}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            FilledTonalIconButton(
+                                                onClick = {
+                                                    try {
+                                                        val playIntent = Intent(Intent.ACTION_VIEW).apply {
+                                                            setDataAndType(CallRecorder.uriFor(context, recFile), "audio/*")
+                                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                        }
+                                                        context.startActivity(playIntent)
+                                                    } catch (_: Exception) {
+                                                        CallRecorder.share(
+                                                            context,
+                                                            recFile,
+                                                            context.getString(R.string.call_recordings_share)
+                                                        )
+                                                    }
+                                                },
+                                                modifier = Modifier.size(36.dp),
+                                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                                    contentColor = MaterialTheme.colorScheme.primary
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PlayArrow,
+                                                    contentDescription = stringResource(R.string.call_recordings_play),
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+
+                                            FilledTonalIconButton(
+                                                onClick = { showDeleteRecordingDialog = true },
+                                                modifier = Modifier.size(36.dp),
+                                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.55f),
+                                                    contentColor = MaterialTheme.colorScheme.error
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Delete,
+                                                    contentDescription = stringResource(R.string.action_delete),
+                                                    modifier = Modifier.size(19.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(10.dp))
 
                     // Big Ad Card (Native Advanced with MediaView in Play variant)
@@ -407,6 +564,31 @@ fun PostCallScreen(
                     context.startActivity(intent)
                     onDismiss()
                 }
+            )
+        }
+
+        if (showDeleteRecordingDialog) {
+            RivoConfirmationDialog(
+                onDismissRequest = { showDeleteRecordingDialog = false },
+                onConfirm = {
+                    val fileToDelete = activeRecordingFile
+                    if (fileToDelete != null) {
+                        CallRecorder.delete(context, fileToDelete)
+                        CallRecorder.clearLastRecordedFile()
+                        activeRecordingFile = null
+                        android.widget.Toast.makeText(
+                            context,
+                            context.getString(R.string.call_recording_deleted),
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    showDeleteRecordingDialog = false
+                },
+                title = stringResource(R.string.call_recordings_delete_title),
+                message = stringResource(R.string.call_recordings_delete_message),
+                confirmLabel = stringResource(R.string.action_delete),
+                icon = Icons.Default.Delete,
+                isDestructive = true
             )
         }
     }

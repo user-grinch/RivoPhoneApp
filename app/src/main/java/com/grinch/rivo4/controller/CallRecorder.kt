@@ -139,6 +139,19 @@ object CallRecorder {
     private val _durationSeconds = MutableStateFlow(0L)
     val durationSeconds = _durationSeconds.asStateFlow()
 
+    @Volatile
+    var lastRecordedFile: File? = null
+        private set
+
+    @Volatile
+    var lastRecordedTimeMillis: Long = 0L
+        private set
+
+    fun clearLastRecordedFile() {
+        lastRecordedFile = null
+        lastRecordedTimeMillis = 0L
+    }
+
     private var recorder: MediaRecorder? = null
     private var currentFile: File? = null
 
@@ -1002,6 +1015,9 @@ object CallRecorder {
             } catch (e: Exception) {
             }
         }
+
+        lastRecordedFile = effectiveFile
+        lastRecordedTimeMillis = System.currentTimeMillis()
 
         return effectiveFile
     }

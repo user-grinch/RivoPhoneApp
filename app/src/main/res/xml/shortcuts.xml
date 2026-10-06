@@ -29,6 +29,10 @@
         android:shortcutShortLabel="@string/action_add_contact"
         android:shortcutLongLabel="@string/contact_create_title">
         <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.grinch.rivo4"
+            android:targetClass="com.grinch.rivo4.MainActivity" />
+        <intent
             android:action="android.intent.action.INSERT"
             android:targetPackage="com.grinch.rivo4"
             android:targetClass="com.grinch.rivo4.MainActivity" />

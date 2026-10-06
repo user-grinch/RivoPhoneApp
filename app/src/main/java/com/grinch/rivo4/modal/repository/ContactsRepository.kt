@@ -585,11 +585,33 @@ class ContactsRepository(
 
     private fun getPhotoBytes(uriString: String): ByteArray? {
         return try {
-            val uri = Uri.parse(uriString)
-            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
-            inputStream.close()
+            val uri = if (uriString.startsWith("/")) Uri.fromFile(java.io.File(uriString)) else Uri.parse(uriString)
+            var inputStream: java.io.InputStream? = null
+            if (uri.scheme == "file" && uri.path != null) {
+                val f = java.io.File(uri.path!!)
+                if (f.exists()) inputStream = f.inputStream()
+            }
+            if (inputStream == null && uriString.contains("contacts")) {
+                try {
+                    inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.contentResolver, uri, true)
+                } catch (_: Exception) {}
+                if (inputStream == null) {
+                    try {
+                        val baseUriStr = if (uriString.endsWith("/photo") || uriString.endsWith("/display_photo")) {
+                            uriString.substringBeforeLast("/")
+                        } else uriString
+                        inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.contentResolver, Uri.parse(baseUriStr), true)
+                    } catch (_: Exception) {}
+                }
+            }
+            if (inputStream == null) {
+                try {
+                    inputStream = context.contentResolver.openInputStream(uri)
+                } catch (_: Exception) {}
+            }
+            if (inputStream == null) return null
 
+            val bitmap = inputStream.use { android.graphics.BitmapFactory.decodeStream(it) }
             if (bitmap == null) return null
 
             val maxSize = 480

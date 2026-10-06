@@ -87,6 +87,7 @@ import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.theme.callColors
 import com.grinch.rivo4.view.theme.rivoAvatarShape
+import com.grinch.rivo4.view.theme.RivoEasing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -95,23 +96,6 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
-@Composable
-private fun audioRouteLabel(audioRoute: Int, audioState: CallAudioState?): String {
-    val bluetoothShortLabel = stringResource(R.string.audio_route_bluetooth_short)
-    return when (audioRoute) {
-        CallAudioState.ROUTE_SPEAKER -> stringResource(R.string.audio_route_speaker)
-        CallAudioState.ROUTE_BLUETOOTH -> try {
-            @Suppress("MissingPermission")
-            audioState?.activeBluetoothDevice?.name ?: bluetoothShortLabel
-        } catch (e: SecurityException) {
-            bluetoothShortLabel
-        } catch (e: Exception) {
-            bluetoothShortLabel
-        }
-        CallAudioState.ROUTE_WIRED_HEADSET -> stringResource(R.string.audio_route_headset)
-        else -> stringResource(R.string.audio_route_handset)
-    }
-}
 
 @Composable
 fun ExpressiveCallScreen(
@@ -290,14 +274,6 @@ fun ExpressiveCallScreen(
         else -> ""
     }
 
-    val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
-    val audioIcon = when (audioRoute) {
-        CallAudioState.ROUTE_SPEAKER -> Icons.AutoMirrored.Filled.VolumeUp
-        CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
-        CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
-        else -> Icons.Default.Phone
-    }
-    val audioLabel = audioRouteLabel(audioRoute, audioState)
     val hasBluetooth = ((audioState?.supportedRouteMask ?: 0) and CallAudioState.ROUTE_BLUETOOTH) != 0
     var showQuickResponsesSheet by remember { mutableStateOf(false) }
     var showCallNotesSheet by remember { mutableStateOf(false) }
@@ -450,20 +426,26 @@ fun ExpressiveCallScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (!showKeypad) {
-                AnimatedVisibility(
-                    visible = shouldShowAvatar,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        if (callState == Call.STATE_RINGING || callState == Call.STATE_DIALING) {
-                            PulsingAvatar(photoUri, isLandscape)
-                        } else {
-                            HeroAvatar(photoUri, isLandscape)
-                        }
-                        Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 20.dp))
+            AnimatedVisibility(
+                visible = shouldShowAvatar && !showKeypad,
+                enter = fadeIn(animationSpec = tween(200)) +
+                        expandVertically(
+                            animationSpec = tween(200),
+                            expandFrom = Alignment.CenterVertically
+                        ),
+                exit = fadeOut(animationSpec = tween(150)) +
+                       shrinkVertically(
+                           animationSpec = tween(150),
+                           shrinkTowards = Alignment.CenterVertically
+                       )
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (callState == Call.STATE_RINGING || callState == Call.STATE_DIALING) {
+                        PulsingAvatar(photoUri, isLandscape)
+                    } else {
+                        HeroAvatar(photoUri, isLandscape)
                     }
+                    Spacer(modifier = Modifier.height(if (isLandscape) 12.dp else 20.dp))
                 }
             }
 
@@ -476,7 +458,8 @@ fun ExpressiveCallScreen(
             }
             Text(
                 text = displayName,
-                style = if (isLandscape) MaterialTheme.typography.headlineMediumEmphasized else MaterialTheme.typography.displaySmallEmphasized,
+                style = if (isLandscape) MaterialTheme.typography.headlineMediumEmphasized
+                        else MaterialTheme.typography.displaySmallEmphasized,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -785,10 +768,25 @@ fun ExpressiveCallScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    when {
-                        showKeypad -> keypadSection(true)
-                        callState == Call.STATE_RINGING -> incomingControls(true)
-                        else -> activeControls(true)
+                    AnimatedContent(
+                        targetState = showKeypad,
+                        transitionSpec = {
+                            if (targetState) {
+                                (fadeIn(animationSpec = tween(200)) + slideInVertically(animationSpec = tween(200)) { it / 6 }) togetherWith
+                                        fadeOut(animationSpec = tween(150))
+                            } else {
+                                fadeIn(animationSpec = tween(200)) togetherWith
+                                        (fadeOut(animationSpec = tween(150)) + slideOutVertically(animationSpec = tween(150)) { it / 6 })
+                            }
+                        },
+                        label = "landscapeKeypadAnim"
+                    ) { isKeypad ->
+                        if (isKeypad) {
+                            keypadSection(true)
+                        } else {
+                            if (callState == Call.STATE_RINGING) incomingControls(true)
+                            else activeControls(true)
+                        }
                     }
                 }
             }
@@ -812,8 +810,16 @@ fun ExpressiveCallScreen(
                     heroSection()
                 }
 
-                if (showKeypad) {
-                    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), contentAlignment = Alignment.Center) {
+                AnimatedVisibility(
+                    visible = showKeypad,
+                    enter = fadeIn(animationSpec = tween(200)) +
+                            slideInVertically(animationSpec = tween(200)) { it / 4 } +
+                            expandVertically(animationSpec = tween(200), expandFrom = Alignment.Bottom),
+                    exit = fadeOut(animationSpec = tween(150)) +
+                           slideOutVertically(animationSpec = tween(150)) { it / 4 } +
+                           shrinkVertically(animationSpec = tween(150), shrinkTowards = Alignment.Bottom)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), contentAlignment = Alignment.Center) {
                         keypadSection(false)
                     }
                 }
@@ -1429,7 +1435,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                                         view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                         onDecline()
                                     }
-                                    else -> offsetX.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
+                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
                                 }
                             }
                         },
@@ -1597,7 +1603,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                                             view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                                             onDecline()
                                         }
-                                        else -> offsetY.animateTo(0f, spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMedium))
+                                        else -> offsetY.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
                                     }
                                 }
                             },
