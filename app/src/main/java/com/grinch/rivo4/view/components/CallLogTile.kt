@@ -77,18 +77,14 @@ fun SimBadge(
 ) {
     val isSim1 = simNumber == 1
     val containerColor = if (isSim1) {
-        MaterialTheme.colorScheme.primaryContainer
+        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
     } else {
-        MaterialTheme.colorScheme.tertiaryContainer
+        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
     }
-    val contentColor = if (isSim1) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-        MaterialTheme.colorScheme.onTertiaryContainer
-    }
+    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Surface(
-        shape = RoundedCornerShape(5.dp),
+        shape = RoundedCornerShape(4.dp),
         color = containerColor,
         contentColor = contentColor,
         modifier = modifier
@@ -101,13 +97,13 @@ fun SimBadge(
             Icon(
                 imageVector = Icons.Outlined.SimCard,
                 contentDescription = if (isSim1) stringResource(R.string.sim_slot_1) else stringResource(R.string.sim_slot_2),
-                modifier = Modifier.size(11.dp)
+                modifier = Modifier.size(10.5.dp)
             )
-            Spacer(modifier = Modifier.width(2.5.dp))
+            Spacer(modifier = Modifier.width(2.dp))
             Text(
                 text = "$simNumber",
                 style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 10.sp,
                     lineHeight = 10.sp
                 )
