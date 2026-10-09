@@ -546,6 +546,12 @@
     <string name="about_check_updates">Check for Updates</string>
     <string name="about_current_version">Current version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
+    <string name="about_shizucallrecorder_desc">Rivo incorporates call recording code from ShizuCallRecorder by kitsumed (licensed under GPLv3 with Section 7 additional terms). Rivo is an independent project and is not officially affiliated with or endorsed by ShizuCallRecorder.\n\nLooking for a dedicated, free, open-source, and privacy-respecting alternative without ads or monetization? Check out the original ShizuCallRecorder project.</string>
+    <string name="about_shizucallrecorder_action">View ShizuCallRecorder on GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Call Recording Engine</string>
+    <string name="call_recording_shizuku_attribution_desc">Internal call recording via Shizuku incorporates code from the open-source ShizuCallRecorder project by kitsumed (GPLv3). Not affiliated with or endorsed by ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Visit ShizuCallRecorder</string>
     <string name="settings_top_card_subtext">Check updates • Contributors • Donate</string>
     <string name="settings_top_card_updates">Updates</string>
     <string name="settings_top_card_donate">Donate</string>
@@ -553,6 +559,7 @@
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Lead Developer</string>
     <string name="contributor_role_developer">Developer</string>
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Author</string>
     <string name="contributor_role_localization">Localization &amp; Translations</string>
     <string name="contributor_role_contributor">Contributor</string>
     <string name="contributor_commits">%1$d commits</string>

@@ -156,6 +156,8 @@ object CallRecorder {
     private var currentFile: File? = null
 
     // Shizuku recording pipeline components
+    // Note: The Shizuku call recording pipeline in this class is adapted from ShizuCallRecorder
+    // (Copyright (C) 2026-present kitsumed (Med), licensed under GPLv3 with Section 7 additional terms).
     private var shizukuManager: ShizukuConnectionManager? = null
     private var shellService: IShellService? = null
     private var prewarmedShizukuManager: ShizukuConnectionManager? = null

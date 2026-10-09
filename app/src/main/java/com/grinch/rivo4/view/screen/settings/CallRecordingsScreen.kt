@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.SHIZU_CALL_RECORDER_URL
 import com.grinch.rivo4.controller.AudioMetadataCache
 import com.grinch.rivo4.controller.CallRecorder
 import com.grinch.rivo4.controller.util.OemPermissionHelper
@@ -1036,6 +1038,60 @@ fun CallRecordingsContent(
                                             android.widget.Toast.LENGTH_SHORT
                                         ).show()
                                     }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 7. Engine & Attribution Section
+                item {
+                    RivoExpressiveCard(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                RivoLeadingIconTile(
+                                    icon = Icons.Outlined.Code,
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.call_recording_shizuku_attribution_title),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(Modifier.height(2.dp))
+                                    Text(
+                                        text = stringResource(R.string.call_recording_shizuku_attribution_desc),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(10.dp))
+                            OutlinedButton(
+                                onClick = { openLink(context, SHIZU_CALL_RECORDER_URL) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Outlined.Launch,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.call_recording_shizuku_attribution_action),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.SemiBold
                                 )
                             }
                         }

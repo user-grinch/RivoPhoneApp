@@ -37,7 +37,7 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 
 - **T9 Search & Speed Dial**: Quick contact lookup by name or number right on the keypad, plus 1–9 speed dial shortcuts.
 - **Dual SIM Support**: Outbound SIM selector, per-contact preferred SIM memory, and carrier tags.
-- **Call Recording via Shizuku**: Internal 2-way call audio capture via Shizuku ADB permissions, without needing root or accessibility services. Standard microphone recording fallback included.
+- **Call Recording via Shizuku**: Internal 2-way call audio capture via Shizuku ADB permissions, without needing root or accessibility services (adapted from [ShizuCallRecorder](https://github.com/kitsumed/ShizuCallRecorder)). Standard microphone recording fallback included.
 - **In-Call Screen**: Audio routing (earpiece, speaker, Bluetooth, wired headset), hold, mute, in-call dialpad, and call notes.
 - **Call Notifications**: Android-native heads-up notifications with answer, decline, and speaker toggles.
 - **Private Contacts Vault**: Keep specific contacts, their call history, and notifications locked behind biometrics or device PIN.
@@ -77,6 +77,13 @@ AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11
 - **Issues & Bugs**: Report problems or feature suggestions via [GitHub Issues](https://github.com/user-grinch/RivoPhoneApp/issues).
 - **Translations**: Help translate Rivo on [Crowdin](https://crowdin.com/project/rivophone).
 - **Chat**: Join our [Discord server](https://discord.gg/NtEvU3726e).
+
+## Acknowledgements
+
+Rivo incorporates code and components from the following open-source project:
+
+- **[ShizuCallRecorder](https://github.com/kitsumed/ShizuCallRecorder)** by [kitsumed](https://github.com/kitsumed): The Shizuku-based ADB call recording pipeline and scrcpy integration are adapted from ShizuCallRecorder, licensed under the GNU General Public License v3 or later with Section 7 Additional Terms.
+  > **Note**: Rivo is an independent project and is not officially affiliated with or endorsed by ShizuCallRecorder. For users seeking a dedicated, free, open-source, and privacy-respecting call recording alternative without ads or monetization, please check out the original [ShizuCallRecorder](https://github.com/kitsumed/ShizuCallRecorder).
 
 ## License
 

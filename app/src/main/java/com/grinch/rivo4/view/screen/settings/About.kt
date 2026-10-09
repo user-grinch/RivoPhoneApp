@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Groups
@@ -31,6 +32,7 @@ import com.grinch.rivo4.DISCORD_URL
 import com.grinch.rivo4.GITHUB_URL
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.PLAY_STORE_URL
+import com.grinch.rivo4.SHIZU_CALL_RECORDER_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.getAppVersion
@@ -248,6 +250,53 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
+            RivoExpressiveCard {
+                Column(
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.Code,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = stringResource(R.string.about_shizucallrecorder_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.about_shizucallrecorder_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Button(
+                        onClick = { openLink(context, SHIZU_CALL_RECORDER_URL) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.filledTonalButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.Launch,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.about_shizucallrecorder_action),
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
+            }
 
             Text(
                 text = stringResource(R.string.about_copyright),

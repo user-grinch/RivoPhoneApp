@@ -69,6 +69,11 @@ val appContributors = listOf(
         role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/tmpjx555",
         imageAsset = "tmpjx555.png"
+    ),
+    Contributor(
+        name = "kitsumed (Med)",
+        role = R.string.contributor_role_upstream_call_recording,
+        githubUrl = "https://github.com/kitsumed/ShizuCallRecorder"
     )
 )
 
