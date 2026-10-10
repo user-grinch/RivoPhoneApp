@@ -197,12 +197,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">显示按字母顺序排列的部分标题</string>
+    <string name="settings_contact_section_headers_supporting">在列表中显示字母标题 (A, B, C) 分隔联系人组</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder 属性</string>
+    <string name="about_shizucallrecorder_desc">Rivo采用了ShizuCallRecorder的通话录制代码（根据GPLv3许可，加上第7节的补充条款）。 Rivo是一个独立的项目，没有正式隶属于ShizuCallRecorder，也没有得到他的认可。\n\n正在寻找一个不带广告或货币化的专用的、免费的、公开的和尊重隐私的替代方法吗？查看原始的 ShizuCallRecorder 项目。</string>
+    <string name="about_shizucallrecorder_action">在 GitHub 上查看 ShizuCallRecorder</string>
+    <string name="call_recording_shizuku_attribution_title">通话录音引擎</string>
+    <string name="call_recording_shizuku_attribution_desc">通过 Shizuku 进行的内部通话录制包含了 Kitsumed 开源的 ShizuCallRecorder 项目(GPLv3) 的代码。不附属于ShizuCallRecorder 或由 ShizuCallRecorder 认可。</string>
+    <string name="call_recording_shizuku_attribution_action">访问 ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder 作者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -210,6 +219,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">通话录制已保存</string>
+    <string name="call_recording_deleted">录制已删除</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -364,9 +375,14 @@
     <string name="settings_search_placeholder">搜索设置…</string>
     <string name="settings_search_no_results">没有找到匹配 \"%1$s \" 的设置</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">在最近任务中显示运营商名称</string>
-    <string name="settings_show_carrier_in_recents_supporting">在通话历史和最近任务中显示运营商和 SIM 卡名称</string>
+    <string name="settings_show_carrier_in_recents">在最近任务中显示 SIM 卡</string>
+    <string name="settings_show_carrier_in_recents_supporting">在通话历史和最近任务中显示 SIM 1 和 SIM 2 徽章</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">显示国家代码</string>
     <string name="settings_show_country_code_supporting">在整个应用程序和通话屏幕中在电话号码中显示国家代码前缀</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">裁剪头像</string>
+    <string name="action_crop">裁剪：</string>
+    <string name="action_rotate">旋转</string>
+    <string name="action_reset">Reset</string>
 </resources>

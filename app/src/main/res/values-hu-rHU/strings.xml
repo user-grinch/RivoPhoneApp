@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="label_mobile">Mobil</string>
+    <string name="label_email">E-mail</string>
+    <string name="label_address">Cím</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
@@ -65,4 +68,5 @@
     <!-- Multi-call & Conference Management -->
     <!-- Carrier in Recents -->
     <!-- Standardized Phone Number Formatting & Country Code -->
+    <!-- Avatar Cropping -->
 </resources>

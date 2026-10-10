@@ -517,12 +517,19 @@
     <string name="about_check_updates">Vérifier les mises à jour</string>
     <string name="about_current_version">Version actuelle : %1$s</string>
     <string name="about_copyright">© 2025-2026 Projet RivoPhone</string>
+    <string name="about_shizucallrecorder_title">Attribution ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_desc">Rivo incorpore le code d\'enregistrement d\'appel de ShizuCallRecorder par kitsumed (sous licence GPLv3 avec des conditions supplémentaires de la section 7). Rivo est un projet indépendant et n\'est pas officiellement affilié ou endossé par ShizuCallRecorder.\n\nVous cherchez une alternative dédiée, gratuite, open-source et respectueuse de la vie privée sans publicité ni monétisation ? Consultez le projet ShizuCallRecorder original.</string>
+    <string name="about_shizucallrecorder_action">Voir ShizuCallRecorder sur GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Moteur d\'enregistrement d\'appels</string>
+    <string name="call_recording_shizuku_attribution_desc">L\'enregistrement d\'appels internes via Shizuku intègre du code du projet ShizuCallRecorder open-source par kitsumed (GPLv3). Non affilié ou approuvé par ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Visiter ShizuCallRecorder</string>
     <string name="settings_top_card_subtext">Vérifier les mises à jour • Contributeurs • Faire un don</string>
     <string name="settings_top_card_updates">Mises à jour</string>
     <string name="settings_top_card_donate">Faire un don</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Développeur principal</string>
     <string name="contributor_role_developer">Développeur</string>
+    <string name="contributor_role_upstream_call_recording">Auteur de ShizuCallRecorder</string>
     <string name="contributor_role_localization">Localisation et traductions</string>
     <string name="contributor_role_contributor">Contributeur</string>
     <string name="contributor_commits">%1$d commits</string>
@@ -633,6 +640,8 @@
     <string name="call_recordings_share">Partager l\'enregistrement</string>
     <string name="call_recordings_delete_title">Supprimer l\'enregistrement ?</string>
     <string name="call_recordings_delete_message">Cet enregistrement sera définitivement supprimé de votre appareil.</string>
+    <string name="call_recording_saved">Enregistrement de l\'appel enregistré</string>
+    <string name="call_recording_deleted">Enregistrement supprimé</string>
     <!-- Video calling app picker -->
     <string name="video_call_title">Appel vidéo</string>
     <string name="video_call_chooser_with">Appel vidéo avec</string>
@@ -957,9 +966,14 @@
     <string name="settings_search_placeholder">Rechercher dans les paramètres…</string>
     <string name="settings_search_no_results">Aucun paramètre correspondant à \"%1$s \" trouvé</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Afficher les noms des transporteurs dans les applications récentes</string>
-    <string name="settings_show_carrier_in_recents_supporting">Afficher les noms de l\'opérateur et de la carte SIM dans l\'historique des appels et les applications récentes</string>
+    <string name="settings_show_carrier_in_recents">Afficher l\'indicateur SIM dans les applications récentes</string>
+    <string name="settings_show_carrier_in_recents_supporting">Afficher les badges SIM 1 et SIM 2 dans l\'historique des appels et les applications récentes</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Afficher l\'indicatif du pays</string>
     <string name="settings_show_country_code_supporting">Afficher le préfixe de l\'indicatif du pays dans les numéros de téléphone dans l\'application et l\'écran d\'appel</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Rogner l\'avatar</string>
+    <string name="action_crop">Rogner</string>
+    <string name="action_rotate">Faire pivoter</string>
+    <string name="action_reset">Reset</string>
 </resources>

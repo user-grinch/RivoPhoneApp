@@ -44,12 +44,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Vis alfabetisk sektionsoverskrifter</string>
+    <string name="settings_contact_section_headers_supporting">Vis brevoverskrifter (A, B, C) for at adskille kontaktgrupper i listen</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
+    <string name="about_shizucallrecorder_desc">Rivo inkorporerer opkaldskoden fra ShizuCallRecorder ved kitsumed (licenseret under GPLv3 med afsnit 7 yderligere vilkår). Rivo er et uafhængigt projekt og er ikke officielt tilknyttet eller godkendt af ShizuCallRecorder.\n\nLeder du efter et dedikeret, gratis, open source og alternativ med respekt for privatlivets fred uden annoncer eller pengeskab? Tjek det oprindelige ShizuCallRecorder projekt.</string>
+    <string name="about_shizucallrecorder_action">Vis ShizuCallRecorder på GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Optagelsesmaskine Til Opkald</string>
+    <string name="call_recording_shizuku_attribution_desc">Intern opkald optagelse via Shizuku inkorporerer kode fra open source ShizuCallRecorder projekt af kitsumed (GPLv3). Ikke tilknyttet eller godkendt af ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Besøg ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -57,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Opkaldsoptagelse gemt</string>
+    <string name="call_recording_deleted">Optagelse slettet</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -215,9 +226,14 @@
     <string name="settings_search_placeholder">Søge indstillinger…</string>
     <string name="settings_search_no_results">Ingen indstillinger fundet matchende \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Vis forsendelsesfirmanavne i seneste</string>
-    <string name="settings_show_carrier_in_recents_supporting">Vis navne på forsendelsesfirmaer og SIM-kort i opkaldshistorik og seneste</string>
+    <string name="settings_show_carrier_in_recents">Vis SIM-indikator i de seneste</string>
+    <string name="settings_show_carrier_in_recents_supporting">Vis SIM 1 og SIM 2 badges i opkaldshistorik og seneste</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Vis landekode</string>
     <string name="settings_show_country_code_supporting">Vis landekode præfiks i telefonnumre i hele app\'en og opkaldsskærmen</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Beskær Avatar</string>
+    <string name="action_crop">Beskær</string>
+    <string name="action_rotate">Rotér</string>
+    <string name="action_reset">Reset</string>
 </resources>

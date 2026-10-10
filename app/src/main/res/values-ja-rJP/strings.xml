@@ -44,12 +44,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">セクションヘッダーをアルファベット順に表示</string>
+    <string name="settings_contact_section_headers_supporting">リスト内の連絡先グループを分離する文字ヘッダー (A, B, C) を表示する</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder表示属性</string>
+    <string name="about_shizucallrecorder_desc">リボには、ShitiCallRecorderからの通話記録コードが組み込まれています(GPLv3のセクション7の追加条件でライセンスされています)。 リボは独立したプロジェクトであり、ShizuCallRecorderの正式な提携または承認を受けていません。\n\n広告やマネタイゼーションなしで、専用のオープンソースでプライバシーを尊重する代替手段をお探しですか? オリジナルのShizuitCallRecorderプロジェクトをご覧ください。</string>
+    <string name="about_shizucallrecorder_action">GitHub で ShizuCallRecorder を見る</string>
+    <string name="call_recording_shizuku_attribution_title">通話録音エンジン</string>
+    <string name="call_recording_shizuku_attribution_desc">Shizukuによる内部通話録音には、ShitiCallRecorderとは提携していない、または承認されていないkitumed(GPLv3)によるオープンソースShizuCallRecorderプロジェクトのコードが組み込まれています。</string>
+    <string name="call_recording_shizuku_attribution_action">ShizuCallRecorderをご覧ください</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder著者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -57,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">通話録音を保存しました</string>
+    <string name="call_recording_deleted">録音が削除されました</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -208,9 +219,14 @@
     <string name="shortcut_dial_contact">%1$s に発信</string>
     <string name="settings_search_no_results">\"%1$s\" に一致する設定が見つかりません</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">履歴にキャリア名を表示する</string>
-    <string name="settings_show_carrier_in_recents_supporting">携帯通信会社とSIMカード名を通話履歴とアプリ履歴に表示する</string>
+    <string name="settings_show_carrier_in_recents">アプリ履歴にSIMインジケーターを表示</string>
+    <string name="settings_show_carrier_in_recents_supporting">SIM 1とSIM 2のバッジを通話履歴とアプリ履歴に表示する</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">国コードを表示</string>
     <string name="settings_show_country_code_supporting">アプリと通話画面を通じて国コードのプレフィックスを電話番号に表示する</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">アバターをトリミングする</string>
+    <string name="action_crop">クロップ</string>
+    <string name="action_rotate">回転</string>
+    <string name="action_reset">Reset</string>
 </resources>

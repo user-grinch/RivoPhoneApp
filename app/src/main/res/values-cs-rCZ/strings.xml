@@ -51,7 +51,14 @@
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">Atribut ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_desc">Rivo zahrnuje kód záznamu hovorů z ShizuCallRecorder pomocí kitsumu (licencovaný pod licencí GPLv3 s oddílem 7 dalšími výrazy). Rivo je nezávislý projekt a není oficiálně přidružen k ShizuCallRecorder.\n\nHledáte vyhrazenou, bezplatnou, otevřenou a soukromou alternativu bez reklam nebo monetizace? Podívejte se na původní projekt ShizuCallRecorder.</string>
+    <string name="about_shizucallrecorder_action">Zobrazit ShizuCallRecorder na GitHubu</string>
+    <string name="call_recording_shizuku_attribution_title">Modul nahrávání hovorů</string>
+    <string name="call_recording_shizuku_attribution_desc">Interní nahrávání hovorů přes Shizuku obsahuje kód z open-source projektu ShizuCallRecorder po kitsumu (GPLv3). Není přidružen k ani schválen ShizuCRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Navštívit ShizuCall Recorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">Zapisovač ShizuCallOrorder autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -59,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Záznam hovoru uložen</string>
+    <string name="call_recording_deleted">Nahrávání smazáno</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -217,9 +226,14 @@
     <string name="settings_search_placeholder">Nastavení hledání…</string>
     <string name="settings_search_no_results">Nebyla nalezena žádná nastavení odpovídající \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Zobrazit názvy operátorů v nedávných aplikacích</string>
-    <string name="settings_show_carrier_in_recents_supporting">Zobrazit názvy operátora a SIM karet v historii hovorů a nedávných</string>
+    <string name="settings_show_carrier_in_recents">Zobrazit indikátor SIM karty v nedávných</string>
+    <string name="settings_show_carrier_in_recents_supporting">Zobrazit odznaky SIM 1 a SIM 2 v historii hovorů a nedávných</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Zobrazit kód země</string>
     <string name="settings_show_country_code_supporting">Zobrazit předponu kódu země v telefonních číslech v celé aplikaci a obrazovce volání</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Oříznout avatara</string>
+    <string name="action_crop">Plodiny</string>
+    <string name="action_rotate">Otočit</string>
+    <string name="action_reset">Reset</string>
 </resources>

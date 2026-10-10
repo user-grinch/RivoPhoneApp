@@ -44,12 +44,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Показувати заголовки алфавітного розділу</string>
+    <string name="settings_contact_section_headers_supporting">Показувати заголовки літер (A, B, C) розділяючи групи контактів зі списком</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">Посилання на СідзуКаллек</string>
+    <string name="about_shizucallrecorder_desc">Rivo включає код запису викликів із ShizuCallRecorder шляхом kitsumed (ліцензовано під GPLv3 з додатковими умовами розділу). Ріво є незалежним проектом і офіційно не пов\'язаний або не схвалив Шизуколлектор.\n\nШукаєте присвячений, вільний, відкритий ресурс та повагу приватності без реклами чи монетизації? Перегляньте оригінальний проект ShizuCallRecorder (поїздка) для замовлення.</string>
+    <string name="about_shizucallrecorder_action">Перегляд ShizuCallRecorder на GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Засіб запису дзвінків</string>
+    <string name="call_recording_shizuku_attribution_desc">Запис внутрішнього виклику через Shizuku включає код з проекту ShizuCallRecorder з відкритим кодом (kitsumed (GPLv3). Не пов\'язаний з або схваленим ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Відвідати ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -57,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Запис дзвінка збережено</string>
+    <string name="call_recording_deleted">Запис видалено</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -204,9 +215,14 @@
     <string name="shortcut_dial_contact">Подзвонити %1$s</string>
     <string name="settings_search_placeholder">Пошук налаштувань…</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Показувати назви перевізника в недавніх додатках</string>
-    <string name="settings_show_carrier_in_recents_supporting">Показати назву оператора й SIM-карти у історії дзвінків і недавніх</string>
+    <string name="settings_show_carrier_in_recents">Показувати індикатор SIM в недавніх додатках</string>
+    <string name="settings_show_carrier_in_recents_supporting">Показувати значки SIM 1 та SIM 2 в історії викликів та недавніх додатків</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Показувати код країни</string>
     <string name="settings_show_country_code_supporting">Показувати префікс коду країни в телефонних номерах в додатку і в екрані виклику</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Обрізати аватар</string>
+    <string name="action_crop">Кадрування</string>
+    <string name="action_rotate">Обертати</string>
+    <string name="action_reset">Reset</string>
 </resources>
