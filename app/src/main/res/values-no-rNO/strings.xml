@@ -44,12 +44,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Vis alfabetiske seksjonshoder</string>
+    <string name="settings_contact_section_headers_supporting">Vis bokstavoverskrifter (A, B, C) som skiller kontaktgrupper i listen</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder Navngivelse</string>
+    <string name="about_shizucallrecorder_desc">Naglo har ringeropptakskode fra ShizuCallRecorder etter kitted (lisensiert under GPLv3 med del 7 flere vilkår). Naglo er et uavhengig prosjekt og er ikke offisielt tilknyttet eller godkjent av ShizuCallRecorder.\n\nLooking for a dedicated, free, open-source, and privacy-respecting alternative without ads or monetization? Sjekk ut det originale ShizuCallRecorder prosjektet.</string>
+    <string name="about_shizucallrecorder_action">Vis ShizuCallRecorder på GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Anrops opptaksmotor</string>
+    <string name="call_recording_shizuku_attribution_desc">Intern samtaleopptak via Shizuku har kode fra ShizuCallRecorder prosjektet fra kitran (GPLv3). Ikke tilknyttet eller godkjent av ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Besøk ShizuCallOpptak</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -57,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Samtaleopptak lagret</string>
+    <string name="call_recording_deleted">Opptak slettet</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -213,9 +224,14 @@
     <string name="settings_search_placeholder">Søk etter innstillinger…</string>
     <string name="settings_search_no_results">Ingen innstillinger funnet som samsvarer med \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Vis transportørnavn i nylige</string>
-    <string name="settings_show_carrier_in_recents_supporting">Vis transportør og SIM-kortnavn i samtalelogg og nylige</string>
+    <string name="settings_show_carrier_in_recents">Vis SIM-indikator i siste</string>
+    <string name="settings_show_carrier_in_recents_supporting">Vis SIM 1 og SIM 2 distinksjoner i samtalelogg og nylige</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Vis landskode</string>
     <string name="settings_show_country_code_supporting">Vis landskodeprefiks i telefonnummer i appen og ring skjerm</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Beskjær Avatar</string>
+    <string name="action_crop">Beskjær</string>
+    <string name="action_rotate">Roter</string>
+    <string name="action_reset">Reset</string>
 </resources>

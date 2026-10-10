@@ -52,7 +52,14 @@
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">Atribuire ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_desc">Rivo încorporează codul de înregistrare a apelurilor de la ShizuCallRecorder prin kitsumed (licență sub licența GPLv3 cu secțiunea 7 termeni suplimentari). Rivo este un proiect independent și nu este afiliat oficial sau aprobat de ShizuCallRecorder.\n\nCauți o alternativă dedicată, gratuită și cu respectarea vieții private fără reclame sau monetizare? Vezi proiectul original ShizuCallRecorder.</string>
+    <string name="about_shizucallrecorder_action">Vezi ShizuCallRecorder pe GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Motor Înregistrare Apel</string>
+    <string name="call_recording_shizuku_attribution_desc">Înregistrarea internă a apelurilor prin Shizuku încorporează codul din proiectul ShizuCallRecorder open-source prin kitsumed (GPLv3). Nu este afiliat sau aprobat de ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Vizitați ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -60,6 +67,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Înregistrare apel salvată</string>
+    <string name="call_recording_deleted">Înregistrare ștearsă</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -218,9 +227,14 @@
     <string name="settings_search_placeholder">Setări căutare…</string>
     <string name="settings_search_no_results">Nicio setare găsită pentru \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Arată numele curierilor în recente</string>
-    <string name="settings_show_carrier_in_recents_supporting">Afișează numele operatorului și numele cardului SIM în istoricul apelurilor și în aplicațiile recente</string>
+    <string name="settings_show_carrier_in_recents">Arată indicatorul SIM în recente</string>
+    <string name="settings_show_carrier_in_recents_supporting">Afișează insignele SIM 1 și SIM 2 în istoricul apelurilor și în recente</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Arată codul țării</string>
     <string name="settings_show_country_code_supporting">Afișează prefixul codului de țară în numărul de telefon în toată aplicația și în ecranul de apel</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Decupare avatar</string>
+    <string name="action_crop">Decupați</string>
+    <string name="action_rotate">Rotire</string>
+    <string name="action_reset">Reset</string>
 </resources>

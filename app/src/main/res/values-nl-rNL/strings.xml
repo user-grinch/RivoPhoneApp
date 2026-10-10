@@ -44,12 +44,21 @@
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
     <!-- Settings > Manage contacts -->
+    <string name="settings_contact_section_headers">Toon alfabetische sectie-headers</string>
+    <string name="settings_contact_section_headers_supporting">Toon letter headers (A, B, C) scheidende contactgroepen in de lijst</string>
     <!-- Settings > Contact visibility -->
     <!-- Settings > Private storage -->
     <!-- Settings > Speed dial -->
     <!-- Settings > Voicemail -->
     <!-- Settings > About -->
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder Attributie</string>
+    <string name="about_shizucallrecorder_desc">Rivo bevat oproepopnamecode van ShizuCallRecorder door kitsumed (gelicenseerd onder GPLv3 met sectie 7 aanvullende termen). Rivo is een onafhankelijk project en is niet officieel geassocieerd met of goedgekeurd door ShizuCallRecorder.\n\nOp zoek naar een toegewijd, gratis, open-source en privacy-respectvol alternatief zonder advertenties of geld? Bekijk het oorspronkelijke ShizuCallRecorderproject.</string>
+    <string name="about_shizucallrecorder_action">ShizuCallRecorder bekijken op GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Oproep Opname Motor</string>
+    <string name="call_recording_shizuku_attribution_desc">Interne opnames via Shizuku bevat code van het open-source ShizuCallRecorderproject door kitsumed (GPLv3). Niet verbonden met of goedgekeurd door ShizuCallRecorder.</string>
+    <string name="call_recording_shizuku_attribution_action">Bezoek ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder auteur</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
     <!-- Bottom navigation layout -->
@@ -57,6 +66,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Oproepopname opgeslagen</string>
+    <string name="call_recording_deleted">Opname verwijderd</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -212,9 +223,14 @@
     <string name="shortcut_dial_contact">Oproep %1$s</string>
     <string name="settings_search_no_results">Geen instellingen gevonden die overeenkomen met \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Toon providernamen in recente apps</string>
-    <string name="settings_show_carrier_in_recents_supporting">Provider- en SIM-kaartnamen in oproepgeschiedenis en recente apps weergeven</string>
+    <string name="settings_show_carrier_in_recents">SIM-indicator in recente apps weergeven</string>
+    <string name="settings_show_carrier_in_recents_supporting">Simkaart 1 en simkaart 2 badges weergeven in oproepgeschiedenis en recenten</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Toon landcode</string>
     <string name="settings_show_country_code_supporting">Voorvoegsel landcode weergeven in telefoonnummers over de app en het gespreksscherm</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Gewas Avatar</string>
+    <string name="action_crop">Bijsnijden</string>
+    <string name="action_rotate">Draaien</string>
+    <string name="action_reset">Reset</string>
 </resources>

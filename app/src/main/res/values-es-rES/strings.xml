@@ -493,12 +493,19 @@
     <string name="about_check_updates">Buscar actualizaciones</string>
     <string name="about_current_version">Versión actual: %1$s</string>
     <string name="about_copyright">©️ Proyecto RivoPhone 2025-2026</string>
+    <string name="about_shizucallrecorder_title">Atribución de ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_desc">Rivo incorpora el código de grabación de llamadas de ShizuCallRecorder por kitsumed (licenciado bajo GPLv3 con los términos adicionales de la Sección 7). Rivo es un proyecto independiente y no está oficialmente afiliado o respaldado por ShizuCallRecorder.\n\n¿Buscas una alternativa dedicada, gratuita, de código abierto y respetuosa con la privacidad sin anuncios ni monetización? Revisa el proyecto ShizuCallRecorder original.</string>
+    <string name="about_shizucallrecorder_action">Ver ShizuCallRecorder en GitHub</string>
+    <string name="call_recording_shizuku_attribution_title">Motor de grabación de llamadas</string>
+    <string name="call_recording_shizuku_attribution_desc">La grabación interna de llamadas a través de Shizuku incorpora código del proyecto open source ShizuCallRecorder por kitsumed (GPLv3).</string>
+    <string name="call_recording_shizuku_attribution_action">Visita ShizuCallRecorder</string>
     <string name="settings_top_card_subtext">Comprobar actualizaciones • Contribuidores • Donar</string>
     <string name="settings_top_card_updates">Actualizaciones</string>
     <string name="settings_top_card_donate">Donar</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_lead_developer">Director de desarrollo</string>
     <string name="contributor_role_developer">Desarrollador</string>
+    <string name="contributor_role_upstream_call_recording">Autor de ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <string name="oem_perm_bg_recording">Audio en segundo plano</string>
     <string name="oem_perm_autostart">Inicio automático</string>
@@ -535,6 +542,8 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <string name="call_recording_saved">Grabación de llamada guardada</string>
+    <string name="call_recording_deleted">Grabación eliminada</string>
     <!-- Video calling app picker -->
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
@@ -692,9 +701,14 @@
     <string name="settings_search_placeholder">Ajustes de búsqueda…</string>
     <string name="settings_search_no_results">No se encontraron ajustes que coincidan con \"%1$s\"</string>
     <!-- Carrier in Recents -->
-    <string name="settings_show_carrier_in_recents">Mostrar nombres de transportistas en recientes</string>
-    <string name="settings_show_carrier_in_recents_supporting">Mostrar nombres de operador y tarjeta SIM en el historial de llamadas y recientes</string>
+    <string name="settings_show_carrier_in_recents">Mostrar indicador de SIM en recientes</string>
+    <string name="settings_show_carrier_in_recents_supporting">Mostrar insignias de SIM 1 y SIM 2 en el historial de llamadas y recientes</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Mostrar código de país</string>
     <string name="settings_show_country_code_supporting">Mostrar prefijo de código de país en los números de teléfono de toda la aplicación y llamar a la pantalla</string>
+    <!-- Avatar Cropping -->
+    <string name="crop_avatar_title">Recortar Avatar</string>
+    <string name="action_crop">Recortar</string>
+    <string name="action_rotate">Rotar</string>
+    <string name="action_reset">Reset</string>
 </resources>
