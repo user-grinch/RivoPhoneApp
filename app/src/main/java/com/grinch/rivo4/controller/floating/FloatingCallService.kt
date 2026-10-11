@@ -373,7 +373,7 @@ class FloatingCallService : Service(), KoinComponent {
 
                             // Magnetic snap interpolation: pulls smoothly into target center
                             val ratio = (distance / magneticRadius).coerceIn(0f, 1f)
-                            val pullFactor = (1f - ratio) * 0.72f
+                            val pullFactor = (1f - ratio) * 0.88f
                             val targetBubbleX = (targetCenterX - bubbleSize / 2f)
                             val targetBubbleY = (targetCenterY - bubbleSize / 2f)
                             val freeBubbleX = (initialX + dx).toFloat()
@@ -604,22 +604,23 @@ class FloatingCallService : Service(), KoinComponent {
             drawable.setColor(Color.parseColor("#E53935"))
             drawable.setStroke((2.5f * density).toInt(), Color.WHITE)
             dismissTargetCircle?.animate()
-                ?.scaleX(1.32f)
-                ?.scaleY(1.32f)
+                ?.scaleX(1.30f)
+                ?.scaleY(1.30f)
                 ?.setDuration(160)
-                ?.setInterpolator(OvershootInterpolator(1.5f))
+                ?.setInterpolator(OvershootInterpolator(1.4f))
                 ?.start()
 
+            // Scale 'X' slightly for emphasis, but keep rotation strictly at 0f (NEVER rotate into '+')
             dismissIconView?.animate()
-                ?.scaleX(1.15f)
-                ?.scaleY(1.15f)
-                ?.rotation(45f)
+                ?.scaleX(1.18f)
+                ?.scaleY(1.18f)
+                ?.rotation(0f)
                 ?.setDuration(160)
                 ?.start()
 
             bubbleContainer?.animate()
-                ?.scaleX(0.82f)
-                ?.scaleY(0.82f)
+                ?.scaleX(0.80f)
+                ?.scaleY(0.80f)
                 ?.setDuration(120)
                 ?.start()
         } else {
@@ -660,7 +661,10 @@ class FloatingCallService : Service(), KoinComponent {
         val destX = targetCenterX - (bubbleSize / 2f)
         val destY = targetCenterY - (bubbleSize / 2f)
 
-        // 1. Swallow animation: Bubble pulls into center, shrinks and fades
+        // Ensure icon is firmly an 'X' and not rotated
+        dismissIconView?.rotation = 0f
+
+        // 1. Swallow animation: Bubble pulls into center of the 'X', shrinks to 0
         val swallowAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 180
             interpolator = AccelerateInterpolator(1.8f)
@@ -677,7 +681,7 @@ class FloatingCallService : Service(), KoinComponent {
                     } catch (_: Exception) {}
                 }
 
-                val scale = 0.82f * (1f - fraction)
+                val scale = (0.80f * (1f - fraction)).coerceAtLeast(0f)
                 val alpha = (1f - fraction).coerceIn(0f, 1f)
                 bubbleContainer?.scaleX = scale
                 bubbleContainer?.scaleY = scale
@@ -685,20 +689,20 @@ class FloatingCallService : Service(), KoinComponent {
             }
         }
 
-        // 2. Chomp and drop down animation on dismiss target
+        // 2. The 'X' target circle: absorbs the bubble, then immediately sinks down smoothly into the bottom of the screen
         dismissTargetCircle?.animate()
-            ?.scaleX(1.48f)
-            ?.scaleY(1.48f)
-            ?.setDuration(120)
+            ?.scaleX(1.36f)
+            ?.scaleY(1.36f)
+            ?.setDuration(90)
             ?.setInterpolator(DecelerateInterpolator())
             ?.withEndAction {
                 dismissTargetCircle?.animate()
-                    ?.scaleX(0.2f)
-                    ?.scaleY(0.2f)
-                    ?.translationY(70 * density)
+                    ?.scaleX(0.1f)
+                    ?.scaleY(0.1f)
+                    ?.translationY(80 * density)
                     ?.alpha(0f)
                     ?.setDuration(160)
-                    ?.setInterpolator(AccelerateInterpolator(1.5f))
+                    ?.setInterpolator(AccelerateInterpolator(1.6f))
                     ?.start()
 
                 dismissTargetAura?.animate()
