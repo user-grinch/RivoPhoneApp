@@ -58,6 +58,7 @@ import com.grinch.rivo4.controller.AudioMetadataCache
 import com.grinch.rivo4.controller.CallRecorder
 import com.grinch.rivo4.controller.util.OemPermissionHelper
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
