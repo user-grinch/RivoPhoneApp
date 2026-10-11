@@ -95,6 +95,15 @@ import com.grinch.rivo4.view.components.rememberRivoAvatarStyle
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.grinch.rivo4.view.components.rivoGroupedItemShape
 import com.grinch.rivo4.view.components.rivoSurfaceStyle
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import com.grinch.rivo4.controller.util.SocialUtils
+import com.grinch.rivo4.modal.data.SwipeActionType
+import com.grinch.rivo4.view.components.RivoSwipeToActionBox
+import com.grinch.rivo4.view.components.rememberMessageLauncher
+import com.grinch.rivo4.view.components.rememberVideoLauncher
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
@@ -186,7 +195,19 @@ fun ContactSearchContent(
     val isCallLogsLoading by callLogVM.isLoading.collectAsState()
 
     val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
     val callLauncher = rememberCallLauncher()
+    val messageLauncher = rememberMessageLauncher()
+    val videoLauncher = rememberVideoLauncher()
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+    val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() }
+    val swipeRightAction = remember(settingsState) {
+        SwipeActionType.fromId(prefs.getSwipeRightAction())
+    }
+    val swipeLeftAction = remember(settingsState) {
+        SwipeActionType.fromId(prefs.getSwipeLeftAction())
+    }
 
     var query by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(SearchTabFilter.ALL) }
@@ -609,32 +630,55 @@ fun ContactSearchContent(
                                                     shape = if (showCards) shape else androidx.compose.ui.graphics.RectangleShape,
                                                     color = if (showCards) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent
                                                 ) {
-                                                    RivoListItem(
-                                                        headline = contact.name,
-                                                        supporting = buildString {
-                                                            contact.nickname?.let { append("$it • ") }
-                                                            contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
-                                                        }.ifEmpty { null },
-                                                        avatarName = contact.name,
-                                                        photoUri = contact.photoUri,
-                                                        onClick = {
-                                                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                                                        },
-                                                        trailingContent = {
-                                                            contact.phoneNumbers.firstOrNull()?.let { num ->
-                                                                IconButton(
-                                                                    onClick = { callLauncher.dial(num, contact) }
-                                                                ) {
-                                                                    Icon(
-                                                                        Icons.Rounded.Call,
-                                                                        contentDescription = stringResource(R.string.action_call),
-                                                                        tint = MaterialTheme.colorScheme.primary,
-                                                                        modifier = Modifier.size(20.dp)
-                                                                    )
+                                                    RivoSwipeToActionBox(
+                                                        enabled = swipeEnabled,
+                                                        swipeRightAction = swipeRightAction,
+                                                        swipeLeftAction = swipeLeftAction,
+                                                        onTriggerAction = { action ->
+                                                            val phone = contact.phoneNumbers.firstOrNull().orEmpty()
+                                                            when (action) {
+                                                                SwipeActionType.CALL -> callLauncher.dial(phone, contact)
+                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, contact)
+                                                                SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, contact)
+                                                                SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
+                                                                SwipeActionType.COPY_NUMBER -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        clipboardManager.setText(AnnotatedString(phone))
+                                                                        Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
                                                                 }
+                                                                SwipeActionType.DELETE -> {}
+                                                                SwipeActionType.NONE -> {}
                                                             }
                                                         }
-                                                    )
+                                                    ) {
+                                                        RivoListItem(
+                                                            headline = contact.name,
+                                                            supporting = buildString {
+                                                                contact.nickname?.let { append("$it • ") }
+                                                                contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
+                                                            }.ifEmpty { null },
+                                                            avatarName = contact.name,
+                                                            photoUri = contact.photoUri,
+                                                            onClick = {
+                                                                navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                            },
+                                                            trailingContent = {
+                                                                contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                                    IconButton(
+                                                                        onClick = { callLauncher.dial(num, contact) }
+                                                                    ) {
+                                                                        Icon(
+                                                                            Icons.Rounded.Call,
+                                                                            contentDescription = stringResource(R.string.action_call),
+                                                                            tint = MaterialTheme.colorScheme.primary,
+                                                                            modifier = Modifier.size(20.dp)
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+                                                        )
+                                                    }
                                                 }
                                                 if (!showCards && index < filteredContacts.size - 1) {
                                                     HorizontalDivider(
@@ -664,17 +708,40 @@ fun ContactSearchContent(
                                                     shape = if (showCards) shape else androidx.compose.ui.graphics.RectangleShape,
                                                     color = if (showCards) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent
                                                 ) {
-                                                    CallLogTileSimple(
-                                                        log = lg,
-                                                        onClick = {
-                                                            navigator.navigate(
-                                                                ContactDetailsScreenDestination(
-                                                                    contactId = lg.contactId,
-                                                                    phoneNumber = lg.number
-                                                                )
-                                                            )
+                                                    RivoSwipeToActionBox(
+                                                        enabled = swipeEnabled,
+                                                        swipeRightAction = swipeRightAction,
+                                                        swipeLeftAction = swipeLeftAction,
+                                                        onTriggerAction = { action ->
+                                                            val phone = lg.number
+                                                            when (action) {
+                                                                SwipeActionType.CALL -> callLauncher.dial(phone, null)
+                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, null)
+                                                                SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, null)
+                                                                SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
+                                                                SwipeActionType.COPY_NUMBER -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        clipboardManager.setText(AnnotatedString(phone))
+                                                                        Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }
+                                                                SwipeActionType.DELETE -> {}
+                                                                SwipeActionType.NONE -> {}
+                                                            }
                                                         }
-                                                    )
+                                                    ) {
+                                                        CallLogTileSimple(
+                                                            log = lg,
+                                                            onClick = {
+                                                                navigator.navigate(
+                                                                    ContactDetailsScreenDestination(
+                                                                        contactId = lg.contactId,
+                                                                        phoneNumber = lg.number
+                                                                    )
+                                                                )
+                                                            }
+                                                        )
+                                                    }
                                                 }
                                                 if (!showCards && index < filteredCallLogs.size - 1) {
                                                     HorizontalDivider(

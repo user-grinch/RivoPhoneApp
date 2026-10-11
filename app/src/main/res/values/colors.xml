@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="rivo_window_background">#FFF8F9FF</color>
     <color name="rivo_splash_background">#FFF8F9FF</color>
+    <color name="shortcut_icon_tint">#FF1F1F1F</color>
 </resources>

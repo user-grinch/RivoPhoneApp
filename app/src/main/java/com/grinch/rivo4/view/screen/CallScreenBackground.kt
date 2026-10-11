@@ -1,12 +1,5 @@
 package com.grinch.rivo4.view.screen
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 
@@ -60,26 +53,6 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
     val customVisible = hasCustomBackground && !customFailed
     val photoVisible = !photoUri.isNullOrEmpty() && !customVisible
 
-    val infiniteTransition = rememberInfiniteTransition(label = "ambientBg")
-    val blob1Offset by infiniteTransition.animateFloat(
-        initialValue = -28f,
-        targetValue = 28f,
-        animationSpec = infiniteRepeatable(tween(11000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "b1"
-    )
-    val blob2Offset by infiniteTransition.animateFloat(
-        initialValue = 28f,
-        targetValue = -28f,
-        animationSpec = infiniteRepeatable(tween(13000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "b2"
-    )
-    val blobAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.18f,
-        targetValue = 0.34f,
-        animationSpec = infiniteRepeatable(tween(6000, easing = LinearEasing), RepeatMode.Reverse),
-        label = "ba"
-    )
-
     val request = remember(backgroundUri, context) {
         if (backgroundUri.isNullOrEmpty()) {
             null
@@ -104,32 +77,6 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
     }
 
     Box(modifier = baseModifier) {
-        if (!customVisible) {
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        translationX = blob1Offset.dp.toPx()
-                        translationY = (-80).dp.toPx()
-                    }
-                    .size(280.dp)
-                    .align(Alignment.TopStart)
-                    .clip(CircleShape)
-                    .background(scheme.primaryContainer.copy(alpha = if (isDark) blobAlpha else 0.12f))
-                    .blur(72.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        translationX = blob2Offset.dp.toPx()
-                        translationY = 100.dp.toPx()
-                    }
-                    .size(320.dp)
-                    .align(Alignment.BottomEnd)
-                    .clip(CircleShape)
-                    .background(scheme.tertiaryContainer.copy(alpha = if (isDark) blobAlpha else 0.10f))
-                    .blur(84.dp)
-            )
-        }
 
         if (photoVisible) {
             AsyncImage(

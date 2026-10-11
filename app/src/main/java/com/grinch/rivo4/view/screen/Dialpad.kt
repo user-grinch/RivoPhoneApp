@@ -72,7 +72,10 @@ import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SocialUtils
+import android.widget.Toast
+import androidx.compose.ui.text.AnnotatedString
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.view.components.*
 import androidx.compose.ui.unit.TextUnit
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
@@ -183,6 +186,15 @@ fun DialPadScreen(
 
     val allContacts by contactsVM.allContacts.collectAsState()
     val clipboardManager = LocalClipboardManager.current
+    val messageLauncher = rememberMessageLauncher()
+    val videoLauncher = rememberVideoLauncher()
+    val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() }
+    val swipeRightAction = remember(settingsState) {
+        SwipeActionType.fromId(prefs.getSwipeRightAction())
+    }
+    val swipeLeftAction = remember(settingsState) {
+        SwipeActionType.fromId(prefs.getSwipeLeftAction())
+    }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(initialNumber ?: "")) }
     var dialpadHeightPx by remember { mutableIntStateOf(0) }
     val number = textFieldValue.text
@@ -499,36 +511,59 @@ fun DialPadScreen(
                             shape = shape,
                             color = MaterialTheme.colorScheme.surfaceContainerLow
                         ) {
-                            RivoListItem(
-                                headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder),
-                                supporting = buildString {
-                                    contact.nickname?.let { append("$it • ") }
-                                    contactNumber?.let { append(formatPhoneNumber(it)) }
-                                }.ifEmpty { null },
-                                avatarName = contact.name,
-                                photoUri = contact.photoUri,
-                                trailingContent = {
-                                    contactNumber?.let { num ->
-                                        IconButton(
-                                            onClick = { performCall(num, contact.id) },
-                                            modifier = Modifier.padding(end = 4.dp)
-                                        ) {
-                                            Icon(
-                                                Icons.Rounded.Call,
-                                                contentDescription = stringResource(R.string.content_desc_call_named, contact.name),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
+                            RivoSwipeToActionBox(
+                                enabled = swipeEnabled,
+                                swipeRightAction = swipeRightAction,
+                                swipeLeftAction = swipeLeftAction,
+                                onTriggerAction = { action ->
+                                    val phone = contactNumber.orEmpty()
+                                    when (action) {
+                                        SwipeActionType.CALL -> performCall(phone, contact.id)
+                                        SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, contact)
+                                        SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, contact)
+                                        SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
+                                        SwipeActionType.COPY_NUMBER -> {
+                                            if (phone.isNotBlank()) {
+                                                clipboardManager.setText(AnnotatedString(phone))
+                                                Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                            }
                                         }
+                                        SwipeActionType.DELETE -> {}
+                                        SwipeActionType.NONE -> {}
                                     }
-                                },
-                                onClick = {
-                                    navigator.navigate(
-                                        ContactDetailsScreenDestination(
-                                            contactId = contact.id
-                                        )
-                                    )
                                 }
-                            )
+                            ) {
+                                RivoListItem(
+                                    headline = com.grinch.rivo4.controller.util.ContactUtils.formatContactName(contact, displayOrder),
+                                    supporting = buildString {
+                                        contact.nickname?.let { append("$it • ") }
+                                        contactNumber?.let { append(formatPhoneNumber(it)) }
+                                    }.ifEmpty { null },
+                                    avatarName = contact.name,
+                                    photoUri = contact.photoUri,
+                                    trailingContent = {
+                                        contactNumber?.let { num ->
+                                            IconButton(
+                                                onClick = { performCall(num, contact.id) },
+                                                modifier = Modifier.padding(end = 4.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Rounded.Call,
+                                                    contentDescription = stringResource(R.string.content_desc_call_named, contact.name),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        }
+                                    },
+                                    onClick = {
+                                        navigator.navigate(
+                                            ContactDetailsScreenDestination(
+                                                contactId = contact.id
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
 
@@ -543,57 +578,80 @@ fun DialPadScreen(
                         ) {
                             val entrySimNumber = entry.simNumber ?: resolveSimNumber(entry)
                             val recentsLabel = stringResource(R.string.nav_recents)
-                            RivoListItem(
-                                headline = formatPhoneNumber(entry.number),
-                                supporting = if (entrySimNumber == null) recentsLabel else null,
-                                supportingContent = if (entrySimNumber != null) {
-                                    {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.padding(top = 1.dp)
-                                        ) {
-                                            SimBadge(simNumber = entrySimNumber)
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = recentsLabel,
-                                                style = RivoListItemDefaults.supportingStyle(),
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
+                            RivoSwipeToActionBox(
+                                enabled = swipeEnabled,
+                                swipeRightAction = swipeRightAction,
+                                swipeLeftAction = swipeLeftAction,
+                                onTriggerAction = { action ->
+                                    val phone = entry.number
+                                    when (action) {
+                                        SwipeActionType.CALL -> performCall(phone, null)
+                                        SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, null)
+                                        SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, null)
+                                        SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
+                                        SwipeActionType.COPY_NUMBER -> {
+                                            if (phone.isNotBlank()) {
+                                                clipboardManager.setText(AnnotatedString(phone))
+                                                Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                            }
                                         }
+                                        SwipeActionType.DELETE -> {}
+                                        SwipeActionType.NONE -> {}
                                     }
-                                } else null,
-                                leadingContent = {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        modifier = Modifier.size(40.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                Icons.Default.History,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                        }
-                                    }
-                                },
-                                trailingContent = {
-                                    IconButton(
-                                        onClick = { performCall(entry.number, null) },
-                                        modifier = Modifier.padding(end = 4.dp)
-                                    ) {
-                                        Icon(
-                                            Icons.Rounded.Call,
-                                            contentDescription = stringResource(R.string.action_call),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                },
-                                onClick = {
-                                    performCall(entry.number, null)
                                 }
-                            )
+                            ) {
+                                RivoListItem(
+                                    headline = formatPhoneNumber(entry.number),
+                                    supporting = if (entrySimNumber == null) recentsLabel else null,
+                                    supportingContent = if (entrySimNumber != null) {
+                                        {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.padding(top = 1.dp)
+                                            ) {
+                                                SimBadge(simNumber = entrySimNumber)
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    text = recentsLabel,
+                                                    style = RivoListItemDefaults.supportingStyle(),
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    } else null,
+                                    leadingContent = {
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Icon(
+                                                    Icons.Default.History,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                        }
+                                    },
+                                    trailingContent = {
+                                        IconButton(
+                                            onClick = { performCall(entry.number, null) },
+                                            modifier = Modifier.padding(end = 4.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Rounded.Call,
+                                                contentDescription = stringResource(R.string.action_call),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        performCall(entry.number, null)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

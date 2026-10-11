@@ -1219,8 +1219,15 @@ fun RivoAvatarShapeSelectorRow(
                     Box(
                         modifier = Modifier
                             .size(44.dp)
+                            .then(
+                                if (!selected) Modifier.border(
+                                    width = 1.5.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                    shape = shape
+                                ) else Modifier
+                            )
                             .background(
-                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
                                 shape = shape
                             ),
                         contentAlignment = Alignment.Center
@@ -1229,7 +1236,7 @@ fun RivoAvatarShapeSelectorRow(
                             text = "R",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
+                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

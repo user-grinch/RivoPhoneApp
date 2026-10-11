@@ -69,6 +69,12 @@ class FloatingCallService : Service(), KoinComponent {
     private var avatarImageView: ImageView? = null
     private var badgeContainer: FrameLayout? = null
 
+    private var dismissTargetView: FrameLayout? = null
+    private var dismissTargetParams: WindowManager.LayoutParams? = null
+    private var dismissTargetCircle: FrameLayout? = null
+    private var isHoveringDismiss = false
+    private var isDismissTargetVisible = false
+
     private var dropdownLayout: LinearLayout? = null
     private var topNotchView: NotchView? = null
     private var bottomNotchView: NotchView? = null
@@ -224,6 +230,8 @@ class FloatingCallService : Service(), KoinComponent {
             Log.e(TAG, "Failed to add floating bubble to WindowManager: ${e.message}", e)
             stopSelf()
         }
+
+        buildDismissTargetView(density)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -317,10 +325,13 @@ class FloatingCallService : Service(), KoinComponent {
                     val dx = (event.rawX - initialTouchX).toInt()
                     val dy = (event.rawY - initialTouchY).toInt()
                     if (abs(dx) > 8 || abs(dy) > 8) {
-                        if (isDropdownOpen) {
-                            collapseDropdown()
+                        if (!isDragging) {
+                            if (isDropdownOpen) {
+                                collapseDropdown()
+                            }
+                            isDragging = true
+                            showDismissTarget()
                         }
-                        isDragging = true
                         val screenHeight = resources.displayMetrics.heightPixels
                         val screenWidth = resources.displayMetrics.widthPixels
                         bubbleX = (initialX + dx).coerceIn(-bubbleSize / 4, screenWidth - (bubbleSize * 3 / 4))
@@ -332,6 +343,33 @@ class FloatingCallService : Service(), KoinComponent {
                         try {
                             windowManager?.updateViewLayout(rootLayout, params)
                         } catch (_: Exception) {}
+
+                        // Calculate distance to dismiss target
+                        val targetCenterX = screenWidth / 2f
+                        val dismissSize = (64 * density).toInt()
+                        val targetCenterY = screenHeight - (48 * density) - (dismissSize / 2f)
+                        val bubbleCenterX = event.rawX
+                        val bubbleCenterY = event.rawY
+                        val distance = kotlin.math.hypot(
+                            (bubbleCenterX - targetCenterX).toDouble(),
+                            (bubbleCenterY - targetCenterY).toDouble()
+                        ).toFloat()
+
+                        val hoverThreshold = 80 * density
+                        if (distance < hoverThreshold) {
+                            if (!isHoveringDismiss) {
+                                isHoveringDismiss = true
+                                setDismissTargetHovered(true)
+                                try {
+                                    dismissTargetView?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+                                } catch (_: Exception) {}
+                            }
+                        } else {
+                            if (isHoveringDismiss) {
+                                isHoveringDismiss = false
+                                setDismissTargetHovered(false)
+                            }
+                        }
                     }
                     true
                 }
@@ -343,26 +381,152 @@ class FloatingCallService : Service(), KoinComponent {
                     velocityTracker?.recycle()
                     velocityTracker = null
 
-                    bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
-                    if (!isDragging) {
-                        if (isDropdownOpen) {
-                            collapseDropdown()
-                        } else {
-                            openDropdown()
-                        }
+                    hideDismissTarget()
+
+                    if (isHoveringDismiss) {
+                        isHoveringDismiss = false
+                        bubbleContainer?.animate()
+                            ?.scaleX(0f)
+                            ?.scaleY(0f)
+                            ?.alpha(0f)
+                            ?.setDuration(160)
+                            ?.withEndAction {
+                                stopSelf()
+                            }
+                            ?.start()
                     } else {
-                        animateFlingToEdge(vx, vy, bubbleSize, density)
+                        bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
+                        if (!isDragging) {
+                            if (isDropdownOpen) {
+                                collapseDropdown()
+                            } else {
+                                openDropdown()
+                            }
+                        } else {
+                            animateFlingToEdge(vx, vy, bubbleSize, density)
+                        }
                     }
                     true
                 }
                 MotionEvent.ACTION_CANCEL -> {
                     velocityTracker?.recycle()
                     velocityTracker = null
+                    hideDismissTarget()
                     bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                     false
                 }
                 else -> false
             }
+        }
+    }
+
+    private fun buildDismissTargetView(density: Float) {
+        val dismissSize = (64 * density).toInt()
+        val dismissType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            @Suppress("DEPRECATION")
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+
+        dismissTargetParams = WindowManager.LayoutParams(
+            dismissSize,
+            dismissSize,
+            dismissType,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            y = (48 * density).toInt()
+        }
+
+        dismissTargetView = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(dismissSize, dismissSize)
+            visibility = View.GONE
+            alpha = 0f
+            scaleX = 0.7f
+            scaleY = 0.7f
+        }
+
+        dismissTargetCircle = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(dismissSize, dismissSize)
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(Color.parseColor("#CC1F1F1F"))
+                setStroke((2 * density).toInt(), Color.parseColor("#44FFFFFF"))
+            }
+            outlineProvider = ViewOutlineProvider.BACKGROUND
+            clipToOutline = true
+            elevation = 12 * density
+        }
+
+        val dismissIcon = ImageView(this).apply {
+            setImageResource(R.drawable.ic_floating_dismiss)
+            layoutParams = FrameLayout.LayoutParams(
+                (28 * density).toInt(),
+                (28 * density).toInt(),
+                Gravity.CENTER
+            )
+        }
+
+        dismissTargetCircle?.addView(dismissIcon)
+        dismissTargetView?.addView(dismissTargetCircle)
+
+        try {
+            windowManager?.addView(dismissTargetView, dismissTargetParams)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to add dismissTargetView to WindowManager: ${e.message}")
+        }
+    }
+
+    private fun showDismissTarget() {
+        if (isDismissTargetVisible) return
+        isDismissTargetVisible = true
+        dismissTargetView?.visibility = View.VISIBLE
+        dismissTargetView?.animate()
+            ?.alpha(1f)
+            ?.scaleX(1f)
+            ?.scaleY(1f)
+            ?.setDuration(180)
+            ?.setInterpolator(DecelerateInterpolator())
+            ?.start()
+    }
+
+    private fun hideDismissTarget() {
+        if (!isDismissTargetVisible) return
+        isDismissTargetVisible = false
+        setDismissTargetHovered(false)
+        dismissTargetView?.animate()
+            ?.alpha(0f)
+            ?.scaleX(0.7f)
+            ?.scaleY(0.7f)
+            ?.setDuration(160)
+            ?.withEndAction {
+                dismissTargetView?.visibility = View.GONE
+            }
+            ?.start()
+    }
+
+    private fun setDismissTargetHovered(hovered: Boolean) {
+        val density = resources.displayMetrics.density
+        val drawable = dismissTargetCircle?.background as? GradientDrawable ?: return
+        if (hovered) {
+            drawable.setColor(Color.parseColor("#E53935"))
+            drawable.setStroke((2.5f * density).toInt(), Color.WHITE)
+            dismissTargetCircle?.animate()
+                ?.scaleX(1.22f)
+                ?.scaleY(1.22f)
+                ?.setDuration(120)
+                ?.start()
+        } else {
+            drawable.setColor(Color.parseColor("#CC1F1F1F"))
+            drawable.setStroke((2 * density).toInt(), Color.parseColor("#44FFFFFF"))
+            dismissTargetCircle?.animate()
+                ?.scaleX(1f)
+                ?.scaleY(1f)
+                ?.setDuration(120)
+                ?.start()
         }
     }
 
@@ -910,6 +1074,16 @@ class FloatingCallService : Service(), KoinComponent {
             }
         }
         rootLayout = null
+
+        dismissTargetView?.let {
+            try {
+                windowManager?.removeView(it)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to remove dismissTargetView: ${e.message}")
+            }
+        }
+        dismissTargetView = null
+        dismissTargetCircle = null
     }
 
     class NotchView(context: Context, var pointingUp: Boolean = true) : View(context) {

@@ -308,9 +308,9 @@ fun PriorityContactsScreen(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.NotificationImportant,
+                                    imageVector = Icons.Default.Close,
                                     contentDescription = "Remove from priority",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }

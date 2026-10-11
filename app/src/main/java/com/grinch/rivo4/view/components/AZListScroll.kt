@@ -96,7 +96,13 @@ fun AZListScroll(
         finalMap
     }
 
-    val alphabetIndices = remember(finalGrouped, header != null, showSectionHeaders) {
+    val adsEnabled = remember(settingsState) {
+        com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED &&
+            prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true) &&
+            !prefs.isSupporter()
+    }
+
+    val alphabetIndices = remember(finalGrouped, header != null, showSectionHeaders, adsEnabled) {
         val map = mutableMapOf<Char, Int>()
         var currentIndex = if (header != null) 1 else 0
         finalGrouped.entries.forEachIndexed { groupIndex, (char, contactsForChar) ->
@@ -107,8 +113,8 @@ fun AZListScroll(
             }
             // 1 for each contact
             currentIndex += contactsForChar.size
-            // 1 for banner ad if groupIndex % 3 == 1
-            if (groupIndex % 3 == 1) {
+            // 1 for banner ad if ads enabled and groupIndex % 3 == 1
+            if (adsEnabled && groupIndex % 3 == 1) {
                 currentIndex += 1
             }
         }
@@ -163,7 +169,13 @@ fun AZListScroll(
                 ) { index, contact ->
                     val surfaceStyle = rivoSurfaceStyle()
                     val showCards = surfaceStyle.showCards
-                    val shape = rivoGroupedItemShape(index, contactsForChar.size)
+                    val shape = if (showSectionHeaders) {
+                        rivoGroupedItemShape(index, contactsForChar.size)
+                    } else {
+                        val flatList = remember(finalGrouped) { finalGrouped.values.flatten() }
+                        val overallIdx = flatList.indexOfFirst { it.id == contact.id }
+                        rivoGroupedItemShape(if (overallIdx >= 0) overallIdx else index, flatList.size)
+                    }
 
                     Column(
                         modifier = Modifier
@@ -263,7 +275,13 @@ fun AZListScroll(
                             )
                         }
                         }
-                        if (!showCards && index < contactsForChar.size - 1) {
+                        val showDivider = if (showSectionHeaders) {
+                            index < contactsForChar.size - 1
+                        } else {
+                            val flatList = finalGrouped.values.flatten()
+                            flatList.lastOrNull()?.id != contact.id
+                        }
+                        if (!showCards && showDivider) {
                             HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 16.dp),
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
@@ -272,11 +290,9 @@ fun AZListScroll(
                     }
                 }
 
-                if (groupIndex % 3 == 1) {
+                if (adsEnabled && groupIndex % 3 == 1) {
                     item(key = "ad_$groupIndex") {
-                        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                            com.grinch.rivo4.view.components.ad.BannerAd()
-                        }
+                        com.grinch.rivo4.view.components.ad.BannerAd()
                     }
                 }
             }

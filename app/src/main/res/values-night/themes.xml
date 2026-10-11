@@ -13,6 +13,7 @@
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:enforceStatusBarContrast">false</item>
         <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:colorControlNormal">@color/shortcut_icon_tint</item>
     </style>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
