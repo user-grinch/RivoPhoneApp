@@ -39,7 +39,9 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.view.VelocityTracker
 import android.view.WindowManager
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -72,8 +74,11 @@ class FloatingCallService : Service(), KoinComponent {
     private var dismissTargetView: FrameLayout? = null
     private var dismissTargetParams: WindowManager.LayoutParams? = null
     private var dismissTargetCircle: FrameLayout? = null
+    private var dismissTargetAura: View? = null
+    private var dismissIconView: ImageView? = null
     private var isHoveringDismiss = false
     private var isDismissTargetVisible = false
+    private var isDismissingInProgress = false
 
     private var dropdownLayout: LinearLayout? = null
     private var topNotchView: NotchView? = null
@@ -345,29 +350,19 @@ class FloatingCallService : Service(), KoinComponent {
                         }
                         val screenHeight = resources.displayMetrics.heightPixels
                         val screenWidth = resources.displayMetrics.widthPixels
-                        bubbleX = (initialX + dx).coerceIn(-bubbleSize / 4, screenWidth - (bubbleSize * 3 / 4))
-                        bubbleY = (initialY + dy).coerceIn(20, screenHeight - bubbleSize - 20)
-
-                        val params = layoutParams ?: return@setOnTouchListener true
-                        params.x = bubbleX
-                        params.y = bubbleY
-                        try {
-                            windowManager?.updateViewLayout(rootLayout, params)
-                        } catch (_: Exception) {}
-
-                        // Calculate distance to dismiss target
-                        val targetCenterX = screenWidth / 2f
                         val dismissSize = (64 * density).toInt()
-                        val targetCenterY = screenHeight - (48 * density) - (dismissSize / 2f)
-                        val bubbleCenterX = event.rawX
-                        val bubbleCenterY = event.rawY
+                        val targetCenterX = screenWidth / 2f
+                        val targetCenterY = screenHeight - (36 * density) - (dismissSize / 2f)
+
+                        val rawFingerX = event.rawX
+                        val rawFingerY = event.rawY
                         val distance = kotlin.math.hypot(
-                            (bubbleCenterX - targetCenterX).toDouble(),
-                            (bubbleCenterY - targetCenterY).toDouble()
+                            (rawFingerX - targetCenterX).toDouble(),
+                            (rawFingerY - targetCenterY).toDouble()
                         ).toFloat()
 
-                        val hoverThreshold = 80 * density
-                        if (distance < hoverThreshold) {
+                        val magneticRadius = 110 * density
+                        if (distance < magneticRadius) {
                             if (!isHoveringDismiss) {
                                 isHoveringDismiss = true
                                 setDismissTargetHovered(true)
@@ -375,12 +370,34 @@ class FloatingCallService : Service(), KoinComponent {
                                     dismissTargetView?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
                                 } catch (_: Exception) {}
                             }
+
+                            // Magnetic snap interpolation: pulls smoothly into target center
+                            val ratio = (distance / magneticRadius).coerceIn(0f, 1f)
+                            val pullFactor = (1f - ratio) * 0.72f
+                            val targetBubbleX = (targetCenterX - bubbleSize / 2f)
+                            val targetBubbleY = (targetCenterY - bubbleSize / 2f)
+                            val freeBubbleX = (initialX + dx).toFloat()
+                            val freeBubbleY = (initialY + dy).toFloat()
+
+                            bubbleX = (freeBubbleX + (targetBubbleX - freeBubbleX) * pullFactor).toInt()
+                                .coerceIn(-bubbleSize / 4, screenWidth - (bubbleSize * 3 / 4))
+                            bubbleY = (freeBubbleY + (targetBubbleY - freeBubbleY) * pullFactor).toInt()
+                                .coerceIn(20, screenHeight - bubbleSize - 20)
                         } else {
                             if (isHoveringDismiss) {
                                 isHoveringDismiss = false
                                 setDismissTargetHovered(false)
                             }
+                            bubbleX = (initialX + dx).coerceIn(-bubbleSize / 4, screenWidth - (bubbleSize * 3 / 4))
+                            bubbleY = (initialY + dy).coerceIn(20, screenHeight - bubbleSize - 20)
                         }
+
+                        val params = layoutParams ?: return@setOnTouchListener true
+                        params.x = bubbleX
+                        params.y = bubbleY
+                        try {
+                            windowManager?.updateViewLayout(rootLayout, params)
+                        } catch (_: Exception) {}
                     }
                     true
                 }
@@ -392,20 +409,16 @@ class FloatingCallService : Service(), KoinComponent {
                     velocityTracker?.recycle()
                     velocityTracker = null
 
-                    hideDismissTarget()
-
                     if (isHoveringDismiss) {
                         isHoveringDismiss = false
-                        bubbleContainer?.animate()
-                            ?.scaleX(0f)
-                            ?.scaleY(0f)
-                            ?.alpha(0f)
-                            ?.setDuration(160)
-                            ?.withEndAction {
-                                stopSelf()
-                            }
-                            ?.start()
+                        val screenHeight = resources.displayMetrics.heightPixels
+                        val screenWidth = resources.displayMetrics.widthPixels
+                        val dismissSize = (64 * density).toInt()
+                        val targetCenterX = screenWidth / 2f
+                        val targetCenterY = screenHeight - (36 * density) - (dismissSize / 2f)
+                        animateDismissAndStop(targetCenterX, targetCenterY, bubbleSize, density)
                     } else {
+                        hideDismissTarget()
                         bubbleContainer?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(120)?.start()
                         if (!isDragging) {
                             if (isDropdownOpen) {
@@ -433,6 +446,7 @@ class FloatingCallService : Service(), KoinComponent {
 
     private fun buildDismissTargetView(density: Float) {
         val dismissSize = (64 * density).toInt()
+        val dismissWindowHeight = (150 * density).toInt()
         val dismissType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -441,48 +455,76 @@ class FloatingCallService : Service(), KoinComponent {
         }
 
         dismissTargetParams = WindowManager.LayoutParams(
-            dismissSize,
-            dismissSize,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            dismissWindowHeight,
             dismissType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            y = (48 * density).toInt()
+            gravity = Gravity.BOTTOM or Gravity.START
+            x = 0
+            y = 0
         }
 
         dismissTargetView = FrameLayout(this).apply {
-            layoutParams = FrameLayout.LayoutParams(dismissSize, dismissSize)
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                dismissWindowHeight
+            )
             visibility = View.GONE
             alpha = 0f
-            scaleX = 0.7f
-            scaleY = 0.7f
         }
 
+        // Soft bottom gradient aura for depth and contrast
+        dismissTargetAura = View(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                dismissWindowHeight
+            )
+            background = GradientDrawable(
+                GradientDrawable.Orientation.BOTTOM_TOP,
+                intArrayOf(Color.parseColor("#99000000"), Color.TRANSPARENT)
+            )
+            alpha = 0f
+        }
+        dismissTargetView?.addView(dismissTargetAura)
+
+        // Circle target centered horizontally near bottom
         dismissTargetCircle = FrameLayout(this).apply {
-            layoutParams = FrameLayout.LayoutParams(dismissSize, dismissSize)
+            val circleParams = FrameLayout.LayoutParams(
+                dismissSize,
+                dismissSize,
+                Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+            ).apply {
+                bottomMargin = (36 * density).toInt()
+            }
+            layoutParams = circleParams
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(Color.parseColor("#CC1F1F1F"))
-                setStroke((2 * density).toInt(), Color.parseColor("#44FFFFFF"))
+                setColor(Color.parseColor("#D9222222"))
+                setStroke((2 * density).toInt(), Color.parseColor("#4DFFFFFF"))
             }
             outlineProvider = ViewOutlineProvider.BACKGROUND
             clipToOutline = true
-            elevation = 12 * density
+            elevation = 14 * density
+            scaleX = 0.5f
+            scaleY = 0.5f
+            alpha = 0f
+            translationY = 60 * density
         }
 
-        val dismissIcon = ImageView(this).apply {
+        dismissIconView = ImageView(this).apply {
             setImageResource(R.drawable.ic_floating_dismiss)
             layoutParams = FrameLayout.LayoutParams(
-                (28 * density).toInt(),
-                (28 * density).toInt(),
+                (26 * density).toInt(),
+                (26 * density).toInt(),
                 Gravity.CENTER
             )
         }
 
-        dismissTargetCircle?.addView(dismissIcon)
+        dismissTargetCircle?.addView(dismissIconView)
         dismissTargetView?.addView(dismissTargetCircle)
 
         try {
@@ -493,29 +535,64 @@ class FloatingCallService : Service(), KoinComponent {
     }
 
     private fun showDismissTarget() {
-        if (isDismissTargetVisible) return
+        if (isDismissTargetVisible || isDismissingInProgress) return
         isDismissTargetVisible = true
+        val density = resources.displayMetrics.density
+
         dismissTargetView?.visibility = View.VISIBLE
         dismissTargetView?.animate()
             ?.alpha(1f)
-            ?.scaleX(1f)
-            ?.scaleY(1f)
             ?.setDuration(180)
-            ?.setInterpolator(DecelerateInterpolator())
             ?.start()
+
+        dismissTargetAura?.animate()
+            ?.alpha(1f)
+            ?.setDuration(220)
+            ?.start()
+
+        dismissTargetCircle?.let { circle ->
+            circle.translationY = 50 * density
+            circle.scaleX = 0.6f
+            circle.scaleY = 0.6f
+            circle.alpha = 0f
+            circle.animate()
+                ?.translationY(0f)
+                ?.scaleX(1.0f)
+                ?.scaleY(1.0f)
+                ?.alpha(1.0f)
+                ?.setDuration(240)
+                ?.setInterpolator(OvershootInterpolator(1.3f))
+                ?.start()
+        }
     }
 
     private fun hideDismissTarget() {
-        if (!isDismissTargetVisible) return
+        if (!isDismissTargetVisible || isDismissingInProgress) return
         isDismissTargetVisible = false
         setDismissTargetHovered(false)
+        val density = resources.displayMetrics.density
+
+        dismissTargetAura?.animate()
+            ?.alpha(0f)
+            ?.setDuration(180)
+            ?.start()
+
+        dismissTargetCircle?.animate()
+            ?.translationY(50 * density)
+            ?.scaleX(0.6f)
+            ?.scaleY(0.6f)
+            ?.alpha(0f)
+            ?.setDuration(180)
+            ?.setInterpolator(DecelerateInterpolator())
+            ?.start()
+
         dismissTargetView?.animate()
             ?.alpha(0f)
-            ?.scaleX(0.7f)
-            ?.scaleY(0.7f)
-            ?.setDuration(160)
+            ?.setDuration(180)
             ?.withEndAction {
-                dismissTargetView?.visibility = View.GONE
+                if (!isDismissTargetVisible) {
+                    dismissTargetView?.visibility = View.GONE
+                }
             }
             ?.start()
     }
@@ -527,19 +604,119 @@ class FloatingCallService : Service(), KoinComponent {
             drawable.setColor(Color.parseColor("#E53935"))
             drawable.setStroke((2.5f * density).toInt(), Color.WHITE)
             dismissTargetCircle?.animate()
-                ?.scaleX(1.22f)
-                ?.scaleY(1.22f)
+                ?.scaleX(1.32f)
+                ?.scaleY(1.32f)
+                ?.setDuration(160)
+                ?.setInterpolator(OvershootInterpolator(1.5f))
+                ?.start()
+
+            dismissIconView?.animate()
+                ?.scaleX(1.15f)
+                ?.scaleY(1.15f)
+                ?.rotation(45f)
+                ?.setDuration(160)
+                ?.start()
+
+            bubbleContainer?.animate()
+                ?.scaleX(0.82f)
+                ?.scaleY(0.82f)
                 ?.setDuration(120)
                 ?.start()
         } else {
-            drawable.setColor(Color.parseColor("#CC1F1F1F"))
-            drawable.setStroke((2 * density).toInt(), Color.parseColor("#44FFFFFF"))
+            drawable.setColor(Color.parseColor("#D9222222"))
+            drawable.setStroke((2 * density).toInt(), Color.parseColor("#4DFFFFFF"))
             dismissTargetCircle?.animate()
-                ?.scaleX(1f)
-                ?.scaleY(1f)
+                ?.scaleX(1.0f)
+                ?.scaleY(1.0f)
+                ?.setDuration(160)
+                ?.setInterpolator(DecelerateInterpolator())
+                ?.start()
+
+            dismissIconView?.animate()
+                ?.scaleX(1.0f)
+                ?.scaleY(1.0f)
+                ?.rotation(0f)
+                ?.setDuration(160)
+                ?.start()
+
+            bubbleContainer?.animate()
+                ?.scaleX(0.92f)
+                ?.scaleY(0.92f)
                 ?.setDuration(120)
                 ?.start()
         }
+    }
+
+    private fun animateDismissAndStop(targetCenterX: Float, targetCenterY: Float, bubbleSize: Int, density: Float) {
+        if (isDismissingInProgress) return
+        isDismissingInProgress = true
+
+        try {
+            dismissTargetView?.performHapticFeedback(android.view.HapticFeedbackConstants.CONFIRM)
+        } catch (_: Exception) {}
+
+        val startX = bubbleX.toFloat()
+        val startY = bubbleY.toFloat()
+        val destX = targetCenterX - (bubbleSize / 2f)
+        val destY = targetCenterY - (bubbleSize / 2f)
+
+        // 1. Swallow animation: Bubble pulls into center, shrinks and fades
+        val swallowAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 180
+            interpolator = AccelerateInterpolator(1.8f)
+            addUpdateListener { va ->
+                val fraction = va.animatedFraction
+                val curX = (startX + (destX - startX) * fraction).toInt()
+                val curY = (startY + (destY - startY) * fraction).toInt()
+
+                layoutParams?.let { params ->
+                    params.x = curX
+                    params.y = curY
+                    try {
+                        windowManager?.updateViewLayout(rootLayout, params)
+                    } catch (_: Exception) {}
+                }
+
+                val scale = 0.82f * (1f - fraction)
+                val alpha = (1f - fraction).coerceIn(0f, 1f)
+                bubbleContainer?.scaleX = scale
+                bubbleContainer?.scaleY = scale
+                bubbleContainer?.alpha = alpha
+            }
+        }
+
+        // 2. Chomp and drop down animation on dismiss target
+        dismissTargetCircle?.animate()
+            ?.scaleX(1.48f)
+            ?.scaleY(1.48f)
+            ?.setDuration(120)
+            ?.setInterpolator(DecelerateInterpolator())
+            ?.withEndAction {
+                dismissTargetCircle?.animate()
+                    ?.scaleX(0.2f)
+                    ?.scaleY(0.2f)
+                    ?.translationY(70 * density)
+                    ?.alpha(0f)
+                    ?.setDuration(160)
+                    ?.setInterpolator(AccelerateInterpolator(1.5f))
+                    ?.start()
+
+                dismissTargetAura?.animate()
+                    ?.alpha(0f)
+                    ?.setDuration(160)
+                    ?.start()
+
+                dismissTargetView?.animate()
+                    ?.alpha(0f)
+                    ?.setDuration(160)
+                    ?.withEndAction {
+                        stopSelf()
+                    }
+                    ?.start()
+            }
+            ?.start()
+
+        swallowAnimator.start()
     }
 
     private var flingAnimator: ValueAnimator? = null
@@ -1096,6 +1273,8 @@ class FloatingCallService : Service(), KoinComponent {
         }
         dismissTargetView = null
         dismissTargetCircle = null
+        dismissTargetAura = null
+        dismissIconView = null
     }
 
     class NotchView(context: Context, var pointingUp: Boolean = true) : View(context) {
