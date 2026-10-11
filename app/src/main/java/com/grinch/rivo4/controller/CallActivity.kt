@@ -151,6 +151,25 @@ class CallActivity : ComponentActivity() {
         }
 
         setupProximitySensor()
+
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val hasOngoing = CallService.allCalls.value.any {
+                    it.state == Call.STATE_ACTIVE ||
+                    it.state == Call.STATE_HOLDING ||
+                    it.state == Call.STATE_DIALING ||
+                    it.state == Call.STATE_CONNECTING
+                }
+                if (hasOngoing) {
+                    checkAndStartFloatingBubble()
+                    moveTaskToBack(true)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         lifecycleScope.launch {
             CallService.audioState.collect { audioState ->
                 val activeCalls = CallService.allCalls.value
@@ -611,22 +630,31 @@ class CallActivity : ComponentActivity() {
         super.onStop()
         if (proximityWakeLock?.isHeld != true) {
             CallService.isActivityVisible.value = false
-            if (!isFinishing && !isDestroyed) {
+            if (!isDestroyed) {
                 checkAndStartFloatingBubble()
             }
         }
     }
 
     private fun checkAndStartFloatingBubble() {
-        if (preferenceManager.isFloatingCallBubbleEnabled() &&
-            android.provider.Settings.canDrawOverlays(this)
-        ) {
-            val hasOngoingCall = CallService.allCalls.value.any {
-                it.state == Call.STATE_ACTIVE || it.state == Call.STATE_HOLDING || it.state == Call.STATE_DIALING
-            }
-            if (hasOngoingCall) {
-                com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
-            }
+        if (!preferenceManager.isFloatingCallBubbleEnabled()) return
+
+        val hasOngoingCall = CallService.allCalls.value.any {
+            it.state == Call.STATE_ACTIVE ||
+            it.state == Call.STATE_HOLDING ||
+            it.state == Call.STATE_DIALING ||
+            it.state == Call.STATE_CONNECTING
+        }
+        if (!hasOngoingCall) return
+
+        if (android.provider.Settings.canDrawOverlays(this)) {
+            com.grinch.rivo4.controller.floating.FloatingCallService.start(this)
+        } else {
+            android.widget.Toast.makeText(
+                this,
+                getString(R.string.floating_bubble_permission_required_toast),
+                android.widget.Toast.LENGTH_LONG
+            ).show()
         }
     }
 

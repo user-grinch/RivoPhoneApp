@@ -500,6 +500,14 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
+                title = context.getString(R.string.settings_floating_call_bubble),
+                supporting = context.getString(R.string.settings_floating_call_bubble_supporting),
+                category = "Calling & Behavior",
+                icon = Icons.Outlined.PictureInPicture,
+                keywords = listOf("floating call bubble", "floating bubble", "call bubble", "bubble", "overlay", "mini call", "picture in picture", "floating controls"),
+                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "Auto Redial",
                 supporting = "Automatically redial busy, declined, or unreachable outgoing calls",
                 category = "Calling & Behavior",

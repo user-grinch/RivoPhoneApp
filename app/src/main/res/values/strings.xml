@@ -1037,4 +1037,10 @@
     <string name="action_crop">Crop</string>
     <string name="action_rotate">Rotate</string>
     <string name="action_reset">Reset</string>
+
+    <!-- Floating Call Bubble -->
+    <string name="settings_floating_call_bubble">Floating Call Bubble</string>
+    <string name="settings_floating_call_bubble_supporting">Show a draggable bubble with call controls when leaving the call screen</string>
+    <string name="floating_bubble_overlay_permission_desc">Display over other apps permission is required to show the floating call bubble</string>
+    <string name="floating_bubble_permission_required_toast">Please grant \"Display over other apps\" to use the floating call bubble</string>
 </resources>

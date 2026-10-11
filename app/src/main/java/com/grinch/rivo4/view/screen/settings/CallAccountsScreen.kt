@@ -91,6 +91,7 @@ fun CallAccountsScreen(
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
     var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
     var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
+    var floatingCallBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
     var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
     var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
     var autoPasteClipboard by remember(settingsState) { mutableStateOf(prefs.isAutoPasteClipboardEnabled()) }
@@ -100,6 +101,12 @@ fun CallAccountsScreen(
     var unknownCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.unknownModel(context)) }
     var savingDefaultBg by remember { mutableStateOf(false) }
     var savingUnknownBg by remember { mutableStateOf(false) }
+
+    val overlayPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        floatingCallBubble = prefs.isFloatingCallBubbleEnabled()
+    }
 
     var showDefaultBgDialog by remember { mutableStateOf(false) }
     var showUnknownBgDialog by remember { mutableStateOf(false) }
@@ -393,6 +400,37 @@ fun CallAccountsScreen(
                                 onCheckedChange = {
                                     missedCallCard = it
                                     prefs.setMissedCallCardEnabled(it)
+                                }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_floating_call_bubble),
+                                supporting = if (floatingCallBubble && !android.provider.Settings.canDrawOverlays(context)) {
+                                    stringResource(R.string.floating_bubble_overlay_permission_desc)
+                                } else {
+                                    stringResource(R.string.settings_floating_call_bubble_supporting)
+                                },
+                                leadingIcon = Icons.Outlined.PictureInPicture,
+                                checked = floatingCallBubble,
+                                onCheckedChange = { isChecked ->
+                                    floatingCallBubble = isChecked
+                                    prefs.setFloatingCallBubbleEnabled(isChecked)
+                                    if (isChecked && !android.provider.Settings.canDrawOverlays(context)) {
+                                        try {
+                                            val intent = Intent(
+                                                android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                                Uri.parse("package:${context.packageName}")
+                                            )
+                                            overlayPermissionLauncher.launch(intent)
+                                        } catch (_: Exception) {
+                                            try {
+                                                overlayPermissionLauncher.launch(
+                                                    Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                                                )
+                                            } catch (_: Exception) {}
+                                        }
+                                    }
                                 }
                             )
                         }
