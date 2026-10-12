@@ -10,24 +10,31 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 [![Platform](https://img.shields.io/badge/Platform-Android-10B981.svg?style=flat-square&logo=android)](https://www.android.com)
 [![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-6366F1.svg?style=flat-square)](https://developer.android.com/jetpack/compose)
 [![Crowdin](https://img.shields.io/badge/Localization-Crowdin-0EA5E9?logo=crowdin&style=flat-square)](https://crowdin.com/project/rivophone)
+[![Donate on Patreon](https://img.shields.io/badge/Donate-Patreon-F96854?style=flat-square&logo=patreon)](https://www.patreon.com/c/grinch_)
 
 <br>
 
-<a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Get it on Google Play" height="40">
-</a>
-&nbsp;
-<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
-  <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/b1c8ac6f2ab08497189721a788a5763e28ff64cd/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="40">
-</a>
-&nbsp;
-<a href="https://github.com/user-grinch/RivoPhoneApp/releases">
-  <img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" alt="Download APK from GitHub" height="40">
-</a>
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Get it on Google Play" height="42">
+  </a>
+  &nbsp;
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/obtainium.png" alt="Get it on Obtainium" height="42">
+  </a>
+  &nbsp;
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/github.png" alt="Download APK from GitHub" height="42">
+  </a>
+  &nbsp;
+  <a href="https://www.patreon.com/c/grinch_">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" alt="Donate on Patreon" height="42">
+  </a>
+</p>
 
 <br>
 
-[Patreon](https://www.patreon.com/c/grinch_) &bull; [Discord](https://discord.gg/NtEvU3726e) &bull; [Translate](https://crowdin.com/project/rivophone) &bull; [Releases](https://github.com/user-grinch/RivoPhoneApp/releases)
+[Donate (Patreon)](https://www.patreon.com/c/grinch_) &bull; [Discord](https://discord.gg/NtEvU3726e) &bull; [Translate](https://crowdin.com/project/rivophone) &bull; [Releases](https://github.com/user-grinch/RivoPhoneApp/releases)
 
 </div>
 
@@ -54,20 +61,38 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/3.png" width="280" alt="Contact Details">
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" width="280" alt="Settings">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" width="280" alt="Call Screen">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.png" width="280" alt="Private Contacts">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.png" width="280" alt="Private Contacts">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.png" width="280" alt="Private Contacts">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.png" width="280" alt="Private Contacts">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/10.png" width="280" alt="Private Contacts">
-  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/11.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" width="280" alt="Settings (Dark)">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" width="280" alt="In-Call Screen (Dark)">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.png" width="280" alt="Private Contacts Vault">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.png" width="280" alt="In-Call Screen (Light)">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.png" width="280" alt="Call Analytics & Tracking">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.png" width="280" alt="Manage Contacts & Storage">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/10.png" width="280" alt="UI & Dynamic Theming">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/11.png" width="280" alt="Settings Overview">
 </p>
 
 ## Downloads
 
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Get it on Google Play" height="42">
+  </a>
+  &nbsp;
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/obtainium.png" alt="Get it on Obtainium" height="42">
+  </a>
+  &nbsp;
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/github.png" alt="Download APK from GitHub" height="42">
+  </a>
+</p>
+
 - **Google Play**: [Play Store listing](https://play.google.com/store/apps/details?id=com.grinch.rivo4)
-- **Obtainium**: Add via [Obtainium link](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22})
+- **Obtainium**: Add via [Obtainium link](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}) for automated GitHub release updates
 - **GitHub**: Pre-built APKs on [Releases](https://github.com/user-grinch/RivoPhoneApp/releases)
 
 ### APK Signing Certificate Hash
@@ -77,11 +102,29 @@ com.grinch.rivo4
 AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11:89:F4:56:50:C5
 ```
 
-## Contributing
+## Support & Donations
 
-- **Issues & Bugs**: Report problems or feature suggestions via [GitHub Issues](https://github.com/user-grinch/RivoPhoneApp/issues).
+Rivo is completely free and open-source software. If you find the app helpful and want to support ongoing development, please consider donating:
+
+<p align="center">
+  <a href="https://www.patreon.com/c/grinch_">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" alt="Donate on Patreon" height="45">
+  </a>
+</p>
+
+- **Patreon**: Support development directly on [Patreon](https://www.patreon.com/c/grinch_).
+
+## Contributing & Community
+
+<p align="center">
+  <a href="https://discord.gg/NtEvU3726e">
+    <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/discord.png" alt="Join us on Discord" height="42">
+  </a>
+</p>
+
+- **Community Chat**: Join our [Discord server](https://discord.gg/NtEvU3726e).
 - **Translations**: Help translate Rivo on [Crowdin](https://crowdin.com/project/rivophone).
-- **Chat**: Join our [Discord server](https://discord.gg/NtEvU3726e).
+- **Issues & Bugs**: Report problems or feature suggestions via [GitHub Issues](https://github.com/user-grinch/RivoPhoneApp/issues).
 
 ## Acknowledgements
 
