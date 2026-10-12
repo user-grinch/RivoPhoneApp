@@ -571,7 +571,7 @@ class PreferenceManager(context: Context) {
     fun getSwipeLeftAction(): Int = getInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     fun setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, action)
 
-    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, false)
+    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, true)
     fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
 
     fun isPostCallScreenEnabled(): Boolean = getBoolean(KEY_POST_CALL_SCREEN, true)

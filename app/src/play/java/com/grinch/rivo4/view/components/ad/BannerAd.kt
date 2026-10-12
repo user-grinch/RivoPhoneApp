@@ -41,7 +41,7 @@ fun BannerAd(
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
     val adsEnabled = remember(settingsState) {
-        prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true) && !prefs.isSupporter()
+        prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, false) && !prefs.isSupporter()
     }
 
     if (!adsEnabled) return

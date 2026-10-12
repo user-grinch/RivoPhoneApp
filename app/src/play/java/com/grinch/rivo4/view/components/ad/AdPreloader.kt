@@ -15,6 +15,7 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.grinch.rivo4.controller.util.PreferenceManager
 
 val TEST_DEVICE_IDS = listOf(
     "372B822B004FEC61757C53C2F881C02C"
@@ -48,6 +49,10 @@ object AdPreloader {
     private var isLoadingPostCall = false
 
     fun init(context: Context) {
+        val prefs = PreferenceManager(context)
+        if (prefs.isSupporter() || !prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, false)) {
+            return
+        }
         if (!isInitialized) {
             isInitialized = true
             val appContext = context.applicationContext

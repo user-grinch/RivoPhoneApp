@@ -57,6 +57,11 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/4.png" width="280" alt="Settings">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/5.png" width="280" alt="Call Screen">
   <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/6.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/7.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/8.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/9.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/10.png" width="280" alt="Private Contacts">
+  <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/11.png" width="280" alt="Private Contacts">
 </p>
 
 ## Downloads
