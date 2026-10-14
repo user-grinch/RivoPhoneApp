@@ -28,7 +28,7 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
     <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/patreon.png" alt="Donate on Patreon" height="42">
   </a>
   &nbsp;
-  <a href="#TipJar">
+  <a href="#Donation">
     <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/tipjar.png" alt="In-App Tip Jar" height="42">
   </a>
   &nbsp;
@@ -91,10 +91,10 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 ```text
 Package: com.grinch.rivo4
 SHA-256: AF:7B:C8:10:1A:C9:D7:4B:93:5B:31:4B:71:C7:EE:1D:ED:0F:9D:45:AB:07:4C:72:7F:82:11:89:F4:56:50:C5
-
 ```
+</details>
 
-## Support & Tip Jar
+## Donation
 
 Rivo is free and open-source software. If you find the app useful and want to support ongoing development, you can contribute in two ways:
 
