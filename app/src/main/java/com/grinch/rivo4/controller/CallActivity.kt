@@ -146,6 +146,8 @@ class CallActivity : ComponentActivity() {
             return
         }
 
+        if (savedInstanceState == null) handleAnswerIntent(intent)
+
         if (preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
@@ -541,9 +543,16 @@ class CallActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleAnswerIntent(intent)
         if (!isFinishingCall && CallService.allCalls.value.any { it.state != Call.STATE_DISCONNECTED }) {
             turnScreenOnAndShowWhileLocked()
         }
+    }
+
+    private fun handleAnswerIntent(intent: Intent?) {
+        if (intent?.action != CallActionReceiver.ACTION_ANSWER_CALL) return
+        intent.action = null
+        CallService.answerCall()
     }
 
     private fun dismissCallScreen() {

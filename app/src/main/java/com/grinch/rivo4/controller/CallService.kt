@@ -983,8 +983,12 @@ class CallService : InCallService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val answerIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_ANSWER_CALL }
-        val answerPendingIntent = PendingIntent.getBroadcast(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        // Open the call screen when answering from the heads-up notification; CallActivity performs the answer
+        val answerIntent = Intent(this, CallActivity::class.java).apply {
+            action = CallActionReceiver.ACTION_ANSWER_CALL
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        val answerPendingIntent = PendingIntent.getActivity(this, 1, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val declineIntent = Intent(this, CallActionReceiver::class.java).apply { action = CallActionReceiver.ACTION_DECLINE_CALL }
         val declinePendingIntent = PendingIntent.getBroadcast(this, 2, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
