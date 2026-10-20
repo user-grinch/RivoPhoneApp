@@ -162,7 +162,19 @@ class CallActivity : ComponentActivity() {
                 }
                 if (hasOngoing) {
                     checkAndStartFloatingBubble()
-                    moveTaskToBack(true)
+                    val km = getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
+                    if (km != null && km.isKeyguardLocked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        km.requestDismissKeyguard(this@CallActivity, object : android.app.KeyguardManager.KeyguardDismissCallback() {
+                            override fun onDismissSucceeded() {
+                                moveTaskToBack(true)
+                            }
+                            override fun onDismissCancelled() {
+                                moveTaskToBack(true)
+                            }
+                        })
+                    } else {
+                        moveTaskToBack(true)
+                    }
                 } else {
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
@@ -583,8 +595,7 @@ class CallActivity : ComponentActivity() {
         window.addFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
     }
 

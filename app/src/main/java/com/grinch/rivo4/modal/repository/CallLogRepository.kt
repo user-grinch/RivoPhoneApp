@@ -22,6 +22,7 @@ import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
 import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.ContactUtils
 
 class CallLogRepository(
     private val contentResolver: ContentResolver,
@@ -40,9 +41,9 @@ class CallLogRepository(
         val contactMap = mutableMapOf<String, Contact>()
         allContacts.forEach { contact ->
             contact.phoneNumbers.forEach { number ->
-                val normalized = normalizePhoneNumber(number)
-                val key = if (normalized.length >= 10) normalized.takeLast(10) else normalized
-                contactMap[key] = contact
+                ContactUtils.getLookupKeys(number).forEach { key ->
+                    contactMap.putIfAbsent(key, contact)
+                }
             }
         }
 
@@ -291,9 +292,17 @@ class CallLogRepository(
                 labelSimMap = labelSimMap
             )
 
-            val normalizedNum = normalizePhoneNumber(number)
-            val lookupKey = if (normalizedNum.length >= 10) normalizedNum.takeLast(10) else normalizedNum
-            val matchedContact = contactMap[lookupKey]
+            var matchedContact: Contact? = null
+            for (k in ContactUtils.getLookupKeys(number)) {
+                val c = contactMap[k]
+                if (c != null) {
+                    matchedContact = c
+                    break
+                }
+            }
+            if (matchedContact == null) {
+                matchedContact = contactMap.values.find { c -> c.phoneNumbers.any { areNumbersEqual(it, number) } }
+            }
             
             val displayName = matchedContact?.name ?: cursor.getString(cachedNameIdx)
             val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)

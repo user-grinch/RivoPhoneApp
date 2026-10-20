@@ -427,7 +427,7 @@ fun ExpressiveCallScreen(
             verticalArrangement = Arrangement.Center
         ) {
             AnimatedVisibility(
-                visible = shouldShowAvatar && !showKeypad,
+                visible = shouldShowAvatar,
                 enter = fadeIn(animationSpec = tween(200)) +
                         expandVertically(
                             animationSpec = tween(200),
@@ -587,7 +587,9 @@ fun ExpressiveCallScreen(
                 try { call.playDtmfTone(digit) } catch (e: Exception) {}
             },
             onDigitUp = { try { call.stopDtmfTone() } catch (e: Exception) {} },
-            onBackspace = { typedDigits = typedDigits.dropLast(1) }
+            onBackspace = { typedDigits = typedDigits.dropLast(1) },
+            onClearAll = { typedDigits = "" },
+            onBack = { showKeypad = false }
         )
     }
 
@@ -810,20 +812,6 @@ fun ExpressiveCallScreen(
                     heroSection()
                 }
 
-                AnimatedVisibility(
-                    visible = showKeypad,
-                    enter = fadeIn(animationSpec = tween(200)) +
-                            slideInVertically(animationSpec = tween(200)) { it / 4 } +
-                            expandVertically(animationSpec = tween(200), expandFrom = Alignment.Bottom),
-                    exit = fadeOut(animationSpec = tween(150)) +
-                           slideOutVertically(animationSpec = tween(150)) { it / 4 } +
-                           shrinkVertically(animationSpec = tween(150), shrinkTowards = Alignment.Bottom)
-                ) {
-                    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), contentAlignment = Alignment.Center) {
-                        keypadSection(false)
-                    }
-                }
-
                 val isUiBlurEnabled = remember(settingsState) { preferenceManager.isUiBlurEnabled() }
                 val controlsModifier = if (isUiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     Modifier
@@ -909,6 +897,21 @@ fun ExpressiveCallScreen(
                     showConferenceSheet = false
                 },
                 onDismiss = { showConferenceSheet = false }
+            )
+        }
+
+        if (showKeypad && !isLandscape) {
+            InCallKeypadBottomSheet(
+                typedDigits = typedDigits,
+                onDigitDown = { digit ->
+                    typedDigits += digit
+                    try { call.playDtmfTone(digit) } catch (e: Exception) {}
+                },
+                onDigitUp = { try { call.stopDtmfTone() } catch (e: Exception) {} },
+                onBackspace = { typedDigits = typedDigits.dropLast(1) },
+                onClearAll = { typedDigits = "" },
+                onDismiss = { showKeypad = false },
+                onEndCall = { try { call.disconnect() } catch (e: Exception) {} }
             )
         }
     }

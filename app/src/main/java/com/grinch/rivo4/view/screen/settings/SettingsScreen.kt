@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
@@ -52,6 +53,8 @@ import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.TipJarDialog
@@ -110,15 +113,24 @@ fun SettingsScreen(
         searchListState.scrollToItem(0)
     }
 
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L || isSearchActive) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        if (target.contains("Ad", ignoreCase = true) || target.contains("Banner", ignoreCase = true)) {
+            delay(150L)
+            listState.animateScrollToItem(listState.layoutInfo.totalItemsCount.coerceAtLeast(1) - 1)
+        }
+    }
+
 val searchItems = remember(settingsState, isSupporter) {
         listOf(
             // ==================== PERSONALIZATION & DISPLAY ====================
             SettingSearchItem(
                 title = "Theme & Appearance",
-                supporting = "Material You, color palette, AMOLED dark mode & animations",
+                supporting = "Theme mode, interface appearance and visual style",
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Palette,
-                keywords = listOf("theme", "appearance", "dark", "light", "amoled", "color", "palette", "dynamic", "animation", "contrast", "accent"),
+                keywords = listOf("theme", "appearance", "interface", "ui theme", "dark theme", "light theme"),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -127,6 +139,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Palette,
                 keywords = listOf("material you", "dynamic colors", "monet", "wallpaper color", "system theme", "palette"),
+                targetHeadline = context.getString(R.string.settings_interface_material_you),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -135,6 +148,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.DarkMode,
                 keywords = listOf("amoled", "oled", "pure black", "pitch black", "true black", "dark theme", "battery saver"),
+                targetHeadline = context.getString(R.string.settings_interface_amoled),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -143,6 +157,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.ViewAgenda,
                 keywords = listOf("cards", "card ui", "containers", "elevated", "surface style", "grouped cards"),
+                targetHeadline = context.getString(R.string.settings_interface_use_cards),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -151,6 +166,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.RoundedCorner,
                 keywords = listOf("roundness", "corner radius", "curvature", "corners", "rounded cards", "shape"),
+                targetHeadline = context.getString(R.string.settings_interface_card_roundness),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -159,6 +175,16 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Animation,
                 keywords = listOf("animations", "motion", "transitions", "slide", "fade", "smooth"),
+                targetHeadline = context.getString(R.string.settings_interface_transition_animation),
+                onClick = { navigator.navigate(InterfaceScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Predictive Back Gestures",
+                supporting = "Interactive swipe-to-preview animations when navigating back",
+                category = "Personalization & Display",
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                keywords = listOf("predictive back", "predictive back gestures", "disable predictive back", "back gesture", "back animation", "gesture navigation", "swipe back"),
+                targetHeadline = context.getString(R.string.settings_predictive_back_title),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -167,6 +193,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.BlurOn,
                 keywords = listOf("blur", "frosted glass", "glassmorphism", "background blur", "transparency"),
+                targetHeadline = context.getString(R.string.settings_ui_blur_title),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -175,6 +202,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & SIM Accounts",
                 icon = Icons.Outlined.SimCard,
                 keywords = listOf("carrier", "carrier name", "recents carrier", "sim", "hide carrier", "show carrier", "call log carrier", "recents sim"),
+                targetHeadline = context.getString(R.string.settings_show_carrier_in_recents),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -183,14 +211,15 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.SimCard,
                 keywords = listOf("dual sim", "sim 1", "sim 2", "dialpad sim", "two call buttons", "carrier buttons"),
+                targetHeadline = context.getString(R.string.settings_interface_dual_sim_buttons_title),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Navigation Bar",
-                supporting = "Floating bar style, blur effect, roundness & tab layout",
+                supporting = "Floating bar style, navigation dock and tab layout",
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Dock,
-                keywords = listOf("navigation", "navbar", "bottom nav", "dock", "floating", "blur", "tabs", "roundness"),
+                keywords = listOf("navigation", "navbar", "bottom nav", "dock"),
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -199,6 +228,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Dock,
                 keywords = listOf("nav bar style", "floating dock", "pill bar", "bottom bar style", "dock style"),
+                targetHeadline = context.getString(R.string.settings_interface_nav_bar_style),
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -207,6 +237,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.RoundedCorner,
                 keywords = listOf("floating bar roundness", "nav bar corners", "pill roundness"),
+                targetHeadline = "Floating Bar Roundness",
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -215,6 +246,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Tune,
                 keywords = listOf("nav tabs", "reorder tabs", "bottom tabs", "favorites tab", "recents tab", "contacts tab", "dialpad tab"),
+                targetHeadline = "Navigation Buttons & Tabs",
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -223,6 +255,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.VisibilityOff,
                 keywords = listOf("icon only", "hide labels", "compact bar", "clean bar"),
+                targetHeadline = context.getString(R.string.settings_interface_icon_only_bar),
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -231,6 +264,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Home,
                 keywords = listOf("start screen", "default tab", "launch tab", "startup screen", "home tab"),
+                targetHeadline = "Default Start Screen",
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
@@ -239,14 +273,15 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Star,
                 keywords = listOf("merge favorites", "starred contacts", "favorites tab", "combine contacts"),
+                targetHeadline = context.getString(R.string.settings_interface_merge_favorites),
                 onClick = { navigator.navigate(BottomNavScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Avatars & Contact Cards",
-                supporting = "11 avatar shapes, contact photos, initials & cards",
+                supporting = "Contact photos, initials and contact card styling",
                 category = "Personalization & Display",
                 icon = Icons.Outlined.AccountCircle,
-                keywords = listOf("avatar", "shape", "photo", "initials", "gradient", "cards", "picture"),
+                keywords = listOf("avatar", "avatars", "contact cards", "profile picture"),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -255,6 +290,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Category,
                 keywords = listOf("avatar shapes", "squircle", "circle avatar", "hexagon", "cookie shape", "flower shape", "morph"),
+                targetHeadline = context.getString(R.string.settings_interface_avatar_shape),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -263,6 +299,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Image,
                 keywords = listOf("contact photo", "contact picture", "avatar image", "profile pic"),
+                targetHeadline = context.getString(R.string.settings_interface_show_picture),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -271,6 +308,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.ColorLens,
                 keywords = listOf("colorful avatars", "colored initials", "avatar colors", "tinted avatars"),
+                targetHeadline = context.getString(R.string.settings_interface_colorful_avatars),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -279,6 +317,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Gradient,
                 keywords = listOf("gradient avatars", "gradient", "smooth colors", "avatar style"),
+                targetHeadline = context.getString(R.string.settings_interface_gradient_avatars),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -287,6 +326,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Wallpaper,
                 keywords = listOf("hide avatar", "wallpaper avatar", "full wallpaper", "contact wallpaper"),
+                targetHeadline = context.getString(R.string.settings_interface_hide_avatar_with_bg),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
@@ -294,7 +334,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 supporting = context.getString(R.string.settings_sound_vibration_supporting),
                 category = "Personalization & Display",
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
-                keywords = listOf("sound", "vibration", "ringtone", "volume", "haptics", "dtmf", "dialpad tone", "silent"),
+                keywords = listOf("sound", "vibration", "volume"),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -303,6 +343,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Dialpad,
                 keywords = listOf("dtmf", "dialpad sound", "keypad tones", "audio beep", "dial tones"),
+                targetHeadline = context.getString(R.string.settings_sound_dtmf_tone),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -311,6 +352,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Vibration,
                 keywords = listOf("dialpad vibration", "keypad haptics", "haptic feedback", "vibrate dialpad"),
+                targetHeadline = context.getString(R.string.settings_sound_dialpad_vibration),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -319,6 +361,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Add,
                 keywords = listOf("hold 0", "plus prefix", "international code", "long press zero"),
+                targetHeadline = context.getString(R.string.settings_sound_hold_zero_for_plus),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -327,6 +370,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.PhoneInTalk,
                 keywords = listOf("vibrate on answer", "vibrate connect", "call connect haptic", "answered call vibration"),
+                targetHeadline = context.getString(R.string.settings_sound_vibrate_on_answer),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -335,6 +379,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.CallEnd,
                 keywords = listOf("vibrate on hangup", "vibrate call end", "disconnect vibration", "end call haptic"),
+                targetHeadline = context.getString(R.string.settings_sound_vibrate_on_hangup),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -343,6 +388,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.TouchApp,
                 keywords = listOf("haptic scroll", "scroll haptics", "tactile tick", "section scroll vibration"),
+                targetHeadline = context.getString(R.string.settings_sound_haptic_scroll),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -350,7 +396,8 @@ val searchItems = remember(settingsState, isSupporter) {
                 supporting = "Turn phone face down to immediately silence incoming ringtone",
                 category = "Personalization & Display",
                 icon = Icons.Outlined.ScreenRotation,
-                keywords = listOf("flip to silence", "flip phone", "silence ringtone", "face down mute", "gesture"),
+                keywords = listOf("flip to silence", "flip phone", "face down mute", "flip gesture"),
+                targetHeadline = context.getString(R.string.settings_sound_flip_to_silence),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -359,6 +406,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.DoNotDisturb,
                 keywords = listOf("dnd during call", "silence notifications in call", "mute chimes in call"),
+                targetHeadline = context.getString(R.string.settings_sound_dnd_during_calls),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -367,6 +415,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.VolumeMute,
                 keywords = listOf("volume squeeze", "volume dnd", "squeeze gesture", "quick dnd"),
+                targetHeadline = "Volume Squeeze for DND",
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -375,6 +424,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.Notifications,
                 keywords = listOf("missed call alerts", "missed call notification", "lock screen missed call"),
+                targetHeadline = context.getString(R.string.settings_sound_missed_call_notifications),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
             SettingSearchItem(
@@ -383,6 +433,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Personalization & Display",
                 icon = Icons.Outlined.MusicNote,
                 keywords = listOf("ringtone", "call ringtone", "change ringtone", "phone sound", "system sounds"),
+                targetHeadline = context.getString(R.string.settings_sound_ringtone_settings),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
             ),
 
@@ -392,7 +443,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 supporting = context.getString(R.string.settings_call_settings_supporting),
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.SimCard,
-                keywords = listOf("calling accounts", "sim", "default sim", "carrier", "telecom", "wallpaper", "call background"),
+                keywords = listOf("calling accounts", "call settings", "sim accounts", "carrier"),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -401,6 +452,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.SimCard,
                 keywords = listOf("default sim", "sim 1", "sim 2", "always ask sim", "dual sim calling", "preferred sim"),
+                targetHeadline = context.getString(R.string.settings_call_default_sim),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -409,6 +461,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.ManageAccounts,
                 keywords = listOf("calling accounts", "telecom", "carrier accounts", "sim accounts", "sip"),
+                targetHeadline = context.getString(R.string.settings_call_calling_accounts),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -417,6 +470,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Public,
                 keywords = listOf("country code", "phone format", "international number", "hide country code", "show country code", "prefix", "number formatting"),
+                targetHeadline = context.getString(R.string.settings_show_country_code),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -425,6 +479,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Dialpad,
                 keywords = listOf("t9", "t9 search", "dialpad search", "smart dial", "spell contact on dialpad"),
+                targetHeadline = context.getString(R.string.settings_call_t9_dialing),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -433,6 +488,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.ContentPaste,
                 keywords = listOf("clipboard", "auto paste", "copied number", "paste dialpad", "clipboard banner"),
+                targetHeadline = context.getString(R.string.settings_auto_paste_clipboard),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -441,6 +497,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Sensors,
                 keywords = listOf("proximity sensor", "screen off in call", "ear sensor", "blank screen call"),
+                targetHeadline = context.getString(R.string.settings_call_proximity_sensor),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -449,6 +506,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.SpeakerPhone,
                 keywords = listOf("auto speaker", "proximity speaker", "hands free", "auto switch speaker"),
+                targetHeadline = context.getString(R.string.settings_call_auto_speaker_proximity),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -457,6 +515,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Call,
                 keywords = listOf("incoming call ui", "call banner", "heads up call", "fullscreen call", "floating call"),
+                targetHeadline = context.getString(R.string.settings_call_incoming_ui),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -465,6 +524,16 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Fullscreen,
                 keywords = listOf("always fullscreen", "incoming call screen", "force fullscreen call"),
+                targetHeadline = context.getString(R.string.settings_call_always_fullscreen),
+                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Open Call Screen on Answer",
+                supporting = "Open full call screen when answering from heads-up notification",
+                category = "Calling & Behavior",
+                icon = Icons.Outlined.PhoneInTalk,
+                keywords = listOf("open call screen", "heads up notification", "answer notification", "incoming call notification", "open call screen on answer", "answer heads up"),
+                targetHeadline = context.getString(R.string.settings_open_call_screen_on_answer_title),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -472,7 +541,8 @@ val searchItems = remember(settingsState, isSupporter) {
                 supporting = "Prevent accidental touches and maximize ringtone volume inside pocket",
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.ScreenLockPortrait,
-                keywords = listOf("pocket mode", "accidental touch", "pocket dial", "loud ringtone pocket"),
+                keywords = listOf("pocket mode", "accidental touch", "pocket dial"),
+                targetHeadline = "Pocket Mode",
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -481,6 +551,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.History,
                 keywords = listOf("call log limit", "call history retention", "max call logs", "delete old logs"),
+                targetHeadline = context.getString(R.string.settings_call_log_limit),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -489,6 +560,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Assignment,
                 keywords = listOf("post call summary", "call summary", "after call screen", "duration summary"),
+                targetHeadline = "Post-Call Summary",
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -497,6 +569,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.AutoMirrored.Outlined.PhoneMissed,
                 keywords = listOf("missed call card", "missed call popup", "quick callback", "popup card", "instant card", "return call", "recents missed card"),
+                targetHeadline = context.getString(R.string.settings_missed_call_card_title),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -505,6 +578,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.PictureInPicture,
                 keywords = listOf("floating call bubble", "floating bubble", "call bubble", "bubble", "overlay", "mini call", "picture in picture", "floating controls"),
+                targetHeadline = context.getString(R.string.settings_floating_call_bubble),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -513,6 +587,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Replay,
                 keywords = listOf("auto redial", "redial busy", "call again", "retry call", "redial attempts"),
+                targetHeadline = context.getString(R.string.settings_call_auto_redial),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -521,6 +596,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.CallReceived,
                 keywords = listOf("call waiting", "second call", "multiple calls", "carrier call waiting"),
+                targetHeadline = context.getString(R.string.settings_call_waiting),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -529,6 +605,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Wallpaper,
                 keywords = listOf("call background", "call wallpaper", "in call picture", "caller screen background"),
+                targetHeadline = context.getString(R.string.settings_call_default_background),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -537,6 +614,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Image,
                 keywords = listOf("unknown caller background", "unknown wallpaper", "stranger background"),
+                targetHeadline = context.getString(R.string.settings_call_unknown_background),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
@@ -664,7 +742,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 supporting = "Configure carrier voicemail phone number or speed dial key 1",
                 category = "Calling & Behavior",
                 icon = Icons.Outlined.Dialpad,
-                keywords = listOf("voicemail number", "speed dial 1", "dial voicemail", "carrier number"),
+                keywords = listOf("voicemail number", "dial voicemail", "carrier voicemail"),
                 onClick = { navigator.navigate(VoicemailScreenDestination) }
             ),
             SettingSearchItem(
@@ -747,6 +825,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Call Protection & Security",
                 icon = Icons.Outlined.PersonOff,
                 keywords = listOf("auto decline unknown", "block private numbers", "block hidden caller id", "reject unknown"),
+                targetHeadline = context.getString(R.string.settings_auto_decline_unknown_title),
                 onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
             ),
             SettingSearchItem(
@@ -755,6 +834,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Call Protection & Security",
                 icon = Icons.Outlined.GroupRemove,
                 keywords = listOf("block non contacts", "stranger calls", "only allow contacts", "reject unknown callers"),
+                targetHeadline = context.getString(R.string.settings_auto_decline_non_contacts_title),
                 onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
             ),
             SettingSearchItem(
@@ -771,6 +851,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Call Protection & Security",
                 icon = Icons.Outlined.NotificationsOff,
                 keywords = listOf("blocked notifications", "silent block", "hide blocked alerts"),
+                targetHeadline = context.getString(R.string.settings_blocked_notifications),
                 onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
             ),
             SettingSearchItem(
@@ -779,6 +860,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Call Protection & Security",
                 icon = Icons.Outlined.Settings,
                 keywords = listOf("system blocked numbers", "android blocklist", "carrier blocked numbers"),
+                targetHeadline = context.getString(R.string.settings_blocked_system_button),
                 onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
             ),
             SettingSearchItem(
@@ -853,6 +935,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.CallMerge,
                 keywords = listOf("merge contacts", "duplicate contacts", "combine contacts", "deduplicate", "clean contacts"),
+                targetHeadline = context.getString(R.string.contact_management_duplicates_title),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
             ),
             SettingSearchItem(
@@ -861,6 +944,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.SwapHoriz,
                 keywords = listOf("move contacts", "transfer contacts", "copy contacts", "sim to google", "google to local"),
+                targetHeadline = context.getString(R.string.contact_management_move_title),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
             ),
             SettingSearchItem(
@@ -869,6 +953,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.FormatListNumbered,
                 keywords = listOf("standardize numbers", "e164", "country code", "format numbers", "normalize phone numbers"),
+                targetHeadline = context.getString(R.string.contact_management_standardize_numbers),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
             ),
             SettingSearchItem(
@@ -877,6 +962,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.ViewAgenda,
                 keywords = listOf("contact management card", "contacts banner", "duplicate banner", "show cleaner card"),
+                targetHeadline = context.getString(R.string.settings_contact_management_card),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
             ),
             SettingSearchItem(
@@ -885,6 +971,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.AppShortcut,
                 keywords = listOf("contacts shortcut", "launcher icon", "standalone contacts app", "home screen icon"),
+                targetHeadline = context.getString(R.string.settings_contacts_launcher_icon),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
             ),
             SettingSearchItem(
@@ -901,6 +988,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.Sort,
                 keywords = listOf("sort contacts", "first name", "last name", "alphabetical sort", "surname first"),
+                targetHeadline = context.getString(R.string.settings_manage_sort_by),
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
             ),
             SettingSearchItem(
@@ -909,6 +997,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.Badge,
                 keywords = listOf("name format", "display name", "surname comma first", "first name first"),
+                targetHeadline = context.getString(R.string.settings_manage_name_format),
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
             ),
             SettingSearchItem(
@@ -917,6 +1006,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.SortByAlpha,
                 keywords = listOf("section headers", "alphabet headers", "abc headers", "contact headers", "letter dividers"),
+                targetHeadline = context.getString(R.string.settings_contact_section_headers),
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
             ),
             SettingSearchItem(
@@ -925,6 +1015,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.FilterAlt,
                 keywords = listOf("filter accounts", "hide google contacts", "hide sim contacts", "local memory contacts"),
+                targetHeadline = "Filter Accounts & Contact Sources",
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
             ),
             SettingSearchItem(
@@ -957,6 +1048,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.FileDownload,
                 keywords = listOf("export contacts", "vcf", "vcard", "backup file", "save contacts file"),
+                targetHeadline = context.getString(R.string.settings_backup_export_contacts),
                 onClick = { navigator.navigate(BackupRestoreScreenDestination) }
             ),
             SettingSearchItem(
@@ -965,6 +1057,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.FileUpload,
                 keywords = listOf("import contacts", "import vcf", "restore vcf", "load vcard"),
+                targetHeadline = context.getString(R.string.settings_backup_import_contacts),
                 onClick = { navigator.navigate(BackupRestoreScreenDestination) }
             ),
             SettingSearchItem(
@@ -973,6 +1066,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.HistoryEdu,
                 keywords = listOf("export call logs", "backup call logs", "save call history", "export call records"),
+                targetHeadline = context.getString(R.string.settings_backup_export_logs),
                 onClick = { navigator.navigate(BackupRestoreScreenDestination) }
             ),
             SettingSearchItem(
@@ -981,6 +1075,25 @@ val searchItems = remember(settingsState, isSupporter) {
                 category = "Contacts & Data",
                 icon = Icons.Outlined.RestorePage,
                 keywords = listOf("import call logs", "restore call logs", "load call history"),
+                targetHeadline = context.getString(R.string.settings_backup_import_logs),
+                onClick = { navigator.navigate(BackupRestoreScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Export App Settings",
+                supporting = "Back up entire app preferences, themes, dialpad style, and configurations to JSON",
+                category = "Contacts & Data",
+                icon = Icons.Outlined.FileUpload,
+                keywords = listOf("backup settings", "export settings", "save settings", "app settings backup", "export preferences"),
+                targetHeadline = context.getString(R.string.settings_backup_export_settings),
+                onClick = { navigator.navigate(BackupRestoreScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Restore App Settings",
+                supporting = "Restore all app preferences and configurations from a saved backup JSON file",
+                category = "Contacts & Data",
+                icon = Icons.Outlined.Restore,
+                keywords = listOf("restore settings", "import settings", "load settings", "restore preferences"),
+                targetHeadline = context.getString(R.string.settings_backup_import_settings),
                 onClick = { navigator.navigate(BackupRestoreScreenDestination) }
             ),
 
@@ -1066,26 +1179,10 @@ val searchItems = remember(settingsState, isSupporter) {
         } else {
             searchItems
                 .distinctBy { it.title }
-                .filter { item ->
-                    item.title.lowercase().contains(q) ||
-                    item.keywords.any { it.lowercase().contains(q) } ||
-                    item.supporting.lowercase().contains(q) ||
-                    item.category.lowercase().contains(q)
-                }
+                .filter { itemMatchesExplicitQuery(it, q) }
                 .sortedWith(
-                    compareByDescending<SettingSearchItem> { item ->
-                        val titleLower = item.title.lowercase()
-                        when {
-                            titleLower == q -> 100
-                            titleLower.startsWith(q) -> 90
-                            titleLower.contains(q) -> 80
-                            item.keywords.any { it.lowercase() == q } -> 70
-                            item.keywords.any { it.lowercase().startsWith(q) } -> 60
-                            item.keywords.any { it.lowercase().contains(q) } -> 50
-                            item.supporting.lowercase().contains(q) -> 30
-                            else -> 15
-                        }
-                    }.thenBy { it.title }
+                    compareByDescending<SettingSearchItem> { scoreSearchItem(it, q) }
+                        .thenBy { it.title }
                 )
         }
     }
@@ -1302,6 +1399,7 @@ val searchItems = remember(settingsState, isSupporter) {
                                                 isSearchActive = false
                                                 searchQuery = ""
                                                 prefs.addSettingsHistory(item.title)
+                                                SettingsHighlightManager.setHighlight(item.title, item.targetHeadline)
                                                 item.onClick()
                                             }
                                         )
@@ -1400,7 +1498,7 @@ val searchItems = remember(settingsState, isSupporter) {
                             item {
                                 RivoListItem(
                                     headline = "Theme & Appearance",
-                                    supporting = "Material You, color palette & AMOLED dark mode",
+                                    supporting = "Theme mode, interface appearance and visual style",
                                     leadingIcon = Icons.Outlined.Palette,
                                     trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                     onClick = {
@@ -1499,39 +1597,24 @@ val searchItems = remember(settingsState, isSupporter) {
                         }
                     }
                 } else {
-                    // Grouped MD3 Expressive Results
-                    val groupedResults = filteredSearchItems.groupBy { it.category }
-                    groupedResults.forEach { (categoryTitle, items) ->
-                        item(key = categoryTitle) {
-                            val categoryIcon = when (categoryTitle) {
-                                "Personalization & Display" -> Icons.Outlined.Palette
-                                "Calling & Behavior" -> Icons.Outlined.Phone
-                                "Call Protection & Security" -> Icons.Outlined.Security
-                                "Contacts & Data" -> Icons.Outlined.ManageAccounts
-                                else -> Icons.AutoMirrored.Outlined.HelpOutline
+                    // Direct results without category headings or container boxes
+                    items(
+                        items = filteredSearchItems,
+                        key = { it.title }
+                    ) { item ->
+                        RivoListItem(
+                            headline = item.title,
+                            supporting = item.supporting.ifBlank { null },
+                            leadingIcon = item.icon,
+                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            onClick = {
+                                isSearchActive = false
+                                searchQuery = ""
+                                prefs.addSettingsHistory(item.title)
+                                SettingsHighlightManager.setHighlight(item.title, item.targetHeadline)
+                                item.onClick()
                             }
-                            RivoExpressiveGroup(
-                                title = categoryTitle,
-                                icon = categoryIcon
-                            ) {
-                                items.forEach { item ->
-                                    item(key = item.title) {
-                                        RivoListItem(
-                                            headline = item.title,
-                                            supporting = item.supporting.ifBlank { null },
-                                            leadingIcon = item.icon,
-                                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                            onClick = {
-                                                isSearchActive = false
-                                                searchQuery = ""
-                                                prefs.addSettingsHistory(item.title)
-                                                item.onClick()
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        )
                     }
                 }
             }
@@ -1622,7 +1705,7 @@ val searchItems = remember(settingsState, isSupporter) {
                     item {
                         RivoListItem(
                             headline = "Theme & Appearance",
-                            supporting = "Material You, color palette, AMOLED dark mode & animations",
+                            supporting = "Theme mode, interface appearance and visual style",
                             leadingIcon = Icons.Outlined.Palette,
                             onClick = {
                                 prefs.addSettingsHistory("Theme & Appearance")
@@ -1633,7 +1716,7 @@ val searchItems = remember(settingsState, isSupporter) {
                     item {
                         RivoListItem(
                             headline = "Navigation Bar",
-                            supporting = "Floating bar style, blur effect, roundness & tab layout",
+                            supporting = "Floating bar style, navigation dock and tab layout",
                             leadingIcon = Icons.Outlined.Dock,
                             onClick = {
                                 prefs.addSettingsHistory("Navigation Bar")
@@ -1958,5 +2041,51 @@ private data class SettingSearchItem(
     val category: String,
     val icon: ImageVector,
     val keywords: List<String> = emptyList(),
+    val targetHeadline: String? = null,
     val onClick: () -> Unit
 )
+
+private fun extractWords(text: String): List<String> {
+    return text.lowercase().split(Regex("[^a-z0-9]+")).filter { it.isNotBlank() }
+}
+
+private fun wordMatchesToken(targetWord: String, token: String, allowPrefix: Boolean): Boolean {
+    if (targetWord == token) return true
+    // Common plural / singular variations
+    if (targetWord == "${token}s" || targetWord == "${token}es") return true
+    if ("${targetWord}s" == token || "${targetWord}es" == token) return true
+    // Prefix match for progressive typing, requiring at least 2 characters
+    if (allowPrefix && token.length >= 2 && targetWord.startsWith(token)) return true
+    return false
+}
+
+private fun itemMatchesExplicitQuery(item: SettingSearchItem, query: String): Boolean {
+    val q = query.trim().lowercase()
+    if (q.isBlank()) return false
+    val tokens = q.split(Regex("[^a-z0-9]+")).filter { it.isNotBlank() }
+    if (tokens.isEmpty()) return false
+
+    val titleLower = item.title.lowercase()
+    // 1. Direct phrase match in main title/heading
+    if (titleLower.contains(q)) return true
+
+    // 2. All tokens explicitly match words in main title/heading (e.g. "call log" matches "Call Logs")
+    val titleWords = extractWords(titleLower)
+    return tokens.all { token -> titleWords.any { wordMatchesToken(it, token, allowPrefix = true) } }
+}
+
+private fun scoreSearchItem(item: SettingSearchItem, query: String): Int {
+    val q = query.trim().lowercase()
+    val tokens = q.split(Regex("[^a-z0-9]+")).filter { it.isNotBlank() }
+    val titleLower = item.title.lowercase()
+    val titleWords = extractWords(titleLower)
+
+    return when {
+        titleLower == q -> 1000
+        titleLower.startsWith(q) -> 900
+        titleLower.contains(q) -> 850
+        tokens.isNotEmpty() && tokens.all { token -> titleWords.any { it == token } } -> 800
+        tokens.isNotEmpty() && tokens.all { token -> titleWords.any { wordMatchesToken(it, token, allowPrefix = true) } } -> 750
+        else -> 100
+    }
+}

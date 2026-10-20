@@ -38,6 +38,7 @@ import com.grinch.rivo4.view.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -640,7 +641,11 @@ fun ContactSelectionScreen(
                                                             contactId = contact.id,
                                                             initialPhone = initialPhoneToAssign
                                                         )
-                                                    )
+                                                    ) {
+                                                        popUpTo(ContactSelectionScreenDestination) {
+                                                            inclusive = true
+                                                        }
+                                                    }
                                                 } else if (returnContactId) {
                                                     resultNavigator.navigateBack(result = contact.id)
                                                 } else {

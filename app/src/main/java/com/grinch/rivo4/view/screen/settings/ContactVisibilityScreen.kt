@@ -5,6 +5,9 @@ import com.grinch.rivo4.view.components.MenuTopAppBar
 import android.accounts.Account
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudOff
@@ -57,6 +60,32 @@ fun ContactVisibilityScreen(
         viewModel.setVisibleAccounts(newSet)
     }
 
+    val listState = rememberLazyListState()
+    val context = LocalContext.current
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Sort", ignoreCase = true) ||
+            target.contains("Name", ignoreCase = true) ||
+            target.contains("Header", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_manage_sort_by)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_manage_name_format)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_contact_section_headers)) -> 1
+
+            target.contains("Account", ignoreCase = true) ||
+            target.contains("Source", ignoreCase = true) ||
+            target.contains("Filter", ignoreCase = true) -> 2
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
@@ -67,6 +96,7 @@ fun ContactVisibilityScreen(
         }
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

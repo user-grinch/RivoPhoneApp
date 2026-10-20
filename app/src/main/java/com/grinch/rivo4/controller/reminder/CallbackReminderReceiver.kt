@@ -88,10 +88,14 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val formattedNum = com.grinch.rivo4.controller.util.formatPhoneNumber(phoneNumber)
+        val targetName = if (!contactName.isNullOrBlank()) contactName else formattedNum
         val contentText = if (!note.isNullOrBlank()) {
-            "Time to call back $contactName: \"$note\""
+            "Time to call back $targetName: \"$note\""
+        } else if (!contactName.isNullOrBlank()) {
+            "Time to call back $contactName ($formattedNum)"
         } else {
-            "Time to call back $contactName ($phoneNumber)"
+            "Time to call back $formattedNum"
         }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)

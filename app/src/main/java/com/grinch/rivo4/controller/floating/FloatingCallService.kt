@@ -74,7 +74,6 @@ class FloatingCallService : Service(), KoinComponent {
     private var dismissTargetView: FrameLayout? = null
     private var dismissTargetParams: WindowManager.LayoutParams? = null
     private var dismissTargetCircle: FrameLayout? = null
-    private var dismissTargetAura: View? = null
     private var dismissIconView: ImageView? = null
     private var isHoveringDismiss = false
     private var isDismissTargetVisible = false
@@ -351,8 +350,10 @@ class FloatingCallService : Service(), KoinComponent {
                         val screenHeight = resources.displayMetrics.heightPixels
                         val screenWidth = resources.displayMetrics.widthPixels
                         val dismissSize = (64 * density).toInt()
+                        val dismissWindowSize = (96 * density).toInt()
+                        val dismissBottomOffset = (36 * density).toInt()
                         val targetCenterX = screenWidth / 2f
-                        val targetCenterY = screenHeight - (36 * density) - (dismissSize / 2f)
+                        val targetCenterY = screenHeight - dismissBottomOffset - (dismissWindowSize / 2f)
 
                         val rawFingerX = event.rawX
                         val rawFingerY = event.rawY
@@ -414,8 +415,10 @@ class FloatingCallService : Service(), KoinComponent {
                         val screenHeight = resources.displayMetrics.heightPixels
                         val screenWidth = resources.displayMetrics.widthPixels
                         val dismissSize = (64 * density).toInt()
+                        val dismissWindowSize = (96 * density).toInt()
+                        val dismissBottomOffset = (36 * density).toInt()
                         val targetCenterX = screenWidth / 2f
-                        val targetCenterY = screenHeight - (36 * density) - (dismissSize / 2f)
+                        val targetCenterY = screenHeight - dismissBottomOffset - (dismissWindowSize / 2f)
                         animateDismissAndStop(targetCenterX, targetCenterY, bubbleSize, density)
                     } else {
                         hideDismissTarget()
@@ -446,7 +449,8 @@ class FloatingCallService : Service(), KoinComponent {
 
     private fun buildDismissTargetView(density: Float) {
         val dismissSize = (64 * density).toInt()
-        val dismissWindowHeight = (150 * density).toInt()
+        val dismissWindowSize = (96 * density).toInt()
+        val dismissBottomOffset = (36 * density).toInt()
         val dismissType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -455,51 +459,34 @@ class FloatingCallService : Service(), KoinComponent {
         }
 
         dismissTargetParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            dismissWindowHeight,
+            dismissWindowSize,
+            dismissWindowSize,
             dismissType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.BOTTOM or Gravity.START
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             x = 0
-            y = 0
+            y = dismissBottomOffset
         }
 
         dismissTargetView = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                dismissWindowHeight
+                dismissWindowSize,
+                dismissWindowSize
             )
             visibility = View.GONE
             alpha = 0f
         }
 
-        // Soft bottom gradient aura for depth and contrast
-        dismissTargetAura = View(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                dismissWindowHeight
-            )
-            background = GradientDrawable(
-                GradientDrawable.Orientation.BOTTOM_TOP,
-                intArrayOf(Color.parseColor("#99000000"), Color.TRANSPARENT)
-            )
-            alpha = 0f
-        }
-        dismissTargetView?.addView(dismissTargetAura)
-
-        // Circle target centered horizontally near bottom
+        // Circle target centered inside window
         dismissTargetCircle = FrameLayout(this).apply {
             val circleParams = FrameLayout.LayoutParams(
                 dismissSize,
                 dismissSize,
-                Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-            ).apply {
-                bottomMargin = (36 * density).toInt()
-            }
+                Gravity.CENTER
+            )
             layoutParams = circleParams
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
@@ -508,11 +495,11 @@ class FloatingCallService : Service(), KoinComponent {
             }
             outlineProvider = ViewOutlineProvider.BACKGROUND
             clipToOutline = true
-            elevation = 14 * density
+            elevation = 0f
             scaleX = 0.5f
             scaleY = 0.5f
             alpha = 0f
-            translationY = 60 * density
+            translationY = 30 * density
         }
 
         dismissIconView = ImageView(this).apply {
@@ -545,13 +532,8 @@ class FloatingCallService : Service(), KoinComponent {
             ?.setDuration(180)
             ?.start()
 
-        dismissTargetAura?.animate()
-            ?.alpha(1f)
-            ?.setDuration(220)
-            ?.start()
-
         dismissTargetCircle?.let { circle ->
-            circle.translationY = 50 * density
+            circle.translationY = 30 * density
             circle.scaleX = 0.6f
             circle.scaleY = 0.6f
             circle.alpha = 0f
@@ -572,13 +554,8 @@ class FloatingCallService : Service(), KoinComponent {
         setDismissTargetHovered(false)
         val density = resources.displayMetrics.density
 
-        dismissTargetAura?.animate()
-            ?.alpha(0f)
-            ?.setDuration(180)
-            ?.start()
-
         dismissTargetCircle?.animate()
-            ?.translationY(50 * density)
+            ?.translationY(30 * density)
             ?.scaleX(0.6f)
             ?.scaleY(0.6f)
             ?.alpha(0f)
@@ -699,15 +676,10 @@ class FloatingCallService : Service(), KoinComponent {
                 dismissTargetCircle?.animate()
                     ?.scaleX(0.1f)
                     ?.scaleY(0.1f)
-                    ?.translationY(80 * density)
+                    ?.translationY(40 * density)
                     ?.alpha(0f)
                     ?.setDuration(160)
                     ?.setInterpolator(AccelerateInterpolator(1.6f))
-                    ?.start()
-
-                dismissTargetAura?.animate()
-                    ?.alpha(0f)
-                    ?.setDuration(160)
                     ?.start()
 
                 dismissTargetView?.animate()
@@ -1277,7 +1249,6 @@ class FloatingCallService : Service(), KoinComponent {
         }
         dismissTargetView = null
         dismissTargetCircle = null
-        dismissTargetAura = null
         dismissIconView = null
     }
 

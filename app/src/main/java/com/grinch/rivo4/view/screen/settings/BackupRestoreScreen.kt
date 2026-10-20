@@ -6,6 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -29,6 +32,9 @@ import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -75,6 +81,47 @@ fun BackupRestoreScreen(
         uri?.let { viewModel.importCallLogs(context, it) }
     }
 
+    var pendingSettingsRestoreUri by remember { mutableStateOf<Uri?>(null) }
+
+    val exportSettingsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.exportAppSettings(context, it) }
+    }
+
+    val importSettingsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { pendingSettingsRestoreUri = it }
+    }
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Contact", ignoreCase = true) ||
+            target.contains("VCF", ignoreCase = true) -> 0
+
+            target.contains("Log", ignoreCase = true) ||
+            target.contains("History", ignoreCase = true) -> 1
+
+            target.contains("Setting", ignoreCase = true) ||
+            target.contains("Preference", ignoreCase = true) ||
+            target.contains("Configuration", ignoreCase = true) -> 2
+
+            target.contains("Standardize", ignoreCase = true) ||
+            target.contains("E.164", ignoreCase = true) -> 3
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
+
     Scaffold(
         topBar = {
             MenuTopAppBar(
@@ -86,6 +133,7 @@ fun BackupRestoreScreen(
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
@@ -142,6 +190,35 @@ fun BackupRestoreScreen(
 
             item {
                 RivoExpressiveGroup(
+                    title = stringResource(R.string.settings_backup_app_settings_header),
+                    icon = Icons.Outlined.SettingsSuggest
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_export_settings),
+                            supporting = stringResource(R.string.settings_backup_export_settings_supporting),
+                            leadingIcon = Icons.Outlined.FileUpload,
+                            onClick = {
+                                val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                                exportSettingsLauncher.launch("rivo_settings_backup_$timestamp.json")
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_import_settings),
+                            supporting = stringResource(R.string.settings_backup_import_settings_supporting),
+                            leadingIcon = Icons.Outlined.FileDownload,
+                            onClick = {
+                                importSettingsLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
+                            }
+                        )
+                    }
+                }
+            }
+
+            item {
+                RivoExpressiveGroup(
                     title = stringResource(R.string.settings_manage_contacts_headline),
                     icon = Icons.Outlined.Numbers
                 ) {
@@ -176,6 +253,23 @@ fun BackupRestoreScreen(
             message = stringResource(R.string.settings_manage_standardize_confirm_message),
             confirmLabel = stringResource(R.string.action_confirm),
             icon = Icons.Outlined.Numbers
+        )
+    }
+
+    if (pendingSettingsRestoreUri != null) {
+        RivoConfirmationDialog(
+            onDismissRequest = { pendingSettingsRestoreUri = null },
+            onConfirm = {
+                val uri = pendingSettingsRestoreUri
+                pendingSettingsRestoreUri = null
+                if (uri != null) {
+                    viewModel.importAppSettings(context, uri)
+                }
+            },
+            title = stringResource(R.string.settings_backup_restore_confirm_title),
+            message = stringResource(R.string.settings_backup_restore_confirm_message),
+            confirmLabel = stringResource(R.string.settings_backup_restore_confirm_action),
+            icon = Icons.Outlined.Restore
         )
     }
 }

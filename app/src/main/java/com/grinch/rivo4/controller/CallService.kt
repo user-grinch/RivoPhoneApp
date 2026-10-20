@@ -326,6 +326,18 @@ class CallService : InCallService() {
         fun answerCall() {
             instance?.let { CallRecorder.prepare(it) }
             _currentCallSession.value?.call?.answer(VideoProfile.STATE_AUDIO_ONLY)
+            instance?.let { service ->
+                if (service.preferenceManager.isOpenCallScreenOnAnswerEnabled()) {
+                    val callIntent = Intent(service, CallActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    }
+                    try {
+                        service.startActivity(callIntent)
+                    } catch (e: Exception) {
+                        Log.e("CallService", "Failed to start CallActivity on answer: ${e.message}", e)
+                    }
+                }
+            }
         }
 
         fun answerRingingCall(endActive: Boolean) {
@@ -904,7 +916,19 @@ class CallService : InCallService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            "ANSWER_CALL", CallActionReceiver.ACTION_ANSWER_CALL -> answerCall()
+            "ANSWER_CALL", CallActionReceiver.ACTION_ANSWER_CALL -> {
+                answerCall()
+                if (preferenceManager.isOpenCallScreenOnAnswerEnabled()) {
+                    val callIntent = Intent(this, CallActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    }
+                    try {
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        Log.e("CallService", "Failed to start CallActivity on answer: ${e.message}", e)
+                    }
+                }
+            }
             "DECLINE_CALL", CallActionReceiver.ACTION_DECLINE_CALL -> declineCall()
             "TOGGLE_MUTE", CallActionReceiver.ACTION_TOGGLE_MUTE -> toggleMute()
             "TOGGLE_SPEAKER", CallActionReceiver.ACTION_TOGGLE_SPEAKER -> cycleAudioRoute()

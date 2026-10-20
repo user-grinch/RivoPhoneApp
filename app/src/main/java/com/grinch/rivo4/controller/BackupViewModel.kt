@@ -5,10 +5,13 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.data.Contact
+import com.grinch.rivo4.modal.data.SettingsBackupEnvelope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,13 +25,21 @@ import java.io.OutputStreamWriter
 
 class BackupViewModel(
     private val contactsRepo: IContactsRepository,
-    private val callLogRepo: ICallLogRepository
+    private val callLogRepo: ICallLogRepository,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     private val _status = MutableStateFlow<String?>(null)
     val status = _status.asStateFlow()
 
     private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
+    private val settingsJson = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+        encodeDefaults = true
+        isLenient = true
+        coerceInputValues = true
+    }
 
     fun exportContacts(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -137,6 +148,40 @@ class BackupViewModel(
                 _status.value = context.getString(R.string.backup_call_logs_import_success)
             } catch (e: Exception) {
                 _status.value = context.getString(R.string.backup_import_failed, e.message)
+            }
+        }
+    }
+
+    fun exportAppSettings(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val (versionName, versionCode) = getAppVersion(context)
+                val backup = preferenceManager.getAllExportableSettings(versionName, versionCode)
+                val jsonString = settingsJson.encodeToString(backup)
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    OutputStreamWriter(outputStream, Charsets.UTF_8).use { writer ->
+                        writer.write(jsonString)
+                    }
+                }
+                _status.value = context.getString(R.string.backup_settings_export_success)
+            } catch (e: Exception) {
+                _status.value = context.getString(R.string.backup_export_failed, e.message ?: e.javaClass.simpleName)
+            }
+        }
+    }
+
+    fun importAppSettings(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val jsonString = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8)).readText()
+                } ?: throw IllegalArgumentException("Could not read backup file")
+
+                val backup = settingsJson.decodeFromString<SettingsBackupEnvelope>(jsonString)
+                val count = preferenceManager.restoreSettings(backup)
+                _status.value = context.getString(R.string.backup_settings_import_success)
+            } catch (e: Exception) {
+                _status.value = context.getString(R.string.backup_import_failed, e.message ?: e.javaClass.simpleName)
             }
         }
     }

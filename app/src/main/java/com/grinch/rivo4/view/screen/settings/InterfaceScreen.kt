@@ -1,5 +1,6 @@
 package com.grinch.rivo4.view.screen.settings
 import androidx.compose.material.icons.automirrored.outlined.CompareArrows
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -65,6 +66,8 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
@@ -95,6 +98,9 @@ fun InterfaceScreen(
     var transitionStyle by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0))
     }
+    var predictiveBackEnabled by remember(settingsState) {
+        mutableStateOf(prefs.isPredictiveBackEnabled())
+    }
     var customPrimaryColor by remember(settingsState) {
         mutableIntStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb()))
     }
@@ -118,6 +124,42 @@ fun InterfaceScreen(
 
     fun triggerThemeRestart() {
         (context as? Activity)?.recreate()
+    }
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_material_you)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_amoled)) ||
+            target.contains("Material You", ignoreCase = true) ||
+            target.contains("Dynamic Color", ignoreCase = true) ||
+            target.contains("AMOLED", ignoreCase = true) -> 0
+
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_use_cards)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_card_roundness)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_transition_animation)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_predictive_back_title)) ||
+            target.contains("Card", ignoreCase = true) ||
+            target.contains("Roundness", ignoreCase = true) ||
+            target.contains("Transition", ignoreCase = true) ||
+            target.contains("Predictive", ignoreCase = true) -> 1
+
+            SettingsHighlightManager.matches(context.getString(R.string.settings_ui_blur_title)) ||
+            target.contains("Blur", ignoreCase = true) -> 2
+
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_dual_sim_buttons_title)) ||
+            target.contains("Dual SIM", ignoreCase = true) -> 3
+
+            target.contains("Navigation Bar", ignoreCase = true) ||
+            target.contains("Avatar", ignoreCase = true) -> 4
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
     }
 
     Scaffold(
@@ -297,6 +339,18 @@ fun InterfaceScreen(
                                     )
                                 }
                             }
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_predictive_back_title),
+                                supporting = stringResource(R.string.settings_predictive_back_supporting),
+                                leadingIcon = Icons.AutoMirrored.Outlined.ArrowBack,
+                                checked = predictiveBackEnabled,
+                                onCheckedChange = {
+                                    predictiveBackEnabled = it
+                                    prefs.setPredictiveBackEnabled(it)
+                                }
+                            )
                         }
                     }
                 }

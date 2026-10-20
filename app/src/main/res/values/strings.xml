@@ -260,6 +260,8 @@
     <string name="backup_contacts_import_success">Contacts imported successfully</string>
     <string name="backup_call_logs_export_success">Call logs exported successfully</string>
     <string name="backup_call_logs_import_success">Call logs imported successfully</string>
+    <string name="backup_settings_export_success">App settings exported successfully</string>
+    <string name="backup_settings_import_success">App settings restored successfully</string>
     <string name="backup_export_failed">Export failed: %1$s</string>
     <string name="backup_import_failed">Import failed: %1$s</string>
 
@@ -459,6 +461,14 @@
     <string name="settings_backup_export_logs_supporting">Save history to a JSON file</string>
     <string name="settings_backup_import_logs">Import Call Logs</string>
     <string name="settings_backup_import_logs_supporting">Restore history from a JSON file</string>
+    <string name="settings_backup_app_settings_header">App Settings &amp; Preferences</string>
+    <string name="settings_backup_export_settings">Export App Settings</string>
+    <string name="settings_backup_export_settings_supporting">Back up themes, dialpad styles, and configurations to JSON</string>
+    <string name="settings_backup_import_settings">Restore App Settings</string>
+    <string name="settings_backup_import_settings_supporting">Restore all app configurations from a JSON backup file</string>
+    <string name="settings_backup_restore_confirm_title">Restore App Settings</string>
+    <string name="settings_backup_restore_confirm_message">Are you sure you want to restore app settings? Your current preferences and customizations will be updated with the settings from this backup file.</string>
+    <string name="settings_backup_restore_confirm_action">Restore</string>
 
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Manage Contacts</string>
@@ -1043,4 +1053,19 @@
     <string name="settings_floating_call_bubble_supporting">Show a draggable bubble with call controls when leaving the call screen</string>
     <string name="floating_bubble_overlay_permission_desc">Display over other apps permission is required to show the floating call bubble</string>
     <string name="floating_bubble_permission_required_toast">Please grant \"Display over other apps\" to use the floating call bubble</string>
+
+    <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Are you sure you want to delete all call logs for this contact? This action cannot be undone.</string>
+    <string name="content_desc_clear_history">Clear history</string>
+    <string name="reminder_custom_preset">Custom…</string>
+    <string name="reminder_pick_date_time">Pick Date &amp; Time</string>
+    <string name="action_clear_all">Clear All</string>
+
+    <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Predictive Back Gestures</string>
+    <string name="settings_predictive_back_supporting">Interactive swipe-to-preview animations when navigating back</string>
+
+    <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Open Call Screen on Answer</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Open full call screen when answering from heads-up notification</string>
 </resources>

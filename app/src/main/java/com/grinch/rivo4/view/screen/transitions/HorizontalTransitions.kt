@@ -59,13 +59,20 @@ object ZoomTransitions : NavHostAnimatedDestinationStyle() {
     }
 }
 
-fun getAppTransition(style: Int): NavHostAnimatedDestinationStyle {
-    return when (style) {
+fun getAppTransition(style: Int, predictiveBack: Boolean = true): NavHostAnimatedDestinationStyle {
+    val baseStyle = when (style) {
         0 -> AppTransitions
         1 -> ZoomTransitions
         2 -> FadeTransitions
         3 -> NoTransitionsDestinationStyle
         else -> AppTransitions
+    }
+    if (predictiveBack) return baseStyle
+    return object : NavHostAnimatedDestinationStyle() {
+        override val enterTransition = baseStyle.enterTransition
+        override val exitTransition = baseStyle.exitTransition
+        override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { EnterTransition.None }
+        override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { ExitTransition.None }
     }
 }
 

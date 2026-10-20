@@ -5,6 +5,9 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -53,6 +56,36 @@ fun SoundVibrationScreen(
     var volumeSqueezeDnd by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VOLUME_SQUEEZE_DND, false)) }
     var dndDuringCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DND_DURING_CALLS, false)) }
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("DTMF", ignoreCase = true) ||
+            target.contains("Dialpad Vibration", ignoreCase = true) ||
+            target.contains("Hold 0", ignoreCase = true) -> 0
+
+            target.contains("Vibrate", ignoreCase = true) ||
+            target.contains("Haptic", ignoreCase = true) -> 1
+
+            target.contains("Flip", ignoreCase = true) ||
+            target.contains("Disturb", ignoreCase = true) ||
+            target.contains("DND", ignoreCase = true) ||
+            target.contains("Priority", ignoreCase = true) -> 2
+
+            target.contains("Missed", ignoreCase = true) ||
+            target.contains("Ringtone", ignoreCase = true) ||
+            target.contains("Sound Settings", ignoreCase = true) -> 3
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
+
     Scaffold(
         topBar = {
             MenuTopAppBar(
@@ -63,6 +96,7 @@ fun SoundVibrationScreen(
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

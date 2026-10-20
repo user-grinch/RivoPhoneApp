@@ -88,6 +88,7 @@ import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScr
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.grinch.rivo4.view.components.AddToContactBottomSheet
+import com.grinch.rivo4.view.components.ImeiDialog
 import com.grinch.rivo4.modal.data.Contact
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -214,6 +215,14 @@ fun DialPadScreen(
 
     var showSocialDialog by remember { mutableStateOf(false) }
     var showAddToContactSheet by remember { mutableStateOf(false) }
+    var showImeiDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(number) {
+        if (number.replace(" ", "") == "*#06#") {
+            showImeiDialog = true
+            textFieldValue = TextFieldValue("")
+        }
+    }
 
     BackHandler(enabled = number.isNotEmpty()) {
         textFieldValue = TextFieldValue("")
@@ -350,8 +359,10 @@ fun DialPadScreen(
 
     val performCall = { targetNumber: String, contactId: String? ->
         val cleanNumber = targetNumber.replace(" ", "")
-        if (cleanNumber == "*#06#" ||
-            (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
+        if (cleanNumber == "*#06#") {
+            showImeiDialog = true
+            textFieldValue = TextFieldValue("")
+        } else if ((cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
             (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4)) {
             val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
             if (handled) {
@@ -395,8 +406,10 @@ fun DialPadScreen(
     val performCallWithSim = { targetNumber: String, handle: PhoneAccountHandle? ->
         val cleanNumber = targetNumber.replace(" ", "")
         if (cleanNumber.isNotEmpty()) {
-            if (cleanNumber == "*#06#" ||
-                (cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
+            if (cleanNumber == "*#06#") {
+                showImeiDialog = true
+                textFieldValue = TextFieldValue("")
+            } else if ((cleanNumber.startsWith("*#*#") && cleanNumber.endsWith("#*#*") && cleanNumber.length >= 9) ||
                 (cleanNumber.startsWith("##") && cleanNumber.endsWith("#") && cleanNumber.length >= 4)
             ) {
                 val handled = com.grinch.rivo4.controller.util.processSecretCode(context, cleanNumber)
@@ -926,6 +939,12 @@ fun DialPadScreen(
                     )
                 )
             }
+        )
+    }
+
+    if (showImeiDialog) {
+        ImeiDialog(
+            onDismissRequest = { showImeiDialog = false }
         )
     }
     }

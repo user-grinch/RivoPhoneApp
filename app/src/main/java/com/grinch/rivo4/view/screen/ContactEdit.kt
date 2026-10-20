@@ -59,6 +59,9 @@ import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSectionHeader
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.components.rivoGroupedItemShape
+import androidx.compose.material.icons.outlined.PersonSearch
+import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -219,6 +222,9 @@ fun ContactEditScreen(
                     selectedAccount = availableAccounts.find {
                         it.name == lastUsed.name && it.type == lastUsed.type
                     }
+                }
+                if (selectedAccount == null) {
+                    selectedAccount = availableAccounts.firstOrNull()
                 }
             }
         }
@@ -382,6 +388,8 @@ fun ContactEditScreen(
             )
         }
 
+        val isNewContact = contactId == null || contactId == "0" || contactId == "null"
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -390,6 +398,37 @@ fun ContactEditScreen(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            if (isNewContact) {
+                item {
+                    val currentPhone = phones.firstOrNull { it.number.isNotBlank() }?.number ?: initialPhone
+                    RivoExpressiveGroup(
+                        title = stringResource(R.string.contact_add_to_existing),
+                        icon = Icons.Outlined.PersonSearch
+                    ) {
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.contact_add_to_existing),
+                                supporting = stringResource(R.string.contact_add_to_existing_desc),
+                                leadingIcon = Icons.Outlined.PersonSearch,
+                                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                onClick = {
+                                    navigator.navigate(
+                                        ContactSelectionScreenDestination(
+                                            title = context.getString(R.string.contact_add_to_existing),
+                                            initialPhoneToAssign = currentPhone
+                                        )
+                                    ) {
+                                        popUpTo(ContactEditScreenDestination) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
             // Expressive Avatar & Photo Picker
             item {
                 Column(

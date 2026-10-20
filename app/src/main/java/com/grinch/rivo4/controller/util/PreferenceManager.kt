@@ -2,6 +2,8 @@ package com.grinch.rivo4.controller.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.grinch.rivo4.modal.data.SettingsBackupEnvelope
+import com.grinch.rivo4.modal.data.SettingsData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +26,10 @@ class PreferenceManager(context: Context) {
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    fun notifySettingsChanged() {
+        _settingsChanged.value += 1
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
@@ -408,6 +414,8 @@ class PreferenceManager(context: Context) {
         const val KEY_SEARCH_MATCH_MODE = "search_match_mode"
         const val KEY_QUICK_RESPONSE_ENABLED = "quick_response_enabled"
         const val KEY_INCOMING_CALL_UI_MODE = "incoming_call_ui_mode"
+        const val KEY_PREDICTIVE_BACK_ENABLED = "predictive_back_gestures_enabled"
+        const val KEY_OPEN_CALL_SCREEN_ON_ANSWER = "open_call_screen_on_answer"
         const val KEY_SHOW_CARDS = "show_cards"
         const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
         const val KEY_HIDE_AVATAR_WITH_BACKGROUND = "hide_avatar_with_background"
@@ -521,6 +529,141 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
         const val KEY_SHOW_COUNTRY_CODE = "show_country_code"
         const val KEY_SETTINGS_HISTORY = "settings_history"
+
+        val EXCLUDED_KEYS = setOf(
+            KEY_APP_USAGE_SECONDS,
+            KEY_RATE_APP_SHOWN,
+            KEY_RATE_APP_SNOOZED_TIME,
+            KEY_ONBOARDING_SHOWN,
+            KEY_PERMISSION_POPUP_SHOWN,
+            KEY_PATREON_PROMPT_SHOWN,
+            KEY_IS_SUPPORTER,
+            KEY_SETTINGS_HISTORY,
+            KEY_LAST_SELECTED_TAB,
+            KEY_APP_LOCK_PIN,
+            KEY_APP_LOCK_ENABLED,
+            KEY_CALL_RECORDING_FOLDER_URI,
+            KEY_CALL_RECORDING_FOLDER_NAME,
+            "oem_opt_dismissed"
+        )
+
+        fun isExcludedKey(key: String): Boolean {
+            if (EXCLUDED_KEYS.contains(key)) return true
+            if (key.startsWith("cache_") || key.startsWith("temp_")) return true
+            return false
+        }
+
+        fun getKnownDefaultBooleans(): Map<String, Boolean> = mapOf(
+            KEY_DYNAMIC_COLORS to true,
+            KEY_AMOLED_MODE to false,
+            KEY_SHOW_FIRST_LETTER to true,
+            KEY_COLORFUL_AVATARS to false,
+            KEY_GRADIENT_AVATARS to false,
+            KEY_SHOW_PICTURE to true,
+            KEY_ROUND_AVATARS to false,
+            KEY_SHOW_DIVIDERS to true,
+            KEY_ICON_ONLY_NAV to false,
+            KEY_FLIP_BOTTOM_NAV to false,
+            KEY_DTMF_TONE to true,
+            KEY_DIALPAD_VIBRATION to true,
+            KEY_HOLD_ZERO_FOR_PLUS to true,
+            KEY_SPEED_DIAL to true,
+            KEY_T9_DIALING to true,
+            KEY_PROXIMITY_SENSOR to true,
+            KEY_AUTO_SPEAKER_PROXIMITY to false,
+            KEY_CONTACTS_TRASH_ENABLED to true,
+            KEY_INCOMING_CALL_POPUP to false,
+            KEY_ALWAYS_FULL_SCREEN_CALLS to false,
+            KEY_AUTO_REDIAL_BUSY to false,
+            KEY_BLOCK_NOTIFICATION to true,
+            KEY_VIBRATE_ON_ANSWER to true,
+            KEY_VIBRATE_ON_HANGUP to false,
+            KEY_VOICEMAIL_VIBRATION to true,
+            KEY_KEEP_SCREEN_ON to true,
+            KEY_SHOW_CALL_SUMMARY_TOAST to false,
+            KEY_VIBRATE_OUTGOING_RINGING to true,
+            KEY_FLIP_TO_SILENCE to false,
+            KEY_SILENCE_UNKNOWN to false,
+            KEY_DISPLAY_CARRIER_INFO to true,
+            KEY_SWIPE_TO_CALL to true,
+            KEY_HAPTIC_LIST_SCROLL to false,
+            KEY_MISSED_CALL_NOTIFICATIONS to true,
+            KEY_SHOW_SIM_ICON_HISTORY to true,
+            KEY_QUICK_RESPONSE_ENABLED to true,
+            KEY_PREDICTIVE_BACK_ENABLED to true,
+            KEY_OPEN_CALL_SCREEN_ON_ANSWER to false,
+            KEY_SHOW_CARDS to true,
+            KEY_SHOW_CALL_SCREEN_AVATAR to true,
+            KEY_HIDE_AVATAR_WITH_BACKGROUND to false,
+            KEY_SHOW_CONTACT_SECTION_HEADERS to true,
+            KEY_CALL_RECORDING to true,
+            KEY_CALL_RECORDING_AUTO to false,
+            KEY_CALL_RECORDING_SHIZUKU to true,
+            KEY_POCKET_MODE to false,
+            KEY_VOLUME_SQUEEZE_DND to false,
+            KEY_DND_DURING_CALLS to false,
+            KEY_MERGE_FAVORITES_RECENTS to false,
+            KEY_RECENTS_FAVORITES_COLLAPSED to false,
+            KEY_POST_CALL_SCREEN to true,
+            KEY_HIDE_PRIVATE_SETTINGS_ENTRY to false,
+            KEY_HIDDEN_CONTACTS_VISIBLE to false,
+            KEY_LOG_FAKE_CALLS to true,
+            KEY_SHOW_RECENTS_STATS to true,
+            KEY_FLOATING_CALL_BUBBLE to true,
+            KEY_UI_BLUR to false,
+            KEY_FLOATING_BAR_BLUR to false,
+            KEY_SWIPE_ACTIONS_ENABLED to false,
+            KEY_MISSED_CALL_CARD to true,
+            KEY_AUTO_DECLINE_UNKNOWN to false,
+            KEY_AUTO_DECLINE_NON_CONTACTS to false,
+            KEY_DUAL_SIM_DIALPAD_BUTTONS to false,
+            KEY_AUTO_PASTE_CLIPBOARD to false,
+            KEY_SEPARATE_CONTACTS_ICON to false,
+            KEY_CALL_ANALYTICS_TRACKING to true,
+            KEY_SHOW_CONTACT_MANAGEMENT_CARD to true,
+            KEY_SHOW_COUNTRY_CODE to true
+        )
+
+        fun getKnownDefaultIntegers(): Map<String, Int> = mapOf(
+            KEY_REDIAL_ATTEMPTS to 3,
+            KEY_REDIAL_DELAY to 5,
+            KEY_BLOCK_METHOD to 0,
+            KEY_BLOCK_LOG_VISIBILITY to 0,
+            KEY_TRANSITION_STYLE to 0,
+            KEY_DIALPAD_STYLE to DIALPAD_STYLE_MODERN,
+            KEY_DIALPAD_SIZE to DIALPAD_SIZE_MEDIUM,
+            KEY_AUTO_ANSWER_DELAY to 0,
+            KEY_CALL_DURATION_DISPLAY to 0,
+            KEY_CALL_LOG_GROUPING to 0,
+            KEY_DIALPAD_LAYOUT to 0,
+            KEY_AVATAR_SHAPE to 0,
+            KEY_CARD_ROUNDNESS to 24,
+            KEY_DIALPAD_VIBRATION_STRENGTH to 2,
+            KEY_DTMF_TONE_VOLUME to 80,
+            KEY_SEARCH_MATCH_MODE to 0,
+            KEY_INCOMING_CALL_UI_MODE to 0,
+            KEY_CONTACT_SORT_ORDER to 0,
+            KEY_CONTACT_DISPLAY_ORDER to 0,
+            KEY_CALL_RECORDING_FILTER to RECORD_FILTER_ALL,
+            KEY_NAV_BAR_STYLE to NAV_BAR_STYLE_STANDARD,
+            KEY_START_LOCATION to START_LOCATION_NORMAL,
+            KEY_FLOATING_BAR_ROUNDNESS to DEFAULT_FLOATING_BAR_ROUNDNESS,
+            KEY_SWIPE_RIGHT_ACTION to SWIPE_ACTION_CALL,
+            KEY_SWIPE_LEFT_ACTION to SWIPE_ACTION_MESSAGE,
+            KEY_CALL_LOG_LIMIT to CALL_LOG_LIMIT_DEFAULT,
+            KEY_DEFAULT_BOTTOM_NAV to 0
+        )
+
+        fun getKnownDefaultStrings(): Map<String, String> = mapOf(
+            KEY_QUICK_RESPONSES to DEFAULT_QUICK_RESPONSES.joinToString("|||"),
+            KEY_BOTTOM_NAV_ORDER to DEFAULT_BOTTOM_NAV_ORDER.joinToString(","),
+            KEY_BOTTOM_NAV_HIDDEN to listOf(TAB_RECORDINGS).joinToString(","),
+            KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE
+        )
+
+        fun getKnownDefaultStringSets(): Map<String, Set<String>> = mapOf(
+            KEY_PRIORITY_CONTACTS to emptySet()
+        )
     }
 
     fun getCallLogLimit(): Int = getInt(KEY_CALL_LOG_LIMIT, CALL_LOG_LIMIT_DEFAULT)
@@ -548,6 +691,12 @@ class PreferenceManager(context: Context) {
     fun setAppLockTimeout(timeout: Int) = setInt(KEY_APP_LOCK_TIMEOUT, timeout)
     fun isFloatingCallBubbleEnabled(): Boolean = getBoolean(KEY_FLOATING_CALL_BUBBLE, true)
     fun setFloatingCallBubbleEnabled(enabled: Boolean) = setBoolean(KEY_FLOATING_CALL_BUBBLE, enabled)
+
+    fun isPredictiveBackEnabled(): Boolean = getBoolean(KEY_PREDICTIVE_BACK_ENABLED, true)
+    fun setPredictiveBackEnabled(enabled: Boolean) = setBoolean(KEY_PREDICTIVE_BACK_ENABLED, enabled)
+
+    fun isOpenCallScreenOnAnswerEnabled(): Boolean = getBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, false)
+    fun setOpenCallScreenOnAnswerEnabled(enabled: Boolean) = setBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, enabled)
     fun isHiddenContactsVisible(): Boolean = getBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, false)
     fun setHiddenContactsVisible(visible: Boolean) = setBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, visible)
 
@@ -642,5 +791,131 @@ class PreferenceManager(context: Context) {
 
     fun clearSettingsHistory() {
         setString(KEY_SETTINGS_HISTORY, "")
+    }
+
+    fun getAllExportableSettings(appVersionName: String, appVersionCode: Long): SettingsBackupEnvelope {
+        val allPrefs = try {
+            prefs.all
+        } catch (e: Exception) {
+            emptyMap()
+        }
+
+        val booleans = getKnownDefaultBooleans().toMutableMap()
+        val integers = getKnownDefaultIntegers().toMutableMap()
+        val longs = mutableMapOf<String, Long>()
+        val floats = mutableMapOf<String, Float>()
+        val strings = getKnownDefaultStrings().toMutableMap()
+        val stringSets = getKnownDefaultStringSets().toMutableMap()
+
+        for ((key, value) in allPrefs) {
+            if (isExcludedKey(key) || value == null) continue
+            when (value) {
+                is Boolean -> booleans[key] = value
+                is Int -> integers[key] = value
+                is Long -> longs[key] = value
+                is Float -> floats[key] = value
+                is String -> strings[key] = value
+                is Set<*> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val strSet = (value as? Set<String>) ?: value.mapNotNull { it?.toString() }.toSet()
+                    stringSets[key] = strSet
+                }
+            }
+        }
+
+        return SettingsBackupEnvelope(
+            app = SettingsBackupEnvelope.DEFAULT_APP_IDENTIFIER,
+            backupType = SettingsBackupEnvelope.BACKUP_TYPE_SETTINGS,
+            schemaVersion = SettingsBackupEnvelope.CURRENT_SCHEMA_VERSION,
+            appVersion = appVersionName,
+            appVersionCode = appVersionCode,
+            createdAt = System.currentTimeMillis(),
+            settings = SettingsData(
+                booleans = booleans,
+                integers = integers,
+                longs = longs,
+                floats = floats,
+                strings = strings,
+                stringSets = stringSets
+            )
+        )
+    }
+
+    private fun migrateSettingsData(data: SettingsData, schemaVersion: Int): SettingsData {
+        var current = data
+        if (schemaVersion < 1) {
+            // Placeholder for pre-v1 migrations if ever needed
+        }
+        return current
+    }
+
+    fun restoreSettings(envelope: SettingsBackupEnvelope): Int {
+        if (!envelope.app.equals(SettingsBackupEnvelope.DEFAULT_APP_IDENTIFIER, ignoreCase = true) &&
+            !envelope.app.equals("Rivo", ignoreCase = true)) {
+            throw IllegalArgumentException("Invalid backup file: not a Rivo backup")
+        }
+        if (envelope.backupType != SettingsBackupEnvelope.BACKUP_TYPE_SETTINGS && envelope.backupType.isNotEmpty()) {
+            throw IllegalArgumentException("Invalid backup file: not a settings backup")
+        }
+
+        val data = envelope.resolvedSettings()
+        val editor = prefs.edit()
+        var restoredCount = 0
+
+        val migratedData = migrateSettingsData(data, envelope.schemaVersion)
+        val knownBoolKeys = getKnownDefaultBooleans().keys
+        val knownIntKeys = getKnownDefaultIntegers().keys
+
+        for ((key, value) in migratedData.booleans) {
+            if (!isExcludedKey(key)) {
+                editor.putBoolean(key, value)
+                restoredCount++
+            }
+        }
+        for ((key, value) in migratedData.integers) {
+            if (!isExcludedKey(key)) {
+                editor.putInt(key, value)
+                restoredCount++
+            }
+        }
+        for ((key, value) in migratedData.longs) {
+            if (!isExcludedKey(key)) {
+                if (knownIntKeys.contains(key)) {
+                    editor.putInt(key, value.toInt())
+                } else {
+                    editor.putLong(key, value)
+                }
+                restoredCount++
+            }
+        }
+        for ((key, value) in migratedData.floats) {
+            if (!isExcludedKey(key)) {
+                editor.putFloat(key, value)
+                restoredCount++
+            }
+        }
+        for ((key, value) in migratedData.strings) {
+            if (!isExcludedKey(key)) {
+                if (knownBoolKeys.contains(key) && (value.equals("true", true) || value.equals("false", true))) {
+                    editor.putBoolean(key, value.toBoolean())
+                } else if (knownIntKeys.contains(key) && value.toIntOrNull() != null) {
+                    editor.putInt(key, value.toInt())
+                } else {
+                    editor.putString(key, value)
+                }
+                restoredCount++
+            }
+        }
+        for ((key, value) in migratedData.stringSets) {
+            if (!isExcludedKey(key)) {
+                editor.putStringSet(key, value)
+                restoredCount++
+            }
+        }
+
+        editor.apply()
+        _settingsChanged.value += 1
+        clearFormattedNumberCache()
+        return restoredCount
     }
 }

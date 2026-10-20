@@ -37,6 +37,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
@@ -93,6 +94,7 @@ fun CallLogFullScreen(
     val settingsState by prefs.settingsChanged.collectAsState(initial = 0)
 
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
+    var showDeleteAllDialog by remember { mutableStateOf(false) }
     
     BackHandler(enabled = selectedEntries.isNotEmpty()) {
         selectedEntries = emptySet()
@@ -118,9 +120,9 @@ fun CallLogFullScreen(
         val map = mutableMapOf<String, Contact>()
         for (c in allContacts) {
             for (p in c.phoneNumbers) {
-                val norm = normalizePhoneNumber(p)
-                val key = if (norm.length >= 10) norm.takeLast(10) else norm
-                if (key.isNotEmpty()) map[key] = c
+                ContactUtils.getLookupKeys(p).forEach { key ->
+                    map.putIfAbsent(key, c)
+                }
             }
         }
         map
@@ -130,9 +132,15 @@ fun CallLogFullScreen(
         if (contactId != null && contactId != "null") {
             contactsById[contactId]
         } else if (phoneNumber != null) {
-            val norm = normalizePhoneNumber(phoneNumber)
-            val key = if (norm.length >= 10) norm.takeLast(10) else norm
-            if (key.isNotEmpty()) contactsByNumber[key] else null
+            var match: Contact? = null
+            for (k in ContactUtils.getLookupKeys(phoneNumber)) {
+                val c = contactsByNumber[k]
+                if (c != null) {
+                    match = c
+                    break
+                }
+            }
+            match ?: allContacts.find { c -> c.phoneNumbers.any { areNumbersEqual(it, phoneNumber) } }
         } else null
     }
 
@@ -201,7 +209,18 @@ fun CallLogFullScreen(
                 if (!isSelecting) {
                     MenuTopAppBar(
                         text = if (contactName != null) stringResource(R.string.call_history_with_contact, contactName) else stringResource(R.string.call_history_title),
-                        navigator = navigator
+                        navigator = navigator,
+                        actions = {
+                            if (isHistoryWithContact && filteredLogsByContact.isNotEmpty()) {
+                                IconButton(onClick = { showDeleteAllDialog = true }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.DeleteSweep,
+                                        contentDescription = stringResource(R.string.content_desc_clear_history),
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                        }
                     )
                 } else {
                     BatchCallLogActionBar(
@@ -224,6 +243,23 @@ fun CallLogFullScreen(
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
+        if (showDeleteAllDialog) {
+            RivoConfirmationDialog(
+                onDismissRequest = { showDeleteAllDialog = false },
+                onConfirm = {
+                    val allIdsToDelete = filteredLogsByContact.flatMap { it.ids }
+                    viewModel.deleteCallLogsByIds(allIdsToDelete)
+                    showDeleteAllDialog = false
+                },
+                title = stringResource(R.string.call_log_delete_title),
+                message = stringResource(R.string.call_log_clear_contact_confirm),
+                confirmLabel = stringResource(R.string.action_delete),
+                dismissLabel = stringResource(R.string.action_cancel),
+                icon = Icons.Outlined.DeleteSweep,
+                isDestructive = true
+            )
+        }
+
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 LazyRow(

@@ -3,6 +3,9 @@ import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -51,6 +54,19 @@ fun AvatarSettingsScreen(
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false))
     }
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Shape", ignoreCase = true) -> 0
+            else -> 1
+        }
+        delay(150L)
+        listState.animateScrollToItem(targetIndex)
+    }
+
     Scaffold(
         topBar = {
             MenuTopAppBar(
@@ -61,6 +77,7 @@ fun AvatarSettingsScreen(
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

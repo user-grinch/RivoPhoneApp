@@ -47,6 +47,6 @@ val appModule = module {
     }
     viewModel { ContactsViewModel(get(), get(), get(), androidContext()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
-    viewModel { BackupViewModel(get(), get()) }
+    viewModel { BackupViewModel(get(), get(), get()) }
     viewModel { CallAnalyticsViewModel(get(), get()) }
 }

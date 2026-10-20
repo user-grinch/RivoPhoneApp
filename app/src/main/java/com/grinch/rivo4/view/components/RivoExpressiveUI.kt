@@ -1,5 +1,12 @@
 package com.grinch.rivo4.view.components
 import androidx.compose.material.icons.outlined.Restore
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.ui.graphics.lerp
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -586,16 +593,50 @@ fun RivoListItem(
         RivoListItemDefaults.Spacing
     }
 
-    val targetContainer = when {
+    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
+        SettingsHighlightManager.matches(headline)
+    }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val highlightPulse = remember { Animatable(0f) }
+
+    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
+        if (isHighlighted) {
+            delay(350L)
+            try {
+                bringIntoViewRequester.bringIntoView()
+            } catch (_: Exception) {}
+            repeat(3) {
+                try {
+                    bringIntoViewRequester.bringIntoView()
+                } catch (_: Exception) {}
+                highlightPulse.animateTo(1f, tween(300))
+                highlightPulse.animateTo(0f, tween(260))
+                delay(80L)
+            }
+            SettingsHighlightManager.clear()
+        }
+    }
+
+    val pulseVal = highlightPulse.value
+    val baseContainer = when {
         containerColor.isSpecified -> containerColor
         selected -> MaterialTheme.colorScheme.secondaryContainer
         else -> Color.Transparent
     }
-    val animatedContainer by animateColorAsState(
-        targetValue = targetContainer,
+    val animatedBaseContainer by animateColorAsState(
+        targetValue = baseContainer,
         animationSpec = RivoMotion.colorChange(),
         label = "RivoListItemContainer"
     )
+    val effectiveContainer = if (pulseVal > 0f) {
+        lerp(
+            baseContainer,
+            MaterialTheme.colorScheme.primaryContainer,
+            pulseVal * 0.95f
+        )
+    } else {
+        animatedBaseContainer
+    }
 
     val isSelected = selected
     val toggleState = toggled
@@ -621,16 +662,23 @@ fun RivoListItem(
     )
 
     Surface(
-        color = animatedContainer,
+        color = effectiveContainer,
         contentColor = if (selected) {
             MaterialTheme.colorScheme.onSecondaryContainer
         } else {
             LocalContentColor.current
         },
+        border = if (pulseVal > 0.05f) {
+            BorderStroke(
+                width = 1.5.dp * pulseVal,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
+            )
+        } else null,
         shape = RoundedCornerShape(animatedCornerRadius),
         shadowElevation = RivoElevation.Flat,
         modifier = modifier
             .fillMaxWidth()
+            .bringIntoViewRequester(bringIntoViewRequester)
             .graphicsLayer {
                 scaleX = itemScale
                 scaleY = itemScale
@@ -1153,91 +1201,134 @@ fun RivoAvatarShapeSelectorRow(
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
+        SettingsHighlightManager.matches(headline)
+    }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val highlightPulse = remember { Animatable(0f) }
+
+    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
+        if (isHighlighted) {
+            delay(350L)
+            try {
+                bringIntoViewRequester.bringIntoView()
+            } catch (_: Exception) {}
+            repeat(3) {
+                try {
+                    bringIntoViewRequester.bringIntoView()
+                } catch (_: Exception) {}
+                highlightPulse.animateTo(1f, tween(300))
+                highlightPulse.animateTo(0f, tween(260))
+                delay(80L)
+            }
+            SettingsHighlightManager.clear()
+        }
+    }
+
+    val pulseVal = highlightPulse.value
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = RivoListItemDefaults.VerticalPadding),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .bringIntoViewRequester(bringIntoViewRequester),
+        shape = RoundedCornerShape(16.dp),
+        color = if (pulseVal > 0f) {
+            lerp(Color.Transparent, MaterialTheme.colorScheme.primaryContainer, pulseVal * 0.95f)
+        } else {
+            Color.Transparent
+        },
+        border = if (pulseVal > 0.05f) {
+            BorderStroke(
+                width = 1.5.dp * pulseVal,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
+            )
+        } else null
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(vertical = RivoListItemDefaults.VerticalPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            RivoLeadingIconTile(icon = Icons.Outlined.AccountBox)
-            Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = headline,
-                    style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (supporting != null) {
-                    Text(
-                        text = supporting,
-                        style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            val currentShape = rivoAvatarShape(selectedValue)
-            Surface(
-                modifier = Modifier.size(44.dp),
-                shape = currentShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                shadowElevation = 2.dp
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center) {
+                RivoLeadingIconTile(icon = Icons.Outlined.AccountBox)
+                Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "R",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = headline,
+                        style = RivoListItemDefaults.headlineStyle(),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (supporting != null) {
+                        Text(
+                            text = supporting,
+                            style = RivoListItemDefaults.supportingStyle(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
-            }
-        }
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(options) { (label, shapeIndex) ->
-                val selected = shapeIndex == selectedValue
-                val shape = rivoAvatarShape(shapeIndex)
-
-                RivoPreviewTile(
-                    label = label,
-                    selected = selected,
-                    onClick = { onValueChange(shapeIndex) },
-                    width = 88.dp,
-                    previewHeight = 72.dp
+                Spacer(modifier = Modifier.width(12.dp))
+                val currentShape = rivoAvatarShape(selectedValue)
+                Surface(
+                    modifier = Modifier.size(44.dp),
+                    shape = currentShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shadowElevation = 2.dp
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .then(
-                                if (!selected) Modifier.border(
-                                    width = 1.5.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                    shape = shape
-                                ) else Modifier
-                            )
-                            .background(
-                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
-                                shape = shape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "R",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
                         )
+                    }
+                }
+            }
+
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(options) { (label, shapeIndex) ->
+                    val selected = shapeIndex == selectedValue
+                    val shape = rivoAvatarShape(shapeIndex)
+
+                    RivoPreviewTile(
+                        label = label,
+                        selected = selected,
+                        onClick = { onValueChange(shapeIndex) },
+                        width = 88.dp,
+                        previewHeight = 72.dp
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .then(
+                                    if (!selected) Modifier.border(
+                                        width = 1.5.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                        shape = shape
+                                    ) else Modifier
+                                )
+                                .background(
+                                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                                    shape = shape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "R",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -1258,54 +1349,97 @@ fun RivoVisualOptionSelectorRow(
     tileHeight: Dp = 56.dp,
     optionContent: @Composable BoxScope.(Int, Boolean) -> Unit
 ) {
-    Column(
+    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
+        SettingsHighlightManager.matches(headline)
+    }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val highlightPulse = remember { Animatable(0f) }
+
+    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
+        if (isHighlighted) {
+            delay(350L)
+            try {
+                bringIntoViewRequester.bringIntoView()
+            } catch (_: Exception) {}
+            repeat(3) {
+                try {
+                    bringIntoViewRequester.bringIntoView()
+                } catch (_: Exception) {}
+                highlightPulse.animateTo(1f, tween(300))
+                highlightPulse.animateTo(0f, tween(260))
+                delay(80L)
+            }
+            SettingsHighlightManager.clear()
+        }
+    }
+
+    val pulseVal = highlightPulse.value
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = RivoListItemDefaults.VerticalPadding),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .bringIntoViewRequester(bringIntoViewRequester),
+        shape = RoundedCornerShape(16.dp),
+        color = if (pulseVal > 0f) {
+            lerp(Color.Transparent, MaterialTheme.colorScheme.primaryContainer, pulseVal * 0.95f)
+        } else {
+            Color.Transparent
+        },
+        border = if (pulseVal > 0.05f) {
+            BorderStroke(
+                width = 1.5.dp * pulseVal,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
+            )
+        } else null
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(vertical = RivoListItemDefaults.VerticalPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (leadingIcon != null) {
-                RivoLeadingIconTile(icon = leadingIcon)
-                Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = headline,
-                    style = RivoListItemDefaults.headlineStyle(),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (supporting != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = RivoListItemDefaults.HorizontalPadding),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (leadingIcon != null) {
+                    RivoLeadingIconTile(icon = leadingIcon)
+                    Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+                }
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = supporting,
-                        style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = headline,
+                        style = RivoListItemDefaults.headlineStyle(),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (supporting != null) {
+                        Text(
+                            text = supporting,
+                            style = RivoListItemDefaults.supportingStyle(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
-        }
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(options) { (label, value) ->
-                val selected = value == selectedValue
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = RivoListItemDefaults.HorizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(options) { (label, value) ->
+                    val selected = value == selectedValue
 
-                RivoPreviewTile(
-                    label = label,
-                    selected = selected,
-                    onClick = { onValueChange(value) },
-                    width = tileWidth,
-                    previewHeight = tileHeight
-                ) {
-                    optionContent(value, selected)
+                    RivoPreviewTile(
+                        label = label,
+                        selected = selected,
+                        onClick = { onValueChange(value) },
+                        width = tileWidth,
+                        previewHeight = tileHeight
+                    ) {
+                        optionContent(value, selected)
+                    }
                 }
             }
         }
@@ -1323,59 +1457,102 @@ fun RivoInteractiveRoundnessSlider(
     onValueChangeFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
+        SettingsHighlightManager.matches(headline)
+    }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val highlightPulse = remember { Animatable(0f) }
+
+    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
+        if (isHighlighted) {
+            delay(350L)
+            try {
+                bringIntoViewRequester.bringIntoView()
+            } catch (_: Exception) {}
+            repeat(3) {
+                try {
+                    bringIntoViewRequester.bringIntoView()
+                } catch (_: Exception) {}
+                highlightPulse.animateTo(1f, tween(300))
+                highlightPulse.animateTo(0f, tween(260))
+                delay(80L)
+            }
+            SettingsHighlightManager.clear()
+        }
+    }
+
+    val pulseVal = highlightPulse.value
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = RivoListItemDefaults.HorizontalPadding,
-                vertical = RivoListItemDefaults.VerticalPadding
-            ),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+            .bringIntoViewRequester(bringIntoViewRequester),
+        shape = RoundedCornerShape(16.dp),
+        color = if (pulseVal > 0f) {
+            lerp(Color.Transparent, MaterialTheme.colorScheme.primaryContainer, pulseVal * 0.95f)
+        } else {
+            Color.Transparent
+        },
+        border = if (pulseVal > 0.05f) {
+            BorderStroke(
+                width = 1.5.dp * pulseVal,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
+            )
+        } else null
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            RivoLeadingIconTile(icon = Icons.Outlined.RoundedCorner)
-            Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = headline,
-                    style = RivoListItemDefaults.headlineStyle()
-                )
-                if (supporting != null) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = RivoListItemDefaults.HorizontalPadding,
+                    vertical = RivoListItemDefaults.VerticalPadding
+                ),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RivoLeadingIconTile(icon = Icons.Outlined.RoundedCorner)
+                Spacer(modifier = Modifier.width(RivoListItemDefaults.Spacing))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = supporting,
-                        style = RivoListItemDefaults.supportingStyle(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = headline,
+                        style = RivoListItemDefaults.headlineStyle()
+                    )
+                    if (supporting != null) {
+                        Text(
+                            text = supporting,
+                            style = RivoListItemDefaults.supportingStyle(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(value.coerceAtLeast(5f).dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Live Corner Roundness: ${value.roundToInt()}dp",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
-        }
 
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(value.coerceAtLeast(5f).dp),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Live Corner Roundness: ${value.roundToInt()}dp",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Slider(
+                value = value,
+                onValueChange = onValueChange,
+                valueRange = valueRange,
+                steps = steps,
+                onValueChangeFinished = onValueChangeFinished,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
-
-        Slider(
-            value = value,
-            onValueChange = onValueChange,
-            valueRange = valueRange,
-            steps = steps,
-            onValueChangeFinished = onValueChangeFinished,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 

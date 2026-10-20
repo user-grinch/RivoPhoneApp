@@ -9,6 +9,9 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -185,6 +188,33 @@ fun BlockedNumbersScreen(
         }
     }
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Unknown", ignoreCase = true) ||
+            target.contains("Non-Contacts", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_unknown_title)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_non_contacts_title)) -> 1
+
+            target.contains("Behavior", ignoreCase = true) ||
+            target.contains("Notification", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_blocked_notifications)) -> 2
+
+            target.contains("System", ignoreCase = true) ||
+            target.contains("Manager", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_blocked_system_button)) -> 3
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
+
     Scaffold(
         topBar = {
             MenuTopAppBar(
@@ -216,6 +246,7 @@ fun BlockedNumbersScreen(
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

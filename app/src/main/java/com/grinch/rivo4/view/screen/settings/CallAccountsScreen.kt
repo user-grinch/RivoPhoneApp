@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.CallBackgroundStore
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
 import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -53,6 +54,7 @@ import com.ramcosta.composedestinations.generated.destinations.QuickResponsesScr
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -88,6 +90,7 @@ fun CallAccountsScreen(
     var redialDelay by remember(settingsState) { mutableStateOf(prefs.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000)) }
     var defaultSim by remember(settingsState) { mutableStateOf(prefs.getInt("default_sim", 0)) }
     var alwaysFullScreenCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) }
+    var openCallScreenOnAnswer by remember(settingsState) { mutableStateOf(prefs.isOpenCallScreenOnAnswerEnabled()) }
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
     var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
     var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
@@ -151,6 +154,71 @@ fun CallAccountsScreen(
 
     var showSimDialog by remember { mutableStateOf(false) }
     var showCallWaitingDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Carrier", ignoreCase = true) ||
+            target.contains("Speed Dial", ignoreCase = true) ||
+            target.contains("Default SIM", ignoreCase = true) ||
+            target.contains("Calling Accounts", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_show_carrier_in_recents)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_speed_dial)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_default_sim)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_calling_accounts)) -> 0
+
+            target.contains("Country Code", ignoreCase = true) ||
+            target.contains("T9", ignoreCase = true) ||
+            target.contains("Auto-Paste", ignoreCase = true) ||
+            target.contains("Clipboard", ignoreCase = true) ||
+            target.contains("Proximity", ignoreCase = true) ||
+            target.contains("Speaker", ignoreCase = true) ||
+            target.contains("Incoming", ignoreCase = true) ||
+            target.contains("Fullscreen", ignoreCase = true) ||
+            target.contains("Answer", ignoreCase = true) ||
+            target.contains("Pocket", ignoreCase = true) ||
+            target.contains("Log Limit", ignoreCase = true) ||
+            target.contains("Summary", ignoreCase = true) ||
+            target.contains("Missed Call Card", ignoreCase = true) ||
+            target.contains("Bubble", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_show_country_code)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_t9_dialing)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_paste_clipboard)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_proximity_sensor)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_auto_speaker_proximity)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_incoming_ui)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_always_fullscreen)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_open_call_screen_on_answer_title)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_log_limit)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_missed_call_card_title)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_floating_call_bubble)) -> 1
+
+            target.contains("Screening", ignoreCase = true) ||
+            target.contains("Decline Unknown", ignoreCase = true) ||
+            target.contains("Decline Non", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_unknown_title)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_non_contacts_title)) -> 2
+
+            target.contains("Redial", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_auto_redial)) -> 3
+
+            target.contains("Voicemail", ignoreCase = true) ||
+            target.contains("Waiting", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_voicemail)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_waiting)) -> 4
+
+            target.contains("Background", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_default_background)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_unknown_background)) -> 5
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -335,6 +403,18 @@ fun CallAccountsScreen(
                                 onCheckedChange = {
                                     alwaysFullScreenCalls = it
                                     prefs.setBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, it)
+                                }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_open_call_screen_on_answer_title),
+                                supporting = stringResource(R.string.settings_open_call_screen_on_answer_supporting),
+                                leadingIcon = Icons.Outlined.PhoneInTalk,
+                                checked = openCallScreenOnAnswer,
+                                onCheckedChange = {
+                                    openCallScreenOnAnswer = it
+                                    prefs.setOpenCallScreenOnAnswerEnabled(it)
                                 }
                             )
                         }

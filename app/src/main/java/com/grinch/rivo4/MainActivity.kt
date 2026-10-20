@@ -2,9 +2,12 @@ package com.grinch.rivo4
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.telecom.Call
+import android.window.OnBackInvokedCallback
+import android.window.OnBackInvokedDispatcher
 import com.grinch.rivo4.controller.CallActivity
 import com.grinch.rivo4.controller.CallService
 import com.grinch.rivo4.view.components.OngoingCallTopBanner
@@ -132,10 +135,68 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 ) {
 
                 val prefs = koinInject<PreferenceManager>()
+                val settingsState by prefs.settingsChanged.collectAsState()
                 val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
                 val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
+                val predictiveBackEnabled = remember(settingsState) { prefs.isPredictiveBackEnabled() }
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
+
+                DisposableEffect(predictiveBackEnabled) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val dispatcher = onBackInvokedDispatcher
+                        if (!predictiveBackEnabled) {
+                            var isDispatching = false
+                            var callback: OnBackInvokedCallback? = null
+                            callback = OnBackInvokedCallback {
+                                if (isDispatching) return@OnBackInvokedCallback
+                                isDispatching = true
+                                try {
+                                    callback?.let { cb ->
+                                        try {
+                                            dispatcher.unregisterOnBackInvokedCallback(cb)
+                                        } catch (_: Exception) {}
+                                    }
+                                    if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+                                        onBackPressedDispatcher.onBackPressed()
+                                    } else {
+                                        moveTaskToBack(true)
+                                    }
+                                } catch (_: Exception) {
+                                    finish()
+                                } finally {
+                                    isDispatching = false
+                                    if (!prefs.isPredictiveBackEnabled()) {
+                                        callback?.let { cb ->
+                                            try {
+                                                dispatcher.registerOnBackInvokedCallback(
+                                                    OnBackInvokedDispatcher.PRIORITY_OVERLAY,
+                                                    cb
+                                                )
+                                            } catch (_: Exception) {}
+                                        }
+                                    }
+                                }
+                            }
+                            try {
+                                dispatcher.registerOnBackInvokedCallback(
+                                    OnBackInvokedDispatcher.PRIORITY_OVERLAY,
+                                    callback
+                                )
+                            } catch (_: Exception) {}
+
+                            onDispose {
+                                try {
+                                    dispatcher.unregisterOnBackInvokedCallback(callback)
+                                } catch (_: Exception) {}
+                            }
+                        } else {
+                            onDispose {}
+                        }
+                    } else {
+                        onDispose {}
+                    }
+                }
 
                 val currentCallSession by CallService.currentCallSession.collectAsState()
                 val isCallOngoing = currentCallSession != null &&
@@ -205,7 +266,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                             DestinationsNavHost(
                                 navGraph = NavGraphs.root,
                                 navController = navController,
-                                defaultTransitions = getAppTransition(transitionStyle)
+                                defaultTransitions = getAppTransition(transitionStyle, predictiveBackEnabled)
                             )
 
                         var showRatePrompt by remember { mutableStateOf(false) }

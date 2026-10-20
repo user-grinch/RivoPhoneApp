@@ -44,6 +44,8 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.util.formatDateHeader
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -521,9 +523,9 @@ fun CallLogFullContent(
             val map = mutableMapOf<String, Contact>()
             for (c in allContacts) {
                 for (p in c.phoneNumbers) {
-                    val norm = normalizePhoneNumber(p)
-                    val key = if (norm.length >= 10) norm.takeLast(10) else norm
-                    if (key.isNotEmpty()) map[key] = c
+                    ContactUtils.getLookupKeys(p).forEach { key ->
+                        map.putIfAbsent(key, c)
+                    }
                 }
             }
             map
@@ -552,9 +554,15 @@ fun CallLogFullContent(
         val contactsByLogId = remember(filteredLogs, contactsById, contactsByNumber) {
             filteredLogs.associate { lg ->
                 val matched = lg.contactId?.let { contactsById[it] } ?: run {
-                    val norm = normalizePhoneNumber(lg.number)
-                    val key = if (norm.length >= 10) norm.takeLast(10) else norm
-                    if (key.isNotEmpty()) contactsByNumber[key] else null
+                    var match: Contact? = null
+                    for (k in ContactUtils.getLookupKeys(lg.number)) {
+                        val c = contactsByNumber[k]
+                        if (c != null) {
+                            match = c
+                            break
+                        }
+                    }
+                    match ?: allContacts.find { c -> c.phoneNumbers.any { areNumbersEqual(it, lg.number) } }
                 }
                 lg.id to matched
             }

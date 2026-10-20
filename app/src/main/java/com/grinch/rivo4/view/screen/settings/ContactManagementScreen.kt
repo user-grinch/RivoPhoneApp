@@ -41,6 +41,7 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.view.components.*
@@ -52,6 +53,7 @@ import com.ramcosta.composedestinations.generated.destinations.TrashContactsScre
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinActivityViewModel
@@ -86,6 +88,36 @@ fun ContactManagementScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Duplicate", ignoreCase = true) ||
+            target.contains("Merge", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.contact_management_duplicates_title)) -> 1
+
+            target.contains("Move", ignoreCase = true) ||
+            target.contains("Storage", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.contact_management_move_title)) -> 2
+
+            target.contains("Standardize", ignoreCase = true) ||
+            target.contains("E.164", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.contact_management_standardize_numbers)) -> 3
+
+            target.contains("Card", ignoreCase = true) ||
+            target.contains("Icon", ignoreCase = true) ||
+            target.contains("Trash", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_contact_management_card)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_contacts_launcher_icon)) -> 4
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
 
     var showMergeAllDialog by remember { mutableStateOf(false) }
     var showStandardizeConfirm by remember { mutableStateOf(false) }

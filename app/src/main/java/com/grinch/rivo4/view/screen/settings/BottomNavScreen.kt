@@ -4,9 +4,13 @@ import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.*
@@ -63,6 +67,9 @@ fun BottomNavScreen(
     var mergeFavorites by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true))
     }
+    var predictiveBackEnabled by remember(settingsState) {
+        mutableStateOf(prefs.isPredictiveBackEnabled())
+    }
 
     val visibleTabs = order.filter { !hidden.contains(it) }
 
@@ -82,6 +89,30 @@ fun BottomNavScreen(
         persist(mutable, hidden)
     }
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
+        if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
+        val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
+        val targetIndex = when {
+            target.contains("Style", ignoreCase = true) ||
+            target.contains("Roundness", ignoreCase = true) ||
+            target.contains("Icon-Only", ignoreCase = true) -> 0
+
+            target.contains("Button", ignoreCase = true) ||
+            target.contains("Tab", ignoreCase = true) ||
+            target.contains("Start Screen", ignoreCase = true) ||
+            target.contains("Favorites", ignoreCase = true) ||
+            target.contains("Predictive", ignoreCase = true) -> 1
+
+            else -> -1
+        }
+        if (targetIndex >= 0) {
+            delay(150L)
+            listState.animateScrollToItem(targetIndex)
+        }
+    }
+
     Scaffold(
         topBar = {
             MenuTopAppBar(
@@ -92,6 +123,7 @@ fun BottomNavScreen(
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
@@ -331,6 +363,18 @@ fun BottomNavScreen(
                             onCheckedChange = {
                                 mergeFavorites = it
                                 prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSwitchListItem(
+                            headline = stringResource(R.string.settings_predictive_back_title),
+                            supporting = stringResource(R.string.settings_predictive_back_supporting),
+                            leadingIcon = Icons.AutoMirrored.Outlined.ArrowBack,
+                            checked = predictiveBackEnabled,
+                            onCheckedChange = {
+                                predictiveBackEnabled = it
+                                prefs.setPredictiveBackEnabled(it)
                             }
                         )
                     }

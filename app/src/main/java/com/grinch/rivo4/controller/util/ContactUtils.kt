@@ -193,4 +193,26 @@ object ContactUtils {
             trimmed
         }
     }
+
+    fun getLookupKeys(number: String): List<String> {
+        val digitsOnly = number.filter { it.isDigit() }
+        if (digitsOnly.length < 3) {
+            return if (digitsOnly.isNotEmpty()) listOf(digitsOnly) else emptyList()
+        }
+        val keys = mutableListOf<String>()
+        keys.add(digitsOnly)
+        val trimmedLeadingZero = digitsOnly.trimStart('0')
+        if (trimmedLeadingZero.isNotEmpty() && trimmedLeadingZero != digitsOnly) {
+            keys.add(trimmedLeadingZero)
+        }
+        for (len in listOf(7, 8, 9, 10)) {
+            if (digitsOnly.length >= len) {
+                keys.add(digitsOnly.takeLast(len))
+            }
+            if (trimmedLeadingZero.length >= len) {
+                keys.add(trimmedLeadingZero.takeLast(len))
+            }
+        }
+        return keys.distinct()
+    }
 }

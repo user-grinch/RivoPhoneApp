@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen
+import android.widget.Toast
 import com.grinch.rivo4.view.components.RivoTopBarIconButton
 import androidx.compose.material.icons.automirrored.filled.CallMissed
 
@@ -1114,11 +1115,17 @@ fun ContactDetailsScreen(
                                 icon = Icons.Outlined.EditNote
                             ) {
                                 item {
+                                    val notesText = fullContact!!.notes!!
                                     RivoListItem(
-                                        headline = fullContact!!.notes!!,
+                                        headline = notesText,
                                         leadingIcon = Icons.AutoMirrored.Filled.Notes,
                                         isCompact = true,
-                                        onClick = {}
+                                        headlineMaxLines = Int.MAX_VALUE,
+                                        onClick = {},
+                                        onLongClick = {
+                                            clipboardManager.setText(AnnotatedString(notesText))
+                                            Toast.makeText(context, context.getString(R.string.imei_copied), Toast.LENGTH_SHORT).show()
+                                        }
                                     )
                                 }
                             }
