@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
+    <string name="content_desc_select_option">Opció kiválasztása</string>
+    <string name="label_mobile">Mobil</string>
+    <string name="label_email">E-mail</string>
+    <string name="label_address">Cím</string>
     <!-- Onboarding -->
+    <string name="onboarding_get_started">Kezdés</string>
+    <string name="onboarding_page3_title">Neked készült</string>
     <!-- Permission Popup -->
     <!-- Patreon support prompt (MainActivity) -->
     <!-- Disable ads warning dialog -->
     <!-- Default dialer prompt -->
     <!-- Top bar / bottom navigation -->
     <!-- Recents / Call log -->
+    <string name="recents_permission_title">Híváslista</string>
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_clear_favorite">Kedvenc törlése</string>
+    <string name="contact_add_to_existing_desc">Szám hozzáadása meglévő névjegyhez</string>
+    <string name="contact_remove_from_device">Névjegy eltávolítása az eszközről</string>
+    <string name="contact_delete_dialog_message">Biztos, hogy törölni szeretnéd ezt a névjegyet? Ez a művelet nem vonható vissza.</string>
     <!-- Contact edit -->
+    <string name="contact_edit_save_to_account">Mentés fiókba</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
     <!-- Settings > root -->
+    <string name="settings_sound_vibration_headline">Hang &amp; rezgés</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <!-- Settings > Call accounts -->
@@ -65,4 +79,6 @@
     <!-- Multi-call & Conference Management -->
     <!-- Carrier in Recents -->
     <!-- Standardized Phone Number Formatting & Country Code -->
+    <!-- Avatar Cropping -->
+    <!-- Floating Call Bubble -->
 </resources>
