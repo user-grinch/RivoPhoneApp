@@ -238,4 +238,7 @@
     <string name="settings_floating_call_bubble_supporting">Laat een sleepbare bubbel zien met oproepbediening wanneer het oproepscherm wordt verlaten</string>
     <string name="floating_bubble_overlay_permission_desc">Weergeven over andere apps is vereist om de zwevende oproepbubbel te tonen</string>
     <string name="floating_bubble_permission_required_toast">Geef toe \"Weergeven over andere apps\" om de zwevende oproepbubbel te gebruiken</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

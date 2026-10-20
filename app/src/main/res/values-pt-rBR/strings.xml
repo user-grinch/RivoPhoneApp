@@ -240,4 +240,7 @@
     <string name="settings_floating_call_bubble_supporting">Mostrar bolha arrastável com controles de chamadas quando sair da tela de chamada</string>
     <string name="floating_bubble_overlay_permission_desc">Exibir sobre outros apps é necessária permissão para mostrar a bolha de chamadas flutuante</string>
     <string name="floating_bubble_permission_required_toast">Por favor, conceda \"Exibir sobre outros aplicativos\" para usar a bolha de chamada flutuante</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

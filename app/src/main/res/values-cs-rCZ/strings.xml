@@ -241,4 +241,7 @@
     <string name="settings_floating_call_bubble_supporting">Zobrazit přetaženou bublinu s ovládáním volání při opuštění obrazovky hovoru</string>
     <string name="floating_bubble_overlay_permission_desc">Zobrazit oprávnění ostatních aplikací pro zobrazení bubliny plovoucího hovoru</string>
     <string name="floating_bubble_permission_required_toast">Pro použití bubliny plovoucího hovoru udělte prosím \"Zobrazit přes ostatní aplikace\"</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

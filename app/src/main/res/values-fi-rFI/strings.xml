@@ -240,4 +240,7 @@
     <string name="settings_floating_call_bubble_supporting">Näytä vedettävä kupla puhelun ohjaimilla, kun poistuu puhelunäytöstä</string>
     <string name="floating_bubble_overlay_permission_desc">Näyttö muiden sovellusten päällä vaaditaan näyttämään kelluva puhelukupla</string>
     <string name="floating_bubble_permission_required_toast">Anna \"Näytä muiden sovellusten päällä\" käyttääksesi kelluvaa kuplaa</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

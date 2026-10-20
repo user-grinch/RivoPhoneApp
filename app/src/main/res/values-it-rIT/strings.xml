@@ -241,4 +241,7 @@
     <string name="settings_floating_call_bubble_supporting">Mostra una bolla trascinabile con i controlli delle chiamate quando esci dalla schermata di chiamata</string>
     <string name="floating_bubble_overlay_permission_desc">Per mostrare la bolla di chiamata fluttuante è necessaria l\'autorizzazione di visualizzazione su altre applicazioni</string>
     <string name="floating_bubble_permission_required_toast">Si prega di concedere \"Display over other apps\" per utilizzare la bolla di chiamata fluttuante</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

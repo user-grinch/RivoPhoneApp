@@ -241,4 +241,7 @@
     <string name="settings_floating_call_bubble_supporting">Visa en dragbar bubbla med samtalskontroller när du lämnar skärmen för samtal</string>
     <string name="floating_bubble_overlay_permission_desc">Visa över andra appar tillstånd krävs för att visa den flytande samtalsbubblan</string>
     <string name="floating_bubble_permission_required_toast">Vänligen bevilja \"Visa över andra appar\" för att använda den flytande samtalsbubblan</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

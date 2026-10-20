@@ -239,4 +239,7 @@
     <string name="settings_floating_call_bubble_supporting">Vis en dragbar boble med samtale-kontroller når du forlater samtale skjermen</string>
     <string name="floating_bubble_overlay_permission_desc">Vise over andre apper tillatelse er nødvendig for å vise den flytende samtale-boblen</string>
     <string name="floating_bubble_permission_required_toast">Vennligst gi \"Vis over andre apper\" for å bruke den flytende samtalebopperen</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>
