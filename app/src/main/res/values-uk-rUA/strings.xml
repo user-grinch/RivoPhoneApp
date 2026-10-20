@@ -230,4 +230,7 @@
     <string name="settings_floating_call_bubble_supporting">Показувати бульбашку, що перетягується, з елементами керування викликами, коли виходить з екрану виклику</string>
     <string name="floating_bubble_overlay_permission_desc">Щоб показати плаваючий міхур викликів потрібен поверх інших додатків</string>
     <string name="floating_bubble_permission_required_toast">Будь ласка, надайте \"Показувати поверх інших програм\", щоб використовувати плаваючий міхур викликів</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

@@ -390,4 +390,7 @@
     <string name="settings_floating_call_bubble_supporting">离开通话屏幕时显示可拖动的气泡和通话控制</string>
     <string name="floating_bubble_overlay_permission_desc">显示浮动通话气泡需要其他应用的权限</string>
     <string name="floating_bubble_permission_required_toast">请授予\"在其他应用上显示\"以使用浮动通话气泡\"</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

@@ -233,4 +233,7 @@
     <string name="settings_floating_call_bubble_supporting">Εμφάνιση μιας φυσαλίδας με στοιχεία ελέγχου κλήσεων κατά την έξοδο από την οθόνη κλήσεων</string>
     <string name="floating_bubble_overlay_permission_desc">Απαιτείται άδεια εμφάνισης πάνω σε άλλες εφαρμογές για την εμφάνιση της κυμαινόμενης φούσκας κλήσεων</string>
     <string name="floating_bubble_permission_required_toast">Παρακαλώ παραχωρήστε την επιλογή \"Εμφάνιση πάνω από άλλες εφαρμογές\" για να χρησιμοποιήσετε την κυμαινόμενη φούσκα κλήσεων</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

@@ -234,4 +234,7 @@
     <string name="settings_floating_call_bubble_supporting">通話画面を離れたときにドラッグ可能なバブルを表示する</string>
     <string name="floating_bubble_overlay_permission_desc">フローティング通話バブルを表示するには他のアプリの権限が必要です</string>
     <string name="floating_bubble_permission_required_toast">フローティング通話バブルを使用するには「他のアプリに重ねて表示」を許可してください</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

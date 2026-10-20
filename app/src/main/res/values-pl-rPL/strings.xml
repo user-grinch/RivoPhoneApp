@@ -987,4 +987,7 @@
     <string name="settings_floating_call_bubble_supporting">Pokaż przeciągającą się bańkę z kontrolą połączeń podczas opuszczania ekranu połączenia</string>
     <string name="floating_bubble_overlay_permission_desc">Wyświetlaj nad innymi aplikacjami uprawnienie do wyświetlania pływającej bańki połączeń</string>
     <string name="floating_bubble_permission_required_toast">Udziel \"Wyświetl nad innymi aplikacjami\", aby użyć pływającej bańki połączeń</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

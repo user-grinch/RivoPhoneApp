@@ -244,6 +244,8 @@
     <string name="backup_contacts_import_success">Contacts importés avec succès</string>
     <string name="backup_call_logs_export_success">Journaux d’appels exportés avec succès</string>
     <string name="backup_call_logs_import_success">Journaux d’appels importés avec succès</string>
+    <string name="backup_settings_export_success">Paramètres de l\'application exportés avec succès</string>
+    <string name="backup_settings_import_success">Paramètres de l\'application restaurés avec succès</string>
     <string name="backup_export_failed">Échec de l’exportation : %1$s</string>
     <string name="backup_import_failed">Échec de l’importation : %1$s</string>
     <!-- Settings > root -->
@@ -436,6 +438,9 @@
     <string name="settings_backup_export_logs_supporting">Enregistrer l’historique dans un fichier JSON</string>
     <string name="settings_backup_import_logs">Importer les journaux d’appels</string>
     <string name="settings_backup_import_logs_supporting">Restaurer l’historique depuis un fichier JSON</string>
+    <string name="settings_backup_app_settings_header">Paramètres de l\'application &amp; Préférences</string>
+    <string name="settings_backup_export_settings">Exporter les paramètres de l\'application</string>
+    <string name="settings_backup_export_settings_supporting">Sauvegarder les thèmes, les styles du clavier numérique et les configurations en JSON</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Gérer les contacts</string>
     <string name="settings_manage_standardizing_title">Normalisation des numéros</string>
@@ -981,4 +986,7 @@
     <string name="settings_floating_call_bubble_supporting">Afficher une bulle déplaçable avec les contrôles d\'appel lorsque vous quittez l\'écran d\'appel</string>
     <string name="floating_bubble_overlay_permission_desc">L\'affichage au-dessus des autres applications est nécessaire pour afficher la bulle d\'appel flottant</string>
     <string name="floating_bubble_permission_required_toast">Veuillez accorder \"Afficher sur les autres applications\" pour utiliser la bulle d\'appel flottant</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

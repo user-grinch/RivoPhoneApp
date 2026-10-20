@@ -241,4 +241,7 @@
     <string name="settings_floating_call_bubble_supporting">Vis en trækbar boble med opkaldskontroller, når du forlader opkaldsskærmen</string>
     <string name="floating_bubble_overlay_permission_desc">Vis over andre apps tilladelse kræves for at vise den flydende opkaldsboble</string>
     <string name="floating_bubble_permission_required_toast">Tildel venligst \"Vis over andre apps\" for at bruge den flydende opkaldsboble</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

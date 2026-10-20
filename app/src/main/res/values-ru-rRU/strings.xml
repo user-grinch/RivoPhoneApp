@@ -987,4 +987,7 @@
     <string name="settings_floating_call_bubble_supporting">Показывать перетаскиваемый пузырь с функцией управления вызовом при выходе из экрана вызова</string>
     <string name="floating_bubble_overlay_permission_desc">Для отображения пузырьков всплывающих вызовов требуется разрешение поверх других приложений</string>
     <string name="floating_bubble_permission_required_toast">Пожалуйста, предоставьте \"Отображать поверх других приложений\" для использования плавающего пузыря вызова</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

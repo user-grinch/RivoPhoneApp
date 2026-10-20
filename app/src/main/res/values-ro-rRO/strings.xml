@@ -25,6 +25,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Setări aplicație exportate cu succes</string>
+    <string name="backup_settings_import_success">Setările aplicației restaurate cu succes</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -44,6 +46,9 @@
     <string name="settings_call_dialpad_size_large">Periculos</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Setări aplicație &amp; Preferințe</string>
+    <string name="settings_backup_export_settings">Exportă setările aplicației</string>
+    <string name="settings_backup_export_settings_supporting">Creaţi o copie de rezervă a temelor, stilurilor de tastatură şi configuraţiilor JSON</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Arată anteturile secţiunilor alfabetice</string>
     <string name="settings_contact_section_headers_supporting">Afișează antetele literelor (A, B, C) separând grupurile de contacte din listă</string>
@@ -242,4 +247,7 @@
     <string name="settings_floating_call_bubble_supporting">Arată o bulă glisabilă cu controale de apel când părăsește ecranul de apel</string>
     <string name="floating_bubble_overlay_permission_desc">Afișarea peste alte aplicații este necesară pentru a afișa bula de apel plutitoare</string>
     <string name="floating_bubble_permission_required_toast">Vă rugăm să acordați \"Afișează peste alte aplicații\" pentru a utiliza bula plutitoare de apel</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>

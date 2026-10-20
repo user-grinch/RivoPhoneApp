@@ -981,4 +981,7 @@
     <string name="settings_floating_call_bubble_supporting">Verschiebbares Fenster mit Anrufsteuerung anzeigen, wenn der Anrufbildschirm verlassen wird</string>
     <string name="floating_bubble_overlay_permission_desc">Berechtigung zur Anzeige über anderen Apps ist erforderlich, um schwebende Anruf-Fenster anzuzeigen</string>
     <string name="floating_bubble_permission_required_toast">Bitte gewähren Sie die Berechtigung \"Über anderen Apps anzeigen\", um das schwebende Anruf-Fenster zu verwenden</string>
+    <!-- Additional Call Log & Reminder Strings -->
+    <!-- Predictive Back Gestures -->
+    <!-- Open Call Screen on Answer -->
 </resources>
