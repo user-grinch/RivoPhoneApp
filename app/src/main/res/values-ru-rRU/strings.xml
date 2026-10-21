@@ -248,6 +248,8 @@
     <string name="backup_contacts_import_success">Контакты успешно импортированы</string>
     <string name="backup_call_logs_export_success">Журналы вызовов успешно экспортированы</string>
     <string name="backup_call_logs_import_success">Журналы вызовов успешно импортированы</string>
+    <string name="backup_settings_export_success">Настройки приложения успешно экспортированы</string>
+    <string name="backup_settings_import_success">Настройки приложения успешно восстановлены</string>
     <string name="backup_export_failed">Ошибка экспорта: %1$s</string>
     <string name="backup_import_failed">Ошибка импорта: %1$s</string>
     <!-- Settings > root -->
@@ -440,6 +442,14 @@
     <string name="settings_backup_export_logs_supporting">Сохранить историю в JSON-файл</string>
     <string name="settings_backup_import_logs">Импорт журнала вызовов</string>
     <string name="settings_backup_import_logs_supporting">Восстановить историю из JSON-файла</string>
+    <string name="settings_backup_app_settings_header">Настройки приложения &amp; Настройки</string>
+    <string name="settings_backup_export_settings">Экспорт настроек приложения</string>
+    <string name="settings_backup_export_settings_supporting">Резервное копирование тем, стилей клавиатуры и конфигураций в JSON</string>
+    <string name="settings_backup_import_settings">Восстановить настройки приложения</string>
+    <string name="settings_backup_import_settings_supporting">Восстановить все конфигурации приложения из файла резервной копии JSON</string>
+    <string name="settings_backup_restore_confirm_title">Восстановить настройки приложения</string>
+    <string name="settings_backup_restore_confirm_message">Вы уверены, что хотите восстановить настройки приложения? Ваши текущие настройки и настройки будут обновлены с помощью настроек из этого файла резервной копии.</string>
+    <string name="settings_backup_restore_confirm_action">Восстановить</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Управление контактами</string>
     <string name="settings_manage_standardizing_title">Стандартизация номеров</string>
@@ -988,6 +998,15 @@
     <string name="floating_bubble_overlay_permission_desc">Для отображения пузырьков всплывающих вызовов требуется разрешение поверх других приложений</string>
     <string name="floating_bubble_permission_required_toast">Пожалуйста, предоставьте \"Отображать поверх других приложений\" для использования плавающего пузыря вызова</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Вы уверены, что хотите удалить все журналы вызовов для этого контакта? Это действие нельзя отменить.</string>
+    <string name="content_desc_clear_history">Очистить историю</string>
+    <string name="reminder_custom_preset">Пользовательское…</string>
+    <string name="reminder_pick_date_time">Выберите дату &amp; Время</string>
+    <string name="action_clear_all">Очистить все</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Предиктивные задние жесты</string>
+    <string name="settings_predictive_back_supporting">Интерактивные анимации свайпа и предпросмотра при навигации назад</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Открыть экран вызова при ответе</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Открыть весь экран вызова при ответе из уведомления heads-up</string>
 </resources>

@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">App indstillinger eksporteret succesfuldt</string>
+    <string name="backup_settings_import_success">App-indstillinger gendannet succesfuldt</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Rummelig</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Appindstillinger &amp; Præferencer</string>
+    <string name="settings_backup_export_settings">Eksporter App-indstillinger</string>
+    <string name="settings_backup_export_settings_supporting">Sikkerhedskopiere temaer, dialpad stilarter og konfigurationer til JSON</string>
+    <string name="settings_backup_import_settings">Gendan App-indstillinger</string>
+    <string name="settings_backup_import_settings_supporting">Gendan alle app-konfigurationer fra en JSON backup-fil</string>
+    <string name="settings_backup_restore_confirm_title">Gendan App-indstillinger</string>
+    <string name="settings_backup_restore_confirm_message">Er du sikker på, at du vil gendanne app-indstillinger? Dine aktuelle præferencer og tilpasninger vil blive opdateret med indstillingerne fra denne backup-fil.</string>
+    <string name="settings_backup_restore_confirm_action">Gendan</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Vis alfabetisk sektionsoverskrifter</string>
     <string name="settings_contact_section_headers_supporting">Vis brevoverskrifter (A, B, C) for at adskille kontaktgrupper i listen</string>
@@ -242,6 +252,15 @@
     <string name="floating_bubble_overlay_permission_desc">Vis over andre apps tilladelse kræves for at vise den flydende opkaldsboble</string>
     <string name="floating_bubble_permission_required_toast">Tildel venligst \"Vis over andre apps\" for at bruge den flydende opkaldsboble</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Er du sikker på, at du vil slette alle opkaldshistorik for denne kontakt? Denne handling kan ikke fortrydes.</string>
+    <string name="content_desc_clear_history">Ryd historik</string>
+    <string name="reminder_custom_preset">Tilpasset…</string>
+    <string name="reminder_pick_date_time">Vælg Dato &amp; Tid</string>
+    <string name="action_clear_all">Ryd Alle</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Predictive Back Gestures</string>
+    <string name="settings_predictive_back_supporting">Interaktiv swipe-to-preview animationer, når du navigerer tilbage</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Åbn opkaldsskærm ved svar</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Åbn fuld opkaldsskærm, når du besvarer fra heads-up notifikation</string>
 </resources>

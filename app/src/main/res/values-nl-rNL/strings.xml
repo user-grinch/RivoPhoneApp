@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">App instellingen succesvol geëxporteerd</string>
+    <string name="backup_settings_import_success">App-instellingen succesvol hersteld</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Ruime</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">App-instellingen &amp; Voorkeuren</string>
+    <string name="settings_backup_export_settings">App instellingen exporteren</string>
+    <string name="settings_backup_export_settings_supporting">Maak een backup van thema\'s, telefoonstijlen en configuraties naar JSON</string>
+    <string name="settings_backup_import_settings">Herstel App Instellingen</string>
+    <string name="settings_backup_import_settings_supporting">Alle app configuraties herstellen vanuit een JSON backup bestand</string>
+    <string name="settings_backup_restore_confirm_title">Herstel App Instellingen</string>
+    <string name="settings_backup_restore_confirm_message">Weet u zeker dat u de app instellingen wilt herstellen? Uw huidige voorkeuren en aanpassingen zullen worden bijgewerkt met de instellingen van dit back-upbestand.</string>
+    <string name="settings_backup_restore_confirm_action">Herstellen</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Toon alfabetische sectie-headers</string>
     <string name="settings_contact_section_headers_supporting">Toon letter headers (A, B, C) scheidende contactgroepen in de lijst</string>
@@ -239,6 +249,15 @@
     <string name="floating_bubble_overlay_permission_desc">Weergeven over andere apps is vereist om de zwevende oproepbubbel te tonen</string>
     <string name="floating_bubble_permission_required_toast">Geef toe \"Weergeven over andere apps\" om de zwevende oproepbubbel te gebruiken</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Weet u zeker dat u alle oproepgeschiedenis van deze contactpersoon wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</string>
+    <string name="content_desc_clear_history">Geschiedenis verwijderen</string>
+    <string name="reminder_custom_preset">Aangepast…</string>
+    <string name="reminder_pick_date_time">Pick Datum &amp; Tijd</string>
+    <string name="action_clear_all">Alles wissen</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Voorspelde Terug Gebaren</string>
+    <string name="settings_predictive_back_supporting">Interactief vegen-naar-preview animaties bij terugnavigeren</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Oproepscherm openen bij antwoord</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Volledig gespreksscherm openen bij antwoorden op een heads-up melding</string>
 </resources>

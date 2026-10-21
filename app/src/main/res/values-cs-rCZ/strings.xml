@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Nastavení aplikace bylo úspěšně exportováno</string>
+    <string name="backup_settings_import_success">Nastavení aplikace bylo úspěšně obnoveno</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Prostor</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Nastavení aplikace &amp; Předvolby</string>
+    <string name="settings_backup_export_settings">Exportovat nastavení aplikace</string>
+    <string name="settings_backup_export_settings_supporting">Zálohovat motivy, styl číselníku a konfigurace na JSON</string>
+    <string name="settings_backup_import_settings">Obnovit nastavení aplikace</string>
+    <string name="settings_backup_import_settings_supporting">Obnovit všechny konfigurace aplikace ze záložního souboru JSON</string>
+    <string name="settings_backup_restore_confirm_title">Obnovit nastavení aplikace</string>
+    <string name="settings_backup_restore_confirm_message">Jste si jisti, že chcete obnovit nastavení aplikací? Vaše aktuální nastavení a přizpůsobení budou aktualizovány v nastavení z tohoto záložního souboru.</string>
+    <string name="settings_backup_restore_confirm_action">Obnovit</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Zobrazit abecední záhlaví sekcí</string>
     <string name="settings_contact_section_headers_supporting">Zobrazit záhlaví písmen (A, B, C) oddělující skupiny kontaktů v seznamu</string>
@@ -242,6 +252,15 @@
     <string name="floating_bubble_overlay_permission_desc">Zobrazit oprávnění ostatních aplikací pro zobrazení bubliny plovoucího hovoru</string>
     <string name="floating_bubble_permission_required_toast">Pro použití bubliny plovoucího hovoru udělte prosím \"Zobrazit přes ostatní aplikace\"</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Jste si jisti, že chcete odstranit všechny záznamy volání pro tento kontakt? Tuto akci nelze vrátit zpět.</string>
+    <string name="content_desc_clear_history">Vymazat historii</string>
+    <string name="reminder_custom_preset">Vlastní…</string>
+    <string name="reminder_pick_date_time">Vybrat datum &amp; čas</string>
+    <string name="action_clear_all">Vymazat vše</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Předpovědní gesta zad</string>
+    <string name="settings_predictive_back_supporting">Interaktivní animace při přejetí zpět</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Obrazovka otevřeného volání při odpovědi</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Otevřít celou obrazovku hovoru při odpovědi z plovoucího oznámení</string>
 </resources>

@@ -177,6 +177,8 @@
     <string name="notif_via_sim">通过 %1$s</string>
     <string name="notif_active_call">通话中</string>
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">成功导出应用设置</string>
+    <string name="backup_settings_import_success">成功恢复应用设置</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -196,6 +198,14 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">应用设置 &amp;</string>
+    <string name="settings_backup_export_settings">导出应用设置</string>
+    <string name="settings_backup_export_settings_supporting">备份主题、拨号键盘样式和配置到 JSON</string>
+    <string name="settings_backup_import_settings">还原应用设置</string>
+    <string name="settings_backup_import_settings_supporting">从 JSON 备份文件恢复所有应用配置</string>
+    <string name="settings_backup_restore_confirm_title">还原应用设置</string>
+    <string name="settings_backup_restore_confirm_message">您确定要还原应用设置吗？您当前的偏好设置和自定义将从这个备份文件中更新设置。</string>
+    <string name="settings_backup_restore_confirm_action">恢复</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">显示按字母顺序排列的部分标题</string>
     <string name="settings_contact_section_headers_supporting">在列表中显示字母标题 (A, B, C) 分隔联系人组</string>
@@ -391,6 +401,14 @@
     <string name="floating_bubble_overlay_permission_desc">显示浮动通话气泡需要其他应用的权限</string>
     <string name="floating_bubble_permission_required_toast">请授予\"在其他应用上显示\"以使用浮动通话气泡\"</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">您确定要删除此联系人的所有通话记录吗？此操作不能撤消。</string>
+    <string name="content_desc_clear_history">清除历史记录</string>
+    <string name="reminder_custom_preset">自定义…</string>
+    <string name="action_clear_all">全部清除</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">预测背部手势</string>
+    <string name="settings_predictive_back_supporting">返回时交互滑动预览动画</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">在回答上打开通话屏幕</string>
+    <string name="settings_open_call_screen_on_answer_supporting">当从浮动通知中回答时打开全屏通话</string>
 </resources>

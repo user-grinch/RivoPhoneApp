@@ -244,6 +244,8 @@
     <string name="backup_contacts_import_success">Contactos importados con éxito</string>
     <string name="backup_call_logs_export_success">Registros de llamadas exportados con éxito</string>
     <string name="backup_call_logs_import_success">Registros de llamadas importados con éxito</string>
+    <string name="backup_settings_export_success">Ajustes de la aplicación exportados con éxito</string>
+    <string name="backup_settings_import_success">Ajustes de la aplicación restaurados correctamente</string>
     <string name="backup_export_failed">Error al exportar: %1$s</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
     <!-- Settings > root -->
@@ -436,6 +438,14 @@
     <string name="settings_backup_export_logs_supporting">Guardar historial en un archivo JSON</string>
     <string name="settings_backup_import_logs">Importar registros de llamadas</string>
     <string name="settings_backup_import_logs_supporting">Restaurar historial desde un archivo JSON</string>
+    <string name="settings_backup_app_settings_header">Ajustes de la aplicación &amp; Preferencias</string>
+    <string name="settings_backup_export_settings">Exportar ajustes de la aplicación</string>
+    <string name="settings_backup_export_settings_supporting">Respaldar temas, estilos de dialpad y configuraciones a JSON</string>
+    <string name="settings_backup_import_settings">Restaurar ajustes de aplicación</string>
+    <string name="settings_backup_import_settings_supporting">Restaurar todas las configuraciones de la aplicación desde un archivo JSON</string>
+    <string name="settings_backup_restore_confirm_title">Restaurar ajustes de aplicación</string>
+    <string name="settings_backup_restore_confirm_message">¿Está seguro de que desea restaurar la configuración de la aplicación? Sus preferencias y personalizaciones actuales se actualizarán con la configuración de este archivo de copia de seguridad.</string>
+    <string name="settings_backup_restore_confirm_action">Restaurar</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Administrar contactos</string>
     <string name="settings_manage_standardizing_title">Números estandarizados</string>
@@ -982,6 +992,15 @@
     <string name="floating_bubble_overlay_permission_desc">Se requiere el permiso sobre otras aplicaciones para mostrar la burbuja de llamadas flotante</string>
     <string name="floating_bubble_permission_required_toast">Por favor, concede \"Mostrar sobre otras aplicaciones\" para usar la bubuja de llamadas flotantes</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">¿Está seguro que desea eliminar todos los registros de llamadas para este contacto? Esta acción no se puede deshacer.</string>
+    <string name="content_desc_clear_history">Borrar historial</string>
+    <string name="reminder_custom_preset">… Personalizado</string>
+    <string name="reminder_pick_date_time">Escoger fecha &amp; Hora</string>
+    <string name="action_clear_all">Limpiar todo</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Gestos de espalda predecitivos</string>
+    <string name="settings_predictive_back_supporting">Animaciones interactivas de deslizar a previsualizar al navegar atrás</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Abrir pantalla de llamada en respuesta</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Abrir pantalla de llamada completa al responder desde la notificación de cabecera</string>
 </resources>

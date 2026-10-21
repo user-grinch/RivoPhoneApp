@@ -244,6 +244,8 @@
     <string name="backup_contacts_import_success">Kontakte erfolgreich importiert</string>
     <string name="backup_call_logs_export_success">Anrufliste erfolgreich exportiert</string>
     <string name="backup_call_logs_import_success">Anrufliste erfolgreich importiert</string>
+    <string name="backup_settings_export_success">App-Einstellungen erfolgreich exportiert</string>
+    <string name="backup_settings_import_success">App-Einstellungen erfolgreich wiederhergestellt</string>
     <string name="backup_export_failed">Export fehlgeschlagen: %1$s</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
     <!-- Settings > root -->
@@ -436,6 +438,14 @@
     <string name="settings_backup_export_logs_supporting">Anrufliste in JSON-Datei speichern</string>
     <string name="settings_backup_import_logs">Anrufliste importieren</string>
     <string name="settings_backup_import_logs_supporting">Anrufliste aus JSON-Datei wiederherstellen</string>
+    <string name="settings_backup_app_settings_header">App-Einstellungen &amp; Einstellungen</string>
+    <string name="settings_backup_export_settings">App-Einstellungen exportieren</string>
+    <string name="settings_backup_export_settings_supporting">Themen und Dialpad-Stile und Konfigurationen auf JSON sichern</string>
+    <string name="settings_backup_import_settings">App-Einstellungen wiederherstellen</string>
+    <string name="settings_backup_import_settings_supporting">Alle App-Konfigurationen aus einer JSON-Sicherungsdatei wiederherstellen</string>
+    <string name="settings_backup_restore_confirm_title">App-Einstellungen wiederherstellen</string>
+    <string name="settings_backup_restore_confirm_message">Sind Sie sicher, dass Sie die App-Einstellungen wiederherstellen möchten? Ihre aktuellen Einstellungen und Anpassungen werden mit den Einstellungen aus dieser Backup-Datei aktualisiert.</string>
+    <string name="settings_backup_restore_confirm_action">Wiederherstellen</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Kontakte verwalten</string>
     <string name="settings_manage_standardizing_title">Telefonnummern standardisieren</string>
@@ -982,6 +992,15 @@
     <string name="floating_bubble_overlay_permission_desc">Berechtigung zur Anzeige über anderen Apps ist erforderlich, um schwebende Anruf-Fenster anzuzeigen</string>
     <string name="floating_bubble_permission_required_toast">Bitte gewähren Sie die Berechtigung \"Über anderen Apps anzeigen\", um das schwebende Anruf-Fenster zu verwenden</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Sind Sie sicher, dass Sie alle Anruflisten für diesen Kontakt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="content_desc_clear_history">Verlauf löschen</string>
+    <string name="reminder_custom_preset">Eigene…</string>
+    <string name="reminder_pick_date_time">Datum &amp; Zeit auswählen</string>
+    <string name="action_clear_all">Alles löschen</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Prädiktive Rückengesten</string>
+    <string name="settings_predictive_back_supporting">Interaktive Animationen wischen zu Vorschau beim Zurücknavigieren</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Anrufbildschirm bei Antwort öffnen</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Öffne den gesamten Anrufbildschirm beim Beantworten von Heads-Up Benachrichtigungen</string>
 </resources>

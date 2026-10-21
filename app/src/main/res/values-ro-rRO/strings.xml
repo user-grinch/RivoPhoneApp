@@ -49,6 +49,11 @@
     <string name="settings_backup_app_settings_header">Setări aplicație &amp; Preferințe</string>
     <string name="settings_backup_export_settings">Exportă setările aplicației</string>
     <string name="settings_backup_export_settings_supporting">Creaţi o copie de rezervă a temelor, stilurilor de tastatură şi configuraţiilor JSON</string>
+    <string name="settings_backup_import_settings">Restabilește setările aplicației</string>
+    <string name="settings_backup_import_settings_supporting">Restabiliți toate configurațiile aplicației dintr-un fișier de backup JSON</string>
+    <string name="settings_backup_restore_confirm_title">Restabilește setările aplicației</string>
+    <string name="settings_backup_restore_confirm_message">Ești sigur că vrei să restaurezi setările aplicației? Preferințele actuale și personalizările vor fi actualizate cu setările acestui fișier de rezervă.</string>
+    <string name="settings_backup_restore_confirm_action">Restaurează</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Arată anteturile secţiunilor alfabetice</string>
     <string name="settings_contact_section_headers_supporting">Afișează antetele literelor (A, B, C) separând grupurile de contacte din listă</string>
@@ -248,6 +253,15 @@
     <string name="floating_bubble_overlay_permission_desc">Afișarea peste alte aplicații este necesară pentru a afișa bula de apel plutitoare</string>
     <string name="floating_bubble_permission_required_toast">Vă rugăm să acordați \"Afișează peste alte aplicații\" pentru a utiliza bula plutitoare de apel</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Sunteţi sigur că doriţi să ştergeţi toate jurnalele de apeluri pentru acest contact? Această acţiune nu poate fi anulată.</string>
+    <string name="content_desc_clear_history">Ștergeți istoricul</string>
+    <string name="reminder_custom_preset">Personalizat…</string>
+    <string name="reminder_pick_date_time">Alege data &amp; Ora</string>
+    <string name="action_clear_all">Șterge tot</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Gesturi predictive înapoi</string>
+    <string name="settings_predictive_back_supporting">Animații interactive swipe-to-preview la navigarea înapoi</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Deschide ecranul de apel la răspuns</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Deschideți ecranul de apel complet când răspundeți de la notificările heads-up</string>
 </resources>

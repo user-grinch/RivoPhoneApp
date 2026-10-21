@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Οι ρυθμίσεις εφαρμογής εξήχθησαν επιτυχώς</string>
+    <string name="backup_settings_import_success">Επιτυχής επαναφορά ρυθμίσεων εφαρμογής</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Ευρύχωρο</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Ρυθμίσεις Εφαρμογής &amp; Προτιμήσεις</string>
+    <string name="settings_backup_export_settings">Εξαγωγή Ρυθμίσεων Εφαρμογής</string>
+    <string name="settings_backup_export_settings_supporting">Δημιουργία αντιγράφων ασφαλείας για θέματα, στυλ dialpad και ρυθμίσεις για JSON</string>
+    <string name="settings_backup_import_settings">Επαναφορά Ρυθμίσεων Εφαρμογής</string>
+    <string name="settings_backup_import_settings_supporting">Επαναφορά όλων των ρυθμίσεων της εφαρμογής από ένα αντίγραφο ασφαλείας JSON</string>
+    <string name="settings_backup_restore_confirm_title">Επαναφορά Ρυθμίσεων Εφαρμογής</string>
+    <string name="settings_backup_restore_confirm_message">Είστε βέβαιοι ότι θέλετε να επαναφέρετε τις ρυθμίσεις της εφαρμογής? Οι τρέχουσες προτιμήσεις και προσαρμογές σας θα ενημερωθούν με τις ρυθμίσεις από αυτό το αρχείο αντιγράφου ασφαλείας.</string>
+    <string name="settings_backup_restore_confirm_action">Επαναφορά</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Εμφάνιση κεφαλίδων αλφαβητικής ενότητας</string>
     <string name="settings_contact_section_headers_supporting">Εμφάνιση κεφαλίδων επιστολών (A, B, C) που χωρίζουν τις ομάδες επαφών στη λίστα</string>
@@ -234,6 +244,14 @@
     <string name="floating_bubble_overlay_permission_desc">Απαιτείται άδεια εμφάνισης πάνω σε άλλες εφαρμογές για την εμφάνιση της κυμαινόμενης φούσκας κλήσεων</string>
     <string name="floating_bubble_permission_required_toast">Παρακαλώ παραχωρήστε την επιλογή \"Εμφάνιση πάνω από άλλες εφαρμογές\" για να χρησιμοποιήσετε την κυμαινόμενη φούσκα κλήσεων</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Είστε βέβαιοι ότι θέλετε να διαγράψετε όλα τα αρχεία καταγραφής κλήσεων για αυτήν την επαφή? Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
+    <string name="content_desc_clear_history">Εκκαθάριση ιστορικού</string>
+    <string name="reminder_custom_preset">Προσαρμοσμένο…</string>
+    <string name="action_clear_all">Εκκαθάριση Όλων</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Πρόβλεψη Πίσω Χειρονομίες</string>
+    <string name="settings_predictive_back_supporting">Διαδραστικά κινούμενα σχέδια swipe-to-preview κατά την πλοήγηση πίσω</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Άνοιγμα της οθόνης κλήσεων κατά την απάντηση</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Άνοιγμα πλήρους οθόνης κλήσεων κατά την απάντηση από την ειδοποίηση heads-up</string>
 </resources>

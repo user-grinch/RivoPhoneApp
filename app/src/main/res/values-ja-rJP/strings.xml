@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">アプリの設定が正常にエクスポートされました</string>
+    <string name="backup_settings_import_success">アプリの設定が正常に復元されました</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">アプリ設定 &amp; 設定</string>
+    <string name="settings_backup_export_settings">アプリの設定をエクスポート</string>
+    <string name="settings_backup_export_settings_supporting">テーマ、ダイヤルパッドのスタイル、設定をJSONにバックアップする</string>
+    <string name="settings_backup_import_settings">アプリの設定を復元</string>
+    <string name="settings_backup_import_settings_supporting">JSON バックアップ ファイルからすべてのアプリ設定を復元します</string>
+    <string name="settings_backup_restore_confirm_title">アプリの設定を復元</string>
+    <string name="settings_backup_restore_confirm_message">アプリの設定を復元してもよろしいですか？現在の設定とカスタマイズは、このバックアップファイルの設定で更新されます。</string>
+    <string name="settings_backup_restore_confirm_action">復元</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">セクションヘッダーをアルファベット順に表示</string>
     <string name="settings_contact_section_headers_supporting">リスト内の連絡先グループを分離する文字ヘッダー (A, B, C) を表示する</string>
@@ -235,6 +245,14 @@
     <string name="floating_bubble_overlay_permission_desc">フローティング通話バブルを表示するには他のアプリの権限が必要です</string>
     <string name="floating_bubble_permission_required_toast">フローティング通話バブルを使用するには「他のアプリに重ねて表示」を許可してください</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">この連絡先の通話履歴をすべて削除してもよろしいですか？この操作は元に戻せません。</string>
+    <string name="content_desc_clear_history">履歴を消去</string>
+    <string name="reminder_custom_preset">カスタム…</string>
+    <string name="action_clear_all">すべてクリア</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">予測背面ジェスチャー</string>
+    <string name="settings_predictive_back_supporting">戻るときのインタラクティブなスワイプからプレビューのアニメーション</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">応答時に通話画面を開く</string>
+    <string name="settings_open_call_screen_on_answer_supporting">heads-up 通知から応答するときに完全な通話画面を開く</string>
 </resources>
