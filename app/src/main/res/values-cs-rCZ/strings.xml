@@ -79,6 +79,7 @@
     <string name="call_recording_saved">Záznam hovoru uložen</string>
     <string name="call_recording_deleted">Nahrávání smazáno</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Přenosový videohovor</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->

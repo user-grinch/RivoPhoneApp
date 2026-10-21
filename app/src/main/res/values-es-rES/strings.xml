@@ -656,6 +656,13 @@
     <string name="video_call_title">Videollamada</string>
     <string name="video_call_chooser_with">Videollamada con</string>
     <string name="video_call_system">Videollamada del sistema</string>
+    <string name="video_call_carrier">Videollamada del operador</string>
+    <string name="video_call_carrier_desc">Videollamada móvil / VoLTE / ViLTE</string>
+    <string name="video_call_whatsapp_desc">Videollamada de WhatsApp</string>
+    <string name="video_call_meet_desc">Videollamada Google Meet</string>
+    <string name="video_call_telegram_desc">Videollamada de Telegram</string>
+    <string name="video_call_signal_desc">Videollamada de señal</string>
+    <string name="video_call_wechat_desc">Videollamada WeChat</string>
     <!-- Call screen background and active controls -->
     <string name="callbg_image_unavailable">No se pudo cargar la imagen de fondo de llamada</string>
     <!-- Incoming call controls and in-call keypad -->

@@ -656,6 +656,13 @@
     <string name="video_call_title">Appel vidéo</string>
     <string name="video_call_chooser_with">Appel vidéo avec</string>
     <string name="video_call_system">Appel vidéo du système</string>
+    <string name="video_call_carrier">Appel vidéo de l\'opérateur</string>
+    <string name="video_call_carrier_desc">Appel vidéo cellulaire / VoLTE / ViLTE</string>
+    <string name="video_call_whatsapp_desc">Appel vidéo WhatsApp</string>
+    <string name="video_call_meet_desc">Google Rencontrer un appel vidéo</string>
+    <string name="video_call_telegram_desc">Appel vidéo Telegram</string>
+    <string name="video_call_signal_desc">Signal d\'appel vidéo</string>
+    <string name="video_call_wechat_desc">Appel vidéo WeChat</string>
     <!-- Call screen background and active controls -->
     <string name="callbg_image_unavailable">Impossible de charger l\'image d\'arrière-plan de l\'appel</string>
     <!-- Incoming call controls and in-call keypad -->
