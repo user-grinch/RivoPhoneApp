@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Sovellusasetusten vienti onnistui</string>
+    <string name="backup_settings_import_success">Sovelluksen asetukset palautettu onnistuneesti</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Tilava</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Sovellusasetukset &amp; Asetukset</string>
+    <string name="settings_backup_export_settings">Vie Sovelluksen Asetukset</string>
+    <string name="settings_backup_export_settings_supporting">Varmuuskopioi teemoja, dialappityylejä ja konfiguraatioita JSON</string>
+    <string name="settings_backup_import_settings">Palauta Sovelluksen Asetukset</string>
+    <string name="settings_backup_import_settings_supporting">Palauta kaikki sovelluksen asetukset JSON varmuuskopiotiedostosta</string>
+    <string name="settings_backup_restore_confirm_title">Palauta Sovelluksen Asetukset</string>
+    <string name="settings_backup_restore_confirm_message">Oletko varma, että haluat palauttaa sovelluksen asetukset? Nykyiset asetuksesi ja mukautuksesi päivitetään tämän varmuuskopiotiedoston asetuksilla.</string>
+    <string name="settings_backup_restore_confirm_action">Palauta</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Näytä aakkosnumeeriset otsikot</string>
     <string name="settings_contact_section_headers_supporting">Näytä kirjainten otsikot (A, B, C) erottamalla yhteysryhmät luettelosta</string>
@@ -241,6 +251,15 @@
     <string name="floating_bubble_overlay_permission_desc">Näyttö muiden sovellusten päällä vaaditaan näyttämään kelluva puhelukupla</string>
     <string name="floating_bubble_permission_required_toast">Anna \"Näytä muiden sovellusten päällä\" käyttääksesi kelluvaa kuplaa</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Oletko varma, että haluat poistaa kaikki puhelulokit tälle yhteystiedolle? Tätä toimintoa ei voi perua.</string>
+    <string name="content_desc_clear_history">Tyhjennä historia</string>
+    <string name="reminder_custom_preset">Mukautettu…</string>
+    <string name="reminder_pick_date_time">Valitse Päivämäärä &amp; Aika</string>
+    <string name="action_clear_all">Tyhjennä Kaikki</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Ennustavat Selkäeleet</string>
+    <string name="settings_predictive_back_supporting">Interaktiivinen pyyhkäisy esikatseluun kun selkä navigoidaan</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Avaa puhelunäyttö vastauksessa</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Avaa koko puhelun näyttö vastattaessa heads-up ilmoituksesta</string>
 </resources>

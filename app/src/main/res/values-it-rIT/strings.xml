@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Impostazioni app esportate con successo</string>
+    <string name="backup_settings_import_success">Impostazioni app ripristinate con successo</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Spazioso</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Impostazioni App &amp; Preferenze</string>
+    <string name="settings_backup_export_settings">Esporta Impostazioni App</string>
+    <string name="settings_backup_export_settings_supporting">Backup temi, stili dialpad e configurazioni in JSON</string>
+    <string name="settings_backup_import_settings">Ripristina Impostazioni App</string>
+    <string name="settings_backup_import_settings_supporting">Ripristina tutte le configurazioni delle app da un file di backup JSON</string>
+    <string name="settings_backup_restore_confirm_title">Ripristina Impostazioni App</string>
+    <string name="settings_backup_restore_confirm_message">Sei sicuro di voler ripristinare le impostazioni dell\'app? Le tue preferenze attuali e le personalizzazioni saranno aggiornate con le impostazioni di questo file di backup.</string>
+    <string name="settings_backup_restore_confirm_action">Ripristina</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Mostra intestazioni di sezione alfabetiche</string>
     <string name="settings_contact_section_headers_supporting">Mostra intestazioni lettere (A, B, C) separando i gruppi di contatti nell\'elenco</string>
@@ -242,6 +252,15 @@
     <string name="floating_bubble_overlay_permission_desc">Per mostrare la bolla di chiamata fluttuante è necessaria l\'autorizzazione di visualizzazione su altre applicazioni</string>
     <string name="floating_bubble_permission_required_toast">Si prega di concedere \"Display over other apps\" per utilizzare la bolla di chiamata fluttuante</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Eliminare veramente tutti i registri delle chiamate di questo contatto? Questa azione non può essere annullata.</string>
+    <string name="content_desc_clear_history">Cancella cronologia</string>
+    <string name="reminder_custom_preset">Personalizzato…</string>
+    <string name="reminder_pick_date_time">Scegli Data &amp; Ora</string>
+    <string name="action_clear_all">Cancella Tutto</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Gesti Indietro Predictive</string>
+    <string name="settings_predictive_back_supporting">Animazioni interattive di swipe-to-preview quando si naviga indietro</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Apri schermo di chiamata in risposta</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Apri lo schermo completo della chiamata quando rispondi dalla notifica heads-up</string>
 </resources>

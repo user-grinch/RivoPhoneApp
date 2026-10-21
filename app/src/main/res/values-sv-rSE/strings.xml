@@ -24,6 +24,8 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_settings_export_success">Appinställningar exporterades framgångsrikt</string>
+    <string name="backup_settings_import_success">Appinställningarna har återställts</string>
     <!-- Settings > root -->
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
@@ -43,6 +45,14 @@
     <string name="settings_call_dialpad_size_large">Rymlig</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_app_settings_header">Appinställningar &amp; Inställningar</string>
+    <string name="settings_backup_export_settings">Exportera appinställningar</string>
+    <string name="settings_backup_export_settings_supporting">Säkerhetskopiera teman, knappsatsen stilar och konfigurationer till JSON</string>
+    <string name="settings_backup_import_settings">Återställ appinställningar</string>
+    <string name="settings_backup_import_settings_supporting">Återställ alla appkonfigurationer från en JSON-säkerhetskopieringsfil</string>
+    <string name="settings_backup_restore_confirm_title">Återställ appinställningar</string>
+    <string name="settings_backup_restore_confirm_message">Är du säker på att du vill återställa appinställningar? Dina nuvarande inställningar och anpassningar kommer att uppdateras med inställningarna från denna säkerhetskopieringsfil.</string>
+    <string name="settings_backup_restore_confirm_action">Återställ</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_contact_section_headers">Visa alfabetisk sektion rubriker</string>
     <string name="settings_contact_section_headers_supporting">Visa bokstavsrubriker (A, B, C) som separerar kontaktgrupper i listan</string>
@@ -242,6 +252,14 @@
     <string name="floating_bubble_overlay_permission_desc">Visa över andra appar tillstånd krävs för att visa den flytande samtalsbubblan</string>
     <string name="floating_bubble_permission_required_toast">Vänligen bevilja \"Visa över andra appar\" för att använda den flytande samtalsbubblan</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Är du säker på att du vill ta bort alla samtalsloggar för denna kontakt? Denna åtgärd kan inte ångras.</string>
+    <string name="content_desc_clear_history">Rensa historik</string>
+    <string name="reminder_custom_preset">Anpassad…</string>
+    <string name="action_clear_all">Rensa alla</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Förutsägande tillbaka gester</string>
+    <string name="settings_predictive_back_supporting">Interaktiva svep-till-förhandsgranska animationer när du navigerar tillbaka</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Öppna samtalsskärmen vid svar</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Öppna helskärm när du svarar från heads-up-avisering</string>
 </resources>

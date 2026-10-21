@@ -248,6 +248,8 @@
     <string name="backup_contacts_import_success">Kontakty zaimportowane pomyślnie</string>
     <string name="backup_call_logs_export_success">Rejestry połączeń wyeksportowane pomyślnie</string>
     <string name="backup_call_logs_import_success">Rejestry połączeń zaimportowane pomyślnie</string>
+    <string name="backup_settings_export_success">Ustawienia aplikacji wyeksportowane pomyślnie</string>
+    <string name="backup_settings_import_success">Ustawienia aplikacji przywrócone pomyślnie</string>
     <string name="backup_export_failed">Błąd eksportu: %1$s</string>
     <string name="backup_import_failed">Błąd importu: %1$s</string>
     <!-- Settings > root -->
@@ -440,6 +442,14 @@
     <string name="settings_backup_export_logs_supporting">Zapisuj historię do pliku JSON</string>
     <string name="settings_backup_import_logs">Importuj rejestry połączeń</string>
     <string name="settings_backup_import_logs_supporting">Przywróć historię z pliku JSON</string>
+    <string name="settings_backup_app_settings_header">Ustawienia aplikacji &amp; Ustawienia</string>
+    <string name="settings_backup_export_settings">Eksportuj ustawienia aplikacji</string>
+    <string name="settings_backup_export_settings_supporting">Kopia zapasowa motywów, klawiatury i konfiguracji do JSON</string>
+    <string name="settings_backup_import_settings">Przywróć ustawienia aplikacji</string>
+    <string name="settings_backup_import_settings_supporting">Przywróć wszystkie konfiguracje aplikacji z pliku kopii zapasowej JSON</string>
+    <string name="settings_backup_restore_confirm_title">Przywróć ustawienia aplikacji</string>
+    <string name="settings_backup_restore_confirm_message">Czy na pewno chcesz przywrócić ustawienia aplikacji? Twoje obecne ustawienia i dostosowania zostaną zaktualizowane ustawieniami z tego pliku kopii zapasowej.</string>
+    <string name="settings_backup_restore_confirm_action">Przywróć</string>
     <!-- Settings > Manage contacts -->
     <string name="settings_manage_title">Zarządzanie kontaktami</string>
     <string name="settings_manage_standardizing_title">Standaryzacja numerów</string>
@@ -988,6 +998,15 @@
     <string name="floating_bubble_overlay_permission_desc">Wyświetlaj nad innymi aplikacjami uprawnienie do wyświetlania pływającej bańki połączeń</string>
     <string name="floating_bubble_permission_required_toast">Udziel \"Wyświetl nad innymi aplikacjami\", aby użyć pływającej bańki połączeń</string>
     <!-- Additional Call Log & Reminder Strings -->
+    <string name="call_log_clear_contact_confirm">Czy na pewno chcesz usunąć wszystkie dzienniki połączeń dla tego kontaktu? Tej akcji nie można cofnąć.</string>
+    <string name="content_desc_clear_history">Wyczyść historię</string>
+    <string name="reminder_custom_preset">Własny…</string>
+    <string name="reminder_pick_date_time">Wybierz datę &amp; Czas</string>
+    <string name="action_clear_all">Wyczyść wszystko</string>
     <!-- Predictive Back Gestures -->
+    <string name="settings_predictive_back_title">Przewidywane gesty wstecz</string>
+    <string name="settings_predictive_back_supporting">Interaktywne animacje przewijania do podglądu podczas nawigacji wstecz</string>
     <!-- Open Call Screen on Answer -->
+    <string name="settings_open_call_screen_on_answer_title">Otwórz ekran połączenia po odebraniu</string>
+    <string name="settings_open_call_screen_on_answer_supporting">Otwórz pełnoekranowy ekran podczas odbierania powiadomień z Heads-up</string>
 </resources>
