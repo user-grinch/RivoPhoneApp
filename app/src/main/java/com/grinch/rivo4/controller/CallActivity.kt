@@ -229,11 +229,9 @@ class CallActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(displaySession?.connectTimeMillis) {
+                LaunchedEffect(displayCall, displaySession?.connectTimeMillis) {
                     val ct = displaySession?.connectTimeMillis ?: 0L
-                    if (ct > 0) {
-                        lastConnectTime = ct
-                    }
+                    lastConnectTime = ct
                 }
 
                 val darkTheme = isSystemInDarkTheme()

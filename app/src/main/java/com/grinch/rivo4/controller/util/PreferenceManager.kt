@@ -362,6 +362,7 @@ class PreferenceManager(context: Context) {
         const val KEY_DIALPAD_VIBRATION = "dialpad_vibration"
         const val KEY_HOLD_ZERO_FOR_PLUS = "hold_zero_for_plus"
         const val KEY_SPEED_DIAL = "speed_dial"
+        const val KEY_DEFAULT_VIDEO_APP = "default_video_call_app"
         const val KEY_T9_DIALING = "t9_dialing"
         const val KEY_PROXIMITY_SENSOR = "proximity_sensor"
         const val KEY_AUTO_SPEAKER_PROXIMITY = "auto_speaker_proximity"
@@ -658,7 +659,8 @@ class PreferenceManager(context: Context) {
             KEY_QUICK_RESPONSES to DEFAULT_QUICK_RESPONSES.joinToString("|||"),
             KEY_BOTTOM_NAV_ORDER to DEFAULT_BOTTOM_NAV_ORDER.joinToString(","),
             KEY_BOTTOM_NAV_HIDDEN to listOf(TAB_RECORDINGS).joinToString(","),
-            KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE
+            KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE,
+            KEY_DEFAULT_VIDEO_APP to ""
         )
 
         fun getKnownDefaultStringSets(): Map<String, Set<String>> = mapOf(
@@ -722,6 +724,9 @@ class PreferenceManager(context: Context) {
 
     fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, true)
     fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
+
+    fun getDefaultVideoApp(): String = getString(KEY_DEFAULT_VIDEO_APP, "") ?: ""
+    fun setDefaultVideoApp(appId: String?) = setString(KEY_DEFAULT_VIDEO_APP, appId ?: "")
 
     fun isPostCallScreenEnabled(): Boolean = getBoolean(KEY_POST_CALL_SCREEN, true)
     fun setPostCallScreenEnabled(enabled: Boolean) = setBoolean(KEY_POST_CALL_SCREEN, enabled)

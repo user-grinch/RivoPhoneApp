@@ -596,19 +596,7 @@ fun PostCallScreen(
 
 private fun initiateCall(context: Context, number: String) {
     if (number.isEmpty()) return
-    try {
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:${Uri.encode(number)}")).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        context.startActivity(intent)
-    } catch (_: Exception) {
-        try {
-            val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${Uri.encode(number)}")).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(dialIntent)
-        } catch (_: Exception) {}
-    }
+    com.grinch.rivo4.controller.util.makeCall(context, number)
 }
 
 private fun sendSms(context: Context, number: String, body: String = "") {

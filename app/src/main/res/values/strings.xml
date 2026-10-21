@@ -694,6 +694,27 @@
     <string name="video_call_title">Video Call</string>
     <string name="video_call_chooser_with">Video Call with</string>
     <string name="video_call_system">System Video Call</string>
+    <string name="video_call_carrier">Carrier Video Call</string>
+    <string name="video_call_carrier_desc">Cellular / VoLTE / ViLTE video call</string>
+    <string name="video_call_whatsapp_desc">WhatsApp video call</string>
+    <string name="video_call_meet_desc">Google Meet video call</string>
+    <string name="video_call_telegram_desc">Telegram video call</string>
+    <string name="video_call_signal_desc">Signal video call</string>
+    <string name="video_call_wechat_desc">WeChat video call</string>
+    <string name="video_call_line_desc">LINE video call</string>
+    <string name="video_call_viber_desc">Viber video call</string>
+    <string name="video_call_skype_desc">Skype video call</string>
+    <string name="video_call_imo_desc">imo video call</string>
+    <string name="video_call_zoom_desc">Zoom video meetings</string>
+    <string name="video_call_remember_choice">Remember choice for future video calls</string>
+    <string name="video_call_default_app">Default video calling app</string>
+    <string name="video_call_always_ask">Always ask</string>
+    <string name="video_call_opening_whatsapp">Opening WhatsApp for video call…</string>
+    <string name="video_call_failed">Unable to start video call</string>
+    <string name="video_call_no_number">No phone number available for video call</string>
+    <string name="video_call_switch_camera">Flip Camera</string>
+    <string name="video_call_toggle_video">Video</string>
+    <string name="video_call_incoming_video">Incoming Video Call</string>
 
     <!-- Call screen background and active controls -->
     <string name="callbg_image_unavailable">Call background image could not be loaded</string>

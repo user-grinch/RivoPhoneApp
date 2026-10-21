@@ -141,7 +141,7 @@ fun RecentScreenContent(
                 }
                 selectedEntries = emptySet()
             },
-            onAddContact = if (isUnsaved && singleSelected != null) {
+            onAddContact = if (isUnsaved) {
                 {
                     addToContactNumber = singleSelected.number
                     selectedEntries = emptySet()

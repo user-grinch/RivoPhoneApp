@@ -39,7 +39,14 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
             return
         }
 
-        // Show notification
+        // Mark reminder completed and show notification
+        if (reminderId != -1L) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    callbackReminderDao.markCompleted(reminderId)
+                } catch (_: Exception) {}
+            }
+        }
         showReminderNotification(context, reminderId, phoneNumber, contactName, note)
     }
 
@@ -65,7 +72,12 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
         }
 
         // Call Action
-        val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber")).apply {
+        val hasCallPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.CALL_PHONE
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val callAction = if (hasCallPermission) Intent.ACTION_CALL else Intent.ACTION_DIAL
+        val callIntent = Intent(callAction, Uri.fromParts("tel", phoneNumber, null)).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val callPendingIntent = PendingIntent.getActivity(

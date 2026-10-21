@@ -137,8 +137,9 @@ class CallService : InCallService() {
         if (photoUri == null) return null
         return try {
             val uri = Uri.parse(photoUri)
-            val inputStream = contentResolver.openInputStream(uri)
-            BitmapFactory.decodeStream(inputStream)
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
         } catch (e: Exception) {
             null
         }
@@ -325,7 +326,16 @@ class CallService : InCallService() {
 
         fun answerCall() {
             instance?.let { CallRecorder.prepare(it) }
-            _currentCallSession.value?.call?.answer(VideoProfile.STATE_AUDIO_ONLY)
+            val call = _currentCallSession.value?.call
+            if (call != null) {
+                val videoState = call.details?.videoState ?: VideoProfile.STATE_AUDIO_ONLY
+                val answerState = if (VideoProfile.isVideo(videoState)) videoState else VideoProfile.STATE_AUDIO_ONLY
+                try {
+                    call.answer(answerState)
+                } catch (_: Exception) {
+                    try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (_: Exception) {}
+                }
+            }
             instance?.let { service ->
                 if (service.preferenceManager.isOpenCallScreenOnAnswerEnabled()) {
                     val callIntent = Intent(service, CallActivity::class.java).apply {
@@ -355,8 +365,11 @@ class CallService : InCallService() {
             }
 
             try {
-                ringing.answer(VideoProfile.STATE_AUDIO_ONLY)
+                val videoState = ringing.details?.videoState ?: VideoProfile.STATE_AUDIO_ONLY
+                val answerState = if (VideoProfile.isVideo(videoState)) videoState else VideoProfile.STATE_AUDIO_ONLY
+                ringing.answer(answerState)
             } catch (e: Exception) {
+                try { ringing.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (_: Exception) {}
             }
         }
 
@@ -454,6 +467,16 @@ class CallService : InCallService() {
                 updateNotification(call)
             }
         }
+
+        override fun onDetailsChanged(call: Call, details: Call.Details?) {
+            super.onDetailsChanged(call, details)
+            updateCallState()
+        }
+
+        override fun onVideoCallChanged(call: Call, videoCall: InCallService.VideoCall?) {
+            super.onVideoCallChanged(call, videoCall)
+            updateCallState()
+        }
     }
 
     private fun startAutoRecordingIfEnabled(call: Call) {
@@ -518,16 +541,24 @@ class CallService : InCallService() {
             val maxAttempts = preferenceManager.getInt(PreferenceManager.KEY_REDIAL_ATTEMPTS, 3)
             val delayMs = preferenceManager.getInt(PreferenceManager.KEY_REDIAL_DELAY, 3000).toLong()
             
-            if (redialCount < maxAttempts) {
+            if (redialCount < maxAttempts && number.isNotBlank()) {
                 redialCount++
                 serviceScope.launch {
                     delay(delayMs)
-                    val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number")).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    try {
+                        val intent = Intent(Intent.ACTION_CALL, Uri.fromParts("tel", number, null)).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e("CallService", "Failed to auto-redial: ${e.message}", e)
                     }
-                    startActivity(intent)
                 }
+            } else {
+                redialCount = 0
             }
+        } else {
+            redialCount = 0
         }
 
         val wasConnected = call.details.connectTimeMillis > 0L || callStartTimes.containsKey(call)
@@ -621,22 +652,42 @@ class CallService : InCallService() {
         }
     }
 
-    private fun handleBlockedCall(call: Call, number: String) {
+    private fun handleBlockedCall(call: Call, number: String): Boolean {
         val method = preferenceManager.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0)
-
-        if (method == 0) {
-            call.reject(Call.REJECT_REASON_DECLINED)
-        }
 
         if (preferenceManager.getBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, true)) {
             showBlockedNotification(number)
+        }
+
+        return if (method == 0) {
+            try {
+                call.reject(Call.REJECT_REASON_DECLINED)
+            } catch (e: Exception) {
+                Log.w("CallService", "Failed to reject blocked call: ${e.message}")
+            }
+            true
+        } else {
+            try {
+                (getSystemService(Context.TELECOM_SERVICE) as? TelecomManager)?.silenceRinger()
+            } catch (_: Exception) {}
+            PriorityRinger.stopRinging()
+            false
         }
     }
 
     private fun showBlockedNotification(number: String) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(
+            SILENT_CHANNEL_ID,
+            getString(R.string.notif_blocked_call_title),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            setSound(null, null)
+            enableVibration(false)
+        }
+        notificationManager.createNotificationChannel(channel)
         
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, SILENT_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel)
             .setContentTitle(getString(R.string.notif_blocked_call_title))
             .setContentText(getString(R.string.notif_blocked_call_text, number))
@@ -777,31 +828,28 @@ class CallService : InCallService() {
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
         instance = this
-        redialCount = 0
         call.registerCallback(callCallback)
 
         val number = call.details.handle?.schemeSpecificPart ?: ""
-        if (isNumberBlocked(number)) {
-            handleBlockedCall(call, number)
-            return
+        val isIncomingCall = call.details.callDirection == Call.Details.DIRECTION_INCOMING || call.state == Call.STATE_RINGING
+        if (isIncomingCall && isNumberBlocked(number)) {
+            if (handleBlockedCall(call, number)) return
         }
 
         val isUnknownNumber = number.isBlank() || number == "null" || number == "-1" || number == "-2" ||
                 call.details.handlePresentation == TelecomManager.PRESENTATION_RESTRICTED ||
                 call.details.handlePresentation == TelecomManager.PRESENTATION_UNKNOWN
 
-        if (isUnknownNumber && preferenceManager.isAutoDeclineUnknownEnabled()) {
-            handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })
-            return
+        if (isIncomingCall && isUnknownNumber && preferenceManager.isAutoDeclineUnknownEnabled()) {
+            if (handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })) return
         }
 
-        if (preferenceManager.isAutoDeclineNonContactsEnabled()) {
+        if (isIncomingCall && preferenceManager.isAutoDeclineNonContactsEnabled()) {
             val contact = if (number.isNotBlank()) {
                 try { contactsRepository.getContactByNumber(number) } catch (e: Exception) { null }
             } else null
             if (contact == null) {
-                handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })
-                return
+                if (handleBlockedCall(call, number.ifBlank { getString(R.string.label_unknown_number) })) return
             }
         }
 

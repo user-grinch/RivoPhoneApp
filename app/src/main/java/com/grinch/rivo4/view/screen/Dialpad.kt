@@ -236,11 +236,13 @@ fun DialPadScreen(
         textFieldValue = TextFieldValue(newText, newSelection)
     }
 
-    val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
+    val toneGenerator = remember {
+        runCatching { ToneGenerator(AudioManager.STREAM_DTMF, 80) }.getOrNull()
+    }
 
     DisposableEffect(Unit) {
         onDispose {
-            toneGenerator.release()
+            toneGenerator?.release()
         }
     }
 
@@ -315,7 +317,9 @@ fun DialPadScreen(
 
                 val matchedContacts = allContacts.asSequence()
                     .filter { contact ->
-                        val matchesNumber = contact.phoneNumbers.any { it.replace(" ", "").contains(cleanQuery) }
+                        val matchesNumber = contact.phoneNumbers.any {
+                            it.replace(Regex("[^0-9+*#]"), "").contains(cleanQuery.replace(Regex("[^0-9+*#]"), ""))
+                        }
                         val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, cleanQuery)
                         val matchesNickname = t9Enabled && contact.nickname?.let { T9Matcher.isMatch(it, cleanQuery) } ?: false
                         matchesNumber || matchesName || matchesNickname
@@ -767,7 +771,7 @@ fun DialPadScreen(
                                                 }
                                             } else if (speedDialEnabled && number.isEmpty()) {
                                                 val mapping = prefs.getString("speed_dial_$digit", null)
-                                                val speedNumber = mapping?.split("|")?.getOrNull(1)
+                                                val speedNumber = mapping?.substringAfterLast("|", "")?.takeIf { it.isNotBlank() }
                                                 if (speedNumber != null) {
                                                     callLauncher.dial(speedNumber, null)
                                                 }
@@ -801,7 +805,7 @@ fun DialPadScreen(
                                 )
                             }
 
-                            if (dualSimButtonsEnabled) {
+                            if (dualSimButtonsEnabled && phoneAccounts.size >= 2) {
                                 val sim1Handle = phoneAccounts.getOrNull(0)
                                 val sim2Handle = phoneAccounts.getOrNull(1)
 
@@ -1061,7 +1065,7 @@ fun DialerSimActionExpressive(
 fun DialPadKey(
     number: String,
     letters: String,
-    toneGenerator: ToneGenerator,
+    toneGenerator: ToneGenerator?,
     context: Context,
     dialpadStyle: Int = PreferenceManager.DIALPAD_STYLE_MODERN,
     dimensions: DialpadDimensions = DialpadDimensions.forSize(PreferenceManager.DIALPAD_SIZE_MEDIUM),
@@ -1289,7 +1293,8 @@ object T9Matcher {
     }
 }
 
-private fun playDtmf(key: String, toneGenerator: ToneGenerator) {
+private fun playDtmf(key: String, toneGenerator: ToneGenerator?) {
+    if (toneGenerator == null) return
     val toneType = when (key) {
         "1" -> ToneGenerator.TONE_DTMF_1
         "2" -> ToneGenerator.TONE_DTMF_2

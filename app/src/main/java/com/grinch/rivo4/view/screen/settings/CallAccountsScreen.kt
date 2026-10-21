@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CallEnd
+import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.PersonOff
 import androidx.compose.material.icons.outlined.Person
@@ -154,6 +155,8 @@ fun CallAccountsScreen(
 
     var showSimDialog by remember { mutableStateOf(false) }
     var showCallWaitingDialog by remember { mutableStateOf(false) }
+    var showDefaultVideoAppDialog by remember { mutableStateOf(false) }
+    var defaultVideoApp by remember(settingsState) { mutableStateOf(prefs.getDefaultVideoApp()) }
 
     LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
         if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
@@ -274,6 +277,20 @@ fun CallAccountsScreen(
                                 },
                                 leadingIcon = Icons.Outlined.SimCard,
                                 onClick = { showSimDialog = true }
+                            )
+                        }
+                        item {
+                            val availableVideoApps = remember(context) { com.grinch.rivo4.view.components.VideoCallHelper.getAvailableVideoApps(context) }
+                            val defaultVideoAppName = when {
+                                defaultVideoApp.isBlank() || defaultVideoApp == "always_ask" -> stringResource(R.string.video_call_always_ask)
+                                defaultVideoApp == "system" -> stringResource(R.string.video_call_carrier)
+                                else -> availableVideoApps.find { it.id == defaultVideoApp }?.name ?: stringResource(R.string.video_call_always_ask)
+                            }
+                            RivoListItem(
+                                headline = stringResource(R.string.video_call_default_app),
+                                supporting = defaultVideoAppName,
+                                leadingIcon = Icons.Default.VideoCall,
+                                onClick = { showDefaultVideoAppDialog = true }
                             )
                         }
                         item {
@@ -784,6 +801,29 @@ fun CallAccountsScreen(
                     defaultSim = index
                     prefs.setInt("default_sim", index)
                     showSimDialog = false
+                }
+            )
+        }
+
+        if (showDefaultVideoAppDialog) {
+            val availableApps = com.grinch.rivo4.view.components.VideoCallHelper.getAvailableVideoApps(context)
+            val options = listOf("always_ask" to stringResource(R.string.video_call_always_ask)) +
+                availableApps.map { it.id to it.name }
+            val currentSelected = if (defaultVideoApp.isBlank()) "always_ask" else defaultVideoApp
+
+            RivoSelectionDialog(
+                onDismissRequest = { showDefaultVideoAppDialog = false },
+                title = stringResource(R.string.video_call_default_app),
+                icon = Icons.Default.VideoCall,
+                items = options,
+                itemLabel = { it.second },
+                itemIcon = { Icons.Default.VideoCall },
+                isSelected = { it.first == currentSelected },
+                onItemSelected = { selectedOption ->
+                    val newId = if (selectedOption.first == "always_ask") "" else selectedOption.first
+                    defaultVideoApp = newId
+                    prefs.setDefaultVideoApp(newId)
+                    showDefaultVideoAppDialog = false
                 }
             )
         }

@@ -32,15 +32,20 @@ class CallRecordingService : Service() {
             }
             ACTION_START -> {
                 val notification = buildNotification()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                            ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                        } else {
+                            ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
+                        }
+                        startForeground(NOTIFICATION_ID, notification, serviceType)
                     } else {
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
+                        startForeground(NOTIFICATION_ID, notification)
                     }
-                    startForeground(NOTIFICATION_ID, notification, serviceType)
-                } else {
-                    startForeground(NOTIFICATION_ID, notification)
+                } catch (e: Exception) {
+                    android.util.Log.e("CallRecordingService", "Failed to startForeground: ${e.message}", e)
+                    stopSelf()
                 }
             }
         }

@@ -5,12 +5,19 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
@@ -52,8 +59,11 @@
         <package android:name="com.skype.raider" />
         <package android:name="com.tencent.mm" />
         <package android:name="jp.naver.line.android" />
+        <package android:name="com.imo.android.imoim" />
         <package android:name="com.google.android.apps.messaging" />
         <package android:name="com.google.android.apps.tachyon" />
+        <package android:name="com.google.android.apps.meetings" />
+        <package android:name="us.zoom.videomeetings" />
         <package android:name="com.truecaller" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -82,6 +92,10 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="line" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="weixin" />
         </intent>
     </queries>
 

@@ -470,7 +470,8 @@ fun RivoExpressiveButton(
     iconSize: Dp = 24.dp,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    labelMaxLines: Int = 1
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -486,6 +487,22 @@ fun RivoExpressiveButton(
 
     val description = contentDescription
     val hasVisibleLabel = label != null
+
+    val effectiveContainerColor = if (enabled) {
+        containerColor
+    } else {
+        containerColor.copy(alpha = 0.38f)
+    }
+    val effectiveContentColor = if (enabled) {
+        contentColor
+    } else {
+        contentColor.copy(alpha = 0.38f)
+    }
+    val effectiveLabelColor = if (enabled) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -503,8 +520,8 @@ fun RivoExpressiveButton(
                 .widthIn(max = size * 1.3f)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(cornerRadius),
-            color = containerColor,
-            contentColor = contentColor,
+            color = effectiveContainerColor,
+            contentColor = effectiveContentColor,
             interactionSource = interactionSource,
             shadowElevation = RivoElevation.Flat
         ) {
@@ -513,14 +530,15 @@ fun RivoExpressiveButton(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(iconSize)
+                        modifier = Modifier.size(iconSize),
+                        tint = effectiveContentColor
                     )
                 } else if (painter != null) {
                     Icon(
                         painter = painter,
                         contentDescription = null,
                         modifier = Modifier.size(iconSize),
-                        tint = Color.Unspecified
+                        tint = if (enabled) Color.Unspecified else effectiveContentColor
                     )
                 }
             }
@@ -530,9 +548,9 @@ fun RivoExpressiveButton(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMediumEmphasized,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = effectiveLabelColor,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
+                maxLines = labelMaxLines,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -553,7 +571,7 @@ fun RivoListItem(
     badgeIcon: ImageVector? = null,
     badgeColor: Color? = null,
     headlineColor: Color = Color.Unspecified,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
     isCompact: Boolean = false,
@@ -661,6 +679,25 @@ fun RivoListItem(
         label = "RivoListItemCorner"
     )
 
+    val hasClickAction = (onClick != null || onLongClick != null) && enabled
+    val clickModifier = if (hasClickAction) {
+        Modifier
+            .graphicsLayer {
+                scaleX = itemScale
+                scaleY = itemScale
+            }
+            .combinedClickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                enabled = true,
+                onClickLabel = onClickLabel,
+                role = resolvedRole,
+                onLongClickLabel = onLongClickLabel,
+                onLongClick = onLongClick,
+                onClick = onClick ?: {}
+            )
+    } else Modifier
+
     Surface(
         color = effectiveContainer,
         contentColor = if (selected) {
@@ -679,23 +716,12 @@ fun RivoListItem(
         modifier = modifier
             .fillMaxWidth()
             .bringIntoViewRequester(bringIntoViewRequester)
-            .graphicsLayer {
-                scaleX = itemScale
-                scaleY = itemScale
-            }
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = ripple(),
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                role = resolvedRole,
-                onLongClickLabel = onLongClickLabel,
-                onLongClick = onLongClick,
-                onClick = onClick
-            )
+            .then(clickModifier)
             .semantics(mergeDescendants = true) {
                 this.selected = isSelected
-                this.role = resolvedRole
+                if (hasClickAction) {
+                    this.role = resolvedRole
+                }
                 if (toggleState != null) {
                     this.toggleableState = ToggleableState(toggleState)
                 }

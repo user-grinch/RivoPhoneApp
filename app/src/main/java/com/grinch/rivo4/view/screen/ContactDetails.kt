@@ -670,7 +670,7 @@ fun ContactDetailsScreen(
                 if (activePlayingFile?.absolutePath == fileToDelete.absolutePath) {
                     activePlayingFile = null
                 }
-                fileToDelete.delete()
+                CallRecorder.delete(context, fileToDelete)
                 recordingsRefreshKey++
                 pendingDeleteRecording = null
             },
@@ -824,6 +824,7 @@ fun ContactDetailsScreen(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 size = 52.dp,
                                 iconSize = 22.dp,
+                                labelMaxLines = if (fullContact == null) 2 else 1,
                                 onClick = {
                                     callLauncher.dial(if (fullContact == null) displayPhone else "", fullContact)
                                 },
@@ -835,6 +836,7 @@ fun ContactDetailsScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 size = 52.dp,
                                 iconSize = 22.dp,
+                                labelMaxLines = if (fullContact == null) 2 else 1,
                                 onClick = {
                                     messageLauncher.sendMessage(
                                         if (fullContact == null) displayPhone else "",
@@ -850,6 +852,7 @@ fun ContactDetailsScreen(
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                     size = 52.dp,
                                     iconSize = 22.dp,
+                                    labelMaxLines = 2,
                                     onClick = {
                                         addToContactNumber = displayPhone
                                     },
@@ -864,6 +867,7 @@ fun ContactDetailsScreen(
                                     containerColor = if (numberBlocked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
                                     size = 52.dp,
                                     iconSize = 22.dp,
+                                    labelMaxLines = 2,
                                     onClick = {
                                         if (numberBlocked) {
                                             BlockedNumbersManager.unblock(context, displayPhone)
@@ -886,7 +890,8 @@ fun ContactDetailsScreen(
                                     },
                                     modifier = Modifier.weight(1f)
                                 )
-                                val hasEmails = fullContact?.emails?.isNotEmpty() == true
+                                val hasEmails = fullContact?.emails?.any { it.isNotBlank() } == true ||
+                                    fullContact?.emailEntries?.any { it.address.isNotBlank() } == true
                                 RivoExpressiveButton(
                                     icon = Icons.Default.Email,
                                     label = stringResource(R.string.label_email),
@@ -1124,7 +1129,7 @@ fun ContactDetailsScreen(
                                         onClick = {},
                                         onLongClick = {
                                             clipboardManager.setText(AnnotatedString(notesText))
-                                            Toast.makeText(context, context.getString(R.string.imei_copied), Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.contact_copy_to_clipboard), Toast.LENGTH_SHORT).show()
                                         }
                                     )
                                 }
@@ -1160,8 +1165,7 @@ fun ContactDetailsScreen(
                                                 android.provider.CallLog.Calls.MISSED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
                                                 else -> Icons.Default.Call
                                             },
-                                            isCompact = true,
-                                            onClick = { callLauncher.dial(log.number, fullContact) }
+                                            isCompact = true
                                         )
                                     }
                                 }

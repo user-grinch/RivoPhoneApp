@@ -40,6 +40,8 @@ object AppLockManager {
     fun onAppForegrounded(prefs: PreferenceManager) {
         if (isLocked(prefs)) {
             isUnlocked = false
+        } else {
+            lastBackgroundTime = 0L
         }
     }
 

@@ -548,8 +548,8 @@ fun PrivateContactsScreen(
         val publicLabel = stringResource(R.string.contact_move_to_public_storage)
         val publicDesc = "Move to public device contacts database"
         val storageOptions = remember(availableAccounts, publicLabel) {
-            listOf("public" to Pair(publicLabel, publicDesc)) +
-            availableAccounts.map { acc -> acc.name to Pair(acc.name, acc.type) }
+            listOf(("public" to "") to Pair(publicLabel, publicDesc)) +
+            availableAccounts.map { acc -> (acc.name to acc.type) to Pair(acc.name, acc.type) }
         }
         RivoSelectionDialog(
             onDismissRequest = {
@@ -561,13 +561,15 @@ fun PrivateContactsScreen(
             items = storageOptions,
             itemLabel = { option -> option.second.first },
             itemSupporting = { option -> option.second.second },
-            itemIcon = { option -> if (option.first == "public") Icons.Outlined.PhoneAndroid else Icons.Outlined.Cloud },
+            itemIcon = { option -> if (option.first.first == "public" && option.first.second.isEmpty()) Icons.Outlined.PhoneAndroid else Icons.Outlined.Cloud },
             onItemSelected = { selected ->
                 val ids = targetContactsToMove.map { contact -> contact.id }
-                if (selected.first == "public") {
+                if (selected.first.first == "public" && selected.first.second.isEmpty()) {
                     viewModel.moveContacts(ids, null)
                 } else {
-                    val targetAcc = availableAccounts.find { acc -> acc.name == selected.first }
+                    val targetAcc = availableAccounts.find { acc ->
+                        acc.name == selected.first.first && acc.type == selected.first.second
+                    }
                     if (targetAcc != null) {
                         viewModel.moveContacts(ids, targetAcc)
                     }

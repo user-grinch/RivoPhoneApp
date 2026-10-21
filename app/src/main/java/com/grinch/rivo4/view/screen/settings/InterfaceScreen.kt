@@ -104,14 +104,8 @@ fun InterfaceScreen(
     var customPrimaryColor by remember(settingsState) {
         mutableIntStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb()))
     }
-    var showCards by remember(settingsState) {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_CARDS, true))
-    }
     var cardRoundness by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5))
-    }
-    var uiBlurEnabled by remember(settingsState) {
-        mutableStateOf(prefs.isUiBlurEnabled())
     }
     var dualSimButtons by remember(settingsState) {
         mutableStateOf(prefs.isDualSimDialpadButtonsEnabled())
@@ -136,7 +130,6 @@ fun InterfaceScreen(
             target.contains("Dynamic Color", ignoreCase = true) ||
             target.contains("AMOLED", ignoreCase = true) -> 0
 
-            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_use_cards)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_card_roundness)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_transition_animation)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_predictive_back_title)) ||
@@ -145,14 +138,11 @@ fun InterfaceScreen(
             target.contains("Transition", ignoreCase = true) ||
             target.contains("Predictive", ignoreCase = true) -> 1
 
-            SettingsHighlightManager.matches(context.getString(R.string.settings_ui_blur_title)) ||
-            target.contains("Blur", ignoreCase = true) -> 2
-
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_dual_sim_buttons_title)) ||
-            target.contains("Dual SIM", ignoreCase = true) -> 3
+            target.contains("Dual SIM", ignoreCase = true) -> 2
 
             target.contains("Navigation Bar", ignoreCase = true) ||
-            target.contains("Avatar", ignoreCase = true) -> 4
+            target.contains("Avatar", ignoreCase = true) -> 3
 
             else -> -1
         }
@@ -280,18 +270,6 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_shape_motion), icon = Icons.Outlined.ViewAgenda) {
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_interface_use_cards),
-                                supporting = stringResource(R.string.settings_interface_use_cards_supporting),
-                                leadingIcon = Icons.Outlined.ViewAgenda,
-                                checked = showCards,
-                                onCheckedChange = {
-                                    showCards = it
-                                    prefs.setBoolean(PreferenceManager.KEY_SHOW_CARDS, it)
-                                }
-                            )
-                        }
-                        item {
                             Box(modifier = Modifier.padding(vertical = 4.dp)) {
                                 RivoInteractiveRoundnessSlider(
                                     headline = stringResource(R.string.settings_interface_card_roundness),
@@ -355,55 +333,7 @@ fun InterfaceScreen(
                     }
                 }
 
-                // 3. Visual Effects & Blur
-                item {
-                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_effects), icon = Icons.Outlined.BlurOn) {
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_ui_blur_title),
-                                supporting = stringResource(R.string.settings_ui_blur_supporting),
-                                leadingIcon = Icons.Outlined.BlurOn,
-                                checked = uiBlurEnabled,
-                                onCheckedChange = {
-                                    uiBlurEnabled = it
-                                    prefs.setUiBlurEnabled(it)
-                                }
-                            )
-                        }
-                        if (uiBlurEnabled) {
-                            item {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.AutoAwesome,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                        Spacer(Modifier.width(8.dp))
-                                        Text(
-                                            text = stringResource(R.string.settings_ui_blur_active_hint),
-                                            style = MaterialTheme.typography.labelMedium,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // 4. Dialpad Interface
+                // 3. Dialpad Interface
                 item {
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialpad_calling), icon = Icons.Outlined.SimCard) {
                         item {
@@ -430,7 +360,7 @@ fun InterfaceScreen(
                         item {
                             RivoListItem(
                                 headline = "Navigation Bar",
-                                supporting = "Floating bar style, blur effect, roundness & tab layout",
+                                supporting = "Floating bar style, roundness & tab layout",
                                 leadingIcon = Icons.Outlined.Dock,
                                 onClick = { navigator.navigate(BottomNavScreenDestination) }
                             )

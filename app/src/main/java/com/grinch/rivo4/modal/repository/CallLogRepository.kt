@@ -37,7 +37,14 @@ class CallLogRepository(
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
 
-        val allContacts = try { contactsRepo.getContacts() } catch (e: Exception) { emptyList() }
+        val allContacts = try {
+            contactsRepo.getContacts(
+                includePrivate = true,
+                includeHidden = preferenceManager.isHiddenContactsVisible()
+            )
+        } catch (e: Exception) {
+            emptyList()
+        }
         val contactMap = mutableMapOf<String, Contact>()
         allContacts.forEach { contact ->
             contact.phoneNumbers.forEach { number ->
@@ -123,13 +130,20 @@ class CallLogRepository(
             put(CallLog.Calls.TYPE, entry.type)
             put(CallLog.Calls.DATE, entry.date)
             put(CallLog.Calls.DURATION, entry.duration)
-            put(CallLog.Calls.NEW, 1)
+            put(CallLog.Calls.NEW, 0)
         }
         try {
             contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun isSameCalendarDay(t1: Long, t2: Long): Boolean {
+        val cal1 = java.util.Calendar.getInstance().apply { timeInMillis = t1 }
+        val cal2 = java.util.Calendar.getInstance().apply { timeInMillis = t2 }
+        return cal1.get(java.util.Calendar.YEAR) == cal2.get(java.util.Calendar.YEAR) &&
+               cal1.get(java.util.Calendar.DAY_OF_YEAR) == cal2.get(java.util.Calendar.DAY_OF_YEAR)
     }
 
     private fun contactIdFromLookupUri(lookupUri: String): String? {
@@ -178,7 +192,7 @@ class CallLogRepository(
         if ((!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) && (accountSimMap.size == 1 || labelSimMap.size == 1)) {
             return 1
         }
-        return if (!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) 1 else null
+        return null
     }
 
     private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>, limit: Int = 0) {
@@ -328,8 +342,9 @@ class CallLogRepository(
 
             val lastEntry = tempLogs.lastOrNull()
             val sameContact = if (lastEntry != null) {
-                (contactId != null && lastEntry.contactId == contactId) ||
-                areNumbersEqual(lastEntry.number, number)
+                ((contactId != null && lastEntry.contactId == contactId) ||
+                areNumbersEqual(lastEntry.number, number)) &&
+                isSameCalendarDay(lastEntry.date, date)
             } else false
 
             if (lastEntry != null && sameContact) {
@@ -350,11 +365,20 @@ class CallLogRepository(
 
     override fun deleteCallLog(number: String) {
         try {
-            contentResolver.delete(
-                CallLog.Calls.CONTENT_URI,
-                "${CallLog.Calls.NUMBER} = ?",
-                arrayOf(number)
-            )
+            val unknownLabel = context.getString(R.string.label_unknown)
+            if (number.isBlank() || number.equals(unknownLabel, ignoreCase = true) || number.equals("Unknown", ignoreCase = true)) {
+                contentResolver.delete(
+                    CallLog.Calls.CONTENT_URI,
+                    "${CallLog.Calls.NUMBER} IS NULL OR ${CallLog.Calls.NUMBER} = '' OR ${CallLog.Calls.NUMBER} = ?",
+                    arrayOf(number)
+                )
+            } else {
+                contentResolver.delete(
+                    CallLog.Calls.CONTENT_URI,
+                    "${CallLog.Calls.NUMBER} = ?",
+                    arrayOf(number)
+                )
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -363,8 +387,10 @@ class CallLogRepository(
     override fun deleteCallLogsByIds(ids: List<Long>) {
         if (ids.isEmpty()) return
         try {
-            val selection = "${CallLog.Calls._ID} IN (${ids.joinToString(",")})"
-            contentResolver.delete(CallLog.Calls.CONTENT_URI, selection, null)
+            ids.chunked(500).forEach { chunk ->
+                val selection = "${CallLog.Calls._ID} IN (${chunk.joinToString(",")})"
+                contentResolver.delete(CallLog.Calls.CONTENT_URI, selection, null)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -96,7 +96,7 @@ fun ContactSelectionScreen(
         }
     }
 
-    val totalSelectedCount = maxOf(selectedContactIds.size, selectedPhoneNumbers.size)
+    val totalSelectedCount = if (returnContactId) selectedContactIds.size else selectedPhoneNumbers.size
 
     CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
         Scaffold(
@@ -143,11 +143,13 @@ fun ContactSelectionScreen(
                                 onClick = {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                     if (allSelected) {
-                                        selectedContactIds = emptySet()
-                                        selectedPhoneNumbers = emptySet()
+                                        val idsToRemove = filteredContacts.map { it.id }.toSet()
+                                        val numsToRemove = filteredContacts.flatMap { it.phoneNumbers }.toSet()
+                                        selectedContactIds = selectedContactIds - idsToRemove
+                                        selectedPhoneNumbers = selectedPhoneNumbers - numsToRemove
                                     } else {
-                                        selectedContactIds = filteredContacts.map { it.id }.toSet()
-                                        selectedPhoneNumbers = filteredContacts.flatMap { it.phoneNumbers }.toSet()
+                                        selectedContactIds = selectedContactIds + filteredContacts.map { it.id }.toSet()
+                                        selectedPhoneNumbers = selectedPhoneNumbers + filteredContacts.flatMap { it.phoneNumbers }.toSet()
                                     }
                                 }
                             ) {

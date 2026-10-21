@@ -47,6 +47,9 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material.icons.filled.SwapCalls
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideocamOff
+import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -292,9 +295,13 @@ fun ActiveCallControls(
     canMerge: Boolean = false,
     canSwap: Boolean = false,
     hasConference: Boolean = false,
+    isVideoCall: Boolean = false,
+    canVideoCall: Boolean = false,
     onMergeCalls: () -> Unit = {},
     onSwapCalls: () -> Unit = {},
     onManageConference: () -> Unit = {},
+    onToggleVideo: () -> Unit = {},
+    onSwitchCamera: () -> Unit = {},
     onToggleMute: () -> Unit,
     onToggleKeypad: () -> Unit,
     onAudioClick: () -> Unit,
@@ -322,7 +329,7 @@ fun ActiveCallControls(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        // Top Auxiliary Row: Tiny pills for Notes, Message, and Swap / Manage Conference
+        // Top Auxiliary Row: Tiny pills for Notes, Message, Video, and Swap / Manage Conference
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
@@ -340,6 +347,22 @@ fun ActiveCallControls(
                 compact = compact,
                 onClick = onMessage
             )
+            if (canVideoCall || isVideoCall) {
+                AuxiliaryPillButton(
+                    icon = if (isVideoCall) Icons.Default.VideocamOff else Icons.Default.Videocam,
+                    label = stringResource(R.string.video_call_toggle_video),
+                    compact = compact,
+                    onClick = onToggleVideo
+                )
+            }
+            if (isVideoCall) {
+                AuxiliaryPillButton(
+                    icon = Icons.Default.Cameraswitch,
+                    label = stringResource(R.string.video_call_switch_camera),
+                    compact = compact,
+                    onClick = onSwitchCamera
+                )
+            }
             if (canSwap && canMerge) {
                 AuxiliaryPillButton(
                     icon = Icons.AutoMirrored.Outlined.CallMerge,

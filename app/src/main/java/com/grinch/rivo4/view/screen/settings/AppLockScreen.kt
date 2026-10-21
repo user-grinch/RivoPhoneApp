@@ -187,7 +187,13 @@ fun AppLockScreen(
                             supporting = "Use Face, Fingerprint, or Device PIN/Password",
                             leadingIcon = Icons.Outlined.Fingerprint,
                             checked = isBiometricEnabled,
-                            onCheckedChange = { prefs.setBiometricLockEnabled(it) }
+                            onCheckedChange = { enabled ->
+                                if (!enabled && !hasPin) {
+                                    Toast.makeText(context, "Set a Custom App PIN first before disabling Biometric Unlock", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    prefs.setBiometricLockEnabled(enabled)
+                                }
+                            }
                         )
                     }
                     item {
@@ -334,7 +340,7 @@ fun AppLockOverlay(
     var pinError by remember { mutableStateOf(false) }
 
     fun tryBiometric() {
-        if (activity != null && isBiometricEnabled) {
+        if (activity != null && (isBiometricEnabled || customPin.isEmpty())) {
             AppLockManager.authenticate(
                 activity = activity,
                 title = "Unlock Rivo Phone",

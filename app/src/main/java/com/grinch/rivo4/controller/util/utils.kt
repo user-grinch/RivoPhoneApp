@@ -161,12 +161,32 @@ fun normalizePhoneNumber(number: String): String {
 
 fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     if (num1.isNullOrBlank() || num2.isNullOrBlank()) return false
-    val digits1 = num1.filter { it.isDigit() }
-    val digits2 = num2.filter { it.isDigit() }
-    if (digits1.length < 3 || digits2.length < 3) {
-        return digits1 == digits2 && digits1.isNotEmpty()
+    val trim1 = num1.trim()
+    val trim2 = num2.trim()
+    if (trim1.equals(trim2, ignoreCase = true)) return true
+
+    // If either number is a USSD/MMI code containing '*' or '#', require exact dialable match
+    if (trim1.contains('*') || trim1.contains('#') || trim2.contains('*') || trim2.contains('#')) {
+        val dial1 = trim1.filter { it.isDigit() || it == '*' || it == '#' || it == '+' }
+        val dial2 = trim2.filter { it.isDigit() || it == '*' || it == '#' || it == '+' }
+        return dial1.isNotEmpty() && dial1 == dial2
     }
-    return PhoneNumberUtils.compare(num1, num2)
+
+    val digits1 = trim1.filter { it.isDigit() }
+    val digits2 = trim2.filter { it.isDigit() }
+    if (digits1.isEmpty() || digits2.isEmpty()) return false
+    if (digits1 == digits2) return true
+    if (digits1.length < 3 || digits2.length < 3) return false
+    val compared = try {
+        PhoneNumberUtils.compare(trim1, trim2)
+    } catch (_: Exception) {
+        false
+    }
+    if (compared) return true
+    // Fallback: match by last 7 digits if both numbers are sufficiently long
+    return if (digits1.length >= 7 && digits2.length >= 7) {
+        digits1.takeLast(7) == digits2.takeLast(7)
+    } else false
 }
 
 fun deduplicateNumbers(numbers: List<String>): List<String> {

@@ -152,15 +152,6 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
-                title = "Use Cards UI Layout",
-                supporting = "Display settings and lists as distinct rounded elevated cards",
-                category = "Personalization & Display",
-                icon = Icons.Outlined.ViewAgenda,
-                keywords = listOf("cards", "card ui", "containers", "elevated", "surface style", "grouped cards"),
-                targetHeadline = context.getString(R.string.settings_interface_use_cards),
-                onClick = { navigator.navigate(InterfaceScreenDestination) }
-            ),
-            SettingSearchItem(
                 title = "Card Roundness",
                 supporting = "Adjust corner curvature from subtle to ultra rounded",
                 category = "Personalization & Display",
@@ -185,15 +176,6 @@ val searchItems = remember(settingsState, isSupporter) {
                 icon = Icons.AutoMirrored.Outlined.ArrowBack,
                 keywords = listOf("predictive back", "predictive back gestures", "disable predictive back", "back gesture", "back animation", "gesture navigation", "swipe back"),
                 targetHeadline = context.getString(R.string.settings_predictive_back_title),
-                onClick = { navigator.navigate(InterfaceScreenDestination) }
-            ),
-            SettingSearchItem(
-                title = "Background Blur Effects",
-                supporting = "Real-time frosted glass blur on dialogs and navigation bars",
-                category = "Personalization & Display",
-                icon = Icons.Outlined.BlurOn,
-                keywords = listOf("blur", "frosted glass", "glassmorphism", "background blur", "transparency"),
-                targetHeadline = context.getString(R.string.settings_ui_blur_title),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(

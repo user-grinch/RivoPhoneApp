@@ -132,11 +132,13 @@ fun ContactEditScreen(
     var isSaving by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var loadedContactId by rememberSaveable { mutableStateOf<String?>(null) }
+    var loadedExistingContact by remember { mutableStateOf<Contact?>(null) }
 
     LaunchedEffect(contactId) {
         if (loadedContactId != contactId && contactId != null && contactId != "0" && contactId != "null") {
             val existing = contactsVM.getFullContactById(contactId)
             if (existing != null) {
+                loadedExistingContact = existing
                 if (!existing.givenName.isNullOrBlank() || !existing.middleName.isNullOrBlank() || !existing.familyName.isNullOrBlank()) {
                     givenName = existing.givenName ?: ""
                     middleName = existing.middleName ?: ""
@@ -244,7 +246,7 @@ fun ContactEditScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (contactId == null || contactId == "0") stringResource(R.string.contact_create_title) else stringResource(
+                        if (contactId == null || contactId == "0" || contactId == "null") stringResource(R.string.contact_create_title) else stringResource(
                             R.string.contact_edit_title
                         ),
                         fontWeight = FontWeight.Bold,
@@ -272,7 +274,7 @@ fun ContactEditScreen(
                     }
                 },
                 actions = {
-                    if (contactId != null && contactId != "0") {
+                    if (contactId != null && contactId != "0" && contactId != "null") {
                         RivoTopBarIconButton(
                             onClick = { showDeleteDialog = true },
                             icon = Icons.Default.Delete,
@@ -308,19 +310,25 @@ fun ContactEditScreen(
                                 val contactToSave = Contact(
                                     id = if (contactId == "null" || contactId == "0" || contactId == null) "0" else contactId,
                                     name = finalName,
+                                    prefix = loadedExistingContact?.prefix,
                                     givenName = finalGivenName,
                                     middleName = middleName.trim().ifBlank { null },
                                     familyName = familyName.trim().ifBlank { null },
+                                    suffix = loadedExistingContact?.suffix,
                                     nickname = nickname.ifBlank { null },
                                     phoneNumbers = savedPhones.map { it.number },
                                     emails = savedEmails.map { it.address },
                                     phones = savedPhones,
                                     emailEntries = savedEmails,
                                     addresses = savedAddresses,
+                                    events = loadedExistingContact?.events ?: emptyList(),
                                     photoUri = photoUri,
+                                    isFavorite = loadedExistingContact?.isFavorite ?: false,
+                                    customRingtone = loadedExistingContact?.customRingtone,
                                     accountName = if (isPrivate) null else selectedAccount?.name,
                                     accountType = if (isPrivate) null else selectedAccount?.type,
                                     isPrivate = isPrivate,
+                                    isHidden = loadedExistingContact?.isHidden ?: false,
                                     notes = notes.ifBlank { null }
                                 )
                                 val success = contactsVM.saveContact(contactToSave)
@@ -542,10 +550,10 @@ fun ContactEditScreen(
 
                             val accountOptions = remember(availableAccounts, privateTitle, localTitle) {
                                 listOf(
-                                    "private" to Triple(privateTitle, privateDesc, Icons.Default.Lock),
-                                    "local" to Triple(localTitle, "", Icons.Default.CloudOff)
+                                    ("private" to "") to Triple(privateTitle, privateDesc, Icons.Default.Lock),
+                                    ("local" to "") to Triple(localTitle, "", Icons.Default.CloudOff)
                                 ) + availableAccounts.map { acc ->
-                                    acc.name to Triple(
+                                    (acc.name to acc.type) to Triple(
                                         ContactUtils.getFriendlyAccountName(context, acc),
                                         acc.name,
                                         ContactUtils.getAccountIcon(acc)
@@ -562,26 +570,28 @@ fun ContactEditScreen(
                                 itemSupporting = { option -> option.second.second },
                                 itemIcon = { option -> option.second.third },
                                 isSelected = { option ->
-                                    when (option.first) {
-                                        "private" -> isPrivate
-                                        "local" -> !isPrivate && selectedAccount == null
-                                        else -> !isPrivate && selectedAccount?.name == option.first
+                                    when (option.first.first) {
+                                        "private" -> isPrivate && option.first.second.isEmpty()
+                                        "local" -> !isPrivate && selectedAccount == null && option.first.second.isEmpty()
+                                        else -> !isPrivate && selectedAccount?.name == option.first.first && selectedAccount?.type == option.first.second
                                     }
                                 },
                                 onItemSelected = { selectedOption ->
-                                    when (selectedOption.first) {
-                                        "private" -> {
+                                    when {
+                                        selectedOption.first.first == "private" && selectedOption.first.second.isEmpty() -> {
                                             selectedAccount = null
                                             isPrivate = true
                                         }
 
-                                        "local" -> {
+                                        selectedOption.first.first == "local" && selectedOption.first.second.isEmpty() -> {
                                             selectedAccount = null
                                             isPrivate = false
                                         }
 
                                         else -> {
-                                            selectedAccount = availableAccounts.find { it.name == selectedOption.first }
+                                            selectedAccount = availableAccounts.find {
+                                                it.name == selectedOption.first.first && it.type == selectedOption.first.second
+                                            }
                                             isPrivate = false
                                         }
                                     }
@@ -664,7 +674,7 @@ fun ContactEditScreen(
                                     indexBadge = index + 1,
                                     typeValue = phone.type,
                                     typeOptions = ContactTypeLabels.phoneTypeOptions,
-                                    typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, null) },
+                                    typeLabel = { ContactTypeLabels.phoneTypeLabel(context, it, phone.label) },
                                     onTypeChange = { phones[index] = phones[index].copy(type = it) },
                                     onDelete = if (phones.size > 1 || phone.number.isNotBlank()) {
                                         {
@@ -746,7 +756,7 @@ fun ContactEditScreen(
                                     indexBadge = index + 1,
                                     typeValue = email.type,
                                     typeOptions = ContactTypeLabels.emailTypeOptions,
-                                    typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, null) },
+                                    typeLabel = { ContactTypeLabels.emailTypeLabel(context, it, email.label) },
                                     onTypeChange = { emails[index] = emails[index].copy(type = it) },
                                     onDelete = if (emails.size > 1 || email.address.isNotBlank()) {
                                         {

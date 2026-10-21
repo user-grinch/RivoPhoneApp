@@ -94,9 +94,8 @@ fun SpeedDialScreen(
             items(8) { index ->
                 val key = index + 2
                 val mapping = prefs.getString("speed_dial_$key", null)
-                val parts = mapping?.split("|")
-                val name = parts?.getOrNull(0)
-                val number = parts?.getOrNull(1)
+                val name = mapping?.substringBeforeLast("|")?.takeIf { it.isNotBlank() }
+                val number = mapping?.substringAfterLast("|", "")?.takeIf { it.isNotBlank() }
 
                 RivoGroupedCardContainer(
                     shape = rivoGroupedItemShape(index, 8)
@@ -217,7 +216,7 @@ fun ContactPickerDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                filteredContacts.take(30).forEach { contact ->
+                filteredContacts.take(100).forEach { contact ->
                     RivoListItem(
                         headline = contact.name,
                         supporting = contact.phoneNumbers.firstOrNull() ?: stringResource(R.string.settings_speed_dial_no_number),

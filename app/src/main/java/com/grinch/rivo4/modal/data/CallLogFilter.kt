@@ -22,15 +22,18 @@ enum class CallLogFilter {
     Outgoing,
     Missed;
 
+    fun matches(entry: CallLogEntry): Boolean = when (this) {
+        All -> true
+        Contacts -> !entry.contactId.isNullOrBlank() ||
+            (!entry.name.isNullOrBlank() && entry.name != entry.number && !entry.name.equals("Unknown", ignoreCase = true))
+        Incoming -> entry.type == android.provider.CallLog.Calls.INCOMING_TYPE
+        Outgoing -> entry.type == android.provider.CallLog.Calls.OUTGOING_TYPE
+        Missed -> entry.type == android.provider.CallLog.Calls.MISSED_TYPE || entry.type == android.provider.CallLog.Calls.REJECTED_TYPE
+    }
+
     companion object {
         public fun filter(context: Context, logs: List<CallLogEntry>, type: CallLogFilter): List<List<CallLogEntry>> {
-            val filteredList = when (type) {
-                All -> logs
-                Contacts -> logs.filter { it.name != null && it.name.isNotEmpty() }
-                Incoming -> logs.filter { it.type == android.provider.CallLog.Calls.INCOMING_TYPE }
-                Outgoing -> logs.filter { it.type == android.provider.CallLog.Calls.OUTGOING_TYPE }
-                Missed -> logs.filter { it.type == android.provider.CallLog.Calls.MISSED_TYPE || it.type == android.provider.CallLog.Calls.REJECTED_TYPE }
-            }
+            val filteredList = logs.filter { type.matches(it) }
             return filteredList.groupBy { formatDateHeader(context, it.date) }.values.toList()
         }
 

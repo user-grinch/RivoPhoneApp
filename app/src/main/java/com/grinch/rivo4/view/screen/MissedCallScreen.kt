@@ -516,7 +516,7 @@ fun MissedCallScreen(
 
 private fun sendOrComposeSms(context: Context, number: String, text: String) {
     val intl = SocialUtils.formatInternationalNumber(context, number)
-    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$intl")).apply {
+    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(intl)}")).apply {
         if (text.isNotEmpty()) {
             putExtra("sms_body", text)
         }

@@ -189,7 +189,7 @@ object CallRecorder {
 
     fun hasStoragePermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            false
+            Environment.isExternalStorageManager()
         } else {
             ContextCompat.checkSelfPermission(
                 context,
@@ -1038,22 +1038,24 @@ object CallRecorder {
     fun listRecordings(context: Context): List<File> {
         val destinationDir = getRecordingsDirectory(context)
 
-        // 1. Recover any unmigrated staging files from cacheDir
-        runCatching {
-            context.cacheDir.listFiles()
-                ?.filter { it.isFile && it.name.startsWith("staging_") && it.length() > 0 }
-                ?.forEach { staging ->
-                    try {
-                        val recoveredName = staging.name.removePrefix("staging_")
-                        val recoveredFile = File(destinationDir, recoveredName)
-                        if (staging.canonicalPath != recoveredFile.canonicalPath) {
-                            staging.copyTo(recoveredFile, overwrite = true)
-                            staging.delete()
+        // 1. Recover any unmigrated staging files from cacheDir (only when not actively recording)
+        if (!_isRecording.value && !isStarting.get()) {
+            runCatching {
+                context.cacheDir.listFiles()
+                    ?.filter { it.isFile && it.name.startsWith("staging_") && it.length() > 0 }
+                    ?.forEach { staging ->
+                        try {
+                            val recoveredName = staging.name.removePrefix("staging_")
+                            val recoveredFile = File(destinationDir, recoveredName)
+                            if (staging.canonicalPath != recoveredFile.canonicalPath) {
+                                staging.copyTo(recoveredFile, overwrite = true)
+                                staging.delete()
+                            }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
                         }
-                    } catch (e: Exception) {
-                        Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
                     }
-                }
+            }
         }
 
         // 2. Scan recording directories
