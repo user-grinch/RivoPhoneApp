@@ -80,6 +80,13 @@
     <string name="call_recording_saved">Înregistrare apel salvată</string>
     <string name="call_recording_deleted">Înregistrare ștearsă</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Apel video operator</string>
+    <string name="video_call_carrier_desc">Apel video mobil / VoLTE / ViLTE</string>
+    <string name="video_call_whatsapp_desc">WhatsApp apel video</string>
+    <string name="video_call_meet_desc">Apel video Google Meet</string>
+    <string name="video_call_telegram_desc">Telegram apel video</string>
+    <string name="video_call_signal_desc">Semnal apel video</string>
+    <string name="video_call_wechat_desc">Apel video WeChat</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
