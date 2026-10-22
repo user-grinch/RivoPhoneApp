@@ -3,6 +3,7 @@ package com.grinch.rivo4.controller.util
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -470,7 +471,7 @@ object CallBackgroundStore {
                 val file = File(path)
                 fileState[path] = file.exists() && file.length() > 0L
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("CallBackgroundStore", "Error in verifyAsync: ${e.message}", e)
             } finally {
                 pendingChecks.remove(path)
             }
@@ -521,7 +522,7 @@ object CallBackgroundStore {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallBackgroundStore", "Error pruneStaleIdKeys: ${e.message}", e)
         }
     }
 
@@ -582,7 +583,7 @@ object CallBackgroundStore {
         val bitmap = try {
             decodeScaled(context, source, targetSize(context))
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallBackgroundStore", "Error decodeScaled: ${e.message}", e)
             null
         } ?: return copyRaw(context, dir, source)
         return try {
@@ -600,7 +601,7 @@ object CallBackgroundStore {
                 target
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallBackgroundStore", "Error importImage: ${e.message}", e)
             null
         } finally {
             bitmap.recycle()
@@ -625,7 +626,7 @@ object CallBackgroundStore {
                 target
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallBackgroundStore", "Error targetSize: ${e.message}", e)
             null
         }
     }

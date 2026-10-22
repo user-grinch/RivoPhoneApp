@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Shield
@@ -46,6 +47,7 @@ import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ThirdPartyLicensesScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
 
@@ -216,12 +218,12 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isSupporter) stringResource(R.string.about_supporter_badge) else stringResource(R.string.about_patreon),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                            text = if (isSupporter) stringResource(R.string.about_supporter_badge) else stringResource(R.string.about_patreon),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
-            }
 
             RivoExpressiveGroup {
                 item {
@@ -248,53 +250,13 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                         onClick = { openLink(context, "$GITHUB_URL/releases") }
                     )
                 }
-            }
-
-            RivoExpressiveCard {
-                Column(
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.Code,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(R.string.about_shizucallrecorder_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Text(
-                        text = stringResource(R.string.about_shizucallrecorder_desc),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.about_third_party_licenses),
+                        supporting = stringResource(R.string.about_third_party_licenses_supporting),
+                        leadingIcon = Icons.Outlined.Gavel,
+                        onClick = { navigator.navigate(ThirdPartyLicensesScreenDestination) }
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Button(
-                        onClick = { openLink(context, SHIZU_CALL_RECORDER_URL) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors()
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.Launch,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.about_shizucallrecorder_action),
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
                 }
             }
 

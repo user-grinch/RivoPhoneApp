@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
+
 import android.telecom.Call
 import android.window.OnBackInvokedCallback
 import android.window.OnBackInvokedDispatcher
@@ -38,6 +40,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -205,7 +208,11 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 currentCallSession?.state == Call.STATE_DIALING ||
                                 currentCallSession?.state == Call.STATE_CONNECTING)
 
-                val darkTheme = isSystemInDarkTheme()
+                val darkTheme = when (prefs.getInt(PreferenceManager.KEY_THEME_MODE, PreferenceManager.THEME_MODE_SYSTEM)) {
+                    PreferenceManager.THEME_MODE_LIGHT -> false
+                    PreferenceManager.THEME_MODE_DARK -> true
+                    else -> isSystemInDarkTheme()
+                }
                 DisposableEffect(isCallOngoing, darkTheme) {
                     val insetsController = WindowCompat.getInsetsController(window, window.decorView)
                     if (isCallOngoing) {
@@ -405,7 +412,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                             launchSingleTop = true
                         }
                     } catch (e2: Exception) {
-                        e2.printStackTrace()
+                        Log.e("MainActivity", "Error navigating to main screen: ${e2.message}", e2)
                     }
                 }
             }
@@ -426,7 +433,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val telecomManager = getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager
                 telecomManager?.cancelMissedCallsNotification()
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("MainActivity", "Error canceling missed calls: ${e.message}", e)
             }
             navController.navigate(MainScreenDestination(initialTab = 0).route) {
                 popUpTo(navController.graph.startDestinationId)
@@ -522,3 +529,6 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         return super.dispatchKeyEvent(event)
     }
 }
+
+
+// TODO: Convert to M3 DynamicColor - use MaterialTheme.dynamicColorScheme

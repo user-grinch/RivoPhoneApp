@@ -12,7 +12,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -67,8 +67,45 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.callColors
+import androidx.compose.runtime.collectAsState
+import org.koin.compose.koinInject
+
+/**
+ * Ordered slots of the in-call action grid: the first three form the top row,
+ * the last three the bottom row.
+ */
+object RivoCallButtonOrder {
+    const val MUTE = "mute"
+    const val KEYPAD = "keypad"
+    const val AUDIO = "audio"
+    const val RECORD = "record"
+    const val HOLD = "hold"
+    const val ADD = "add"
+
+    val All: List<String> = listOf(MUTE, KEYPAD, AUDIO, RECORD, HOLD, ADD)
+
+    /** Parses the comma-separated hidden-button pref into a sanitized set of known ids. */
+    fun hiddenSet(raw: String?): Set<String> =
+        raw?.split(',')?.map { it.trim() }?.filter { it in All }?.toSet().orEmpty()
+
+    fun parse(raw: String?, hidden: Set<String> = emptySet()): List<String> {
+        val saved = raw
+            ?.split(',')
+            ?.map { it.trim() }
+            ?.filter { it in All }
+            ?.distinct()
+            .orEmpty()
+        val full = saved + All.filterNot { it in saved }
+        val visible = full.filterNot { it in hidden }
+        // If every button was hidden (stale pref from another device), fall back to the full grid
+        return visible.ifEmpty { full }
+    }
+
+    fun format(order: List<String>): String = parse(order.joinToString(",")).joinToString(",")
+}
 
 @Composable
 fun CallActionButton(
@@ -99,7 +136,7 @@ fun CallActionButton(
         label = "CallActionCornerRadius"
     )
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
 
     val containerColor by animateColorAsState(
         targetValue = when {
@@ -177,7 +214,7 @@ fun AuxiliaryPillButton(
     onClick: () -> Unit
 ) {
     val view = LocalView.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
@@ -253,7 +290,7 @@ fun EndCallButton(
         label = "endCallCorner"
     )
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
 
     Surface(
         onClick = {
@@ -324,6 +361,95 @@ fun ActiveCallControls(
 
     val cellSpacing = if (compact) 8.dp else 12.dp
 
+    val prefs = koinInject<PreferenceManager>()
+    val settingsVersion by prefs.settingsChanged.collectAsState()
+    val buttonOrder = remember(settingsVersion) {
+        RivoCallButtonOrder.parse(
+            prefs.getString(PreferenceManager.KEY_CALL_BUTTON_ORDER, PreferenceManager.DEFAULT_CALL_BUTTON_ORDER),
+            RivoCallButtonOrder.hiddenSet(
+                prefs.getString(PreferenceManager.KEY_HIDDEN_CALL_BUTTONS, "")
+            )
+        )
+    }
+
+    @Composable
+    fun CallActionFor(id: String, modifier: Modifier) {
+        when (id) {
+            RivoCallButtonOrder.MUTE -> CallActionButton(
+                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                isActive = isMuted,
+                label = stringResource(R.string.action_mute),
+                compact = compact,
+                modifier = modifier,
+                onClick = onToggleMute
+            )
+            RivoCallButtonOrder.KEYPAD -> CallActionButton(
+                icon = Icons.Default.Dialpad,
+                isActive = showKeypad,
+                label = stringResource(R.string.action_keypad),
+                compact = compact,
+                modifier = modifier,
+                onClick = onToggleKeypad
+            )
+            RivoCallButtonOrder.AUDIO -> CallActionButton(
+                icon = callAudioRouteIcon(audioRoute),
+                isActive = audioActive,
+                label = callAudioRouteLabel(audioRoute, audioState),
+                compact = compact,
+                modifier = modifier,
+                onClick = onAudioClick
+            )
+            RivoCallButtonOrder.RECORD -> CallActionButton(
+                icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
+                isActive = isRecording,
+                isDanger = isRecording,
+                enabled = recordingEnabled,
+                label = if (isRecording) {
+                    stringResource(R.string.action_stop_recording)
+                } else {
+                    stringResource(R.string.action_record)
+                },
+                compact = compact,
+                modifier = modifier,
+                onClick = onToggleRecording
+            )
+            RivoCallButtonOrder.HOLD -> CallActionButton(
+                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
+                isActive = isHolding,
+                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
+                compact = compact,
+                modifier = modifier,
+                onClick = onToggleHold
+            )
+            else -> when {
+                canSwap -> CallActionButton(
+                    icon = Icons.Default.SwapCalls,
+                    isActive = false,
+                    label = stringResource(R.string.action_swap),
+                    compact = compact,
+                    modifier = modifier,
+                    onClick = onSwapCalls
+                )
+                canMerge -> CallActionButton(
+                    icon = Icons.AutoMirrored.Outlined.CallMerge,
+                    isActive = false,
+                    label = stringResource(R.string.action_merge_calls),
+                    compact = compact,
+                    modifier = modifier,
+                    onClick = onMergeCalls
+                )
+                else -> CallActionButton(
+                    icon = Icons.Default.Add,
+                    isActive = false,
+                    label = stringResource(R.string.action_add_call),
+                    compact = compact,
+                    modifier = modifier,
+                    onClick = onAddCall
+                )
+            }
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -383,92 +509,15 @@ fun ActiveCallControls(
 
         Spacer(modifier = Modifier.height(if (compact) 10.dp else 14.dp))
 
-        // Main 6-button Grid: Row 1 (Mute, Keypad, Audio)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CallActionButton(
-                icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                isActive = isMuted,
-                label = stringResource(R.string.action_mute),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onToggleMute
-            )
-            CallActionButton(
-                icon = Icons.Default.Dialpad,
-                isActive = showKeypad,
-                label = stringResource(R.string.action_keypad),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onToggleKeypad
-            )
-            CallActionButton(
-                icon = callAudioRouteIcon(audioRoute),
-                isActive = audioActive,
-                label = callAudioRouteLabel(audioRoute, audioState),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onAudioClick
-            )
-        }
-
-        Spacer(modifier = Modifier.height(cellSpacing))
-
-        // Main 6-button Grid: Row 2 (Record, Hold, Add/Merge/Swap Call)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(cellSpacing),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CallActionButton(
-                icon = if (isRecording) Icons.Default.StopCircle else Icons.Default.FiberManualRecord,
-                isActive = isRecording,
-                isDanger = isRecording,
-                enabled = recordingEnabled,
-                label =
-                    if (isRecording) stringResource(R.string.action_stop_recording) else stringResource(R.string.action_record),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onToggleRecording
-            )
-            CallActionButton(
-                icon = if (isHolding) Icons.Default.PlayArrow else Icons.Default.Pause,
-                isActive = isHolding,
-                label = if (isHolding) stringResource(R.string.action_resume) else stringResource(R.string.action_hold),
-                compact = compact,
-                modifier = Modifier.weight(1f),
-                onClick = onToggleHold
-            )
-            if (canSwap) {
-                CallActionButton(
-                    icon = Icons.Default.SwapCalls,
-                    isActive = false,
-                    label = stringResource(R.string.action_swap),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onSwapCalls
-                )
-            } else if (canMerge) {
-                CallActionButton(
-                    icon = Icons.AutoMirrored.Outlined.CallMerge,
-                    isActive = false,
-                    label = stringResource(R.string.action_merge_calls),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onMergeCalls
-                )
-            } else {
-                CallActionButton(
-                    icon = Icons.Default.Add,
-                    isActive = false,
-                    label = stringResource(R.string.action_add_call),
-                    compact = compact,
-                    modifier = Modifier.weight(1f),
-                    onClick = onAddCall
-                )
+        // Main 2x3 action grid laid out in the user's saved slot order.
+        buttonOrder.chunked(3).forEachIndexed { rowIndex, rowIds ->
+            if (rowIndex > 0) Spacer(modifier = Modifier.height(cellSpacing))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(cellSpacing),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                rowIds.forEach { id -> CallActionFor(id, Modifier.weight(1f)) }
             }
         }
 

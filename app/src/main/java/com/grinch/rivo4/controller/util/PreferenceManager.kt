@@ -351,6 +351,42 @@ class PreferenceManager(context: Context) {
 
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
+        const val KEY_THEME_MODE = "theme_mode"
+        const val THEME_MODE_SYSTEM = 0
+        const val THEME_MODE_LIGHT = 1
+        const val THEME_MODE_DARK = 2
+        const val KEY_DYNAMIC_VARIANT = "dynamic_variant"
+        const val KEY_FONT_FAMILY = "font_family"
+        const val FONT_FAMILY_SANS_SERIF = "sans_serif"
+        const val FONT_FAMILY_SERIF = "serif"
+        const val FONT_FAMILY_MONOSPACE = "monospace"
+        const val FONT_FAMILY_CURSIVE = "cursive"
+        const val FONT_FAMILY_CASUAL = "casual"
+        const val FONT_FAMILY_CONDENSED = "sans_serif_condensed"
+        const val FONT_FAMILY_LIGHT = "sans_serif_light"
+        const val FONT_FAMILY_MEDIUM = "sans_serif_medium"
+        const val FONT_FAMILY_BLACK = "sans_serif_black"
+
+        /** Supported font family ids in picker order. */
+        val ALL_FONT_FAMILIES = listOf(
+            FONT_FAMILY_SANS_SERIF,
+            FONT_FAMILY_SERIF,
+            FONT_FAMILY_MONOSPACE,
+            FONT_FAMILY_CURSIVE,
+            FONT_FAMILY_CASUAL,
+            FONT_FAMILY_CONDENSED,
+            FONT_FAMILY_LIGHT,
+            FONT_FAMILY_MEDIUM,
+            FONT_FAMILY_BLACK
+        )
+        const val KEY_FONT_SIZE = "font_size"
+        const val FONT_SIZE_SMALL = 0
+        const val FONT_SIZE_MEDIUM = 1
+        const val FONT_SIZE_LARGE = 2
+        const val KEY_USE_SYSTEM_FONT = "use_system_font"
+        const val KEY_CALL_BUTTON_ORDER = "call_button_order"
+        const val DEFAULT_CALL_BUTTON_ORDER = "mute,keypad,audio,record,hold,add"
+        const val KEY_HIDDEN_CALL_BUTTONS = "hidden_call_buttons"
         const val KEY_SHOW_FIRST_LETTER = "show_first_letter"
         const val KEY_COLORFUL_AVATARS = "colorful_avatars"
         const val KEY_GRADIENT_AVATARS = "gradient_avatars"
@@ -404,6 +440,7 @@ class PreferenceManager(context: Context) {
         const val KEY_DISPLAY_CARRIER_INFO = "display_carrier_info"
         const val KEY_CALL_DURATION_DISPLAY = "call_duration_display_mode"
         const val KEY_CALL_LOG_GROUPING = "call_log_grouping"
+        const val KEY_GROUP_CALL_LOGS = "group_call_logs"
         const val KEY_DIALPAD_LAYOUT = "dialpad_layout_style"
         const val KEY_AVATAR_SHAPE = "avatar_shape"
         const val KEY_SWIPE_TO_CALL = "swipe_to_call"
@@ -622,7 +659,8 @@ class PreferenceManager(context: Context) {
             KEY_SEPARATE_CONTACTS_ICON to false,
             KEY_CALL_ANALYTICS_TRACKING to true,
             KEY_SHOW_CONTACT_MANAGEMENT_CARD to true,
-            KEY_SHOW_COUNTRY_CODE to true
+            KEY_SHOW_COUNTRY_CODE to true,
+            KEY_GROUP_CALL_LOGS to true
         )
 
         fun getKnownDefaultIntegers(): Map<String, Int> = mapOf(
@@ -660,7 +698,8 @@ class PreferenceManager(context: Context) {
             KEY_BOTTOM_NAV_ORDER to DEFAULT_BOTTOM_NAV_ORDER.joinToString(","),
             KEY_BOTTOM_NAV_HIDDEN to listOf(TAB_RECORDINGS).joinToString(","),
             KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE,
-            KEY_DEFAULT_VIDEO_APP to ""
+            KEY_DEFAULT_VIDEO_APP to "",
+            KEY_HIDDEN_CALL_BUTTONS to ""
         )
 
         fun getKnownDefaultStringSets(): Map<String, Set<String>> = mapOf(

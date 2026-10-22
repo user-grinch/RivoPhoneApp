@@ -13,12 +13,14 @@ import androidx.compose.material.icons.outlined.Gradient
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoAvatarShapeSelectorRow
 import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -170,6 +172,42 @@ fun AvatarSettingsScreen(
             }
 
             item {
+                RivoExpressiveCard(
+                    title = stringResource(R.string.avatar_preview_title),
+                    icon = Icons.Outlined.AccountCircle
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp, vertical = 14.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            listOf("Dana Blue", "Milo Yellow", "Ava Green", "Eli Red").forEach { name ->
+                                RivoAvatar(
+                                    name = name,
+                                    modifier = Modifier.weight(1f).aspectRatio(1f)
+                                )
+                            }
+                        }
+                        Text(
+                            text = stringResource(
+                                when {
+                                    colorfulAvatars && gradientAvatars -> R.string.avatar_preview_colorful_gradient
+                                    colorfulAvatars -> R.string.avatar_preview_colorful
+                                    gradientAvatars -> R.string.avatar_preview_gradient
+                                    else -> R.string.avatar_preview_plain
+                                }
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
 
             item {

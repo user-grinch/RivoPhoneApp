@@ -14,6 +14,7 @@ import android.content.ContentValues
 import android.telephony.SubscriptionManager
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
@@ -117,7 +118,7 @@ class CallLogRepository(
                 )
                 cursor?.use { parseCursor(it, callLogs, contactMap, limit) }
             } catch (e2: Exception) {
-                e2.printStackTrace()
+                Log.e("CallLogRepository", "Error reading call logs: ${e2.message}", e2)
             }
         }
 
@@ -135,7 +136,7 @@ class CallLogRepository(
         try {
             contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error saving call log entry: ${e.message}", e)
         }
     }
 
@@ -264,6 +265,11 @@ class CallLogRepository(
             emptySet()
         }
 
+        val groupCallLogs = preferenceManager.getBoolean(
+            com.grinch.rivo4.controller.util.PreferenceManager.KEY_GROUP_CALL_LOGS,
+            true
+        )
+
         while (cursor.moveToNext()) {
             if (limit > 0 && tempLogs.size >= limit) {
                 break
@@ -347,7 +353,7 @@ class CallLogRepository(
                 isSameCalendarDay(lastEntry.date, date)
             } else false
 
-            if (lastEntry != null && sameContact) {
+            if (lastEntry != null && sameContact && groupCallLogs) {
                 val currentSubLogs = if (lastEntry.subLogs.isEmpty()) listOf(lastEntry) else lastEntry.subLogs
                 tempLogs[tempLogs.size - 1] = lastEntry.copy(
                     types = lastEntry.types + type,
@@ -380,7 +386,7 @@ class CallLogRepository(
                 )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error deleting call log: ${e.message}", e)
         }
     }
 
@@ -392,7 +398,7 @@ class CallLogRepository(
                 contentResolver.delete(CallLog.Calls.CONTENT_URI, selection, null)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error deleting call log entries: ${e.message}", e)
         }
     }
 
@@ -400,7 +406,7 @@ class CallLogRepository(
         try {
             contentResolver.delete(CallLog.Calls.CONTENT_URI, null, null)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error clearing call logs: ${e.message}", e)
         }
     }
 }

@@ -12,6 +12,9 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.automirrored.outlined.VolumeDown
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
+import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
 import androidx.compose.material.icons.automirrored.outlined.PhoneMissed
 
@@ -188,6 +191,15 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
             ),
             SettingSearchItem(
+                title = "Group Call Logs",
+                supporting = "Merge repeated calls from the same contact into a single entry",
+                category = "Calling & SIM Accounts",
+                icon = Icons.AutoMirrored.Outlined.CallMerge,
+                keywords = listOf("group call logs", "call log grouping", "merge calls", "call history", "recents grouping"),
+                targetHeadline = context.getString(R.string.settings_group_call_logs),
+                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "Dialpad Dual SIM Buttons",
                 supporting = "Show separate SIM 1 and SIM 2 call buttons directly on dialpad",
                 category = "Personalization & Display",
@@ -303,6 +315,22 @@ val searchItems = remember(settingsState, isSupporter) {
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
             SettingSearchItem(
+                title = "Typography",
+                supporting = "Font, text size and system font",
+                category = "Personalization & Display",
+                icon = Icons.Outlined.TextFields,
+                keywords = listOf("font", "typeface", "text size", "typography", "system font", "serif", "monospace", "text scale"),
+                onClick = { navigator.navigate(TypographyScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Call Screen Buttons",
+                supporting = "Choose the position of each in-call button",
+                category = "Calling & SIM Accounts",
+                icon = Icons.Outlined.Dialpad,
+                keywords = listOf("call buttons", "rearrange", "button position", "call screen", "mute", "keypad", "hold"),
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
+            ),
+            SettingSearchItem(
                 title = "Hide Avatar with Wallpaper",
                 supporting = "Omit avatar circle when a full contact background wallpaper is set",
                 category = "Personalization & Display",
@@ -395,7 +423,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Volume Squeeze for DND",
                 supporting = "Press both volume keys to activate Do Not Disturb mode",
                 category = "Personalization & Display",
-                icon = Icons.Outlined.VolumeMute,
+                icon = Icons.AutoMirrored.Outlined.VolumeDown,
                 keywords = listOf("volume squeeze", "volume dnd", "squeeze gesture", "quick dnd"),
                 targetHeadline = "Volume Squeeze for DND",
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
@@ -540,7 +568,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Post-Call Summary",
                 supporting = "Display call duration, note option, and quick actions after hanging up",
                 category = "Calling & Behavior",
-                icon = Icons.Outlined.Assignment,
+                icon = Icons.Outlined.ContentCopy,
                 keywords = listOf("post call summary", "call summary", "after call screen", "duration summary"),
                 targetHeadline = "Post-Call Summary",
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
@@ -576,7 +604,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Call Waiting",
                 supporting = "Receive alerts for incoming calls while already on another call",
                 category = "Calling & Behavior",
-                icon = Icons.Outlined.CallReceived,
+                icon = Icons.Outlined.Call,
                 keywords = listOf("call waiting", "second call", "multiple calls", "carrier call waiting"),
                 targetHeadline = context.getString(R.string.settings_call_waiting),
                 onClick = { navigator.navigate(CallAccountsScreenDestination) }
@@ -915,7 +943,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Merge Duplicate Contacts",
                 supporting = "Detect and combine contacts sharing identical phone numbers or names",
                 category = "Contacts & Data",
-                icon = Icons.Outlined.CallMerge,
+                icon = Icons.Outlined.ManageAccounts,
                 keywords = listOf("merge contacts", "duplicate contacts", "combine contacts", "deduplicate", "clean contacts"),
                 targetHeadline = context.getString(R.string.contact_management_duplicates_title),
                 onClick = { navigator.navigate(ContactManagementScreenDestination) }
@@ -968,7 +996,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Sort Contacts by Name",
                 supporting = "Sort address book list by First Name or Last Name",
                 category = "Contacts & Data",
-                icon = Icons.Outlined.Sort,
+                icon = Icons.AutoMirrored.Outlined.Sort,
                 keywords = listOf("sort contacts", "first name", "last name", "alphabetical sort", "surname first"),
                 targetHeadline = context.getString(R.string.settings_manage_sort_by),
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
@@ -986,7 +1014,7 @@ val searchItems = remember(settingsState, isSupporter) {
                 title = "Contact Section Headers",
                 supporting = "Show or hide alphabetical A-Z letter headers in contact list",
                 category = "Contacts & Data",
-                icon = Icons.Outlined.SortByAlpha,
+                icon = Icons.AutoMirrored.Outlined.Sort,
                 keywords = listOf("section headers", "alphabet headers", "abc headers", "contact headers", "letter dividers"),
                 targetHeadline = context.getString(R.string.settings_contact_section_headers),
                 onClick = { navigator.navigate(ContactVisibilityScreenDestination) }

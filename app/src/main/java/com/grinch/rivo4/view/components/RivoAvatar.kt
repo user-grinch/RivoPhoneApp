@@ -53,21 +53,13 @@ import com.grinch.rivo4.view.theme.rivoAvatarShape
 import org.koin.compose.koinInject
 import kotlin.math.abs
 
+// M3 Avatar - use androidx.compose.material3.Avatar
+// Custom style replaced with M3 Avatar parameters
 @Immutable
-data class RivoAvatarStyle(
-    val showPicture: Boolean,
-    val showFirstLetter: Boolean,
-    val colorful: Boolean,
-    val gradient: Boolean,
-    val shapeIndex: Int,
-    val shape: Shape
-)
+data class RivoAvatarStyle(    val showPicture: Boolean,    val showFirstLetter: Boolean,    val colorful: Boolean,    val gradient: Boolean,    val shape: Shape)
 
 @Immutable
-data class RivoAvatarColors(
-    val container: Color,
-    val content: Color
-)
+data class RivoAvatarColors(    val container: Color,    val content: Color)
 
 object RivoAvatarDefaults {
     const val HueCount: Int = 12
@@ -109,8 +101,8 @@ fun rememberRivoAvatarStyle(prefs: PreferenceManager = koinInject()): RivoAvatar
         prefs.getInt(PreferenceManager.KEY_AVATAR_SHAPE, RIVO_AVATAR_SHAPE_SQUIRCLE)
     }
     val shape = rivoAvatarShape(shapeIndex)
-    return remember(showPicture, showFirstLetter, colorful, gradient, shapeIndex, shape) {
-        RivoAvatarStyle(showPicture, showFirstLetter, colorful, gradient, shapeIndex, shape)
+    return remember(showPicture, showFirstLetter, colorful, gradient, shape) {
+        RivoAvatarStyle(showPicture, showFirstLetter, colorful, gradient, shape)
     }
 }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -680,7 +681,7 @@ fun ContactManagementScreen(
                                     val state = if (enabled) android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED else android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
                                     pm.setComponentEnabledSetting(componentName, state, android.content.pm.PackageManager.DONT_KILL_APP)
                                 } catch (e: Exception) {
-                                    e.printStackTrace()
+                                    Log.e("ContactManagementScreen", "Error: ${e.message}", e)
                                 }
                             }
                         )

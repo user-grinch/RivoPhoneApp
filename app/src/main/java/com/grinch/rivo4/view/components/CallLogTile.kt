@@ -564,7 +564,9 @@ fun BatchCallLogActionBar(
     onDelete: () -> Unit,
     onBlock: () -> Unit,
     onAddContact: (() -> Unit)? = null,
-    onCopy: (() -> Unit)? = null
+    onCopy: (() -> Unit)? = null,
+    onSelectAll: (() -> Unit)? = null,
+    allSelected: Boolean = false
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showBlockConfirm by remember { mutableStateOf(false) }
@@ -593,6 +595,16 @@ fun BatchCallLogActionBar(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
+            if (onSelectAll != null) {
+                IconButton(onClick = onSelectAll) {
+                    Icon(
+                        imageVector = if (allSelected) Icons.Default.Deselect else Icons.Default.SelectAll,
+                        contentDescription = stringResource(
+                            if (allSelected) R.string.action_select_none else R.string.action_select_all
+                        )
+                    )
+                }
+            }
             if (onAddContact != null) {
                 IconButton(onClick = onAddContact) {
                     Icon(Icons.Default.PersonAdd, stringResource(R.string.contact_add_to_contacts))

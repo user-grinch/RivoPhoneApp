@@ -272,6 +272,72 @@
     <string name="settings_donate">Donate</string>
     <string name="settings_interface_headline">Interface</string>
     <string name="settings_interface_supporting">Theme, colors, and accessibility</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="system">System</string>
+    <string name="pref_theme_mode">Theme Mode</string>
+    <string name="pref_system_theme_follows_system">Follow system theme</string>
+    <string name="pref_enable_dynamic_color">Enable dynamic color</string>
+    <string name="pref_enable_dynamic_color_description">Derive colors automatically from wallpaper (Material You)</string>
+    <string name="rearrange_call_buttons">Rearrange Call Buttons</string>
+    <string name="call_screen_visible_buttons_title">Visible buttons</string>
+    <string name="call_screen_visible_buttons_supporting">Add or remove buttons shown on the call screen</string>
+    <string name="top_row_items">Top row: items 1–3</string>
+    <string name="bottom_row_items">Bottom row: items 4–6</string>
+    <string name="mute">Mute / Unmute</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Audio Route</string>
+    <string name="record">Call Record</string>
+    <string name="hold">Hold Call</string>
+    <string name="add">Add Call</string>
+    <string name="call_button_customization_description">Top row: items 1–3 • Bottom row: items 4–6</string>
+    <string name="enable_group_calls">Enable Group Calls</string>
+    <string name="enable_group_calls_description">Allow conference calls with multiple participants</string>
+    <string name="group_calls_default_enabled">Enabled by default</string>
+
+
+    <string name="settings_interface_avatar_show_picture">Show picture in avatar</string>
+    <string name="settings_interface_avatar_show_first_letter">Show first letter</string>
+    <string name="settings_interface_colorful_avatars">Use colorful avatars</string>
+    <string name="settings_interface_gradient_avatars">Use gradient avatars</string>
+    <string name="settings_interface_smart_contrast">Smart Contrast Preview</string>
+    <string name="settings_interface_smart_contrast_description">Text automatically adapts: dark backgrounds use crisp white text, and yellow backgrounds use dark text for high legibility</string>
+    <string name="settings_interface_gradient_avatars_preview">Gradient Avatars Preview</string>
+    <string name="settings_interface_smart_contrast_title">Smart Contrast</string>
+    <string name="settings_interface_gradient_avatars_title">Gradient Avatars</string>
+    <string name="avatar_blue_white">Blue
+White text</string>
+    <string name="avatar_yellow_dark">Yellow
+Dark text</string>
+    <string name="avatar_green_dark">Green
+Dark text</string>
+    <string name="avatar_red_white">Red
+White text</string>
+
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Use system font</string>
+    <string name="pref_system_font_toggle_description">Use system font settings</string>
+    <string name="typography_title">Typography</string>
+    <string name="typography_preview_text">The quick brown fox jumps over the lazy dog</string>
+    <string name="font_size_small">Small</string>
+    <string name="font_size_medium">Medium</string>
+    <string name="font_size_large">Large</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">Monospace</string>
+    <string name="font_family_cursive">Cursive</string>
+    <string name="font_family_casual">Casual</string>
+    <string name="font_family_condensed">Condensed</string>
+    <string name="font_family_light">Light</string>
+    <string name="font_family_medium">Medium</string>
+    <string name="font_family_black">Black</string>
+
+
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="dynamic_color">Dynamic Color</string>
+    <string name="enable_dynamic_color">Enable dynamic color from wallpaper</string>
+
     <string name="settings_sound_vibration_headline">Sound &amp; Vibration</string>
     <string name="settings_sound_vibration_supporting">Ringtones and dialpad tones</string>
     <string name="settings_call_settings_headline">Call Settings</string>
@@ -300,9 +366,7 @@
     <string name="settings_interface_amoled_supporting">Uses pitch black for UI elements.</string>
     <string name="settings_interface_show_first_letter">Show first letter in avatar</string>
     <string name="settings_interface_show_first_letter_supporting">Displays letter when picture is missing</string>
-    <string name="settings_interface_colorful_avatars">Use colorful avatars</string>
     <string name="settings_interface_colorful_avatars_supporting">Random colors based on contact name</string>
-    <string name="settings_interface_gradient_avatars">Gradient contact avatars</string>
     <string name="settings_interface_gradient_avatars_supporting">Use multi-color gradient backgrounds</string>
     <string name="settings_interface_show_picture">Show picture in avatar</string>
     <string name="settings_interface_show_picture_supporting">Shows the contact picture if available</string>
@@ -913,6 +977,8 @@
     <string name="settings_call_log_limit_500">500 calls (Default)</string>
     <string name="settings_call_log_limit_1000">1,000 calls</string>
     <string name="settings_call_log_limit_unlimited">Unlimited</string>
+    <string name="settings_group_call_logs">Group call logs</string>
+    <string name="settings_group_call_logs_supporting">Merge repeated calls from the same contact on the same day into one entry</string>
 
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Auto paste copied number</string>
@@ -1002,6 +1068,7 @@
     <string name="settings_permissions_system_title">System</string>
     <string name="settings_private_contacts_count">Secured Contacts (%1$d)</string>
     <string name="action_select_all">Select All</string>
+    <string name="action_select_none">Deselect All</string>
     <string name="settings_private_secret_code">Secret Dialpad Code</string>
     <string name="about_rate_on_google_play">Rate on Google Play</string>
     <string name="about_supporter_badge">Supporter ⭐</string>
@@ -1089,4 +1156,58 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Open Call Screen on Answer</string>
     <string name="settings_open_call_screen_on_answer_supporting">Open full call screen when answering from heads-up notification</string>
+
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Follow the system or lock light or dark</string>
+    <string name="palette_variant_title">Dynamic palette</string>
+    <string name="palette_tonal_spot">Tonal Spot</string>
+    <string name="palette_expressive">Expressive</string>
+    <string name="palette_neutral">Neutral</string>
+    <string name="palette_vibrant">Vibrant</string>
+    <string name="palette_fruit_salad">Fruit Salad</string>
+    <string name="palette_rainbow">Rainbow</string>
+    <string name="palette_content">Content</string>
+    <string name="palette_fidelity">Fidelity</string>
+    <string name="palette_monochrome">Monochrome</string>
+    <string name="palette_big_clock">Big Clock</string>
+    <string name="palette_candy">Candy</string>
+    <string name="palette_deep_ocean">Deep Ocean</string>
+    <string name="palette_sunset_glow">Sunset Glow</string>
+
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Typeface used across the app</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Scale text across the app</string>
+    <string name="typography_entry_supporting">Font, text size and system font</string>
+
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Preview</string>
+    <string name="avatar_preview_colorful_gradient">Colorful gradients with two-letter initials</string>
+    <string name="avatar_preview_colorful">Colorful avatars with contrasting initials</string>
+    <string name="avatar_preview_gradient">Gradient avatars with two-letter initials</string>
+    <string name="avatar_preview_plain">Plain themed avatars</string>
+
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Call Screen Customization</string>
+    <string name="call_screen_customization_supporting">Choose which row each in-call button appears in.</string>
+    <string name="about_third_party_licenses">Third-party licenses</string>
+    <string name="about_third_party_licenses_supporting">Open source components used in Rivo</string>
+    <string name="about_third_party_licenses_title">Third-party licenses</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines — Apache 2.0
+Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
+Koin (dependency injection) — Apache 2.0
+Room (database) — Apache 2.0
+Coil (image loading) — Apache 2.0
+Compose Destinations (navigation) — Apache 2.0
+ZXing (QR code generation) — Apache 2.0
+Accompanist (runtime permissions) — Apache 2.0
+BiometricPrompt (app lock) — Apache 2.0
+Shizuku (privileged call recording API) — Apache 2.0
+ShizuCallRecorder (call recording code) — GPLv3 with Section 7 additional terms</string>
+    <string name="call_screen_preview_title">Preview</string>
+    <string name="call_slot_top">Top row \u2022 Slot #%1$d</string>
+    <string name="call_slot_bottom">Bottom row \u2022 Slot #%1$d</string>
+    <string name="call_slot_move_up">Move up</string>
+    <string name="call_slot_move_down">Move down</string>
 </resources>

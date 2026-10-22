@@ -172,6 +172,9 @@ object CallRecorder {
 
     const val DIRECTORY_NAME = "Rivo Recordings"
 
+    /** Same value as [Environment.DIRECTORY_RECORDINGS], which only exists from API 31. */
+    private const val RECORDINGS_STORAGE_DIR = "Recordings"
+
     @Volatile
     private var recordingStartTimeMillis: Long = 0L
 
@@ -282,7 +285,7 @@ object CallRecorder {
 
         // 2. Standard public Recordings folder: /storage/emulated/0/Recordings/Rivo Recordings
         val pubRecordings = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS),
+            Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR),
             DIRECTORY_NAME
         )
         if (isWritableDirectory(pubRecordings)) {
@@ -299,7 +302,7 @@ object CallRecorder {
         }
 
         // 4. App-specific external storage (always writable)
-        val extDir = context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)
+        val extDir = context.getExternalFilesDir(RECORDINGS_STORAGE_DIR)
             ?: context.getExternalFilesDir(null)
         if (extDir != null) {
             val dir = File(extDir, DIRECTORY_NAME)
@@ -337,7 +340,7 @@ object CallRecorder {
         }
         runCatching {
             val d =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), DIRECTORY_NAME)
+                File(Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR), DIRECTORY_NAME)
             if (d.exists() && d.isDirectory) dirs.add(d)
         }
         runCatching {
@@ -368,11 +371,11 @@ object CallRecorder {
         }
         runCatching {
             val d =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), "Voice Recorder")
+                File(Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR), "Voice Recorder")
             if (d.exists() && d.isDirectory) dirs.add(d)
         }
         runCatching {
-            context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)?.let {
+            context.getExternalFilesDir(RECORDINGS_STORAGE_DIR)?.let {
                 val d = File(it, DIRECTORY_NAME)
                 if (d.exists() && d.isDirectory) dirs.add(d)
             }

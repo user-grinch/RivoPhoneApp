@@ -634,7 +634,7 @@ fun PrivateContactsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Switch(
+                    RivoSwitch(
                         checked = hideFromSettings,
                         onCheckedChange = { hideFromSettings = it }
                     )

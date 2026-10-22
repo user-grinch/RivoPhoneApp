@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- M3 Dynamic Colors - auto-derived from wallpaper -->
+    <color name="android_dark_material_dark_color_panelbottom">#1E1E1E</color>
+    <color name="android_material_dark_color_surface">#121212</color>
+    <color name="android_material_dark_color_onsurface">#FFFFFF</color>
+    <color name="android_material_light_color_panelbottom">#F8F9FF</color>
+    <color name="android_material_light_color_surface">#FFFFFF</color>
+    <color name="android_material_light_color_onsurface">#212121</color>
+    
+    <!-- Keep some custom colors for specific app elements -->
     <color name="rivo_window_background">#FFF8F9FF</color>
     <color name="rivo_splash_background">#FFF8F9FF</color>
-    <color name="shortcut_icon_tint">#FF1F1F1F</color>
+    <color name="shortcut_icon_tint">#FFFFFFFF</color>
 </resources>

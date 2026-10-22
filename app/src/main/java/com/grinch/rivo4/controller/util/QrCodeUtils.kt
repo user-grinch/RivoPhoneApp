@@ -2,6 +2,8 @@ package com.grinch.rivo4.controller.util
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Log
+
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -26,7 +28,7 @@ object QrCodeUtils {
             }
             bitmap
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("QrCodeUtils", "Error: ${e.message}", e)
             null
         }
     }

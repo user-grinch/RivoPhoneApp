@@ -121,10 +121,29 @@ fun RecentScreenContent(
     }
     val selectedFilter by viewModel.selectedFilter.collectAsState()
 
+    // Compute the currently filtered call-log entries so "select all" matches what's visible
+    val logs by viewModel.allCallLogs.collectAsState()
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val blockLogVisibility = remember(settingsState) {
+        prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
+    }
+    val allFilteredEntries = remember(logs, selectedFilter, blockLogVisibility) {
+        val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
+        when (selectedFilter) {
+            CallLogFilter.All -> baseLogs
+            CallLogFilter.Missed -> baseLogs.filter { it.type == CallLog.Calls.MISSED_TYPE }
+            CallLogFilter.Incoming -> baseLogs.filter { it.type == CallLog.Calls.INCOMING_TYPE }
+            CallLogFilter.Outgoing -> baseLogs.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
+            CallLogFilter.Contacts -> baseLogs.filter { it.name != null && it.name != it.number }
+        }
+    }
+
     val isSelecting = selectedEntries.isNotEmpty()
     val clipboardManager = LocalClipboardManager.current
     val singleSelected = if (selectedEntries.size == 1) selectedEntries.first() else null
     val isUnsaved = singleSelected != null && (singleSelected.contactId == null || singleSelected.name == null || singleSelected.name == singleSelected.number)
+    val allSelected = allFilteredEntries.isNotEmpty() && selectedEntries.size >= allFilteredEntries.size
 
     val batchActionBar: @Composable () -> Unit = {
         BatchCallLogActionBar(
@@ -153,7 +172,13 @@ fun RecentScreenContent(
                     Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
                     selectedEntries = emptySet()
                 }
-            } else null
+            } else null,
+            onSelectAll = if (allFilteredEntries.isNotEmpty()) {
+                {
+                    selectedEntries = if (allSelected) emptySet() else allFilteredEntries.toSet()
+                }
+            } else null,
+            allSelected = allSelected
         )
     }
 
@@ -445,6 +470,16 @@ fun CallLogFullContent(
         }
 
         val logs by viewModel.allCallLogs.collectAsState()
+        val groupCallLogs = remember(settingsState) {
+            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_GROUP_CALL_LOGS, true)
+        }
+        var lastGroupCallLogs by remember { mutableStateOf(groupCallLogs) }
+        LaunchedEffect(groupCallLogs) {
+            if (groupCallLogs != lastGroupCallLogs) {
+                lastGroupCallLogs = groupCallLogs
+                viewModel.fetchLogs()
+            }
+        }
         val todayStats by viewModel.todayStats.collectAsState()
         val allContacts by contactsVM.allContacts.collectAsState()
 

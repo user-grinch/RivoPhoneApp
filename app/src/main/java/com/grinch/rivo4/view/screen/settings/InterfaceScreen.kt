@@ -46,8 +46,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.RivoShapeDefaults
+import com.grinch.rivo4.view.theme.rivoCornerDp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
@@ -58,13 +62,20 @@ import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoInteractiveRoundnessSlider
 import com.grinch.rivo4.view.components.RivoListItem
+import com.grinch.rivo4.view.components.RivoLeadingIconTile
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.ScrollToTopButton
+import com.grinch.rivo4.view.theme.RivoPaletteStyle
+import com.grinch.rivo4.view.theme.rivoPaletteSwatches
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.CallScreenCustomizationScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.TypographyScreenDestination
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.grinch.rivo4.controller.util.SettingsHighlightManager
 import kotlinx.coroutines.delay
@@ -109,6 +120,33 @@ fun InterfaceScreen(
     }
     var dualSimButtons by remember(settingsState) {
         mutableStateOf(prefs.isDualSimDialpadButtonsEnabled())
+    }
+    var themeMode by remember(settingsState) {
+        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_THEME_MODE, PreferenceManager.THEME_MODE_SYSTEM))
+    }
+    var paletteVariant by remember(settingsState) {
+        mutableStateOf(
+            prefs.getString(PreferenceManager.KEY_DYNAMIC_VARIANT, RivoPaletteStyle.TonalSpot.id)
+                ?: RivoPaletteStyle.TonalSpot.id
+        )
+    }
+
+    val systemDark = isSystemInDarkTheme()
+    val paletteSeed = remember(dynamicColors, customPrimaryColor, systemDark) {
+        if (dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (systemDark) {
+                androidx.compose.material3.dynamicDarkColorScheme(context).primary.toArgb()
+            } else {
+                androidx.compose.material3.dynamicLightColorScheme(context).primary.toArgb()
+            }
+        } else {
+            customPrimaryColor
+        }
+    }
+    val paletteSwatches = remember(paletteSeed, systemDark) {
+        RivoPaletteStyle.entries.associateWith { style ->
+            rivoPaletteSwatches(paletteSeed, style, systemDark)
+        }
     }
 
     val presetColors = listOf(
@@ -172,6 +210,87 @@ fun InterfaceScreen(
                 item {
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_color), icon = Icons.Outlined.Palette) {
                         item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    RivoLeadingIconTile(icon = Icons.Outlined.Contrast)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text(
+                                            text = stringResource(R.string.theme_mode),
+                                            style = MaterialTheme.typography.titleSmallEmphasized
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.theme_mode_supporting),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    val roundness = LocalCardRoundness.current
+                                    listOf(
+                                        Triple(PreferenceManager.THEME_MODE_SYSTEM, Icons.Outlined.Contrast, R.string.system),
+                                        Triple(PreferenceManager.THEME_MODE_LIGHT, Icons.Outlined.LightMode, R.string.light),
+                                        Triple(PreferenceManager.THEME_MODE_DARK, Icons.Outlined.DarkMode, R.string.dark)
+                                    ).forEach { (mode, icon, labelRes) ->
+                                        val selected = themeMode == mode
+                                        Surface(
+                                            selected = selected,
+                                            onClick = {
+                                                themeMode = mode
+                                                prefs.setInt(PreferenceManager.KEY_THEME_MODE, mode)
+                                            },
+                                            shape = RoundedCornerShape(
+                                                rivoCornerDp(
+                                                    if (selected) RivoShapeDefaults.BaseExtraLarge else RivoShapeDefaults.BaseLargeIncreased,
+                                                    roundness
+                                                )
+                                            ),
+                                            color = if (selected) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceContainerHigh
+                                            },
+                                            contentColor = if (selected) {
+                                                MaterialTheme.colorScheme.onPrimary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            },
+                                            shadowElevation = RivoElevation.Flat,
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(52.dp)
+                                        ) {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center,
+                                                modifier = Modifier.fillMaxSize()
+                                            ) {
+                                                Icon(
+                                                    imageVector = icon,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                                Spacer(modifier = Modifier.height(2.dp))
+                                                Text(
+                                                    text = stringResource(labelRes),
+                                                    style = MaterialTheme.typography.labelSmall
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        item {
                             RivoSwitchListItem(
                                 headline = stringResource(R.string.settings_interface_material_you),
                                 supporting = stringResource(R.string.settings_interface_material_you_supporting),
@@ -183,6 +302,40 @@ fun InterfaceScreen(
                                     triggerThemeRestart()
                                 }
                             )
+                        }
+                        if (dynamicColors) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.palette_variant_title),
+                                        style = MaterialTheme.typography.labelLargeEmphasized,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .horizontalScroll(rememberScrollState()),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        RivoPaletteStyle.entries.forEach { style ->
+                                            RivoPaletteChip(
+                                                label = stringResource(paletteStyleLabel(style)),
+                                                swatches = paletteSwatches[style].orEmpty(),
+                                                selected = paletteVariant == style.id,
+                                                onClick = {
+                                                    paletteVariant = style.id
+                                                    prefs.setString(PreferenceManager.KEY_DYNAMIC_VARIANT, style.id)
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                         if (!dynamicColors) {
                             item {
@@ -359,6 +512,14 @@ fun InterfaceScreen(
                     ) {
                         item {
                             RivoListItem(
+                                headline = stringResource(R.string.typography_title),
+                                supporting = stringResource(R.string.typography_entry_supporting),
+                                leadingIcon = Icons.Outlined.TextFields,
+                                onClick = { navigator.navigate(TypographyScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
                                 headline = "Navigation Bar",
                                 supporting = "Floating bar style, roundness & tab layout",
                                 leadingIcon = Icons.Outlined.Dock,
@@ -371,6 +532,14 @@ fun InterfaceScreen(
                                 supporting = "11 avatar shapes, contact photos, initials & cards",
                                 leadingIcon = Icons.Outlined.AccountCircle,
                                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.call_screen_customization_title),
+                                supporting = stringResource(R.string.call_screen_customization_supporting),
+                                leadingIcon = Icons.Outlined.Dialpad,
+                                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
                             )
                         }
                     }
@@ -400,6 +569,80 @@ fun InterfaceScreen(
                     triggerThemeRestart()
                 }
             )
+        }
+    }
+}
+
+@StringRes
+private fun paletteStyleLabel(style: RivoPaletteStyle): Int = when (style) {
+    RivoPaletteStyle.TonalSpot -> R.string.palette_tonal_spot
+    RivoPaletteStyle.Expressive -> R.string.palette_expressive
+    RivoPaletteStyle.Neutral -> R.string.palette_neutral
+    RivoPaletteStyle.Vibrant -> R.string.palette_vibrant
+    RivoPaletteStyle.FruitSalad -> R.string.palette_fruit_salad
+    RivoPaletteStyle.Rainbow -> R.string.palette_rainbow
+    RivoPaletteStyle.Content -> R.string.palette_content
+    RivoPaletteStyle.Fidelity -> R.string.palette_fidelity
+    RivoPaletteStyle.Monochrome -> R.string.palette_monochrome
+    RivoPaletteStyle.BigClock -> R.string.palette_big_clock
+    RivoPaletteStyle.Candy -> R.string.palette_candy
+    RivoPaletteStyle.DeepOcean -> R.string.palette_deep_ocean
+    RivoPaletteStyle.SunsetGlow -> R.string.palette_sunset_glow
+}
+
+@Composable
+private fun RivoPaletteChip(
+    label: String,
+    swatches: List<Color>,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val roundness = LocalCardRoundness.current
+    Surface(
+        selected = selected,
+        onClick = onClick,
+        shape = RoundedCornerShape(rivoCornerDp(RivoShapeDefaults.BaseLargeIncreased, roundness)),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        },
+        contentColor = if (selected) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        },
+        shadowElevation = RivoElevation.Flat
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(modifier = Modifier.size(width = 30.dp, height = 16.dp)) {
+                swatches.take(3).forEachIndexed { index, color ->
+                    Surface(
+                        modifier = Modifier
+                            .offset(x = (index * 7).dp)
+                            .size(16.dp),
+                        shape = CircleShape,
+                        color = color,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surface.copy(alpha = 0.6f))
+                    ) {}
+                }
+            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1
+            )
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.filled.CallMissed
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.rivoCornerDp
 import android.Manifest
+import android.util.Log
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -13,6 +14,7 @@ import android.media.RingtoneManager
 import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import android.telecom.VideoProfile
+
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -170,7 +172,7 @@ fun ContactDetailsScreen(
             if (byId != null) return byId
             if (phoneNumber != null) contactsViewModel.getFullContactByNumber(phoneNumber) else null
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactDetails", "Error: ${e.message}", e)
             null
         }
     }
@@ -1460,7 +1462,7 @@ fun ContactDetailsScreen(
                                         leadingIcon = if (isPriorityContact) Icons.Filled.NotificationImportant else Icons.Outlined.NotificationImportant,
                                         isCompact = true,
                                         trailingContent = {
-                                            Switch(
+                                            RivoSwitch(
                                                 checked = isPriorityContact,
                                                 onCheckedChange = { checked ->
                                                     isPriorityContact = checked

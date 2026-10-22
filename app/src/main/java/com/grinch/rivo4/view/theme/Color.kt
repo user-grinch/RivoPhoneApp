@@ -230,18 +230,69 @@ private fun harmonizeHue(sourceHue: Float, targetHue: Float, maxShiftDegrees: Fl
 private const val NEUTRAL_CHROMA_CAP = 4f
 private const val NEUTRAL_VARIANT_CHROMA_CAP = 8f
 
-fun rivoColorSchemeFromSeed(seedArgb: Int, darkTheme: Boolean): ColorScheme {
+/**
+ * Tonal palette styles for dynamic (wallpaper derived) colour.
+ * Each style reshapes the seed colour into a distinct Material 3 palette.
+ */
+@Immutable
+enum class RivoPaletteStyle(
+    val id: String,
+    val primaryChromaFactor: Float,
+    val primaryHueShift: Float,
+    val secondaryHueOffset: Float,
+    val secondaryChromaFactor: Float,
+    val tertiaryHueOffset: Float,
+    val tertiaryChromaFactor: Float,
+    val neutralChromaFactor: Float,
+    val hueAnchor: Float? = null,
+    val hueAnchorWeight: Float = 0f
+) {
+    TonalSpot("tonal_spot", 1.0f, 0f, 0f, 0.34f, 60f, 0.5f, 1.0f),
+    Expressive("expressive", 1.4f, 0f, -25f, 0.65f, 95f, 0.75f, 1.15f),
+    Neutral("neutral", 0.35f, 0f, 0f, 0.18f, 60f, 0.22f, 0.45f),
+    Vibrant("vibrant", 1.6f, 0f, 12f, 0.7f, 72f, 0.85f, 1.25f),
+    FruitSalad("fruit_salad", 1.45f, -18f, 95f, 0.95f, 205f, 0.85f, 1.15f),
+    Rainbow("rainbow", 1.35f, 0f, 120f, 0.95f, 240f, 0.95f, 1.05f),
+    Content("content", 1.12f, 0f, 0f, 0.34f, 60f, 0.5f, 1.0f),
+    Fidelity("fidelity", 1.28f, 0f, 0f, 0.28f, 60f, 0.45f, 0.85f),
+    Monochrome("monochrome", 0f, 0f, 0f, 0f, 0f, 0f, 0f),
+    BigClock("big_clock", 1.5f, 0f, 0f, 0.45f, 90f, 0.55f, 1.35f, hueAnchor = 225f, hueAnchorWeight = 0.55f),
+    Candy("candy", 0.95f, 0f, 42f, 0.72f, 155f, 0.68f, 1.45f, hueAnchor = 330f, hueAnchorWeight = 0.35f),
+    DeepOcean("deep_ocean", 1.15f, 0f, 22f, 0.5f, 48f, 0.6f, 1.05f, hueAnchor = 225f, hueAnchorWeight = 0.7f),
+    SunsetGlow("sunset_glow", 1.25f, 0f, -38f, 0.65f, -78f, 0.7f, 1.2f, hueAnchor = 32f, hueAnchorWeight = 0.6f);
+
+    fun resolveHue(seedHue: Float): Float {
+        val anchored = hueAnchor?.let { anchor ->
+            val weight = hueAnchorWeight.coerceIn(0f, 1f)
+            val delta = ((anchor - seedHue + 540f) % 360f) - 180f
+            (seedHue + delta * weight + 360f) % 360f
+        } ?: seedHue
+        return (anchored + primaryHueShift + 360f) % 360f
+    }
+}
+
+fun rivoPaletteStyleFromId(id: String?): RivoPaletteStyle =
+    RivoPaletteStyle.entries.firstOrNull { it.id == id } ?: RivoPaletteStyle.TonalSpot
+
+fun rivoColorSchemeFromSeed(
+    seedArgb: Int,
+    darkTheme: Boolean,
+    style: RivoPaletteStyle = RivoPaletteStyle.TonalSpot
+): ColorScheme {
     val seed = colorToLch(Color(seedArgb))
-    val hue = seed[2]
-    val primaryChroma = seed[1].coerceIn(0f, 80f)
-    val secondaryChroma = primaryChroma / 3f
-    val tertiaryHue = (hue + 60f) % 360f
-    val tertiaryChroma = primaryChroma / 2f
-    val neutralChroma = kotlin.math.min(primaryChroma / 8f, NEUTRAL_CHROMA_CAP)
-    val neutralVariantChroma = kotlin.math.min(primaryChroma / 6f, NEUTRAL_VARIANT_CHROMA_CAP)
+    val hue = style.resolveHue(seed[2])
+    val baseChroma = seed[1].coerceIn(28f, 70f)
+    val primaryChroma = (baseChroma * style.primaryChromaFactor).coerceIn(0f, 90f)
+    val secondaryChroma = (primaryChroma * style.secondaryChromaFactor).coerceIn(0f, 75f)
+    val secondaryHue = (hue + style.secondaryHueOffset + 360f) % 360f
+    val tertiaryHue = (hue + style.tertiaryHueOffset + 360f) % 360f
+    val tertiaryChroma = (primaryChroma * style.tertiaryChromaFactor).coerceIn(0f, 80f)
+    val neutralChroma = kotlin.math.min(primaryChroma * style.neutralChromaFactor / 8f, NEUTRAL_CHROMA_CAP)
+    val neutralVariantChroma =
+        kotlin.math.min(primaryChroma * style.neutralChromaFactor / 6f, NEUTRAL_VARIANT_CHROMA_CAP)
 
     fun p(tone: Float) = toneColor(tone, primaryChroma, hue)
-    fun s(tone: Float) = toneColor(tone, secondaryChroma, hue)
+    fun s(tone: Float) = toneColor(tone, secondaryChroma, secondaryHue)
     fun t(tone: Float) = toneColor(tone, tertiaryChroma, tertiaryHue)
     fun n(tone: Float) = toneColor(tone, neutralChroma, hue)
     fun nv(tone: Float) = toneColor(tone, neutralVariantChroma, hue)
@@ -362,6 +413,16 @@ fun rivoColorSchemeFromSeed(seedArgb: Int, darkTheme: Boolean): ColorScheme {
             onTertiaryFixedVariant = onTertiaryFixedVariant
         )
     }
+}
+
+/** Compact three-swatch preview of a tonal palette style. */
+fun rivoPaletteSwatches(
+    seedArgb: Int,
+    style: RivoPaletteStyle,
+    darkTheme: Boolean
+): List<Color> {
+    val scheme = rivoColorSchemeFromSeed(seedArgb, darkTheme, style)
+    return listOf(scheme.primary, scheme.secondary, scheme.tertiary)
 }
 
 @Immutable

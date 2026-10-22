@@ -18,6 +18,8 @@ import android.database.ContentObserver
 import android.os.Handler
 import android.os.Looper
 import android.provider.CallLog
+import android.util.Log
+
 
 data class TodayCallStats(
     val totalCalls: Int = 0,
@@ -60,7 +62,7 @@ class CallLogViewModel(
         try {
             contentResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, contentObserver)
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("CallLogViewModel", "Error: ${e.message}", e)
         }
     }
 
@@ -70,7 +72,7 @@ class CallLogViewModel(
         try {
             contentResolver.unregisterContentObserver(contentObserver)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogViewModel", "Error: ${e.message}", e)
         }
     }
 

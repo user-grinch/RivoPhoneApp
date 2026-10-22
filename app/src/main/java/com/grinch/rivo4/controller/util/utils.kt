@@ -13,6 +13,8 @@ import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
+import android.util.Log
+
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -377,7 +379,7 @@ fun openLink(context: Context, link: String) {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("Utils", "Error: ${e.message}", e)
     }
 }
 
@@ -398,7 +400,7 @@ fun getAppVersion(context: Context): Pair<String, Long> {
 
         Pair(versionName, versionCode)
     } catch (e: PackageManager.NameNotFoundException) {
-        e.printStackTrace()
+        Log.e("Utils", "Error: ${e.message}", e)
         Pair(context.getString(R.string.label_unknown), -1L)
     }
 }
@@ -459,9 +461,9 @@ fun getDeviceImeiInfo(context: Context): DeviceImeiInfo {
                 } else null
             } catch (e: Exception) { null }
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("Utils", "Error: ${e.message}", e)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("Utils", "Error: ${e.message}", e)
         }
     }
     return DeviceImeiInfo(imei1 = imei1, imei2 = imei2, meid = meid, serial = serial)
@@ -490,7 +492,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
             handled = true
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("Utils", "Error: ${e.message}", e)
     }
 
     try {
@@ -505,7 +507,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
         context.sendBroadcast(intent1)
         handled = true
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("Utils", "Error: ${e.message}", e)
     }
 
     try {
@@ -515,7 +517,7 @@ fun processSecretCode(context: Context, fullCode: String): Boolean {
         context.sendBroadcast(intent2)
         handled = true
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("Utils", "Error: ${e.message}", e)
     }
 
     when (code) {

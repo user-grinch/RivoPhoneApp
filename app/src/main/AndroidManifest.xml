@@ -27,7 +27,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"  tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -102,14 +102,14 @@
     <application
         android:name=".RivoApp"
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
+        
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:directBootAware="true"
+        
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.RivoPhone">
 
@@ -119,7 +119,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
-            android:directBootAware="true"
+            
             android:theme="@style/Theme.App.Starting">
             <meta-data
                 android:name="android.app.shortcuts"
@@ -222,7 +222,7 @@
             android:roundIcon="@mipmap/ic_launcher_contacts_round"
             android:label="@string/app_name_contacts"
             android:windowSoftInputMode="adjustResize"
-            android:directBootAware="true"
+            
             android:theme="@style/Theme.App.Starting.Contacts">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -242,7 +242,7 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:inheritShowWhenLocked="true"
-            android:directBootAware="true"
+            
             android:theme="@style/Theme.RivoPhone" />
 
         <activity
@@ -315,7 +315,7 @@
             android:name=".controller.CallService"
             android:permission="android.permission.BIND_INCALL_SERVICE"
             android:foregroundServiceType="phoneCall|microphone"
-            android:directBootAware="true"
+            
             android:exported="true">
             <meta-data
                 android:name="android.telecom.IN_CALL_SERVICE_UI"

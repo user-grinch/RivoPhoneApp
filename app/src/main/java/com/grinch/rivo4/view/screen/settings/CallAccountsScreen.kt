@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import androidx.compose.material.icons.automirrored.outlined.PhoneMissed
 import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
 import androidx.compose.material.icons.automirrored.outlined.ContactSupport
@@ -100,6 +101,9 @@ fun CallAccountsScreen(
     var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
     var autoPasteClipboard by remember(settingsState) { mutableStateOf(prefs.isAutoPasteClipboardEnabled()) }
     var callLogLimit by remember(settingsState) { mutableStateOf(prefs.getCallLogLimit()) }
+    var groupCallLogs by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, true))
+    }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var unknownCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.unknownModel(context)) }
@@ -454,6 +458,18 @@ fun CallAccountsScreen(
                                 leadingIcon = Icons.Outlined.Quickreply,
                                 onClick = {
                                     navigator.navigate(QuickResponsesScreenDestination())
+                                }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_group_call_logs),
+                                supporting = stringResource(R.string.settings_group_call_logs_supporting),
+                                leadingIcon = Icons.AutoMirrored.Outlined.CallMerge,
+                                checked = groupCallLogs,
+                                onCheckedChange = { enabled ->
+                                    groupCallLogs = enabled
+                                    prefs.setBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, enabled)
                                 }
                             )
                         }

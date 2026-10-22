@@ -817,6 +817,33 @@ fun RivoListItem(
     }
 }
 
+/** Material 3 Expressive switch with a checkmark thumb when enabled. */
+@Composable
+fun RivoSwitch(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Switch(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        enabled = enabled,
+        thumbContent = if (checked) {
+            {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+        } else {
+            null
+        }
+    )
+}
+
 @Composable
 fun RivoSwitchListItem(
     headline: String,
@@ -841,7 +868,7 @@ fun RivoSwitchListItem(
         headlineMaxLines = headlineMaxLines,
         supportingMaxLines = supportingMaxLines,
         trailingContent = {
-            Switch(
+            RivoSwitch(
                 checked = checked,
                 onCheckedChange = null,
                 enabled = enabled

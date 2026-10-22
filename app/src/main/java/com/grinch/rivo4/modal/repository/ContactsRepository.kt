@@ -26,6 +26,7 @@ import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.CallBackgroundStore
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import android.util.Log
 
 private data class StructuredNameData(
     val prefix: String? = null,
@@ -71,7 +72,7 @@ class ContactsRepository(
 
     override fun getContacts(includePrivate: Boolean, includeHidden: Boolean): List<Contact> {
         val contactsMap = LinkedHashMap<String, Contact>()
-        
+
         if (includePrivate) {
             privateContactDao.getAll().forEach {
                 val contact = it.toContact()
@@ -271,7 +272,7 @@ class ContactsRepository(
         }
 
         val list = contactsMap.values.toList()
-        
+
         val nicknameMap = mutableMapOf<String, String>()
         try {
             contentResolver.query(
@@ -403,7 +404,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error reading contacts: ${e.message}", e)
         }
         return numbers
     }
@@ -556,7 +557,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error processing contact: ${e.message}", e)
         }
         val finalContact = contact?.let { c ->
             val resolvedName = if (c.name.isBlank() || c.name == unknownLabel || c.name == "Unnamed") {
@@ -822,7 +823,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error picking account: ${e.message}", e)
         }
         val primary = pickPrimaryAccount(entries, getAvailableAccounts())
         return Pair(primary, entries)
@@ -1574,7 +1575,7 @@ class ContactsRepository(
 
             if (filtered.isNotEmpty()) filtered else allAccounts
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error filtering accounts: ${e.message}", e)
             emptyList()
         }
     }
@@ -1641,7 +1642,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error: \${e.message}", e)
         }
         return null
     }
@@ -1941,7 +1942,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error: \${e.message}", e)
         }
     }
 
@@ -2006,11 +2007,11 @@ class ContactsRepository(
             }
         }
         try {
-            context.contentResolver.openOutputStream(uri)?.use { 
+            context.contentResolver.openOutputStream(uri)?.use {
                 it.write(vcfContent.toByteArray())
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error: \${e.message}", e)
         }
     }
 
@@ -2027,7 +2028,7 @@ class ContactsRepository(
                 val emails = mutableListOf<String>()
                 val addresses = mutableListOf<String>()
                 val events = mutableListOf<ContactEvent>()
-                
+
                 vCard.lines().forEach { rawLine ->
                     val line = rawLine.trim()
                     if (!line.contains(":")) return@forEach
@@ -2058,7 +2059,7 @@ class ContactsRepository(
                         }
                     }
                 }
-                
+
                 if (name.isNotBlank() || numbers.isNotEmpty() || emails.isNotEmpty()) {
                     saveContact(Contact(
                         id = "0",
@@ -2074,7 +2075,7 @@ class ContactsRepository(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error: \${e.message}", e)
         }
     }
 
@@ -2136,7 +2137,7 @@ class ContactsRepository(
         try {
             trashedContactDao.pruneOlderThan(thirtyDaysAgo)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ContactsRepository", "Error: \${e.message}", e)
         }
     }
 }

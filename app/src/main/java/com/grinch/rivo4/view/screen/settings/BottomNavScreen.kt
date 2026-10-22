@@ -28,6 +28,7 @@ import com.grinch.rivo4.view.components.RivoDivider
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoInteractiveFloatingBarSlider
+import com.grinch.rivo4.view.components.RivoSwitch
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.navigationTabIcon
@@ -242,7 +243,7 @@ fun BottomNavScreen(
                                         contentDescription = stringResource(R.string.settings_bottom_nav_move_down)
                                     )
                                 }
-                                Switch(
+                                RivoSwitch(
                                     checked = isVisible,
                                     enabled = !isVisible || visibleTabs.size > 1,
                                     onCheckedChange = { checked ->
