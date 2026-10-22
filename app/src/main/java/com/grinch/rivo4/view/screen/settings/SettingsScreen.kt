@@ -57,10 +57,10 @@ import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import com.grinch.rivo4.controller.util.ProBrandingManager
 import kotlinx.coroutines.delay
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
-import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
 import com.grinch.rivo4.view.components.RivoDivider
@@ -93,8 +93,6 @@ fun SettingsScreen(
 
     var enableAds by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
     var showDisableAdsDialog by remember { mutableStateOf(false) }
-    var showTipJarDialog by remember { mutableStateOf(false) }
-    val isSupporter = remember(settingsState) { prefs.isSupporter() }
 
     var isSearchActive by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
@@ -125,7 +123,7 @@ fun SettingsScreen(
         }
     }
 
-val searchItems = remember(isSearchActive, isSupporter) {
+val searchItems = remember(isSearchActive) {
         if (!isSearchActive) emptyList() else listOf(
             // ==================== PERSONALIZATION & DISPLAY ====================
             SettingSearchItem(
@@ -1126,27 +1124,12 @@ val searchItems = remember(isSearchActive, isSupporter) {
 
             // ==================== SUPPORT & ABOUT ====================
             SettingSearchItem(
-                title = if (isSupporter) "Rivo Supporter ⭐" else "Support Us",
-                supporting = if (isSupporter) "Thank you for supporting Rivo!" else "Support development via Tip Jar or Patreon",
+                title = context.getString(R.string.settings_support_development),
+                supporting = context.getString(R.string.settings_support_development_supporting),
                 category = "Support & About",
-                icon = if (isSupporter) Icons.Outlined.Star else Icons.Outlined.Favorite,
-                keywords = listOf("tip jar", "patreon", "donate", "supporter", "sponsor"),
-                onClick = { showTipJarDialog = true }
-            ),
-            SettingSearchItem(
-                title = "Display Banner Ads",
-                supporting = "Toggle support banner ads on settings and screens",
-                category = "Support & About",
-                icon = Icons.Outlined.AdUnits,
-                keywords = listOf("ads", "banner ads", "disable ads", "turn off ads", "advertisements"),
-                onClick = {
-                    if (enableAds) {
-                        showDisableAdsDialog = true
-                    } else {
-                        enableAds = true
-                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
-                    }
-                }
+                icon = Icons.Outlined.Favorite,
+                keywords = listOf("support", "development", "donate", "patreon", "tip jar", "video ad", "pro"),
+                onClick = { navigator.navigate(SupportDevelopmentScreenDestination) }
             ),
             SettingSearchItem(
                 title = context.getString(R.string.settings_rate_google_play),
@@ -1677,7 +1660,11 @@ val searchItems = remember(isSearchActive, isSupporter) {
                         ) {
                             Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(12.dp)) {
                                 Image(
-                                    painter = painterResource(R.drawable.logo),
+                                    painter = if (ProBrandingManager.isActive(prefs)) {
+                                        painterResource(R.drawable.pro_app_icon)
+                                    } else {
+                                        painterResource(R.drawable.logo)
+                                    },
                                     contentDescription = null,
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -1687,7 +1674,11 @@ val searchItems = remember(isSearchActive, isSupporter) {
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = stringResource(R.string.about_app_display_name),
+                                    text = if (ProBrandingManager.isActive(prefs)) {
+                                        "Rivo Pro"
+                                    } else {
+                                        stringResource(R.string.about_app_display_name)
+                                    },
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -1965,30 +1956,13 @@ val searchItems = remember(isSearchActive, isSupporter) {
                     title = stringResource(R.string.settings_group_support_about),
                     icon = Icons.AutoMirrored.Outlined.HelpOutline
                 ) {
-                    if (IS_ADS_SUPPORTED) {
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_display_banner_ads),
-                                supporting = stringResource(R.string.settings_display_banner_ads_supporting),
-                                leadingIcon = Icons.Outlined.AdUnits,
-                                checked = enableAds,
-                                onCheckedChange = { checked ->
-                                    if (!checked) {
-                                        showDisableAdsDialog = true
-                                    } else {
-                                        enableAds = true
-                                        prefs.setBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
-                                    }
-                                }
-                            )
-                        }
-                    }
                     item {
                         RivoListItem(
-                            headline = if (isSupporter) "Rivo Supporter ⭐" else "Support Us",
-                            supporting = if (isSupporter) "Thank you for supporting Rivo!" else "Support development via Tip Jar or Patreon",
-                            leadingIcon = if (isSupporter) Icons.Outlined.Star else Icons.Outlined.Favorite,
-                            onClick = { showTipJarDialog = true }
+                            headline = stringResource(R.string.settings_support_development),
+                            supporting = stringResource(R.string.settings_support_development_supporting),
+                            leadingIcon = Icons.Outlined.Favorite,
+                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            onClick = { navigator.navigate(SupportDevelopmentScreenDestination) }
                         )
                     }
                     item {
@@ -2067,9 +2041,6 @@ val searchItems = remember(isSearchActive, isSupporter) {
             }
         }
 
-        if (showTipJarDialog) {
-            TipJarDialog(onDismissRequest = { showTipJarDialog = false })
-        }
     }
 }
 

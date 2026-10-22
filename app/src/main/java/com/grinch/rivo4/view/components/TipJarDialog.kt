@@ -162,27 +162,6 @@ fun TipJarDialog(
                     }
                 )
 
-                if (!isAlreadySupporter && !showSuccessBanner) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextButton(
-                        onClick = {
-                            prefs.setSupporter(true)
-                            isAlreadySupporter = true
-                            showSuccessBanner = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Star,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Already a Patron? Activate Supporter Badge ⭐",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                }
             }
         }
     }

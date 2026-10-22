@@ -4,6 +4,8 @@
     <string name="action_merge_calls">Îmbinare apeluri</string>
     <string name="conference_call">Apel conferință</string>
     <string name="content_desc_select_option">Selectează opțiunea</string>
+    <string name="action_add_note">Adaugă Notă</string>
+    <string name="call_notes_title">Sună note</string>
     <string name="label_local_memory">Dispozitiv</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -172,6 +174,11 @@ Text alb</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Vezi contact</string>
+    <string name="swipe_action_share">Distribuie</string>
+    <string name="swipe_action_block">Blochează</string>
+    <string name="action_block_or_report">Blochează sau raportează</string>
+    <string name="action_history">Istoric</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->

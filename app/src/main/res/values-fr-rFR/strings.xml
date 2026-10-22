@@ -47,6 +47,8 @@
     <string name="label_email">E-mail</string>
     <string name="label_address">Adresse</string>
     <string name="label_notes">Notes</string>
+    <string name="action_add_note">Ajouter une note</string>
+    <string name="call_notes_title">Notes d\'appel</string>
     <string name="label_social_apps">Applications sociales</string>
     <string name="label_local_memory">Appareil</string>
     <string name="option_standard">Standard</string>
@@ -870,6 +872,11 @@ blanc</string>
     <string name="swipe_action_whatsapp">WhatsApp</string>
     <string name="swipe_action_copy_number">Copier le numéro</string>
     <string name="swipe_action_delete">Supprimer</string>
+    <string name="swipe_action_view_contact">Voir le contact</string>
+    <string name="swipe_action_share">Partager</string>
+    <string name="swipe_action_block">Bloquer</string>
+    <string name="action_block_or_report">Bloquer ou signaler</string>
+    <string name="action_history">Historique</string>
     <string name="swipe_action_preview_title">Aperçu interactif des gestes</string>
     <string name="swipe_action_preview_supporting">Faites glisser cette carte vers la gauche ou vers la droite pour découvrir les propriétés physiques du ressort Material 3 Expressive</string>
     <string name="swipe_action_test_contact_name">Alex Rivera</string>

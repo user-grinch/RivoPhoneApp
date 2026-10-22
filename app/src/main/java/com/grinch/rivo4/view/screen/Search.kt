@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -96,6 +98,7 @@ import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.rememberCallLauncher
 import com.grinch.rivo4.view.components.rememberRivoAvatarStyle
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import com.ramcosta.composedestinations.generated.destinations.SupportDevelopmentScreenDestination
 import com.grinch.rivo4.view.components.rivoGroupedItemShape
 import com.grinch.rivo4.view.components.rivoSurfaceStyle
 import android.widget.Toast

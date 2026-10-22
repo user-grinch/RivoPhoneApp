@@ -23,8 +23,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +74,8 @@ import com.grinch.rivo4.view.theme.RivoEasing
 import kotlin.math.roundToInt
 import androidx.navigation.NavController
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.ads.RewardedAdManager
+import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.grinch.rivo4.view.components.BottomBar
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
@@ -87,6 +96,10 @@ fun MainScreen(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
+    val rewardedAdManager = koinInject<RewardedAdManager>()
+    val context = LocalContext.current
+    val reminderMode = remember(settingsState) { prefs.getVideoAdReminderMode() }
+    var showVideoAdFab by remember { mutableStateOf(false) }
 
     val requestedTabState = LocalRequestedTab.current
     val externalRequestedTab = requestedTabState.value
@@ -165,8 +178,12 @@ fun MainScreen(
 
     var isToolbarVisible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(currentTabId) {
+    LaunchedEffect(currentTabId, settingsState) {
         isToolbarVisible = true
+        showVideoAdFab = IS_ADS_SUPPORTED && prefs.shouldShowVideoAdReminder()
+        if (showVideoAdFab && reminderMode == PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS) {
+            prefs.markVideoAdReminderShown()
+        }
     }
 
     LaunchedEffect(isToolbar) {
@@ -401,6 +418,27 @@ fun MainScreen(
                             }
                         )
                     }
+
+                }
+            }
+
+            if (showVideoAdFab) {
+                SmallFloatingActionButton(
+                    onClick = {
+                        (context as? Activity)?.let { rewardedAdManager.showAd(it) {} }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(
+                            end = 20.dp,
+                            bottom = if (isToolbar) 88.dp else innerPadding.calculateBottomPadding() + 20.dp
+                        )
+                ) {
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        contentDescription = "Watch support video",
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }

@@ -125,11 +125,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <intent-filter>
                 <action android:name="com.grinch.rivo4.ACTION_VIEW_CONTACTS" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.APP_CONTACTS" />
@@ -212,6 +207,34 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:name=".DefaultLauncherAlias"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".ProLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/pro_app_icon"
+            android:label="Rivo Pro"
+            android:roundIcon="@drawable/pro_app_icon"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity
             android:name=".ContactsAliasActivity"

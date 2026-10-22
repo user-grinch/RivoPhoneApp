@@ -10,6 +10,8 @@ import coil.memory.MemoryCache
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import com.grinch.rivo4.view.components.ad.AdPreloader
+import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.ProBrandingManager
 
 class RivoApp : Application(), ImageLoaderFactory {
 
@@ -43,6 +45,7 @@ class RivoApp : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        ProBrandingManager.apply(this, PreferenceManager(this))
         startKoin {
             androidContext(this@RivoApp)
             modules(appModule)

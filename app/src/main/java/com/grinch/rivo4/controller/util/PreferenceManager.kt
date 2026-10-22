@@ -44,6 +44,17 @@ class PreferenceManager(context: Context) {
         prefs.edit().putBoolean(key, value).apply()
     }
 
+    fun getLong(key: String, defaultValue: Long): Long =
+        try {
+            prefs.getLong(key, defaultValue)
+        } catch (e: Exception) {
+            defaultValue
+        }
+
+    fun setLong(key: String, value: Long) {
+        prefs.edit().putLong(key, value).apply()
+    }
+
     fun getString(key: String, defaultValue: String?): String? {
         return try {
             prefs.getString(key, defaultValue)
@@ -299,7 +310,8 @@ class PreferenceManager(context: Context) {
     }
 
     fun getLastSelectedTab(): Int? {
-        return if (prefs.contains(KEY_LAST_SELECTED_TAB)) prefs.getInt(KEY_LAST_SELECTED_TAB, -1).takeIf { it != -1 } else null
+        return if (prefs.contains(KEY_LAST_SELECTED_TAB)) prefs.getInt(KEY_LAST_SELECTED_TAB, -1)
+            .takeIf { it != -1 } else null
     }
 
     fun setLastSelectedTab(tab: Int) {
@@ -510,6 +522,9 @@ class PreferenceManager(context: Context) {
         const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
         const val KEY_ENABLE_ADS = "enable_ads"
         const val KEY_IS_SUPPORTER = "is_supporter"
+        const val KEY_SUPPORT_PURCHASE_TOKEN = "support_purchase_token"
+        const val KEY_SUPPORT_PURCHASE_PRODUCT = "support_purchase_product"
+        const val KEY_PRO_AD_EXPIRY = "pro_ad_expiry"
         const val KEY_POST_CALL_SCREEN = "post_call_screen"
         const val KEY_NAV_BAR_STYLE = "nav_bar_style"
         const val NAV_BAR_STYLE_STANDARD = 0
@@ -593,6 +608,14 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
         const val KEY_SHOW_COUNTRY_CODE = "show_country_code"
         const val KEY_SETTINGS_HISTORY = "settings_history"
+        const val KEY_PRO_STATUS = "pro_status"
+        const val KEY_VIDEO_AD_REMINDER_MODE = "video_ad_reminder_mode"
+        const val KEY_LAST_VIDEO_AD_REMINDER = "last_video_ad_reminder"
+        const val VIDEO_AD_REMINDER_OFF = 0
+        const val VIDEO_AD_REMINDER_SIX_HOURS = 1
+        const val VIDEO_AD_REMINDER_ALWAYS = 2
+        const val KEY_PRO_BRANDING_DISABLED = "pro_branding_disabled"
+        const val KEY_SELECTED_APP_ICON = "selected_app_icon"
 
         val EXCLUDED_KEYS = setOf(
             KEY_APP_USAGE_SECONDS,
@@ -820,7 +843,10 @@ class PreferenceManager(context: Context) {
         setString(KEY_CALL_LOG_ACTIONS_UNSAVED, actions.joinToString(","))
     }
 
-    fun getCallLogTrailingAction(): String = getString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION) ?: DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION
+    fun getCallLogTrailingAction(): String =
+        getString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION)
+            ?: DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION
+
     fun setCallLogTrailingAction(action: String) = setString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, action)
 
     fun resetCallLogCustomization() {
@@ -829,8 +855,18 @@ class PreferenceManager(context: Context) {
         setCallLogTrailingAction(DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION)
     }
 
-    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, true)
+    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, false)
     fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
+    fun getSupportPurchaseToken(): String = getString(KEY_SUPPORT_PURCHASE_TOKEN, "") ?: ""
+    fun setSupportPurchase(token: String, productId: String) {
+        setString(KEY_SUPPORT_PURCHASE_TOKEN, token)
+        setString(KEY_SUPPORT_PURCHASE_PRODUCT, productId)
+        setSupporter(true)
+    }
+    fun hasAdSupportedPro(): Boolean = System.currentTimeMillis() < getLong(KEY_PRO_AD_EXPIRY, 0L)
+    fun grantAdSupportedPro(durationMillis: Long = 24 * 60 * 60 * 1000L) {
+        setLong(KEY_PRO_AD_EXPIRY, System.currentTimeMillis() + durationMillis)
+    }
 
     fun getDefaultVideoApp(): String = getString(KEY_DEFAULT_VIDEO_APP, "") ?: ""
     fun setDefaultVideoApp(appId: String?) = setString(KEY_DEFAULT_VIDEO_APP, appId ?: "")
@@ -878,6 +914,31 @@ class PreferenceManager(context: Context) {
         setBoolean(KEY_SHOW_COUNTRY_CODE, enabled)
         clearFormattedNumberCache()
     }
+
+
+    fun isProStatus(): Boolean = getBoolean(KEY_PRO_STATUS, false)
+    fun setProStatus(isPro: Boolean) = setBoolean(KEY_PRO_STATUS, isPro)
+
+    fun getVideoAdReminderMode(): Int =
+        getInt(KEY_VIDEO_AD_REMINDER_MODE, VIDEO_AD_REMINDER_SIX_HOURS)
+            .coerceIn(VIDEO_AD_REMINDER_OFF, VIDEO_AD_REMINDER_ALWAYS)
+    fun setVideoAdReminderMode(mode: Int) = setInt(KEY_VIDEO_AD_REMINDER_MODE, mode)
+    fun shouldShowVideoAdReminder(now: Long = System.currentTimeMillis()): Boolean {
+        return when (getVideoAdReminderMode()) {
+            VIDEO_AD_REMINDER_ALWAYS -> true
+            VIDEO_AD_REMINDER_SIX_HOURS ->
+                now - getLong(KEY_LAST_VIDEO_AD_REMINDER, 0L) >= 6 * 60 * 60 * 1000L
+            else -> false
+        }
+    }
+    fun markVideoAdReminderShown(now: Long = System.currentTimeMillis()) =
+        setLong(KEY_LAST_VIDEO_AD_REMINDER, now)
+
+    fun isProBrandingDisabled(): Boolean = getBoolean(KEY_PRO_BRANDING_DISABLED, false)
+    fun setProBrandingDisabled(disabled: Boolean) = setBoolean(KEY_PRO_BRANDING_DISABLED, disabled)
+
+    fun getSelectedAppIcon(): String = getString(KEY_SELECTED_APP_ICON, "default") ?: "default"
+    fun setSelectedAppIcon(iconName: String) = setString(KEY_SELECTED_APP_ICON, iconName)
 
     fun isShowContactSectionHeaders(): Boolean = getBoolean(KEY_SHOW_CONTACT_SECTION_HEADERS, true)
     fun setShowContactSectionHeaders(enabled: Boolean) {
@@ -963,7 +1024,8 @@ class PreferenceManager(context: Context) {
 
     fun restoreSettings(envelope: SettingsBackupEnvelope): Int {
         if (!envelope.app.equals(SettingsBackupEnvelope.DEFAULT_APP_IDENTIFIER, ignoreCase = true) &&
-            !envelope.app.equals("Rivo", ignoreCase = true)) {
+            !envelope.app.equals("Rivo", ignoreCase = true)
+        ) {
             throw IllegalArgumentException("Invalid backup file: not a Rivo backup")
         }
         if (envelope.backupType != SettingsBackupEnvelope.BACKUP_TYPE_SETTINGS && envelope.backupType.isNotEmpty()) {

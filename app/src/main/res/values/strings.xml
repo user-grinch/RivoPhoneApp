@@ -1105,8 +1105,16 @@ White text</string>
     <string name="blocked_action_export_csv">Export CSV</string>
     <string name="blocked_search_placeholder">Search blocked numbers…</string>
     <string name="settings_group_support_about">Support &amp; About</string>
-    <string name="settings_display_banner_ads">Display Banner Ads</string>
-    <string name="settings_display_banner_ads_supporting">Show non-intrusive banner ads inside lists to support development</string>
+    <string name="settings_display_banner_ads">Non-Intrusive ads</string>
+    <string name="settings_display_banner_ads_supporting">Show small ads in lists to support development</string>
+    <string name="settings_support_development">Support Development</string>
+    <string name="settings_support_development_supporting">Support Rivo development</string>
+    <string name="settings_provide_tip">Provide a Tip</string>
+    <string name="settings_provide_tip_supporting">Support development via Tip Jar or Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Monthly patronage with exclusive perks</string>
+    <string name="settings_watch_video_ad">Watch Video Ad</string>
+    <string name="settings_watch_video_ad_supporting">Watch a short video to support development</string>
     <string name="settings_rate_google_play">Rate on Google Play</string>
     <string name="settings_rate_google_play_supporting">Support Rivo on Google Play Store</string>
     <string name="settings_about_rivo">About Rivo</string>
@@ -1232,4 +1240,28 @@ ShizuCallRecorder (call recording code) — GPLv3 with Section 7 additional term
     <string name="call_slot_bottom">Bottom row \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Move up</string>
     <string name="call_slot_move_down">Move down</string>
+
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Loading video ad…</string>
+    <string name="video_ad_failed">Failed to load video ad. Please try again later.</string>
+    <string name="support_video_ads_watched">Video ads watched: %1$d</string>
+    <string name="support_image_ads_watched">Image ads watched: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro unlocked! Enjoy your perks.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Custom app icon</string>
+    <string name="support_foss_only_donate">Rivo Pro perks are unavailable in FOSS builds. Use the Play Store build to unlock Pro, or support development through Patreon.
+Please consider donating via Patreon to support development.</string>
+    <string name="support_custom_app_icon">Custom App Icon</string>
+    <string name="support_custom_app_icon_desc">Select your preferred app icon</string>
+    <string name="support_default_app_icon">Default (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Daily ad watch limit reached. Try again tomorrow.</string>
+    <string name="support_video_ad_not_ready">Video ad is not ready yet. Please wait a moment.</string>
+    <string name="support_pro_branding_enabled">Pro branding enabled</string>
+    <string name="support_pro_branding_disabled">Pro branding disabled</string>
+    <string name="support_ads_enabled_pro">Ads enabled - Pro perks active</string>
+    <string name="support_tip_jar_pro">Tip Jar purchase - Pro perks active</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro perks active</string>
+    <string name="support_choose_app_icon_title">Choose dialer icon and name</string>
+    <string name="support_choose_app_icon_desc">Choose the dialer launcher icon and label together. Nothing changes until you confirm and restart Rivo.</string>
 </resources>

@@ -1,6 +1,11 @@
 package com.grinch.rivo4.view.screen.settings
+import com.grinch.rivo4.view.components.WavyAudioSlider
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.rivoCornerDp
+import com.grinch.rivo4.view.theme.rivoCornerShape
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.isActive
 import com.grinch.rivo4.view.components.RivoResetButton
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
@@ -47,6 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -360,7 +366,7 @@ fun CallRecordingsContent(
                     isRecordingPlaying = false
                 }
             }
-            delay(250)
+            delay(100)
         }
     }
 
@@ -671,7 +677,8 @@ fun CallRecordingsContent(
                                 key = { _, item -> item.file.absolutePath }
                             ) { index, item ->
                                 val isCurrentActive = activePlayingFile?.absolutePath == item.file.absolutePath
-                                val shape = rivoGroupedItemShape(index, itemsInGroup.size)
+                                val roundness = LocalCardRoundness.current
+                                val shape = if (isCurrentActive) rivoCornerShape(20, roundness) else rivoGroupedItemShape(index, itemsInGroup.size)
 
                                 CallRecordEntryCard(
                                     item = item,
@@ -1249,52 +1256,73 @@ fun CallRecordEntryCard(
     isPlaying: Boolean,
     currentPositionMs: Int,
     durationMs: Int,
-    playbackSpeed: Float,
+    playbackSpeed: Float = 1.0f,
     onCardClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
     onSeekTo: (Int) -> Unit,
     onRewind10: () -> Unit,
     onForward10: () -> Unit,
-    onSpeedChange: (Float) -> Unit,
+    onSpeedChange: (Float) -> Unit = {},
     onShareClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(20.dp)
+    shape: androidx.compose.ui.graphics.Shape? = null
 ) {
+    val roundness = LocalCardRoundness.current
+    val effectiveCardShape = shape ?: rivoCornerShape(20, roundness)
+
+    val iconTileShape = rivoCornerShape(14, roundness)
+    val buttonShape = rivoCornerShape(14, roundness)
+    val actionShape = rivoCornerShape(12, roundness)
+
     val durationFormatted = remember(item.durationMs, durationMs, isCurrentActive) {
         val dur = if (isCurrentActive && durationMs > 0) durationMs.toLong() else item.durationMs
         if (dur > 0) formatTimeMs(dur.toInt()) else null
     }
 
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = shape,
-        color = if (isCurrentActive) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+    val animatedCardBg by animateColorAsState(
+        targetValue = if (isCurrentActive) {
+            MaterialTheme.colorScheme.surfaceContainerHigh
         } else {
             MaterialTheme.colorScheme.surfaceContainerLow
-        }
+        },
+        label = "CallRecordCardBg"
+    )
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = effectiveCardShape,
+        color = animatedCardBg,
+        tonalElevation = if (isCurrentActive) 2.dp else 1.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 12.dp)
         ) {
-            // Collapsed Header: Leading icon + info + single Play/Pause button
+            // Line 1: Leading icon + Title/Date/Size + Action Icons (Share & Delete when active, or Play when collapsed)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onCardClick() },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RivoLeadingIconTile(
-                    icon = if (isCurrentActive && isPlaying) Icons.AutoMirrored.Outlined.VolumeUp else Icons.Outlined.MicNone,
-                    selected = isCurrentActive,
-                    containerColor = if (isCurrentActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = if (isCurrentActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
-                )
+                Surface(
+                    shape = iconTileShape,
+                    color = if (isCurrentActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                    modifier = Modifier.size(42.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = if (isCurrentActive && isPlaying) Icons.AutoMirrored.Outlined.VolumeUp else Icons.Outlined.MicNone,
+                            contentDescription = null,
+                            tint = if (isCurrentActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
 
-                Spacer(Modifier.width(14.dp))
+                Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -1305,7 +1333,7 @@ fun CallRecordEntryCard(
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(2.dp))
 
                     Text(
                         text = buildString {
@@ -1313,7 +1341,7 @@ fun CallRecordEntryCard(
                             if (durationFormatted != null) append(" • $durationFormatted")
                             append(" • ${item.sizeFormatted}")
                         },
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -1322,197 +1350,221 @@ fun CallRecordEntryCard(
 
                 Spacer(Modifier.width(8.dp))
 
-                // Single prominent Play/Pause button
-                Surface(
-                    onClick = onPlayPauseClick,
-                    shape = CircleShape,
-                    color = if (isCurrentActive && isPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
+                if (isCurrentActive) {
+                    // Share icon button (follows container roundness, no border)
+                    Surface(
+                        onClick = onShareClick,
+                        shape = actionShape,
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Share,
+                                contentDescription = stringResource(R.string.call_recordings_share),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.width(6.dp))
+
+                    // Delete icon button (follows container roundness, no border)
+                    Surface(
+                        onClick = onDeleteClick,
+                        shape = actionShape,
+                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = stringResource(R.string.action_delete),
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // Collapsed: single play icon button
+                    FilledIconButton(
+                        onClick = onPlayPauseClick,
+                        shape = buttonShape,
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier.size(40.dp)
+                    ) {
                         Icon(
-                            imageVector = if (isCurrentActive && isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = "Play/Pause",
-                            tint = if (isCurrentActive && isPlaying) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "Play",
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 }
             }
 
-            // Expanded Player Section
+            // Line 2: Expanded Transport Controls (Rewind, Play/Pause, Forward) + Smooth Squiggly Progress
             AnimatedVisibility(
                 visible = isCurrentActive,
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-
-                    // Time Labels + Wavy Progress Slider
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    // Rewind 10s button (follows container roundness, no border)
+                    Surface(
+                        onClick = onRewind10,
+                        shape = actionShape,
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.size(36.dp)
                     ) {
-                        Text(
-                            text = formatTimeMs(currentPositionMs),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.width(38.dp),
-                            textAlign = TextAlign.Start
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Replay10,
+                                contentDescription = "Rewind 10s",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(19.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.width(6.dp))
+
+                    // Hero Play/Pause button
+                    FilledIconButton(
+                        onClick = onPlayPauseClick,
+                        shape = buttonShape,
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = if (isPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = if (isPlaying) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                            contentDescription = if (isPlaying) "Pause" else "Play",
+                            modifier = Modifier.size(22.dp)
                         )
+                    }
+
+                    Spacer(Modifier.width(6.dp))
+
+                    // Forward 10s button (follows container roundness, no border)
+                    Surface(
+                        onClick = onForward10,
+                        shape = actionShape,
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Forward10,
+                                contentDescription = "Forward 10s",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(19.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.width(10.dp))
+
+                    // Right side: Squiggly Progress slider with smooth continuous VSYNC interpolation
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        val totalDur = if (durationMs > 0) durationMs else item.durationMs.toInt()
+
+                        val currentPosState = rememberUpdatedState(currentPositionMs)
+                        val playbackSpeedState = rememberUpdatedState(playbackSpeed)
+
+                        var smoothProgress by remember {
+                            mutableFloatStateOf(if (totalDur > 0) (currentPositionMs.toFloat() / totalDur.toFloat()).coerceIn(0f, 1f) else 0f)
+                        }
+
+                        // When paused or stopped: sync immediately if currentPositionMs or totalDur changes
+                        LaunchedEffect(currentPositionMs, totalDur, isPlaying) {
+                            if (!isPlaying || totalDur <= 0) {
+                                smoothProgress = if (totalDur > 0) (currentPositionMs.toFloat() / totalDur.toFloat()).coerceIn(0f, 1f) else 0f
+                            }
+                        }
+
+                        // During playback: glide smoothly on every display frame (60Hz / 120Hz VSYNC)
+                        LaunchedEffect(isPlaying, totalDur) {
+                            if (!isPlaying || totalDur <= 0) return@LaunchedEffect
+
+                            var basePos = currentPosState.value.toFloat()
+                            var lastElapsed = android.os.SystemClock.elapsedRealtime()
+
+                            while (isActive && isPlaying) {
+                                withFrameMillis {
+                                    val now = android.os.SystemClock.elapsedRealtime()
+                                    val deltaMs = (now - lastElapsed).toFloat()
+                                    lastElapsed = now
+
+                                    val polledMs = currentPosState.value.toFloat()
+                                    // If user jumped (seek, rewind, fast forward)
+                                    if (kotlin.math.abs(polledMs - basePos) > 300f) {
+                                        basePos = polledMs
+                                    } else {
+                                        basePos = (basePos + deltaMs * playbackSpeedState.value).coerceAtMost(totalDur.toFloat())
+                                    }
+
+                                    smoothProgress = (basePos / totalDur.toFloat()).coerceIn(0f, 1f)
+                                }
+                                if (basePos >= totalDur) break
+                            }
+                        }
+
+                        val displayTimeMs = if (isPlaying && totalDur > 0) {
+                            (smoothProgress * totalDur).toInt()
+                        } else {
+                            currentPositionMs
+                        }
 
                         WavyAudioSlider(
-                            value = if (durationMs > 0) currentPositionMs.toFloat() / durationMs.toFloat() else 0f,
+                            value = smoothProgress,
                             onValueChange = { fraction ->
-                                onSeekTo((fraction * durationMs).toInt())
+                                onSeekTo((fraction * totalDur).toInt())
                             },
                             isPlaying = isPlaying,
+                            sliderHeight = 22.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(Modifier.height(1.dp))
+
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 4.dp)
-                        )
-
-                        Text(
-                            text = formatTimeMs(durationMs),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(38.dp),
-                            textAlign = TextAlign.End
-                        )
-                    }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    // Transport Controls Row
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Speed Pill
-                        AssistChip(
-                            onClick = {
-                                val newSpeed = when (playbackSpeed) {
-                                    1.0f -> 1.25f
-                                    1.25f -> 1.5f
-                                    1.5f -> 2.0f
-                                    else -> 1.0f
-                                }
-                                onSpeedChange(newSpeed)
-                            },
-                            label = { Text("${playbackSpeed}x", style = MaterialTheme.typography.labelSmall) },
-                            shape = CircleShape,
-                            modifier = Modifier.height(34.dp)
-                        )
-
-                        Spacer(Modifier.width(12.dp))
-
-                        // Rewind 10s
-                        Surface(
-                            onClick = onRewind10,
-                            shape = RoundedCornerShape(16.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            modifier = Modifier.size(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 2.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Replay10,
-                                    contentDescription = "Rewind 10s",
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.width(12.dp))
-
-                        // Center Play/Pause Hero Button
-                        Surface(
-                            onClick = onPlayPauseClick,
-                            shape = RoundedCornerShape(20.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.size(width = 64.dp, height = 52.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                    contentDescription = "Play/Pause",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.width(12.dp))
-
-                        // Forward 10s
-                        Surface(
-                            onClick = onForward10,
-                            shape = RoundedCornerShape(16.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            modifier = Modifier.size(50.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Forward10,
-                                    contentDescription = "Forward 10s",
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(10.dp))
-
-                    // Bottom Action Bar: Share & Delete
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilledTonalButton(
-                            onClick = onShareClick,
-                            modifier = Modifier.weight(1f),
-                            shape = CircleShape
-                        ) {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                            Text(
+                                text = formatTimeMs(displayTimeMs),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = if (isPlaying) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(Modifier.width(6.dp))
-                            Text("Share")
-                        }
-                        OutlinedButton(
-                            onClick = onDeleteClick,
-                            modifier = Modifier.weight(1f),
-                            shape = CircleShape,
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            ),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f))
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+
+                            Text(
+                                text = formatTimeMs(totalDur),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(Modifier.width(6.dp))
-                            Text("Delete")
                         }
                     }
                 }
@@ -1541,7 +1593,7 @@ fun CallRecordEntryCard(
     onShareClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(20.dp)
+    shape: androidx.compose.ui.graphics.Shape? = null
 ) {
     val context = LocalContext.current
     val item = remember(file) { file.toCallRecordingItem(context) }
@@ -1565,98 +1617,7 @@ fun CallRecordEntryCard(
     )
 }
 
-/**
- * Custom MD3 Expressive Swirly/Wavy Audio Progress Slider
- */
-@Composable
-fun WavyAudioSlider(
-    value: Float, // 0.0f to 1.0f
-    onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier,
-    isPlaying: Boolean = false,
-    activeColor: Color = MaterialTheme.colorScheme.primary,
-    inactiveColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
-    handleColor: Color = MaterialTheme.colorScheme.primary
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "WavyPhaseTransition")
-    val phase by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = if (isPlaying) (2 * Math.PI).toFloat() else 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "WavyPhaseAnimation"
-    )
 
-    val density = LocalDensity.current
-    val amplitudePx = with(density) { 3.5.dp.toPx() }
-    val wavelengthPx = with(density) { 20.dp.toPx() }
-    val strokeWidthPx = with(density) { 3.5.dp.toPx() }
-    val handleHeightPx = with(density) { 18.dp.toPx() }
-
-    Box(
-        modifier = modifier
-            .height(32.dp)
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val fraction = (offset.x / size.width.toFloat()).coerceIn(0f, 1f)
-                    onValueChange(fraction)
-                }
-            }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures { change, _ ->
-                    change.consume()
-                    val fraction = (change.position.x / size.width.toFloat()).coerceIn(0f, 1f)
-                    onValueChange(fraction)
-                }
-            }
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val centerY = size.height / 2f
-            val currentX = (value.coerceIn(0f, 1f) * width)
-
-            // 1. Active Wavy Line (0 to currentX)
-            if (currentX > 0f) {
-                val path = Path()
-                path.moveTo(0f, centerY)
-                var x = 0f
-                val step = 3.dp.toPx()
-                while (x <= currentX) {
-                    val y = centerY + amplitudePx * kotlin.math.sin((x / wavelengthPx) * 2 * Math.PI + phase).toFloat()
-                    path.lineTo(x, y)
-                    x += step
-                }
-                drawPath(
-                    path = path,
-                    color = activeColor,
-                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-                )
-            }
-
-            // 2. Vertical Scrubber Handle | (at currentX)
-            drawLine(
-                color = handleColor,
-                start = Offset(currentX, centerY - handleHeightPx / 2f),
-                end = Offset(currentX, centerY + handleHeightPx / 2f),
-                strokeWidth = strokeWidthPx * 1.15f,
-                cap = StrokeCap.Round
-            )
-
-            // 3. Inactive Straight Line (currentX to width)
-            if (currentX < width) {
-                drawLine(
-                    color = inactiveColor,
-                    start = Offset(currentX, centerY),
-                    end = Offset(width, centerY),
-                    strokeWidth = strokeWidthPx,
-                    cap = StrokeCap.Round
-                )
-            }
-        }
-    }
-}
 
 /**
  * Full-width OEM action row with icon, title, subtitle, and trailing arrow.
