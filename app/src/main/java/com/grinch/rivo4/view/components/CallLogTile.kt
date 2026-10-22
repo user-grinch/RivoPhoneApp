@@ -3,18 +3,22 @@ package com.grinch.rivo4.view.components
 import com.grinch.rivo4.R
 import android.provider.CallLog
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallMissed
@@ -30,6 +34,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.outlined.SimCard
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Videocam
+import androidx.compose.material.icons.automirrored.outlined.Message
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Block
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.grinch.rivo4.controller.util.PreferenceManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,7 +67,10 @@ data class CallLogTileConfig(
     val swipeEnabled: Boolean = false,
     val swipeRightAction: SwipeActionType = SwipeActionType.CALL,
     val swipeLeftAction: SwipeActionType = SwipeActionType.MESSAGE,
-    val displayOrder: Int = 0
+    val displayOrder: Int = 0,
+    val savedActions: List<String> = PreferenceManager.DEFAULT_CALL_LOG_ACTIONS_SAVED,
+    val unsavedActions: List<String> = PreferenceManager.DEFAULT_CALL_LOG_ACTIONS_UNSAVED,
+    val trailingAction: String = PreferenceManager.DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION
 )
 
 val LocalCallLogTileConfig: ProvidableCompositionLocal<CallLogTileConfig> =
@@ -113,6 +132,32 @@ fun SimBadge(
 }
 
 @Composable
+fun HdBadge(
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(4.dp),
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f),
+        contentColor = MaterialTheme.colorScheme.primary,
+        modifier = modifier
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+        ) {
+            Text(
+                text = "HD",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 9.sp,
+                    lineHeight = 10.sp
+                )
+            )
+        }
+    }
+}
+
+@Composable
 fun CallLogTileSimple(
     log: CallLogEntry,
     contact: Contact? = null,
@@ -125,7 +170,8 @@ fun CallLogTileSimple(
     swipeEnabled: Boolean = LocalCallLogTileConfig.current.swipeEnabled && !selected,
     swipeRightAction: SwipeActionType = LocalCallLogTileConfig.current.swipeRightAction,
     swipeLeftAction: SwipeActionType = LocalCallLogTileConfig.current.swipeLeftAction,
-    onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null
+    onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null,
+    shape: Shape = RoundedCornerShape(24.dp)
 ) {
     val isBlocked = log.isBlocked || log.type == CallLog.Calls.BLOCKED_TYPE
     val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
@@ -187,31 +233,45 @@ fun CallLogTileSimple(
     }
 
     val resolvedSimNumber = log.simNumber ?: resolveSimNumber(log)
+    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd
 
     @Composable
     fun ContentBox() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
+                .clip(shape)
                 .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(),
+                        onClick = onClick,
+                        onLongClick = onLongClick
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
                         headline = headlineText,
-                        supporting = if (!showSim || resolvedSimNumber == null) supportingText else null,
-                        supportingContent = if (showSim && resolvedSimNumber != null) {
+                        supporting = if (!hasSupportingBadge) supportingText else null,
+                        supportingContent = if (hasSupportingBadge) {
                             {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(top = 1.dp)
                                 ) {
-                                    SimBadge(simNumber = resolvedSimNumber)
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    if (showSim && resolvedSimNumber != null) {
+                                        SimBadge(simNumber = resolvedSimNumber)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    if (log.isHd) {
+                                        HdBadge()
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
                                     Text(
                                         text = supportingText,
                                         style = RivoListItemDefaults.supportingStyle(),
@@ -228,9 +288,10 @@ fun CallLogTileSimple(
                         badgeIcon = icon,
                         badgeColor = badgeColor,
                         headlineColor = headlineColor,
-                        onClick = onClick,
-                        onLongClick = onLongClick,
-                        selected = selected
+                        onClick = null,
+                        onLongClick = null,
+                        selected = false,
+                        containerColor = Color.Transparent
                     )
                 }
 
@@ -265,12 +326,34 @@ fun CallLogTileSimple(
     }
 }
 
+data class CallLogActionInfo(
+    val key: String,
+    val label: String,
+    val icon: ImageVector
+)
+
+@Composable
+fun getCallLogActionInfo(key: String): CallLogActionInfo? = when (key) {
+    "save" -> CallLogActionInfo("save", stringResource(R.string.action_save), Icons.Outlined.PersonAdd)
+    "view_contact" -> CallLogActionInfo("view_contact", stringResource(R.string.swipe_action_view_contact), Icons.Outlined.Person)
+    "block" -> CallLogActionInfo("block", stringResource(R.string.swipe_action_block), Icons.Outlined.Block)
+    "message" -> CallLogActionInfo("message", stringResource(R.string.action_message), Icons.AutoMirrored.Outlined.Message)
+    "call" -> CallLogActionInfo("call", stringResource(R.string.action_call), Icons.Rounded.Call)
+    "video_call" -> CallLogActionInfo("video_call", stringResource(R.string.contact_details_video), Icons.Outlined.Videocam)
+    "history" -> CallLogActionInfo("history", stringResource(R.string.action_history), Icons.Outlined.History)
+    "share" -> CallLogActionInfo("share", stringResource(R.string.swipe_action_share), Icons.Outlined.Share)
+    "whatsapp" -> CallLogActionInfo("whatsapp", stringResource(R.string.swipe_action_whatsapp), Icons.Outlined.ChatBubbleOutline)
+    "copy_number" -> CallLogActionInfo("copy_number", stringResource(R.string.swipe_action_copy_number), Icons.Outlined.ContentCopy)
+    else -> null
+}
+
 @Composable
 fun CallLogTile(
     log: CallLogEntry,
     contact: Contact? = null,
     onTileClick: (CallLogEntry) -> Unit,
     onButtonClick: (CallLogEntry) -> Unit,
+    onAvatarClick: ((CallLogEntry) -> Unit)? = null,
     onLongClick: (CallLogEntry) -> Unit = {},
     selected: Boolean = false,
     displayOrder: Int = LocalCallLogTileConfig.current.displayOrder,
@@ -279,7 +362,15 @@ fun CallLogTile(
     swipeEnabled: Boolean = LocalCallLogTileConfig.current.swipeEnabled && !selected,
     swipeRightAction: SwipeActionType = LocalCallLogTileConfig.current.swipeRightAction,
     swipeLeftAction: SwipeActionType = LocalCallLogTileConfig.current.swipeLeftAction,
-    onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null
+    onSwipeAction: ((SwipeActionType, CallLogEntry) -> Unit)? = null,
+    isOptionsExpanded: Boolean = false,
+    savedActions: List<String> = LocalCallLogTileConfig.current.savedActions,
+    unsavedActions: List<String> = LocalCallLogTileConfig.current.unsavedActions,
+    trailingAction: String = LocalCallLogTileConfig.current.trailingAction,
+    onActionClick: ((String, CallLogEntry) -> Unit)? = null,
+    onAddContact: ((CallLogEntry) -> Unit)? = null,
+    onBlockContact: ((CallLogEntry) -> Unit)? = null,
+    shape: Shape = RoundedCornerShape(24.dp)
 ) {
     val isBlocked = log.isBlocked || log.type == CallLog.Calls.BLOCKED_TYPE
     val isMissedOrRejected = log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE
@@ -336,32 +427,58 @@ fun CallLogTile(
     val resolvedSimNumber = log.simNumber ?: resolveSimNumber(log)
 
     val isStacked = log.count > 1
-    var isExpanded by remember { mutableStateOf(false) }
+    var isHistoryExpanded by remember { mutableStateOf(false) }
+    val isUnsaved = contact == null && (log.contactId == null || log.contactId == "null") && (log.name == null || log.name == log.number)
+    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd
+
+    val tileBgColor = when {
+        selected -> MaterialTheme.colorScheme.secondaryContainer
+        isOptionsExpanded -> MaterialTheme.colorScheme.surfaceContainer
+        else -> Color.Transparent
+    }
+    val animatedTileBgColor by animateColorAsState(
+        targetValue = tileBgColor,
+        label = "CallLogTileBackground"
+    )
 
     @Composable
     fun ContentBox() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
+                .clip(shape)
+                .background(animatedTileBgColor)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape)
+                    .combinedClickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(),
+                        onClick = { onTileClick(log) },
+                        onLongClick = { onLongClick(log) }
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     RivoListItem(
                         headline = headlineText,
-                        supporting = if (!showSim || resolvedSimNumber == null) timeText else null,
-                        supportingContent = if (showSim && resolvedSimNumber != null) {
+                        supporting = if (!hasSupportingBadge) timeText else null,
+                        supportingContent = if (hasSupportingBadge) {
                             {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(top = 1.dp)
                                 ) {
-                                    SimBadge(simNumber = resolvedSimNumber)
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    if (showSim && resolvedSimNumber != null) {
+                                        SimBadge(simNumber = resolvedSimNumber)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    if (log.isHd) {
+                                        HdBadge()
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
                                     Text(
                                         text = timeText,
                                         style = RivoListItemDefaults.supportingStyle(),
@@ -371,36 +488,37 @@ fun CallLogTile(
                             }
                         } else null,
                         supporting2 = null,
-                        avatarName = if (isStacked) null else displayName,
-                        photoUri = if (isStacked) null else log.photoUri,
-                        badgeIcon = if (isStacked) null else icon,
-                        badgeColor = if (isStacked) null else badgeColor,
-                        leadingContent = if (isStacked) {
-                            {
-                                Box(
-                                    modifier = Modifier
-                                        .padding(bottom = 6.dp)
-                                        .size(RivoListItemDefaults.AvatarSize)
-                                        .clickable { isExpanded = !isExpanded }
-                                ) {
-                                    RivoAvatar(
-                                        name = displayName,
-                                        photoUri = log.photoUri,
-                                        badgeIcon = null,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
+                        avatarName = null,
+                        photoUri = null,
+                        badgeIcon = null,
+                        badgeColor = null,
+                        leadingContent = {
+                            Box(
+                                modifier = Modifier
+                                    .padding(bottom = if (isStacked) 4.dp else 0.dp)
+                                    .size(RivoListItemDefaults.AvatarSize)
+                            ) {
+                                RivoAvatar(
+                                    name = displayName,
+                                    photoUri = log.photoUri,
+                                    badgeIcon = icon,
+                                    badgeColor = badgeColor,
+                                    onClick = { onAvatarClick?.invoke(log) ?: onTileClick(log) },
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                                if (isStacked) {
                                     Surface(
                                         modifier = Modifier
                                             .align(Alignment.BottomStart)
-                                            .offset(x = (-4).dp, y = 8.dp)
-                                            .height(20.dp)
-                                            .widthIn(min = 28.dp),
-                                        shape = RoundedCornerShape(10.dp),
-                                        color = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+                                            .offset(x = (-2).dp, y = 3.dp)
+                                            .height(18.dp)
+                                            .widthIn(min = 24.dp),
+                                        shape = RoundedCornerShape(9.dp),
+                                        color = if (isOptionsExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
                                         shadowElevation = RivoElevation.Raised
                                     ) {
                                         Row(
-                                            modifier = Modifier.padding(horizontal = 5.dp),
+                                            modifier = Modifier.padding(horizontal = 4.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.Center
                                         ) {
@@ -409,72 +527,132 @@ fun CallLogTile(
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 10.sp,
-                                                color = if (isExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = if (isOptionsExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                             Spacer(modifier = Modifier.width(1.dp))
                                             Icon(
-                                                imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                                imageVector = if (isOptionsExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                                 contentDescription = null,
-                                                modifier = Modifier.size(12.dp),
-                                                tint = if (isExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-                                    Surface(
-                                        modifier = Modifier
-                                            .align(Alignment.BottomEnd)
-                                            .offset(x = 4.dp, y = 8.dp)
-                                            .size(20.dp),
-                                        shape = CircleShape,
-                                        color = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
-                                        shadowElevation = RivoElevation.Raised
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = icon,
-                                                contentDescription = null,
-                                                tint = if (isExpanded) MaterialTheme.colorScheme.onPrimary else badgeColor,
-                                                modifier = Modifier.size(13.dp)
+                                                modifier = Modifier.size(11.dp),
+                                                tint = if (isOptionsExpanded) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     }
                                 }
                             }
-                        } else null,
+                        },
                         headlineColor = headlineColor,
                         trailingIcon = if (isFavorite) Icons.Default.Star else null,
-                        onClick = { onTileClick(log) },
-                        onLongClick = { onLongClick(log) },
-                        selected = selected
+                        onClick = null,
+                        onLongClick = null,
+                        selected = false,
+                        containerColor = Color.Transparent
                     )
                 }
 
-                if (!selected) {
+                if (!selected && trailingAction != "none") {
+                    val trailingIcon = when (trailingAction) {
+                        "message" -> Icons.AutoMirrored.Outlined.Message
+                        "video_call" -> Icons.Outlined.Videocam
+                        "whatsapp" -> Icons.Outlined.ChatBubbleOutline
+                        "view_contact" -> Icons.Outlined.Person
+                        "history" -> Icons.Outlined.History
+                        else -> Icons.Rounded.Call
+                    }
+                    val trailingTint = when (trailingAction) {
+                        "message" -> MaterialTheme.colorScheme.secondary
+                        "video_call" -> MaterialTheme.colorScheme.tertiary
+                        "whatsapp" -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.primary
+                    }
                     IconButton(
                         onClick = { onButtonClick(log) },
                         modifier = Modifier.padding(end = 10.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.Call,
-                            contentDescription = stringResource(R.string.action_call),
-                            tint = MaterialTheme.colorScheme.primary
+                            imageVector = trailingIcon,
+                            contentDescription = null,
+                            tint = trailingTint
                         )
                     }
                 }
             }
 
-            AnimatedVisibility(
-                visible = isExpanded && !selected,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                val subItems = if (log.subLogs.isNotEmpty()) log.subLogs else listOf(log)
+            if (isUnsaved && !selected && !isOptionsExpanded) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 72.dp, end = 16.dp, top = 2.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onAddContact?.invoke(log) }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.PersonAdd,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.action_save),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onBlockContact?.invoke(log) }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Report,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.swipe_action_block),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+
+            @Composable
+            fun SubCallsList(subItems: List<CallLogEntry>) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 72.dp, end = 16.dp, top = 2.dp, bottom = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    subItems.forEachIndexed { idx, subLog ->
+                    subItems.forEachIndexed { subIndex, subLog ->
                         val subBlocked = subLog.isBlocked || subLog.type == CallLog.Calls.BLOCKED_TYPE
                         val subMissed = subLog.type == CallLog.Calls.MISSED_TYPE || subLog.type == CallLog.Calls.REJECTED_TYPE
                         val subIcon = when {
@@ -496,49 +674,131 @@ fun CallLogTile(
                             else -> stringResource(R.string.action_call)
                         }
 
-                        Row(
+                        val subShape = rivoGroupedItemShape(subIndex, subItems.size)
+                        Surface(
+                            shape = subShape,
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(subShape)
                                 .clickable { onTileClick(subLog) }
-                                .padding(vertical = 5.dp, horizontal = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = subIcon,
-                                contentDescription = null,
-                                tint = subColor,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = subTypeLabel,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Medium,
-                                color = subColor
-                            )
-                            val subSimNumber = subLog.simNumber ?: resolveSimNumber(subLog)
-                            if (showSim && subSimNumber != null) {
-                                Spacer(modifier = Modifier.width(6.dp))
-                                SimBadge(simNumber = subSimNumber)
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(
-                                text = formatTime(context, subLog.date),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            if (subLog.duration > 0) {
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "(${android.text.format.DateUtils.formatElapsedTime(subLog.duration)})",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 9.dp, horizontal = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = subIcon,
+                                    contentDescription = null,
+                                    tint = subColor,
+                                    modifier = Modifier.size(16.dp)
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = subTypeLabel,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = subColor
+                                )
+                                val subSimNumber = subLog.simNumber ?: resolveSimNumber(subLog)
+                                if (showSim && subSimNumber != null) {
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    SimBadge(simNumber = subSimNumber)
+                                }
+                                if (subLog.isHd) {
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    HdBadge()
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(
+                                    text = formatTime(context, subLog.date),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                if (subLog.duration > 0) {
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "(${android.text.format.DateUtils.formatElapsedTime(subLog.duration)})",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
+                                }
                             }
                         }
                     }
                 }
+            }
+
+            AnimatedVisibility(
+                visible = isOptionsExpanded && !selected,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                ) {
+                    if (isStacked && log.subLogs.isNotEmpty()) {
+                        SubCallsList(log.subLogs)
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        val actionsToDisplay = if (isUnsaved) unsavedActions else savedActions
+                        actionsToDisplay.forEachIndexed { index, actionKey ->
+                            val actionInfo = getCallLogActionInfo(actionKey)
+                            if (actionInfo != null) {
+                                val itemShape = rivoGroupedItemShape(index, actionsToDisplay.size)
+                                Surface(
+                                    shape = itemShape,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(itemShape)
+                                        .clickable { onActionClick?.invoke(actionKey, log) }
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 18.dp, vertical = 13.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = actionInfo.icon,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(14.dp))
+                                        Text(
+                                            text = actionInfo.label,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            AnimatedVisibility(
+                visible = isHistoryExpanded && !isOptionsExpanded && !selected,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                val subItems = if (log.subLogs.isNotEmpty()) log.subLogs else listOf(log)
+                SubCallsList(subItems)
             }
         }
     }
@@ -562,14 +822,10 @@ fun BatchCallLogActionBar(
     selectedCount: Int,
     onClearSelection: () -> Unit,
     onDelete: () -> Unit,
-    onBlock: () -> Unit,
-    onAddContact: (() -> Unit)? = null,
-    onCopy: (() -> Unit)? = null,
     onSelectAll: (() -> Unit)? = null,
     allSelected: Boolean = false
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    var showBlockConfirm by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -605,19 +861,6 @@ fun BatchCallLogActionBar(
                     )
                 }
             }
-            if (onAddContact != null) {
-                IconButton(onClick = onAddContact) {
-                    Icon(Icons.Default.PersonAdd, stringResource(R.string.contact_add_to_contacts))
-                }
-            }
-            if (onCopy != null) {
-                IconButton(onClick = onCopy) {
-                    Icon(Icons.Default.ContentCopy, stringResource(R.string.action_copy_number))
-                }
-            }
-            IconButton(onClick = { showBlockConfirm = true }) {
-                Icon(Icons.Default.Block, stringResource(R.string.action_block_number))
-            }
             IconButton(onClick = { showDeleteConfirm = true }) {
                 Icon(Icons.Default.Delete, stringResource(R.string.content_desc_delete_selected))
             }
@@ -633,19 +876,6 @@ fun BatchCallLogActionBar(
             confirmLabel = stringResource(R.string.action_delete),
             dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Default.Delete,
-            isDestructive = true
-        )
-    }
-
-    if (showBlockConfirm) {
-        RivoConfirmationDialog(
-            onDismissRequest = { showBlockConfirm = false },
-            onConfirm = onBlock,
-            title = stringResource(R.string.call_log_block_title),
-            message = pluralStringResource(R.plurals.call_log_block_message, selectedCount, selectedCount),
-            confirmLabel = stringResource(R.string.action_block),
-            dismissLabel = stringResource(R.string.action_cancel),
-            icon = Icons.Default.Block,
             isDestructive = true
         )
     }

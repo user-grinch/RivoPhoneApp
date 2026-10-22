@@ -277,6 +277,9 @@ fun RivoAvatar(
         remember(name, dark) { gradientAvatarBrush(name, dark) }
     } else null
     val hasLetters = name.any { it.isLetter() }
+    val initials = if (style.showFirstLetter && hasLetters) {
+        remember(name, style.gradient) { contactInitials(name, style.gradient) }
+    } else ""
     val description = contentDescription
 
     val rootModifier = modifier
@@ -339,7 +342,7 @@ fun RivoAvatar(
                 )
             } else if (style.showFirstLetter && hasLetters) {
                 Text(
-                    text = contactInitials(name, style.gradient),
+                    text = initials,
                     style = textStyle,
                     color = colors.content
                 )

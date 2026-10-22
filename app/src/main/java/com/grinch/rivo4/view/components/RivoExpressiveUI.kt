@@ -611,14 +611,16 @@ fun RivoListItem(
         RivoListItemDefaults.Spacing
     }
 
-    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
-        SettingsHighlightManager.matches(headline)
+    val highlightEpoch = SettingsHighlightManager.highlightEpoch
+    val isHighlighted = remember(highlightEpoch, headline) {
+        highlightEpoch != 0L && SettingsHighlightManager.matches(headline)
     }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val highlightPulse = remember { Animatable(0f) }
-
-    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
-        if (isHighlighted) {
+    var pulseVal = 0f
+    var highlightModifier: Modifier = Modifier
+    if (isHighlighted) {
+        val bringIntoViewRequester = remember { BringIntoViewRequester() }
+        val highlightPulse = remember { Animatable(0f) }
+        LaunchedEffect(isHighlighted, highlightEpoch) {
             delay(350L)
             try {
                 bringIntoViewRequester.bringIntoView()
@@ -633,27 +635,30 @@ fun RivoListItem(
             }
             SettingsHighlightManager.clear()
         }
+        pulseVal = highlightPulse.value
+        highlightModifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
     }
 
-    val pulseVal = highlightPulse.value
     val baseContainer = when {
         containerColor.isSpecified -> containerColor
         selected -> MaterialTheme.colorScheme.secondaryContainer
         else -> Color.Transparent
     }
-    val animatedBaseContainer by animateColorAsState(
-        targetValue = baseContainer,
-        animationSpec = RivoMotion.colorChange(),
-        label = "RivoListItemContainer"
-    )
     val effectiveContainer = if (pulseVal > 0f) {
         lerp(
             baseContainer,
             MaterialTheme.colorScheme.primaryContainer,
             pulseVal * 0.95f
         )
-    } else {
+    } else if (selectable || selected) {
+        val animatedBaseContainer by animateColorAsState(
+            targetValue = baseContainer,
+            animationSpec = RivoMotion.colorChange(),
+            label = "RivoListItemContainer"
+        )
         animatedBaseContainer
+    } else {
+        baseContainer
     }
 
     val isSelected = selected
@@ -661,26 +666,19 @@ fun RivoListItem(
     val resolvedRole = role ?: if (selectable) Role.Checkbox else Role.Button
     val selectedDescription = stringResource(R.string.content_desc_selected_item)
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val itemScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.97f else 1f,
-        animationSpec = RivoMotion.pressFeedback(),
-        label = "RivoListItemScale"
-    )
-
     val roundness = LocalCardRoundness.current
     val restCorner = rivoCornerDp(24, roundness)
-    val pressedCorner = rivoCornerDp(12, roundness)
-    val animatedCornerRadius by animateDpAsState(
-        targetValue = if (isPressed) pressedCorner else restCorner,
-        animationSpec = RivoMotion.shapeMorph(),
-        label = "RivoListItemCorner"
-    )
+    val itemShape = remember(restCorner) { RoundedCornerShape(restCorner) }
 
     val hasClickAction = (onClick != null || onLongClick != null) && enabled
     val clickModifier = if (hasClickAction) {
+        val interactionSource = remember { MutableInteractionSource() }
+        val isPressed by interactionSource.collectIsPressedAsState()
+        val itemScale by animateFloatAsState(
+            targetValue = if (isPressed) 0.97f else 1f,
+            animationSpec = RivoMotion.pressFeedback(),
+            label = "RivoListItemScale"
+        )
         Modifier
             .graphicsLayer {
                 scaleX = itemScale
@@ -711,11 +709,11 @@ fun RivoListItem(
                 color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
             )
         } else null,
-        shape = RoundedCornerShape(animatedCornerRadius),
+        shape = itemShape,
         shadowElevation = RivoElevation.Flat,
         modifier = modifier
             .fillMaxWidth()
-            .bringIntoViewRequester(bringIntoViewRequester)
+            .then(highlightModifier)
             .then(clickModifier)
             .semantics(mergeDescendants = true) {
                 this.selected = isSelected

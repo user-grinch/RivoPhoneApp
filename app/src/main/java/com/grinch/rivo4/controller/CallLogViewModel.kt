@@ -64,6 +64,7 @@ class CallLogViewModel(
         } catch (e: SecurityException) {
             Log.e("CallLogViewModel", "Error: ${e.message}", e)
         }
+        fetchLogs()
     }
 
     override fun onCleared() {

@@ -4,9 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -21,8 +23,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -30,10 +30,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
@@ -54,6 +60,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.view.components.LocalScrollToTopBottomPadding
 import com.grinch.rivo4.view.components.LocalShowFloatingNavBar
+import com.grinch.rivo4.view.screen.transitions.LocalTransitionStyle
+import com.grinch.rivo4.view.screen.transitions.LocalTransitionTimeScale
+import com.grinch.rivo4.view.screen.transitions.SmoothDecelerateEasing
+import com.grinch.rivo4.view.theme.RivoEasing
+import kotlin.math.roundToInt
 import androidx.navigation.NavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.BottomBar
@@ -101,9 +112,9 @@ fun MainScreen(
 
     val lastActiveTab = savedTab ?: prefs.getLastSelectedTab()
     val requestedTab = externalRequestedTab ?: initialTab ?: lastActiveTab ?: defaultTab
-    val startPage = visibleTabs.indexOf(requestedTab).coerceAtLeast(0)
 
-    val pagerState = rememberPagerState(initialPage = startPage) { visibleTabs.size }
+    var currentTabId by rememberSaveable { mutableIntStateOf(requestedTab) }
+    val saveableStateHolder = rememberSaveableStateHolder()
     val scope = rememberCoroutineScope()
 
     var isSelectingRecents by remember { mutableStateOf(false) }
@@ -111,30 +122,22 @@ fun MainScreen(
     var isSelectingContacts by remember { mutableStateOf(false) }
     var contactsActionBar by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
-    val currentTab = visibleTabs.getOrNull(pagerState.currentPage)
+    val currentTab = currentTabId
     val isSelecting = when (currentTab) {
         PreferenceManager.TAB_RECENTS -> isSelectingRecents
         PreferenceManager.TAB_CONTACTS -> isSelectingContacts
         else -> false
     }
 
-    LaunchedEffect(pagerState.currentPage, visibleTabs) {
-        visibleTabs.getOrNull(pagerState.currentPage)?.let { tabId ->
-            savedTab = tabId
-            prefs.setLastSelectedTab(tabId)
-        }
+    LaunchedEffect(currentTabId) {
+        savedTab = currentTabId
+        prefs.setLastSelectedTab(currentTabId)
     }
 
     LaunchedEffect(externalRequestedTab) {
         if (externalRequestedTab != null) {
-            val target = visibleTabs.indexOf(externalRequestedTab)
-            if (target >= 0) {
-                if (pagerState.currentPage != target) {
-                    pagerState.animateScrollToPage(
-                        page = target,
-                        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
-                    )
-                }
+            if (visibleTabs.contains(externalRequestedTab)) {
+                currentTabId = externalRequestedTab
                 savedTab = externalRequestedTab
                 prefs.setLastSelectedTab(externalRequestedTab)
             }
@@ -143,24 +146,16 @@ fun MainScreen(
     }
 
     LaunchedEffect(initialTab) {
-        if (initialTab != null) {
-            val target = visibleTabs.indexOf(initialTab)
-            if (target >= 0) {
-                if (pagerState.currentPage != target) {
-                    pagerState.animateScrollToPage(
-                        page = target,
-                        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
-                    )
-                }
-                savedTab = initialTab
-                prefs.setLastSelectedTab(initialTab)
-            }
+        if (initialTab != null && visibleTabs.contains(initialTab)) {
+            currentTabId = initialTab
+            savedTab = initialTab
+            prefs.setLastSelectedTab(initialTab)
         }
     }
 
-    LaunchedEffect(visibleTabs.size) {
-        if (pagerState.currentPage > visibleTabs.lastIndex) {
-            pagerState.scrollToPage(visibleTabs.lastIndex.coerceAtLeast(0))
+    LaunchedEffect(visibleTabs) {
+        if (!visibleTabs.contains(currentTabId)) {
+            currentTabId = visibleTabs.firstOrNull() ?: PreferenceManager.TAB_RECENTS
         }
     }
 
@@ -170,7 +165,7 @@ fun MainScreen(
 
     var isToolbarVisible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(pagerState.currentPage) {
+    LaunchedEffect(currentTabId) {
         isToolbarVisible = true
     }
 
@@ -270,29 +265,40 @@ fun MainScreen(
             }
         },
         bottomBar = {
+            val transitionStyle = LocalTransitionStyle.current
+            val transitionTimeScale = LocalTransitionTimeScale.current
             if (!isToolbar) {
                 BottomBar(
                     navController = navController,
                     navigator = navigator,
-                    pagerState = pagerState,
+                    selectedTabId = currentTabId,
                     visibleTabs = visibleTabs,
-                    onPageSelected = { page ->
-                        scope.launch {
-                            if (pagerState.currentPage != page) {
-                                pagerState.animateScrollToPage(
-                                    page = page,
-                                    animationSpec = tween(
-                                        durationMillis = 280,
-                                        easing = FastOutSlowInEasing
-                                    )
-                                )
-                            }
+                    onTabSelected = { tabId ->
+                        if (tabId != currentTabId) {
+                            currentTabId = tabId
                         }
                     }
                 )
             }
         }
     ) { innerPadding ->
+        val warmTabs = remember { mutableStateListOf(currentTabId) }
+        if (!warmTabs.contains(currentTabId)) {
+            warmTabs.add(currentTabId)
+        }
+
+        // Pre-warm remaining tabs shortly after initial render so clicking any navigation button
+        // switches immediately with zero cold-composition delay.
+        LaunchedEffect(visibleTabs) {
+            kotlinx.coroutines.delay(250L)
+            for (tab in visibleTabs) {
+                if (!warmTabs.contains(tab)) {
+                    warmTabs.add(tab)
+                    kotlinx.coroutines.delay(100L)
+                }
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -306,38 +312,55 @@ fun MainScreen(
                 LocalScrollToTopBottomPadding provides animatedScrollToTopPadding,
                 LocalShowFloatingNavBar provides { isToolbarVisible = true }
             ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                    beyondViewportPageCount = visibleTabs.size.coerceAtLeast(1),
-                    userScrollEnabled = !isSwipeActionsEnabled
-                ) { page ->
-                    when (visibleTabs.getOrNull(page)) {
-                        PreferenceManager.TAB_RECENTS -> RecentScreenContent(
-                            navController = navController,
-                            navigator = navigator,
-                            onSelectionStateChange = { selecting, actionBar ->
-                                isSelectingRecents = selecting
-                                recentsActionBar = actionBar
+                Box(modifier = Modifier.fillMaxSize()) {
+                    warmTabs.forEach { tab ->
+                        key(tab) {
+                            val isActive = tab == currentTabId
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .layout { measurable, constraints ->
+                                        val placeable = measurable.measure(constraints)
+                                        if (isActive) {
+                                            layout(placeable.width, placeable.height) {
+                                                placeable.placeRelative(0, 0)
+                                            }
+                                        } else {
+                                            layout(0, 0) {}
+                                        }
+                                    }
+                            ) {
+                                saveableStateHolder.SaveableStateProvider(tab) {
+                                    when (tab) {
+                                        PreferenceManager.TAB_RECENTS -> RecentScreenContent(
+                                            navController = navController,
+                                            navigator = navigator,
+                                            onSelectionStateChange = { selecting, actionBar ->
+                                                isSelectingRecents = selecting
+                                                recentsActionBar = actionBar
+                                            }
+                                        )
+                                        PreferenceManager.TAB_FAVORITES -> FavoritesScreenContent(
+                                            navController = navController,
+                                            navigator = navigator,
+                                            showTopBar = false
+                                        )
+                                        PreferenceManager.TAB_CONTACTS -> ContactScreenContent(
+                                            navController = navController,
+                                            navigator = navigator,
+                                            onSelectionStateChange = { selecting, actionBar ->
+                                                isSelectingContacts = selecting
+                                                contactsActionBar = actionBar
+                                            }
+                                        )
+                                        PreferenceManager.TAB_RECORDINGS -> com.grinch.rivo4.view.screen.settings.CallRecordingsContent(
+                                            showTopBar = false,
+                                            initialShowList = true
+                                        )
+                                    }
+                                }
                             }
-                        )
-                        PreferenceManager.TAB_FAVORITES -> FavoritesScreenContent(
-                            navController = navController,
-                            navigator = navigator,
-                            showTopBar = false
-                        )
-                        PreferenceManager.TAB_CONTACTS -> ContactScreenContent(
-                            navController = navController,
-                            navigator = navigator,
-                            onSelectionStateChange = { selecting, actionBar ->
-                                isSelectingContacts = selecting
-                                contactsActionBar = actionBar
-                            }
-                        )
-                        PreferenceManager.TAB_RECORDINGS -> com.grinch.rivo4.view.screen.settings.CallRecordingsContent(
-                            showTopBar = false,
-                            initialShowList = true
-                        )
+                        }
                     }
                 }
             }
@@ -371,20 +394,10 @@ fun MainScreen(
                         BottomBar(
                             navController = navController,
                             navigator = navigator,
-                            pagerState = pagerState,
+                            selectedTabId = currentTabId,
                             visibleTabs = visibleTabs,
-                            onPageSelected = { page ->
-                                scope.launch {
-                                    if (pagerState.currentPage != page) {
-                                        pagerState.animateScrollToPage(
-                                            page = page,
-                                            animationSpec = tween(
-                                                durationMillis = 280,
-                                                easing = FastOutSlowInEasing
-                                            )
-                                        )
-                                    }
-                                }
+                            onTabSelected = { tabId ->
+                                currentTabId = tabId
                             }
                         )
                     }

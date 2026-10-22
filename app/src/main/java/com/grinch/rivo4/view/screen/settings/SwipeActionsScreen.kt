@@ -50,6 +50,9 @@ fun SwipeActionsScreen(
             SwipeActionType.VIDEO_CALL,
             SwipeActionType.WHATSAPP,
             SwipeActionType.COPY_NUMBER,
+            SwipeActionType.VIEW_CONTACT,
+            SwipeActionType.SHARE,
+            SwipeActionType.BLOCK,
             SwipeActionType.DELETE,
             SwipeActionType.NONE
         )
@@ -93,34 +96,6 @@ fun SwipeActionsScreen(
                             prefs.setSwipeActionsEnabled(it)
                         }
                     )
-                    if (enabled) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.45f),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 6.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.WarningAmber,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.settings_swipe_actions_tab_warning),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                                )
-                            }
-                        }
-                    }
                 }
             }
 

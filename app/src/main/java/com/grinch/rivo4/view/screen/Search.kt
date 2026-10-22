@@ -215,14 +215,6 @@ fun ContactSearchContent(
     var query by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(SearchTabFilter.ALL) }
 
-    BackHandler(enabled = query.isNotEmpty() || selectedFilter != SearchTabFilter.ALL) {
-        if (query.isNotEmpty()) {
-            query = ""
-        } else {
-            selectedFilter = SearchTabFilter.ALL
-        }
-    }
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -232,6 +224,8 @@ fun ContactSearchContent(
         focusRequester.requestFocus()
         keyboardController?.show()
     }
+
+    val favoritesCount = remember(contacts) { contacts.count { it.isFavorite } }
 
     val filteredContacts = remember(query, contacts, selectedFilter) {
         val baseContacts = if (selectedFilter == SearchTabFilter.FAVORITES) {
@@ -247,12 +241,12 @@ fun ContactSearchContent(
                 emptyList()
             }
         } else {
-            val cleanQuery = query.replace(Regex("[^0-9+*#]"), "")
+            val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
             baseContacts.filter {
                 val matchesName = it.name.contains(query, ignoreCase = true)
                 val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
                 val matchesNumber = cleanQuery.isNotEmpty() && it.phoneNumbers.any { number ->
-                    number.replace(Regex("[^0-9+*#]"), "").contains(cleanQuery)
+                    number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
                 }
                 matchesName || matchesNickname || matchesNumber
             }.take(50).toList()
@@ -275,10 +269,11 @@ fun ContactSearchContent(
                 emptyList()
             }
         } else {
-            val cleanQuery = query.replace(Regex("[^0-9+*#]"), "")
+            val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
             baseLogs.filter { log ->
                 val matchesName = log.name?.contains(query, ignoreCase = true) == true
-                val matchesNumber = cleanQuery.isNotEmpty() && log.number.replace(Regex("[^0-9+*#]"), "").contains(cleanQuery)
+                val matchesNumber = cleanQuery.isNotEmpty() &&
+                    log.number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
                 matchesName || matchesNumber
             }.take(30).toList()
         }
@@ -473,7 +468,7 @@ fun ContactSearchContent(
                                     }
                                 },
                                 label = {
-                                    val count = if (selectedFilter == SearchTabFilter.FAVORITES) filteredContacts.size else contacts.count { it.isFavorite }
+                                    val count = if (selectedFilter == SearchTabFilter.FAVORITES) filteredContacts.size else favoritesCount
                                     Text("Favorites ($count)")
                                 },
                                 leadingIcon = {
@@ -757,7 +752,11 @@ fun ContactSearchContent(
                                         }
 
                                         val showCards = surfaceStyle.showCards
-                                        itemsIndexed(filteredContacts, key = { _, c -> "contact_${c.id}" }) { index, contact ->
+                                        itemsIndexed(
+                                            filteredContacts,
+                                            key = { _, c -> "contact_${c.id}" },
+                                            contentType = { _, _ -> "contact" }
+                                        ) { index, contact ->
                                             val shape = rivoGroupedItemShape(index, filteredContacts.size)
                                             Column(modifier = Modifier.fillMaxWidth()) {
                                                 Surface(
@@ -780,6 +779,22 @@ fun ContactSearchContent(
                                                                     if (phone.isNotBlank()) {
                                                                         clipboardManager.setText(AnnotatedString(phone))
                                                                         Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }
+                                                                SwipeActionType.VIEW_CONTACT -> {
+                                                                    navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                                }
+                                                                SwipeActionType.SHARE -> {
+                                                                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                                        type = "text/plain"
+                                                                        putExtra(android.content.Intent.EXTRA_TEXT, "${contact.name}: $phone")
+                                                                    }
+                                                                    context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                                }
+                                                                SwipeActionType.BLOCK -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                                        Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
                                                                     }
                                                                 }
                                                                 SwipeActionType.DELETE -> {}
@@ -840,7 +855,11 @@ fun ContactSearchContent(
                                         }
 
                                         val showCards = surfaceStyle.showCards
-                                        itemsIndexed(filteredCallLogs, key = { _, lg -> "call_${lg.id}_${lg.date}" }) { index, lg ->
+                                        itemsIndexed(
+                                            filteredCallLogs,
+                                            key = { _, lg -> "call_${lg.id}_${lg.date}" },
+                                            contentType = { _, _ -> "call_log" }
+                                        ) { index, lg ->
                                             val shape = rivoGroupedItemShape(index, filteredCallLogs.size)
                                             Column(modifier = Modifier.fillMaxWidth()) {
                                                 Surface(
@@ -863,6 +882,27 @@ fun ContactSearchContent(
                                                                     if (phone.isNotBlank()) {
                                                                         clipboardManager.setText(AnnotatedString(phone))
                                                                         Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }
+                                                                SwipeActionType.VIEW_CONTACT -> {
+                                                                    navigator.navigate(
+                                                                        ContactDetailsScreenDestination(
+                                                                            contactId = lg.contactId,
+                                                                            phoneNumber = lg.number
+                                                                        )
+                                                                    )
+                                                                }
+                                                                SwipeActionType.SHARE -> {
+                                                                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                                        type = "text/plain"
+                                                                        putExtra(android.content.Intent.EXTRA_TEXT, "${lg.name ?: lg.number}: $phone")
+                                                                    }
+                                                                    context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                                }
+                                                                SwipeActionType.BLOCK -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                                        Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
                                                                     }
                                                                 }
                                                                 SwipeActionType.DELETE -> {}

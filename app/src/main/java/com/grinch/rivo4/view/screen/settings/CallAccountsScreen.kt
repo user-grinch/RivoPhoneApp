@@ -52,6 +52,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.CallLogCustomizationScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.QuickResponsesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
@@ -470,6 +471,16 @@ fun CallAccountsScreen(
                                 onCheckedChange = { enabled ->
                                     groupCallLogs = enabled
                                     prefs.setBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, enabled)
+                                }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_call_log_customization_title),
+                                supporting = stringResource(R.string.settings_call_log_customization_supporting),
+                                leadingIcon = Icons.Outlined.Tune,
+                                onClick = {
+                                    navigator.navigate(CallLogCustomizationScreenDestination)
                                 }
                             )
                         }

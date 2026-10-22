@@ -224,10 +224,6 @@ fun DialPadScreen(
         }
     }
 
-    BackHandler(enabled = number.isNotEmpty()) {
-        textFieldValue = TextFieldValue("")
-    }
-
     val onDigitClick = { digit: String ->
         val selection = textFieldValue.selection
         val text = textFieldValue.text
@@ -306,7 +302,14 @@ fun DialPadScreen(
     var searchResults by remember { mutableStateOf<List<Contact>>(emptyList()) }
     var searchRecentNumbers by remember { mutableStateOf<List<CallLogEntry>>(emptyList()) }
 
-    LaunchedEffect(number, allContacts, allCallLogs, t9Enabled) {
+    val savedNumbersSet = remember(allContacts) {
+        allContacts.flatMap { it.phoneNumbers }
+            .map { normalizePhoneNumber(it) }
+            .filter { it.isNotEmpty() }
+            .toSet()
+    }
+
+    LaunchedEffect(number, allContacts, allCallLogs, t9Enabled, savedNumbersSet) {
         if (number.isEmpty()) {
             searchResults = emptyList()
             searchRecentNumbers = emptyList()
@@ -314,11 +317,12 @@ fun DialPadScreen(
             val (contacts, recents) = withContext(Dispatchers.Default) {
                 val cleanQuery = number.replace(" ", "")
                 val cleanDigits = cleanQuery.filter { it.isDigit() }
+                val cleanQueryChars = cleanQuery.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
 
                 val matchedContacts = allContacts.asSequence()
                     .filter { contact ->
-                        val matchesNumber = contact.phoneNumbers.any {
-                            it.replace(Regex("[^0-9+*#]"), "").contains(cleanQuery.replace(Regex("[^0-9+*#]"), ""))
+                        val matchesNumber = contact.phoneNumbers.any { num ->
+                            num.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }.contains(cleanQueryChars)
                         }
                         val matchesName = t9Enabled && T9Matcher.isMatch(contact.name, cleanQuery)
                         val matchesNickname = t9Enabled && contact.nickname?.let { T9Matcher.isMatch(it, cleanQuery) } ?: false
@@ -326,11 +330,6 @@ fun DialPadScreen(
                     }
                     .take(50)
                     .toList()
-
-                val savedNumbersSet = allContacts.flatMap { it.phoneNumbers }
-                    .map { normalizePhoneNumber(it) }
-                    .filter { it.isNotEmpty() }
-                    .toSet()
 
                 val matchedRecents = if (cleanDigits.isNotEmpty()) {
                     allCallLogs.asSequence()
@@ -519,7 +518,11 @@ fun DialPadScreen(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = dialpadHeightDp + 16.dp),
                     verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    itemsIndexed(searchResults, key = { _, contact -> "dialpad_contact_${contact.id}" }) { index, contact ->
+                    itemsIndexed(
+                        searchResults,
+                        key = { _, contact -> "dialpad_contact_${contact.id}" },
+                        contentType = { _, _ -> "contact" }
+                    ) { index, contact ->
                         val contactNumber = contact.phoneNumbers.firstOrNull()
                         val shape = rivoGroupedItemShape(index, totalResults)
 
@@ -543,6 +546,22 @@ fun DialPadScreen(
                                             if (phone.isNotBlank()) {
                                                 clipboardManager.setText(AnnotatedString(phone))
                                                 Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                        SwipeActionType.VIEW_CONTACT -> {
+                                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                        }
+                                        SwipeActionType.SHARE -> {
+                                            val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                type = "text/plain"
+                                                putExtra(android.content.Intent.EXTRA_TEXT, "${contact.name}: $phone")
+                                            }
+                                            context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                        }
+                                        SwipeActionType.BLOCK -> {
+                                            if (phone.isNotBlank()) {
+                                                com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                         SwipeActionType.DELETE -> {}
@@ -584,7 +603,11 @@ fun DialPadScreen(
                         }
                     }
 
-                    itemsIndexed(searchRecentNumbers, key = { _, entry -> "dialpad_recent_${entry.id}_${entry.number}" }) { index, entry ->
+                    itemsIndexed(
+                        searchRecentNumbers,
+                        key = { _, entry -> "dialpad_recent_${entry.id}_${entry.number}" },
+                        contentType = { _, _ -> "recent" }
+                    ) { index, entry ->
                         val itemIndex = searchResults.size + index
                         val shape = rivoGroupedItemShape(itemIndex, totalResults)
 
@@ -612,6 +635,27 @@ fun DialPadScreen(
                                                 Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
                                             }
                                         }
+                                        SwipeActionType.VIEW_CONTACT -> {
+                                            navigator.navigate(
+                                                ContactDetailsScreenDestination(
+                                                    contactId = entry.contactId ?: "null",
+                                                    phoneNumber = entry.number
+                                                )
+                                            )
+                                        }
+                                        SwipeActionType.SHARE -> {
+                                            val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                type = "text/plain"
+                                                putExtra(android.content.Intent.EXTRA_TEXT, "${entry.name ?: entry.number}: $phone")
+                                            }
+                                            context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                        }
+                                        SwipeActionType.BLOCK -> {
+                                            if (phone.isNotBlank()) {
+                                                com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
                                         SwipeActionType.DELETE -> {}
                                         SwipeActionType.NONE -> {}
                                     }
@@ -619,15 +663,21 @@ fun DialPadScreen(
                             ) {
                                 RivoListItem(
                                     headline = formatPhoneNumber(entry.number),
-                                    supporting = if (entrySimNumber == null) recentsLabel else null,
-                                    supportingContent = if (entrySimNumber != null) {
+                                    supporting = if (entrySimNumber == null && !entry.isHd) recentsLabel else null,
+                                    supportingContent = if (entrySimNumber != null || entry.isHd) {
                                         {
                                             Row(
                                                 verticalAlignment = Alignment.CenterVertically,
                                                 modifier = Modifier.padding(top = 1.dp)
                                             ) {
-                                                SimBadge(simNumber = entrySimNumber)
-                                                Spacer(modifier = Modifier.width(6.dp))
+                                                if (entrySimNumber != null) {
+                                                    SimBadge(simNumber = entrySimNumber)
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                }
+                                                if (entry.isHd) {
+                                                    HdBadge()
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                }
                                                 Text(
                                                     text = recentsLabel,
                                                     style = RivoListItemDefaults.supportingStyle(),

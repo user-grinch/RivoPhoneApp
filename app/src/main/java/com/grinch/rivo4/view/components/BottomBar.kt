@@ -107,6 +107,8 @@ private fun navigationTabUnselectedIcon(tabId: Int): ImageVector = when (tabId) 
 fun BottomBar(
     navController: NavController,
     navigator: DestinationsNavigator,
+    selectedTabId: Int? = null,
+    onTabSelected: ((Int) -> Unit)? = null,
     pagerState: PagerState? = null,
     onPageSelected: ((Int) -> Unit)? = null,
     visibleTabs: List<Int>? = null
@@ -171,10 +173,10 @@ fun BottomBar(
                 contentPadding = FloatingToolbarDefaults.ContentPadding
             ) {
                 tabs.forEach { tab ->
-                    val isSelected = if (pagerState != null) {
-                        pagerState.targetPage == tab.value
-                    } else {
-                        currentDestination?.hierarchy?.any { it.route == tab.route } == true
+                    val isSelected = when {
+                        selectedTabId != null -> tab.id == selectedTabId
+                        pagerState != null -> pagerState.targetPage == tab.value
+                        else -> currentDestination?.hierarchy?.any { it.route == tab.route } == true
                     }
 
                     val indicatorColor by animateColorAsState(
@@ -192,7 +194,9 @@ fun BottomBar(
                     )
 
                     val onItemClick = {
-                        if (onPageSelected != null && pagerState != null) {
+                        if (onTabSelected != null) {
+                            onTabSelected(tab.id)
+                        } else if (onPageSelected != null && pagerState != null) {
                             onPageSelected(tab.value)
                         } else {
                             navController.navigate(tab.route) {
@@ -264,16 +268,18 @@ fun BottomBar(
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             tabs.forEach { tab ->
-                val isSelected = if (pagerState != null) {
-                    pagerState.targetPage == tab.value
-                } else {
-                    currentDestination?.hierarchy?.any { it.route == tab.route } == true
+                val isSelected = when {
+                    selectedTabId != null -> tab.id == selectedTabId
+                    pagerState != null -> pagerState.targetPage == tab.value
+                    else -> currentDestination?.hierarchy?.any { it.route == tab.route } == true
                 }
 
                 ShortNavigationBarItem(
                     selected = isSelected,
                     onClick = {
-                        if (onPageSelected != null && pagerState != null) {
+                        if (onTabSelected != null) {
+                            onTabSelected(tab.id)
+                        } else if (onPageSelected != null && pagerState != null) {
                             onPageSelected(tab.value)
                         } else {
                             navController.navigate(tab.route) {

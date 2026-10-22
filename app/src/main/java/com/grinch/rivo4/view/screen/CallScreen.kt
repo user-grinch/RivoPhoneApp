@@ -1438,7 +1438,7 @@ fun formatDuration(seconds: Long): String {
 @Composable
 fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-    val offsetX = remember { Animatable(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1459,7 +1459,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     }
     val triggerThreshold = maxDrag * 0.85f
 
-    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX.value / maxDrag else 0f } }
+    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX / maxDrag else 0f } }
     val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -1559,7 +1559,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .graphicsLayer {
                     val idleFactor = (1f - dragNormal.value * 5f).coerceIn(0f, 1f)
                     scaleX = 1f + (handlePulseScale - 1f) * idleFactor
@@ -1572,26 +1572,42 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
+                            val current = offsetX
+                            when {
+                                current > triggerThreshold -> {
+                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    onAnswer()
+                                }
+                                current < -triggerThreshold -> {
+                                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                    onDecline()
+                                }
+                                else -> {
+                                    coroutineScope.launch {
+                                        Animatable(current).animateTo(
+                                            0f,
+                                            spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                        ) {
+                                            offsetX = value
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        onDragCancel = {
+                            val current = offsetX
                             coroutineScope.launch {
-                                when {
-                                    offsetX.value > triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                        onAnswer()
-                                    }
-                                    offsetX.value < -triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                        onDecline()
-                                    }
-                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                                Animatable(current).animateTo(
+                                    0f,
+                                    spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                ) {
+                                    offsetX = value
                                 }
                             }
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
-                            coroutineScope.launch { 
-                                val newOffset = (offsetX.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
-                                offsetX.snapTo(newOffset) 
-                            }
+                            offsetX = (offsetX + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
                         }
                     )
                 },
@@ -1621,7 +1637,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val coroutineScope = rememberCoroutineScope()
-    val offsetY = remember { Animatable(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1632,7 +1648,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val maxDrag = with(density) { (trackHeight / 2f - handleSize / 2f - 8.dp).toPx() }
     val triggerThreshold = maxDrag * 0.75f
 
-    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetY.value / maxDrag else 0f } }
+    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetY / maxDrag else 0f } }
     val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
 
     val infiniteTransition = rememberInfiniteTransition(label = "vertPulse")
@@ -1728,7 +1744,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset { IntOffset(0, offsetY.value.roundToInt()) }
+                    .offset { IntOffset(0, offsetY.roundToInt()) }
                     .graphicsLayer {
                         val idleFactor = (1f - dragNormal.value * 4f).coerceIn(0f, 1f)
                         scaleX = 1f + (pulseScale - 1f) * idleFactor
@@ -1740,26 +1756,42 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragEnd = {
+                                val current = offsetY
+                                when {
+                                    current < -triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        onAnswer()
+                                    }
+                                    current > triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                        onDecline()
+                                    }
+                                    else -> {
+                                        coroutineScope.launch {
+                                            Animatable(current).animateTo(
+                                                0f,
+                                                spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                            ) {
+                                                offsetY = value
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            onDragCancel = {
+                                val current = offsetY
                                 coroutineScope.launch {
-                                    when {
-                                        offsetY.value < -triggerThreshold -> {
-                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                            onAnswer()
-                                        }
-                                        offsetY.value > triggerThreshold -> {
-                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                            onDecline()
-                                        }
-                                        else -> offsetY.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                                    Animatable(current).animateTo(
+                                        0f,
+                                        spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                    ) {
+                                        offsetY = value
                                     }
                                 }
                             },
                             onVerticalDrag = { change, dragAmount ->
                                 change.consume()
-                                coroutineScope.launch {
-                                    val newOffset = (offsetY.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
-                                    offsetY.snapTo(newOffset)
-                                }
+                                offsetY = (offsetY + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
                             }
                         )
                     },
@@ -1790,7 +1822,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val coroutineScope = rememberCoroutineScope()
-    val offsetX = remember { Animatable(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1905,7 +1937,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = handleSize + 16.dp)
-                    .graphicsLayer { alpha = (1f - (offsetX.value / maxDrag)).coerceIn(0f, 1f) },
+                    .graphicsLayer { alpha = (1f - (offsetX / maxDrag)).coerceIn(0f, 1f) },
                 style = MaterialTheme.typography.titleMedium.copy(
                     brush = brush,
                     fontWeight = FontWeight.SemiBold
@@ -1916,27 +1948,36 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
             Box(
                 modifier = Modifier
                     .padding(start = handlePadding)
-                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .offset { IntOffset(offsetX.roundToInt(), 0) }
                     .size(handleSize)
                     .clip(CircleShape)
                     .background(MaterialTheme.callColors.answer)
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onDragEnd = {
+                                val current = offsetX
+                                if (current > maxDrag * 0.85f) {
+                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    onAnswer()
+                                } else {
+                                    coroutineScope.launch {
+                                        Animatable(current).animateTo(0f, spring(dampingRatio = 0.8f)) {
+                                            offsetX = value
+                                        }
+                                    }
+                                }
+                            },
+                            onDragCancel = {
+                                val current = offsetX
                                 coroutineScope.launch {
-                                    if (offsetX.value > maxDrag * 0.85f) {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                        onAnswer()
-                                    } else {
-                                        offsetX.animateTo(0f, spring(dampingRatio = 0.8f))
+                                    Animatable(current).animateTo(0f, spring(dampingRatio = 0.8f)) {
+                                        offsetX = value
                                     }
                                 }
                             },
                             onHorizontalDrag = { change, dragAmount ->
                                 change.consume()
-                                coroutineScope.launch {
-                                    offsetX.snapTo((offsetX.value + dragAmount).coerceIn(0f, maxDrag))
-                                }
+                                offsetX = (offsetX + dragAmount).coerceIn(0f, maxDrag)
                             }
                         )
                     },

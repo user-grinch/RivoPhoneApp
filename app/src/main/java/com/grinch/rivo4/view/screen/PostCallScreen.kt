@@ -19,10 +19,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,7 +53,6 @@ import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import java.io.File
 import com.grinch.rivo4.view.components.AddToContactBottomSheet
 import com.grinch.rivo4.view.components.CallNotesSheet
-import com.grinch.rivo4.view.screen.settings.CallRecordEntryCard
 import com.grinch.rivo4.view.screen.settings.toCallRecordingItem
 import com.grinch.rivo4.view.components.ad.PostCallNativeAd
 import kotlinx.coroutines.delay
@@ -458,46 +461,87 @@ fun PostCallScreen(
                         val item = recItem
                         if (file != null && file.exists() && item != null) {
                             Spacer(modifier = Modifier.height(10.dp))
-                            CallRecordEntryCard(
-                                item = item,
-                                isCurrentActive = true,
-                                isPlaying = isRecordingPlaying,
-                                currentPositionMs = currentPositionMs,
-                                durationMs = recordingDurationMs,
-                                playbackSpeed = playbackSpeed,
-                                onCardClick = toggleRecordingPlayback,
-                                onPlayPauseClick = toggleRecordingPlayback,
-                                onSeekTo = { posMs ->
-                                    currentPositionMs = posMs
-                                    mediaPlayer?.seekTo(posMs)
-                                },
-                                onRewind10 = {
-                                    val newPos = (currentPositionMs - 10000).coerceAtLeast(0)
-                                    currentPositionMs = newPos
-                                    mediaPlayer?.seekTo(newPos)
-                                },
-                                onForward10 = {
-                                    val newPos = (currentPositionMs + 10000).coerceAtMost(recordingDurationMs)
-                                    currentPositionMs = newPos
-                                    mediaPlayer?.seekTo(newPos)
-                                },
-                                onSpeedChange = { newSpeed ->
-                                    playbackSpeed = newSpeed
-                                    mediaPlayer?.let { mp ->
-                                        runCatching {
-                                            mp.playbackParams = mp.playbackParams.setSpeed(newSpeed)
-                                        }
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    FilledIconButton(
+                                        onClick = toggleRecordingPlayback,
+                                        modifier = Modifier.size(38.dp),
+                                        colors = IconButtonDefaults.filledIconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            contentColor = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = if (isRecordingPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                                            contentDescription = if (isRecordingPlaying) "Pause" else "Play",
+                                            modifier = Modifier.size(20.dp)
+                                        )
                                     }
-                                },
-                                onShareClick = {
-                                    CallRecorder.share(
-                                        context,
-                                        file,
-                                        context.getString(R.string.call_recordings_share)
-                                    )
-                                },
-                                onDeleteClick = { showDeleteRecordingDialog = true }
-                            )
+
+                                    Spacer(modifier = Modifier.width(12.dp))
+
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = stringResource(R.string.settings_call_recording),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        val durMs = if (recordingDurationMs > 0) recordingDurationMs.toLong() else item.durationMs
+                                        val durationLabel = if (durMs > 0) {
+                                            android.text.format.DateUtils.formatElapsedTime(durMs / 1000)
+                                        } else {
+                                            item.sizeFormatted
+                                        }
+                                        Text(
+                                            text = durationLabel,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+
+                                    IconButton(
+                                        onClick = {
+                                            CallRecorder.share(
+                                                context,
+                                                file,
+                                                context.getString(R.string.call_recordings_share)
+                                            )
+                                        },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Share,
+                                            contentDescription = stringResource(R.string.call_recordings_share),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+
+                                    IconButton(
+                                        onClick = { showDeleteRecordingDialog = true },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Delete,
+                                            contentDescription = stringResource(R.string.action_delete),
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 

@@ -61,7 +61,13 @@ fun RivoFloatingActionButton(
 
     if (isBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val density = LocalDensity.current
-        val blurRadiusPx = with(density) { 36.dp.toPx() }
+        val blurRadiusPx = remember(density) { with(density) { 36.dp.toPx() } }
+        val blurEffect = remember(blurRadiusPx) {
+            RenderEffect.createBlurEffect(
+                blurRadiusPx, blurRadiusPx,
+                Shader.TileMode.CLAMP
+            ).asComposeRenderEffect()
+        }
         val resolvedInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
 
         Box(
@@ -76,10 +82,7 @@ fun RivoFloatingActionButton(
                     .matchParentSize()
                     .clip(shape)
                     .graphicsLayer {
-                        renderEffect = RenderEffect.createBlurEffect(
-                            blurRadiusPx, blurRadiusPx,
-                            Shader.TileMode.CLAMP
-                        ).asComposeRenderEffect()
+                        renderEffect = blurEffect
                     }
                     .background(containerColor.copy(alpha = 0.85f))
             )

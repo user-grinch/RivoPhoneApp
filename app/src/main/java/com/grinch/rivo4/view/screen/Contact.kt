@@ -75,7 +75,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>(style = NoTransitions::class)
+@Destination<RootGraph>
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     ContactScreenContent(navController, navigator)
@@ -455,7 +455,7 @@ fun ContactContent(
     var showMergeAllDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isGranted) {
-        if (isGranted) {
+        if (isGranted && contacts.isEmpty()) {
             contactsVM.fetchContacts()
         }
     }

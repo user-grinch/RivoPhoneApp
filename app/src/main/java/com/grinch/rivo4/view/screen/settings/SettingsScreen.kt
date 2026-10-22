@@ -88,7 +88,7 @@ fun SettingsScreen(
     val settingsState by prefs.settingsChanged.collectAsState()
     val listState = rememberLazyListState()
     val searchListState = rememberLazyListState()
-    val appInfo = getAppVersion(context)
+    val appInfo = remember { getAppVersion(context) }
     val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.2f }
 
     var enableAds by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
@@ -125,8 +125,8 @@ fun SettingsScreen(
         }
     }
 
-val searchItems = remember(settingsState, isSupporter) {
-        listOf(
+val searchItems = remember(isSearchActive, isSupporter) {
+        if (!isSearchActive) emptyList() else listOf(
             // ==================== PERSONALIZATION & DISPLAY ====================
             SettingSearchItem(
                 title = "Theme & Appearance",
@@ -170,6 +170,15 @@ val searchItems = remember(settingsState, isSupporter) {
                 icon = Icons.Outlined.Animation,
                 keywords = listOf("animations", "motion", "transitions", "slide", "fade", "smooth"),
                 targetHeadline = context.getString(R.string.settings_interface_transition_animation),
+                onClick = { navigator.navigate(InterfaceScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = "Transition Animation Speed",
+                supporting = "Adjust transition animation time scale across pages, tabs, and menus",
+                category = "Personalization & Display",
+                icon = Icons.Outlined.Speed,
+                keywords = listOf("transition speed", "animation speed", "time scale", "duration", "fast animations", "slow animations"),
+                targetHeadline = "Transition Animation Speed",
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -650,6 +659,14 @@ val searchItems = remember(settingsState, isSupporter) {
                 icon = Icons.Outlined.Swipe,
                 keywords = listOf("swipe", "gesture", "swipe to call", "swipe to message", "left", "right"),
                 onClick = { navigator.navigate(SwipeActionsScreenDestination) }
+            ),
+            SettingSearchItem(
+                title = context.getString(R.string.settings_call_log_customization_title),
+                supporting = context.getString(R.string.settings_call_log_customization_supporting),
+                category = "Calling & Behavior",
+                icon = Icons.Outlined.History,
+                keywords = listOf("call log", "call log actions", "click actions", "trailing button", "recents options", "call log customize"),
+                onClick = { navigator.navigate(CallLogCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Swipe Right Action",
@@ -1784,6 +1801,17 @@ val searchItems = remember(settingsState, isSupporter) {
                             onClick = {
                                 prefs.addSettingsHistory("Swipe Actions")
                                 navigator.navigate(SwipeActionsScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_call_log_customization_title),
+                            supporting = stringResource(R.string.settings_call_log_customization_supporting),
+                            leadingIcon = Icons.Outlined.History,
+                            onClick = {
+                                prefs.addSettingsHistory("Call Log Customization")
+                                navigator.navigate(CallLogCustomizationScreenDestination)
                             }
                         )
                     }

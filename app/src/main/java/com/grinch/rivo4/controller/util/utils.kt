@@ -35,7 +35,7 @@ private val timeFormatCache = ThreadLocal<Pair<Boolean, java.text.DateFormat>>()
 private val calThreadLocal1 = ThreadLocal.withInitial { Calendar.getInstance() }
 private val calThreadLocal2 = ThreadLocal.withInitial { Calendar.getInstance() }
 
-private fun isYesterday(timestamp: Long): Boolean {
+fun isYesterday(timestamp: Long): Boolean {
     return DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)
 }
 

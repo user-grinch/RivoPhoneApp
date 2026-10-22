@@ -69,6 +69,7 @@ class CallLogRepository(
         baseProjection.add("phone_account_label")
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_ID)
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
+        baseProjection.add(CallLog.Calls.FEATURES)
 
         val limit = preferenceManager.getCallLogLimit()
 
@@ -107,7 +108,8 @@ class CallLogRepository(
                     CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
                     CallLog.Calls.CACHED_PHOTO_URI, CallLog.Calls.CACHED_LOOKUP_URI,
                     CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.DURATION,
-                    CallLog.Calls.PHONE_ACCOUNT_ID, CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME
+                    CallLog.Calls.PHONE_ACCOUNT_ID, CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME,
+                    CallLog.Calls.FEATURES
                 )
                 val cursor = contentResolver.query(
                     CallLog.Calls.CONTENT_URI,
@@ -209,6 +211,7 @@ class CallLogRepository(
         val labelIdx = cursor.getColumnIndex("phone_account_label")
         val accountIdIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID)
         val componentNameIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
+        val featuresIdx = cursor.getColumnIndex(CallLog.Calls.FEATURES)
 
         val accountSimMap = mutableMapOf<String, Int>()
         val labelSimMap = mutableMapOf<String, Int>()
@@ -330,6 +333,8 @@ class CallLogRepository(
                 contactIdFromLookupUri(it)
             }
 
+            val features = if (featuresIdx != -1) cursor.getInt(featuresIdx) else 0
+
             val singleEntry = CallLogEntry(
                 id = callId,
                 number = number,
@@ -342,6 +347,7 @@ class CallLogRepository(
                 simLabel = simLabel,
                 simNumber = simNumber,
                 isBlocked = isBlocked,
+                features = features,
                 types = listOf(type),
                 ids = listOf(callId)
             )
@@ -359,6 +365,7 @@ class CallLogRepository(
                     types = lastEntry.types + type,
                     ids = lastEntry.ids + callId,
                     isBlocked = lastEntry.isBlocked || isBlocked,
+                    features = lastEntry.features or features,
                     simNumber = lastEntry.simNumber ?: simNumber,
                     subLogs = currentSubLogs + singleEntry
                 )

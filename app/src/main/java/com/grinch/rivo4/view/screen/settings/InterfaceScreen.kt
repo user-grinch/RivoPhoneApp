@@ -63,6 +63,7 @@ import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoInteractiveRoundnessSlider
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoLeadingIconTile
+import com.grinch.rivo4.view.components.RivoSliderListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.components.ScrollToTopButton
@@ -109,6 +110,9 @@ fun InterfaceScreen(
     var transitionStyle by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0))
     }
+    var transitionTimeScale by remember(settingsState) {
+        mutableFloatStateOf(prefs.getTransitionTimeScale())
+    }
     var predictiveBackEnabled by remember(settingsState) {
         mutableStateOf(prefs.isPredictiveBackEnabled())
     }
@@ -143,8 +147,9 @@ fun InterfaceScreen(
             customPrimaryColor
         }
     }
-    val paletteSwatches = remember(paletteSeed, systemDark) {
-        RivoPaletteStyle.entries.associateWith { style ->
+    val paletteSwatches = remember(dynamicColors, paletteSeed, systemDark) {
+        if (!dynamicColors) emptyMap()
+        else RivoPaletteStyle.entries.associateWith { style ->
             rivoPaletteSwatches(paletteSeed, style, systemDark)
         }
     }
@@ -155,7 +160,8 @@ fun InterfaceScreen(
     )
 
     fun triggerThemeRestart() {
-        (context as? Activity)?.recreate()
+        // Rivo4Theme and MainActivity observe prefs.settingsChanged reactively;
+        // no Activity recreation is needed.
     }
 
     LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
@@ -453,7 +459,6 @@ fun InterfaceScreen(
                                     onValueChange = {
                                         transitionStyle = it
                                         prefs.setInt(PreferenceManager.KEY_TRANSITION_STYLE, it)
-                                        triggerThemeRestart()
                                     }
                                 ) { value, selected ->
                                     val icon = when (value) {
@@ -469,6 +474,31 @@ fun InterfaceScreen(
                                         tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            }
+                        }
+                        if (transitionStyle != 3) {
+                            item {
+                                val snappedScale = ((transitionTimeScale * 20f).roundToInt() / 20f).coerceIn(0.25f, 5.0f)
+                                val scaleText = if (snappedScale * 100 % 10 == 0f) {
+                                    String.format(java.util.Locale.US, "%.1fx", snappedScale)
+                                } else {
+                                    String.format(java.util.Locale.US, "%.2fx", snappedScale)
+                                }
+                                RivoSliderListItem(
+                                    headline = "Transition Animation Speed",
+                                    supporting = "Adjust transition animation time scale across pages, tabs, and menus",
+                                    leadingIcon = Icons.Outlined.Speed,
+                                    value = transitionTimeScale.coerceIn(0.25f, 5.0f),
+                                    valueRange = 0.25f..5.0f,
+                                    steps = 18,
+                                    valueLabel = scaleText,
+                                    onValueChange = { raw ->
+                                        transitionTimeScale = ((raw * 4f).roundToInt() / 4f).coerceIn(0.25f, 5.0f)
+                                    },
+                                    onValueChangeFinished = {
+                                        prefs.setTransitionTimeScale(transitionTimeScale)
+                                    }
+                                )
                             }
                         }
                         item {

@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
@@ -189,7 +191,7 @@ class ContactsViewModel(
                 ContactUtils.stripTitlePrefix(sortKey).lowercase()
             }
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val groupedContacts = combine(filteredContacts, _sortOrder) { contacts, sortOrder ->
         val mainGroups = contacts.groupBy { contact ->
@@ -219,11 +221,28 @@ class ContactsViewModel(
         if (hashGroup != null) finalMap['#'] = hashGroup
 
         finalMap
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    val contactsByNumber: StateFlow<Map<String, Contact>> = _allContacts.map { contacts ->
+        val map = mutableMapOf<String, Contact>()
+        for (c in contacts) {
+            for (p in c.phoneNumbers) {
+                ContactUtils.getLookupKeys(p).forEach { key ->
+                    map.putIfAbsent(key, c)
+                }
+            }
+        }
+        map
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    val contactsById: StateFlow<Map<String, Contact>> = _allContacts.map { contacts ->
+        contacts.associateBy { it.id }
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     init {
         fetchAccounts()
         registerObserver()
+        fetchContacts()
     }
 
     fun syncFavoriteShortcuts() {

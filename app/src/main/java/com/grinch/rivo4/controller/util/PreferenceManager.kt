@@ -19,7 +19,7 @@ class PreferenceManager(context: Context) {
     val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB) {
+        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB && key != KEY_SETTINGS_HISTORY) {
             _settingsChanged.value += 1
         }
     }
@@ -66,6 +66,18 @@ class PreferenceManager(context: Context) {
 
     fun setInt(key: String, value: Int) {
         prefs.edit().putInt(key, value).apply()
+    }
+
+    fun getFloat(key: String, defaultValue: Float): Float {
+        return try {
+            prefs.getFloat(key, defaultValue)
+        } catch (e: Exception) {
+            defaultValue
+        }
+    }
+
+    fun setFloat(key: String, value: Float) {
+        prefs.edit().putFloat(key, value).apply()
     }
 
     fun setLastUsedNumber(contactId: String, number: String) {
@@ -416,6 +428,7 @@ class PreferenceManager(context: Context) {
         const val KEY_ROUND_AVATARS = "round_avatars"
         const val KEY_SHOW_DIVIDERS = "show_dividers"
         const val KEY_TRANSITION_STYLE = "transition_animation_style"
+        const val KEY_TRANSITION_TIME_SCALE = "transition_time_scale"
         const val KEY_DIALPAD_STYLE = "dialpad_style"
         const val DIALPAD_STYLE_MODERN = 0
         const val DIALPAD_STYLE_CIRCLE = 1
@@ -547,6 +560,19 @@ class PreferenceManager(context: Context) {
         const val SWIPE_ACTION_WHATSAPP = 4
         const val SWIPE_ACTION_COPY_NUMBER = 5
         const val SWIPE_ACTION_DELETE = 6
+        const val SWIPE_ACTION_VIEW_CONTACT = 7
+        const val SWIPE_ACTION_SHARE = 8
+        const val SWIPE_ACTION_BLOCK = 9
+
+        const val KEY_CALL_LOG_ACTIONS = "call_log_actions"
+        const val KEY_CALL_LOG_ACTIONS_SAVED = "call_log_actions_saved"
+        const val KEY_CALL_LOG_ACTIONS_UNSAVED = "call_log_actions_unsaved"
+        const val KEY_CALL_LOG_TRAILING_BUTTON_ACTION = "call_log_trailing_button_action"
+
+        val DEFAULT_CALL_LOG_ACTIONS_SAVED = listOf("view_contact", "block", "message")
+        val DEFAULT_CALL_LOG_ACTIONS_UNSAVED = listOf("save", "block", "message")
+        const val DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION = "call"
+        val DEFAULT_CALL_LOG_ACTIONS = DEFAULT_CALL_LOG_ACTIONS_SAVED
 
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
@@ -663,6 +689,10 @@ class PreferenceManager(context: Context) {
             KEY_GROUP_CALL_LOGS to true
         )
 
+        fun getKnownDefaultFloats(): Map<String, Float> = mapOf(
+            KEY_TRANSITION_TIME_SCALE to 2.5f
+        )
+
         fun getKnownDefaultIntegers(): Map<String, Int> = mapOf(
             KEY_REDIAL_ATTEMPTS to 3,
             KEY_REDIAL_DELAY to 5,
@@ -736,6 +766,9 @@ class PreferenceManager(context: Context) {
     fun isPredictiveBackEnabled(): Boolean = getBoolean(KEY_PREDICTIVE_BACK_ENABLED, true)
     fun setPredictiveBackEnabled(enabled: Boolean) = setBoolean(KEY_PREDICTIVE_BACK_ENABLED, enabled)
 
+    fun getTransitionTimeScale(): Float = getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).coerceIn(0.2f, 5.0f)
+    fun setTransitionTimeScale(scale: Float) = setFloat(KEY_TRANSITION_TIME_SCALE, scale.coerceIn(0.2f, 5.0f))
+
     fun isOpenCallScreenOnAnswerEnabled(): Boolean = getBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, false)
     fun setOpenCallScreenOnAnswerEnabled(enabled: Boolean) = setBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, enabled)
     fun isHiddenContactsVisible(): Boolean = getBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, false)
@@ -760,6 +793,41 @@ class PreferenceManager(context: Context) {
 
     fun getSwipeLeftAction(): Int = getInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     fun setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, action)
+
+    fun getCallLogSavedActions(): List<String> {
+        val raw = getString(KEY_CALL_LOG_ACTIONS_SAVED, getString(KEY_CALL_LOG_ACTIONS, null))
+        if (raw == null) return DEFAULT_CALL_LOG_ACTIONS_SAVED
+        if (raw.isEmpty()) return emptyList()
+        return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    fun setCallLogSavedActions(actions: List<String>) {
+        setString(KEY_CALL_LOG_ACTIONS_SAVED, actions.joinToString(","))
+        setString(KEY_CALL_LOG_ACTIONS, actions.joinToString(","))
+    }
+
+    fun getCallLogExpandedActions(): List<String> = getCallLogSavedActions()
+    fun setCallLogExpandedActions(actions: List<String>) = setCallLogSavedActions(actions)
+
+    fun getCallLogUnsavedActions(): List<String> {
+        val raw = getString(KEY_CALL_LOG_ACTIONS_UNSAVED, null)
+        if (raw == null) return DEFAULT_CALL_LOG_ACTIONS_UNSAVED
+        if (raw.isEmpty()) return emptyList()
+        return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    fun setCallLogUnsavedActions(actions: List<String>) {
+        setString(KEY_CALL_LOG_ACTIONS_UNSAVED, actions.joinToString(","))
+    }
+
+    fun getCallLogTrailingAction(): String = getString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION) ?: DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION
+    fun setCallLogTrailingAction(action: String) = setString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, action)
+
+    fun resetCallLogCustomization() {
+        setCallLogSavedActions(DEFAULT_CALL_LOG_ACTIONS_SAVED)
+        setCallLogUnsavedActions(DEFAULT_CALL_LOG_ACTIONS_UNSAVED)
+        setCallLogTrailingAction(DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION)
+    }
 
     fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, true)
     fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
@@ -847,7 +915,7 @@ class PreferenceManager(context: Context) {
         val booleans = getKnownDefaultBooleans().toMutableMap()
         val integers = getKnownDefaultIntegers().toMutableMap()
         val longs = mutableMapOf<String, Long>()
-        val floats = mutableMapOf<String, Float>()
+        val floats = getKnownDefaultFloats().toMutableMap()
         val strings = getKnownDefaultStrings().toMutableMap()
         val stringSets = getKnownDefaultStringSets().toMutableMap()
 

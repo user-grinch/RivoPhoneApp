@@ -58,6 +58,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.runtime.CompositionLocalProvider
+import com.grinch.rivo4.view.screen.transitions.LocalTransitionTimeScale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -193,54 +194,18 @@ fun RivoDialog(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val isBlurEnabled = prefs.isUiBlurEnabled()
+    val timeScale = LocalTransitionTimeScale.current.coerceIn(0.2f, 5.0f)
+    val scaledExitDurationMs = (DialogExitDurationMs * timeScale).toInt().coerceAtLeast(50)
+    val scaledEnterDurationMs = (240 * timeScale).toInt().coerceAtLeast(60)
 
-    var isVisible by remember { mutableStateOf(false) }
-    var isDismissing by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        isVisible = true
-    }
-
-    val dismissWithAnimation: (() -> Unit) -> Unit = { action ->
-        if (!isDismissing) {
-            isDismissing = true
-            isVisible = false
-            coroutineScope.launch {
-                delay(DialogExitDurationMs.toLong())
-                action()
-            }
-        }
-    }
-
-    val scale by animateFloatAsState(
-        targetValue = if (isVisible) 1f else if (isDismissing) DialogExitScale else DialogEnterScale,
-        animationSpec = if (isVisible) {
-            spring(
-                dampingRatio = 0.68f,
-                stiffness = Spring.StiffnessMediumLow
-            )
-        } else {
-            tween(
-                durationMillis = DialogExitDurationMs,
-                easing = FastOutLinearInEasing
-            )
-        },
-        label = "RivoDialogScale"
-    )
-    val fade by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0f,
-        animationSpec = if (isVisible) {
-            tween(durationMillis = 200, easing = LinearOutSlowInEasing)
-        } else {
-            tween(durationMillis = 150, easing = LinearEasing)
-        },
-        label = "RivoDialogFade"
-    )
+    var isDismissing by remember { mutableStateOf(false) }
 
     Dialog(
         onDismissRequest = {
-            dismissWithAnimation { onDismissRequest() }
+            if (!isDismissing) {
+                isDismissing = true
+            }
         },
         properties = DialogProperties(
             dismissOnBackPress = dismissOnBackPress,
@@ -248,6 +213,53 @@ fun RivoDialog(
             usePlatformDefaultWidth = false
         )
     ) {
+        var isVisible by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            isVisible = true
+        }
+
+        val dismissWithAnimation: (() -> Unit) -> Unit = { action ->
+            if (!isDismissing) {
+                isDismissing = true
+                coroutineScope.launch {
+                    delay(scaledExitDurationMs.toLong())
+                    action()
+                }
+            }
+        }
+
+        LaunchedEffect(isDismissing) {
+            if (isDismissing) {
+                delay(scaledExitDurationMs.toLong())
+                onDismissRequest()
+            }
+        }
+
+        val scale by animateFloatAsState(
+            targetValue = if (isDismissing) DialogExitScale else if (isVisible) 1f else DialogEnterScale,
+            animationSpec = if (!isDismissing) {
+                spring(
+                    dampingRatio = 0.72f,
+                    stiffness = (Spring.StiffnessMediumLow / (timeScale * timeScale)).coerceIn(80f, 1500f)
+                )
+            } else {
+                tween(
+                    durationMillis = scaledExitDurationMs,
+                    easing = FastOutLinearInEasing
+                )
+            },
+            label = "RivoDialogScale"
+        )
+        val fade by animateFloatAsState(
+            targetValue = if (isDismissing) 0f else if (isVisible) 1f else 0f,
+            animationSpec = if (!isDismissing) {
+                tween(durationMillis = scaledEnterDurationMs, easing = LinearOutSlowInEasing)
+            } else {
+                tween(durationMillis = scaledExitDurationMs, easing = LinearEasing)
+            },
+            label = "RivoDialogFade"
+        )
+
         CompositionLocalProvider(LocalRivoDialogDismiss provides dismissWithAnimation) {
             ApplyDialogBlurBehind()
 
@@ -604,6 +616,7 @@ fun <T> RivoSelectionDialog(
             RivoDialogAction(label = it, onClick = onDismissRequest)
         }
     ) {
+        val animatedDismiss = LocalRivoDialogDismiss.current
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -616,7 +629,7 @@ fun <T> RivoSelectionDialog(
                     label = itemLabel(item),
                     onClick = {
                         onItemSelected(item)
-                        onDismissRequest()
+                        animatedDismiss?.invoke(onDismissRequest) ?: onDismissRequest()
                     },
                     supporting = itemSupporting?.invoke(item)?.takeIf { it.isNotBlank() },
                     icon = itemIcon?.invoke(item),
