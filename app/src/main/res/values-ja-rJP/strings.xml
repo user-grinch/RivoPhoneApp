@@ -27,6 +27,63 @@
     <string name="backup_settings_export_success">アプリの設定が正常にエクスポートされました</string>
     <string name="backup_settings_import_success">アプリの設定が正常に復元されました</string>
     <!-- Settings > root -->
+    <string name="theme_mode">テーマモード</string>
+    <string name="system">システム</string>
+    <string name="pref_theme_mode">テーマモード</string>
+    <string name="pref_system_theme_follows_system">システムテーマに従ってください</string>
+    <string name="pref_enable_dynamic_color">動的な色を有効にする</string>
+    <string name="pref_enable_dynamic_color_description">壁紙から色を自動的に派生させます (マテリアルYou)</string>
+    <string name="rearrange_call_buttons">通話ボタンを再配置</string>
+    <string name="call_screen_visible_buttons_title">表示ボタン</string>
+    <string name="call_screen_visible_buttons_supporting">通話画面に表示されるボタンの追加または削除</string>
+    <string name="top_row_items">一番上の行: 項目 1–3</string>
+    <string name="bottom_row_items">一番下の行: 項目 4–6</string>
+    <string name="mute">ミュート/ミュート解除</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">オーディオルート</string>
+    <string name="record">通話記録</string>
+    <string name="hold">通話を保留する</string>
+    <string name="add">通話を追加</string>
+    <string name="call_button_customization_description">一番上の行: 項目 1–3 • 一番下の行: 項目 4–6</string>
+    <string name="enable_group_calls">グループ通話を有効にする</string>
+    <string name="enable_group_calls_description">複数の参加者との電話会議を許可する</string>
+    <string name="group_calls_default_enabled">デフォルトで有効</string>
+    <string name="settings_interface_avatar_show_picture">アバターに画像を表示</string>
+    <string name="settings_interface_avatar_show_first_letter">最初の文字を表示</string>
+    <string name="settings_interface_gradient_avatars">グラデーションアバターを使用</string>
+    <string name="settings_interface_smart_contrast">スマートコントラストのプレビュー</string>
+    <string name="settings_interface_smart_contrast_description">テキストは自動的に適応:暗い背景は鮮明な白いテキストを使用し、黄色い背景は高い読みやすさのために暗いテキストを使用します</string>
+    <string name="settings_interface_gradient_avatars_preview">グラデーションアバターのプレビュー</string>
+    <string name="settings_interface_smart_contrast_title">スマートコントラスト</string>
+    <string name="settings_interface_gradient_avatars_title">グラデーションのアバター</string>
+    <string name="avatar_blue_white">青
+白のテキスト</string>
+    <string name="avatar_yellow_dark">Yellow
+ダークテキスト</string>
+    <string name="avatar_green_dark">グリーン
+ダークテキスト</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">システムフォントを使用</string>
+    <string name="pref_system_font_toggle_description">システムフォント設定を使用</string>
+    <string name="typography_title">タイポグラフィー（文法）</string>
+    <string name="typography_preview_text">素早い茶色のキツネが怠け者の犬の上を飛び越える。</string>
+    <string name="font_size_small">小</string>
+    <string name="font_size_medium">ミディアム</string>
+    <string name="font_size_large">大</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">Monospace</string>
+    <string name="font_family_cursive">筆記体</string>
+    <string name="font_family_casual">カジュアルな</string>
+    <string name="font_family_condensed">Condensed</string>
+    <string name="font_family_light">ライト</string>
+    <string name="font_family_medium">ミディアム</string>
+    <string name="font_family_black">ブラック</string>
+    <string name="light">ライト</string>
+    <string name="dark">ダーク</string>
+    <string name="dynamic_color">動的な色</string>
+    <string name="enable_dynamic_color">壁紙からの動的な色を有効にする</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">0を長押しして+にする</string>
@@ -79,6 +136,26 @@
     <string name="call_recording_saved">通話録音を保存しました</string>
     <string name="call_recording_deleted">録音が削除されました</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">キャリアビデオ通話</string>
+    <string name="video_call_carrier_desc">モバイル / VoLTE / ViLTE ビデオ通話</string>
+    <string name="video_call_whatsapp_desc">WhatsAppビデオ通話</string>
+    <string name="video_call_meet_desc">Google Meetビデオ通話</string>
+    <string name="video_call_telegram_desc">Telegram ビデオ通話</string>
+    <string name="video_call_signal_desc">シグナルビデオ通話</string>
+    <string name="video_call_wechat_desc">WeChat ビデオ通話</string>
+    <string name="video_call_line_desc">LINEビデオ通話</string>
+    <string name="video_call_viber_desc">Viberビデオ通話</string>
+    <string name="video_call_skype_desc">Skype ビデオ通話</string>
+    <string name="video_call_imo_desc">IMOビデオ通話</string>
+    <string name="video_call_zoom_desc">ズームビデオミーティング</string>
+    <string name="video_call_remember_choice">将来のビデオ通話の選択を記憶する</string>
+    <string name="video_call_default_app">既定のビデオ通話アプリ</string>
+    <string name="video_call_always_ask">常に確認する</string>
+    <string name="video_call_failed">ビデオ通話を開始できません</string>
+    <string name="video_call_no_number">ビデオ通話に利用可能な電話番号がありません</string>
+    <string name="video_call_switch_camera">カメラを反転</string>
+    <string name="video_call_toggle_video">ビデオ</string>
+    <string name="video_call_incoming_video">ビデオ通話着信</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -103,6 +180,8 @@
     <string name="settings_call_log_limit_500">500 calls (デフォルト)</string>
     <string name="settings_call_log_limit_1000">1,000件の通話</string>
     <string name="settings_call_log_limit_unlimited">無制限です</string>
+    <string name="settings_group_call_logs">通話履歴のグループ化</string>
+    <string name="settings_group_call_logs_supporting">同じ日に同じ連絡先からの繰り返し通話を1つのエントリにマージします</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">コピーされた番号を自動ペーストする</string>
     <string name="settings_auto_paste_clipboard_supporting">現在クリップボードにコピーされている電話番号をダイヤルパッドに自動的に入力します</string>
@@ -180,6 +259,7 @@
     <string name="settings_permissions_system_title">システム</string>
     <string name="settings_private_contacts_count">保護された連絡先 (%1$d)</string>
     <string name="action_select_all">すべて選択</string>
+    <string name="action_select_none">すべての選択を解除</string>
     <string name="settings_private_secret_code">シークレットダイヤルパッドコード</string>
     <string name="about_rate_on_google_play">Google Playで評価</string>
     <string name="about_supporter_badge">Supporter ⭐</string>
@@ -255,4 +335,42 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">応答時に通話画面を開く</string>
     <string name="settings_open_call_screen_on_answer_supporting">heads-up 通知から応答するときに完全な通話画面を開く</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">システムに従うか、ライトまたはダークをロックします</string>
+    <string name="palette_variant_title">ダイナミックパレット</string>
+    <string name="palette_tonal_spot">トーナルスポット</string>
+    <string name="palette_expressive">表現的</string>
+    <string name="palette_neutral">ニュートラル</string>
+    <string name="palette_vibrant">バイブ</string>
+    <string name="palette_fruit_salad">フルーツサラダ</string>
+    <string name="palette_rainbow">Rainbow</string>
+    <string name="palette_content">コンテンツ</string>
+    <string name="palette_fidelity">忠実度</string>
+    <string name="palette_monochrome">モノクローム</string>
+    <string name="palette_big_clock">大きな時計</string>
+    <string name="palette_candy">Candy</string>
+    <string name="palette_deep_ocean">深い海</string>
+    <string name="palette_sunset_glow">サンセットグローformat@@0</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">アプリ間で使用されるTypeface</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">アプリ全体でテキストを拡大/縮小する</string>
+    <string name="typography_entry_supporting">フォント、テキストサイズ、システムフォント</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">プレビュー</string>
+    <string name="avatar_preview_colorful_gradient">色とりどりのグラデーションと2文字のイニシャルを含む</string>
+    <string name="avatar_preview_colorful">対照的なイニシャルを持つカラフルなアバター。</string>
+    <string name="avatar_preview_gradient">グラデーションアバター(2文字のイニシャル付き)</string>
+    <string name="avatar_preview_plain">プレーンテーマのアバター</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">通話画面のカスタマイズ</string>
+    <string name="call_screen_customization_supporting">各インコールボタンが表示される行を選択します。</string>
+    <string name="about_third_party_licenses">サードパーティのライセンス</string>
+    <string name="about_third_party_licenses_supporting">Rivo で使用されるオープンソースコンポーネント</string>
+    <string name="about_third_party_licenses_title">サードパーティのライセンス</string>
+    <string name="call_screen_preview_title">プレビュー</string>
+    <string name="call_slot_bottom">Bottom row \u2022 Slot #%1$d</string>
+    <string name="call_slot_move_up">上へ移動</string>
+    <string name="call_slot_move_down">下に移動</string>
 </resources>

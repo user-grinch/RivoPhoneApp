@@ -28,6 +28,65 @@
     <string name="backup_settings_export_success">Setări aplicație exportate cu succes</string>
     <string name="backup_settings_import_success">Setările aplicației restaurate cu succes</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Mod Temă</string>
+    <string name="system">Sistem</string>
+    <string name="pref_theme_mode">Mod Temă</string>
+    <string name="pref_system_theme_follows_system">Urmărește tema sistemului</string>
+    <string name="pref_enable_dynamic_color">Activează culoarea dinamică</string>
+    <string name="pref_enable_dynamic_color_description">Culori Derive automat din tapet (Material You)</string>
+    <string name="rearrange_call_buttons">Rearanjați butoanele de apel</string>
+    <string name="call_screen_visible_buttons_title">Butoane vizibile</string>
+    <string name="call_screen_visible_buttons_supporting">Adăugați sau eliminați butoanele afișate pe ecranul de apel</string>
+    <string name="top_row_items">Rândul de sus: elementele 1-3</string>
+    <string name="bottom_row_items">Rândul inferior: elementele 4-6</string>
+    <string name="mute">Amuțește / Deblochează</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Rută audio</string>
+    <string name="record">Înregistrare apel</string>
+    <string name="hold">Mențineți apelul</string>
+    <string name="add">Adaugă apel</string>
+    <string name="call_button_customization_description">Rândul superior: elementele 1–3 • rândul inferior: elementele 4-6</string>
+    <string name="enable_group_calls">Activare apeluri de grup</string>
+    <string name="enable_group_calls_description">Permiteți apeluri în conferință cu mai mulți participanți</string>
+    <string name="group_calls_default_enabled">Activat în mod implicit</string>
+    <string name="settings_interface_avatar_show_picture">Arată imaginea în avatar</string>
+    <string name="settings_interface_avatar_show_first_letter">Arată prima literă</string>
+    <string name="settings_interface_gradient_avatars">Utilizare avatare gradient</string>
+    <string name="settings_interface_smart_contrast">Previzualizare Contrast Inteligent</string>
+    <string name="settings_interface_smart_contrast_description">Adaptarea automată a textului: Fundalurile întunecate folosesc text de culoare albă crisp și fundalurile galbene folosesc text întunecat pentru lizibilitate ridicată</string>
+    <string name="settings_interface_gradient_avatars_preview">Previzualizare Avatare Gradient</string>
+    <string name="settings_interface_smart_contrast_title">Contrast inteligent</string>
+    <string name="settings_interface_gradient_avatars_title">Avatarele Gradient</string>
+    <string name="avatar_blue_white">Albastru
+Text alb</string>
+    <string name="avatar_yellow_dark">Text galben
+</string>
+    <string name="avatar_green_dark">Text verde
+Întunecat</string>
+    <string name="avatar_red_white">Roșu
+Text alb</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Folosește fontul sistemului</string>
+    <string name="pref_system_font_toggle_description">Utilizați setările de font ale sistemului</string>
+    <string name="typography_title">Tipografie</string>
+    <string name="typography_preview_text">Rapida vulpe maro sare peste câinele leneş</string>
+    <string name="font_size_small">Mică</string>
+    <string name="font_size_medium">Medie</string>
+    <string name="font_size_large">Mare</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Serif Sans</string>
+    <string name="font_family_monospace">Monospațiu</string>
+    <string name="font_family_cursive">Cursiv</string>
+    <string name="font_family_casual">Ocazional</string>
+    <string name="font_family_condensed">Condensat</string>
+    <string name="font_family_light">Lumină</string>
+    <string name="font_family_medium">Medie</string>
+    <string name="font_family_black">Negru</string>
+    <string name="light">Lumină</string>
+    <string name="dark">Întunecat</string>
+    <string name="dynamic_color">Culoare dinamică</string>
+    <string name="enable_dynamic_color">Activează culoarea dinamică din imaginea de fundal</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Țineți apăsat 0 pentru +</string>
@@ -87,6 +146,20 @@
     <string name="video_call_telegram_desc">Telegram apel video</string>
     <string name="video_call_signal_desc">Semnal apel video</string>
     <string name="video_call_wechat_desc">Apel video WeChat</string>
+    <string name="video_call_line_desc">Apel video LINE</string>
+    <string name="video_call_viber_desc">Apel video cu Viber</string>
+    <string name="video_call_skype_desc">Apel video Skype</string>
+    <string name="video_call_imo_desc">apel video imo</string>
+    <string name="video_call_zoom_desc">Măriți întâlnirile video</string>
+    <string name="video_call_remember_choice">Amintește-ți alegerea pentru apelurile video viitoare</string>
+    <string name="video_call_default_app">Aplicație implicită pentru apeluri video</string>
+    <string name="video_call_always_ask">Întreabă întotdeauna</string>
+    <string name="video_call_opening_whatsapp">Se deschide WhatsApp pentru apel video…</string>
+    <string name="video_call_failed">Nu se poate porni apelul video</string>
+    <string name="video_call_no_number">Niciun număr de telefon disponibil pentru apel video</string>
+    <string name="video_call_switch_camera">Rotește camera foto</string>
+    <string name="video_call_toggle_video">Video</string>
+    <string name="video_call_incoming_video">Apel video de intrare</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -111,6 +184,8 @@
     <string name="settings_call_log_limit_500">500 de apeluri (implicit)</string>
     <string name="settings_call_log_limit_1000">1000 apeluri</string>
     <string name="settings_call_log_limit_unlimited">Nelimitat</string>
+    <string name="settings_group_call_logs">Jurnale de apeluri de grup</string>
+    <string name="settings_group_call_logs_supporting">Îmbinați apelurile repetate de la același contact în aceeași zi într-o singură intrare</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Auto lipire număr copiat</string>
     <string name="settings_auto_paste_clipboard_supporting">Completează automat tastatura cu numărul de telefon în prezent copiat în clipboard</string>
@@ -192,6 +267,7 @@
     <string name="settings_permissions_system_title">Sistem</string>
     <string name="settings_private_contacts_count">Contacte securizate (%1$d)</string>
     <string name="action_select_all">Selectează tot</string>
+    <string name="action_select_none">Deselectează tot</string>
     <string name="settings_private_secret_code">Cod Dialpad secret</string>
     <string name="about_rate_on_google_play">Evaluează pe Google Play</string>
     <string name="about_supporter_badge">Suportator ⭐</string>
@@ -271,4 +347,54 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Deschide ecranul de apel la răspuns</string>
     <string name="settings_open_call_screen_on_answer_supporting">Deschideți ecranul de apel complet când răspundeți de la notificările heads-up</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Urmăriți sistemul sau blocați lumina sau întuneric</string>
+    <string name="palette_variant_title">Paletă dinamică</string>
+    <string name="palette_tonal_spot">Punct tonal</string>
+    <string name="palette_expressive">Expresiv</string>
+    <string name="palette_neutral">Neutral</string>
+    <string name="palette_vibrant">Vibrant</string>
+    <string name="palette_fruit_salad">Salata de fructe</string>
+    <string name="palette_rainbow">Curcubeu</string>
+    <string name="palette_content">Conținut</string>
+    <string name="palette_fidelity">Fidelitate</string>
+    <string name="palette_monochrome">Monocrom</string>
+    <string name="palette_big_clock">Ceas mare</string>
+    <string name="palette_candy">Bomboane</string>
+    <string name="palette_deep_ocean">Oceanul Adânc</string>
+    <string name="palette_sunset_glow">Glentură de soare</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Typeface utilizate în întreaga aplicație</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Scalează textul în întreaga aplicație</string>
+    <string name="typography_entry_supporting">Font, dimensiunea textului și fontul sistemului</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Previzualizare</string>
+    <string name="avatar_preview_colorful_gradient">gradiente colorate cu inițiale din două litere</string>
+    <string name="avatar_preview_colorful">Avatare colorate cu iniţiale contrastante</string>
+    <string name="avatar_preview_gradient">Avatare Gradient cu iniţiale din două litere</string>
+    <string name="avatar_preview_plain">Avatare tematice simple</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Personalizare ecran apel</string>
+    <string name="call_screen_customization_supporting">Alegeți în ce rând apare fiecare buton de apelare.</string>
+    <string name="about_third_party_licenses">Licențe pentru terți</string>
+    <string name="about_third_party_licenses_supporting">Componente open source utilizate în Rivo</string>
+    <string name="about_third_party_licenses_title">Licențe pentru terți</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutine — Apache 2.
+Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
+Koin (injecție de dependență) — Apache 2.
+Cameră (bază de date) — Apache 2.0
+Coil (încărcarea imaginii) — Apache 2.0
+Compune Destinații (navigație) — Apache 2.
+ZXing (generare cod QR) — Apache 2.0
+Accompanist (permisiuni de rulare) — Apache 2.0
+BiometricPrompt (blocare aplicație) — Apache 2.
+Shizuku (cod de înregistrare privilegiată a apelurilor API) — Apache 2.0
+ShizuCallRecorder (cod de înregistrare total) — GPLv3 cu secțiunea 7 termeni suplimentari</string>
+    <string name="call_screen_preview_title">Previzualizare</string>
+    <string name="call_slot_top">Rândul de sus \u2022 Slot #%1$d</string>
+    <string name="call_slot_bottom">Rândul de jos \u2022 Slot #%1$d</string>
+    <string name="call_slot_move_up">Mută în sus</string>
+    <string name="call_slot_move_down">Mută în jos</string>
 </resources>

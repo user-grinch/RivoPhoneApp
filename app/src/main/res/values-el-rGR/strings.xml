@@ -27,6 +27,59 @@
     <string name="backup_settings_export_success">Οι ρυθμίσεις εφαρμογής εξήχθησαν επιτυχώς</string>
     <string name="backup_settings_import_success">Επιτυχής επαναφορά ρυθμίσεων εφαρμογής</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Λειτουργία Θέματος</string>
+    <string name="system">Σύστημα</string>
+    <string name="pref_theme_mode">Λειτουργία Θέματος</string>
+    <string name="pref_system_theme_follows_system">Βάση θέματος συστήματος</string>
+    <string name="pref_enable_dynamic_color">Ενεργοποίηση δυναμικού χρώματος</string>
+    <string name="pref_enable_dynamic_color_description">Derive χρώματα αυτόματα από την ταπετσαρία (Material You)</string>
+    <string name="rearrange_call_buttons">Αναδιάταξη Κουμπιών Κλήσης</string>
+    <string name="call_screen_visible_buttons_title">Ορατά πλήκτρα</string>
+    <string name="call_screen_visible_buttons_supporting">Προσθήκη ή αφαίρεση κουμπιών που εμφανίζονται στην οθόνη κλήσεων</string>
+    <string name="top_row_items">Κορυφαία σειρά: στοιχεία 1-3</string>
+    <string name="bottom_row_items">Κάτω γραμμή: αντικείμενα 4–6</string>
+    <string name="mute">Σίγαση / Κατάργηση Σίγασης</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Διαδρομή Ήχου</string>
+    <string name="record">Εγγραφή Κλήσεων</string>
+    <string name="hold">Αναμονή Κλήσης</string>
+    <string name="add">Προσθήκη Κλήσης</string>
+    <string name="call_button_customization_description">Πάνω σειρά: αντικείμενα 1-3 • Κάτω σειρά: αντικείμενα 4-6</string>
+    <string name="enable_group_calls">Ενεργοποίηση Κλήσεων Ομάδας</string>
+    <string name="enable_group_calls_description">Να επιτρέπονται κλήσεις συνδιάσκεψης με πολλούς συμμετέχοντες</string>
+    <string name="group_calls_default_enabled">Ενεργοποιημένη από προεπιλογή</string>
+    <string name="settings_interface_avatar_show_picture">Εμφάνιση εικόνας σε avatar</string>
+    <string name="settings_interface_avatar_show_first_letter">Εμφάνιση πρώτου γράμματος</string>
+    <string name="settings_interface_gradient_avatars">Χρήση διαβαθμισμένων avatars</string>
+    <string name="settings_interface_smart_contrast">Προεπισκόπηση Έξυπνης Αντίθεσης</string>
+    <string name="settings_interface_smart_contrast_description">Το κείμενο προσαρμόζεται αυτόματα: τα σκούρα υπόβαθρα χρησιμοποιούν τραγανό λευκό κείμενο και κίτρινα υπόβαθρα χρησιμοποιούν σκούρο κείμενο για υψηλή ευανάγνωστη</string>
+    <string name="settings_interface_gradient_avatars_preview">Προεπισκόπηση Διαβαθμίσεων Avatars</string>
+    <string name="settings_interface_smart_contrast_title">Έξυπνη Αντίθεση</string>
+    <string name="settings_interface_gradient_avatars_title">Κλίση Avatars</string>
+    <string name="avatar_yellow_dark">Κίτρινο
+Σκούρο κείμενο</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Χρήση γραμματοσειράς συστήματος</string>
+    <string name="pref_system_font_toggle_description">Χρήση γραμματοσειράς συστήματος</string>
+    <string name="typography_title">Τυπογραφία</string>
+    <string name="typography_preview_text">Η γρήγορη καφέ αλεπού πηδάει πάνω από το τεμπέλης σκυλί</string>
+    <string name="font_size_small">Μικρό</string>
+    <string name="font_size_medium">Μεσαίο</string>
+    <string name="font_size_large">Μεγάλο</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">Μονοδιαστημική</string>
+    <string name="font_family_cursive">Cursive</string>
+    <string name="font_family_casual">Περιστασιακό</string>
+    <string name="font_family_condensed">Πυκνή</string>
+    <string name="font_family_light">Φωτεινό</string>
+    <string name="font_family_medium">Μεσαίο</string>
+    <string name="font_family_black">Μαύρο</string>
+    <string name="light">Φωτεινό</string>
+    <string name="dark">Σκοτεινό</string>
+    <string name="dynamic_color">Δυναμικό Χρώμα</string>
+    <string name="enable_dynamic_color">Ενεργοποίηση δυναμικού χρώματος από την ταπετσαρία</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Κρατήστε 0 για +</string>
@@ -78,6 +131,27 @@
     <string name="call_recording_saved">Η καταγραφή αποθηκεύτηκε</string>
     <string name="call_recording_deleted">Η εγγραφή διαγράφηκε</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Βίντεο Κλήση Πάροχου</string>
+    <string name="video_call_carrier_desc">Κλήση βίντεο κινητής τηλεφωνίας / VoLTE / ViLTE</string>
+    <string name="video_call_whatsapp_desc">WhatsApp βιντεοκλήση</string>
+    <string name="video_call_meet_desc">Google Γνωρίστε βιντεοκλήση</string>
+    <string name="video_call_telegram_desc">Telegram βιντεοκλήση</string>
+    <string name="video_call_signal_desc">Σήμα βιντεοκλήσης</string>
+    <string name="video_call_wechat_desc">WeChat βιντεοκλήση</string>
+    <string name="video_call_line_desc">ΓΡΑΜΜΗ βιντεοκλήση</string>
+    <string name="video_call_viber_desc">Viber βίντεο κλήση</string>
+    <string name="video_call_skype_desc">Κλήση βίντεο Skype</string>
+    <string name="video_call_imo_desc">imo βίντεο κλήση</string>
+    <string name="video_call_zoom_desc">Μεγέθυνση των συνεδριάσεων βίντεο</string>
+    <string name="video_call_remember_choice">Απομνημόνευση επιλογής για μελλοντικές βιντεοκλήσεις</string>
+    <string name="video_call_default_app">Προεπιλεγμένη εφαρμογή κλήσεων βίντεο</string>
+    <string name="video_call_always_ask">Ερώτηση πάντα</string>
+    <string name="video_call_opening_whatsapp">Άνοιγμα WhatsApp για βιντεοκλήση…</string>
+    <string name="video_call_failed">Αδύνατη η εκκίνηση της βιντεοκλήσης</string>
+    <string name="video_call_no_number">Δεν υπάρχει διαθέσιμος τηλεφωνικός αριθμός για βιντεοκλήση</string>
+    <string name="video_call_switch_camera">Αναστροφή Κάμερας</string>
+    <string name="video_call_toggle_video">Βίντεο</string>
+    <string name="video_call_incoming_video">Εισερχόμενη Βίντεο Κλήση</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -102,6 +176,8 @@
     <string name="settings_call_log_limit_500">500 κλήσεις (προεπιλογή)</string>
     <string name="settings_call_log_limit_1000">1.000 κλήσεις</string>
     <string name="settings_call_log_limit_unlimited">Απεριόριστο</string>
+    <string name="settings_group_call_logs">Αρχείο κλήσεων ομάδας</string>
+    <string name="settings_group_call_logs_supporting">Συγχώνευση επαναλαμβανόμενων κλήσεων από την ίδια επαφή την ίδια ημέρα σε μία είσοδο</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Αυτόματη επικόλληση αντιγράφηκε αριθμός</string>
     <string name="settings_auto_paste_clipboard_supporting">Συμπληρώστε αυτόματα το πληκτρολόγιο κλήσης με τον αριθμό τηλεφώνου που αντιγράφηκε στο πρόχειρο σας</string>
@@ -178,6 +254,7 @@
     <string name="settings_permissions_system_title">Σύστημα</string>
     <string name="settings_private_contacts_count">Ασφαλισμένες Επαφές (%1$d)</string>
     <string name="action_select_all">Επιλογή Όλων</string>
+    <string name="action_select_none">Αποεπιλογή Όλων</string>
     <string name="settings_private_secret_code">Μυστικός Κωδικός Πληκτρολόγησης</string>
     <string name="about_rate_on_google_play">Βαθμολογήστε στο Google Play</string>
     <string name="about_supporter_badge">Υποστηρικτής ⭐</string>
@@ -254,4 +331,54 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Άνοιγμα της οθόνης κλήσεων κατά την απάντηση</string>
     <string name="settings_open_call_screen_on_answer_supporting">Άνοιγμα πλήρους οθόνης κλήσεων κατά την απάντηση από την ειδοποίηση heads-up</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Ακολουθήστε το σύστημα ή κλειδώστε το φως ή σκούρο</string>
+    <string name="palette_variant_title">Δυναμική παλέτα</string>
+    <string name="palette_tonal_spot">Tonal Spot</string>
+    <string name="palette_expressive">Εκφραστικό</string>
+    <string name="palette_neutral">Ουδέτερο</string>
+    <string name="palette_vibrant">Ζωντανή</string>
+    <string name="palette_fruit_salad">Σαλάτα Φρούτων</string>
+    <string name="palette_rainbow">Ουράνιο Τόξο</string>
+    <string name="palette_content">Περιεχόμενο</string>
+    <string name="palette_fidelity">Πιστότητα</string>
+    <string name="palette_monochrome">Μονόχρωμο</string>
+    <string name="palette_big_clock">Μεγάλο Ρολόι</string>
+    <string name="palette_candy">Καραμέλα</string>
+    <string name="palette_deep_ocean">Βαθύς Ωκεανός</string>
+    <string name="palette_sunset_glow">Λάμψη Ηλίου</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Typeface που χρησιμοποιείται σε όλη την εφαρμογή</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Κλιμάκωση κειμένου στην εφαρμογή</string>
+    <string name="typography_entry_supporting">Γραμματοσειρά, μέγεθος κειμένου και γραμματοσειρά συστήματος</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Προεπισκόπηση</string>
+    <string name="avatar_preview_colorful_gradient">Πολύχρωμες διαβαθμίσεις με δύο γράμματα αρχικά</string>
+    <string name="avatar_preview_colorful">Πολύχρωμα avatars με αρχικά σε αντίθεση</string>
+    <string name="avatar_preview_gradient">Διαβαθμισμένα avatars με δύο γράμματα αρχικά</string>
+    <string name="avatar_preview_plain">Απλό θέμα avatars</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Προσαρμογή Οθόνης Κλήσεων</string>
+    <string name="call_screen_customization_supporting">Επιλέξτε τη σειρά στην οποία εμφανίζεται κάθε κουμπί κατά την κλήση.</string>
+    <string name="about_third_party_licenses">Άδειες τρίτων</string>
+    <string name="about_third_party_licenses_supporting">Εξαρτήματα ανοικτού κώδικα που χρησιμοποιούνται στο Rivo</string>
+    <string name="about_third_party_licenses_title">Άδειες τρίτων</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines - Apache 2.
+Jetpack Compose, Υλικό 3 &amp; AndroidX — Apache 2.0
+Koin (ένεση εξάρτησης) — Apache 2.
+Αίθουσα (βάση δεδομένων) — Apache 2.0
+Πηνίο (φόρτωση εικόνας) — Apache 2.0
+Σύνθεση Προορισμών (πλοήγηση) — Apache 2.
+ZXing (QR code generation) — Apache 2.0
+Accompanist (runtime permissions) — Apache 2.0
+BiometricPrompt (app lock) — Apache 2.
+Shizuku (προνομιακή εγγραφή κλήσης API) — Apache 2.0
+ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 με επιπρόσθετους όρους στην ενότητα 7</string>
+    <string name="call_screen_preview_title">Προεπισκόπηση</string>
+    <string name="call_slot_top">Κορυφαία γραμμή \u2022 Slot #%1$d</string>
+    <string name="call_slot_bottom">Κάτω γραμμή \u2022 Slot #%1$d</string>
+    <string name="call_slot_move_up">Μετακίνηση πάνω</string>
+    <string name="call_slot_move_down">Μετακίνηση κάτω</string>
 </resources>

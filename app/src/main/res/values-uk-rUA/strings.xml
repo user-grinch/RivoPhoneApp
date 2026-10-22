@@ -27,6 +27,63 @@
     <string name="backup_settings_export_success">Параметри програми успішно експортовано</string>
     <string name="backup_settings_import_success">Налаштування додатків успішно відновлені</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Режим теми</string>
+    <string name="system">Система</string>
+    <string name="pref_theme_mode">Режим теми</string>
+    <string name="pref_system_theme_follows_system">Застосувати системну тему</string>
+    <string name="pref_enable_dynamic_color">Увімкнути динамічний колір</string>
+    <string name="pref_enable_dynamic_color_description">Автоматичне введення кольорів з фонового матеріалу (Material You)</string>
+    <string name="rearrange_call_buttons">Упорядкувати кнопки виклику</string>
+    <string name="call_screen_visible_buttons_title">Видимі кнопки</string>
+    <string name="call_screen_visible_buttons_supporting">Додавання або видалення кнопок, що відображаються на екрані виклику</string>
+    <string name="top_row_items">Найбільший рядок: пункти 1–3</string>
+    <string name="bottom_row_items">Нижній рядок: елементи 4–6</string>
+    <string name="mute">Вимкнути звук / увімкнути звук</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Аудіо маршрут</string>
+    <string name="record">Записи дзвінків</string>
+    <string name="hold">Призупинити виклик</string>
+    <string name="add">Додати виклик</string>
+    <string name="call_button_customization_description">Найбільший рядок: елементи 1–3 • Нижній рядок: елементи 4–6</string>
+    <string name="enable_group_calls">Увімкнути групові дзвінки</string>
+    <string name="enable_group_calls_description">Дозволити дзвінки на конференції з декількома учасниками</string>
+    <string name="group_calls_default_enabled">Увімкнено за замовчуванням</string>
+    <string name="settings_interface_avatar_show_picture">Показати зображення в аватарі</string>
+    <string name="settings_interface_avatar_show_first_letter">Показати перший лист</string>
+    <string name="settings_interface_gradient_avatars">Використовувати градієнти аватарів</string>
+    <string name="settings_interface_smart_contrast">Режим розумного контрастного перегляду</string>
+    <string name="settings_interface_smart_contrast_description">Тексти автоматично адаптуються: темні фони використовують чистий текст та зелений фон, щоб використовувати темний текст для високої роздільної здатності</string>
+    <string name="settings_interface_gradient_avatars_preview">Аватари поля попереднього перегляду</string>
+    <string name="settings_interface_smart_contrast_title">Розумна контрастність</string>
+    <string name="settings_interface_gradient_avatars_title">Аватари градієнтів</string>
+    <string name="avatar_blue_white">Синій
+Білий текст</string>
+    <string name="avatar_yellow_dark">Жовтий
+темний текст</string>
+    <string name="avatar_red_white">Червоний
+Білий текст</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Використовувати системний шрифт</string>
+    <string name="pref_system_font_toggle_description">Використовувати системні налаштування шрифтів</string>
+    <string name="typography_title">Типографія</string>
+    <string name="typography_preview_text">Щурячий бугай із їжаком-харцизом в\'ючись у собаку</string>
+    <string name="font_size_small">Маленький</string>
+    <string name="font_size_medium">Медіум</string>
+    <string name="font_size_large">Великий</string>
+    <string name="font_family_serif">З зарубками</string>
+    <string name="font_family_sans_serif">Без зарубок</string>
+    <string name="font_family_monospace">Моноширинний шрифт</string>
+    <string name="font_family_cursive">Курсив</string>
+    <string name="font_family_casual">Довільний</string>
+    <string name="font_family_condensed">Стиснутий</string>
+    <string name="font_family_light">Світла</string>
+    <string name="font_family_medium">Медіум</string>
+    <string name="font_family_black">Чорний колір</string>
+    <string name="light">Світла</string>
+    <string name="dark">Темна</string>
+    <string name="dynamic_color">Динамічний колір</string>
+    <string name="enable_dynamic_color">Увімкнути динамічний колір шпалер</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Утримуйте 0 для +</string>
@@ -79,6 +136,26 @@
     <string name="call_recording_saved">Запис дзвінка збережено</string>
     <string name="call_recording_deleted">Запис видалено</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Перевізник відеодзвінок</string>
+    <string name="video_call_carrier_desc">Мобільний / VoLTE / ViLTE - відео-виклик</string>
+    <string name="video_call_whatsapp_desc">Дзвінок у WhatsApp</string>
+    <string name="video_call_meet_desc">Google Зустрічає відеодзвінок</string>
+    <string name="video_call_telegram_desc">Телеграм відеодзвінок</string>
+    <string name="video_call_signal_desc">Signal відеодзвінок</string>
+    <string name="video_call_wechat_desc">Відеодзвінок WeChat</string>
+    <string name="video_call_line_desc">Відеодзвінок у LINE</string>
+    <string name="video_call_viber_desc">Відео-дзвінок Viber</string>
+    <string name="video_call_skype_desc">Skype відеодзвінок</string>
+    <string name="video_call_imo_desc">imo відеодзвінок</string>
+    <string name="video_call_zoom_desc">Zoom-відеозустрічі</string>
+    <string name="video_call_remember_choice">Запам\'ятати вибір для наступних відеодзвінків</string>
+    <string name="video_call_default_app">Додаток для відеодзвінків за замовчуванням</string>
+    <string name="video_call_always_ask">Завжди питати</string>
+    <string name="video_call_failed">Не вдається розпочати відеодзвінок</string>
+    <string name="video_call_no_number">Немає номера телефону для відеодзвінка</string>
+    <string name="video_call_switch_camera">Перевернути камеру</string>
+    <string name="video_call_toggle_video">Відео</string>
+    <string name="video_call_incoming_video">Вхідний відеодзвінок</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -103,6 +180,8 @@
     <string name="settings_call_log_limit_500">500 викликів (за замовчуванням)</string>
     <string name="settings_call_log_limit_1000">1 000 дзвінків</string>
     <string name="settings_call_log_limit_unlimited">Необмежено</string>
+    <string name="settings_group_call_logs">Групувати журнали викликів</string>
+    <string name="settings_group_call_logs_supporting">Об\'єднати неодноразові дзвінки з того ж контакта на той самий день в один запис</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Автовставка скопійованого номера</string>
     <string name="settings_auto_paste_clipboard_supporting">Автоматично заповнити клавіатуру набору номеру телефону, який наразі скопійовано до буферу обміну</string>
@@ -178,6 +257,7 @@
     <string name="settings_quick_responses_add">Добавити відповідь</string>
     <string name="settings_permissions_system_title">Система</string>
     <string name="action_select_all">Виділити все</string>
+    <string name="action_select_none">Відмінити все</string>
     <string name="settings_private_secret_code">Код секретної клавіатури</string>
     <string name="about_rate_on_google_play">Оцінити в Google Play</string>
     <string name="about_supporter_badge">Підтримка ⭐</string>
@@ -251,4 +331,41 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Відкрити екран виклику при відповіді</string>
     <string name="settings_open_call_screen_on_answer_supporting">Відкривати повний екран виклику при відповіді на Heads-Up повідомлення</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Відстежувати систему чи блокувати світло або затемнити</string>
+    <string name="palette_variant_title">Динамічна палітра</string>
+    <string name="palette_tonal_spot">Тональна цятка</string>
+    <string name="palette_expressive">Експресивний</string>
+    <string name="palette_neutral">Нейтрально</string>
+    <string name="palette_vibrant">Вібрація</string>
+    <string name="palette_fruit_salad">Фруктовий салат</string>
+    <string name="palette_rainbow">Веселка</string>
+    <string name="palette_content">Зміст</string>
+    <string name="palette_fidelity">Чесність</string>
+    <string name="palette_monochrome">Монотонні</string>
+    <string name="palette_big_clock">Великий годинник</string>
+    <string name="palette_candy">Цукерки</string>
+    <string name="palette_deep_ocean">Глибокий океан</string>
+    <string name="palette_sunset_glow">Світло сонячного світла</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Яскравість використовується у програмі</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Масштабувати текст у програмі</string>
+    <string name="typography_entry_supporting">Шрифт, розмір тексту, та шрифт системи</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Прев\'ю</string>
+    <string name="avatar_preview_colorful_gradient">Барвисті градієнти з дволітерними ініціалами</string>
+    <string name="avatar_preview_colorful">Барвисті аватари з контрастними ініціативами</string>
+    <string name="avatar_preview_gradient">Аватари градієнта з дволітерними ініціалами</string>
+    <string name="avatar_preview_plain">Просте тематичне аватари</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Налаштування екрану виклику</string>
+    <string name="call_screen_customization_supporting">Виберіть, який рядок з\'являється кожна кнопка виклику.</string>
+    <string name="about_third_party_licenses">Сторонні ліцензії</string>
+    <string name="about_third_party_licenses_supporting">Компоненти з відкритим кодом для використання в Rivo</string>
+    <string name="about_third_party_licenses_title">Сторонні ліцензії</string>
+    <string name="call_screen_preview_title">Прев\'ю</string>
+    <string name="call_slot_move_up">Посунути вгору</string>
+    <string name="call_slot_move_down">Посунути вниз</string>
 </resources>

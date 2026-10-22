@@ -180,6 +180,65 @@
     <string name="backup_settings_export_success">成功导出应用设置</string>
     <string name="backup_settings_import_success">成功恢复应用设置</string>
     <!-- Settings > root -->
+    <string name="theme_mode">主题模式</string>
+    <string name="system">系统</string>
+    <string name="pref_theme_mode">主题模式</string>
+    <string name="pref_system_theme_follows_system">关注系统主题</string>
+    <string name="pref_enable_dynamic_color">启用动态颜色</string>
+    <string name="pref_enable_dynamic_color_description">从壁纸自动生成颜色 (材料你)</string>
+    <string name="rearrange_call_buttons">重新排列调用按钮</string>
+    <string name="call_screen_visible_buttons_title">可见按钮</string>
+    <string name="call_screen_visible_buttons_supporting">添加或删除在通话屏幕上显示的按钮</string>
+    <string name="top_row_items">顶行：项目 1- 3</string>
+    <string name="bottom_row_items">底部行：项目 4- 6</string>
+    <string name="mute">静音 / 取消静音</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">音频路由</string>
+    <string name="record">通话记录</string>
+    <string name="hold">按住来电</string>
+    <string name="add">添加通话</string>
+    <string name="call_button_customization_description">顶部行：项目 1- 3 • 底部行：项目 4- 6</string>
+    <string name="enable_group_calls">启用群组呼叫</string>
+    <string name="enable_group_calls_description">允许多个参与者的会议通话</string>
+    <string name="group_calls_default_enabled">默认启用</string>
+    <string name="settings_interface_avatar_show_picture">以头像显示图片</string>
+    <string name="settings_interface_avatar_show_first_letter">显示第一个字母</string>
+    <string name="settings_interface_gradient_avatars">使用渐变头像</string>
+    <string name="settings_interface_smart_contrast">智能对比预览</string>
+    <string name="settings_interface_smart_contrast_description">文本自动调整：黑暗背景使用简洁白色文本，黄色背景使用暗色文本以获取高清晰度</string>
+    <string name="settings_interface_gradient_avatars_preview">渐变头像预览</string>
+    <string name="settings_interface_smart_contrast_title">智能对比度</string>
+    <string name="settings_interface_gradient_avatars_title">渐变头像</string>
+    <string name="avatar_blue_white">蓝色
+白色文本</string>
+    <string name="avatar_yellow_dark">黄色的
+深色文本</string>
+    <string name="avatar_green_dark">Green
+暗文本</string>
+    <string name="avatar_red_white">Red
+白色文本</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">使用系统字体</string>
+    <string name="pref_system_font_toggle_description">使用系统字体设置</string>
+    <string name="typography_title">图形</string>
+    <string name="typography_preview_text">飞速的棕色恐龙跳过已经落后的狗龙</string>
+    <string name="font_size_small">小的</string>
+    <string name="font_size_medium">中</string>
+    <string name="font_size_large">大的</string>
+    <string name="font_family_serif">序列号</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">等宽度</string>
+    <string name="font_family_cursive">缓存的</string>
+    <string name="font_family_casual">休眠</string>
+    <string name="font_family_condensed">紧凑的</string>
+    <string name="font_family_light">亮色的</string>
+    <string name="font_family_medium">中</string>
+    <string name="font_family_black">黑色</string>
+    <string name="light">亮色的</string>
+    <string name="dark">深色</string>
+    <string name="dynamic_color">动态颜色</string>
+    <string name="enable_dynamic_color">启用壁纸中的动态颜色</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">按 0 键++</string>
@@ -232,6 +291,26 @@
     <string name="call_recording_saved">通话录制已保存</string>
     <string name="call_recording_deleted">录制已删除</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">运营商视频通话</string>
+    <string name="video_call_carrier_desc">移动电话/VoLTE / 维里特视频通话</string>
+    <string name="video_call_whatsapp_desc">WhatsApp 视频通话</string>
+    <string name="video_call_meet_desc">Google Meet视频通话</string>
+    <string name="video_call_telegram_desc">Telegram 视频通话</string>
+    <string name="video_call_signal_desc">信号视频通话</string>
+    <string name="video_call_wechat_desc">微信视频通话</string>
+    <string name="video_call_line_desc">LINE 视频通话</string>
+    <string name="video_call_viber_desc">Viber 视频通话</string>
+    <string name="video_call_skype_desc">Skype 视频通话</string>
+    <string name="video_call_imo_desc">imo 视频通话</string>
+    <string name="video_call_zoom_desc">缩放视频会议</string>
+    <string name="video_call_remember_choice">记住未来视频通话的选择</string>
+    <string name="video_call_default_app">默认视频通话应用</string>
+    <string name="video_call_always_ask">总是询问</string>
+    <string name="video_call_failed">无法开始视频通话</string>
+    <string name="video_call_no_number">视频通话没有可用的电话号码</string>
+    <string name="video_call_switch_camera">翻转相机</string>
+    <string name="video_call_toggle_video">视频</string>
+    <string name="video_call_incoming_video">收到视频通话</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -256,6 +335,8 @@
     <string name="settings_call_log_limit_500">500次呼叫 (默认)</string>
     <string name="settings_call_log_limit_1000">1 000个呼叫</string>
     <string name="settings_call_log_limit_unlimited">无限制</string>
+    <string name="settings_group_call_logs">群组通话记录</string>
+    <string name="settings_group_call_logs_supporting">将同一天从同一个联系人重复通话合并为一个条目</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">自动粘贴复制的号码</string>
     <string name="settings_auto_paste_clipboard_supporting">自动用当前复制到剪贴板的电话号码填充拨号</string>
@@ -334,6 +415,7 @@
     <string name="settings_permissions_system_title">系统</string>
     <string name="settings_private_contacts_count">已加密联系人 (%1$d)</string>
     <string name="action_select_all">选择所有</string>
+    <string name="action_select_none">取消全选</string>
     <string name="settings_private_secret_code">密钥拨号键盘</string>
     <string name="about_rate_on_google_play">在 Google Play 上评分</string>
     <string name="about_supporter_badge">支持者:star：</string>
@@ -411,4 +493,52 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">在回答上打开通话屏幕</string>
     <string name="settings_open_call_screen_on_answer_supporting">当从浮动通知中回答时打开全屏通话</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">跟随系统或锁定灯光或暗色</string>
+    <string name="palette_variant_title">动态调色板</string>
+    <string name="palette_tonal_spot">倾斜点</string>
+    <string name="palette_expressive">表达式</string>
+    <string name="palette_neutral">中性的</string>
+    <string name="palette_vibrant">振动</string>
+    <string name="palette_fruit_salad">水果沙拉德</string>
+    <string name="palette_rainbow">彩虹灯</string>
+    <string name="palette_content">内容</string>
+    <string name="palette_fidelity">幻影性</string>
+    <string name="palette_monochrome">单色</string>
+    <string name="palette_big_clock">大时钟</string>
+    <string name="palette_candy">糖果座</string>
+    <string name="palette_deep_ocean">深海地区</string>
+    <string name="palette_sunset_glow">日落发光</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">在应用程序中使用的类型</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">在整个应用范围内缩放文本</string>
+    <string name="typography_entry_supporting">字体、文本大小和系统字体</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">预览</string>
+    <string name="avatar_preview_colorful_gradient">带有双字母初始值的彩色渐变</string>
+    <string name="avatar_preview_colorful">彩色头像与初始形状对比的</string>
+    <string name="avatar_preview_gradient">带有双字母初始值的渐变头像</string>
+    <string name="avatar_preview_plain">普通主题头像</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">调用屏幕自定义</string>
+    <string name="call_screen_customization_supporting">选择每个通话按钮的行数。</string>
+    <string name="about_third_party_licenses">第三方许可证</string>
+    <string name="about_third_party_licenses_supporting">在 Rivo 中使用的开源组件</string>
+    <string name="about_third_party_licenses_title">第三方许可证</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx 序列化 &amp; Coroutines — Apache 2.
+Jetpack Compose, Material 3 &amp; AndroidX - Apache 2.0
+Koin (依赖注入) - Apache 2
+房间 (数据库) - Apache 2.0
+Coil (图像加载) - Apache 2.0
+创建目的地(导航) - Apache 2.
+ZXing (QR code generation) - Apache 2.0
+公司(运行许可) - Apache 2.0
+BiometricPrompt (app lock) - Apache 2
+Shizuku (有特权的通话记录 API) - Apache 2.0
+ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
+    <string name="call_screen_preview_title">预览</string>
+    <string name="call_slot_move_up">上移</string>
+    <string name="call_slot_move_down">向下移动</string>
 </resources>
