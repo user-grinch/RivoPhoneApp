@@ -27,6 +27,65 @@
     <string name="backup_settings_export_success">Nastavení aplikace bylo úspěšně exportováno</string>
     <string name="backup_settings_import_success">Nastavení aplikace bylo úspěšně obnoveno</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Režim motivu</string>
+    <string name="system">Systém</string>
+    <string name="pref_theme_mode">Režim motivu</string>
+    <string name="pref_system_theme_follows_system">Sledovat motiv systému</string>
+    <string name="pref_enable_dynamic_color">Povolit dynamickou barvu</string>
+    <string name="pref_enable_dynamic_color_description">Automaticky odstranit barvy z tapety (Material You)</string>
+    <string name="rearrange_call_buttons">Změnit uspořádání tlačítek hovoru</string>
+    <string name="call_screen_visible_buttons_title">Viditelná tlačítka</string>
+    <string name="call_screen_visible_buttons_supporting">Přidat nebo odebrat tlačítka zobrazená na obrazovce volání</string>
+    <string name="top_row_items">Horní řádek: položky 1–3</string>
+    <string name="bottom_row_items">Dolní řádek: položky 4–6</string>
+    <string name="mute">Ztlumit / Odtlumit</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Zvuková trasa</string>
+    <string name="record">Záznam volání</string>
+    <string name="hold">Držet hovor</string>
+    <string name="add">Přidat hovor</string>
+    <string name="call_button_customization_description">Horní řádek: položky 1–3 • spodní řádek: položky 4–6</string>
+    <string name="enable_group_calls">Povolit skupinové hovory</string>
+    <string name="enable_group_calls_description">Povolit konferenční hovory s více účastníky</string>
+    <string name="group_calls_default_enabled">Ve výchozím nastavení povoleno</string>
+    <string name="settings_interface_avatar_show_picture">Zobrazit obrázek v avataru</string>
+    <string name="settings_interface_avatar_show_first_letter">Zobrazit první písmeno</string>
+    <string name="settings_interface_gradient_avatars">Použít avatary gradient</string>
+    <string name="settings_interface_smart_contrast">Náhled chytrého kontrastu</string>
+    <string name="settings_interface_smart_contrast_description">Text se automaticky přizpůsobuje: tmavé pozadí používá krátký bílý text a žluté pozadí používá tmavý text pro vysokou čitelnost</string>
+    <string name="settings_interface_gradient_avatars_preview">Náhled přechodových avatarů</string>
+    <string name="settings_interface_smart_contrast_title">Chytrý kontrast</string>
+    <string name="settings_interface_gradient_avatars_title">Gradientové Avatary</string>
+    <string name="avatar_blue_white">Modrá
+Bílý text</string>
+    <string name="avatar_yellow_dark">Žlutý
+Tmavý text</string>
+    <string name="avatar_green_dark">Zelený
+Tmavý text</string>
+    <string name="avatar_red_white">Červený
+Bílý text</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Použít systémové písmo</string>
+    <string name="pref_system_font_toggle_description">Použít systémové nastavení písma</string>
+    <string name="typography_title">Typografie</string>
+    <string name="typography_preview_text">Rychlý hnědý liška skočí nad líným psem</string>
+    <string name="font_size_small">Malá</string>
+    <string name="font_size_medium">Střední</string>
+    <string name="font_size_large">Velký</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Saní Serif</string>
+    <string name="font_family_monospace">Monospace</string>
+    <string name="font_family_cursive">Kurzivní</string>
+    <string name="font_family_casual">Neformální</string>
+    <string name="font_family_condensed">Zkrácené</string>
+    <string name="font_family_light">Světlý</string>
+    <string name="font_family_medium">Střední</string>
+    <string name="font_family_black">Černý</string>
+    <string name="light">Světlý</string>
+    <string name="dark">Tmavý</string>
+    <string name="dynamic_color">Dynamická barva</string>
+    <string name="enable_dynamic_color">Povolit dynamickou barvu z tapety</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Držet 0 pro +</string>
@@ -80,6 +139,26 @@
     <string name="call_recording_deleted">Nahrávání smazáno</string>
     <!-- Video calling app picker -->
     <string name="video_call_carrier">Přenosový videohovor</string>
+    <string name="video_call_carrier_desc">Mobilní / VoLTE / ViLTE video hovor</string>
+    <string name="video_call_whatsapp_desc">Videohovor WhatsApp</string>
+    <string name="video_call_meet_desc">Google Meet video hovor</string>
+    <string name="video_call_telegram_desc">Telegram videohovor</string>
+    <string name="video_call_signal_desc">Signální videohovor</string>
+    <string name="video_call_wechat_desc">WeChat video hovor</string>
+    <string name="video_call_line_desc">LINE videohovor</string>
+    <string name="video_call_viber_desc">Vibrační videohovor</string>
+    <string name="video_call_skype_desc">Skype videohovor</string>
+    <string name="video_call_imo_desc">imo video hovor</string>
+    <string name="video_call_zoom_desc">Přiblížení videí</string>
+    <string name="video_call_remember_choice">Zapamatovat si volbu pro budoucí videohovory</string>
+    <string name="video_call_default_app">Výchozí aplikace pro videohovory</string>
+    <string name="video_call_always_ask">Vždy se zeptat</string>
+    <string name="video_call_opening_whatsapp">Otevírání WhatsApp pro videohovor…</string>
+    <string name="video_call_failed">Nelze zahájit videohovor</string>
+    <string name="video_call_no_number">Pro videohovor není k dispozici žádné telefonní číslo</string>
+    <string name="video_call_switch_camera">Překlopit kameru</string>
+    <string name="video_call_toggle_video">Video</string>
+    <string name="video_call_incoming_video">Příchozí videohovor</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -104,6 +183,8 @@
     <string name="settings_call_log_limit_500">500 hovorů (výchozí)</string>
     <string name="settings_call_log_limit_1000">1.000 hovorů</string>
     <string name="settings_call_log_limit_unlimited">Bez omezení</string>
+    <string name="settings_group_call_logs">Seskupit protokoly hovorů</string>
+    <string name="settings_group_call_logs_supporting">Sloučit opakované hovory ze stejného kontaktu téhož dne do jednoho záznamu</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Automaticky vložit zkopírované číslo</string>
     <string name="settings_auto_paste_clipboard_supporting">Automaticky vyplnit číselník telefonním číslem, které je aktuálně zkopírováno do schránky</string>
@@ -185,6 +266,7 @@
     <string name="settings_permissions_system_title">Systém</string>
     <string name="settings_private_contacts_count">Zabezpečené kontakty (%1$d)</string>
     <string name="action_select_all">Vybrat vše</string>
+    <string name="action_select_none">Zrušit výběr všech</string>
     <string name="settings_private_secret_code">Tajný kód číselníku</string>
     <string name="about_rate_on_google_play">Ohodnoťte na Google Play</string>
     <string name="about_supporter_badge">Podporovatel ⭐</string>
@@ -264,4 +346,54 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Obrazovka otevřeného volání při odpovědi</string>
     <string name="settings_open_call_screen_on_answer_supporting">Otevřít celou obrazovku hovoru při odpovědi z plovoucího oznámení</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Sledujte systém nebo zamykací světlo nebo tmavý</string>
+    <string name="palette_variant_title">Dynamická paleta</string>
+    <string name="palette_tonal_spot">Tonální terč</string>
+    <string name="palette_expressive">Výrazný</string>
+    <string name="palette_neutral">Neutrální</string>
+    <string name="palette_vibrant">Vibrace</string>
+    <string name="palette_fruit_salad">Ovocný salát</string>
+    <string name="palette_rainbow">dub</string>
+    <string name="palette_content">Obsah</string>
+    <string name="palette_fidelity">Věrnost</string>
+    <string name="palette_monochrome">Monochromní</string>
+    <string name="palette_big_clock">Velké hodiny</string>
+    <string name="palette_candy">Cukr</string>
+    <string name="palette_deep_ocean">Hluboký oceán</string>
+    <string name="palette_sunset_glow">Zrna slunce</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Typ používaný v celé aplikaci</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Měřítko textu napříč aplikací</string>
+    <string name="typography_entry_supporting">Písmo, velikost textu a systémové písmo</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Náhled</string>
+    <string name="avatar_preview_colorful_gradient">Barevné gradienty s dvoupísmennými iniciály</string>
+    <string name="avatar_preview_colorful">Barevné avatary s kontrastními iniciály</string>
+    <string name="avatar_preview_gradient">Gradientové avatary s dvoupísmennými iniciály</string>
+    <string name="avatar_preview_plain">Prosté avatary s motivy</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Přizpůsobení obrazovky volání</string>
+    <string name="call_screen_customization_supporting">Vyberte, který řádek se zobrazí každé tlačítko v hovoru.</string>
+    <string name="about_third_party_licenses">Licence třetích stran</string>
+    <string name="about_third_party_licenses_supporting">Open source komponenty používané v Rivo</string>
+    <string name="about_third_party_licenses_title">Licence třetích stran</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines – Apache 2.
+Jetpack Compose, Material 3 &amp; AndroidX – Apache 2.0
+Koin (injekce závislosti) – Apache 2.
+Room (databáze) – Apache 2.0
+Coil (načtení obrázku) – Apache 2.0
+Compose Destinations (navigace) – Apache 2.
+ZXing (QR kód generace) – Apache 2.0
+Accompanist (oprávnění runtime) – Apache 2.0
+BiometricPrompt (zámek aplikací) – Apache 2.
+Shizuku (privilegovaný záznam hovorů API) – Apache 2.0
+ShizuCallorder (kód záznamu hovoru) – GPLv3 s oddílem 7 dalšími termíny</string>
+    <string name="call_screen_preview_title">Náhled</string>
+    <string name="call_slot_top">Horní řádek \u2022 otvor #%1$d</string>
+    <string name="call_slot_bottom">Spodní řádek \u2022 otvor #%1$d</string>
+    <string name="call_slot_move_up">Posunout nahoru</string>
+    <string name="call_slot_move_down">Přesunout dolů</string>
 </resources>

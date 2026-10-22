@@ -27,6 +27,65 @@
     <string name="backup_settings_export_success">Sovellusasetusten vienti onnistui</string>
     <string name="backup_settings_import_success">Sovelluksen asetukset palautettu onnistuneesti</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Teeman Tila</string>
+    <string name="system">Järjestelmä</string>
+    <string name="pref_theme_mode">Teeman Tila</string>
+    <string name="pref_system_theme_follows_system">Noudata järjestelmän teemaa</string>
+    <string name="pref_enable_dynamic_color">Ota dynaaminen väri käyttöön</string>
+    <string name="pref_enable_dynamic_color_description">Derive värit automaattisesti taustakuva (Material sinä)</string>
+    <string name="rearrange_call_buttons">Järjestä Puhelupainikkeet Uudelleen</string>
+    <string name="call_screen_visible_buttons_title">Näkyvät painikkeet</string>
+    <string name="call_screen_visible_buttons_supporting">Lisää tai poista painikkeita, jotka näkyvät puhelulokella</string>
+    <string name="top_row_items">Ylärivi: kohdat 1–3</string>
+    <string name="bottom_row_items">Alarivi: kohdat 4–6</string>
+    <string name="mute">Mykistä / Poista Mykistys</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Ääni-Reitti</string>
+    <string name="record">Puhelun Tietue</string>
+    <string name="hold">Pidä Puhelua</string>
+    <string name="add">Lisää Puhelu</string>
+    <string name="call_button_customization_description">Ylärivi: kohdat 1–3 • Alarivi: kohdat 4–6</string>
+    <string name="enable_group_calls">Ota Ryhmäpuhelut Käyttöön</string>
+    <string name="enable_group_calls_description">Salli konferenssipuhelut, joissa on useita osallistujia</string>
+    <string name="group_calls_default_enabled">Käytössä oletuksena</string>
+    <string name="settings_interface_avatar_show_picture">Näytä kuva avatarissa</string>
+    <string name="settings_interface_avatar_show_first_letter">Näytä ensimmäinen kirjain</string>
+    <string name="settings_interface_gradient_avatars">Käytä gradientin avatareita</string>
+    <string name="settings_interface_smart_contrast">Älykäs Kontrastin Esikatselu</string>
+    <string name="settings_interface_smart_contrast_description">Teksti mukautuu automaattisesti: tummat taustat käyttävät terävää valkoista tekstiä, ja keltaiset taustat käyttävät tummaa tekstiä suureen luettavuuteen</string>
+    <string name="settings_interface_gradient_avatars_preview">Gradienttien Hahmojen Esikatselu</string>
+    <string name="settings_interface_smart_contrast_title">Älykäs Kontrasti</string>
+    <string name="settings_interface_gradient_avatars_title">Gradient Hahmot</string>
+    <string name="avatar_blue_white">Sininen
+valkoinen teksti</string>
+    <string name="avatar_yellow_dark">Keltainen
+Tumma teksti</string>
+    <string name="avatar_green_dark">Vihreä
+Tumma teksti</string>
+    <string name="avatar_red_white">Punainen
+valkoinen teksti</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Käytä järjestelmän kirjasinta</string>
+    <string name="pref_system_font_toggle_description">Käytä järjestelmän kirjasinasetuksia</string>
+    <string name="typography_title">Typografia</string>
+    <string name="typography_preview_text">Nopea ruskea kettu hyppää yli laiska koira</string>
+    <string name="font_size_small">Pieni</string>
+    <string name="font_size_medium">Keskitaso</string>
+    <string name="font_size_large">Suuri</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">Monospace</string>
+    <string name="font_family_cursive">Kapea</string>
+    <string name="font_family_casual">Rento</string>
+    <string name="font_family_condensed">Tiivistetty</string>
+    <string name="font_family_light">Vaalea</string>
+    <string name="font_family_medium">Keskitaso</string>
+    <string name="font_family_black">Musta</string>
+    <string name="light">Vaalea</string>
+    <string name="dark">Tumma</string>
+    <string name="dynamic_color">Dynaaminen Väri</string>
+    <string name="enable_dynamic_color">Ota dynaaminen väri käyttöön taustakuvasta</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Pidä 0 pohjassa +</string>
@@ -79,6 +138,27 @@
     <string name="call_recording_saved">Puhelun nauhoitus tallennettu</string>
     <string name="call_recording_deleted">Tallennus poistettu</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Operaattorin Videopuhelu</string>
+    <string name="video_call_carrier_desc">Mobiili / VoLTE / ViLTE videopuhelu</string>
+    <string name="video_call_whatsapp_desc">WhatsApp videopuhelu</string>
+    <string name="video_call_meet_desc">Google Meet videopuhelu</string>
+    <string name="video_call_telegram_desc">Telegram videopuhelu</string>
+    <string name="video_call_signal_desc">Signaali videopuhelu</string>
+    <string name="video_call_wechat_desc">WeChat videopuhelu</string>
+    <string name="video_call_line_desc">LINE videopuhelu</string>
+    <string name="video_call_viber_desc">Viber videopuhelu</string>
+    <string name="video_call_skype_desc">Skypen videopuhelu</string>
+    <string name="video_call_imo_desc">imo videopuhelu</string>
+    <string name="video_call_zoom_desc">Zoomaa videoiden tapaamisia</string>
+    <string name="video_call_remember_choice">Muista valinta tuleville videopuheluille</string>
+    <string name="video_call_default_app">Oletus videoon soittaminen sovellus</string>
+    <string name="video_call_always_ask">Kysy aina</string>
+    <string name="video_call_opening_whatsapp">Avataan WhatsApp videopuheluun…</string>
+    <string name="video_call_failed">Videopuhelua ei voitu käynnistää</string>
+    <string name="video_call_no_number">Puhelun puheluita varten ei ole saatavilla puhelinnumeroa</string>
+    <string name="video_call_switch_camera">Käännä Kamera</string>
+    <string name="video_call_toggle_video">Video</string>
+    <string name="video_call_incoming_video">Saapuva Videopuhelu</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -103,6 +183,8 @@
     <string name="settings_call_log_limit_500">500 puhelua (Oletus)</string>
     <string name="settings_call_log_limit_1000">1 000 puhelua</string>
     <string name="settings_call_log_limit_unlimited">Rajoittamaton</string>
+    <string name="settings_group_call_logs">Ryhmän puhelulokit</string>
+    <string name="settings_group_call_logs_supporting">Yhdistä saman yhteyshenkilön toistuvat puhelut samana päivänä yhteen syötteeseen</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Liitä kopioitu numero automaattisesti</string>
     <string name="settings_auto_paste_clipboard_supporting">Täytä valintaikkuna automaattisesti leikepöydälle tällä hetkellä kopioidulla puhelinnumerolla</string>
@@ -183,6 +265,7 @@
     <string name="settings_permissions_system_title">Järjestelmä</string>
     <string name="settings_private_contacts_count">Suojatut Yhteystiedot (%1$d)</string>
     <string name="action_select_all">Valitse Kaikki</string>
+    <string name="action_select_none">Poista Kaikki Valinnat</string>
     <string name="settings_private_secret_code">Salainen Näppäimistön Koodi</string>
     <string name="about_rate_on_google_play">Arvostele Google Playssa</string>
     <string name="about_supporter_badge">Tukija ⭐</string>
@@ -262,4 +345,52 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Avaa puhelunäyttö vastauksessa</string>
     <string name="settings_open_call_screen_on_answer_supporting">Avaa koko puhelun näyttö vastattaessa heads-up ilmoituksesta</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Seuraa järjestelmää tai lukita valoa tai tummaa</string>
+    <string name="palette_variant_title">Dynaaminen paletti</string>
+    <string name="palette_tonal_spot">Tonaalinen Spot</string>
+    <string name="palette_expressive">Ilmeinen</string>
+    <string name="palette_neutral">Neutraali</string>
+    <string name="palette_vibrant">Elinvoimainen</string>
+    <string name="palette_fruit_salad">Hedelmäsalaatti</string>
+    <string name="palette_rainbow">Sateenkaari</string>
+    <string name="palette_content">Sisältö</string>
+    <string name="palette_fidelity">Uskottomuus</string>
+    <string name="palette_monochrome">Yksivärinen</string>
+    <string name="palette_big_clock">Suuri Kello</string>
+    <string name="palette_candy">Karkki</string>
+    <string name="palette_deep_ocean">Syvä Meri</string>
+    <string name="palette_sunset_glow">Auringonlaskun Hehku</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Tyyppi, jota käytetään koko sovelluksessa</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Skaalaa tekstiä koko sovelluksessa</string>
+    <string name="typography_entry_supporting">Kirjasin, tekstin koko ja järjestelmän kirjasin</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Esikatselu</string>
+    <string name="avatar_preview_colorful_gradient">Värikkäitä kaltevuuksia, joissa on kaksikirjaiminen nimikirjaimet</string>
+    <string name="avatar_preview_colorful">Värikkäitä hahmoja vastakkaisine nimikirjoineen.</string>
+    <string name="avatar_preview_gradient">Gradient avatarit kahden kirjaimen nimikirjaimet</string>
+    <string name="avatar_preview_plain">Tavalliset teemahahmot</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Soita Näytön Mukautukseen</string>
+    <string name="call_screen_customization_supporting">Valitse mikä rivi jokainen puhelu-painike näkyy sisään.</string>
+    <string name="about_third_party_licenses">Kolmansien osapuolten lisenssit</string>
+    <string name="about_third_party_licenses_supporting">Rivossa käytettävät avoimen lähdekoodin komponentit</string>
+    <string name="about_third_party_licenses_title">Kolmansien osapuolten lisenssit</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines - Apache 2.
+Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
+Koin (riippuvuusinjektio) — Apache 2.
+Huone (tietokanta) – Apache 2.0
+Coil (image loading) – Apache 2.0
+Compose Destinations (navigointi) – Apache 2.
+ZXing (QR-koodin luonti) – Apache 2.0
+Accompanist (runtime permissions) – Apache 2.0
+BiometricPrompt (app lock) – Apache 2.
+Shizuku (etuoikeutetun puhelun tallennus API) – Apache 2.0
+ShizuCallRecorder (puhelun tallennuskoodi) – GPLv3 ja 7 kohdan lisäehdot</string>
+    <string name="call_screen_preview_title">Esikatselu</string>
+    <string name="call_slot_move_up">Siirrä ylös</string>
+    <string name="call_slot_move_down">Siirrä alas</string>
 </resources>

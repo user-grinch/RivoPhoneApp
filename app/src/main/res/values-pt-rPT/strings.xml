@@ -27,6 +27,65 @@
     <string name="backup_settings_export_success">Configurações do aplicativo exportadas com sucesso</string>
     <string name="backup_settings_import_success">Configurações do aplicativo restauradas com sucesso</string>
     <!-- Settings > root -->
+    <string name="theme_mode">Modo tema</string>
+    <string name="system">SISTEMA</string>
+    <string name="pref_theme_mode">Modo tema</string>
+    <string name="pref_system_theme_follows_system">Do tema do sistema</string>
+    <string name="pref_enable_dynamic_color">Ativar cor dinâmica</string>
+    <string name="pref_enable_dynamic_color_description">Cores derivadas automaticamente do papel de parede (Material para Você)</string>
+    <string name="rearrange_call_buttons">Reorganizar Botões de Chamada</string>
+    <string name="call_screen_visible_buttons_title">Botões visíveis</string>
+    <string name="call_screen_visible_buttons_supporting">Adicionar ou remover botões mostrados na tela da chamada</string>
+    <string name="top_row_items">Linha superior: itens 1-3</string>
+    <string name="bottom_row_items">Linha inferior: itens de 4 a 6</string>
+    <string name="mute">Silenciar / Reativar</string>
+    <string name="keypad">Keypad</string>
+    <string name="audio">Rota de Áudio</string>
+    <string name="record">Registro de chamadas</string>
+    <string name="hold">Manter Chamada</string>
+    <string name="add">Adicionar Ligação</string>
+    <string name="call_button_customization_description">Linha superior: itens 1–3 • Linha inferior: itens de 4 a 6</string>
+    <string name="enable_group_calls">Habilitar Chamadas ao Grupo</string>
+    <string name="enable_group_calls_description">Permitir chamadas de conferência com vários participantes</string>
+    <string name="group_calls_default_enabled">Habilitado por padrão</string>
+    <string name="settings_interface_avatar_show_picture">Mostrar imagem no avatar</string>
+    <string name="settings_interface_avatar_show_first_letter">Mostrar primeira letra</string>
+    <string name="settings_interface_gradient_avatars">Usar avatares de gradiente</string>
+    <string name="settings_interface_smart_contrast">Pré-visualização inteligente de contraste</string>
+    <string name="settings_interface_smart_contrast_description">Texto se adapta automaticamente: fundos escuros usam texto claro em branco, e fundos amarelos usam texto escuro para alta legibilidade</string>
+    <string name="settings_interface_gradient_avatars_preview">Pré-visualização de Avatares em Gradiente</string>
+    <string name="settings_interface_smart_contrast_title">Contraste Inteligente</string>
+    <string name="settings_interface_gradient_avatars_title">Avatares de gradiente</string>
+    <string name="avatar_blue_white">Azul
+Texto Branco</string>
+    <string name="avatar_yellow_dark">Amarelo
+Texto escuro</string>
+    <string name="avatar_green_dark">Verde
+Texto escuro</string>
+    <string name="avatar_red_white">Vermelho
+Texto branco</string>
+    <string name="pref_font_family">Font</string>
+    <string name="pref_font_size">Font Size</string>
+    <string name="pref_system_font_toggle">Usar fonte do sistema</string>
+    <string name="pref_system_font_toggle_description">Usar configurações de fonte do sistema</string>
+    <string name="typography_title">Tipografia</string>
+    <string name="typography_preview_text">rápida raposa marrom pula sobre o cão preguiçoso</string>
+    <string name="font_size_small">Pequeno</string>
+    <string name="font_size_medium">Média</string>
+    <string name="font_size_large">grande</string>
+    <string name="font_family_serif">Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
+    <string name="font_family_monospace">Monosespaçada</string>
+    <string name="font_family_cursive">Cursivo</string>
+    <string name="font_family_casual">Casual</string>
+    <string name="font_family_condensed">Condensado</string>
+    <string name="font_family_light">Fino</string>
+    <string name="font_family_medium">Média</string>
+    <string name="font_family_black">Preto</string>
+    <string name="light">Fino</string>
+    <string name="dark">Escuro</string>
+    <string name="dynamic_color">Cor dinâmica</string>
+    <string name="enable_dynamic_color">Ativar cor dinâmica do papel de parede</string>
     <!-- Settings > Interface -->
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Segure 0 para +</string>
@@ -78,6 +137,27 @@
     <string name="call_recording_saved">Gravação de chamada salva</string>
     <string name="call_recording_deleted">Gravação excluída</string>
     <!-- Video calling app picker -->
+    <string name="video_call_carrier">Chamada de vídeo da operadora</string>
+    <string name="video_call_carrier_desc">Chamada de vídeo móvel / VoLTE</string>
+    <string name="video_call_whatsapp_desc">Chamada de vídeo WhatsApp</string>
+    <string name="video_call_meet_desc">Chamada de vídeo Google Meet</string>
+    <string name="video_call_telegram_desc">Videochamada do Telegram</string>
+    <string name="video_call_signal_desc">Sinal de chamada</string>
+    <string name="video_call_wechat_desc">Chamada de vídeo WeChat</string>
+    <string name="video_call_line_desc">Chamada de vídeo LINE</string>
+    <string name="video_call_viber_desc">Chamada de vídeo Viber</string>
+    <string name="video_call_skype_desc">Vídeochamada Skype</string>
+    <string name="video_call_imo_desc">vídeo chamada</string>
+    <string name="video_call_zoom_desc">Ampliar reuniões de vídeo</string>
+    <string name="video_call_remember_choice">Lembre-se de escolher para futuras chamadas de vídeo</string>
+    <string name="video_call_default_app">App padrão para chamadas de vídeo</string>
+    <string name="video_call_always_ask">Sempre perguntar</string>
+    <string name="video_call_opening_whatsapp">Abrindo o WhatsApp para chamada de vídeo…</string>
+    <string name="video_call_failed">Não foi possível iniciar a chamada de vídeo</string>
+    <string name="video_call_no_number">Nenhum número de telefone disponível para chamada de vídeo</string>
+    <string name="video_call_switch_camera">Virar câmera</string>
+    <string name="video_call_toggle_video">Vídeo</string>
+    <string name="video_call_incoming_video">Recebendo uma chamada de vídeo</string>
     <!-- Call screen background and active controls -->
     <!-- Incoming call controls and in-call keypad -->
     <!-- IMEI / Secret codes -->
@@ -102,6 +182,8 @@
     <string name="settings_call_log_limit_500">500 chamadas (Padrão)</string>
     <string name="settings_call_log_limit_1000">1.000 chamadas</string>
     <string name="settings_call_log_limit_unlimited">Ilimitado</string>
+    <string name="settings_group_call_logs">Agrupar registros de chamadas</string>
+    <string name="settings_group_call_logs_supporting">Mesclar chamadas repetidas do mesmo contato no mesmo dia em uma entrada</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Auto colar número copiado</string>
     <string name="settings_auto_paste_clipboard_supporting">Preencher automaticamente o discador com o número de telefone copiado para a área de transferência</string>
@@ -183,6 +265,7 @@
     <string name="settings_permissions_system_title">SISTEMA</string>
     <string name="settings_private_contacts_count">Contatos seguros (%1$d)</string>
     <string name="action_select_all">Selecionar Todos</string>
+    <string name="action_select_none">Desmarcar Todos</string>
     <string name="settings_private_secret_code">Código de teclado secreto</string>
     <string name="about_rate_on_google_play">Avaliar no Google Play</string>
     <string name="about_supporter_badge">Apoiador ⭐</string>
@@ -261,4 +344,54 @@
     <!-- Open Call Screen on Answer -->
     <string name="settings_open_call_screen_on_answer_title">Abrir Tela de Chamada ao responder</string>
     <string name="settings_open_call_screen_on_answer_supporting">Abrir tela de chamada completa ao responder a partir de notificações heads-up</string>
+    <!-- Theme mode & dynamic palettes -->
+    <string name="theme_mode_supporting">Seguir o sistema ou bloquear a luz ou escuro</string>
+    <string name="palette_variant_title">Paleta dinâmica</string>
+    <string name="palette_tonal_spot">Ponto Tonal</string>
+    <string name="palette_expressive">Expressivo</string>
+    <string name="palette_neutral">Neutro</string>
+    <string name="palette_vibrant">Vibrante</string>
+    <string name="palette_fruit_salad">Salada de frutas</string>
+    <string name="palette_rainbow">Arco-íris</string>
+    <string name="palette_content">Conteúdo</string>
+    <string name="palette_fidelity">Fidelidade</string>
+    <string name="palette_monochrome">Monocromático</string>
+    <string name="palette_big_clock">Relógio Grande</string>
+    <string name="palette_candy">Doces</string>
+    <string name="palette_deep_ocean">Oceano profundo</string>
+    <string name="palette_sunset_glow">Brilho do sol</string>
+    <!-- Typography -->
+    <string name="font_family_label">Font</string>
+    <string name="font_family_label_supporting">Typeface usada em todo o app</string>
+    <string name="font_size_label">Font size</string>
+    <string name="font_size_label_supporting">Escalar texto através do aplicativo</string>
+    <string name="typography_entry_supporting">Fonte, tamanho do texto e fonte do sistema</string>
+    <!-- Avatar preview -->
+    <string name="avatar_preview_title">Pré-visualizar</string>
+    <string name="avatar_preview_colorful_gradient">Gradientes coloridos com iniciais de duas letras</string>
+    <string name="avatar_preview_colorful">Avatares coloridos com iniciais contrastantes</string>
+    <string name="avatar_preview_gradient">Avatares de gradiente com iniciais de duas letras</string>
+    <string name="avatar_preview_plain">Avatares com tema simples</string>
+    <!-- Call screen customization -->
+    <string name="call_screen_customization_title">Personalização de tela de chamada</string>
+    <string name="call_screen_customization_supporting">Escolha em qual linha cada botão de chamada será exibido.</string>
+    <string name="about_third_party_licenses">Licenças de terceiros</string>
+    <string name="about_third_party_licenses_supporting">Componentes Open source usados no Rivo</string>
+    <string name="about_third_party_licenses_title">Licenças de terceiros</string>
+    <string name="about_third_party_licenses_body">Kotlin, Sérialização Kotlinx &amp; Coroutines — Apache 2.
+Compose Jetpack, Material 3 &amp; AndroidX — Apache 2.0
+Koin (injeção de dependência) — Apache 2.
+Sala (banco de dados) — Apache 2.0
+Coil (carregamento de imagens) — Apache 2.0
+Compor Destinos (navegação) — Apache 2.
+ZXing (geração de código QR) — Apache 2.0
+Accompanist (permissões de tempo de execução) — Apache 2.0
+BiometricPrompt (bloqueio de app) — Apache 2.
+Shizuku (API de gravação de chamadas privilegiada) — Apache 2.0
+ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 termos adicionais</string>
+    <string name="call_screen_preview_title">Pré-visualizar</string>
+    <string name="call_slot_top">Linha superior \u2022 Slot #%1$d</string>
+    <string name="call_slot_bottom">Linha inferior \u2022 Espaço #%1$d</string>
+    <string name="call_slot_move_up">Mover para cima</string>
+    <string name="call_slot_move_down">Mover para baixo</string>
 </resources>
