@@ -419,6 +419,5 @@
     <string name="support_ads_enabled_pro">Реклама увімкнена - Pro дозволи активовано</string>
     <string name="support_tip_jar_pro">Покупка Tip Jar - Ввімкнено переваги Pro</string>
     <string name="support_patreon_pro">Команда Patreon - Підтримка Pro привілеїв</string>
-    <string name="support_choose_app_icon_title">Вибрати значок набору номера та назву</string>
     <string name="support_choose_app_icon_desc">Вибір значка запуску номеронабирача і ярлика разом. Нічого не зміниться, поки ви не підтвердите і перезавантажте Ріво.</string>
 </resources>

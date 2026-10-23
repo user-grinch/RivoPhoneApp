@@ -447,6 +447,5 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="support_ads_enabled_pro">Annunci abilitati - Pro perks attivi</string>
     <string name="support_tip_jar_pro">Acquisto barattolo - Pro perks attivi</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks attivo</string>
-    <string name="support_choose_app_icon_title">Scegli l\'icona e il nome del dialer</string>
     <string name="support_choose_app_icon_desc">Scegli l\'icona del lanciatore dialer e l\'etichetta insieme. Nulla cambia finché non confermi e riavvii Rivo.</string>
 </resources>

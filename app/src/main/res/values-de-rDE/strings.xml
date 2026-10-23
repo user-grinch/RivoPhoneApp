@@ -1186,6 +1186,5 @@ Bitte überlegen Sie, über Patreon zu spenden, um die Entwicklung zu unterstüt
     <string name="support_ads_enabled_pro">Werbung aktiviert - Pro Perks aktiv</string>
     <string name="support_tip_jar_pro">Tipp Jar Kauf - Pro Perks aktiv</string>
     <string name="support_patreon_pro">Patreon Unterstützer - Pro Perks aktiv</string>
-    <string name="support_choose_app_icon_title">Wählersymbol und Name auswählen</string>
     <string name="support_choose_app_icon_desc">Wählen Sie das Dialer Launcher Symbol aus und benennen Sie es zusammen. Nichts ändert sich, bis Sie Rivo bestätigen und neu starten.</string>
 </resources>

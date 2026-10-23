@@ -447,6 +447,10 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="support_ads_enabled_pro">Reklamy povoleny - Pro perks aktivní</string>
     <string name="support_tip_jar_pro">Tip Jar nákup - Pro výhody aktivní</string>
     <string name="support_patreon_pro">Patreon supporter - Pro výhody aktivní</string>
-    <string name="support_choose_app_icon_title">Zvolte ikonu a název číselníku</string>
+    <string name="support_rewarded_pro">Odměněné video - Pro je aktivní jeden den</string>
+    <string name="support_pro_active_reason">Rivo Pro je aktivní: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro není aktivní. Vyberte možnost podpory níže.</string>
+    <string name="support_pro_foss_reason">Rivo Pro je k dispozici v Play Store. Patreon podporuje vývoj FOSS.</string>
+    <string name="support_choose_app_icon_title">Vybrat značku</string>
     <string name="support_choose_app_icon_desc">Vyberte společně ikonu a popisek číselníku. Nic se nemění, dokud nepotvrdíte a nerestartujete Rivo.</string>
 </resources>

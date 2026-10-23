@@ -443,6 +443,5 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="support_ads_enabled_pro">Mainokset käytössä - Pro-oikeudet käytössä</string>
     <string name="support_tip_jar_pro">Vinkki Jar osto - Pro perks aktiivinen</string>
     <string name="support_patreon_pro">Patreonien tukija - Pro perks aktiivinen</string>
-    <string name="support_choose_app_icon_title">Valitse puhelimen kuvake ja nimi</string>
     <string name="support_choose_app_icon_desc">Valitse puhelimen käynnistäjän kuvake ja etiketti yhdessä. Mikään ei muutu, ennen kuin vahvistat ja käynnistät Rivon uudelleen.</string>
 </resources>

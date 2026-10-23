@@ -423,6 +423,5 @@
     <string name="support_ads_enabled_pro">広告を有効にする - プロの特典が有効です</string>
     <string name="support_tip_jar_pro">ヒントジャール購入 - プロの特典が有効です</string>
     <string name="support_patreon_pro">Patreonサポーター-プロ特典が有効です</string>
-    <string name="support_choose_app_icon_title">ダイヤラーアイコンと名前を選択</string>
     <string name="support_choose_app_icon_desc">ダイヤラーランチャーアイコンを選択し、一緒にラベルを付けます。Rivoを確認して再起動するまで何も変わりません。</string>
 </resources>

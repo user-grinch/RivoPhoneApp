@@ -443,6 +443,5 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="support_ads_enabled_pro">Annonser aktivert - Pro perks aktive</string>
     <string name="support_tip_jar_pro">Tips Jar kjøp - Pro perks aktiv</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks aktiv</string>
-    <string name="support_choose_app_icon_title">Velg kobling ikon og navn</string>
     <string name="support_choose_app_icon_desc">Velg ikonet for dialer og merket sammen. Ingenting endres inntil du bekrefter og starter ned Nagla.</string>
 </resources>

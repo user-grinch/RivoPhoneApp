@@ -1172,6 +1172,10 @@ blanc</string>
     <string name="support_ads_enabled_pro">Annonces activées - Avantages Pro actifs</string>
     <string name="support_tip_jar_pro">Achat de pourboires - Avantages Pro actifs</string>
     <string name="support_patreon_pro">supporter Patreon - Avantages Pro actifs</string>
-    <string name="support_choose_app_icon_title">Choisissez l\'icône et le nom du numéroteur</string>
+    <string name="support_rewarded_pro">Vidéo récompensée - Pro est actif pendant un jour</string>
+    <string name="support_pro_active_reason">Rivo Pro est actif : %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro n\'est pas actif. Choisissez une option de support ci-dessous.</string>
+    <string name="support_pro_foss_reason">Rivo Pro est disponible dans la version Play Store. Patreon supporte le développement FOSS.</string>
+    <string name="support_choose_app_icon_title">Choisir une image de marque</string>
     <string name="support_choose_app_icon_desc">Choisissez l\'icône et l\'étiquette du lanceur de numéros. Rien ne change tant que vous ne confirmez et redémarrez Rivo.</string>
 </resources>

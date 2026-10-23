@@ -1192,6 +1192,5 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="support_ads_enabled_pro">Реклама включена - Pro Perks активен</string>
     <string name="support_tip_jar_pro">Советы Jar покупка - Pro perks активен</string>
     <string name="support_patreon_pro">Поддержка Patreon - Pro перки активны</string>
-    <string name="support_choose_app_icon_title">Выберите значок и имя номеронабирателя</string>
     <string name="support_choose_app_icon_desc">Выберите одновременно значок лаунчера номеронабирателя. Ничего не изменяется, пока вы не подтвердите и перезапустите Риво.</string>
 </resources>

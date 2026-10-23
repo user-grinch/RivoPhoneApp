@@ -429,6 +429,5 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="support_ads_enabled_pro">Ενεργές διαφημίσεις - Pro προνόμια ενεργή</string>
     <string name="support_tip_jar_pro">Συμβουλή αγορά βάζο - Pro perks ενεργό</string>
     <string name="support_patreon_pro">Υποστηρικτής Patreon - Pro perks active</string>
-    <string name="support_choose_app_icon_title">Επιλέξτε εικονίδιο και όνομα τηλεφώνου</string>
     <string name="support_choose_app_icon_desc">Επιλέξτε μαζί το εικονίδιο και την ετικέτα του launcher dialer. Τίποτα δεν αλλάζει μέχρι να επιβεβαιώσετε και να επανεκκινήσετε το Rivo.</string>
 </resources>
