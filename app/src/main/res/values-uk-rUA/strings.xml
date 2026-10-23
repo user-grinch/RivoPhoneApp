@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Об’єдн. дзвінки</string>
     <string name="conference_call">Конференц-виклик</string>
+    <string name="action_add_note">Додати примітку</string>
+    <string name="call_notes_title">Нотатки під час викликів</string>
     <string name="label_local_memory">Пристрій</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -168,6 +170,26 @@
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Переглянути контакт</string>
+    <string name="swipe_action_share">Поділитись</string>
+    <string name="swipe_action_block">Блок</string>
+    <string name="action_block_or_report">Заблокувати або повідомити</string>
+    <string name="action_history">Історія</string>
+    <string name="toast_blocked_number">Заблоковано %1$s</string>
+    <string name="call_log_block_confirm_single">Заблокувати %1$s? Ви більше не отримаєте дзвінків або повідомлень від цього номера.</string>
+    <string name="date_older">Старіші</string>
+    <string name="settings_call_log_customization_title">Налаштування журналу дзвінків</string>
+    <string name="settings_call_log_customization_supporting">Налаштувати дії, крапку в кінці та швидкі дії</string>
+    <string name="settings_call_log_trailing_title">Дія після натиснення кнопки</string>
+    <string name="settings_call_log_trailing_supporting">Дія, викликана кнопкою праворуч для кожного запису журналу викликів</string>
+    <string name="settings_call_log_saved_actions_title">Швидкі дії щодо контактів</string>
+    <string name="settings_call_log_saved_actions_supporting">Дії, що відображаються при натисканні на запис журналу викликів для збереженого контакту</string>
+    <string name="settings_call_log_unsaved_actions_title">Незбережені числа швидкі дії</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Дії, що відображаються при натисканні на запис журналу викликів для незбереженого номера</string>
+    <string name="settings_call_log_reset">Скинути налаштування журналу викликів</string>
+    <string name="settings_call_log_click_behavior_title">Торкніться взаємодій</string>
+    <string name="settings_call_log_click_behavior_supporting">Аватар відкриває контактні дані; кнопка в кінці містить призначені дії; натисніть будь-де інше розгортає швидкі дії.</string>
+    <string name="action_none">Без ефекту</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -270,8 +292,16 @@
     <string name="blocked_action_add_number">Додати номер</string>
     <string name="blocked_action_import_csv">Імпортувати CSV</string>
     <string name="blocked_action_export_csv">Експортувати в CSV</string>
-    <string name="settings_display_banner_ads">Відображення реклами банерів</string>
-    <string name="settings_display_banner_ads_supporting">Показ реклами банера в списках для підтримки розробки</string>
+    <string name="settings_display_banner_ads">ненав\'язливі оголошення</string>
+    <string name="settings_display_banner_ads_supporting">Показати невелику рекламу в списках для підтримки розробки</string>
+    <string name="settings_support_development">Підтримати розробку</string>
+    <string name="settings_support_development_supporting">Підтримати розробку Rivo</string>
+    <string name="settings_provide_tip">Вкажіть підказку</string>
+    <string name="settings_provide_tip_supporting">Підтримати розробку через Tip Jar або Patreon</string>
+    <string name="settings_patreon">Патреон</string>
+    <string name="settings_patreon_supporting">Щомісячний покровитель з ексклюзивними бонусами</string>
+    <string name="settings_watch_video_ad">Дивитися відеорекламу</string>
+    <string name="settings_watch_video_ad_supporting">Перегляньте коротке відео для підтримки розробки</string>
     <string name="settings_rate_google_play">Оцінити в Google Play</string>
     <string name="settings_rate_google_play_supporting">Підтримка Rivo у магазині Google Play</string>
     <string name="settings_about_rivo">Про Rivo</string>
@@ -368,4 +398,27 @@
     <string name="call_screen_preview_title">Прев\'ю</string>
     <string name="call_slot_move_up">Посунути вгору</string>
     <string name="call_slot_move_down">Посунути вниз</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Завантаження відеореклами…</string>
+    <string name="video_ad_failed">Не вдалося завантажити відеорекламу. Будь ласка, спробуйте пізніше.</string>
+    <string name="support_video_ads_watched">Переглянута відеореклама: %1$d</string>
+    <string name="support_image_ads_watched">Переглянута реклама зображень: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro розблоковано! Насолоджуйтесь вашими перевагами.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Іконка користувача</string>
+    <string name="support_foss_only_donate">Переваги Rivo Pro недоступні в FOSS збірках. Використовуйте Play Store для розблокування Pro, або підтримки розвитку через Patreon.
+Будь ласка, розгляньте можливість пожертвування через Patreon для підтримки розробки.</string>
+    <string name="support_custom_app_icon">Користувацька піктограма додатка</string>
+    <string name="support_custom_app_icon_desc">Виберіть бажану іконку програми</string>
+    <string name="support_default_app_icon">Типово (Рів)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Денний ліміт переглядів оголошень вичерпано. Спробуйте знову завтра.</string>
+    <string name="support_video_ad_not_ready">Відеореклама ще не готова. Будь ласка, зачекайте хвилинку.</string>
+    <string name="support_pro_branding_enabled">Pro брендинг увімкнено</string>
+    <string name="support_pro_branding_disabled">Pro брендинг вимкнено</string>
+    <string name="support_ads_enabled_pro">Реклама увімкнена - Pro дозволи активовано</string>
+    <string name="support_tip_jar_pro">Покупка Tip Jar - Ввімкнено переваги Pro</string>
+    <string name="support_patreon_pro">Команда Patreon - Підтримка Pro привілеїв</string>
+    <string name="support_choose_app_icon_title">Вибрати значок набору номера та назву</string>
+    <string name="support_choose_app_icon_desc">Вибір значка запуску номеронабирача і ярлика разом. Нічого не зміниться, поки ви не підтвердите і перезавантажте Ріво.</string>
 </resources>

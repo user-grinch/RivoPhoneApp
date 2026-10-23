@@ -49,6 +49,8 @@
     <string name="label_email">Электронная почта</string>
     <string name="label_address">Адрес</string>
     <string name="label_notes">Заметки</string>
+    <string name="action_add_note">Добавить заметку</string>
+    <string name="call_notes_title">Заметки к звонку</string>
     <string name="label_social_apps">Социальные сети и мессенджеры</string>
     <string name="label_local_memory">Устройство</string>
     <string name="option_standard">Стандарт</string>
@@ -157,7 +159,7 @@
     <string name="contact_create_new_desc">Сохранить как новый контакт</string>
     <string name="contact_add_to_existing">Добавить в существующий контакт</string>
     <string name="contact_add_to_existing_desc">Добавить этот номер к существующему контакту</string>
-    <string name="contact_events_title">События &amp; ещё</string>
+    <string name="contact_events_title">События и ещё</string>
     <string name="contact_event_birthday">День рождения</string>
     <string name="contact_event_generic">Событие</string>
     <string name="contact_recent_activity_title">Недавние действия</string>
@@ -178,7 +180,7 @@
     <string name="contact_delete_dialog_title">Удалить контакт?</string>
     <string name="contact_delete_dialog_message">Вы уверены, что хотите удалить этот контакт? Это действие нельзя отменить.</string>
     <string name="contact_personalization_title">Персонализация</string>
-    <string name="contact_privacy_title">Конфиденциальность &amp; безопасность</string>
+    <string name="contact_privacy_title">Конфиденциальность и безопасность</string>
     <!-- Contact edit -->
     <string name="contact_create_title">Создать контакт</string>
     <string name="contact_edit_title">Изменить контакт</string>
@@ -263,18 +265,18 @@
     <string name="system">Система</string>
     <string name="pref_theme_mode">Режим темы</string>
     <string name="pref_system_theme_follows_system">Следить за системной темой</string>
-    <string name="pref_enable_dynamic_color">Включить динамический цвет</string>
+    <string name="pref_enable_dynamic_color">Включить динамические цвета</string>
     <string name="pref_enable_dynamic_color_description">Автоматически раскрасить цвета из обоев (Material You)</string>
-    <string name="rearrange_call_buttons">Кнопки изменения порядка вызовов</string>
+    <string name="rearrange_call_buttons">Изменение порядка кнопок вызова</string>
     <string name="call_screen_visible_buttons_title">Видимые кнопки</string>
     <string name="call_screen_visible_buttons_supporting">Добавление или удаление кнопок, отображаемых на экране вызова</string>
     <string name="top_row_items">Верхняя строка: позиции 1–3</string>
     <string name="bottom_row_items">Нижняя строка: пункты 4–6</string>
     <string name="mute">Отключить / включить звук</string>
-    <string name="keypad">Keypad</string>
-    <string name="audio">Аудио маршрут</string>
+    <string name="keypad">Панель набора</string>
+    <string name="audio">Маршрутизация звука</string>
     <string name="record">Запись звонка</string>
-    <string name="hold">Задержать звонок</string>
+    <string name="hold">Удерживать вызов</string>
     <string name="add">Добавить вызов</string>
     <string name="call_button_customization_description">Верхняя строка: пункты 1–3 • Нижняя строка: пункты 4–6</string>
     <string name="enable_group_calls">Включить групповые звонки</string>
@@ -283,31 +285,31 @@
     <string name="settings_interface_avatar_show_picture">Показывать изображение в аватаре</string>
     <string name="settings_interface_avatar_show_first_letter">Показать первую букву</string>
     <string name="settings_interface_colorful_avatars">Использовать цветные аватары</string>
-    <string name="settings_interface_gradient_avatars">Использовать градиентные аватары</string>
+    <string name="settings_interface_gradient_avatars">Использовать градиент аватара</string>
     <string name="settings_interface_smart_contrast">Предпросмотр Smart Contrast</string>
-    <string name="settings_interface_smart_contrast_description">Текст автоматически приспосабливается: темный фон использует хрустящий белый текст, а желтый фон - тёмный текст для высокой четкости</string>
-    <string name="settings_interface_gradient_avatars_preview">Предварительный просмотр аватаров градиента</string>
+    <string name="settings_interface_smart_contrast_description">Цвет текста подстраивается автоматически: белый для тёмного фона и тёмный для жёлтого, чтобы сохранить максимальную читаемость</string>
+    <string name="settings_interface_gradient_avatars_preview">Предпросмотр аватаров с градиентом</string>
     <string name="settings_interface_smart_contrast_title">Smart Contrast</string>
-    <string name="settings_interface_gradient_avatars_title">Аватары градиентов</string>
-    <string name="avatar_blue_white">Синяя
+    <string name="settings_interface_gradient_avatars_title">Градиент аватаров</string>
+    <string name="avatar_blue_white">Синий
 Белый текст</string>
     <string name="avatar_yellow_dark">Желтый
-тёмный текст</string>
+Тёмный текст</string>
     <string name="avatar_green_dark">Зелёный
-темный текст</string>
-    <string name="avatar_red_white">Белый шрифт
-</string>
-    <string name="pref_font_family">Font</string>
-    <string name="pref_font_size">Font Size</string>
+Темный текст</string>
+    <string name="avatar_red_white">Красный
+Белый текст</string>
+    <string name="pref_font_family">Шрифт</string>
+    <string name="pref_font_size">Размер шрифта</string>
     <string name="pref_system_font_toggle">Использовать системный шрифт</string>
     <string name="pref_system_font_toggle_description">Использовать системные настройки шрифта</string>
     <string name="typography_title">Типография</string>
-    <string name="typography_preview_text">Быстрый коричневый лисица прыгает через ленивую собаку</string>
+    <string name="typography_preview_text">Быстрая коричневая лиса прыгает через ленивую собаку</string>
     <string name="font_size_small">Маленький</string>
     <string name="font_size_medium">Средний</string>
     <string name="font_size_large">Большой</string>
     <string name="font_family_serif">Сериф</string>
-    <string name="font_family_sans_serif">Без засечек</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
     <string name="font_family_monospace">Моноширинный</string>
     <string name="font_family_cursive">Курсив</string>
     <string name="font_family_casual">Обычный</string>
@@ -319,13 +321,13 @@
     <string name="dark">Тёмная</string>
     <string name="dynamic_color">Динамический цвет</string>
     <string name="enable_dynamic_color">Включить динамический цвет из обоев</string>
-    <string name="settings_sound_vibration_headline">Звук &amp; вибрация</string>
+    <string name="settings_sound_vibration_headline">Звук и вибрация</string>
     <string name="settings_sound_vibration_supporting">Рингтоны и звуки номеронабирателя</string>
     <string name="settings_call_settings_headline">Настройки вызовов</string>
     <string name="settings_call_settings_supporting">Управление SIM-картами, вызовы и автодозвон</string>
     <string name="settings_blocked_numbers_headline">Заблокированные номера</string>
     <string name="settings_blocked_numbers_supporting">Управление блокировками и спамом</string>
-    <string name="settings_backup_restore_headline">Резервное копирование &amp; восстановление</string>
+    <string name="settings_backup_restore_headline">Резервное копирование и восстановление</string>
     <string name="settings_backup_restore_supporting">Импорт и экспорт контактов и журналов</string>
     <string name="settings_manage_contacts_headline">Управление контактами</string>
     <string name="settings_manage_contacts_supporting">Поиск дубликатов и очистка</string>
@@ -335,7 +337,7 @@
     <string name="settings_interface_title">Пользовательский интерфейс</string>
     <string name="settings_group_color">Цвет</string>
     <string name="settings_group_avatars">Аватары</string>
-    <string name="settings_group_shape_motion">Форма &amp; движение</string>
+    <string name="settings_group_shape_motion">Форма и движение</string>
     <string name="settings_group_navigation">Навигация</string>
     <string name="settings_interface_restart_required">Для полного применения темы требуется перезапуск.</string>
     <string name="settings_interface_restart_action">Перезапуск</string>
@@ -376,7 +378,7 @@
     <string name="settings_interface_transition_none">Нет</string>
     <string name="settings_interface_search_matching_mode">Режим поиска</string>
     <string name="settings_interface_search_matching_mode_supporting">Метод фильтрации контактов</string>
-    <string name="settings_interface_search_mode_t9_contains">T9 &amp; содержит</string>
+    <string name="settings_interface_search_mode_t9_contains">T9 и содержит</string>
     <string name="settings_interface_search_mode_starts_with">Начать с</string>
     <string name="settings_interface_search_mode_exact_match">Точное совпадение</string>
     <string name="settings_interface_card_roundness">Скругление карточек</string>
@@ -388,11 +390,11 @@
     <string name="settings_interface_default_bottom_bar">Нижняя панель по умолчанию</string>
     <string name="settings_interface_default_bottom_bar_supporting">Вкладка при запуске</string>
     <string name="settings_interface_flip_bottom_bar">Зеркальное отображение нижней панели</string>
-    <string name="settings_interface_flip_bottom_bar_supporting">Инвертирует расположение вкладок контактов &amp; недавних</string>
+    <string name="settings_interface_flip_bottom_bar_supporting">Инвертирует расположение вкладок контактов и недавних</string>
     <string name="settings_interface_icon_only_bar">Иконки без подписей</string>
     <string name="settings_interface_icon_only_bar_supporting">Скрывает подписи на панели навигации</string>
     <!-- Settings > Sound & Vibration -->
-    <string name="settings_sound_title">Звук &amp; вибрация</string>
+    <string name="settings_sound_title">Звук и; вибрация</string>
     <string name="settings_sound_dtmf_tone">Тоновый набор (DTMF)</string>
     <string name="settings_sound_dtmf_tone_supporting">Звук клавиш при наборе номера</string>
     <string name="settings_sound_dialpad_vibration">Вибрация клавиатуры</string>
@@ -489,7 +491,7 @@
     <string name="settings_blocked_notifications_supporting">Показывать уведомление с низким приоритетом для заблокированных вызовов</string>
     <string name="settings_blocked_system_button">Системный список заблокированных номеров</string>
     <!-- Settings > Backup & Restore -->
-    <string name="settings_backup_title">Резервное копирование &amp; восстановление</string>
+    <string name="settings_backup_title">Резервное копирование и восстановление</string>
     <string name="settings_backup_contacts_header">Контакты</string>
     <string name="settings_backup_export_contacts">Экспорт контактов</string>
     <string name="settings_backup_export_contacts_supporting">Сохранить контакты в файл VCF</string>
@@ -512,7 +514,7 @@
     <string name="settings_manage_title">Управление контактами</string>
     <string name="settings_manage_standardizing_title">Стандартизация номеров</string>
     <string name="settings_manage_percent_completed">%1$d%% завершено</string>
-    <string name="settings_manage_display_sorting">Отображение &amp; сортировка</string>
+    <string name="settings_manage_display_sorting">Отображение и сортировка</string>
     <string name="settings_manage_sort_by">Сортировать по</string>
     <string name="settings_manage_sort_by_supporting">Выберите способ сортировки контактов</string>
     <string name="settings_manage_sort_first_name">Имя</string>
@@ -602,7 +604,7 @@
     <string name="contributor_role_lead_developer">Ведущий разработчик</string>
     <string name="contributor_role_developer">Разработчик</string>
     <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>
-    <string name="contributor_role_localization">Локализация &amp; Переводы</string>
+    <string name="contributor_role_localization">Локализация и Переводы</string>
     <string name="contributor_role_contributor">Поддержавшие проект</string>
     <string name="contributor_commits">%1$d коммитов</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
@@ -772,7 +774,7 @@
     <string name="fake_call_name">Имя абонента</string>
     <string name="fake_call_number">Номер телефона</string>
     <string name="fake_call_pick_contact">Выбрать из контактов</string>
-    <string name="fake_call_schedule_time">Дата &amp; время</string>
+    <string name="fake_call_schedule_time">Дата и время</string>
     <string name="fake_call_now">Позвонить сейчас</string>
     <string name="fake_call_schedule_btn">Запланировать</string>
     <string name="fake_call_cancel_btn">Закрыть</string>
@@ -815,9 +817,9 @@
     <string name="settings_blocked_csv_empty">В файле не найдено допустимых телефонных номеров</string>
     <string name="settings_blocked_file_error">Не удалось обработать файл</string>
     <!-- Contact Management & Duplicates -->
-    <string name="settings_contacts_management_title">Контакты &amp; хранилище</string>
+    <string name="settings_contacts_management_title">Контакты и хранилище</string>
     <string name="settings_contact_management_headline">Управление контактами</string>
-    <string name="settings_contact_management_supporting">Объединение дубликатов, перенос контактов между SIM-картой, устройством &amp; аккаунтами</string>
+    <string name="settings_contact_management_supporting">Объединение дубликатов, перенос контактов между SIM-картой, устройством и аккаунтами</string>
     <string name="contact_management_title">Управление контактами</string>
     <string name="contact_management_storage_overview">Обзор хранилища</string>
     <string name="contact_management_duplicates_title">Дублирующиеся контакты</string>
@@ -842,10 +844,10 @@
     <string name="contact_management_tools_title">Инструменты адресной книги</string>
     <string name="contact_management_standardize_numbers">Стандартизация номеров</string>
     <string name="contact_management_standardize_supporting">Удалить лишние пробелы и привести к международному формату</string>
-    <string name="contact_management_card_review">Проверить &amp; объединить</string>
+    <string name="contact_management_card_review">Проверить и объединить</string>
     <string name="contact_management_card_clean">Очистить адресную книгу</string>
     <string name="contact_management_card_clean_sub">Все контакты уникальны • Нажмите для управления памятью</string>
-    <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты &amp; данных</string>
+    <string name="contact_management_card_dup_sub">Нажмите для просмотра и объединения номеров, почты и данных</string>
     <string name="settings_contact_management_card">Показать карту управления контактами</string>
     <string name="settings_contact_management_card_supporting">Отображать обзор хранения, статус очистки и дублирование уведомлений контакта выше контактов</string>
     <!-- Floating Bar Customization & Blur -->
@@ -856,9 +858,9 @@
     <string name="settings_floating_bar_blur_warning">Ресурсоемкий на старых устройствах (рекомендуется Android 12+)</string>
     <!-- Global UI Blur Effects -->
     <string name="settings_group_effects">Визуальные эффекты</string>
-    <string name="settings_ui_blur_title">Матовое стекло &amp; эффекты размытия</string>
+    <string name="settings_ui_blur_title">Матовое стекло и эффекты размытия</string>
     <string name="settings_ui_blur_supporting">Применяет размытие матового стекла в режиме реального времени за всплывающими окнами диалоговых окон, нижними листами и панелью навигации (Android 12+)</string>
-    <string name="settings_ui_blur_active_hint">Активно во всех всплывающих окнах, листах &amp; навигационных панелях</string>
+    <string name="settings_ui_blur_active_hint">Активно во всех всплывающих окнах, листах и навигационных панелях</string>
     <string name="settings_nav_blur_global_hint">Управление глобальным размытием интерфейса</string>
     <!-- Swipe Actions on Contacts & Call Logs -->
     <string name="settings_swipe_actions_title">Действия жестами</string>
@@ -876,6 +878,26 @@
     <string name="swipe_action_whatsapp">WhatsApp</string>
     <string name="swipe_action_copy_number">Копировать номер</string>
     <string name="swipe_action_delete">Удалить</string>
+    <string name="swipe_action_view_contact">Просмотр контакта</string>
+    <string name="swipe_action_share">Поделиться</string>
+    <string name="swipe_action_block">Блок</string>
+    <string name="action_block_or_report">Блок или отчет</string>
+    <string name="action_history">История</string>
+    <string name="toast_blocked_number">Заблокировано %1$s</string>
+    <string name="call_log_block_confirm_single">Блокировать %1$s? Вы больше не будете получать звонки или сообщения с этого номера.</string>
+    <string name="date_older">Старший</string>
+    <string name="settings_call_log_customization_title">Настройка журнала звонков</string>
+    <string name="settings_call_log_customization_supporting">Настройка действий нажатия на кнопку и быстрых действий</string>
+    <string name="settings_call_log_trailing_title">Действие кнопок с трейлингом</string>
+    <string name="settings_call_log_trailing_supporting">Действие справа от каждой записи журнала вызовов</string>
+    <string name="settings_call_log_saved_actions_title">Сохраненные быстрые действия контактов</string>
+    <string name="settings_call_log_saved_actions_supporting">Действия, отображаемые при нажатии на запись журнала вызовов для сохраненного контакта</string>
+    <string name="settings_call_log_unsaved_actions_title">Несохраненные цифры быстрых действий</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Действия, отображаемые при нажатии на запись журнала вызовов для несохраненного номера</string>
+    <string name="settings_call_log_reset">Сбросить настройки журнала вызовов</string>
+    <string name="settings_call_log_click_behavior_title">Нажатие на взаимодействия</string>
+    <string name="settings_call_log_click_behavior_supporting">Аватар открывает информацию о контактах; триггер кнопки назначенные действия; тап в любом другом месте расширяет быстрые действия.</string>
+    <string name="action_none">Нет</string>
     <string name="swipe_action_preview_title">Предпросмотр жестов</string>
     <string name="swipe_action_preview_supporting">Смахните карточку влево или вправо для проверки физики жестов Material 3 Expressive</string>
     <string name="swipe_action_test_contact_name">Алекс Ривера</string>
@@ -944,7 +966,7 @@
     <string name="settings_call_analytics_supporting">Отслеживать метрику звонков, статистику по времени разговора, часы пика и частые контактные данные</string>
     <string name="settings_call_analytics_disabled_supporting">Отслеживание звонков и статистика их использования отключены</string>
     <string name="settings_call_analytics_view_title">Просмотр аналитики &amp; Прогнозы</string>
-    <string name="settings_call_analytics_view_supporting">Таблица лидеров по времени разговора, часы пиковой нагрузки &amp; распределение</string>
+    <string name="settings_call_analytics_view_supporting">Таблица лидеров по времени разговора, часы пиковой нагрузки и распределение</string>
     <string name="call_analytics_disabled_title">Аналитика вызовов &amp; Отслеживание отключено</string>
     <string name="call_analytics_disabled_desc">Аналитика звонков и отслеживание времени разговора в настоящее время отключены. Включите эту опцию, чтобы рассчитать время разговора, часы пиковой нагрузки и информацию о контактах.</string>
     <string name="call_analytics_enable_action">Включить аналитику &amp; отслеживание</string>
@@ -1026,8 +1048,16 @@
     <string name="blocked_action_export_csv">Экспорт CSV</string>
     <string name="blocked_search_placeholder">Поиск заблокированных номеров…</string>
     <string name="settings_group_support_about">Поддержка &amp; О программе</string>
-    <string name="settings_display_banner_ads">Отображать баннер рекламы</string>
-    <string name="settings_display_banner_ads_supporting">Показывать ненавязчивую баннерную рекламу в списках для поддержки разработки</string>
+    <string name="settings_display_banner_ads">Ненавязчивая реклама</string>
+    <string name="settings_display_banner_ads_supporting">Показывать маленькую рекламу в списках для поддержки разработки</string>
+    <string name="settings_support_development">Поддержать разработку</string>
+    <string name="settings_support_development_supporting">Поддержать разработку Rivo</string>
+    <string name="settings_provide_tip">Написать подсказку</string>
+    <string name="settings_provide_tip_supporting">Поддержать разработку через Tip Jar или Patreon</string>
+    <string name="settings_patreon">Покровитель</string>
+    <string name="settings_patreon_supporting">Ежемесячная покровительница с эксклюзивными перками</string>
+    <string name="settings_watch_video_ad">Смотреть видеорекламу</string>
+    <string name="settings_watch_video_ad_supporting">Посмотрите короткое видео для поддержки разработки</string>
     <string name="settings_rate_google_play">Оценить на Google Play</string>
     <string name="settings_rate_google_play_supporting">Поддержка Rivo в Google Play Store</string>
     <string name="settings_about_rivo">О Риво</string>
@@ -1141,4 +1171,27 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="call_slot_bottom">Нижняя строка \u2022 слот #%1$d</string>
     <string name="call_slot_move_up">Вверх</string>
     <string name="call_slot_move_down">Сдвинуть вниз</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Загрузка видео рекламы…</string>
+    <string name="video_ad_failed">Не удалось загрузить видео. Повторите попытку позже.</string>
+    <string name="support_video_ads_watched">Просмотрена видеореклама: %1$d</string>
+    <string name="support_image_ads_watched">Просмотрено изображений: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro открыт! Наслаждайтесь перки.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Пользовательский значок приложения</string>
+    <string name="support_foss_only_donate">Утилиты Rivo Pro недоступны в сборках FOSS. Используйте сборку Play Store для разблокировки Pro, или поддержите разработку через Patreon.
+Пожалуйста, подумайте о пожертвовании через Patreon для поддержки развития.</string>
+    <string name="support_custom_app_icon">Пользовательская иконка приложения</string>
+    <string name="support_custom_app_icon_desc">Выберите значок приложения</string>
+    <string name="support_default_app_icon">По умолчанию (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Достигнут дневной лимит просмотров объявлений. Попробуйте завтра.</string>
+    <string name="support_video_ad_not_ready">Видеореклама еще не готова. Пожалуйста, подождите минутку.</string>
+    <string name="support_pro_branding_enabled">Pro branding включён</string>
+    <string name="support_pro_branding_disabled">Pro брендинг отключен</string>
+    <string name="support_ads_enabled_pro">Реклама включена - Pro Perks активен</string>
+    <string name="support_tip_jar_pro">Советы Jar покупка - Pro perks активен</string>
+    <string name="support_patreon_pro">Поддержка Patreon - Pro перки активны</string>
+    <string name="support_choose_app_icon_title">Выберите значок и имя номеронабирателя</string>
+    <string name="support_choose_app_icon_desc">Выберите одновременно значок лаунчера номеронабирателя. Ничего не изменяется, пока вы не подтвердите и перезапустите Риво.</string>
 </resources>

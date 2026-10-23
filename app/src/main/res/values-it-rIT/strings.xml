@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Unisci chiamate</string>
     <string name="conference_call">Chiamata alla conferenza</string>
+    <string name="action_add_note">Aggiungi Nota</string>
+    <string name="call_notes_title">Note Di Chiamata</string>
     <string name="label_local_memory">Dispositivo</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -171,6 +173,26 @@ Testo bianco</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Visualizza Contatto</string>
+    <string name="swipe_action_share">Condividi</string>
+    <string name="swipe_action_block">Blocca</string>
+    <string name="action_block_or_report">Blocca o segnala</string>
+    <string name="action_history">Storico</string>
+    <string name="toast_blocked_number">Bloccato %1$s</string>
+    <string name="call_log_block_confirm_single">Bloccare %1$s? Non riceverai più chiamate o messaggi da questo numero.</string>
+    <string name="date_older">Anziani</string>
+    <string name="settings_call_log_customization_title">Personalizzazione Registro Chiamate</string>
+    <string name="settings_call_log_customization_supporting">Configura le azioni del tocco, il pulsante finale e le azioni rapide</string>
+    <string name="settings_call_log_trailing_title">Azione Pulsante Trailing</string>
+    <string name="settings_call_log_trailing_supporting">Azione attivata dal pulsante sul lato destro di ogni voce del registro chiamate</string>
+    <string name="settings_call_log_saved_actions_title">Azioni Veloci Contatti Salvati</string>
+    <string name="settings_call_log_saved_actions_supporting">Azioni mostrate quando si tocca una voce del registro chiamate per un contatto salvato</string>
+    <string name="settings_call_log_unsaved_actions_title">Azioni Rapide Numeri Non Salvati</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Azioni mostrate quando si tocca una voce del registro chiamate per un numero non salvato</string>
+    <string name="settings_call_log_reset">Ripristina Impostazioni Registro Chiamate</string>
+    <string name="settings_call_log_click_behavior_title">Interazioni Tocca</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar apre i dettagli del contatto; pulsante finale attiva l\'azione assegnata; toccando altrove espande azioni rapide.</string>
+    <string name="action_none">Nessuno</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -281,8 +303,16 @@ Testo bianco</string>
     <string name="blocked_action_export_csv">Esporta CSV</string>
     <string name="blocked_search_placeholder">Ricerca numeri bloccati…</string>
     <string name="settings_group_support_about">Supporto &amp; Informazioni</string>
-    <string name="settings_display_banner_ads">Visualizza Pubblicità Banner</string>
-    <string name="settings_display_banner_ads_supporting">Mostra gli annunci banner non intrusivi all\'interno delle liste per supportare lo sviluppo</string>
+    <string name="settings_display_banner_ads">Annunci non invadenti</string>
+    <string name="settings_display_banner_ads_supporting">Mostra piccoli annunci nelle liste per supportare lo sviluppo</string>
+    <string name="settings_support_development">Sostieni Lo Sviluppo</string>
+    <string name="settings_support_development_supporting">Supporta sviluppo Rivo</string>
+    <string name="settings_provide_tip">Fornisci un suggerimento</string>
+    <string name="settings_provide_tip_supporting">Sostieni lo sviluppo tramite Tip Jar o Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Patrocinio mensile con vantaggi esclusivi</string>
+    <string name="settings_watch_video_ad">Guarda L\'Annuncio Video</string>
+    <string name="settings_watch_video_ad_supporting">Guarda un breve video per supportare lo sviluppo</string>
     <string name="settings_rate_google_play">Valuta su Google Play</string>
     <string name="settings_rate_google_play_supporting">Supporta Rivo su Google Play Store</string>
     <string name="settings_about_rivo">Informazioni Su Rivo</string>
@@ -396,4 +426,27 @@ ShizuCallRecorder (call recording code) — GPLv3 con la Sezione 7 termini aggiu
     <string name="call_slot_bottom">Riga inferiore \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Sposta in alto</string>
     <string name="call_slot_move_down">Sposta in basso</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Caricamento annuncio video…</string>
+    <string name="video_ad_failed">Impossibile caricare l\'annuncio video. Riprova più tardi.</string>
+    <string name="support_video_ads_watched">Video pubblicitari guardati: %1$d</string>
+    <string name="support_image_ads_watched">Annunci immagine osservati: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro sbloccato! Goditi i tuoi vantaggi.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Icona app personalizzata</string>
+    <string name="support_foss_only_donate">I perk Rivo Pro non sono disponibili nelle build FOSS. Usa la build Play Store per sbloccare Pro o supportare lo sviluppo tramite Patreon.
+Si prega di considerare la possibilità di donare tramite Patreon per sostenere lo sviluppo.</string>
+    <string name="support_custom_app_icon">Icona App Personalizzata</string>
+    <string name="support_custom_app_icon_desc">Seleziona l\'icona dell\'app preferita</string>
+    <string name="support_default_app_icon">Predefinito (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Raggiunto il limite giornaliero di osservazione pubblicitaria. Riprova domani.</string>
+    <string name="support_video_ad_not_ready">L\'annuncio video non è ancora pronto. Attendere un attimo.</string>
+    <string name="support_pro_branding_enabled">Marchio Pro abilitato</string>
+    <string name="support_pro_branding_disabled">Marchio Pro disabilitato</string>
+    <string name="support_ads_enabled_pro">Annunci abilitati - Pro perks attivi</string>
+    <string name="support_tip_jar_pro">Acquisto barattolo - Pro perks attivi</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro perks attivo</string>
+    <string name="support_choose_app_icon_title">Scegli l\'icona e il nome del dialer</string>
+    <string name="support_choose_app_icon_desc">Scegli l\'icona del lanciatore dialer e l\'etichetta insieme. Nulla cambia finché non confermi e riavvii Rivo.</string>
 </resources>

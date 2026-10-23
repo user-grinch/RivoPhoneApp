@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Oproepen samenvoegen</string>
     <string name="conference_call">Telefonische vergadering</string>
+    <string name="action_add_note">Notitie toevoegen</string>
+    <string name="call_notes_title">Oproep notities</string>
     <string name="label_local_memory">Apparaat</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -171,6 +173,26 @@ witte tekst</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Contactpersoon bekijken</string>
+    <string name="swipe_action_share">Delen</string>
+    <string name="swipe_action_block">Blokkeren</string>
+    <string name="action_block_or_report">Blokkeren of rapporteren</string>
+    <string name="action_history">Geschiedenis</string>
+    <string name="toast_blocked_number">Geblokkeerd %1$s</string>
+    <string name="call_log_block_confirm_single">Blokkeren van %1$s? U ontvangt niet langer oproepen of berichten van dit nummer.</string>
+    <string name="date_older">Ouder</string>
+    <string name="settings_call_log_customization_title">Aanpassing van oproeplog</string>
+    <string name="settings_call_log_customization_supporting">Configureren van tap acties, trailing knop en snelle acties</string>
+    <string name="settings_call_log_trailing_title">Trailing knop actie</string>
+    <string name="settings_call_log_trailing_supporting">Actie geactiveerd door de knop aan de rechterkant van elke belgeschiedenis</string>
+    <string name="settings_call_log_saved_actions_title">Opgeslagen Contacten Snelle Acties</string>
+    <string name="settings_call_log_saved_actions_supporting">Acties die worden weergegeven bij het aanraken van een bellogboek item voor een opgeslagen contactpersoon</string>
+    <string name="settings_call_log_unsaved_actions_title">Niet-opgeslagen getallen snelle acties</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Acties die worden weergegeven bij het aanraken van een oproepgeschiedenis voor een niet-opgeslagen nummer</string>
+    <string name="settings_call_log_reset">Reset de instellingen voor het Call Log</string>
+    <string name="settings_call_log_click_behavior_title">Tik interactie</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar opent contactgegevens; trailing knop activeert toegewezen actie; ergens anders tikt u snelle acties uit.</string>
+    <string name="action_none">geen</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -279,8 +301,16 @@ witte tekst</string>
     <string name="blocked_action_import_csv">Importeer CSV</string>
     <string name="blocked_action_export_csv">Exporteren als CSV</string>
     <string name="settings_group_support_about">Ondersteuning &amp; Over</string>
-    <string name="settings_display_banner_ads">Banner advertenties weergeven</string>
-    <string name="settings_display_banner_ads_supporting">Toon niet-opdringerige banneradvertenties binnen lijsten om de ontwikkeling te ondersteunen</string>
+    <string name="settings_display_banner_ads">Niet-opdringerige advertenties</string>
+    <string name="settings_display_banner_ads_supporting">Kleine advertenties in lijsten tonen om de ontwikkeling te ondersteunen</string>
+    <string name="settings_support_development">Ondersteun ontwikkeling</string>
+    <string name="settings_support_development_supporting">Steun Rivo ontwikkeling</string>
+    <string name="settings_provide_tip">Voorzie een tip</string>
+    <string name="settings_provide_tip_supporting">Ondersteun ontwikkeling via Tip Jar of Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Maandelijkse patronen met exclusieve voordelen</string>
+    <string name="settings_watch_video_ad">Videoadvertentie bekijken</string>
+    <string name="settings_watch_video_ad_supporting">Bekijk een korte video om ontwikkeling te ondersteunen</string>
     <string name="settings_rate_google_play">Beoordeel op Google Play</string>
     <string name="settings_rate_google_play_supporting">Steun Rivo in de Google Play Store</string>
     <string name="settings_about_rivo">Over Rivo</string>
@@ -393,4 +423,26 @@ ShizuCallRecorder (call opname code) — GPLv3 met sectie 7 extra voorwaarden</s
     <string name="call_slot_bottom">Onderste rij \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Verplaats omhoog</string>
     <string name="call_slot_move_down">Verplaats naar beneden</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_failed">Laden van video advertentie mislukt. Probeer het later opnieuw.</string>
+    <string name="support_video_ads_watched">Video-advertenties gevolgd: %1$d</string>
+    <string name="support_image_ads_watched">Bekeken afbeeldingen: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro ontgrendeld! Geniet van uw voordelen.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Aangepast app icoon</string>
+    <string name="support_foss_only_donate">Rivo Pro voordelen zijn niet beschikbaar in FOSS-versies. Gebruik de Play Store om Pro te ontgrendelen of steun de ontwikkeling via Patreon.
+Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
+    <string name="support_custom_app_icon">Aangepaste App Icoon</string>
+    <string name="support_custom_app_icon_desc">Selecteer uw voorkeurs app icoon</string>
+    <string name="support_default_app_icon">Standaard (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Limiet dagelijks advertentie-horloge bereikt. Probeer het morgen opnieuw.</string>
+    <string name="support_video_ad_not_ready">Video-advertentie is nog niet klaar. Wacht even een moment.</string>
+    <string name="support_pro_branding_enabled">Pro-branding ingeschakeld</string>
+    <string name="support_pro_branding_disabled">Pro branding uitgeschakeld</string>
+    <string name="support_ads_enabled_pro">Advertenties ingeschakeld - Pro-voordelen actief</string>
+    <string name="support_tip_jar_pro">Tip Jar aankoop - Pro voordelen actief</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro voordelen actief</string>
+    <string name="support_choose_app_icon_title">Kies kiezerpictogram en naam</string>
+    <string name="support_choose_app_icon_desc">Kies het kiezer launcher icoon en label samen. Niets verandert totdat u bevestigt en Rivo herstart.</string>
 </resources>

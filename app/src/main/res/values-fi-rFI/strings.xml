@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Yhdistä puhelut</string>
     <string name="conference_call">Konferenssi puhelu</string>
+    <string name="action_add_note">Lisää Huomautus</string>
+    <string name="call_notes_title">Soita Muistiinpanoja</string>
     <string name="label_local_memory">Laite</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -171,6 +173,26 @@ valkoinen teksti</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Näytä Yhteystieto</string>
+    <string name="swipe_action_share">Jaa</string>
+    <string name="swipe_action_block">Estä</string>
+    <string name="action_block_or_report">Estä tai raportoi</string>
+    <string name="action_history">Historia</string>
+    <string name="toast_blocked_number">Estetty %1$s</string>
+    <string name="call_log_block_confirm_single">Estä %1$s? Et enää vastaanota puheluita tai viestejä tästä numerosta.</string>
+    <string name="date_older">Vanhemmat</string>
+    <string name="settings_call_log_customization_title">Soittolokin Mukauttaminen</string>
+    <string name="settings_call_log_customization_supporting">Määritä napautuksen toiminnot, irrotuspainike ja pikanäppäimet</string>
+    <string name="settings_call_log_trailing_title">Perävaunun Toiminto</string>
+    <string name="settings_call_log_trailing_supporting">Kunkin puhelulokin oikealla puolella olevan painikkeen käynnistämä toiminto</string>
+    <string name="settings_call_log_saved_actions_title">Tallennetut Yhteystiedot Pikatoiminnot</string>
+    <string name="settings_call_log_saved_actions_supporting">Näytetyt toiminnot kun painat tallennetun yhteystiedon puhelulokia</string>
+    <string name="settings_call_log_unsaved_actions_title">Tallentamattomat Numerot Pikatoiminnot</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Näytetyt toiminnot kun painat puhelulokia tallentamattomalle numerolle</string>
+    <string name="settings_call_log_reset">Nollaa Puhelulokin Asetukset</string>
+    <string name="settings_call_log_click_behavior_title">Napauta Vuorovaikutusta</string>
+    <string name="settings_call_log_click_behavior_supporting">Hahmo avaa yhteystiedot; purkauspainikkeen käynnistimet määritetty toiminto; napautus missä tahansa muualla laajentaa nopeita toimintoja.</string>
+    <string name="action_none">Ei Mitään</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -280,8 +302,16 @@ valkoinen teksti</string>
     <string name="blocked_action_export_csv">Vie CSV</string>
     <string name="blocked_search_placeholder">Etsi estetty numerot…</string>
     <string name="settings_group_support_about">Tuki &amp; Tietoja</string>
-    <string name="settings_display_banner_ads">Näytä Mainospalkit</string>
-    <string name="settings_display_banner_ads_supporting">Näytä ei-häiritsevät mainospalkin mainokset listojen sisällä tukemaan kehitystä</string>
+    <string name="settings_display_banner_ads">Ei-häiritsevät mainokset</string>
+    <string name="settings_display_banner_ads_supporting">Näytä pienet mainokset listoissa tukemaan kehitystä</string>
+    <string name="settings_support_development">Tue Kehitystä</string>
+    <string name="settings_support_development_supporting">Tue Rivon kehittämistä</string>
+    <string name="settings_provide_tip">Anna vihje</string>
+    <string name="settings_provide_tip_supporting">Tue kehitystä vihje Jar tai Patreon</string>
+    <string name="settings_patreon">Patreoni</string>
+    <string name="settings_patreon_supporting">Kuukausittainen suojelija yksinomainen etuisuuksia</string>
+    <string name="settings_watch_video_ad">Katso Video-mainos</string>
+    <string name="settings_watch_video_ad_supporting">Katso lyhyt video tukemaan kehitystä</string>
     <string name="settings_rate_google_play">Arvostele Google Playssa</string>
     <string name="settings_rate_google_play_supporting">Tue Rivoa Google Play Kaupassa</string>
     <string name="settings_about_rivo">Tietoja Rivosta</string>
@@ -393,4 +423,26 @@ ShizuCallRecorder (puhelun tallennuskoodi) – GPLv3 ja 7 kohdan lisäehdot</str
     <string name="call_screen_preview_title">Esikatselu</string>
     <string name="call_slot_move_up">Siirrä ylös</string>
     <string name="call_slot_move_down">Siirrä alas</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_failed">Videon mainos ei voitu ladata. Yritä myöhemmin uudelleen.</string>
+    <string name="support_video_ads_watched">Katsotut videomainokset: %1$d</string>
+    <string name="support_image_ads_watched">Katsotut kuvamainokset: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro avattu! Nauti eduistasi.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Mukautettu sovelluskuvake</string>
+    <string name="support_foss_only_donate">Rivo Pro -edut eivät ole käytettävissä FOSS rakennuksissa. Käytä Play Store -versiota vapauttaaksesi Pron tai tukeaksesi kehitystä Patreonin kautta.
+Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
+    <string name="support_custom_app_icon">Mukautettu Sovelluksen Kuvake</string>
+    <string name="support_custom_app_icon_desc">Valitse haluamasi sovelluksen kuvake</string>
+    <string name="support_default_app_icon">Oletus (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Päivittäinen mainos katsella raja saavutettu. Yritä uudelleen huomenna.</string>
+    <string name="support_video_ad_not_ready">Videomainos ei ole vielä valmis. Odota hetki.</string>
+    <string name="support_pro_branding_enabled">Pro-brändäys käytössä</string>
+    <string name="support_pro_branding_disabled">Pro-brändäys pois käytöstä</string>
+    <string name="support_ads_enabled_pro">Mainokset käytössä - Pro-oikeudet käytössä</string>
+    <string name="support_tip_jar_pro">Vinkki Jar osto - Pro perks aktiivinen</string>
+    <string name="support_patreon_pro">Patreonien tukija - Pro perks aktiivinen</string>
+    <string name="support_choose_app_icon_title">Valitse puhelimen kuvake ja nimi</string>
+    <string name="support_choose_app_icon_desc">Valitse puhelimen käynnistäjän kuvake ja etiketti yhdessä. Mikään ei muutu, ennen kuin vahvistat ja käynnistät Rivon uudelleen.</string>
 </resources>

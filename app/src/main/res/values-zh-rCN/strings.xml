@@ -41,6 +41,8 @@
     <string name="label_email">电子邮件</string>
     <string name="label_address">地址</string>
     <string name="label_notes">备注</string>
+    <string name="action_add_note">添加备注</string>
+    <string name="call_notes_title">通话笔记</string>
     <string name="label_social_apps">社交网络</string>
     <string name="label_local_memory">设备</string>
     <string name="ringtone_default">默认</string>
@@ -323,6 +325,26 @@
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">查看联系人</string>
+    <string name="swipe_action_share">分享</string>
+    <string name="swipe_action_block">封禁</string>
+    <string name="action_block_or_report">屏蔽或报告</string>
+    <string name="action_history">历史记录</string>
+    <string name="toast_blocked_number">已屏蔽的 %1$s</string>
+    <string name="call_log_block_confirm_single">阻止 %1$s？您将不再收到来自此号码的通话或消息。</string>
+    <string name="date_older">更旧的</string>
+    <string name="settings_call_log_customization_title">自定义通话记录</string>
+    <string name="settings_call_log_customization_supporting">配置点击动作，拖动按钮和快速操作</string>
+    <string name="settings_call_log_trailing_title">尾随按钮动作</string>
+    <string name="settings_call_log_trailing_supporting">每个通话记录右侧按钮触发的动作</string>
+    <string name="settings_call_log_saved_actions_title">已保存联系人快速操作</string>
+    <string name="settings_call_log_saved_actions_supporting">点击已保存联系人的通话记录条目时显示的动作</string>
+    <string name="settings_call_log_unsaved_actions_title">未保存的数字快速操作</string>
+    <string name="settings_call_log_unsaved_actions_supporting">点击未保存号码的通话记录条目时显示的动作</string>
+    <string name="settings_call_log_reset">重置通话记录设置</string>
+    <string name="settings_call_log_click_behavior_title">点击互动</string>
+    <string name="settings_call_log_click_behavior_supporting">头像打开联系细节；拖动按钮触发分配行动；点击任何其他地方扩展快速动作。</string>
+    <string name="action_none">无</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -430,8 +452,16 @@
     <string name="blocked_action_export_csv">导出CSV</string>
     <string name="blocked_search_placeholder">搜索被阻止的号码…</string>
     <string name="settings_group_support_about">关于支持 &amp;</string>
-    <string name="settings_display_banner_ads">显示横幅广告</string>
-    <string name="settings_display_banner_ads_supporting">在列表中显示非侵入式横幅广告以支持开发</string>
+    <string name="settings_display_banner_ads">非侵扰性广告</string>
+    <string name="settings_display_banner_ads_supporting">在列表中显示支持开发的小广告</string>
+    <string name="settings_support_development">支持开发</string>
+    <string name="settings_support_development_supporting">支持里沃发展</string>
+    <string name="settings_provide_tip">提供提示</string>
+    <string name="settings_provide_tip_supporting">通过 Tip Jar 或 Patreon 支持开发</string>
+    <string name="settings_patreon">帕特里昂州</string>
+    <string name="settings_patreon_supporting">带有专用增益的月度赞助商</string>
+    <string name="settings_watch_video_ad">观看视频广告</string>
+    <string name="settings_watch_video_ad_supporting">观看一个短视频来支持开发</string>
     <string name="settings_rate_google_play">在 Google Play 上评分</string>
     <string name="settings_rate_google_play_supporting">在 Google Play 商店支持 Rivo</string>
     <string name="settings_about_rivo">关于 Rivo</string>
@@ -541,4 +571,26 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="call_screen_preview_title">预览</string>
     <string name="call_slot_move_up">上移</string>
     <string name="call_slot_move_down">向下移动</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_failed">加载视频失败。请稍后再试。</string>
+    <string name="support_video_ads_watched">观看视频广告: %1$d</string>
+    <string name="support_image_ads_watched">观看的图像广告: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro 解锁！享受您的增益！</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">自定义应用图标</string>
+    <string name="support_foss_only_donate">在自由和开放源码软件构建中无法使用Rivo Pro perks。使用 Play Store 构建解锁专业版，或通过Patreon 支持开发。
+请考虑通过Patreon捐赠以支持开发。</string>
+    <string name="support_custom_app_icon">自定义应用图标</string>
+    <string name="support_custom_app_icon_desc">选择您首选的应用图标</string>
+    <string name="support_default_app_icon">默认 (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">已达到每日广告监视上限。明天再试。</string>
+    <string name="support_video_ad_not_ready">视频广告尚未准备就绪。请稍等。</string>
+    <string name="support_pro_branding_enabled">专业品牌已启用</string>
+    <string name="support_pro_branding_disabled">专业品牌已禁用</string>
+    <string name="support_ads_enabled_pro">广告已启用 - 专业版已启用</string>
+    <string name="support_tip_jar_pro">Prix Jar 购买 - 专业版已启用</string>
+    <string name="support_patreon_pro">Patreon 支持者-专业版激活</string>
+    <string name="support_choose_app_icon_title">选择拨号器图标和名称</string>
+    <string name="support_choose_app_icon_desc">请同时选择拨号器启动器图标和标签。在确认并重启Rivo之前，没有任何变化。</string>
 </resources>
