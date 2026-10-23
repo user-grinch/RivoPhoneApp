@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Slå sammen samtaler</string>
     <string name="conference_call">Telefonmøte i konferansen</string>
+    <string name="action_add_note">Legg til notat</string>
+    <string name="call_notes_title">Notater om anrop</string>
     <string name="label_local_memory">Enhet</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -170,6 +172,25 @@ Hvit tekst</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Vis kontakt</string>
+    <string name="swipe_action_share">Del</string>
+    <string name="swipe_action_block">Blokker</string>
+    <string name="action_block_or_report">Blokker eller rapporter</string>
+    <string name="action_history">Historikk</string>
+    <string name="call_log_block_confirm_single">Blokker %1$s? Du vil ikke lenger motta samtaler eller meldinger fra dette nummeret.</string>
+    <string name="date_older">Eldre</string>
+    <string name="settings_call_log_customization_title">Tilpasningslogg Tilpasning</string>
+    <string name="settings_call_log_customization_supporting">Konfigurer trykk handlinger, etterfølgende knapp og hurtighandlinger</string>
+    <string name="settings_call_log_trailing_title">Handling med etterfølgende knapp</string>
+    <string name="settings_call_log_trailing_supporting">Handling utløst av knappen på høyre side av hver anropslogg</string>
+    <string name="settings_call_log_saved_actions_title">Lagrede hurtighandlinger for kontakter</string>
+    <string name="settings_call_log_saved_actions_supporting">Handlinger vises når du trykker på en anropslogg for en lagret kontakt</string>
+    <string name="settings_call_log_unsaved_actions_title">Ikke-lagrede numre hurtighandlinger</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Handlinger som vises når du trykker på en anropslogg for et ulagret nummer</string>
+    <string name="settings_call_log_reset">Tilbakestill oppringingslogginnstillinger</string>
+    <string name="settings_call_log_click_behavior_title">Trykk Interaksjoner</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar åpner kontaktdetaljene; adresse med etterfølgende knapp som utløser handling, der du trykker på hvor som helst andre utvider raske handlinger.</string>
+    <string name="action_none">Ingen</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -280,8 +301,16 @@ Hvit tekst</string>
     <string name="blocked_action_export_csv">Eksportere CSV</string>
     <string name="blocked_search_placeholder">Søk blokkerte numre…</string>
     <string name="settings_group_support_about">Støtt &amp; Om</string>
-    <string name="settings_display_banner_ads">Vis bannerannonser</string>
-    <string name="settings_display_banner_ads_supporting">Vis ikke-påtrengende bannerannonser inne i lister for å støtte utvikling</string>
+    <string name="settings_display_banner_ads">Ikke-påtrengende annonser</string>
+    <string name="settings_display_banner_ads_supporting">Vis små annonser i lister som støtter utvikling</string>
+    <string name="settings_support_development">Støtt videreutvikling</string>
+    <string name="settings_support_development_supporting">Støtt utvikling av Naglo</string>
+    <string name="settings_provide_tip">Oppgi en tips</string>
+    <string name="settings_provide_tip_supporting">Støtt utviklingen via Tip Jar eller Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Månedlig patronasje med eksklusive fordeler</string>
+    <string name="settings_watch_video_ad">Se video annonse</string>
+    <string name="settings_watch_video_ad_supporting">Se en kort video for å støtte utvikling</string>
     <string name="settings_rate_google_play">Vurder den på Google Play</string>
     <string name="settings_rate_google_play_supporting">Støtt Rivo på Google Play Store</string>
     <string name="settings_about_rivo">Om Nagle</string>
@@ -393,4 +422,27 @@ ShizuCallRecorder (call recording code) - GPLv3 med del 7 flere vilkår</string>
     <string name="call_slot_bottom">Nederste rad \u2022 Spor #%1$d</string>
     <string name="call_slot_move_up">Flytt opp</string>
     <string name="call_slot_move_down">Flytt ned</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Laster video annonsen…</string>
+    <string name="video_ad_failed">Kunne ikke laste inn videoannonsen. Prøv igjen senere.</string>
+    <string name="support_video_ads_watched">Videoannonser observert: %1$d</string>
+    <string name="support_image_ads_watched">Bilde annonser fulgt: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Naglo Pro åpnet! Nyt fordelene dine.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Egendefinert app ikon</string>
+    <string name="support_foss_only_donate">Rivo Pro-perks er ikke tilgjengelig i FOSS-byggene. Bruk Play Store-versjonen for å låse opp Pro eller støtte utviklingen via Patreon.
+Vurder å donere via Patreon for å støtte utvikling.</string>
+    <string name="support_custom_app_icon">Egendefinert app ikon</string>
+    <string name="support_custom_app_icon_desc">Velg foretrukket app-ikon</string>
+    <string name="support_default_app_icon">Standard (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Grensen for daglig annonse er nådd. Prøv igjen i morgen.</string>
+    <string name="support_video_ad_not_ready">Videoannonsen er ikke klar ennå. Vennligst vent et øyeblikk.</string>
+    <string name="support_pro_branding_enabled">Pro-branding aktivert</string>
+    <string name="support_pro_branding_disabled">Pro-branding deaktivert</string>
+    <string name="support_ads_enabled_pro">Annonser aktivert - Pro perks aktive</string>
+    <string name="support_tip_jar_pro">Tips Jar kjøp - Pro perks aktiv</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro perks aktiv</string>
+    <string name="support_choose_app_icon_title">Velg kobling ikon og navn</string>
+    <string name="support_choose_app_icon_desc">Velg ikonet for dialer og merket sammen. Ingenting endres inntil du bekrefter og starter ned Nagla.</string>
 </resources>

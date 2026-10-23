@@ -47,6 +47,8 @@
     <string name="label_email">E-Mail</string>
     <string name="label_address">Adresse</string>
     <string name="label_notes">Notizen</string>
+    <string name="action_add_note">Notiz hinzufügen</string>
+    <string name="call_notes_title">Anrufnotizen</string>
     <string name="label_social_apps">Messenger Apps</string>
     <string name="label_local_memory">Gerät</string>
     <string name="option_standard">Standard</string>
@@ -264,37 +266,37 @@
     <string name="rearrange_call_buttons">Anruftasten neu anordnen</string>
     <string name="call_screen_visible_buttons_title">Sichtbare Tasten</string>
     <string name="call_screen_visible_buttons_supporting">Tasten auf dem Anrufbildschirm hinzufügen oder entfernen</string>
-    <string name="top_row_items">Top Zeile: Artikel 1–3</string>
-    <string name="bottom_row_items">Untere Zeile: Artikel 4–6</string>
-    <string name="mute">Lautlos / lautlos</string>
-    <string name="keypad">Keypad</string>
-    <string name="audio">Audio-Route</string>
+    <string name="top_row_items">Obere Zeile: Objekte 1–3</string>
+    <string name="bottom_row_items">Untere Zeile: Objekte 4–6</string>
+    <string name="mute">Stumm / Stumm aus</string>
+    <string name="keypad">Tastenfeld</string>
+    <string name="audio">Audio-Ausgabe</string>
     <string name="record">Anrufaufzeichnung</string>
     <string name="hold">Anruf halten</string>
     <string name="add">Neuer Anruf</string>
-    <string name="call_button_customization_description">Top Zeile: Artikel 1–3 • Untere Reihe: Artikel 4–6</string>
+    <string name="call_button_customization_description">Top Zeile: Objekte 1–3 • Untere Reihe: Objekte 4–6</string>
     <string name="enable_group_calls">Gruppenanrufe aktivieren</string>
     <string name="enable_group_calls_description">Konferenzgespräche mit mehreren Teilnehmern erlauben</string>
     <string name="group_calls_default_enabled">Standardmäßig aktiviert</string>
     <string name="settings_interface_avatar_show_picture">Bild im Avatar anzeigen</string>
-    <string name="settings_interface_avatar_show_first_letter">ersten Buchstaben anzeigen</string>
+    <string name="settings_interface_avatar_show_first_letter">Anfangsbuchstabe anzeigen</string>
     <string name="settings_interface_colorful_avatars">Farbige Avatare</string>
-    <string name="settings_interface_gradient_avatars">Gradientenbilder verwenden</string>
+    <string name="settings_interface_gradient_avatars">Gradiente Avatare verwenden</string>
     <string name="settings_interface_smart_contrast">Intelligente Kontrastvorschau</string>
-    <string name="settings_interface_smart_contrast_description">Text passt sich automatisch an: dunkle Hintergründe verwenden weißem Text und gelbe Hintergründe verwenden dunklen Text für hohe Lesbarkeit</string>
-    <string name="settings_interface_gradient_avatars_preview">Farb-Avatarvorschau</string>
+    <string name="settings_interface_smart_contrast_description">Text passt sich automatisch an: dunkle Hintergründe verwenden weißen Text und gelbe Hintergründe verwenden dunklen Text für hohe Lesbarkeit</string>
+    <string name="settings_interface_gradient_avatars_preview">Vorschau für gradiente Avatare</string>
     <string name="settings_interface_smart_contrast_title">Smarter Kontrast</string>
-    <string name="settings_interface_gradient_avatars_title">Farbverlauf Avatare</string>
+    <string name="settings_interface_gradient_avatars_title">Gradiente Avatare</string>
     <string name="avatar_blue_white">Blauer
-weißer Text</string>
+Weißer Text</string>
     <string name="avatar_yellow_dark">Gelber
 Dunkler Text</string>
     <string name="avatar_green_dark">Grün
 Dunkler Text</string>
     <string name="avatar_red_white">Roter
 Weißer Text</string>
-    <string name="pref_font_family">Font</string>
-    <string name="pref_font_size">Font Size</string>
+    <string name="pref_font_family">Schriftart</string>
+    <string name="pref_font_size">Schriftgröße</string>
     <string name="pref_system_font_toggle">Systemschriftart verwenden</string>
     <string name="pref_system_font_toggle_description">Systemeinstellungen verwenden</string>
     <string name="typography_title">Typographie</string>
@@ -306,7 +308,7 @@ Weißer Text</string>
     <string name="font_family_sans_serif">Sans Serif</string>
     <string name="font_family_monospace">Monospace</string>
     <string name="font_family_cursive">Kursiv</string>
-    <string name="font_family_casual">Gelassene</string>
+    <string name="font_family_casual">Gelassen</string>
     <string name="font_family_condensed">Schmal</string>
     <string name="font_family_light">Hell</string>
     <string name="font_family_medium">Mittel</string>
@@ -314,7 +316,7 @@ Weißer Text</string>
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="dynamic_color">Dynamische Farbe</string>
-    <string name="enable_dynamic_color">Dynamische Farbe vom Hintergrund aktivieren</string>
+    <string name="enable_dynamic_color">Dynamische Farbe aus Hintergrund aktivieren</string>
     <string name="settings_sound_vibration_headline">Töne &amp; Vibration</string>
     <string name="settings_sound_vibration_supporting">Klingeltöne und Tastenfeldtöne</string>
     <string name="settings_call_settings_headline">Anruf-Einstellungen</string>
@@ -434,9 +436,9 @@ Weißer Text</string>
     <string name="settings_call_incoming_ui_slide_ios">Streichen zur Annahme (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertikales Wischen</string>
     <string name="settings_call_always_fullscreen">Bei Anruf stets Vollbildanzeige</string>
-    <string name="settings_call_always_fullscreen_supporting">Bei Anruf stets Vollbildanzeige. Falls deaktiviert Anzeige als schwebendes Banner, während andere Apps benutzt werden.</string>
+    <string name="settings_call_always_fullscreen_supporting">Falls deaktiviert Anzeige als schwebendes Banner, während andere Apps benutzt werden.</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
-    <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild der Tastenfelds</string>
+    <string name="settings_call_dialpad_style_supporting">Visuelles Erscheinungsbild des Tastenfelds</string>
     <string name="settings_call_dialpad_style_modern">Modern</string>
     <string name="settings_call_dialpad_style_classic">Klassisch</string>
     <string name="settings_call_dialpad_style_circle">Kreis</string>
@@ -445,7 +447,7 @@ Weißer Text</string>
     <string name="settings_call_dialpad_style_unified">Einheitlich</string>
     <string name="settings_call_dialpad_style_minimal">Minimal</string>
     <string name="settings_call_dialpad_size">Wählfeldgröße</string>
-    <string name="settings_call_dialpad_size_supporting">Tastendimensionen, Textmaßstab und Wählerhöhe anpassen</string>
+    <string name="settings_call_dialpad_size_supporting">Tastendimensionen, Textmaßstab und Tastenfeldhöhe anpassen</string>
     <string name="settings_call_dialpad_size_compact">Kompakt</string>
     <string name="settings_call_dialpad_size_medium">Standard</string>
     <string name="settings_call_dialpad_size_large">Geräumig</string>
@@ -498,9 +500,9 @@ Weißer Text</string>
     <string name="settings_backup_import_logs_supporting">Anrufliste aus JSON-Datei wiederherstellen</string>
     <string name="settings_backup_app_settings_header">App-Einstellungen &amp; Einstellungen</string>
     <string name="settings_backup_export_settings">App-Einstellungen exportieren</string>
-    <string name="settings_backup_export_settings_supporting">Themen und Dialpad-Stile und Konfigurationen auf JSON sichern</string>
+    <string name="settings_backup_export_settings_supporting">Themen, Tastenfeld-Stile und Konfigurationen in JSON-Datei sichern</string>
     <string name="settings_backup_import_settings">App-Einstellungen wiederherstellen</string>
-    <string name="settings_backup_import_settings_supporting">Alle App-Konfigurationen aus einer JSON-Sicherungsdatei wiederherstellen</string>
+    <string name="settings_backup_import_settings_supporting">Alle App-Konfigurationen aus JSON-Datei wiederherstellen</string>
     <string name="settings_backup_restore_confirm_title">App-Einstellungen wiederherstellen</string>
     <string name="settings_backup_restore_confirm_message">Sind Sie sicher, dass Sie die App-Einstellungen wiederherstellen möchten? Ihre aktuellen Einstellungen und Anpassungen werden mit den Einstellungen aus dieser Backup-Datei aktualisiert.</string>
     <string name="settings_backup_restore_confirm_action">Wiederherstellen</string>
@@ -517,8 +519,8 @@ Weißer Text</string>
     <string name="settings_manage_name_format_supporting">Auswählen, wie Namen angezeigt werden</string>
     <string name="settings_manage_name_format_first_first">Vorname zuerst</string>
     <string name="settings_manage_name_format_last_first">Nachname zuerst</string>
-    <string name="settings_contact_section_headers">alphabetische Kopfzeilen anzeigen</string>
-    <string name="settings_contact_section_headers_supporting">Zeige Kopfzeilen (A, B, C) an, die Kontaktgruppen in der Liste trennen</string>
+    <string name="settings_contact_section_headers">Alphabetische Abschnittsüberschriften anzeigen</string>
+    <string name="settings_contact_section_headers_supporting">Zeige Anfangsbuchstaben (A, B, C) an, die Kontaktgruppen in der Liste trennen</string>
     <string name="settings_manage_storage">Speicher</string>
     <string name="settings_manage_private_contacts">Privater Speicher</string>
     <string name="settings_manage_private_contacts_supporting">Kontakte im privaten App-Speicher verwalten</string>
@@ -586,9 +588,9 @@ Weißer Text</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
-    <string name="about_shizucallrecorder_desc">Rivo enthält den Code zur Aufzeichnung von Anrufen von ShizuCallRecorder nach Kitsumed (lizenziert unter GPLv3 mit weiteren Bedingungen von Abschnitt 7). Rivo ist ein unabhängiges Projekt und ist nicht offiziell mit ShizuCallRecorder verbunden.\n\nSuche nach einer Alternative ohne Werbung oder Monetarisierung? Schauen Sie sich das ursprüngliche ShizuCallRecorder Projekt an.</string>
+    <string name="about_shizucallrecorder_desc">Rivo enthält den Code zur Aufzeichnung von Anrufen von ShizuCallRecorder nach Kitsumed (lizenziert unter GPLv3 mit weiteren Bedingungen von Abschnitt 7). Rivo ist ein unabhängiges Projekt und ist nicht offiziell mit ShizuCallRecorder verbunden.\n\nSuchen Sie nach einer Alternative ohne Werbung oder Monetarisierung? Schauen Sie sich das ursprüngliche ShizuCallRecorder Projekt an.</string>
     <string name="about_shizucallrecorder_action">ShizuCallRecorder auf GitHub ansehen</string>
-    <string name="call_recording_shizuku_attribution_title">Aufzeichnung aufrufen</string>
+    <string name="call_recording_shizuku_attribution_title">Engine für Anruf-Aufzeichnung</string>
     <string name="call_recording_shizuku_attribution_desc">Die interne Anrufaufnahme über Shizuku beinhaltet Code aus dem Open-Source ShizuCallRecorder Projekt nach kitsumed (GPLv3).</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorder besuchen</string>
     <string name="settings_top_card_subtext">Auf Updates überprüfen • Mitwirkende • Spenden</string>
@@ -732,7 +734,7 @@ Weißer Text</string>
     <string name="video_call_opening_whatsapp">Öffnen von WhatsApp für Videoanruf…</string>
     <string name="video_call_failed">Videoanruf kann nicht gestartet werden</string>
     <string name="video_call_no_number">Keine Telefonnummer für Videoanruf verfügbar</string>
-    <string name="video_call_switch_camera">Kamera spiegeln</string>
+    <string name="video_call_switch_camera">Kamera wechseln</string>
     <string name="video_call_toggle_video">Video</string>
     <string name="video_call_incoming_video">Eingehender Videoanruf</string>
     <!-- Call screen background and active controls -->
@@ -870,6 +872,26 @@ Weißer Text</string>
     <string name="swipe_action_whatsapp">WhatsApp</string>
     <string name="swipe_action_copy_number">Nummer kopieren</string>
     <string name="swipe_action_delete">Löschen</string>
+    <string name="swipe_action_view_contact">Kontakt anzeigen</string>
+    <string name="swipe_action_share">Teilen</string>
+    <string name="swipe_action_block">Blockieren</string>
+    <string name="action_block_or_report">Blockieren oder melden</string>
+    <string name="action_history">Verlauf</string>
+    <string name="toast_blocked_number">Gesperrt %1$s</string>
+    <string name="call_log_block_confirm_single">%1$sblockieren? Sie werden keine Anrufe oder Nachrichten mehr von dieser Nummer erhalten.</string>
+    <string name="date_older">Ältere</string>
+    <string name="settings_call_log_customization_title">Anpassung der Anrufliste</string>
+    <string name="settings_call_log_customization_supporting">Konfigurieren Sie Antipp-Aktionen, die End-Schaltfläche und Schnell-Aktionen</string>
+    <string name="settings_call_log_trailing_title">Aktion der End-Schaltfläche</string>
+    <string name="settings_call_log_trailing_supporting">Aktion ausgelöst durch Schaltfläche auf der rechten Seite jedes Anruflisteneintrags</string>
+    <string name="settings_call_log_saved_actions_title">Schnellaktionen für gespeicherte Kontakte</string>
+    <string name="settings_call_log_saved_actions_supporting">Aktionen beim Antippen eines Anruflisteneintrags für einen gespeicherten Kontakt</string>
+    <string name="settings_call_log_unsaved_actions_title">Schnellaktionen für ungespeicherte Nummern</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Aktionen, die beim Antippen eines Anruflisteneintrags für eine ungespeicherte Nummer angezeigt werden</string>
+    <string name="settings_call_log_reset">Einstellungen für Anrufliste zurücksetzen</string>
+    <string name="settings_call_log_click_behavior_title">Antipp-Interaktionen</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar öffnet die Kontaktdetails; die nachfolgende Schaltfläche löst die zugewiesene Aktion aus; das Tippen an einem anderen Ort öffnet die Schnell-Aktionen.</string>
+    <string name="action_none">Keine</string>
     <string name="swipe_action_preview_title">Interaktive Gesten-Vorschau</string>
     <string name="swipe_action_preview_supporting">Ziehen Sie diese Karte nach links oder rechts, um Material 3 Expressive Effekte zu erleben</string>
     <string name="swipe_action_test_contact_name">Alex Rivera</string>
@@ -878,8 +900,8 @@ Weißer Text</string>
     <string name="settings_swipe_actions_reset">Wischaktionen zurücksetzen</string>
     <string name="settings_swipe_actions_tab_warning">Die Wisch-Navigation zwischen Tabs ist deaktiviert, während Wisch-Aktionen aktiviert sind, um Gestenkonflikte zu vermeiden.</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
-    <string name="call_is_ongoing_tap_to_return">Anruf läuft — Tippen um zurückzukehren</string>
-    <string name="call_is_ongoing_with_time">Anruf läuft (%1$s) — Tippen um zurückzukehren</string>
+    <string name="call_is_ongoing_tap_to_return">Anruf läuft — Antippen um zurückzukehren</string>
+    <string name="call_is_ongoing_with_time">Anruf läuft (%1$s) — Antippen um zurückzukehren</string>
     <string name="oem_vivo_popup_permission_title">Vivo Hintergrund-Popup</string>
     <string name="oem_vivo_popup_permission_desc">Rivo erlauben, eingehende Anrufe und schwebende Hinweise auf Vivo-Geräten anzuzeigen.</string>
     <string name="notif_channel_calls_desc">Benachrichtigungen zu eingehenden, andauernden und verpassten Anrufen</string>
@@ -922,7 +944,7 @@ Weißer Text</string>
     <string name="settings_call_log_limit_500">500 Anrufe (Standard)</string>
     <string name="settings_call_log_limit_1000">1.000 Anrufe</string>
     <string name="settings_call_log_limit_unlimited">Unbegrenzt</string>
-    <string name="settings_group_call_logs">Gruppenanruflisten</string>
+    <string name="settings_group_call_logs">Anruflisten gruppieren</string>
     <string name="settings_group_call_logs_supporting">Wiederholte Anrufe vom gleichen Kontakt am selben Tag zu einem Eintrag zusammenführen</string>
     <!-- Auto Paste Clipboard (#168) -->
     <string name="settings_auto_paste_clipboard">Auto-Einfügen: kopierte Nummer</string>
@@ -1020,8 +1042,16 @@ Weißer Text</string>
     <string name="blocked_action_export_csv">CSV exportieren</string>
     <string name="blocked_search_placeholder">Blockierte Nummern durchsuchen…</string>
     <string name="settings_group_support_about">Unterstützen &amp; Über</string>
-    <string name="settings_display_banner_ads">Banner-Werbung anzeigen</string>
-    <string name="settings_display_banner_ads_supporting">Nicht aufdringliche Banner-Werbung innerhalb von Listen anzeigen, um die Entwicklung zu unterstützen</string>
+    <string name="settings_display_banner_ads">Nicht aufdringliche Werbung</string>
+    <string name="settings_display_banner_ads_supporting">Zeige kleine Anzeigen in Listen, um die Entwicklung zu unterstützen</string>
+    <string name="settings_support_development">Unterstütze die Entwicklung</string>
+    <string name="settings_support_development_supporting">Rivo-Entwicklung unterstützen</string>
+    <string name="settings_provide_tip">Tipp geben</string>
+    <string name="settings_provide_tip_supporting">Unterstütze die Entwicklung über Tip Jar oder Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Monatliche Patronage mit exklusiven Perks</string>
+    <string name="settings_watch_video_ad">Video anzeigen</string>
+    <string name="settings_watch_video_ad_supporting">Sehen Sie sich ein kurzes Video an, um die Entwicklung zu unterstützen</string>
     <string name="settings_rate_google_play">Bei Google Play bewerten</string>
     <string name="settings_rate_google_play_supporting">Unterstützen Sie Rivo im Google Play Store</string>
     <string name="settings_about_rivo">Über Rivo</string>
@@ -1086,53 +1116,76 @@ Weißer Text</string>
     <string name="settings_open_call_screen_on_answer_title">Anrufbildschirm bei Anrufannahme öffnen</string>
     <string name="settings_open_call_screen_on_answer_supporting">Bei Anrufannahme aus Fenster Vollbild-Anrufbildschirm öffnen</string>
     <!-- Theme mode & dynamic palettes -->
-    <string name="theme_mode_supporting">Folgen Sie dem System oder sperren Sie hell oder dunkel</string>
-    <string name="palette_variant_title">Dynamische Palette</string>
+    <string name="theme_mode_supporting">Dem System folgen oder hell oder dunkel einstellen</string>
+    <string name="palette_variant_title">Dynamische Farbpalette</string>
     <string name="palette_tonal_spot">Tonaler Spot</string>
     <string name="palette_expressive">Ausdrucksvoll</string>
     <string name="palette_neutral">Neutral</string>
-    <string name="palette_vibrant">Vibriert</string>
+    <string name="palette_vibrant">Lebhaft</string>
     <string name="palette_fruit_salad">Obstsalat</string>
     <string name="palette_rainbow">Regenbogen</string>
-    <string name="palette_content">Inhalt</string>
-    <string name="palette_fidelity">Fidelität</string>
+    <string name="palette_content">Ausgeglichen</string>
+    <string name="palette_fidelity">Realitätsgetreu</string>
     <string name="palette_monochrome">Monochrom</string>
     <string name="palette_big_clock">Große Uhr</string>
     <string name="palette_candy">Zuckerbrot</string>
     <string name="palette_deep_ocean">Tiefsee</string>
-    <string name="palette_sunset_glow">Sonnenuntergang leuchten</string>
+    <string name="palette_sunset_glow">Leuchten des Sonnenuntergangs</string>
     <!-- Typography -->
-    <string name="font_family_label">Font</string>
-    <string name="font_family_label_supporting">Typeface in der gesamten App verwendet</string>
-    <string name="font_size_label">Font size</string>
-    <string name="font_size_label_supporting">Text in der App skalieren</string>
+    <string name="font_family_label">Schriftart</string>
+    <string name="font_family_label_supporting">In der gesamten App verwendete Schriftart</string>
+    <string name="font_size_label">Schriftgröße</string>
+    <string name="font_size_label_supporting">Textgröße in der App skalieren</string>
     <string name="typography_entry_supporting">Schriftart, Textgröße und Systemschriftart</string>
     <!-- Avatar preview -->
     <string name="avatar_preview_title">Vorschau</string>
     <string name="avatar_preview_colorful_gradient">Farbige Farbverläufe mit zweistelligen Initialen</string>
     <string name="avatar_preview_colorful">Farbenfrohe Avatare mit kontrastreichen Initialen</string>
-    <string name="avatar_preview_gradient">Farbverlauf Avatare mit Initialen mit zwei Buchstaben</string>
-    <string name="avatar_preview_plain">Einfache Theme-Avatare</string>
+    <string name="avatar_preview_gradient">Farbverlauf-Avatare mit zweistelligen Initialen</string>
+    <string name="avatar_preview_plain">Einfach gestaltete Avatare</string>
     <!-- Call screen customization -->
-    <string name="call_screen_customization_title">Anrufbildschirm-Anpassung</string>
+    <string name="call_screen_customization_title">Anpassung des Anrufbildschirms</string>
     <string name="call_screen_customization_supporting">Wählen Sie aus, in welcher Zeile jede Anrufschaltfläche angezeigt wird.</string>
     <string name="about_third_party_licenses">Drittlizenzen</string>
     <string name="about_third_party_licenses_supporting">In Rivo verwendete Open Source Komponenten</string>
     <string name="about_third_party_licenses_title">Drittlizenzen</string>
-    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines — Apache 2.
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines — Apache 2.0
 Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
-Koin (Abhängigkeitsinjektion) — Apache 2.
+Koin (Abhängigkeitsinjektion) — Apache 2.0
 Room (database) — Apache 2.0
 Coil (image loading) — Apache 2.0
-Compose Destinations (navigation) — Apache 2.
-ZXing (QR-Codegeneration) — Apache 2.0
-Accompanist (Laufzeitberechtigung) — Apache 2.0
-BiometricPrompt (app lock) — Apache 2.
-Shizuku (privilegierte Aufzeichnungs-API) — Apache 2.0
-ShizuCallRecorder (Aufzeichnungscode) — GPLv3 mit weiteren Begriffen aus Abschnitt 7</string>
+Compose Destinations (navigation) — Apache 2.0
+ZXing (QR-Code-Generation) — Apache 2.0
+Accompanist (Laufzeitberechtigungen) — Apache 2.0
+BiometricPrompt (App-Sperre) — Apache 2.0
+Shizuku (privilegierte Anruf-Aufzeichnungs-API) — Apache 2.0
+ShizuCallRecorder (Anruf-Aufzeichnungscode) — GPLv3 mit weiteren Begriffen aus Abschnitt 7</string>
     <string name="call_screen_preview_title">Vorschau</string>
     <string name="call_slot_top">Obere Zeile \u2022 Slot #%1$d</string>
     <string name="call_slot_bottom">Untere Zeile \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Nach oben</string>
     <string name="call_slot_move_down">Nach unten</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Lade Video-Anzeige…</string>
+    <string name="video_ad_failed">Video-Anzeige konnte nicht geladen werden. Bitte versuchen Sie es später erneut.</string>
+    <string name="support_video_ads_watched">Videowerbung gesehen: %1$d</string>
+    <string name="support_image_ads_watched">Anzeigewerbung: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro freigeschaltet! Genieße deine Perks.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Benutzerdefiniertes App-Symbol</string>
+    <string name="support_foss_only_donate">Rivo Pro Perks sind in FOSS Versionen nicht verfügbar. Benutzen Sie den Play Store Build, um Pro zu entsperren, oder unterstützen Sie die Entwicklung über Patreon.
+Bitte überlegen Sie, über Patreon zu spenden, um die Entwicklung zu unterstützen.</string>
+    <string name="support_custom_app_icon">Benutzerdefiniertes App-Symbol</string>
+    <string name="support_custom_app_icon_desc">Wählen Sie Ihr bevorzugtes App-Symbol</string>
+    <string name="support_default_app_icon">Standard (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Tägliches Anzeigenlimit erreicht. Versuchen Sie es morgen erneut.</string>
+    <string name="support_video_ad_not_ready">Video-Anzeige ist noch nicht fertig. Bitte warten Sie einen Moment.</string>
+    <string name="support_pro_branding_enabled">Pro-Branding aktiviert</string>
+    <string name="support_pro_branding_disabled">Pro-Branding deaktiviert</string>
+    <string name="support_ads_enabled_pro">Werbung aktiviert - Pro Perks aktiv</string>
+    <string name="support_tip_jar_pro">Tipp Jar Kauf - Pro Perks aktiv</string>
+    <string name="support_patreon_pro">Patreon Unterstützer - Pro Perks aktiv</string>
+    <string name="support_choose_app_icon_title">Wählersymbol und Name auswählen</string>
+    <string name="support_choose_app_icon_desc">Wählen Sie das Dialer Launcher Symbol aus und benennen Sie es zusammen. Nichts ändert sich, bis Sie Rivo bestätigen und neu starten.</string>
 </resources>

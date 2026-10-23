@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">通話をマージ</string>
     <string name="conference_call">電話会議</string>
+    <string name="action_add_note">メモを追加</string>
+    <string name="call_notes_title">通話ノート</string>
     <string name="label_local_memory">デバイス</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -168,6 +170,26 @@
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">連絡先を表示</string>
+    <string name="swipe_action_share">共有</string>
+    <string name="swipe_action_block">ブロック</string>
+    <string name="action_block_or_report">ブロックまたはレポート</string>
+    <string name="action_history">沿革</string>
+    <string name="toast_blocked_number">ブロック %1$s</string>
+    <string name="call_log_block_confirm_single">%1$sをブロックしますか? この番号からの通話やメッセージは受信されなくなります。</string>
+    <string name="date_older">古い順</string>
+    <string name="settings_call_log_customization_title">コールログのカスタマイズ</string>
+    <string name="settings_call_log_customization_supporting">タップアクション、末尾ボタン、クイックアクションを設定します</string>
+    <string name="settings_call_log_trailing_title">末尾ボタンの動作</string>
+    <string name="settings_call_log_trailing_supporting">各通話ログエントリの右側にあるボタンによってトリガーされたアクション</string>
+    <string name="settings_call_log_saved_actions_title">連絡先のクイックアクション</string>
+    <string name="settings_call_log_saved_actions_supporting">保存された連絡先の通話ログエントリをタップした時に表示されるアクション</string>
+    <string name="settings_call_log_unsaved_actions_title">保存されていない数値クイックアクション</string>
+    <string name="settings_call_log_unsaved_actions_supporting">保存されていない番号の通話ログエントリをタップしたときに表示されるアクション</string>
+    <string name="settings_call_log_reset">通話履歴の設定をリセット</string>
+    <string name="settings_call_log_click_behavior_title">タップ操作</string>
+    <string name="settings_call_log_click_behavior_supporting">アバターは連絡先の詳細を開き、末尾のボタンは割り当てられたアクションをトリガーします。他の場所をタップするとクイックアクションが展開されます。</string>
+    <string name="action_none">なし</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -272,8 +294,16 @@
     <string name="blocked_action_add_number">番号を追加</string>
     <string name="blocked_action_import_csv">CSVをインポート</string>
     <string name="blocked_action_export_csv">CSVエクスポート</string>
-    <string name="settings_display_banner_ads">バナー広告を表示</string>
-    <string name="settings_display_banner_ads_supporting">開発をサポートするための非侵入型バナー広告をリスト内に表示する</string>
+    <string name="settings_display_banner_ads">控えめな広告</string>
+    <string name="settings_display_banner_ads_supporting">開発をサポートするリストに小さな広告を表示する</string>
+    <string name="settings_support_development">開発を支援する</string>
+    <string name="settings_support_development_supporting">Rivo の開発を支援する</string>
+    <string name="settings_provide_tip">先端を提供する</string>
+    <string name="settings_provide_tip_supporting">Tip Jar または Patreon 経由での開発をサポート</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">毎月限定特典をご利用いただけます。</string>
+    <string name="settings_watch_video_ad">動画広告を見る</string>
+    <string name="settings_watch_video_ad_supporting">開発をサポートするために短いビデオを見る</string>
     <string name="settings_rate_google_play">Google Playで評価</string>
     <string name="settings_rate_google_play_supporting">Google Play ストアで Rivo をサポート</string>
     <string name="settings_about_rivo">Rivo について</string>
@@ -373,4 +403,26 @@
     <string name="call_slot_bottom">Bottom row \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">上へ移動</string>
     <string name="call_slot_move_down">下に移動</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_failed">動画広告の読み込みに失敗しました。後でもう一度お試しください。</string>
+    <string name="support_video_ads_watched">視聴された動画広告: %1$d</string>
+    <string name="support_image_ads_watched">見ていた画像広告: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Proのロックが解除されました！特典をお楽しみください。</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">カスタム App アイコン</string>
+    <string name="support_foss_only_donate">LIvo Pro perks は FOSS ビルドでは利用できません。Play Store ビルドを使用して Pro のロックを解除するか、Patreon 経由での開発をサポートします。
+開発を支援するためにPatreon経由での寄付を検討してください。</string>
+    <string name="support_custom_app_icon">カスタム App アイコン</string>
+    <string name="support_custom_app_icon_desc">お好みのアプリアイコンを選択してください</string>
+    <string name="support_default_app_icon">デフォルト (リボ)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">毎日の広告視聴回数の上限に達しました。明日もう一度お試しください。</string>
+    <string name="support_video_ad_not_ready">ビデオ広告の準備ができていません。しばらくお待ちください。</string>
+    <string name="support_pro_branding_enabled">プロブランディングを有効にしました</string>
+    <string name="support_pro_branding_disabled">プロブランディングが無効になりました</string>
+    <string name="support_ads_enabled_pro">広告を有効にする - プロの特典が有効です</string>
+    <string name="support_tip_jar_pro">ヒントジャール購入 - プロの特典が有効です</string>
+    <string name="support_patreon_pro">Patreonサポーター-プロ特典が有効です</string>
+    <string name="support_choose_app_icon_title">ダイヤラーアイコンと名前を選択</string>
+    <string name="support_choose_app_icon_desc">ダイヤラーランチャーアイコンを選択し、一緒にラベルを付けます。Rivoを確認して再起動するまで何も変わりません。</string>
 </resources>

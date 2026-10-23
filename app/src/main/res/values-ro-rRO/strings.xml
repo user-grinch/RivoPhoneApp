@@ -179,6 +179,21 @@ Text alb</string>
     <string name="swipe_action_block">Blochează</string>
     <string name="action_block_or_report">Blochează sau raportează</string>
     <string name="action_history">Istoric</string>
+    <string name="toast_blocked_number">%1$s blocat</string>
+    <string name="call_log_block_confirm_single">Blochează %1$s? Nu vei mai primi apeluri sau mesaje de la acest număr.</string>
+    <string name="date_older">Vechi</string>
+    <string name="settings_call_log_customization_title">Personalizare Jurnal Apel</string>
+    <string name="settings_call_log_customization_supporting">Configurare acțiuni apasare, buton de navigare și acțiuni rapide</string>
+    <string name="settings_call_log_trailing_title">Acțiune Buton de antrenament</string>
+    <string name="settings_call_log_trailing_supporting">Acțiune declanșată de butonul din partea dreaptă a fiecărei înregistrări din jurnalul apelurilor</string>
+    <string name="settings_call_log_saved_actions_title">Contacte salvate Acțiuni rapide</string>
+    <string name="settings_call_log_saved_actions_supporting">Acțiuni afișate când apăsați o intrare în jurnalul de apeluri pentru un contact salvat</string>
+    <string name="settings_call_log_unsaved_actions_title">Numere nesalvate Acțiuni rapide</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Acțiuni afișate când apăsați o intrare în jurnalul de apeluri pentru un număr nesalvat</string>
+    <string name="settings_call_log_reset">Resetează setările jurnalului de apeluri</string>
+    <string name="settings_call_log_click_behavior_title">Atingeți interacțiuni</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar deschide detaliile contactului; butonul de trailing declanșează acțiunea alocată; apasă oriunde altundeva extinde acțiunile rapide.</string>
+    <string name="action_none">Niciunul</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -289,8 +304,16 @@ Text alb</string>
     <string name="blocked_action_export_csv">Exportă CSV</string>
     <string name="blocked_search_placeholder">Căutare numere blocate…</string>
     <string name="settings_group_support_about">Suport &amp; Despre</string>
-    <string name="settings_display_banner_ads">Afişare anunţuri banner</string>
-    <string name="settings_display_banner_ads_supporting">Arată anunțuri banner neintrusive în liste pentru a sprijini dezvoltarea</string>
+    <string name="settings_display_banner_ads">Reclame discrete</string>
+    <string name="settings_display_banner_ads_supporting">Arată reclame mici în liste pentru a sprijini dezvoltarea</string>
+    <string name="settings_support_development">Sprijină dezvoltarea</string>
+    <string name="settings_support_development_supporting">Sprijină dezvoltarea Rivo</string>
+    <string name="settings_provide_tip">Oferă un sfat</string>
+    <string name="settings_provide_tip_supporting">Susțineți dezvoltarea prin Tip Jar sau Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Patronaj lunar cu avantaje exclusive</string>
+    <string name="settings_watch_video_ad">Urmărește anunțul video</string>
+    <string name="settings_watch_video_ad_supporting">Urmărește un scurt videoclip pentru a sprijini dezvoltarea</string>
     <string name="settings_rate_google_play">Evaluează pe Google Play</string>
     <string name="settings_rate_google_play_supporting">Susțineți Rivo pe Google Play Store</string>
     <string name="settings_about_rivo">Despre Rivo</string>
@@ -404,4 +427,27 @@ ShizuCallRecorder (cod de înregistrare total) — GPLv3 cu secțiunea 7 termeni
     <string name="call_slot_bottom">Rândul de jos \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Mută în sus</string>
     <string name="call_slot_move_down">Mută în jos</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Se încarcă anunțul video…</string>
+    <string name="video_ad_failed">Încărcarea anunțului video a eșuat. Te rugăm să încerci din nou mai târziu.</string>
+    <string name="support_video_ads_watched">Anunțuri video urmărite: %1$d</string>
+    <string name="support_image_ads_watched">Anunțuri imagine urmărite: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro deblocat! Bucură-te de avantajele tale.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Pictogramă aplicație personalizată</string>
+    <string name="support_foss_only_donate">Rivo Pro nu este disponibil în construcțiile FOSS. Utilizați Magazinul Play pentru a debloca Pro, sau pentru a sprijini dezvoltarea prin Patreon.
+Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dezvoltarea.</string>
+    <string name="support_custom_app_icon">Pictogramă personalizată pentru aplicație</string>
+    <string name="support_custom_app_icon_desc">Selectați pictograma aplicației preferate</string>
+    <string name="support_default_app_icon">Implicit (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Limita zilnică pentru ceasul publicitar a fost atinsă. Încercați din nou mâine.</string>
+    <string name="support_video_ad_not_ready">Anunțul video nu este încă finalizat. Vă rugăm să așteptați un moment.</string>
+    <string name="support_pro_branding_enabled">Branding Pro activat</string>
+    <string name="support_pro_branding_disabled">Branding Pro dezactivat</string>
+    <string name="support_ads_enabled_pro">Anunțuri activate - Avantaje Pro active</string>
+    <string name="support_tip_jar_pro">Cumpărare cu sfaturi Jar - Avantaje active</string>
+    <string name="support_patreon_pro">Susținător Patreon - Perks Pro active</string>
+    <string name="support_choose_app_icon_title">Alegeți pictograma și numele apelului</string>
+    <string name="support_choose_app_icon_desc">Alegeți iconița lansatorului de dialer și eticheta împreună. Nimic nu se schimbă până când confirmați și reporniți Rivo.</string>
 </resources>

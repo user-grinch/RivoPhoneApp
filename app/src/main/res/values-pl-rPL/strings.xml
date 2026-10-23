@@ -49,6 +49,8 @@
     <string name="label_email">E-mail</string>
     <string name="label_address">Adres</string>
     <string name="label_notes">Notatki</string>
+    <string name="action_add_note">Dodaj notatkę</string>
+    <string name="call_notes_title">Notatki połączeń</string>
     <string name="label_social_apps">Aplikacje społecznościowe</string>
     <string name="label_local_memory">Urządzenie</string>
     <string name="option_standard">Standardowy</string>
@@ -271,7 +273,7 @@
     <string name="top_row_items">Górny wiersz: pozycje 1–3</string>
     <string name="bottom_row_items">Dolny wiersz: pozycje 4–6</string>
     <string name="mute">Wycisz / Wyłącz wyciszenie</string>
-    <string name="keypad">Keypad</string>
+    <string name="keypad">Klawiatura</string>
     <string name="audio">Droga audio</string>
     <string name="record">Nagrywanie połączeń</string>
     <string name="hold">Przytrzymaj połączenie</string>
@@ -297,25 +299,25 @@ ciemny tekst</string>
 ciemny tekst</string>
     <string name="avatar_red_white">Czerwony
 Tekst biały</string>
-    <string name="pref_font_family">Font</string>
-    <string name="pref_font_size">Font Size</string>
+    <string name="pref_font_family">Czcionka</string>
+    <string name="pref_font_size">Rozmiar czcionki</string>
     <string name="pref_system_font_toggle">Użyj czcionki systemowej</string>
     <string name="pref_system_font_toggle_description">Użyj ustawień czcionki systemowej</string>
     <string name="typography_title">Typografia</string>
-    <string name="typography_preview_text">Szybki brązowy lis skakuje nad leniwym psem</string>
+    <string name="typography_preview_text">Szybki brązowy lis skacze nad leniwym psem</string>
     <string name="font_size_small">Mały</string>
     <string name="font_size_medium">Średni</string>
     <string name="font_size_large">Duży</string>
     <string name="font_family_serif">Serif</string>
     <string name="font_family_sans_serif">Sansy Serif</string>
-    <string name="font_family_monospace">Pieśń</string>
-    <string name="font_family_cursive">Cursive</string>
-    <string name="font_family_casual">Zwykły</string>
-    <string name="font_family_condensed">Zagęszczony</string>
-    <string name="font_family_light">Światło</string>
-    <string name="font_family_medium">Średni</string>
-    <string name="font_family_black">Czarny</string>
-    <string name="light">Światło</string>
+    <string name="font_family_monospace">Monospace</string>
+    <string name="font_family_cursive">Kursywa</string>
+    <string name="font_family_casual">Zwykła</string>
+    <string name="font_family_condensed">Wąska</string>
+    <string name="font_family_light">Cienka</string>
+    <string name="font_family_medium">Średnia</string>
+    <string name="font_family_black">Czarna</string>
+    <string name="light">Jasny</string>
     <string name="dark">Ciemny</string>
     <string name="dynamic_color">Dynamiczny kolor</string>
     <string name="enable_dynamic_color">Włącz dynamiczny kolor z tapety</string>
@@ -876,6 +878,26 @@ Tekst biały</string>
     <string name="swipe_action_whatsapp">WhatsApp</string>
     <string name="swipe_action_copy_number">Kopiuj numer</string>
     <string name="swipe_action_delete">Usuń</string>
+    <string name="swipe_action_view_contact">Zobacz kontakt</string>
+    <string name="swipe_action_share">Udostępnij</string>
+    <string name="swipe_action_block">Blokuj</string>
+    <string name="action_block_or_report">Zablokuj lub zgłoś</string>
+    <string name="action_history">Historia</string>
+    <string name="toast_blocked_number">Zablokowano %1$s</string>
+    <string name="call_log_block_confirm_single">Zablokować %1$s? Nie będziesz już odbierać połączeń ani wiadomości z tego numeru.</string>
+    <string name="date_older">Starsze</string>
+    <string name="settings_call_log_customization_title">Dostosowanie dziennika połączeń</string>
+    <string name="settings_call_log_customization_supporting">Skonfiguruj akcje stuknięcia, przycisk trailing i szybkie akcje</string>
+    <string name="settings_call_log_trailing_title">Akcja przycisku śledzenia</string>
+    <string name="settings_call_log_trailing_supporting">Akcja wywołana przez przycisk po prawej stronie każdego wpisu w dzienniku połączeń</string>
+    <string name="settings_call_log_saved_actions_title">Zapisane szybkie akcje kontaktów</string>
+    <string name="settings_call_log_saved_actions_supporting">Akcje wyświetlane podczas dotykania wpisu w dzienniku połączeń dla zapisanego kontaktu</string>
+    <string name="settings_call_log_unsaved_actions_title">Niezapisane Numery Szybkich Akcji</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Akcje wyświetlane podczas dotykania wpisu w dzienniku połączeń dla niezapisanego numeru</string>
+    <string name="settings_call_log_reset">Resetuj ustawienia dziennika połączeń</string>
+    <string name="settings_call_log_click_behavior_title">Dotknij interakcji</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar otwiera dane kontaktowe; przyciski uruchamiające przypisaną akcję; dotknięcie gdziekolwiek indziej rozszerza szybkie akcje.</string>
+    <string name="action_none">Brak</string>
     <string name="swipe_action_preview_title">Interaktywny podgląd gestów</string>
     <string name="swipe_action_preview_supporting">Przesuń tę kartę w lewo lub w prawo, aby wypróbować dynamiczną, sprężystą fizykę Material 3</string>
     <string name="swipe_action_test_contact_name">Jan Kowalski</string>
@@ -981,7 +1003,7 @@ Tekst biały</string>
     <!-- Priority Contacts -->
     <string name="priority_contact_title">Kontakt priorytetowy</string>
     <string name="priority_contact_summary">Dzwonek nawet w trybie Cichym lub Nie przeszkadzać</string>
-    <string name="priority_contacts_title">Kontakty priorytetowy</string>
+    <string name="priority_contacts_title">Kontakty priorytetowe</string>
     <string name="priority_contacts_supporting">Zarządzaj kontaktami, które omijają ustawienia trybu Cichego i Nie przeszkadzać</string>
     <string name="priority_contacts_empty_title">Brak kontaktów priorytetowych</string>
     <string name="priority_contacts_empty_desc">Dodaj kontakty, które zawsze mogą się z Tobą skontaktować, nawet gdy tryb Cichy lub Nie przeszkadzać jest włączony.</string>
@@ -1026,8 +1048,16 @@ Tekst biały</string>
     <string name="blocked_action_export_csv">Eksportuj CSV</string>
     <string name="blocked_search_placeholder">Szukaj zablokowanych numerów…</string>
     <string name="settings_group_support_about">Wsparcie i informacje</string>
-    <string name="settings_display_banner_ads">Wyświetl banery reklamowe</string>
-    <string name="settings_display_banner_ads_supporting">Pokaż nieinwazyjne reklamy banerów na listach, aby wesprzeć rozwój</string>
+    <string name="settings_display_banner_ads">Nierówne reklamy</string>
+    <string name="settings_display_banner_ads_supporting">Pokaż małe reklamy na listach do wsparcia rozwoju</string>
+    <string name="settings_support_development">Wspomóż rozwój</string>
+    <string name="settings_support_development_supporting">Wesprzyj rozwój Rivo</string>
+    <string name="settings_provide_tip">Podaj napiwk</string>
+    <string name="settings_provide_tip_supporting">Wesprzyj rozwój poprzez Tip Jar lub Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Miesięczny patronat z ekskluzywnymi korzyściami</string>
+    <string name="settings_watch_video_ad">Obejrzyj reklamy wideo</string>
+    <string name="settings_watch_video_ad_supporting">Obejrzyj krótki film, aby wesprzeć rozwój</string>
     <string name="settings_rate_google_play">Oceń w Google Play</string>
     <string name="settings_rate_google_play_supporting">Wesprzyj Rivo w sklepie Google Play</string>
     <string name="settings_about_rivo">O Rivo</string>
@@ -1092,7 +1122,7 @@ Tekst biały</string>
     <string name="settings_open_call_screen_on_answer_title">Otwórz ekran połączenia po odebraniu</string>
     <string name="settings_open_call_screen_on_answer_supporting">Otwórz pełnoekranowy ekran podczas odbierania powiadomień z Heads-up</string>
     <!-- Theme mode & dynamic palettes -->
-    <string name="theme_mode_supporting">Śledź system lub zablokuj światło lub ciemny</string>
+    <string name="theme_mode_supporting">Zgodnie z systemem lub ustaw na stałe motyw jasny lub ciemny</string>
     <string name="palette_variant_title">Paleta dynamiczna</string>
     <string name="palette_tonal_spot">Punkt tonalny</string>
     <string name="palette_expressive">Ekspresywny</string>
@@ -1108,9 +1138,9 @@ Tekst biały</string>
     <string name="palette_deep_ocean">Głęboki Ocean</string>
     <string name="palette_sunset_glow">Słońce</string>
     <!-- Typography -->
-    <string name="font_family_label">Font</string>
+    <string name="font_family_label">Czcionka</string>
     <string name="font_family_label_supporting">Typ używany w aplikacji</string>
-    <string name="font_size_label">Font size</string>
+    <string name="font_size_label">Rozmier czcionki</string>
     <string name="font_size_label_supporting">Skaluj tekst w aplikacji</string>
     <string name="typography_entry_supporting">Czcionka, rozmiar tekstu i czcionka systemowa</string>
     <!-- Avatar preview -->
@@ -1125,20 +1155,43 @@ Tekst biały</string>
     <string name="about_third_party_licenses">Licencje osób trzecich</string>
     <string name="about_third_party_licenses_supporting">Komponenty open source używane w Rivo</string>
     <string name="about_third_party_licenses_title">Licencje osób trzecich</string>
-    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serializacja &amp; Koroutiny – Apache 2.
-Jetpack Compose, Material 3 &amp; AndroidX – Apache 2.0
-Koin (wstrzykiwanie zależności) – Apache 2.
-Pokój (baza danych) — Apache 2.0
-Coil (ładowanie obrazów) — Apache 2.0
-Utwórz miejsca docelowe (nawigacja) — Apache 2.
-ZXing (generowanie kodu QR) — Apache 2.0
-Accompanist (uprawnienia w czasie uruchomienia) — Apache 2.0
-BiometricPrompt (blokada aplikacji) — Apache 2.
-Shizuku (uprzywilejowane API nagrywania połączeń) — Apache 2.0
-ShizuCallRecorder (kod nagrywania połączeń) — GPLv3 z sekcją 7 Dodatkowe terminy</string>
+    <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines — Apache 2.0
+Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
+Koin (wstrzykiwanie zależności) — Apache 2.0
+Room (baza danych) — Apache 2.0
+Coil (wczytywanie obrazów) — Apache 2.0
+Compose Destinations (nawigacja) — Apache 2.0
+ZXing (generowanie kodów QR) — Apache 2.0
+Accompanist (zarządzanie uprawnieniami) — Apache 2.0
+BiometricPrompt (blokada aplikacji) — Apache 2.0
+Shizuku (API do nagrywania rozmów z uprawnieniami systemowymi) — Apache 2.0
+ShizuCallRecorder (kod nagrywania rozmów) — GPLv3 z dodatkowymi warunkami Sekcji 7</string>
     <string name="call_screen_preview_title">Podgląd</string>
     <string name="call_slot_top">Górny wiersz \u2022 Slot #%1$d</string>
     <string name="call_slot_bottom">Dolny rząd \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Przesuń w górę</string>
     <string name="call_slot_move_down">Przesuń w dół</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Ładowanie reklamy wideo…</string>
+    <string name="video_ad_failed">Nie udało się załadować reklamy wideo. Spróbuj ponownie później.</string>
+    <string name="support_video_ads_watched">Oglądane reklamy wideo: %1$d</string>
+    <string name="support_image_ads_watched">Oglądane reklamy obrazów: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Odblokowano Rivo Pro! Ciesz się swoimi umiejętnościami.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Własna ikona aplikacji</string>
+    <string name="support_foss_only_donate">Umiejętności Rivo Pro są niedostępne w wersjach FOSS. Użyj kompilacji Sklep Play, aby odblokować Pro, lub wesprze rozwój poprzez Patreon.
+Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
+    <string name="support_custom_app_icon">Własna ikona aplikacji</string>
+    <string name="support_custom_app_icon_desc">Wybierz preferowaną ikonę aplikacji</string>
+    <string name="support_default_app_icon">Domyślne (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Osiągnięto dzienny limit zegarków reklamowych. Spróbuj ponownie jutro.</string>
+    <string name="support_video_ad_not_ready">Reklama wideo nie jest jeszcze gotowa. Proszę poczekać chwilę.</string>
+    <string name="support_pro_branding_enabled">Marka Pro włączona</string>
+    <string name="support_pro_branding_disabled">Marka Pro wyłączona</string>
+    <string name="support_ads_enabled_pro">Reklamy włączone - Pro perks aktywny</string>
+    <string name="support_tip_jar_pro">Zakup Porady - Pro perks aktywny</string>
+    <string name="support_patreon_pro">Opiekun Patreon - aktywne umiejętności Pro</string>
+    <string name="support_choose_app_icon_title">Wybierz ikonę i nazwę dialera</string>
+    <string name="support_choose_app_icon_desc">Wybierz razem ikonę i etykietę. Nic nie zmienia się dopóki nie potwierdzisz i nie zrestartujesz Rivo.</string>
 </resources>

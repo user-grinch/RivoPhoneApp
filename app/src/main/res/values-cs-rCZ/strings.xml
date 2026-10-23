@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Sloučit hovory</string>
     <string name="conference_call">Konferenční hovor</string>
+    <string name="action_add_note">Přidat poznámku</string>
+    <string name="call_notes_title">Poznámky k hovoru</string>
     <string name="label_local_memory">Zařízení</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -171,6 +173,26 @@ Bílý text</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Zobrazit kontakt</string>
+    <string name="swipe_action_share">Sdílet</string>
+    <string name="swipe_action_block">Blokovat</string>
+    <string name="action_block_or_report">Blokovat nebo nahlásit</string>
+    <string name="action_history">Historie</string>
+    <string name="toast_blocked_number">Zablokován %1$s</string>
+    <string name="call_log_block_confirm_single">Blokovat %1$s? Již nebudete přijímat hovory ani zprávy z tohoto čísla.</string>
+    <string name="date_older">Starší</string>
+    <string name="settings_call_log_customization_title">Přizpůsobení seznamu hovorů</string>
+    <string name="settings_call_log_customization_supporting">Konfigurace akcí poklepání, tlačítka trailing a rychlých akcí</string>
+    <string name="settings_call_log_trailing_title">Akce taženým tlačítkem</string>
+    <string name="settings_call_log_trailing_supporting">Akce spuštěná tlačítkem na pravé straně každého záznamu protokolu hovorů</string>
+    <string name="settings_call_log_saved_actions_title">Rychlé akce uložené kontakty</string>
+    <string name="settings_call_log_saved_actions_supporting">Akce zobrazené při klepnutí na položku protokolu volání pro uložený kontakt</string>
+    <string name="settings_call_log_unsaved_actions_title">Rychlé akce pro neuložená čísla</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Akce zobrazené při klepnutí na položku protokolu volání pro neuložené číslo</string>
+    <string name="settings_call_log_reset">Obnovit nastavení protokolu hovorů</string>
+    <string name="settings_call_log_click_behavior_title">Interakce klepnutím</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar otevře kontaktní údaje; tlačítko trailing aktivuje přiřazenou akci; klepnutí kdekoli jinde rozšiřuje rychlé akce.</string>
+    <string name="action_none">Nic</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -281,8 +303,16 @@ Bílý text</string>
     <string name="blocked_action_export_csv">Exportovat CSV</string>
     <string name="blocked_search_placeholder">Hledat blokovaná čísla…</string>
     <string name="settings_group_support_about">Podpora &amp; O</string>
-    <string name="settings_display_banner_ads">Zobrazit reklamy na banneru</string>
-    <string name="settings_display_banner_ads_supporting">Zobrazit nerušivé reklamy bannerů v seznamech pro podporu vývoje</string>
+    <string name="settings_display_banner_ads">Neúnavné reklamy</string>
+    <string name="settings_display_banner_ads_supporting">Zobrazit malé reklamy v seznamech pro podporu vývoje</string>
+    <string name="settings_support_development">Podpořit vývoj</string>
+    <string name="settings_support_development_supporting">Podpořte vývoj Rivo</string>
+    <string name="settings_provide_tip">Poskytnout Tip</string>
+    <string name="settings_provide_tip_supporting">Podpořte vývoj přes Tip Jar nebo Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Měsíční patronát s výlučnými požitky</string>
+    <string name="settings_watch_video_ad">Podívejte se na reklamu</string>
+    <string name="settings_watch_video_ad_supporting">Podívejte se na krátké video pro podporu vývoje</string>
     <string name="settings_rate_google_play">Ohodnoťte na Google Play</string>
     <string name="settings_rate_google_play_supporting">Podpořte Rivo v Google Play Store</string>
     <string name="settings_about_rivo">O společnosti Rivo</string>
@@ -396,4 +426,27 @@ ShizuCallorder (kód záznamu hovoru) – GPLv3 s oddílem 7 dalšími termíny<
     <string name="call_slot_bottom">Spodní řádek \u2022 otvor #%1$d</string>
     <string name="call_slot_move_up">Posunout nahoru</string>
     <string name="call_slot_move_down">Přesunout dolů</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Načítání video reklamy…</string>
+    <string name="video_ad_failed">Nepodařilo se načíst reklamu. Opakujte akci později.</string>
+    <string name="support_video_ads_watched">Sledují videoreklamy: %1$d</string>
+    <string name="support_image_ads_watched">Sledované reklamy obrázků: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro odemčeno! Užijte si vaše výhody.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Vlastní ikona aplikace</string>
+    <string name="support_foss_only_donate">Rivo Pro výhody nejsou dostupné ve FOSS budovách. Pro odemknutí Pro, nebo podporu vývoje prostřednictvím Patreonu, použijte sestavení v obchodě Play.
+Zvažte prosím darování přes Patreon na podporu vývoje.</string>
+    <string name="support_custom_app_icon">Vlastní ikona aplikace</string>
+    <string name="support_custom_app_icon_desc">Vyberte preferovanou ikonu aplikace</string>
+    <string name="support_default_app_icon">Výchozí (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Dosažen limit denních hodinek. Zkuste to zítra.</string>
+    <string name="support_video_ad_not_ready">Videoreklama není ještě připravená. Počkejte prosím chvilku.</string>
+    <string name="support_pro_branding_enabled">Pro značkování povoleno</string>
+    <string name="support_pro_branding_disabled">Pro branding zakázán</string>
+    <string name="support_ads_enabled_pro">Reklamy povoleny - Pro perks aktivní</string>
+    <string name="support_tip_jar_pro">Tip Jar nákup - Pro výhody aktivní</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro výhody aktivní</string>
+    <string name="support_choose_app_icon_title">Zvolte ikonu a název číselníku</string>
+    <string name="support_choose_app_icon_desc">Vyberte společně ikonu a popisek číselníku. Nic se nemění, dokud nepotvrdíte a nerestartujete Rivo.</string>
 </resources>

@@ -3,6 +3,8 @@
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Flet opkald</string>
     <string name="conference_call">Opkald på konference</string>
+    <string name="action_add_note">Tilføj Note</string>
+    <string name="call_notes_title">Opkald Noter</string>
     <string name="label_local_memory">Enhed</string>
     <!-- Onboarding -->
     <!-- Permission Popup -->
@@ -171,6 +173,26 @@ Hvid tekst</string>
     <!-- Floating Bar Customization & Blur -->
     <!-- Global UI Blur Effects -->
     <!-- Swipe Actions on Contacts & Call Logs -->
+    <string name="swipe_action_view_contact">Vis Kontakt</string>
+    <string name="swipe_action_share">Del</string>
+    <string name="swipe_action_block">Blokér</string>
+    <string name="action_block_or_report">Blokér eller rapport</string>
+    <string name="action_history">Historik</string>
+    <string name="toast_blocked_number">Blokerede %1$s</string>
+    <string name="call_log_block_confirm_single">Blokér %1$s? Du vil ikke længere modtage opkald eller beskeder fra dette nummer.</string>
+    <string name="date_older">Ældre</string>
+    <string name="settings_call_log_customization_title">Tilpasning Af Opkaldslog</string>
+    <string name="settings_call_log_customization_supporting">Konfigurer tryk-handlinger, efterfølgende knap og hurtige handlinger</string>
+    <string name="settings_call_log_trailing_title">Efterfølgende Knap Handling</string>
+    <string name="settings_call_log_trailing_supporting">Handling udløst af knappen i højre side af hver opkaldslog post</string>
+    <string name="settings_call_log_saved_actions_title">Hurtige Handlinger Gemte Kontakter</string>
+    <string name="settings_call_log_saved_actions_supporting">Handlinger, der vises, når du trykker på en opkaldslogpost for en gemt kontakt</string>
+    <string name="settings_call_log_unsaved_actions_title">Ikke-Gemte Numre Hurtige Handlinger</string>
+    <string name="settings_call_log_unsaved_actions_supporting">Handlinger, der vises, når du trykker på en opkaldslogpost for et ikke-gemt nummer</string>
+    <string name="settings_call_log_reset">Nulstil Opkaldslogindstillinger</string>
+    <string name="settings_call_log_click_behavior_title">Tryk Interaktioner</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar åbner kontaktoplysninger; efterfølgende knap udløser tildelt handling; trykke på andre steder udvider hurtige handlinger.</string>
+    <string name="action_none">Ingen</string>
     <!-- Ongoing Call Top Banner & Vivo Notifications -->
     <!-- Missed Call Card & Auto Decline -->
     <!-- Favorites Modernization -->
@@ -281,8 +303,16 @@ Hvid tekst</string>
     <string name="blocked_action_export_csv">Eksporter CSV</string>
     <string name="blocked_search_placeholder">Søg blokerede numre…</string>
     <string name="settings_group_support_about">Support &amp; Om</string>
-    <string name="settings_display_banner_ads">Vis Banner Annoncer</string>
-    <string name="settings_display_banner_ads_supporting">Vis ikke-påtrængende bannerannoncer i lister for at understøtte udvikling</string>
+    <string name="settings_display_banner_ads">Ikke-påtrængende annoncer</string>
+    <string name="settings_display_banner_ads_supporting">Vis små annoncer i lister for at understøtte udvikling</string>
+    <string name="settings_support_development">Støt Udvikling</string>
+    <string name="settings_support_development_supporting">Støt Rivo udvikling</string>
+    <string name="settings_provide_tip">Giv et tip</string>
+    <string name="settings_provide_tip_supporting">Støt udvikling via Tip Jar eller Patreon</string>
+    <string name="settings_patreon">Patreon</string>
+    <string name="settings_patreon_supporting">Månedlig protektion med eksklusive frynsegoder</string>
+    <string name="settings_watch_video_ad">Se Video Annonce</string>
+    <string name="settings_watch_video_ad_supporting">Se en kort video for at understøtte udviklingen</string>
     <string name="settings_rate_google_play">Bedøm på Google Play</string>
     <string name="settings_rate_google_play_supporting">Support Rivo i Google Play Butik</string>
     <string name="settings_about_rivo">Om Rivo</string>
@@ -396,4 +426,27 @@ ShizuCallRecorder (opkaldsregistreringskode) — GPLv3 med afsnit 7 yderligere v
     <string name="call_slot_bottom">Nederste række \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Flyt op</string>
     <string name="call_slot_move_down">Flyt ned</string>
+    <!-- Support Development & Video Ads -->
+    <string name="video_ad_loading">Indlæser video annonce…</string>
+    <string name="video_ad_failed">Kunne ikke indlæse video annonce. Prøv igen senere.</string>
+    <string name="support_video_ads_watched">Videoannoncer set: %1$d</string>
+    <string name="support_image_ads_watched">Billede annoncer set: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro låst op! Nyd dine frynsegoder.</string>
+    <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
+    <string name="support_rivo_pro_perk_app_icon">Tilpasset app-ikon</string>
+    <string name="support_foss_only_donate">Rivo Pro-frynsegoder er utilgængelige i FOSS-bygninger. Brug Play Butik til at låse op for Pro, eller støtte udviklingen gennem Patreon.
+Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
+    <string name="support_custom_app_icon">Tilpasset App-Ikon</string>
+    <string name="support_custom_app_icon_desc">Vælg dit foretrukne app-ikon</string>
+    <string name="support_default_app_icon">Standard (Rivo)</string>
+    <string name="support_pro_app_icon">Rivo Pro</string>
+    <string name="support_ad_watch_limit_reached">Grænsen for daglig annonceur er nået. Prøv igen i morgen.</string>
+    <string name="support_video_ad_not_ready">Videoannonce er ikke klar endnu. Vent et øjeblik.</string>
+    <string name="support_pro_branding_enabled">Pro branding aktiveret</string>
+    <string name="support_pro_branding_disabled">Pro branding deaktiveret</string>
+    <string name="support_ads_enabled_pro">Annoncer aktiveret - Pro frynsegoder aktive</string>
+    <string name="support_tip_jar_pro">Tip Jar køb - Pro frynser aktive</string>
+    <string name="support_patreon_pro">Patreon supporter - Pro frynsegoder aktiv</string>
+    <string name="support_choose_app_icon_title">Vælg opkalds-ikon og navn</string>
+    <string name="support_choose_app_icon_desc">Vælg dialer launcher ikonet og etiket sammen. Intet ændrer sig, før du bekræfter og genstarter Rivo.</string>
 </resources>
