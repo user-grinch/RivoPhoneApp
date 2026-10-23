@@ -448,6 +448,10 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="support_ads_enabled_pro">Anunțuri activate - Avantaje Pro active</string>
     <string name="support_tip_jar_pro">Cumpărare cu sfaturi Jar - Avantaje active</string>
     <string name="support_patreon_pro">Susținător Patreon - Perks Pro active</string>
-    <string name="support_choose_app_icon_title">Alegeți pictograma și numele apelului</string>
+    <string name="support_rewarded_pro">Video recompensat - Pro este activ pentru o zi</string>
+    <string name="support_pro_active_reason">Rivo Pro este activ: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro nu este activ. Alegeți o opțiune de suport de mai jos.</string>
+    <string name="support_pro_foss_reason">Rivo Pro este disponibil în magazinul Play construit. Patreon suportă dezvoltarea FOSS.</string>
+    <string name="support_choose_app_icon_title">Alege Branding</string>
     <string name="support_choose_app_icon_desc">Alegeți iconița lansatorului de dialer și eticheta împreună. Nimic nu se schimbă până când confirmați și reporniți Rivo.</string>
 </resources>

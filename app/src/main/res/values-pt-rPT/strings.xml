@@ -443,6 +443,5 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="support_ads_enabled_pro">Anúncios ativados - Vantagens Pro ativas</string>
     <string name="support_tip_jar_pro">Compra de gorjeta Jar - Perks Pro ativo</string>
     <string name="support_patreon_pro">Apoiador de Patreon - Perks Pro ativos</string>
-    <string name="support_choose_app_icon_title">Escolher ícone e nome do discador</string>
     <string name="support_choose_app_icon_desc">Escolha o ícone do lançador discador e label juntos. Nada muda até você confirmar e reiniciar o Rivo.</string>
 </resources>

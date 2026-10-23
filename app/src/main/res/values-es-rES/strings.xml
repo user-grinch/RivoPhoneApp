@@ -1185,6 +1185,10 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="support_ads_enabled_pro">Anuncios habilitados - perks Pro activos</string>
     <string name="support_tip_jar_pro">Tip Jar compra - Pro perks activos</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks activos</string>
-    <string name="support_choose_app_icon_title">Elegir icono y nombre del marcador</string>
+    <string name="support_rewarded_pro">Video recompensado - Pro está activo por un día</string>
+    <string name="support_pro_active_reason">Rivo Pro está activo: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro no está activo. Elija una opción de soporte a continuación.</string>
+    <string name="support_pro_foss_reason">Rivo Pro está disponible en la Play Store construida.</string>
+    <string name="support_choose_app_icon_title">Elegir marca</string>
     <string name="support_choose_app_icon_desc">Elija el icono del lanzador del marcador y etiqueta juntos. Nada cambia hasta que confirme y reinicie Rivo.</string>
 </resources>

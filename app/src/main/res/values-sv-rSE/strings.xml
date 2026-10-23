@@ -446,6 +446,5 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="support_ads_enabled_pro">Annonser aktiverade - Pro perks aktiva</string>
     <string name="support_tip_jar_pro">Tips burk köp - Pro förmåner aktiva</string>
     <string name="support_patreon_pro">Patreon supporter - Pro förmåner aktiva</string>
-    <string name="support_choose_app_icon_title">Välj knappsatsens ikon och namn</string>
     <string name="support_choose_app_icon_desc">Välj ikonen för dialer launcher och etikettera tillsammans. Inget ändras förrän du bekräftar och startar om Rivo.</string>
 </resources>

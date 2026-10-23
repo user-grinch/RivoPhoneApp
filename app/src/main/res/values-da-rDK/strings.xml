@@ -447,6 +447,5 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="support_ads_enabled_pro">Annoncer aktiveret - Pro frynsegoder aktive</string>
     <string name="support_tip_jar_pro">Tip Jar køb - Pro frynser aktive</string>
     <string name="support_patreon_pro">Patreon supporter - Pro frynsegoder aktiv</string>
-    <string name="support_choose_app_icon_title">Vælg opkalds-ikon og navn</string>
     <string name="support_choose_app_icon_desc">Vælg dialer launcher ikonet og etiket sammen. Intet ændrer sig, før du bekræfter og genstarter Rivo.</string>
 </resources>

@@ -443,6 +443,5 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="support_ads_enabled_pro">Advertenties ingeschakeld - Pro-voordelen actief</string>
     <string name="support_tip_jar_pro">Tip Jar aankoop - Pro voordelen actief</string>
     <string name="support_patreon_pro">Patreon supporter - Pro voordelen actief</string>
-    <string name="support_choose_app_icon_title">Kies kiezerpictogram en naam</string>
     <string name="support_choose_app_icon_desc">Kies het kiezer launcher icoon en label samen. Niets verandert totdat u bevestigt en Rivo herstart.</string>
 </resources>

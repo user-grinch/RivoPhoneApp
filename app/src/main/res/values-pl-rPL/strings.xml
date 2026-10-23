@@ -1192,6 +1192,5 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="support_ads_enabled_pro">Reklamy włączone - Pro perks aktywny</string>
     <string name="support_tip_jar_pro">Zakup Porady - Pro perks aktywny</string>
     <string name="support_patreon_pro">Opiekun Patreon - aktywne umiejętności Pro</string>
-    <string name="support_choose_app_icon_title">Wybierz ikonę i nazwę dialera</string>
     <string name="support_choose_app_icon_desc">Wybierz razem ikonę i etykietę. Nic nie zmienia się dopóki nie potwierdzisz i nie zrestartujesz Rivo.</string>
 </resources>
