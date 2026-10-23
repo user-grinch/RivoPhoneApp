@@ -2,17 +2,20 @@ package com.grinch.rivo4.controller.ads
 
 import android.app.Activity
 import android.content.Context
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.grinch.rivo4.controller.util.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,9 +39,11 @@ class RewardedAdManager(private val context: Context) {
         const val TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
     }
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private var rewardedAd: RewardedAd? = null
+    private var adsInitializationRequested = false
+    private var adsInitialized = false
     private var pendingActivity: WeakReference<Activity>? = null
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -59,17 +64,40 @@ class RewardedAdManager(private val context: Context) {
     val adDismissed: SharedFlow<Unit> = _adDismissed.asSharedFlow()
 
     init {
-        loadAd()
+        initializeAds()
+    }
+
+    private fun initializeAds() {
+        if (adsInitializationRequested) return
+        adsInitializationRequested = true
+        MobileAds.initialize(context) {
+            adsInitialized = true
+            loadAd()
+        }
     }
 
     fun loadAd() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            scope.launch { loadAd() }
+            return
+        }
+
+        if (!adsInitialized) {
+            initializeAds()
+            return
+        }
         if (_isLoading.value || _isAdReady.value) return
 
         _isLoading.value = true
 
+        val adUnitId = if (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+            TEST_REWARDED_AD_UNIT_ID
+        } else {
+            REWARDED_AD_UNIT_ID
+        }
         RewardedAd.load(
             context,
-            TEST_REWARDED_AD_UNIT_ID, // Use test ID during development
+            adUnitId,
             AdRequest.Builder().build(),
             object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
@@ -124,6 +152,11 @@ class RewardedAdManager(private val context: Context) {
     }
 
     fun showAd(activity: Activity, onRewardEarned: () -> Unit) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            scope.launch { showAd(activity, onRewardEarned) }
+            return
+        }
+
         if (!_isAdReady.value || rewardedAd == null) {
             Log.w(TAG, "Rewarded ad not ready")
             if (activity.isFinishing || activity.isDestroyed) return

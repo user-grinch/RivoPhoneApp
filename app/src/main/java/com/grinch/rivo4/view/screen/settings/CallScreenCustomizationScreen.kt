@@ -1,5 +1,8 @@
 package com.grinch.rivo4.view.screen.settings
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -12,6 +15,13 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.Sensors
+import androidx.compose.material.icons.outlined.SpeakerPhone
+import androidx.compose.material.icons.outlined.Fullscreen
+import androidx.compose.material.icons.outlined.PhoneInTalk
+import androidx.compose.material.icons.outlined.ScreenLockPortrait
+import androidx.compose.material.icons.outlined.Wallpaper
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,17 +31,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.CallBackgroundStore
 import com.grinch.rivo4.view.components.MenuTopAppBar
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
+import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
+import com.grinch.rivo4.view.screen.settings.IncomingCallUiPreview
 import com.grinch.rivo4.view.screen.CallActionButton
 import com.grinch.rivo4.view.screen.RivoCallButtonOrder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 private data class CallButtonSlot(
@@ -46,7 +60,7 @@ private val callButtonSlots = listOf(
     CallButtonSlot(RivoCallButtonOrder.AUDIO, R.string.audio, Icons.AutoMirrored.Filled.VolumeUp),
     CallButtonSlot(RivoCallButtonOrder.RECORD, R.string.record, Icons.Default.FiberManualRecord),
     CallButtonSlot(RivoCallButtonOrder.HOLD, R.string.hold, Icons.Default.Pause),
-    CallButtonSlot(RivoCallButtonOrder.ADD, R.string.add, Icons.Default.Add)
+    CallButtonSlot(RivoCallButtonOrder.ADD, R.string.add, Icons.Default.Add),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +71,28 @@ fun CallScreenCustomizationScreen(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = rememberCoroutineScope()
+    var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
+    var autoSpeakerProximity by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, false)) }
+    var incomingCallUI by remember(settingsState) { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, 0)) }
+    var alwaysFullScreenCalls by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, false)) }
+    var openCallScreenOnAnswer by remember(settingsState) { mutableStateOf(prefs.isOpenCallScreenOnAnswerEnabled()) }
+    var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
+    var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
+    var unknownCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.unknownModel(context)) }
+    val defaultCallBgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            runCatching { context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            scope.launch { if (CallBackgroundStore.saveDefault(context, uri)) defaultCallBg = CallBackgroundStore.defaultModelAsync(context) }
+        }
+    }
+    val unknownCallBgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            runCatching { context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            scope.launch { if (CallBackgroundStore.saveUnknown(context, uri)) unknownCallBg = CallBackgroundStore.unknownModelAsync(context) }
+        }
+    }
 
     var order by remember(settingsState) {
         mutableStateOf(
@@ -94,6 +130,10 @@ fun CallScreenCustomizationScreen(
         val next = hidden.toMutableSet()
         if (show) {
             next.remove(id)
+            if (id !in order) {
+                order = order + id
+                prefs.setString(PreferenceManager.KEY_CALL_BUTTON_ORDER, RivoCallButtonOrder.format(order))
+            }
         } else {
             // Always keep at least one button on the call screen
             if (order.count { !next.contains(it) && it != id } <= 0) return
@@ -119,6 +159,81 @@ fun CallScreenCustomizationScreen(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            item {
+                RivoExpressiveGroup(title = "Call behavior", icon = Icons.Outlined.PhoneInTalk) {
+                    item {
+                        RivoSwitchListItem(headline = stringResource(R.string.settings_call_proximity_sensor), supporting = stringResource(R.string.settings_call_proximity_sensor_supporting), leadingIcon = Icons.Outlined.Sensors, checked = proximitySensor, onCheckedChange = {
+                            proximitySensor = it; prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
+                        })
+                    }
+                    item {
+                        RivoSwitchListItem(headline = stringResource(R.string.settings_call_auto_speaker_proximity), supporting = stringResource(R.string.settings_call_auto_speaker_proximity_supporting), leadingIcon = Icons.Outlined.SpeakerPhone, checked = autoSpeakerProximity, onCheckedChange = {
+                            autoSpeakerProximity = it; prefs.setBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, it)
+                        })
+                    }
+                    item {
+                        RivoSwitchListItem(headline = stringResource(R.string.settings_call_always_fullscreen), supporting = stringResource(R.string.settings_call_always_fullscreen_supporting), leadingIcon = Icons.Outlined.Fullscreen, checked = alwaysFullScreenCalls, onCheckedChange = {
+                            alwaysFullScreenCalls = it; prefs.setBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, it)
+                        })
+                    }
+                    item {
+                        RivoSwitchListItem(headline = stringResource(R.string.settings_open_call_screen_on_answer_title), supporting = stringResource(R.string.settings_open_call_screen_on_answer_supporting), leadingIcon = Icons.Outlined.PhoneInTalk, checked = openCallScreenOnAnswer, onCheckedChange = {
+                            openCallScreenOnAnswer = it; prefs.setOpenCallScreenOnAnswerEnabled(it)
+                        })
+                    }
+                    item {
+                        RivoSwitchListItem(headline = "Pocket Mode", supporting = "Prevent accidental touches during incoming calls when the phone is in a pocket", leadingIcon = Icons.Outlined.ScreenLockPortrait, checked = pocketMode, onCheckedChange = {
+                            pocketMode = it; prefs.setBoolean(PreferenceManager.KEY_POCKET_MODE, it)
+                        })
+                    }
+                }
+            }
+
+            item {
+                RivoExpressiveGroup(title = "Incoming call style", icon = Icons.Outlined.PhoneInTalk) {
+                    item {
+                        Box(modifier = Modifier.padding(vertical = 4.dp)) {
+                            RivoVisualOptionSelectorRow(
+                                headline = stringResource(R.string.settings_call_incoming_ui),
+                                supporting = stringResource(R.string.settings_call_incoming_ui_supporting),
+                                leadingIcon = Icons.Outlined.PhoneInTalk,
+                                options = listOf(
+                                    stringResource(R.string.settings_call_incoming_ui_horizontal_swipe) to 0,
+                                    stringResource(R.string.settings_call_incoming_ui_buttons) to 1,
+                                    stringResource(R.string.settings_call_incoming_ui_slide_ios) to 2,
+                                    stringResource(R.string.settings_call_incoming_ui_vertical_swipe) to 3
+                                ),
+                                selectedValue = incomingCallUI,
+                                onValueChange = {
+                                    incomingCallUI = it
+                                    prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
+                                },
+                                tileWidth = 110.dp,
+                                tileHeight = 76.dp
+                            ) { value, _ ->
+                                IncomingCallUiPreview(value)
+                            }
+                        }
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_call_default_background),
+                            supporting = if (defaultCallBg != null) stringResource(R.string.settings_call_default_background_set) else stringResource(R.string.settings_call_default_background_none),
+                            leadingIcon = Icons.Outlined.Wallpaper,
+                            onClick = { defaultCallBgLauncher.launch(arrayOf("image/*")) }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_call_unknown_background),
+                            supporting = if (unknownCallBg != null) stringResource(R.string.settings_call_unknown_background_set) else stringResource(R.string.settings_call_unknown_background_none),
+                            leadingIcon = Icons.Outlined.Image,
+                            onClick = { unknownCallBgLauncher.launch(arrayOf("image/*")) }
+                        )
+                    }
+                }
+            }
+
             item {
                 RivoExpressiveCard(
                     title = stringResource(R.string.call_screen_preview_title),
@@ -183,7 +298,7 @@ fun CallScreenCustomizationScreen(
                                 headline = stringResource(slot.labelRes),
                                 supporting = stringResource(R.string.call_screen_visible_buttons_supporting),
                                 leadingIcon = slot.icon,
-                                checked = !hidden.contains(slot.id),
+                                checked = slot.id in order && !hidden.contains(slot.id),
                                 onCheckedChange = { show -> toggleButton(slot.id, show) }
                             )
                         }
@@ -245,4 +360,5 @@ fun CallScreenCustomizationScreen(
             }
         }
     }
+
 }

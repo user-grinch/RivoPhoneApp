@@ -43,7 +43,7 @@ fun PostCallNativeAd(
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
     val adsEnabled = remember(settingsState) {
-        prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, false) && !prefs.isSupporter()
+        prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
     }
 
     if (!adsEnabled) return

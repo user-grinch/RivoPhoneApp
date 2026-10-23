@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen.settings
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -91,23 +94,20 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                         .fillMaxWidth()
                         .padding(vertical = 12.dp)
                 ) {
-                    Surface(
-                        modifier = Modifier.size(88.dp),
-                        shape = logoMorph,
-                        color = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        shadowElevation = 4.dp
-                    ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(
-                                    if (appName == "Rivo Pro") R.drawable.pro_app_icon else R.drawable.logo
-                                ),
-                                contentDescription = stringResource(R.string.about_logo_content_desc),
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    }
+                    Image(
+                        painter = painterResource(
+                            if (appName == "Rivo Pro") R.drawable.pro_app_icon else R.drawable.logo
+                        ),
+                        contentDescription = stringResource(R.string.about_logo_content_desc),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(88.dp)
+                            .graphicsLayer {
+                                scaleX = 1.15f
+                                scaleY = 1.15f
+                            }
+                            .clip(logoMorph)
+                    )
 
                     Text(
                         text = appName,

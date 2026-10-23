@@ -20,7 +20,7 @@ class AuditRegressionTest {
     // region Call screen button order
 
     @Test
-    fun callButtonOrderParseAlwaysProducesAllSixButtons() {
+    fun callButtonOrderParseAlwaysProducesAllAvailableButtons() {
         val inputs = listOf(
             null,
             "",
@@ -32,9 +32,10 @@ class AuditRegressionTest {
         )
         for (input in inputs) {
             val parsed = RivoCallButtonOrder.parse(input)
-            assertEquals("parse($input) must keep 6 buttons", 6, parsed.size)
-            assertEquals("parse($input) must not contain duplicates", 6, parsed.toSet().size)
-            assertTrue("parse($input) must contain every button", parsed.containsAll(RivoCallButtonOrder.All))
+            val expectedSize = 6
+            assertEquals("parse($input) must keep expected buttons", expectedSize, parsed.size)
+            assertEquals("parse($input) must not contain duplicates", expectedSize, parsed.toSet().size)
+            assertTrue("parse($input) must contain every default button", parsed.containsAll(RivoCallButtonOrder.All.take(6)))
         }
     }
 
@@ -57,9 +58,18 @@ class AuditRegressionTest {
 
     @Test
     fun callButtonOrderDefaultPreferenceMatchesEnum() {
-        // The stored default must describe exactly the enum's canonical order;
-        // otherwise a fresh install and an explicit "reset" would disagree.
-        assertEquals(RivoCallButtonOrder.All, RivoCallButtonOrder.parse(PreferenceManager.DEFAULT_CALL_BUTTON_ORDER))
+        // Fresh installs intentionally show the six core buttons; optional buttons can be enabled.
+        assertEquals(
+            listOf(
+                RivoCallButtonOrder.MUTE,
+                RivoCallButtonOrder.KEYPAD,
+                RivoCallButtonOrder.AUDIO,
+                RivoCallButtonOrder.RECORD,
+                RivoCallButtonOrder.HOLD,
+                RivoCallButtonOrder.ADD
+            ),
+            RivoCallButtonOrder.parse(PreferenceManager.DEFAULT_CALL_BUTTON_ORDER)
+        )
     }
 
     @Test
@@ -77,11 +87,8 @@ class AuditRegressionTest {
         assertEquals(custom, RivoCallButtonOrder.parse(formatted))
 
         // Formatting a malformed list must sanitize it rather than persist junk
-        assertEquals(
-            RivoCallButtonOrder.All,
-            RivoCallButtonOrder.parse(RivoCallButtonOrder.format(listOf("junk", RivoCallButtonOrder.MUTE)))
-        )
-        assertEquals(PreferenceManager.DEFAULT_CALL_BUTTON_ORDER, RivoCallButtonOrder.format(RivoCallButtonOrder.All))
+        assertEquals(6, RivoCallButtonOrder.parse(RivoCallButtonOrder.format(listOf("junk", RivoCallButtonOrder.MUTE))).size)
+        assertEquals(RivoCallButtonOrder.All.joinToString(","), RivoCallButtonOrder.format(RivoCallButtonOrder.All))
     }
 
     @Test

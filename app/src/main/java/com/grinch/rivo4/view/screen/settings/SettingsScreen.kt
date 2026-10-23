@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -332,7 +334,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = "Call Screen Buttons",
                 supporting = "Choose the position of each in-call button",
-                category = "Calling & SIM Accounts",
+                category = "Personalization & Display",
                 icon = Icons.Outlined.Dialpad,
                 keywords = listOf("call buttons", "rearrange", "button position", "call screen", "mute", "keypad", "hold"),
                 onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
@@ -515,7 +517,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Sensors,
                 keywords = listOf("proximity sensor", "screen off in call", "ear sensor", "blank screen call"),
                 targetHeadline = context.getString(R.string.settings_call_proximity_sensor),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Auto Speakerphone via Proximity",
@@ -524,7 +526,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.SpeakerPhone,
                 keywords = listOf("auto speaker", "proximity speaker", "hands free", "auto switch speaker"),
                 targetHeadline = context.getString(R.string.settings_call_auto_speaker_proximity),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Incoming Call UI Style",
@@ -533,7 +535,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Call,
                 keywords = listOf("incoming call ui", "call banner", "heads up call", "fullscreen call", "floating call"),
                 targetHeadline = context.getString(R.string.settings_call_incoming_ui),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Always Fullscreen Call Screen",
@@ -542,7 +544,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Fullscreen,
                 keywords = listOf("always fullscreen", "incoming call screen", "force fullscreen call"),
                 targetHeadline = context.getString(R.string.settings_call_always_fullscreen),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Open Call Screen on Answer",
@@ -551,7 +553,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.PhoneInTalk,
                 keywords = listOf("open call screen", "heads up notification", "answer notification", "incoming call notification", "open call screen on answer", "answer heads up"),
                 targetHeadline = context.getString(R.string.settings_open_call_screen_on_answer_title),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Pocket Mode",
@@ -560,7 +562,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.ScreenLockPortrait,
                 keywords = listOf("pocket mode", "accidental touch", "pocket dial"),
                 targetHeadline = "Pocket Mode",
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Call Log History Limit",
@@ -623,7 +625,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Wallpaper,
                 keywords = listOf("call background", "call wallpaper", "in call picture", "caller screen background"),
                 targetHeadline = context.getString(R.string.settings_call_default_background),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Unknown Caller Background",
@@ -632,7 +634,7 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Image,
                 keywords = listOf("unknown caller background", "unknown wallpaper", "stranger background"),
                 targetHeadline = context.getString(R.string.settings_call_unknown_background),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
+                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Speed Dial",
@@ -657,14 +659,6 @@ val searchItems = remember(isSearchActive) {
                 icon = Icons.Outlined.Swipe,
                 keywords = listOf("swipe", "gesture", "swipe to call", "swipe to message", "left", "right"),
                 onClick = { navigator.navigate(SwipeActionsScreenDestination) }
-            ),
-            SettingSearchItem(
-                title = context.getString(R.string.settings_call_log_customization_title),
-                supporting = context.getString(R.string.settings_call_log_customization_supporting),
-                category = "Calling & Behavior",
-                icon = Icons.Outlined.History,
-                keywords = listOf("call log", "call log actions", "click actions", "trailing button", "recents options", "call log customize"),
-                onClick = { navigator.navigate(CallLogCustomizationScreenDestination) }
             ),
             SettingSearchItem(
                 title = "Swipe Right Action",
@@ -1651,25 +1645,22 @@ val searchItems = remember(isSearchActive) {
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Surface(
-                            modifier = Modifier.size(60.dp),
-                            shape = logoMorph,
-                            color = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            shadowElevation = 3.dp
-                        ) {
-                            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(12.dp)) {
-                                Image(
-                                    painter = if (ProBrandingManager.isActive(prefs)) {
-                                        painterResource(R.drawable.pro_app_icon)
-                                    } else {
-                                        painterResource(R.drawable.logo)
-                                    },
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-                        }
+                        Image(
+                            painter = if (ProBrandingManager.isActive(prefs)) {
+                                painterResource(R.drawable.pro_app_icon)
+                            } else {
+                                painterResource(R.drawable.logo)
+                            },
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .graphicsLayer {
+                                    scaleX = 1.15f
+                                    scaleY = 1.15f
+                                }
+                                .clip(CircleShape)
+                        )
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1792,17 +1783,6 @@ val searchItems = remember(isSearchActive) {
                             onClick = {
                                 prefs.addSettingsHistory("Swipe Actions")
                                 navigator.navigate(SwipeActionsScreenDestination)
-                            }
-                        )
-                    }
-                    item {
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_call_log_customization_title),
-                            supporting = stringResource(R.string.settings_call_log_customization_supporting),
-                            leadingIcon = Icons.Outlined.History,
-                            onClick = {
-                                prefs.addSettingsHistory("Call Log Customization")
-                                navigator.navigate(CallLogCustomizationScreenDestination)
                             }
                         )
                     }

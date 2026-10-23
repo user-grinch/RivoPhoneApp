@@ -74,6 +74,7 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.CallScreenCustomizationScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.CallLogCustomizationScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.TypographyScreenDestination
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -570,6 +571,14 @@ fun InterfaceScreen(
                                 supporting = stringResource(R.string.call_screen_customization_supporting),
                                 leadingIcon = Icons.Outlined.Dialpad,
                                 onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_call_log_customization_title),
+                                supporting = stringResource(R.string.settings_call_log_customization_supporting),
+                                leadingIcon = Icons.Outlined.History,
+                                onClick = { navigator.navigate(CallLogCustomizationScreenDestination) }
                             )
                         }
                     }

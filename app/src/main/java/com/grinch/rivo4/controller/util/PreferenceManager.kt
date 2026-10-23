@@ -614,8 +614,13 @@ class PreferenceManager(context: Context) {
         const val VIDEO_AD_REMINDER_OFF = 0
         const val VIDEO_AD_REMINDER_SIX_HOURS = 1
         const val VIDEO_AD_REMINDER_ALWAYS = 2
+        const val VIDEO_AD_REMINDER_INTERVAL_MILLIS = 6 * 60 * 60 * 1000L
         const val KEY_PRO_BRANDING_DISABLED = "pro_branding_disabled"
         const val KEY_SELECTED_APP_ICON = "selected_app_icon"
+
+        fun shouldShowVideoAdReminder(mode: Int, lastShown: Long, now: Long): Boolean =
+            mode == VIDEO_AD_REMINDER_SIX_HOURS &&
+                now - lastShown >= VIDEO_AD_REMINDER_INTERVAL_MILLIS
 
         val EXCLUDED_KEYS = setOf(
             KEY_APP_USAGE_SECONDS,
@@ -926,8 +931,11 @@ class PreferenceManager(context: Context) {
     fun shouldShowVideoAdReminder(now: Long = System.currentTimeMillis()): Boolean {
         return when (getVideoAdReminderMode()) {
             VIDEO_AD_REMINDER_ALWAYS -> true
-            VIDEO_AD_REMINDER_SIX_HOURS ->
-                now - getLong(KEY_LAST_VIDEO_AD_REMINDER, 0L) >= 6 * 60 * 60 * 1000L
+            VIDEO_AD_REMINDER_SIX_HOURS -> shouldShowVideoAdReminder(
+                VIDEO_AD_REMINDER_SIX_HOURS,
+                getLong(KEY_LAST_VIDEO_AD_REMINDER, 0L),
+                now
+            )
             else -> false
         }
     }

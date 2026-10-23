@@ -117,8 +117,7 @@ fun AZListScroll(
 
     val adsEnabled = remember(settingsState) {
         com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED &&
-            prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true) &&
-            !prefs.isSupporter()
+            prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)
     }
 
     val alphabetIndices = remember(finalGrouped, header != null, showSectionHeaders, adsEnabled) {

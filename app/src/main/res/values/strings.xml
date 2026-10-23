@@ -1262,6 +1262,10 @@ Please consider donating via Patreon to support development.</string>
     <string name="support_ads_enabled_pro">Ads enabled - Pro perks active</string>
     <string name="support_tip_jar_pro">Tip Jar purchase - Pro perks active</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks active</string>
-    <string name="support_choose_app_icon_title">Choose dialer icon and name</string>
+    <string name="support_rewarded_pro">Rewarded video - Pro is active for one day</string>
+    <string name="support_pro_active_reason">Rivo Pro is active: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro is not active. Choose a support option below.</string>
+    <string name="support_pro_foss_reason">Rivo Pro is available in the Play Store build. Patreon supports FOSS development.</string>
+    <string name="support_choose_app_icon_title">Choose Branding</string>
     <string name="support_choose_app_icon_desc">Choose the dialer launcher icon and label together. Nothing changes until you confirm and restart Rivo.</string>
 </resources>

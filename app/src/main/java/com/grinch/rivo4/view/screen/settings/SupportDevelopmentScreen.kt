@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,7 +60,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
     val settingsState by prefs.settingsChanged.collectAsState()
     val rewardedAdManager = koinInject<RewardedAdManager>()
 
-    val isPro by remember(settingsState) { mutableStateOf(prefs.isProStatus()) }
     val isSupporter by remember(settingsState) { mutableStateOf(prefs.isSupporter()) }
     val enableAds by remember(settingsState) {
         mutableStateOf(
@@ -90,14 +90,15 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
         ProBrandingManager.apply(context, prefs)
     }
 
-    // Check if pro should be active (tip jar purchase, patreon, or ads enabled)
+    // Ads-enabled access is intentional: it funds the app while keeping Pro perks small.
     val shouldBePro = isPlayStoreBuild &&
         (isSupporter || enableAds || prefs.hasAdSupportedPro())
     val proSource = when {
+        !isPlayStoreBuild -> stringResource(R.string.support_pro_foss_reason)
         isSupporter -> stringResource(R.string.support_tip_jar_pro)
-        prefs.hasAdSupportedPro() -> "Rewarded video Pro is active for today"
-        enableAds && isPlayStoreBuild -> stringResource(R.string.support_ads_enabled_pro)
-        else -> ""
+        prefs.hasAdSupportedPro() -> stringResource(R.string.support_rewarded_pro)
+        enableAds -> stringResource(R.string.support_ads_enabled_pro)
+        else -> stringResource(R.string.support_pro_not_active)
     }
 
     val scope = rememberCoroutineScope()
@@ -238,6 +239,21 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = if (shouldBePro) {
+                            stringResource(R.string.support_pro_active_reason, proSource)
+                        } else {
+                            proSource
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (shouldBePro) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }
@@ -480,8 +496,9 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
 
     if (showAppIconPicker) {
         RivoDialog(
+            modifier = Modifier.widthIn(max = 320.dp),
             onDismissRequest = { showAppIconPicker = false },
-            title = "Choose dialer icon and name",
+            title = stringResource(R.string.support_choose_app_icon_title),
             icon = Icons.Default.Apps,
             confirmAction = RivoDialogAction(
                 label = stringResource(R.string.action_confirm),
@@ -503,13 +520,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                 modifier = Modifier.padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Choose how Rivo appears on your home screen. Changes are staged until you confirm and restart.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 AppIconOptions(
                     selectedIcon = pendingAppIcon,
                     onIconSelected = { iconName ->
@@ -770,34 +780,20 @@ private fun AppIconOption(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                shape = CircleShape,
-                color = if (iconName == "pro") Color.Transparent else MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(56.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    if (iconName == "pro") {
-                        Image(
-                            painter = painterResource(R.drawable.pro_app_icon),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(R.drawable.logo),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp)
-                                .clip(CircleShape)
-                        )
+            Image(
+                painter = painterResource(
+                    if (iconName == "pro") R.drawable.pro_app_icon else R.drawable.logo
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(48.dp)
+                    .graphicsLayer {
+                        scaleX = 1.2f
+                        scaleY = 1.2f
                     }
-                }
-            }
+                    .clip(RoundedCornerShape(14.dp))
+            )
             Spacer(modifier = Modifier.width(14.dp))
             Column(
                 modifier = Modifier.weight(1f),
@@ -808,13 +804,6 @@ private fun AppIconOption(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
-                if (iconName == "pro" && !isEnabled) {
-                    Text(
-                        text = "Requires Rivo Pro",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
             RadioButton(
                 selected = isSelected,

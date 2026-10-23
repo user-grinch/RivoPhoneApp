@@ -98,13 +98,18 @@ object RivoCallButtonOrder {
             ?.filter { it in All }
             ?.distinct()
             .orEmpty()
-        val full = saved + All.filterNot { it in saved }
+        if (raw == PreferenceManager.DEFAULT_CALL_BUTTON_ORDER) {
+            return saved.filterNot { it in hidden }.ifEmpty { saved }
+        }
+        val available = All
+        val full = saved + available.filterNot { it in saved }
         val visible = full.filterNot { it in hidden }
         // If every button was hidden (stale pref from another device), fall back to the full grid
         return visible.ifEmpty { full }
     }
 
-    fun format(order: List<String>): String = parse(order.joinToString(",")).joinToString(",")
+    fun format(order: List<String>): String =
+        order.filter { it in All }.distinct().joinToString(",")
 }
 
 @Composable

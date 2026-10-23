@@ -52,7 +52,6 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.CallLogCustomizationScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.QuickResponsesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
@@ -369,90 +368,6 @@ fun CallAccountsScreen(
                             )
                         }
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_proximity_sensor),
-                                supporting = stringResource(R.string.settings_call_proximity_sensor_supporting),
-                                leadingIcon = Icons.Outlined.Sensors,
-                                checked = proximitySensor,
-                                onCheckedChange = {
-                                    proximitySensor = it
-                                    prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_auto_speaker_proximity),
-                                supporting = stringResource(R.string.settings_call_auto_speaker_proximity_supporting),
-                                leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
-                                checked = autoSpeakerProximity,
-                                onCheckedChange = {
-                                    autoSpeakerProximity = it
-                                    prefs.setBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, it)
-                                }
-                            )
-                        }
-                        item {
-                            Box(modifier = Modifier.padding(vertical = 4.dp)) {
-                                RivoVisualOptionSelectorRow(
-                                    headline = stringResource(R.string.settings_call_incoming_ui),
-                                    supporting = stringResource(R.string.settings_call_incoming_ui_supporting),
-                                    leadingIcon = Icons.Outlined.PhoneInTalk,
-                                    options = listOf(
-                                        stringResource(R.string.settings_call_incoming_ui_horizontal_swipe) to 0,
-                                        stringResource(R.string.settings_call_incoming_ui_buttons) to 1,
-                                        stringResource(R.string.settings_call_incoming_ui_slide_ios) to 2,
-                                        stringResource(R.string.settings_call_incoming_ui_vertical_swipe) to 3
-                                    ),
-                                    selectedValue = incomingCallUI,
-                                    onValueChange = {
-                                        incomingCallUI = it
-                                        prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
-                                    },
-                                    tileWidth = 110.dp,
-                                    tileHeight = 76.dp
-                                ) { value, _ ->
-                                    IncomingCallUiPreview(value)
-                                }
-                            }
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_always_fullscreen),
-                                supporting = stringResource(R.string.settings_call_always_fullscreen_supporting),
-                                leadingIcon = Icons.Outlined.Fullscreen,
-                                checked = alwaysFullScreenCalls,
-                                onCheckedChange = {
-                                    alwaysFullScreenCalls = it
-                                    prefs.setBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_open_call_screen_on_answer_title),
-                                supporting = stringResource(R.string.settings_open_call_screen_on_answer_supporting),
-                                leadingIcon = Icons.Outlined.PhoneInTalk,
-                                checked = openCallScreenOnAnswer,
-                                onCheckedChange = {
-                                    openCallScreenOnAnswer = it
-                                    prefs.setOpenCallScreenOnAnswerEnabled(it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = "Pocket Mode",
-                                supporting = "Prevent accidental touches during incoming calls when phone is in pocket",
-                                leadingIcon = Icons.Outlined.ScreenLockPortrait,
-                                checked = pocketMode,
-                                onCheckedChange = {
-                                    pocketMode = it
-                                    prefs.setBoolean(PreferenceManager.KEY_POCKET_MODE, it)
-                                }
-                            )
-                        }
-                        item {
                             RivoListItem(
                                 headline = "Quick Responses",
                                 supporting = "Manage canned SMS decline responses for incoming calls",
@@ -471,16 +386,6 @@ fun CallAccountsScreen(
                                 onCheckedChange = { enabled ->
                                     groupCallLogs = enabled
                                     prefs.setBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, enabled)
-                                }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_call_log_customization_title),
-                                supporting = stringResource(R.string.settings_call_log_customization_supporting),
-                                leadingIcon = Icons.Outlined.Tune,
-                                onClick = {
-                                    navigator.navigate(CallLogCustomizationScreenDestination)
                                 }
                             )
                         }
@@ -667,40 +572,6 @@ fun CallAccountsScreen(
                                 supporting = stringResource(R.string.settings_call_waiting_supporting),
                                 leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
                                 onClick = { showCallWaitingDialog = true }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    RivoExpressiveGroup(
-                        title = stringResource(R.string.settings_call_backgrounds_title),
-                        icon = Icons.Outlined.Wallpaper
-                    ) {
-                        item {
-                            CallBackgroundSettingTile(
-                                headline = stringResource(R.string.settings_call_default_background),
-                                supporting = if (defaultCallBg != null) {
-                                    stringResource(R.string.settings_call_default_background_set)
-                                } else {
-                                    stringResource(R.string.settings_call_default_background_none)
-                                },
-                                backgroundModel = defaultCallBg,
-                                icon = Icons.Outlined.Wallpaper,
-                                onClick = { showDefaultBgDialog = true }
-                            )
-                        }
-                        item {
-                            CallBackgroundSettingTile(
-                                headline = stringResource(R.string.settings_call_unknown_background),
-                                supporting = if (unknownCallBg != null) {
-                                    stringResource(R.string.settings_call_unknown_background_set)
-                                } else {
-                                    stringResource(R.string.settings_call_unknown_background_none)
-                                },
-                                backgroundModel = unknownCallBg,
-                                icon = Icons.AutoMirrored.Outlined.ContactSupport,
-                                onClick = { showUnknownBgDialog = true }
                             )
                         }
                     }
