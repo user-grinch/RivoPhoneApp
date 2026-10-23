@@ -56,6 +56,26 @@ class BackupViewModel(
                         contact.emails.forEach { email ->
                             append("EMAIL;TYPE=INTERNET:$email\n")
                         }
+                        if (!contact.nickname.isNullOrBlank()) {
+                            append("NICKNAME:${contact.nickname}\n")
+                        }
+                        contact.organizations.filter { it.company.isNotBlank() }.forEach { org ->
+                            append("ORG:${org.company}\n")
+                            if (!org.title.isNullOrBlank()) append("TITLE:${org.title}\n")
+                        }
+                        contact.websites.filter { it.url.isNotBlank() }.forEach { website ->
+                            append("URL:${website.url}\n")
+                        }
+                        contact.events.forEach { event ->
+                            if (event.date.isBlank()) return@forEach
+                            when (event.type) {
+                                android.provider.ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY -> append("BDAY:${event.date}\n")
+                                android.provider.ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY -> append("ANNIVERSARY:${event.date}\n")
+                            }
+                        }
+                        if (!contact.notes.isNullOrBlank()) {
+                            append("NOTE:${contact.notes.replace("\n", "\\n")}\n")
+                        }
                         append("END:VCARD\n")
                     }
                 }

@@ -1260,19 +1260,91 @@ fun ContactDetailsScreen(
                                     }
                                 }
 
-                                fullContact?.addresses?.filter { it.isNotBlank() }?.forEach { address ->
+                                fullContact?.addressEntries?.filter { it.address.isNotBlank() }?.forEach { addressEntry ->
                                     item {
                                         RivoListItem(
-                                            headline = address,
-                                            supporting = stringResource(R.string.label_address),
+                                            headline = addressEntry.address,
+                                            supporting = ContactTypeLabels.postalAddressTypeLabel(
+                                                context, addressEntry.type, addressEntry.label
+                                            ).ifBlank { stringResource(R.string.label_address) },
                                             leadingIcon = Icons.Default.LocationOn,
                                             isCompact = true,
                                             onClick = {
                                                 val intent = Intent(
                                                     Intent.ACTION_VIEW,
-                                                    Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+                                                    Uri.parse("geo:0,0?q=${Uri.encode(addressEntry.address)}")
                                                 )
                                                 context.startActivity(intent)
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.events?.filter { it.date.isNotBlank() }?.forEach { event ->
+                                    item {
+                                        RivoListItem(
+                                            headline = event.date,
+                                            supporting = ContactTypeLabels.eventTypeLabel(context, event.type, event.label),
+                                            leadingIcon = Icons.Default.Cake,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.organizations?.filter { it.company.isNotBlank() }?.forEach { org ->
+                                    item {
+                                        val orgSupporting = listOfNotNull(
+                                            org.title?.takeIf { it.isNotBlank() },
+                                            org.department?.takeIf { it.isNotBlank() }
+                                        ).joinToString(" · ")
+                                        RivoListItem(
+                                            headline = org.company,
+                                            supporting = orgSupporting.ifBlank { stringResource(R.string.contact_edit_organization_header) },
+                                            leadingIcon = Icons.Default.Work,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.websites?.filter { it.url.isNotBlank() }?.forEach { website ->
+                                    item {
+                                        RivoListItem(
+                                            headline = website.url,
+                                            supporting = ContactTypeLabels.websiteTypeLabel(context, website.type, website.label),
+                                            leadingIcon = Icons.Default.Language,
+                                            isCompact = true,
+                                            onClick = {
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse(website.url)
+                                                )
+                                                context.startActivity(intent)
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.relations?.filter { it.name.isNotBlank() }?.forEach { relation ->
+                                    item {
+                                        RivoListItem(
+                                            headline = relation.name,
+                                            supporting = ContactTypeLabels.relationTypeLabel(context, relation.type, relation.label),
+                                            leadingIcon = Icons.Default.Group,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
                                             }
                                         )
                                     }

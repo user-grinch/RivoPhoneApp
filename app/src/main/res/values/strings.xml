@@ -371,6 +371,25 @@
     <string name="contact_edit_add_email">Add Email</string>
     <string name="contact_edit_address_header">Address</string>
     <string name="contact_edit_add_address">Add Address</string>
+    <string name="contact_edit_events_header">Important Dates</string>
+    <string name="contact_edit_add_event">Add Date</string>
+    <string name="contact_edit_organization_header">Organization</string>
+    <string name="contact_edit_add_organization">Add Organization</string>
+    <string name="contact_edit_company">Company</string>
+    <string name="contact_edit_job_title">Job title</string>
+    <string name="contact_edit_department">Department</string>
+    <string name="contact_edit_websites_header">Websites</string>
+    <string name="contact_edit_add_website">Add Website</string>
+    <string name="contact_edit_website">Website</string>
+    <string name="contact_edit_relations_header">Relations</string>
+    <string name="contact_edit_add_relation">Add Relation</string>
+    <string name="contact_edit_relation">Relation</string>
+    <string name="website_type_homepage">Homepage</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profile</string>
+    <string name="website_type_work">Work</string>
+    <string name="website_type_home">Home</string>
+    <string name="website_type_ftp">FTP</string>
     <string name="contact_edit_notes_header">Notes</string>
 
     <!-- Dialpad -->

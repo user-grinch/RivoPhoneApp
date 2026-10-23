@@ -24,7 +24,11 @@ data class PrivateContactEntity(
     val phoneNumbersJson: String,
     val emailsJson: String,
     val addressesJson: String,
+    val addressEntriesJson: String? = null,
     val eventsJson: String,
+    val organizationsJson: String? = null,
+    val websitesJson: String? = null,
+    val relationsJson: String? = null,
     val photoUri: String? = null,
     val isFavorite: Boolean = false,
     val customRingtone: String? = null,
@@ -34,6 +38,13 @@ data class PrivateContactEntity(
     fun toContact(): Contact {
         val decodedPhones = runCatching { entityJson.decodeFromString<List<String>>(phoneNumbersJson) }.getOrDefault(emptyList())
         val decodedEmails = runCatching { entityJson.decodeFromString<List<String>>(emailsJson) }.getOrDefault(emptyList())
+        val decodedAddresses = runCatching { entityJson.decodeFromString<List<String>>(addressesJson) }.getOrDefault(emptyList())
+        val decodedAddressEntries = addressEntriesJson?.let {
+            runCatching { entityJson.decodeFromString<List<com.grinch.rivo4.modal.data.PostalAddressEntry>>(it) }.getOrDefault(emptyList())
+        } ?: emptyList()
+        // Legacy rows (v5) have no typed entries: derive them from the plain list with default types
+        val effectiveAddressEntries = if (decodedAddressEntries.isNotEmpty()) decodedAddressEntries
+        else decodedAddresses.map { com.grinch.rivo4.modal.data.PostalAddressEntry(address = it) }
         return Contact(
             id = "p$localId",
             name = name,
@@ -42,8 +53,18 @@ data class PrivateContactEntity(
             phones = decodedPhones.map { PhoneNumberEntry(it) },
             emails = decodedEmails,
             emailEntries = decodedEmails.map { EmailEntry(it) },
-            addresses = runCatching { entityJson.decodeFromString<List<String>>(addressesJson) }.getOrDefault(emptyList()),
+            addresses = decodedAddresses,
+            addressEntries = effectiveAddressEntries,
             events = runCatching { entityJson.decodeFromString<List<ContactEvent>>(eventsJson) }.getOrDefault(emptyList()),
+            organizations = organizationsJson?.let {
+                runCatching { entityJson.decodeFromString<List<com.grinch.rivo4.modal.data.OrganizationEntry>>(it) }.getOrDefault(emptyList())
+            } ?: emptyList(),
+            websites = websitesJson?.let {
+                runCatching { entityJson.decodeFromString<List<com.grinch.rivo4.modal.data.WebsiteEntry>>(it) }.getOrDefault(emptyList())
+            } ?: emptyList(),
+            relations = relationsJson?.let {
+                runCatching { entityJson.decodeFromString<List<com.grinch.rivo4.modal.data.RelationEntry>>(it) }.getOrDefault(emptyList())
+            } ?: emptyList(),
             photoUri = photoUri,
             isFavorite = isFavorite,
             customRingtone = customRingtone,
@@ -65,6 +86,11 @@ data class PrivateContactEntity(
             } else {
                 contact.emailEntries.map { it.address }.filter { it.isNotBlank() }
             }
+            val effectiveAddressEntries = if (contact.addressEntries.isNotEmpty()) {
+                contact.addressEntries
+            } else {
+                contact.addresses.map { com.grinch.rivo4.modal.data.PostalAddressEntry(address = it) }
+            }
             return PrivateContactEntity(
                 localId = if (contact.id.startsWith("p")) contact.id.substring(1).toLongOrNull() ?: 0L else 0L,
                 name = contact.formattedDisplayName.ifBlank { contact.name },
@@ -72,7 +98,11 @@ data class PrivateContactEntity(
                 phoneNumbersJson = entityJson.encodeToString(effectivePhones),
                 emailsJson = entityJson.encodeToString(effectiveEmails),
                 addressesJson = entityJson.encodeToString(contact.addresses),
+                addressEntriesJson = entityJson.encodeToString(effectiveAddressEntries),
                 eventsJson = entityJson.encodeToString(contact.events),
+                organizationsJson = entityJson.encodeToString(contact.organizations),
+                websitesJson = entityJson.encodeToString(contact.websites),
+                relationsJson = entityJson.encodeToString(contact.relations),
                 photoUri = contact.photoUri,
                 isFavorite = contact.isFavorite,
                 customRingtone = contact.customRingtone,
