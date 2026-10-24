@@ -19,10 +19,6 @@ data class SocialAppInfo(
 
 object SocialUtils {
 
-    /**
-     * Formats a raw phone number to international E.164 format (+15551234567).
-     * If formatting fails, cleans formatting symbols and preserves leading '+'.
-     */
     fun formatInternationalNumber(context: Context, rawNumber: String): String {
         val trimmed = rawNumber.trim()
         if (trimmed.isEmpty()) return ""
@@ -50,9 +46,6 @@ object SocialUtils {
         }
     }
 
-    /**
-     * Extracts only digits without '+' or punctuation for APIs like WhatsApp / Viber.
-     */
     fun cleanDigitsOnly(context: Context, rawNumber: String): String {
         val intl = formatInternationalNumber(context, rawNumber)
         return intl.replace(Regex("[^0-9]"), "")
@@ -229,11 +222,13 @@ object SocialUtils {
         }
     }
 
-    /**
-     * Queries and returns ONLY the supported social/messaging apps that are
-     * actually installed on the user's device.
-     */
-    fun getInstalledSocialApps(context: Context): List<SocialAppInfo> {
+    @Volatile
+    private var cachedSocialApps: List<SocialAppInfo>? = null
+
+    fun getInstalledSocialApps(context: Context, forceRefresh: Boolean = false): List<SocialAppInfo> {
+        if (!forceRefresh) {
+            cachedSocialApps?.let { return it }
+        }
         val pm = context.packageManager
         val list = mutableListOf<SocialAppInfo>()
 
@@ -395,6 +390,7 @@ object SocialUtils {
             )
         }
 
+        cachedSocialApps = list
         return list
     }
 }

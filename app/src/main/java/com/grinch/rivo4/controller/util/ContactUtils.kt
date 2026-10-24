@@ -47,9 +47,6 @@ object ContactUtils {
         }
     }
 
-    /**
-     * Helper to determine whether a contact is stored locally (either as primary account or in its linked accounts).
-     */
     fun isContactLocal(contact: Contact, availableAccounts: List<Account> = emptyList()): Boolean {
         if (contact.isPrivate) return false
         if (isLocalAccount(contact.accountType, contact.accountName, availableAccounts)) return true

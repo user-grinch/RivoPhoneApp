@@ -141,10 +141,6 @@ fun formatPhoneNumber(number: String, showCountryCode: Boolean? = null): String 
             // Strip leading "+" and country calling code if present
             var stripped = formattedStandard.trim()
             if (stripped.startsWith("+")) {
-                // Remove the plus and the country dialing code (1 to 4 digits followed by space/separator)
-                // Examples: +1 (555) 123-4567 -> (555) 123-4567
-                // +44 20 7946 0958 -> 020 7946 0958 or 20 7946 0958
-                // +91 98765 43210 -> 98765 43210
                 stripped = stripped.replace(Regex("^\\+\\d{1,4}[\\s\\-]"), "")
                 if (stripped.startsWith("+")) {
                     stripped = stripped.replace(Regex("^\\+\\d{1,4}"), "")

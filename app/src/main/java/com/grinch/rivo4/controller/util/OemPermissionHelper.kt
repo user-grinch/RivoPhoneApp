@@ -150,9 +150,6 @@ object OemPermissionHelper {
         }
     }
 
-    /**
-     * Attempts to open the OEM-specific permissions screen (e.g. background audio, floating window).
-     */
     fun openOemPermissions(context: Context): Boolean {
         val intents = mutableListOf<Intent>()
 
@@ -261,14 +258,8 @@ object OemPermissionHelper {
         return launchFirstWorkingIntent(context, intents)
     }
 
-    /**
-     * Alias for opening OEM background pop-up / lockscreen permission screen (e.g. Vivo/iQOO).
-     */
     fun openBackgroundPopupPermission(context: Context): Boolean = openOemPermissions(context)
 
-    /**
-     * Attempts to launch the Autostart settings across all OEMs.
-     */
     fun openAutostartSettings(context: Context): Boolean {
         val intents = mutableListOf<Intent>()
 
@@ -414,9 +405,6 @@ object OemPermissionHelper {
         return launchFirstWorkingIntent(context, intents)
     }
 
-    /**
-     * Opens battery saver settings across all OEMs.
-     */
     fun openBatterySaverSettings(context: Context): Boolean {
         val intents = mutableListOf<Intent>()
 

@@ -12,6 +12,7 @@ import org.koin.core.context.startKoin
 import com.grinch.rivo4.view.components.ad.AdPreloader
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.ProBrandingManager
+import kotlinx.coroutines.launch
 
 class RivoApp : Application(), ImageLoaderFactory {
 
@@ -52,6 +53,10 @@ class RivoApp : Application(), ImageLoaderFactory {
         }
 
         AdPreloader.init(this@RivoApp)
+
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            com.grinch.rivo4.controller.util.SocialUtils.getInstalledSocialApps(this@RivoApp)
+        }
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}

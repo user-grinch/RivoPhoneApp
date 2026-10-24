@@ -230,10 +230,6 @@ private fun harmonizeHue(sourceHue: Float, targetHue: Float, maxShiftDegrees: Fl
 private const val NEUTRAL_CHROMA_CAP = 4f
 private const val NEUTRAL_VARIANT_CHROMA_CAP = 8f
 
-/**
- * Tonal palette styles for dynamic (wallpaper derived) colour.
- * Each style reshapes the seed colour into a distinct Material 3 palette.
- */
 @Immutable
 enum class RivoPaletteStyle(
     val id: String,
@@ -415,7 +411,6 @@ fun rivoColorSchemeFromSeed(
     }
 }
 
-/** Compact three-swatch preview of a tonal palette style. */
 fun rivoPaletteSwatches(
     seedArgb: Int,
     style: RivoPaletteStyle,

@@ -129,13 +129,6 @@ object RivoListItemDefaults {
     fun shape(): Shape = MaterialTheme.shapes.extraLarge
 }
 
-/**
- * Calculates continuous grouped card corner shapes for items in a section.
- * First item: rounded top corners
- * Middle items: subtle inner corners
- * Last item: rounded bottom corners
- * Single item: all corners rounded
- */
 fun rivoGroupedItemShape(
     index: Int,
     total: Int,
@@ -150,9 +143,6 @@ fun rivoGroupedItemShape(
     }
 }
 
-/**
- * Dynamic grouped item shape that scales its outer and inner corner radii with [LocalCardRoundness].
- */
 @Composable
 fun rivoGroupedItemShape(
     index: Int,
@@ -166,9 +156,6 @@ fun rivoGroupedItemShape(
     return rivoGroupedItemShape(index, total, outerDp, innerDp)
 }
 
-/**
- * Reusable container for grouped card items matching the Recents M3 Expressive design.
- */
 @Composable
 fun RivoGroupedCardContainer(
     index: Int,
@@ -212,12 +199,6 @@ class RivoGroupScope {
     }
 }
 
-/**
- * Material 3 Expressive grouped section container.
- * Renders an external section header (if title/icon provided) and styles children as
- * connected cards with dynamic corner radii (top rounded 20dp, middle subtle 4dp, bottom rounded 20dp, or single 20dp),
- * separated by 3dp hairline gaps matching the Recents, Contacts, and Call Recordings design.
- */
 @Composable
 fun RivoExpressiveGroup(
     modifier: Modifier = Modifier,
@@ -815,7 +796,6 @@ fun RivoListItem(
     }
 }
 
-/** Material 3 Expressive switch with a checkmark thumb when enabled. */
 @Composable
 fun RivoSwitch(
     checked: Boolean,

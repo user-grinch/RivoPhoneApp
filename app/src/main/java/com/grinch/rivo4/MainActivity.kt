@@ -17,6 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.BackHandler
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.isAlreadyDefaultDialer
@@ -236,6 +238,15 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 navController = navController,
                                 defaultTransitions = defaultTransitions
                             )
+
+                            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                            val canPopBack = remember(currentBackStackEntry) {
+                                navController.previousBackStackEntry != null
+                            }
+
+                            BackHandler(enabled = !predictiveBackEnabled && canPopBack) {
+                                navController.popBackStack()
+                            }
 
                         LaunchedEffect(showOnboarding, pendingDestinationAfterOnboarding) {
                             if (!showOnboarding && pendingDestinationAfterOnboarding != null) {

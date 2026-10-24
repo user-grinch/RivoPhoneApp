@@ -35,10 +35,6 @@ data class AccountEntry(
     val type: String?
 )
 
-/**
- * Organization data (vCard ORG / TITLE, RFC 6350 §6.6.4 / §6.6.1).
- * Mirrors ContactsContract.CommonDataKinds.Organization.
- */
 @Immutable
 @Serializable
 data class OrganizationEntry(
@@ -47,10 +43,6 @@ data class OrganizationEntry(
     val department: String? = null
 )
 
-/**
- * Website data (vCard URL, RFC 6350 §6.7.3).
- * Mirrors ContactsContract.CommonDataKinds.Website.
- */
 @Immutable
 @Serializable
 data class WebsiteEntry(
@@ -59,10 +51,6 @@ data class WebsiteEntry(
     val label: String? = null
 )
 
-/**
- * Relation data (vCard RELATED, RFC 6350 §6.6.6).
- * Mirrors ContactsContract.CommonDataKinds.Relation.
- */
 @Immutable
 @Serializable
 data class RelationEntry(
@@ -71,10 +59,6 @@ data class RelationEntry(
     val label: String? = null
 )
 
-/**
- * Typed postal address (vCard ADR with TYPE parameter, RFC 6350 §6.3.1).
- * Mirrors ContactsContract.CommonDataKinds.StructuredPostal types.
- */
 @Immutable
 @Serializable
 data class PostalAddressEntry(

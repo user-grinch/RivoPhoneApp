@@ -15,9 +15,6 @@ object CallUiHelper {
 
     private const val TAG = "CallUiHelper"
 
-    /**
-     * Checks whether the device is currently locked or the screen is off (blacked).
-     */
     fun isDeviceLocked(context: Context): Boolean {
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
@@ -29,9 +26,6 @@ object CallUiHelper {
         return isLocked || !isInteractive
     }
 
-    /**
-     * Determines whether an incoming call should immediately open full-screen.
-     */
     fun shouldShowFullScreen(context: Context, preferenceManager: PreferenceManager): Boolean {
         if (isDeviceLocked(context)) {
             Log.d(TAG, "Full-screen: device is locked or screen off")
@@ -52,9 +46,6 @@ object CallUiHelper {
         return false
     }
 
-    /**
-     * Checks whether the system launcher (home screen) is the current foreground app.
-     */
     fun isHomeScreenForeground(context: Context): Boolean {
         val launcherPackages = getLauncherPackages(context)
         if (launcherPackages.isEmpty()) return false
@@ -100,9 +91,6 @@ object CallUiHelper {
         return false
     }
 
-    /**
-     * Finds installed launcher / home screen packages on the device.
-     */
     fun getLauncherPackages(context: Context): Set<String> {
         val packages = mutableSetOf<String>()
         try {

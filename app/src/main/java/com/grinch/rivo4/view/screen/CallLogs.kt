@@ -28,13 +28,7 @@ import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -53,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
-import com.grinch.rivo4.controller.util.BlockedNumbersManager
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.areNumbersEqual
@@ -331,81 +324,12 @@ fun CallLogFullScreen(
                                             overflow = TextOverflow.Ellipsis
                                         )
                                     }
-                                    Box {
-                                        var showMenu by remember { mutableStateOf(false) }
+                                    if (filteredLogsByContact.isNotEmpty()) {
                                         RivoTopBarIconButton(
-                                            onClick = { showMenu = true },
-                                            icon = Icons.Default.MoreVert,
-                                            contentDescription = stringResource(R.string.content_desc_options)
+                                            onClick = { showDeleteAllDialog = true },
+                                            icon = Icons.Outlined.DeleteSweep,
+                                            contentDescription = stringResource(R.string.content_desc_clear_history)
                                         )
-                                        DropdownMenu(
-                                            expanded = showMenu,
-                                            onDismissRequest = { showMenu = false }
-                                        ) {
-                                            if (matchedContact != null) {
-                                                DropdownMenuItem(
-                                                    text = { Text(stringResource(R.string.swipe_action_view_contact)) },
-                                                    leadingIcon = { Icon(Icons.Outlined.Person, null) },
-                                                    onClick = {
-                                                        showMenu = false
-                                                        navigator.navigate(ContactDetailsScreenDestination(contactId = matchedContact.id))
-                                                    }
-                                                )
-                                                DropdownMenuItem(
-                                                    text = { Text(stringResource(R.string.action_edit)) },
-                                                    leadingIcon = { Icon(Icons.Outlined.Edit, null) },
-                                                    onClick = {
-                                                        showMenu = false
-                                                        navigator.navigate(ContactEditScreenDestination(contactId = matchedContact.id))
-                                                    }
-                                                )
-                                            } else {
-                                                DropdownMenuItem(
-                                                    text = { Text(stringResource(R.string.contact_add_to_contacts)) },
-                                                    leadingIcon = { Icon(Icons.Outlined.PersonAdd, null) },
-                                                    onClick = {
-                                                        showMenu = false
-                                                        showAddContactSheet = true
-                                                    }
-                                                )
-                                            }
-                                            if (filteredLogsByContact.isNotEmpty()) {
-                                                DropdownMenuItem(
-                                                    text = { Text(stringResource(R.string.content_desc_clear_history)) },
-                                                    leadingIcon = { Icon(Icons.Outlined.DeleteSweep, null) },
-                                                    onClick = {
-                                                        showMenu = false
-                                                        showDeleteAllDialog = true
-                                                    }
-                                                )
-                                            }
-                                            val isNumberBlocked = remember(targetPhoneNumber) {
-                                                BlockedNumbersManager.isBlocked(context, targetPhoneNumber)
-                                            }
-                                            DropdownMenuItem(
-                                                text = { Text(stringResource(if (isNumberBlocked) R.string.action_unblock_number else R.string.action_block_number)) },
-                                                leadingIcon = { Icon(Icons.Outlined.Block, null) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    if (isNumberBlocked) {
-                                                        BlockedNumbersManager.unblock(context, targetPhoneNumber)
-                                                        android.widget.Toast.makeText(context, context.getString(R.string.toast_unblocked_number, targetPhoneNumber), android.widget.Toast.LENGTH_SHORT).show()
-                                                    } else {
-                                                        BlockedNumbersManager.block(context, targetPhoneNumber)
-                                                        android.widget.Toast.makeText(context, context.getString(R.string.toast_blocked_number, targetPhoneNumber), android.widget.Toast.LENGTH_SHORT).show()
-                                                    }
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = { Text(stringResource(R.string.action_copy_number)) },
-                                                leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) },
-                                                onClick = {
-                                                    showMenu = false
-                                                    clipboardManager.setText(AnnotatedString(targetPhoneNumber))
-                                                    android.widget.Toast.makeText(context, context.getString(R.string.number_copied_toast), android.widget.Toast.LENGTH_SHORT).show()
-                                                }
-                                            )
-                                        }
                                     }
                                 }
                             }
@@ -415,13 +339,11 @@ fun CallLogFullScreen(
                                 navigator = navigator,
                                 actions = {
                                     if (filteredLogsByContact.isNotEmpty()) {
-                                        IconButton(onClick = { showDeleteAllDialog = true }) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.DeleteSweep,
-                                                contentDescription = stringResource(R.string.content_desc_clear_history),
-                                                tint = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        }
+                                        RivoTopBarIconButton(
+                                            onClick = { showDeleteAllDialog = true },
+                                            icon = Icons.Outlined.DeleteSweep,
+                                            contentDescription = stringResource(R.string.content_desc_clear_history)
+                                        )
                                     }
                                 }
                             )

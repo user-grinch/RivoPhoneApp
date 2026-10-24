@@ -334,7 +334,9 @@ fun ContactDetailsScreen(
     val backgroundNoTargetMessage = stringResource(R.string.contact_call_background_no_target)
 
     LaunchedEffect(backgroundContactId, backgroundNumbers) {
-        callBackground = CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+        callBackground = withContext(Dispatchers.IO) {
+            CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+        }
     }
 
     val backgroundPickerLauncher = rememberLauncherForActivityResult(
@@ -818,14 +820,6 @@ fun ContactDetailsScreen(
                                     )
                                 }
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.call_notes_title)) },
-                                    leadingIcon = { Icon(Icons.Outlined.EditNote, contentDescription = null) },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        showCallNotesSheet = true
-                                    }
-                                )
-                                DropdownMenuItem(
                                     text = {
                                         Text(
                                             if (contactBlocked) stringResource(R.string.contact_unblock)
@@ -893,14 +887,6 @@ fun ContactDetailsScreen(
                                     onClick = {
                                         showOverflowMenu = false
                                         navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.call_notes_title)) },
-                                    leadingIcon = { Icon(Icons.Outlined.EditNote, contentDescription = null) },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        showCallNotesSheet = true
                                     }
                                 )
                                 DropdownMenuItem(
