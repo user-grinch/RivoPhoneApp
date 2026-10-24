@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Lucrări în curs</string>
     <string name="support_ways_title">Modalități de a sprijini</string>
     <string name="support_video_reminders">Reamintiri anunțuri video</string>
+    <string name="support_video_reminders_supporting">Arată un buton de suport la fiecare 6 ore</string>
     <string name="support_patreon_instead">Suport pentru Patreon în schimb</string>
     <string name="support_restart_required">Repornire necesară</string>
     <string name="support_restart_now">Repornește acum</string>
@@ -182,8 +183,13 @@
     <string name="contact_create_new_desc">Salvare ca contact nou</string>
     <string name="contact_add_to_existing">Adăugați la un contact existent</string>
     <string name="contact_add_to_existing_desc">Adăugați acest număr la o persoană de contact existentă</string>
+    <string name="contact_show_all_social_apps">Arată toate aplicațiile sociale (%1$d)</string>
+    <string name="contact_show_less">Arată mai puțin</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Al doilea nume</string>
+    <string name="contact_edit_events_header">Date importante</string>
+    <string name="contact_edit_add_event">Adăugare dată</string>
+    <string name="contact_edit_select_date">Selectați data</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -458,7 +464,6 @@ Text alb</string>
     <string name="action_select_all">Selectează tot</string>
     <string name="action_select_none">Deselectează tot</string>
     <string name="settings_private_secret_code">Cod Dialpad secret</string>
-    <string name="about_rate_on_google_play">Evaluează pe Google Play</string>
     <string name="about_supporter_badge">Suportator ⭐</string>
     <string name="settings_group_style_appearance">Stilul &amp; Aspectul</string>
     <string name="priority_contacts_select_title">Selectare contact prioritar</string>

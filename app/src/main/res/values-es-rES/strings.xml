@@ -77,6 +77,7 @@
     <string name="settings_work_in_progress">Trabajo en curso</string>
     <string name="support_ways_title">Formas de apoyo</string>
     <string name="support_video_reminders">Recordatorios de anuncios de vídeo</string>
+    <string name="support_video_reminders_supporting">Mostrar un botón de soporte cada 6 horas</string>
     <string name="support_patreon_instead">Apoyo en Patreon en su lugar</string>
     <string name="support_restart_required">Es necesario reiniciar</string>
     <string name="support_restart_now">Reiniciar ahora</string>
@@ -322,6 +323,8 @@
     <string name="contact_event_generic">Evento</string>
     <string name="contact_recent_activity_title">Actividad reciente</string>
     <string name="contact_show_full_history">Ver historial completo</string>
+    <string name="contact_show_all_social_apps">Mostrar todas las aplicaciones sociales (%1$d)</string>
+    <string name="contact_show_less">Mostrar menos</string>
     <string name="contact_settings_title">Ajustes de contactos</string>
     <string name="contact_custom_ringtone">Tono personalizado</string>
     <string name="contact_select_ringtone">Seleccionar tono</string>
@@ -360,6 +363,9 @@
     <string name="contact_edit_add_email">Agregar correo electrónico</string>
     <string name="contact_edit_address_header">Dirección</string>
     <string name="contact_edit_add_address">Agregar dirección</string>
+    <string name="contact_edit_events_header">Fechas importantes</string>
+    <string name="contact_edit_add_event">Añadir fecha</string>
+    <string name="contact_edit_select_date">Seleccionar fecha</string>
     <string name="contact_edit_notes_header">Notas</string>
     <!-- Dialpad -->
     <string name="dialpad_title">Marcador</string>
@@ -1190,7 +1196,6 @@ texto blanco</string>
     <string name="action_select_all">Seleccionar todo</string>
     <string name="action_select_none">Deseleccionar todo</string>
     <string name="settings_private_secret_code">Código de marcador secreto</string>
-    <string name="about_rate_on_google_play">Valorar en Google Play</string>
     <string name="about_supporter_badge">Apoyador ⭐</string>
     <string name="settings_group_style_appearance">Estilo &amp; Apariencia</string>
     <string name="priority_contacts_select_title">Seleccionar contacto prioritario</string>
