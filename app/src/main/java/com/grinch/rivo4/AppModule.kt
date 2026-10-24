@@ -3,6 +3,7 @@ package com.grinch.rivo4
 import androidx.room.Room
 import com.grinch.rivo4.modal.db.RivoDatabase
 import com.grinch.rivo4.controller.BackupViewModel
+import com.grinch.rivo4.controller.ContactBackupManager
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
