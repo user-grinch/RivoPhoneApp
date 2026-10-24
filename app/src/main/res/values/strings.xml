@@ -723,7 +723,9 @@ White text</string>
     <string name="settings_backup_export_contacts">Export Contacts</string>
     <string name="settings_backup_export_contacts_supporting">Save contacts to a VCF file</string>
     <string name="settings_backup_import_contacts">Import Contacts</string>
-    <string name="settings_backup_import_contacts_supporting">Restore contacts from a VCF file</string>
+    <string name="settings_backup_import_contacts_supporting">Restore contacts from a VCF or encrypted VCF backup</string>
+    <string name="settings_backup_import_encrypted_contacts">Import Encrypted Contact Backup</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Select a .vcf.enc file and enter the same backup password first</string>
     <string name="settings_backup_encryption">Encrypt contact backups</string>
     <string name="settings_backup_encryption_supporting">Use AES encryption for manual and automatic contact backups</string>
     <string name="settings_backup_password">Backup password</string>
