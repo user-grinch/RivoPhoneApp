@@ -75,6 +75,7 @@
     <string name="settings_work_in_progress">正在进行的工作</string>
     <string name="support_ways_title">支持方式</string>
     <string name="support_video_reminders">视频广告提醒</string>
+    <string name="support_video_reminders_supporting">每隔6小时显示一个支持按钮</string>
     <string name="support_patreon_instead">在Patreon上提供支持</string>
     <string name="support_restart_required">需要重启</string>
     <string name="support_restart_now">现在重启</string>
@@ -295,6 +296,8 @@
     <string name="contact_event_generic">事件</string>
     <string name="contact_recent_activity_title">近期活动</string>
     <string name="contact_show_full_history">显示完整历史</string>
+    <string name="contact_show_all_social_apps">显示所有社交应用 (%1$d)</string>
+    <string name="contact_show_less">显示更少的</string>
     <string name="contact_settings_title">联系人设置</string>
     <string name="contact_custom_ringtone">自定义铃声</string>
     <string name="contact_select_ringtone">选择铃声</string>
@@ -322,6 +325,40 @@
     <string name="contact_edit_first_name">名</string>
     <string name="contact_edit_middle_name">中间名</string>
     <string name="contact_edit_last_name">姓</string>
+    <string name="contact_edit_events_header">重要日期</string>
+    <string name="contact_edit_add_event">添加日期</string>
+    <string name="contact_edit_select_date">选择日期</string>
+    <string name="contact_edit_organization_header">组织</string>
+    <string name="contact_edit_add_organization">添加组织</string>
+    <string name="contact_edit_company">公司</string>
+    <string name="contact_edit_job_title">职务</string>
+    <string name="contact_edit_department">部门</string>
+    <string name="contact_edit_websites_header">网站</string>
+    <string name="contact_edit_add_website">添加网站</string>
+    <string name="contact_edit_website">网址</string>
+    <string name="contact_edit_relations_header">关系</string>
+    <string name="contact_edit_add_relation">添加关系</string>
+    <string name="contact_edit_relation">关系</string>
+    <string name="website_type_homepage">主页</string>
+    <string name="website_type_blog">博客</string>
+    <string name="website_type_profile">个人信息</string>
+    <string name="website_type_work">工作</string>
+    <string name="website_type_home">首页</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">助理</string>
+    <string name="relation_type_brother">Brother</string>
+    <string name="relation_type_child">儿童</string>
+    <string name="relation_type_domestic_partner">国内合作伙伴</string>
+    <string name="relation_type_father">神器</string>
+    <string name="relation_type_friend">朋友</string>
+    <string name="relation_type_manager">管理器</string>
+    <string name="relation_type_mother">Mother</string>
+    <string name="relation_type_parent">父级</string>
+    <string name="relation_type_partner">合作伙伴</string>
+    <string name="relation_type_referred_by">引用者</string>
+    <string name="relation_type_relative">相对的</string>
+    <string name="relation_type_sister">修女会</string>
+    <string name="relation_type_spouse">配偶：</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -385,6 +422,7 @@
     <string name="pref_system_font_toggle">使用系统字体</string>
     <string name="pref_system_font_toggle_description">使用系统字体设置</string>
     <string name="typography_title">图形</string>
+    <string name="font_picker_dialog_title">选择字体</string>
     <string name="typography_preview_text">飞速的棕色恐龙跳过已经落后的狗龙</string>
     <string name="font_size_small">小的</string>
     <string name="font_size_medium">中</string>
@@ -438,7 +476,9 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">您的运营商的语音信箱访问号码。</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">特殊属性</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder 属性</string>
+    <string name="about_shizucallrecorder_short_desc">通话录音引擎</string>
     <string name="about_shizucallrecorder_desc">Rivo采用了ShizuCallRecorder的通话录制代码（根据GPLv3许可，加上第7节的补充条款）。 Rivo是一个独立的项目，没有正式隶属于ShizuCallRecorder，也没有得到他的认可。\n\n正在寻找一个不带广告或货币化的专用的、免费的、公开的和尊重隐私的替代方法吗？查看原始的 ShizuCallRecorder 项目。</string>
     <string name="about_shizucallrecorder_action">在 GitHub 上查看 ShizuCallRecorder</string>
     <string name="call_recording_shizuku_attribution_title">通话录音引擎</string>
@@ -448,6 +488,8 @@
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder 作者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">切换到列表视图</string>
+    <string name="favorites_switch_to_grid">切换到网格视图</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -605,6 +647,7 @@
     <string name="action_select_all">选择所有</string>
     <string name="action_select_none">取消全选</string>
     <string name="settings_private_secret_code">密钥拨号键盘</string>
+    <string name="about_rate_on_google_play">给这个应用评分</string>
     <string name="about_supporter_badge">支持者:star：</string>
     <string name="settings_group_style_appearance">样式 &amp; 外观</string>
     <string name="priority_contacts_select_title">选择优先级联系人</string>

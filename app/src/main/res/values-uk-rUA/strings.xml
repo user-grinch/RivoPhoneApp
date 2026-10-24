@@ -72,6 +72,7 @@
     <string name="settings_work_in_progress">Робота в процесі</string>
     <string name="support_ways_title">Способи підтримки</string>
     <string name="support_video_reminders">Нагадування відеореклами</string>
+    <string name="support_video_reminders_supporting">Показувати кнопку підтримки кожні 6 годин</string>
     <string name="support_patreon_instead">Підтримати на Patreon замість цього</string>
     <string name="support_restart_required">Необхідне перезавантаження</string>
     <string name="support_restart_now">Перезавантажити</string>
@@ -177,8 +178,43 @@
     <string name="contact_create_new_desc">Зберегти як новий контакт</string>
     <string name="contact_add_to_existing">Додати до існуючого контакту</string>
     <string name="contact_add_to_existing_desc">Додати цей номер до існуючого контакту</string>
+    <string name="contact_show_less">Показати менше</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">По батькові</string>
+    <string name="contact_edit_events_header">Важливі дати</string>
+    <string name="contact_edit_add_event">Додати дату</string>
+    <string name="contact_edit_select_date">Виберіть дату</string>
+    <string name="contact_edit_organization_header">Організація</string>
+    <string name="contact_edit_add_organization">Добавити орґанізацію</string>
+    <string name="contact_edit_company">Організація</string>
+    <string name="contact_edit_job_title">Посада</string>
+    <string name="contact_edit_department">Відділ</string>
+    <string name="contact_edit_websites_header">Сайти</string>
+    <string name="contact_edit_add_website">Добавити світлину</string>
+    <string name="contact_edit_website">Вебсайт</string>
+    <string name="contact_edit_relations_header">Зв\'язки</string>
+    <string name="contact_edit_add_relation">Додати зв\'язок</string>
+    <string name="contact_edit_relation">Відношення</string>
+    <string name="website_type_homepage">Домашня сторінка</string>
+    <string name="website_type_blog">Блог</string>
+    <string name="website_type_profile">Анкета</string>
+    <string name="website_type_work">Праця</string>
+    <string name="website_type_home">Домашній екран</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Помічник</string>
+    <string name="relation_type_brother">Брат</string>
+    <string name="relation_type_child">Дитина</string>
+    <string name="relation_type_domestic_partner">Внутрішній партнер</string>
+    <string name="relation_type_father">Батько</string>
+    <string name="relation_type_friend">Друг</string>
+    <string name="relation_type_manager">Керівник</string>
+    <string name="relation_type_mother">Мати</string>
+    <string name="relation_type_parent">Батьківський елемент</string>
+    <string name="relation_type_partner">Партнер</string>
+    <string name="relation_type_referred_by">Реферал від</string>
+    <string name="relation_type_relative">Відносно</string>
+    <string name="relation_type_sister">Сестра</string>
+    <string name="relation_type_spouse">Чоловік/дружина</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -227,6 +263,7 @@
     <string name="pref_system_font_toggle">Використовувати системний шрифт</string>
     <string name="pref_system_font_toggle_description">Використовувати системні налаштування шрифтів</string>
     <string name="typography_title">Типографія</string>
+    <string name="font_picker_dialog_title">Вибрати шрифт</string>
     <string name="typography_preview_text">Щурячий бугай із їжаком-харцизом в\'ючись у собаку</string>
     <string name="font_size_small">Маленький</string>
     <string name="font_size_medium">Медіум</string>
@@ -280,7 +317,10 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Номер голосової пошти вашого перевізника.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Спеціальні атрибути</string>
+    <string name="about_third_party_libraries_title">Бібліотеки &amp; фреймворки</string>
     <string name="about_shizucallrecorder_title">Посилання на СідзуКаллек</string>
+    <string name="about_shizucallrecorder_short_desc">Двигун записування виклику на суму kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo включає код запису викликів із ShizuCallRecorder шляхом kitsumed (ліцензовано під GPLv3 з додатковими умовами розділу). Ріво є незалежним проектом і офіційно не пов\'язаний або не схвалив Шизуколлектор.\n\nШукаєте присвячений, вільний, відкритий ресурс та повагу приватності без реклами чи монетизації? Перегляньте оригінальний проект ShizuCallRecorder (поїздка) для замовлення.</string>
     <string name="about_shizucallrecorder_action">Перегляд ShizuCallRecorder на GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Засіб запису дзвінків</string>
@@ -290,6 +330,8 @@
     <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Переключити на вигляд списку</string>
+    <string name="favorites_switch_to_grid">Переключити в режим перегляду сітки</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -444,6 +486,7 @@
     <string name="action_select_all">Виділити все</string>
     <string name="action_select_none">Відмінити все</string>
     <string name="settings_private_secret_code">Код секретної клавіатури</string>
+    <string name="about_rate_on_google_play">Оцініть програму</string>
     <string name="about_supporter_badge">Підтримка ⭐</string>
     <string name="settings_group_style_appearance">Стиль &amp; Вигляд</string>
     <string name="priority_contacts_select_title">Вибрати пріоритет контакту</string>

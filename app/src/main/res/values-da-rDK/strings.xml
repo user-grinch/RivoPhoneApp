@@ -189,6 +189,37 @@
     <string name="contact_edit_events_header">Vigtige Datoer</string>
     <string name="contact_edit_add_event">Tilføj Dato</string>
     <string name="contact_edit_select_date">Vælg dato</string>
+    <string name="contact_edit_organization_header">Organisation</string>
+    <string name="contact_edit_add_organization">Tilføj Organisation</string>
+    <string name="contact_edit_company">Virksomhed</string>
+    <string name="contact_edit_job_title">Job titel</string>
+    <string name="contact_edit_department">Afdeling</string>
+    <string name="contact_edit_websites_header">Websider</string>
+    <string name="contact_edit_add_website">Tilføj Hjemmeside</string>
+    <string name="contact_edit_website">Hjemmeside</string>
+    <string name="contact_edit_relations_header">Relationer</string>
+    <string name="contact_edit_add_relation">Tilføj Relation</string>
+    <string name="contact_edit_relation">Relation</string>
+    <string name="website_type_homepage">Hjemmeside</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profil</string>
+    <string name="website_type_work">Arbejde</string>
+    <string name="website_type_home">Hjem</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Assistent</string>
+    <string name="relation_type_brother">Bror</string>
+    <string name="relation_type_child">Barn</string>
+    <string name="relation_type_domestic_partner">Indenlandsk partner</string>
+    <string name="relation_type_father">Far</string>
+    <string name="relation_type_friend">Ven</string>
+    <string name="relation_type_manager">Administrator</string>
+    <string name="relation_type_mother">Mor</string>
+    <string name="relation_type_parent">Overordnet</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Henvist af</string>
+    <string name="relation_type_relative">Relativ</string>
+    <string name="relation_type_sister">Søster</string>
+    <string name="relation_type_spouse">Ægtefælle</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -239,6 +270,7 @@ Hvid tekst</string>
     <string name="pref_system_font_toggle">Brug systemskrifttype</string>
     <string name="pref_system_font_toggle_description">Brug systemskrifttype-indstillinger</string>
     <string name="typography_title">Typografi</string>
+    <string name="font_picker_dialog_title">Vælg Skrifttype</string>
     <string name="typography_preview_text">Den hurtige brune ræv hopper over den dovne hund</string>
     <string name="font_size_small">Lille</string>
     <string name="font_size_medium">Mellem</string>
@@ -292,7 +324,10 @@ Hvid tekst</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Dit luftfartsselskabs telefonsvarertelefonnummer.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Særlige Attributter</string>
+    <string name="about_third_party_libraries_title">Biblioteker &amp; Rammer</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
+    <string name="about_shizucallrecorder_short_desc">Opkaldsoptagelsesmotor efter kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo inkorporerer opkaldskoden fra ShizuCallRecorder ved kitsumed (licenseret under GPLv3 med afsnit 7 yderligere vilkår). Rivo er et uafhængigt projekt og er ikke officielt tilknyttet eller godkendt af ShizuCallRecorder.\n\nLeder du efter et dedikeret, gratis, open source og alternativ med respekt for privatlivets fred uden annoncer eller pengeskab? Tjek det oprindelige ShizuCallRecorder projekt.</string>
     <string name="about_shizucallrecorder_action">Vis ShizuCallRecorder på GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Optagelsesmaskine Til Opkald</string>
@@ -302,6 +337,8 @@ Hvid tekst</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Skift til listevisning</string>
+    <string name="favorites_switch_to_grid">Skift til gittervisning</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -463,6 +500,7 @@ Hvid tekst</string>
     <string name="action_select_all">Vælg Alle</string>
     <string name="action_select_none">Fravælg Alle</string>
     <string name="settings_private_secret_code">Hemmelig Dialpad Kode</string>
+    <string name="about_rate_on_google_play">Bedøm appen</string>
     <string name="about_supporter_badge">Støtter ⭐</string>
     <string name="settings_group_style_appearance">Stil &amp; Udseende</string>
     <string name="priority_contacts_select_title">Vælg Prioriteret Kontakt</string>

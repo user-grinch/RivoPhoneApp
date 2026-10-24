@@ -190,6 +190,37 @@
     <string name="contact_edit_events_header">Date importante</string>
     <string name="contact_edit_add_event">Adăugare dată</string>
     <string name="contact_edit_select_date">Selectați data</string>
+    <string name="contact_edit_organization_header">Organizație</string>
+    <string name="contact_edit_add_organization">Adaugă Organizație</string>
+    <string name="contact_edit_company">Companie</string>
+    <string name="contact_edit_job_title">Titlu Job</string>
+    <string name="contact_edit_department">Departament</string>
+    <string name="contact_edit_websites_header">Site-uri</string>
+    <string name="contact_edit_add_website">Adaugă website</string>
+    <string name="contact_edit_website">Website</string>
+    <string name="contact_edit_relations_header">Relaţii</string>
+    <string name="contact_edit_add_relation">Adaugă Relație</string>
+    <string name="contact_edit_relation">Relatie</string>
+    <string name="website_type_homepage">Pagina principală</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profil</string>
+    <string name="website_type_work">Muncă</string>
+    <string name="website_type_home">Acasă</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Asistent</string>
+    <string name="relation_type_brother">Fratele</string>
+    <string name="relation_type_child">Copil</string>
+    <string name="relation_type_domestic_partner">Partener local</string>
+    <string name="relation_type_father">Tatăl</string>
+    <string name="relation_type_friend">Prieten</string>
+    <string name="relation_type_manager">Administrator</string>
+    <string name="relation_type_mother">Mamă</string>
+    <string name="relation_type_parent">Părinte</string>
+    <string name="relation_type_partner">Partener</string>
+    <string name="relation_type_referred_by">Recomandat de</string>
+    <string name="relation_type_relative">Relativ</string>
+    <string name="relation_type_sister">Sora</string>
+    <string name="relation_type_spouse">Soţie</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -240,6 +271,7 @@ Text alb</string>
     <string name="pref_system_font_toggle">Folosește fontul sistemului</string>
     <string name="pref_system_font_toggle_description">Utilizați setările de font ale sistemului</string>
     <string name="typography_title">Tipografie</string>
+    <string name="font_picker_dialog_title">Alege Font</string>
     <string name="typography_preview_text">Rapida vulpe maro sare peste câinele leneş</string>
     <string name="font_size_small">Mică</string>
     <string name="font_size_medium">Medie</string>
@@ -258,6 +290,8 @@ Text alb</string>
     <string name="dynamic_color">Culoare dinamică</string>
     <string name="enable_dynamic_color">Activează culoarea dinamică din imaginea de fundal</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Mareste</string>
+    <string name="settings_interface_transition_stack">Stivă de adâncime</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Țineți apăsat 0 pentru +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Scrie + prin apăsarea butonului 0 pe tastatura numerică</string>
@@ -293,7 +327,10 @@ Text alb</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Numărul de acces la mesageria vocală a transportatorului.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Atribuiri speciale</string>
+    <string name="about_third_party_libraries_title">Biblioteci &amp; Cadre</string>
     <string name="about_shizucallrecorder_title">Atribuire ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_short_desc">Motor de înregistrare apel prin kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo încorporează codul de înregistrare a apelurilor de la ShizuCallRecorder prin kitsumed (licență sub licența GPLv3 cu secțiunea 7 termeni suplimentari). Rivo este un proiect independent și nu este afiliat oficial sau aprobat de ShizuCallRecorder.\n\nCauți o alternativă dedicată, gratuită și cu respectarea vieții private fără reclame sau monetizare? Vezi proiectul original ShizuCallRecorder.</string>
     <string name="about_shizucallrecorder_action">Vezi ShizuCallRecorder pe GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Motor Înregistrare Apel</string>
@@ -303,6 +340,8 @@ Text alb</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Comutați la vizualizarea listei</string>
+    <string name="favorites_switch_to_grid">Comută la vizualizarea grilă</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -464,6 +503,7 @@ Text alb</string>
     <string name="action_select_all">Selectează tot</string>
     <string name="action_select_none">Deselectează tot</string>
     <string name="settings_private_secret_code">Cod Dialpad secret</string>
+    <string name="about_rate_on_google_play">Evaluează aplicația</string>
     <string name="about_supporter_badge">Suportator ⭐</string>
     <string name="settings_group_style_appearance">Stilul &amp; Aspectul</string>
     <string name="priority_contacts_select_title">Selectare contact prioritar</string>

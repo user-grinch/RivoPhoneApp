@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Arbetet pågår</string>
     <string name="support_ways_title">Sätt att stödja</string>
     <string name="support_video_reminders">Påminnelser för videoannons</string>
+    <string name="support_video_reminders_supporting">Visa en support-knapp var 6:e timme</string>
     <string name="support_patreon_instead">Stöd på Patreon istället</string>
     <string name="support_restart_required">Omstart krävs</string>
     <string name="support_restart_now">Starta om nu</string>
@@ -181,8 +182,44 @@
     <string name="contact_create_new_desc">Spara som ny kontakt</string>
     <string name="contact_add_to_existing">Lägg till i befintlig kontakt</string>
     <string name="contact_add_to_existing_desc">Lägg till detta nummer till en befintlig kontakt</string>
+    <string name="contact_show_all_social_apps">Visa alla sociala appar (%1$d)</string>
+    <string name="contact_show_less">Visa mindre</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Mitten namn</string>
+    <string name="contact_edit_events_header">Viktiga datum</string>
+    <string name="contact_edit_add_event">Lägg till datum</string>
+    <string name="contact_edit_select_date">Välj datum</string>
+    <string name="contact_edit_organization_header">Organisation</string>
+    <string name="contact_edit_add_organization">Lägg till organisation</string>
+    <string name="contact_edit_company">Företag</string>
+    <string name="contact_edit_job_title">Titel på jobb</string>
+    <string name="contact_edit_department">Avdelning</string>
+    <string name="contact_edit_websites_header">Webbplatser</string>
+    <string name="contact_edit_add_website">Lägg till webbplats</string>
+    <string name="contact_edit_website">Webbplats</string>
+    <string name="contact_edit_relations_header">Relationer</string>
+    <string name="contact_edit_add_relation">Lägg till Relation</string>
+    <string name="contact_edit_relation">Relation</string>
+    <string name="website_type_homepage">Hemsida</string>
+    <string name="website_type_blog">Blogg</string>
+    <string name="website_type_profile">Profil</string>
+    <string name="website_type_work">Arbete</string>
+    <string name="website_type_home">Hem</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Assistent</string>
+    <string name="relation_type_brother">Broder</string>
+    <string name="relation_type_child">Barn</string>
+    <string name="relation_type_domestic_partner">Inhemsk partner</string>
+    <string name="relation_type_father">Far</string>
+    <string name="relation_type_friend">Vän</string>
+    <string name="relation_type_manager">Hanterare</string>
+    <string name="relation_type_mother">Mamma</string>
+    <string name="relation_type_parent">Överordnad</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Hänvisad av</string>
+    <string name="relation_type_relative">Relativ</string>
+    <string name="relation_type_sister">Syster</string>
+    <string name="relation_type_spouse">Make/maka</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -233,6 +270,7 @@ Vit text</string>
     <string name="pref_system_font_toggle">Använd systemtypsnitt</string>
     <string name="pref_system_font_toggle_description">Använd systemets teckensnittsinställningar</string>
     <string name="typography_title">Typografi</string>
+    <string name="font_picker_dialog_title">Välj typsnitt</string>
     <string name="typography_preview_text">Den snabba bruna räven hoppar över den lata hunden</string>
     <string name="font_size_small">Liten</string>
     <string name="font_size_medium">Medel</string>
@@ -286,7 +324,10 @@ Vit text</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Din operatörs röstbrevlåda åtkomstnummer.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Särskilda Erkännanden</string>
+    <string name="about_third_party_libraries_title">Bibliotek &amp; Ramverk</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Erkännande</string>
+    <string name="about_shizucallrecorder_short_desc">Samtal inspelningsmotor av kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo innehåller samtals inspelningskod från ShizuCallRecorder av kitsumed (licensierad under GPLv3 med avsnitt 7 ytterligare villkor). Rivo är ett oberoende projekt och är inte officiellt ansluten till eller stöds av ShizuCallRecorder.\n\nLetar du efter ett dedikerat, kostnadsfritt, öppet källkod, och sekretess-respekterande alternativ utan annonser eller monetarisering? Kolla in det ursprungliga ShizuCallRecorder projektet.</string>
     <string name="about_shizucallrecorder_action">Visa ShizuCallRecorder på GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Samtal Inspelning Motor</string>
@@ -296,6 +337,8 @@ Vit text</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder författare</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Växla till listvy</string>
+    <string name="favorites_switch_to_grid">Växla till rutnätsvy</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -457,6 +500,7 @@ Vit text</string>
     <string name="action_select_all">Markera alla</string>
     <string name="action_select_none">Avmarkera alla</string>
     <string name="settings_private_secret_code">Hemlig uppringningskod</string>
+    <string name="about_rate_on_google_play">Betygsätt appen</string>
     <string name="about_supporter_badge">Supporter ⭐</string>
     <string name="settings_group_style_appearance">Stil &amp; Utseende</string>
     <string name="priority_contacts_select_title">Välj Prioriterad kontakt</string>
