@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Arbeid i fremdrift</string>
     <string name="support_ways_title">Veiviser å støtte</string>
     <string name="support_video_reminders">Reklameklame for video</string>
+    <string name="support_video_reminders_supporting">Vis en brukerstøtte-knappen hver 6. time</string>
     <string name="support_patreon_instead">Støtt på Patreon i stedet</string>
     <string name="support_restart_required">Omstart kreves</string>
     <string name="support_restart_now">Omstart nå</string>
@@ -181,8 +182,44 @@
     <string name="contact_create_new_desc">Lagre som ny kontakt</string>
     <string name="contact_add_to_existing">Legg til eksisterende kontakt</string>
     <string name="contact_add_to_existing_desc">Legg til dette nummeret på en eksisterende kontakt</string>
+    <string name="contact_show_all_social_apps">Vis alle sosiale apper (%1$d)</string>
+    <string name="contact_show_less">Vis mindre</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Midten navn</string>
+    <string name="contact_edit_events_header">Viktige datoer</string>
+    <string name="contact_edit_add_event">Legg til dato</string>
+    <string name="contact_edit_select_date">Velg dato</string>
+    <string name="contact_edit_organization_header">Organisasjon</string>
+    <string name="contact_edit_add_organization">Legg til organisasjon</string>
+    <string name="contact_edit_company">Firma</string>
+    <string name="contact_edit_job_title">Jobb tittel</string>
+    <string name="contact_edit_department">Avdeling</string>
+    <string name="contact_edit_websites_header">Nettsteder</string>
+    <string name="contact_edit_add_website">Legg til nettside</string>
+    <string name="contact_edit_website">Nettside</string>
+    <string name="contact_edit_relations_header">Relasjoner</string>
+    <string name="contact_edit_add_relation">Legg til relasjon</string>
+    <string name="contact_edit_relation">Relasjon</string>
+    <string name="website_type_homepage">Hjemmeside</string>
+    <string name="website_type_blog">Blogg</string>
+    <string name="website_type_profile">Profil</string>
+    <string name="website_type_work">Arbeid</string>
+    <string name="website_type_home">Hjem</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Assistent</string>
+    <string name="relation_type_brother">Bror</string>
+    <string name="relation_type_child">Barn</string>
+    <string name="relation_type_domestic_partner">Innenlandsk partner</string>
+    <string name="relation_type_father">Far</string>
+    <string name="relation_type_friend">Venn</string>
+    <string name="relation_type_manager">Leder</string>
+    <string name="relation_type_mother">Mor</string>
+    <string name="relation_type_parent">Forelder</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Anbefalt av</string>
+    <string name="relation_type_relative">Relativ</string>
+    <string name="relation_type_sister">Søster</string>
+    <string name="relation_type_spouse">Ektefelle</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -233,6 +270,7 @@ Hvit tekst</string>
     <string name="pref_system_font_toggle">Bruk systemskrift</string>
     <string name="pref_system_font_toggle_description">Bruk systemskriftinnstillinger</string>
     <string name="typography_title">Typografi</string>
+    <string name="font_picker_dialog_title">Velg skrifttype</string>
     <string name="typography_preview_text">Kortbrune reumler over den late hunden</string>
     <string name="font_size_small">Liten</string>
     <string name="font_size_medium">Middels</string>
@@ -285,7 +323,10 @@ Hvit tekst</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Din transportør telefonsvarer tilgang nummer.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Spesiell beskjed</string>
+    <string name="about_third_party_libraries_title">Biblioteker &amp; Rammer</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Navngivelse</string>
+    <string name="about_shizucallrecorder_short_desc">Anropsopptaksmotor etter kitansert</string>
     <string name="about_shizucallrecorder_desc">Naglo har ringeropptakskode fra ShizuCallRecorder etter kitted (lisensiert under GPLv3 med del 7 flere vilkår). Naglo er et uavhengig prosjekt og er ikke offisielt tilknyttet eller godkjent av ShizuCallRecorder.\n\nLooking for a dedicated, free, open-source, and privacy-respecting alternative without ads or monetization? Sjekk ut det originale ShizuCallRecorder prosjektet.</string>
     <string name="about_shizucallrecorder_action">Vis ShizuCallRecorder på GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Anrops opptaksmotor</string>
@@ -295,6 +336,8 @@ Hvit tekst</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Bytt til listevisning</string>
+    <string name="favorites_switch_to_grid">Bytt til rutenettvisning</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -455,6 +498,7 @@ Hvit tekst</string>
     <string name="action_select_all">Velg alle</string>
     <string name="action_select_none">Opphev merking</string>
     <string name="settings_private_secret_code">Hemmelig tallkode</string>
+    <string name="about_rate_on_google_play">Vurder appen</string>
     <string name="about_supporter_badge">Tilhenger ⭐</string>
     <string name="settings_group_style_appearance">Stil &amp; Utseende</string>
     <string name="priority_contacts_select_title">Velg prioritet kontakt</string>

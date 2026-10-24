@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Werk in uitvoering</string>
     <string name="support_ways_title">Manieren om te ondersteunen</string>
     <string name="support_video_reminders">Video advertentie herinneringen</string>
+    <string name="support_video_reminders_supporting">Toon een support knop elke 6 uur</string>
     <string name="support_patreon_instead">Ondersteuning op Patreon in plaats daarvan</string>
     <string name="support_restart_required">Opnieuw opstarten vereist</string>
     <string name="support_restart_now">Nu opnieuw opstarten</string>
@@ -181,8 +182,44 @@
     <string name="contact_create_new_desc">Opslaan als nieuw contact</string>
     <string name="contact_add_to_existing">Toevoegen aan bestaand contact</string>
     <string name="contact_add_to_existing_desc">Dit nummer toevoegen aan een bestaand contact</string>
+    <string name="contact_show_all_social_apps">Toon alle sociale apps (%1$d)</string>
+    <string name="contact_show_less">Minder weergeven</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Tweede naam</string>
+    <string name="contact_edit_events_header">Belangrijke datums</string>
+    <string name="contact_edit_add_event">Datum toevoegen</string>
+    <string name="contact_edit_select_date">Selecteer datum</string>
+    <string name="contact_edit_organization_header">Rekening</string>
+    <string name="contact_edit_add_organization">Organisatie toevoegen</string>
+    <string name="contact_edit_company">Bedrijfsnaam</string>
+    <string name="contact_edit_job_title">Functie titel</string>
+    <string name="contact_edit_department">Afdeling</string>
+    <string name="contact_edit_websites_header">Websites</string>
+    <string name="contact_edit_add_website">Website toevoegen</string>
+    <string name="contact_edit_website">website</string>
+    <string name="contact_edit_relations_header">Relaties</string>
+    <string name="contact_edit_add_relation">Relatie toevoegen</string>
+    <string name="contact_edit_relation">Relatie</string>
+    <string name="website_type_homepage">Startpagina</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profiel</string>
+    <string name="website_type_work">Werk</string>
+    <string name="website_type_home">Startpagina</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Assistent</string>
+    <string name="relation_type_brother">Broer</string>
+    <string name="relation_type_child">Kind</string>
+    <string name="relation_type_domestic_partner">Binnenlandse partner</string>
+    <string name="relation_type_father">Vader</string>
+    <string name="relation_type_friend">Vriend</string>
+    <string name="relation_type_manager">Beheerder</string>
+    <string name="relation_type_mother">Moeder</string>
+    <string name="relation_type_parent">Bovenliggende</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Aanbevolen door</string>
+    <string name="relation_type_relative">Relatief</string>
+    <string name="relation_type_sister">Zuster</string>
+    <string name="relation_type_spouse">Huwelijkspartner</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -233,6 +270,7 @@ witte tekst</string>
     <string name="pref_system_font_toggle">Systeemlettertype gebruiken</string>
     <string name="pref_system_font_toggle_description">Gebruik lettertypeinstellingen van het systeem</string>
     <string name="typography_title">Typografie</string>
+    <string name="font_picker_dialog_title">Kies lettertype</string>
     <string name="typography_preview_text">De snelle bruine vos springt over de luie hond</string>
     <string name="font_size_small">Klein</string>
     <string name="font_size_medium">Middelgroot</string>
@@ -286,7 +324,10 @@ witte tekst</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Toegangsnummer van uw provider voicemail.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Speciale Attributies</string>
+    <string name="about_third_party_libraries_title">Bibliotheken &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Attributie</string>
+    <string name="about_shizucallrecorder_short_desc">Roep opname engine op door keushoofd</string>
     <string name="about_shizucallrecorder_desc">Rivo bevat oproepopnamecode van ShizuCallRecorder door kitsumed (gelicenseerd onder GPLv3 met sectie 7 aanvullende termen). Rivo is een onafhankelijk project en is niet officieel geassocieerd met of goedgekeurd door ShizuCallRecorder.\n\nOp zoek naar een toegewijd, gratis, open-source en privacy-respectvol alternatief zonder advertenties of geld? Bekijk het oorspronkelijke ShizuCallRecorderproject.</string>
     <string name="about_shizucallrecorder_action">ShizuCallRecorder bekijken op GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Oproep Opname Motor</string>
@@ -296,6 +337,8 @@ witte tekst</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder auteur</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Schakel over naar lijstweergave</string>
+    <string name="favorites_switch_to_grid">Overschakelen naar rasterweergave</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -456,6 +499,7 @@ witte tekst</string>
     <string name="action_select_all">Alles selecteren</string>
     <string name="action_select_none">Deselecteer alles</string>
     <string name="settings_private_secret_code">Geheim toetsenbord code</string>
+    <string name="about_rate_on_google_play">Beoordeel de app</string>
     <string name="about_supporter_badge">Supporter ⭐</string>
     <string name="settings_group_style_appearance">Stijl &amp; Uiterlijk</string>
     <string name="priority_contacts_select_title">Prioriteitscontact selecteren</string>

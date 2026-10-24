@@ -189,6 +189,37 @@
     <string name="contact_edit_events_header">Důležitá data</string>
     <string name="contact_edit_add_event">Přidat datum</string>
     <string name="contact_edit_select_date">Vybrat datum</string>
+    <string name="contact_edit_organization_header">Organizace</string>
+    <string name="contact_edit_add_organization">Přidat organizaci</string>
+    <string name="contact_edit_company">Článek 2</string>
+    <string name="contact_edit_job_title">Pracovní titulek</string>
+    <string name="contact_edit_department">Oddělení</string>
+    <string name="contact_edit_websites_header">Webové stránky</string>
+    <string name="contact_edit_add_website">Přidat web</string>
+    <string name="contact_edit_website">Webová stránka</string>
+    <string name="contact_edit_relations_header">Vztahy</string>
+    <string name="contact_edit_add_relation">Přidat vztah</string>
+    <string name="contact_edit_relation">Vztah</string>
+    <string name="website_type_homepage">Domovská stránka</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profil</string>
+    <string name="website_type_work">Práce</string>
+    <string name="website_type_home">Domů</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Asistent</string>
+    <string name="relation_type_brother">Bratr</string>
+    <string name="relation_type_child">Dítě</string>
+    <string name="relation_type_domestic_partner">Domácí partner</string>
+    <string name="relation_type_father">Otec</string>
+    <string name="relation_type_friend">Přítel</string>
+    <string name="relation_type_manager">Správce</string>
+    <string name="relation_type_mother">Matka</string>
+    <string name="relation_type_parent">Nadřazený</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Doporučeno</string>
+    <string name="relation_type_relative">Relativní</string>
+    <string name="relation_type_sister">Sestava</string>
+    <string name="relation_type_spouse">Manžel/ka</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -239,6 +270,7 @@ Bílý text</string>
     <string name="pref_system_font_toggle">Použít systémové písmo</string>
     <string name="pref_system_font_toggle_description">Použít systémové nastavení písma</string>
     <string name="typography_title">Typografie</string>
+    <string name="font_picker_dialog_title">Vybrat písmo</string>
     <string name="typography_preview_text">Rychlý hnědý liška skočí nad líným psem</string>
     <string name="font_size_small">Malá</string>
     <string name="font_size_medium">Střední</string>
@@ -257,6 +289,8 @@ Bílý text</string>
     <string name="dynamic_color">Dynamická barva</string>
     <string name="enable_dynamic_color">Povolit dynamickou barvu z tapety</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Přiblížení</string>
+    <string name="settings_interface_transition_stack">Hloubkový zásobník</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Držet 0 pro +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Napište + podržením tlačítka 0 na číselníku</string>
@@ -292,7 +326,10 @@ Bílý text</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Přístupové číslo hlasové schránky vašeho dopravce.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Speciální atributy</string>
+    <string name="about_third_party_libraries_title">Knihovny &amp; Rámce</string>
     <string name="about_shizucallrecorder_title">Atribut ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_short_desc">Modul nahrávání hovorů pomocí kitsumu</string>
     <string name="about_shizucallrecorder_desc">Rivo zahrnuje kód záznamu hovorů z ShizuCallRecorder pomocí kitsumu (licencovaný pod licencí GPLv3 s oddílem 7 dalšími výrazy). Rivo je nezávislý projekt a není oficiálně přidružen k ShizuCallRecorder.\n\nHledáte vyhrazenou, bezplatnou, otevřenou a soukromou alternativu bez reklam nebo monetizace? Podívejte se na původní projekt ShizuCallRecorder.</string>
     <string name="about_shizucallrecorder_action">Zobrazit ShizuCallRecorder na GitHubu</string>
     <string name="call_recording_shizuku_attribution_title">Modul nahrávání hovorů</string>
@@ -302,6 +339,8 @@ Bílý text</string>
     <string name="contributor_role_upstream_call_recording">Zapisovač ShizuCallOrorder autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Přepnout na zobrazení seznamu</string>
+    <string name="favorites_switch_to_grid">Přepnout na zobrazení mřížky</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -463,6 +502,7 @@ Bílý text</string>
     <string name="action_select_all">Vybrat vše</string>
     <string name="action_select_none">Zrušit výběr všech</string>
     <string name="settings_private_secret_code">Tajný kód číselníku</string>
+    <string name="about_rate_on_google_play">Ohodnoťte aplikaci</string>
     <string name="about_supporter_badge">Podporovatel ⭐</string>
     <string name="settings_group_style_appearance">Vzhled stylu &amp;</string>
     <string name="priority_contacts_select_title">Vybrat Prioritní kontakt</string>

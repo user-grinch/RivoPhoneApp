@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Lavori in corso</string>
     <string name="support_ways_title">Modi di supporto</string>
     <string name="support_video_reminders">Promemoria annunci video</string>
+    <string name="support_video_reminders_supporting">Mostra un pulsante di supporto ogni 6 ore</string>
     <string name="support_patreon_instead">Sostieni invece su Patreon</string>
     <string name="support_restart_required">Riavvia richiesto</string>
     <string name="support_restart_now">Riavvia ora</string>
@@ -181,8 +182,44 @@
     <string name="contact_create_new_desc">Salva come nuovo contatto</string>
     <string name="contact_add_to_existing">Aggiungi al contatto esistente</string>
     <string name="contact_add_to_existing_desc">Aggiungi questo numero a un contatto esistente</string>
+    <string name="contact_show_all_social_apps">Mostra tutte le app social (%1$d)</string>
+    <string name="contact_show_less">Mostra meno</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Secondo nome</string>
+    <string name="contact_edit_events_header">Date Importanti</string>
+    <string name="contact_edit_add_event">Aggiungi Data</string>
+    <string name="contact_edit_select_date">Seleziona data</string>
+    <string name="contact_edit_organization_header">Organizzazione</string>
+    <string name="contact_edit_add_organization">Aggiungi Organizzazione</string>
+    <string name="contact_edit_company">Società</string>
+    <string name="contact_edit_job_title">Titolo del lavoro</string>
+    <string name="contact_edit_department">Dipartimento</string>
+    <string name="contact_edit_websites_header">Siti Web</string>
+    <string name="contact_edit_add_website">Aggiungi Sito Web</string>
+    <string name="contact_edit_website">Sito</string>
+    <string name="contact_edit_relations_header">Relazioni</string>
+    <string name="contact_edit_add_relation">Aggiungi Relazione</string>
+    <string name="contact_edit_relation">Relazione</string>
+    <string name="website_type_homepage">Homepage</string>
+    <string name="website_type_blog">Blog</string>
+    <string name="website_type_profile">Profilo</string>
+    <string name="website_type_work">Lavoro</string>
+    <string name="website_type_home">Home</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Assistente</string>
+    <string name="relation_type_brother">Fratello</string>
+    <string name="relation_type_child">Figlio</string>
+    <string name="relation_type_domestic_partner">Partner nazionale</string>
+    <string name="relation_type_father">Padre</string>
+    <string name="relation_type_friend">Amico</string>
+    <string name="relation_type_manager">Manager</string>
+    <string name="relation_type_mother">Madre</string>
+    <string name="relation_type_parent">Genitore</string>
+    <string name="relation_type_partner">Partner</string>
+    <string name="relation_type_referred_by">Riferito da</string>
+    <string name="relation_type_relative">Relativo</string>
+    <string name="relation_type_sister">Sorella</string>
+    <string name="relation_type_spouse">Coniuge</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -233,6 +270,7 @@ Testo bianco</string>
     <string name="pref_system_font_toggle">Usa carattere di sistema</string>
     <string name="pref_system_font_toggle_description">Usa le impostazioni del carattere di sistema</string>
     <string name="typography_title">Tipografia</string>
+    <string name="font_picker_dialog_title">Scegli Il Carattere</string>
     <string name="typography_preview_text">Il rapido salto di volpe marrone sopra il cane pigro</string>
     <string name="font_size_small">Piccolo</string>
     <string name="font_size_medium">Medio</string>
@@ -286,7 +324,10 @@ Testo bianco</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Numero di accesso vocale del tuo vettore.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Attribuzioni Speciali</string>
+    <string name="about_third_party_libraries_title">Librerie &amp; Quadri</string>
     <string name="about_shizucallrecorder_title">Attribuzione ShizuCallRecorder</string>
+    <string name="about_shizucallrecorder_short_desc">Call recording engine by kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo incorpora il codice di registrazione delle chiamate da ShizuCallRecorder tramite kitsumed (concesso sotto licenza GPLv3 con la Sezione 7 termini aggiuntivi). Rivo è un progetto indipendente e non è ufficialmente affiliato o approvato da ShizuCallRecorder.\n\nCerchi un\'alternativa dedicata, gratuita, open-source e rispettosa della privacy senza pubblicità o monetizzazione? Scopri il progetto ShizuCallRecorder originale.</string>
     <string name="about_shizucallrecorder_action">Visualizza ShizuCallRecorder su GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Motore Registrazione Chiamata</string>
@@ -296,6 +337,8 @@ Testo bianco</string>
     <string name="contributor_role_upstream_call_recording">Autore ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Passa alla visualizzazione elenco</string>
+    <string name="favorites_switch_to_grid">Passa alla visualizzazione a griglia</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -457,6 +500,7 @@ Testo bianco</string>
     <string name="action_select_all">Seleziona Tutto</string>
     <string name="action_select_none">Deseleziona Tutto</string>
     <string name="settings_private_secret_code">Codice Tastierino Segreto</string>
+    <string name="about_rate_on_google_play">Valuta l\'app</string>
     <string name="about_supporter_badge">Sostenitore ⭐</string>
     <string name="settings_group_style_appearance">Stile &amp; Aspetto</string>
     <string name="priority_contacts_select_title">Seleziona Contatto Priorità</string>

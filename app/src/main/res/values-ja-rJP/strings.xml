@@ -75,6 +75,7 @@
     <string name="settings_work_in_progress">作業中</string>
     <string name="support_ways_title">サポートする方法</string>
     <string name="support_video_reminders">動画広告のアラーム</string>
+    <string name="support_video_reminders_supporting">6時間ごとにサポートボタンを表示する</string>
     <string name="support_patreon_instead">代わりにPatreonをサポート</string>
     <string name="support_restart_required">再起動が必要です</string>
     <string name="support_restart_now">今すぐ再起動</string>
@@ -180,8 +181,44 @@
     <string name="contact_create_new_desc">新しい連絡先として保存</string>
     <string name="contact_add_to_existing">既存の連絡先に追加</string>
     <string name="contact_add_to_existing_desc">既存の連絡先にこの番号を追加</string>
+    <string name="contact_show_all_social_apps">すべてのソーシャルアプリを表示 (%1$d)</string>
+    <string name="contact_show_less">表示を減らす</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">ミドルネーム</string>
+    <string name="contact_edit_events_header">重要な日付</string>
+    <string name="contact_edit_add_event">日付を追加</string>
+    <string name="contact_edit_select_date">日付を選択</string>
+    <string name="contact_edit_organization_header">組織</string>
+    <string name="contact_edit_add_organization">組織を追加</string>
+    <string name="contact_edit_company">会社名</string>
+    <string name="contact_edit_job_title">職名</string>
+    <string name="contact_edit_department">部門</string>
+    <string name="contact_edit_websites_header">ウェブサイト</string>
+    <string name="contact_edit_add_website">ウェブサイトを追加</string>
+    <string name="contact_edit_website">ウェブサイト</string>
+    <string name="contact_edit_relations_header">関連</string>
+    <string name="contact_edit_add_relation">関連を追加</string>
+    <string name="contact_edit_relation">関連</string>
+    <string name="website_type_homepage">ホームページ</string>
+    <string name="website_type_blog">ブログ</string>
+    <string name="website_type_profile">プロフィール</string>
+    <string name="website_type_work">仕事</string>
+    <string name="website_type_home">ホーム</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">アシスタント</string>
+    <string name="relation_type_brother">兄弟</string>
+    <string name="relation_type_child">子要素</string>
+    <string name="relation_type_domestic_partner">国内のパートナー</string>
+    <string name="relation_type_father">父</string>
+    <string name="relation_type_friend">友達</string>
+    <string name="relation_type_manager">マネージャー</string>
+    <string name="relation_type_mother">母</string>
+    <string name="relation_type_parent">親</string>
+    <string name="relation_type_partner">パートナー</string>
+    <string name="relation_type_referred_by">参照元</string>
+    <string name="relation_type_relative">相対値</string>
+    <string name="relation_type_sister">シスター</string>
+    <string name="relation_type_spouse">配偶者たち</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -230,6 +267,7 @@
     <string name="pref_system_font_toggle">システムフォントを使用</string>
     <string name="pref_system_font_toggle_description">システムフォント設定を使用</string>
     <string name="typography_title">タイポグラフィー（文法）</string>
+    <string name="font_picker_dialog_title">フォントを選択</string>
     <string name="typography_preview_text">素早い茶色のキツネが怠け者の犬の上を飛び越える。</string>
     <string name="font_size_small">小</string>
     <string name="font_size_medium">ミディアム</string>
@@ -283,7 +321,10 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">配送業者のボイスメールへのアクセス番号</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">特別な表示</string>
+    <string name="about_third_party_libraries_title">ライブラリ &amp; フレームワーク</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder表示属性</string>
+    <string name="about_shizucallrecorder_short_desc">kitsumed による録音エンジンの通話</string>
     <string name="about_shizucallrecorder_desc">リボには、ShitiCallRecorderからの通話記録コードが組み込まれています(GPLv3のセクション7の追加条件でライセンスされています)。 リボは独立したプロジェクトであり、ShizuCallRecorderの正式な提携または承認を受けていません。\n\n広告やマネタイゼーションなしで、専用のオープンソースでプライバシーを尊重する代替手段をお探しですか? オリジナルのShizuitCallRecorderプロジェクトをご覧ください。</string>
     <string name="about_shizucallrecorder_action">GitHub で ShizuCallRecorder を見る</string>
     <string name="call_recording_shizuku_attribution_title">通話録音エンジン</string>
@@ -293,6 +334,8 @@
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder著者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">リストビューに切り替える</string>
+    <string name="favorites_switch_to_grid">グリッド表示に切り替える</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -449,6 +492,7 @@
     <string name="action_select_all">すべて選択</string>
     <string name="action_select_none">すべての選択を解除</string>
     <string name="settings_private_secret_code">シークレットダイヤルパッドコード</string>
+    <string name="about_rate_on_google_play">アプリを評価</string>
     <string name="about_supporter_badge">Supporter ⭐</string>
     <string name="settings_group_style_appearance">スタイル &amp; 外観</string>
     <string name="priority_contacts_select_title">優先連絡先を選択</string>

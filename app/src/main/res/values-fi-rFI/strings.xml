@@ -74,6 +74,7 @@
     <string name="settings_work_in_progress">Käynnissä oleva työ</string>
     <string name="support_ways_title">Tapoja tukea</string>
     <string name="support_video_reminders">Videon mainosten muistutukset</string>
+    <string name="support_video_reminders_supporting">Näytä tukipainike 6 tunnin välein</string>
     <string name="support_patreon_instead">Tuki Patreonissa sen sijaan</string>
     <string name="support_restart_required">Uudelleenkäynnistys vaaditaan</string>
     <string name="support_restart_now">Käynnistä uudelleen nyt</string>
@@ -178,8 +179,44 @@
     <string name="contact_create_new_desc">Tallenna uutena yhteystietona</string>
     <string name="contact_add_to_existing">Lisää olemassa olevaan yhteystietoon</string>
     <string name="contact_add_to_existing_desc">Lisää tämä numero olemassa olevaan yhteystietoon</string>
+    <string name="contact_show_all_social_apps">Näytä kaikki sosiaaliset sovellukset (%1$d)</string>
+    <string name="contact_show_less">Näytä vähemmän</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Toinen nimi</string>
+    <string name="contact_edit_events_header">Tärkeitä Päivämääriä</string>
+    <string name="contact_edit_add_event">Lisää Päivämäärä</string>
+    <string name="contact_edit_select_date">Valitse päivämäärä</string>
+    <string name="contact_edit_organization_header">Organisaatio</string>
+    <string name="contact_edit_add_organization">Lisää Organisaatio</string>
+    <string name="contact_edit_company">Yritys</string>
+    <string name="contact_edit_job_title">Työn otsikko</string>
+    <string name="contact_edit_department">Osasto</string>
+    <string name="contact_edit_websites_header">Sivustot</string>
+    <string name="contact_edit_add_website">Lisää Sivusto</string>
+    <string name="contact_edit_website">Sivusto</string>
+    <string name="contact_edit_relations_header">Suhteet</string>
+    <string name="contact_edit_add_relation">Lisää Suhde</string>
+    <string name="contact_edit_relation">Suhde</string>
+    <string name="website_type_homepage">Kotisivu</string>
+    <string name="website_type_blog">Blogi</string>
+    <string name="website_type_profile">Profiili</string>
+    <string name="website_type_work">Työ</string>
+    <string name="website_type_home">Koti</string>
+    <string name="website_type_ftp">FTP</string>
+    <string name="relation_type_assistant">Avustaja</string>
+    <string name="relation_type_brother">Veli</string>
+    <string name="relation_type_child">Lapsi</string>
+    <string name="relation_type_domestic_partner">Kotimainen kumppani</string>
+    <string name="relation_type_father">Isä</string>
+    <string name="relation_type_friend">Kaveri</string>
+    <string name="relation_type_manager">Johtaja</string>
+    <string name="relation_type_mother">Äiti</string>
+    <string name="relation_type_parent">Vanhempi</string>
+    <string name="relation_type_partner">Kumppani</string>
+    <string name="relation_type_referred_by">Viitattu toimesta</string>
+    <string name="relation_type_relative">Suhteellinen</string>
+    <string name="relation_type_sister">Sisko</string>
+    <string name="relation_type_spouse">Puoliso</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -230,6 +267,7 @@ valkoinen teksti</string>
     <string name="pref_system_font_toggle">Käytä järjestelmän kirjasinta</string>
     <string name="pref_system_font_toggle_description">Käytä järjestelmän kirjasinasetuksia</string>
     <string name="typography_title">Typografia</string>
+    <string name="font_picker_dialog_title">Valitse Kirjasin</string>
     <string name="typography_preview_text">Nopea ruskea kettu hyppää yli laiska koira</string>
     <string name="font_size_small">Pieni</string>
     <string name="font_size_medium">Keskitaso</string>
@@ -283,7 +321,10 @@ valkoinen teksti</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Operaattoriesi vastaajan puhelinnumero.</string>
     <!-- Settings > About -->
+    <string name="about_attributions_title">Erityiset Ominaisuudet</string>
+    <string name="about_third_party_libraries_title">Kirjastot &amp; Kehykset</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Nimeä</string>
+    <string name="about_shizucallrecorder_short_desc">Puhelun tallennus moottori kissanmaksu</string>
     <string name="about_shizucallrecorder_desc">Rivo sisältää puhelun tallennuskoodin ShizuCallRecorder kissanvedolla (lisensoitu GPLv3 kohdan 7 lisäehdot). Rivo on riippumaton hanke eikä se ole virallisesti sidoksissa tai vahvistanut ShizuCallRecorder.\n\nEtsitkö omistautunut, ilmainen, avoimen lähdekoodin ja yksityisyyttä kunnioittavan vaihtoehdon ilman mainoksia tai ansaitsemista? Tutustu alkuperäiseen ShizuCallRecorder projektiin.</string>
     <string name="about_shizucallrecorder_action">Näytä ShizuCallRecorder GitHubissa</string>
     <string name="call_recording_shizuku_attribution_title">Soita Tallennusmoottoriin</string>
@@ -293,6 +334,8 @@ valkoinen teksti</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Tekijä</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
+    <string name="favorites_switch_to_list">Siirry listan näkymään</string>
+    <string name="favorites_switch_to_grid">Vaihda ruudukkonäkymään</string>
     <!-- Bottom navigation layout -->
     <!-- Blocking -->
     <!-- Contact call screen background -->
@@ -453,6 +496,7 @@ valkoinen teksti</string>
     <string name="action_select_all">Valitse Kaikki</string>
     <string name="action_select_none">Poista Kaikki Valinnat</string>
     <string name="settings_private_secret_code">Salainen Näppäimistön Koodi</string>
+    <string name="about_rate_on_google_play">Arvostele sovellus</string>
     <string name="about_supporter_badge">Tukija ⭐</string>
     <string name="settings_group_style_appearance">Tyyli &amp; Ulkonäkö</string>
     <string name="priority_contacts_select_title">Valitse Prioriteettiyhteystieto</string>
