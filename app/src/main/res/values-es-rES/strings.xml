@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Rivo</string>
+    <string name="permission_default_phone_app_title">Aplicación de teléfono por defecto</string>
+    <string name="permission_default_phone_app_description">Requerido para responder llamadas, manejar llamadas entrantes y administrar el bloqueo de llamadas.</string>
+    <string name="permission_phone_sim_title">Teléfono &amp; acceso a SIM</string>
+    <string name="permission_phone_sim_description">Se requiere realizar llamadas directamente, administrar tarjetas SIM dobles y detectar el estado de las llamadas.</string>
+    <string name="permission_contacts_title">Contactos</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Cancelar</string>
     <string name="action_confirm">Confirmar</string>
@@ -534,7 +539,6 @@ texto blanco</string>
     <string name="settings_manage_merge_duplicates">Fusionar duplicados</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Visibilidad del contacto</string>
-    <string name="settings_visibility_description">Selecciona qué cuentas deben ser visibles en tu lista de contactos. Deseleccionar una cuenta ocultará sus contactos pero no los eliminará.</string>
     <string name="settings_visibility_accounts_header">Cuentas</string>
     <string name="settings_visibility_local_memory_supporting">Contactos almacenados en el dispositivo</string>
     <string name="settings_visibility_reset_all">Restablecer para mostrar todo</string>
@@ -558,7 +562,6 @@ texto blanco</string>
     <string name="settings_voicemail_carrier_settings">Ajustes del operador</string>
     <string name="settings_voicemail_number">Número del buzón de voz</string>
     <string name="content_desc_auto_detect_sim">Autodetectar desde SIM</string>
-    <string name="settings_voicemail_number_hint">Número de acceso al buzón de voz de su compañía.</string>
     <string name="settings_voicemail_call_voicemail">Llamar al buzón de voz</string>
     <string name="settings_voicemail_call_voicemail_supporting">Marcar correo de voz directamente</string>
     <string name="settings_voicemail_notifications_header">Notificaciones</string>
@@ -916,9 +919,6 @@ texto blanco</string>
     <string name="settings_auto_decline_non_contacts_title">Autorechazar números no en contactos</string>
     <string name="settings_auto_decline_non_contacts_supporting">Rechazar automáticamente las llamadas entrantes de los números de teléfono no guardados en tus contactos</string>
     <string name="missed_call_msg_call_me_back">Llámame de vuelta</string>
-    <string name="missed_call_msg_sorry_busy">Lo siento, estoy ocupado</string>
-    <string name="missed_call_msg_call_right_back">Te llamo ahora.</string>
-    <string name="missed_call_msg_cant_talk">No puedo hablar ahora</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d favoritos</string>
     <string name="favorites_one_pill">1 favorito</string>
@@ -931,7 +931,6 @@ texto blanco</string>
     <string name="favorites_no_contacts_found">No se encontraron contactos</string>
     <string name="search_contacts">Buscar contactos…</string>
     <string name="action_add_to_favorites">Añadir a favoritos</string>
-    <string name="content_desc_clear_search">Limpiar búsqueda</string>
     <string name="action_dismiss">Descartar</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Botones de llamada dual SIM</string>
@@ -1161,7 +1160,6 @@ BiometricPrompt (bloqueo de aplicaciones) — Apache 2.
 Shizuku (API de grabación de llamadas privilegiadas) — Apache 2.0
 ShizuCallRecorder (código de grabación de llamadas) — GPLv3 con términos adicionales de la Sección 7</string>
     <string name="call_screen_preview_title">Vista previa</string>
-    <string name="call_slot_top">Ranura superior \u2022 Ranura #%1$d</string>
     <string name="call_slot_move_up">Subir</string>
     <string name="call_slot_move_down">Bajar</string>
     <!-- Support Development & Video Ads -->
@@ -1191,4 +1189,5 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="support_pro_foss_reason">Rivo Pro está disponible en la Play Store construida.</string>
     <string name="support_choose_app_icon_title">Elegir marca</string>
     <string name="support_choose_app_icon_desc">Elija el icono del lanzador del marcador y etiqueta juntos. Nada cambia hasta que confirme y reinicie Rivo.</string>
+    <string name="content_desc_clear_search">Limpiar búsqueda</string>
 </resources>

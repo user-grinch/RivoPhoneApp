@@ -419,8 +419,6 @@ BiometricPrompt (app lock) — Apache 2.
 Shizuku (geprivilegieerd gesprek opname API) - Apache 2.0
 ShizuCallRecorder (call opname code) — GPLv3 met sectie 7 extra voorwaarden</string>
     <string name="call_screen_preview_title">Voorvertoning</string>
-    <string name="call_slot_top">Bovenste rij \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Onderste rij \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Verplaats omhoog</string>
     <string name="call_slot_move_down">Verplaats naar beneden</string>
     <!-- Support Development & Video Ads -->
@@ -443,5 +441,10 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="support_ads_enabled_pro">Advertenties ingeschakeld - Pro-voordelen actief</string>
     <string name="support_tip_jar_pro">Tip Jar aankoop - Pro voordelen actief</string>
     <string name="support_patreon_pro">Patreon supporter - Pro voordelen actief</string>
+    <string name="support_rewarded_pro">Beloond video - Pro is actief voor één dag</string>
+    <string name="support_pro_active_reason">Rivo Pro is actief: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro is niet actief. Kies hieronder een ondersteuningsoptie.</string>
+    <string name="support_pro_foss_reason">Rivo Pro is beschikbaar in de Play Store versie. Patreon ondersteunt FOSS-ontwikkeling.</string>
+    <string name="support_choose_app_icon_title">Kies Branding</string>
     <string name="support_choose_app_icon_desc">Kies het kiezer launcher icoon en label samen. Niets verandert totdat u bevestigt en Rivo herstart.</string>
 </resources>

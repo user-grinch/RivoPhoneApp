@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="permission_default_phone_app_title">Výchozí aplikace telefonu</string>
+    <string name="permission_default_phone_app_description">Vyžadováno pro příjem hovorů, zpracování příchozích telefonních hovorů a správu blokování hovorů.</string>
+    <string name="permission_phone_sim_title">Telefon &amp; přístup k SIM kartě</string>
+    <string name="permission_phone_sim_description">Vyžadováno pro přímé volání, správu duálních SIM karet a detekci stavu hovoru.</string>
+    <string name="permission_contacts_title">Kontakty</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Sloučit hovory</string>
     <string name="conference_call">Konferenční hovor</string>
@@ -422,8 +427,6 @@ BiometricPrompt (zámek aplikací) – Apache 2.
 Shizuku (privilegovaný záznam hovorů API) – Apache 2.0
 ShizuCallorder (kód záznamu hovoru) – GPLv3 s oddílem 7 dalšími termíny</string>
     <string name="call_screen_preview_title">Náhled</string>
-    <string name="call_slot_top">Horní řádek \u2022 otvor #%1$d</string>
-    <string name="call_slot_bottom">Spodní řádek \u2022 otvor #%1$d</string>
     <string name="call_slot_move_up">Posunout nahoru</string>
     <string name="call_slot_move_down">Přesunout dolů</string>
     <!-- Support Development & Video Ads -->

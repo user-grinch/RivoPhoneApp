@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="permission_default_phone_app_title">Aplicație telefonică implicită</string>
+    <string name="permission_default_phone_app_description">Necesar pentru a răspunde apelurilor, pentru a gestiona apelurile primite și pentru a gestiona blocarea apelurilor.</string>
+    <string name="permission_phone_sim_title">Acces telefon &amp; SIM</string>
+    <string name="permission_phone_sim_description">Necesar pentru a efectua apeluri direct, gestionați cartelele SIM duale și detectați starea apelului.</string>
+    <string name="permission_contacts_title">Contacte</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Îmbinare apeluri</string>
     <string name="conference_call">Apel conferință</string>
@@ -423,8 +428,6 @@ BiometricPrompt (blocare aplicație) — Apache 2.
 Shizuku (cod de înregistrare privilegiată a apelurilor API) — Apache 2.0
 ShizuCallRecorder (cod de înregistrare total) — GPLv3 cu secțiunea 7 termeni suplimentari</string>
     <string name="call_screen_preview_title">Previzualizare</string>
-    <string name="call_slot_top">Rândul de sus \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Rândul de jos \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Mută în sus</string>
     <string name="call_slot_move_down">Mută în jos</string>
     <!-- Support Development & Video Ads -->

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Rivo</string>
+    <string name="permission_default_phone_app_title">Application de téléphone par défaut</string>
+    <string name="permission_default_phone_app_description">Requis pour répondre aux appels, gérer les appels entrants et gérer le blocage des appels.</string>
+    <string name="permission_phone_sim_title">Accès au téléphone &amp; SIM</string>
+    <string name="permission_phone_sim_description">Requis pour passer les appels directement, gérer les doubles cartes SIM et détecter l\'état des appels.</string>
+    <string name="permission_contacts_title">Contacts</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Annuler</string>
     <string name="action_confirm">Confirmer</string>
@@ -534,7 +539,6 @@ blanc</string>
     <string name="settings_manage_merge_duplicates">Fusionner les doublons</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Visibilité des contacts</string>
-    <string name="settings_visibility_description">Choisissez les comptes qui doivent être visibles dans votre liste de contacts. Désélectionner un compte masquera ses contacts sans les supprimer.</string>
     <string name="settings_visibility_accounts_header">Comptes</string>
     <string name="settings_visibility_local_memory_supporting">Contacts stockés sur l’appareil</string>
     <string name="settings_visibility_reset_all">Réinitialiser pour tout afficher</string>
@@ -558,7 +562,6 @@ blanc</string>
     <string name="settings_voicemail_carrier_settings">Paramètres opérateur</string>
     <string name="settings_voicemail_number">Numéro de messagerie vocale</string>
     <string name="content_desc_auto_detect_sim">Détecter automatiquement depuis la SIM</string>
-    <string name="settings_voicemail_number_hint">Le numéro d’accès à la messagerie vocale de votre opérateur.</string>
     <string name="settings_voicemail_call_voicemail">Appeler la messagerie vocale</string>
     <string name="settings_voicemail_call_voicemail_supporting">Composer directement votre service de messagerie vocale</string>
     <string name="settings_voicemail_notifications_header">Notifications</string>
@@ -916,9 +919,6 @@ blanc</string>
     <string name="settings_auto_decline_non_contacts_title">Refuser les appelants ne figurant pas dans vos contacts</string>
     <string name="settings_auto_decline_non_contacts_supporting">Refuser automatiquement les appels entrants des numéros de téléphone non enregistrés dans vos contacts</string>
     <string name="missed_call_msg_call_me_back">Tu peux me rappeler ?</string>
-    <string name="missed_call_msg_sorry_busy">Désolé, je suis occupé</string>
-    <string name="missed_call_msg_call_right_back">Je te rappelle tout de suite</string>
-    <string name="missed_call_msg_cant_talk">Impossible de parler pour le moment</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d favoris</string>
     <string name="favorites_one_pill">1 favori</string>
@@ -931,7 +931,6 @@ blanc</string>
     <string name="favorites_no_contacts_found">Aucun contact trouvé</string>
     <string name="search_contacts">Rechercher des contacts…</string>
     <string name="action_add_to_favorites">Ajouter aux favoris</string>
-    <string name="content_desc_clear_search">Effacer la recherche</string>
     <string name="action_dismiss">Rejeter</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Boutons d\'appel double SIM</string>
@@ -1149,8 +1148,6 @@ blanc</string>
     <string name="about_third_party_licenses_supporting">Composants Open Source utilisés dans Rivo</string>
     <string name="about_third_party_licenses_title">Licences tierces</string>
     <string name="call_screen_preview_title">Aperçu</string>
-    <string name="call_slot_top">Ligne \u2022 Emplacement #%1$d</string>
-    <string name="call_slot_bottom">Ligne inférieure \u2022 Emplacement #%1$d</string>
     <string name="call_slot_move_up">Déplacer vers le haut</string>
     <string name="call_slot_move_down">Déplacer vers le bas</string>
     <!-- Support Development & Video Ads -->
@@ -1178,4 +1175,5 @@ blanc</string>
     <string name="support_pro_foss_reason">Rivo Pro est disponible dans la version Play Store. Patreon supporte le développement FOSS.</string>
     <string name="support_choose_app_icon_title">Choisir une image de marque</string>
     <string name="support_choose_app_icon_desc">Choisissez l\'icône et l\'étiquette du lanceur de numéros. Rien ne change tant que vous ne confirmez et redémarrez Rivo.</string>
+    <string name="content_desc_clear_search">Effacer la recherche</string>
 </resources>

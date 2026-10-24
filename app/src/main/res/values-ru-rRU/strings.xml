@@ -538,7 +538,6 @@
     <string name="settings_manage_merge_duplicates">Объединить дубликаты</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Отображение контакта</string>
-    <string name="settings_visibility_description">Выбор учетных записей для отображения в списке контактов. Снятие галочки с учетной записи скроет ее контакты, но не удалит их.</string>
     <string name="settings_visibility_accounts_header">Учётные записи</string>
     <string name="settings_visibility_local_memory_supporting">Контакты, сохранённые на устройстве</string>
     <string name="settings_visibility_reset_all">Сброс отображения всех</string>
@@ -562,7 +561,6 @@
     <string name="settings_voicemail_carrier_settings">Настройки оператора</string>
     <string name="settings_voicemail_number">Номер голосовой почты</string>
     <string name="content_desc_auto_detect_sim">Автоопределение с SIM</string>
-    <string name="settings_voicemail_number_hint">Номер голосовой почты сотового оператора.</string>
     <string name="settings_voicemail_call_voicemail">Вызов голосовой почты</string>
     <string name="settings_voicemail_call_voicemail_supporting">Прямой набор голосовой почты</string>
     <string name="settings_voicemail_notifications_header">Уведомление</string>
@@ -922,9 +920,6 @@
     <string name="settings_auto_decline_non_contacts_title">Автоотклонение номеров не из контактов</string>
     <string name="settings_auto_decline_non_contacts_supporting">Автоматически отклонять входящие звонки с телефонных номеров, не сохраненных в ваших контактах</string>
     <string name="missed_call_msg_call_me_back">Перезвоните мне</string>
-    <string name="missed_call_msg_sorry_busy">Извините, я занят</string>
-    <string name="missed_call_msg_call_right_back">Перезвоню вам позже</string>
-    <string name="missed_call_msg_cant_talk">Не могу говорить сейчас</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d избранных</string>
     <string name="favorites_one_pill">1 избранный</string>
@@ -937,7 +932,6 @@
     <string name="favorites_no_contacts_found">Контакты не найдены</string>
     <string name="search_contacts">Поиск контактов…</string>
     <string name="action_add_to_favorites">Добавить в избранное</string>
-    <string name="content_desc_clear_search">Очистить поиск</string>
     <string name="action_dismiss">Отклонить</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Кнопки вызова для двух SIM-карт</string>
@@ -1167,8 +1161,6 @@ BiometricPrompt (блокирование приложения) — Apache 2.
 Shizuku (привилегированный API записи вызова) — Apache 2.0
 ShizuCallRecorder (код записи вызова) — GPLv3 с разделом 7 дополнительные условия</string>
     <string name="call_screen_preview_title">Предпросмотр</string>
-    <string name="call_slot_top">Топ строка \u2022 слот #%1$d</string>
-    <string name="call_slot_bottom">Нижняя строка \u2022 слот #%1$d</string>
     <string name="call_slot_move_up">Вверх</string>
     <string name="call_slot_move_down">Сдвинуть вниз</string>
     <!-- Support Development & Video Ads -->
@@ -1192,5 +1184,11 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="support_ads_enabled_pro">Реклама включена - Pro Perks активен</string>
     <string name="support_tip_jar_pro">Советы Jar покупка - Pro perks активен</string>
     <string name="support_patreon_pro">Поддержка Patreon - Pro перки активны</string>
+    <string name="support_rewarded_pro">Награжденное видео - Pro активен на один день</string>
+    <string name="support_pro_active_reason">Rivo Pro активен: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro не активен. Выберите ниже вариант поддержки.</string>
+    <string name="support_pro_foss_reason">Rivo Pro доступен в сборке Play Store. Patreon поддерживает разработку FOSS .</string>
+    <string name="support_choose_app_icon_title">Выберите брендинг</string>
     <string name="support_choose_app_icon_desc">Выберите одновременно значок лаунчера номеронабирателя. Ничего не изменяется, пока вы не подтвердите и перезапустите Риво.</string>
+    <string name="content_desc_clear_search">Очистить поиск</string>
 </resources>

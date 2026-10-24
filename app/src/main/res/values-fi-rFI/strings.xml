@@ -443,5 +443,10 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="support_ads_enabled_pro">Mainokset käytössä - Pro-oikeudet käytössä</string>
     <string name="support_tip_jar_pro">Vinkki Jar osto - Pro perks aktiivinen</string>
     <string name="support_patreon_pro">Patreonien tukija - Pro perks aktiivinen</string>
+    <string name="support_rewarded_pro">Palkittu video - Pro on käytössä yhden päivän ajan</string>
+    <string name="support_pro_active_reason">Rivo Pro on aktiivinen: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro ei ole aktiivinen. Valitse tukivaihtoehto alla.</string>
+    <string name="support_pro_foss_reason">Rivo Pro on saatavilla Play Storessa. Patreon tukee FOSS kehitystä.</string>
+    <string name="support_choose_app_icon_title">Valitse Tuotemerkki</string>
     <string name="support_choose_app_icon_desc">Valitse puhelimen käynnistäjän kuvake ja etiketti yhdessä. Mikään ei muutu, ennen kuin vahvistat ja käynnistät Rivon uudelleen.</string>
 </resources>

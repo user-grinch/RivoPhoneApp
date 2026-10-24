@@ -64,7 +64,7 @@
     <string name="call_type_outgoing">Ausgehend</string>
     <string name="call_type_missed">Verpasst</string>
     <string name="filter_all">Alle</string>
-    <string name="sim_ask_every_time">Jedes Mal fragen</string>
+    <string name="sim_ask_every_time">Immer fragen</string>
     <string name="sim_slot_1">SIM 1</string>
     <string name="sim_slot_2">SIM 2</string>
     <string name="brand_whatsapp">WhatsApp</string>
@@ -257,12 +257,12 @@
     <string name="settings_donate">Spenden</string>
     <string name="settings_interface_headline">Benutzeroberfläche</string>
     <string name="settings_interface_supporting">Thema, Farben und Bedienung</string>
-    <string name="theme_mode">Theme-Modus</string>
+    <string name="theme_mode">App-Thema</string>
     <string name="system">System</string>
-    <string name="pref_theme_mode">Theme-Modus</string>
-    <string name="pref_system_theme_follows_system">System-Theme folgen</string>
-    <string name="pref_enable_dynamic_color">Dynamische Farbe aktivieren</string>
-    <string name="pref_enable_dynamic_color_description">Farben automatisch vom Hintergrund abziehen (Material dich)</string>
+    <string name="pref_theme_mode">App-Thema</string>
+    <string name="pref_system_theme_follows_system">System-Thema folgen</string>
+    <string name="pref_enable_dynamic_color">Dynamische Farben aktivieren</string>
+    <string name="pref_enable_dynamic_color_description">Farben automatisch vom Hintergrund ableiten (Material You)</string>
     <string name="rearrange_call_buttons">Anruftasten neu anordnen</string>
     <string name="call_screen_visible_buttons_title">Sichtbare Tasten</string>
     <string name="call_screen_visible_buttons_supporting">Tasten auf dem Anrufbildschirm hinzufügen oder entfernen</string>
@@ -274,7 +274,7 @@
     <string name="record">Anrufaufzeichnung</string>
     <string name="hold">Anruf halten</string>
     <string name="add">Neuer Anruf</string>
-    <string name="call_button_customization_description">Top Zeile: Objekte 1–3 • Untere Reihe: Objekte 4–6</string>
+    <string name="call_button_customization_description">Obere Zeile: Objekte 1–3 • Untere Zeile: Objekte 4–6</string>
     <string name="enable_group_calls">Gruppenanrufe aktivieren</string>
     <string name="enable_group_calls_description">Konferenzgespräche mit mehreren Teilnehmern erlauben</string>
     <string name="group_calls_default_enabled">Standardmäßig aktiviert</string>
@@ -315,8 +315,8 @@ Weißer Text</string>
     <string name="font_family_black">Schwarz</string>
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
-    <string name="dynamic_color">Dynamische Farbe</string>
-    <string name="enable_dynamic_color">Dynamische Farbe aus Hintergrund aktivieren</string>
+    <string name="dynamic_color">Dynamische Farben</string>
+    <string name="enable_dynamic_color">Dynamische Farben abgeleitet aus Hintergrund aktivieren</string>
     <string name="settings_sound_vibration_headline">Töne &amp; Vibration</string>
     <string name="settings_sound_vibration_supporting">Klingeltöne und Tastenfeldtöne</string>
     <string name="settings_call_settings_headline">Anruf-Einstellungen</string>
@@ -428,7 +428,7 @@ Weißer Text</string>
     <string name="settings_call_proximity_sensor">Nähe-Sensor</string>
     <string name="settings_call_proximity_sensor_supporting">Anrufbildschirm bei Ohrnähe abschalten</string>
     <string name="settings_call_auto_speaker_proximity">Auto-Lautsprecher</string>
-    <string name="settings_call_auto_speaker_proximity_supporting">Bei Nicht-Ohrnähe laut, sonst leise (deaktiviert bei verbundenen Ohrhörern)</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Bei Ohrnähe leise, sonst laut (deaktiviert bei BT-Ohrhörern)</string>
     <string name="settings_call_incoming_ui">Anrufbildschirm</string>
     <string name="settings_call_incoming_ui_supporting">Annahmeart bei Anrufen</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Horizontales Wischen</string>
@@ -446,7 +446,7 @@ Weißer Text</string>
     <string name="settings_call_dialpad_style_outlined">Umriss</string>
     <string name="settings_call_dialpad_style_unified">Einheitlich</string>
     <string name="settings_call_dialpad_style_minimal">Minimal</string>
-    <string name="settings_call_dialpad_size">Wählfeldgröße</string>
+    <string name="settings_call_dialpad_size">Tastenfeldgröße</string>
     <string name="settings_call_dialpad_size_supporting">Tastendimensionen, Textmaßstab und Tastenfeldhöhe anpassen</string>
     <string name="settings_call_dialpad_size_compact">Kompakt</string>
     <string name="settings_call_dialpad_size_medium">Standard</string>
@@ -534,7 +534,6 @@ Weißer Text</string>
     <string name="settings_manage_merge_duplicates">Duplikate zusammenführen</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Kontakt-Sichtbarkeit</string>
-    <string name="settings_visibility_description">Auswahl, welche Konten in Ihrer Kontaktliste sichtbar sind. Die Abwahl eines Kontos verbirgt dessen Kontakte, löscht sie aber nicht.</string>
     <string name="settings_visibility_accounts_header">Konten</string>
     <string name="settings_visibility_local_memory_supporting">Auf Gerät gespeichert</string>
     <string name="settings_visibility_reset_all">Zurücksetzen auf \"alle anzeigen\"</string>
@@ -558,7 +557,6 @@ Weißer Text</string>
     <string name="settings_voicemail_carrier_settings">Netzbetreiber-Einstellungen</string>
     <string name="settings_voicemail_number">VoiceMail-Nummer</string>
     <string name="content_desc_auto_detect_sim">Automatischer Abruf von SIM</string>
-    <string name="settings_voicemail_number_hint">Die VoiceMail-Nummer Ihres Netzbetreibers.</string>
     <string name="settings_voicemail_call_voicemail">VoiceMail anrufen</string>
     <string name="settings_voicemail_call_voicemail_supporting">Ihre VoiceMail direkt anrufen</string>
     <string name="settings_voicemail_notifications_header">Benachrichtigungen</string>
@@ -587,7 +585,7 @@ Weißer Text</string>
     <string name="about_check_updates">Auf Updates überprüfen</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
-    <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
+    <string name="about_shizucallrecorder_title">ShizuCallRecorder-Hinweis</string>
     <string name="about_shizucallrecorder_desc">Rivo enthält den Code zur Aufzeichnung von Anrufen von ShizuCallRecorder nach Kitsumed (lizenziert unter GPLv3 mit weiteren Bedingungen von Abschnitt 7). Rivo ist ein unabhängiges Projekt und ist nicht offiziell mit ShizuCallRecorder verbunden.\n\nSuchen Sie nach einer Alternative ohne Werbung oder Monetarisierung? Schauen Sie sich das ursprüngliche ShizuCallRecorder Projekt an.</string>
     <string name="about_shizucallrecorder_action">ShizuCallRecorder auf GitHub ansehen</string>
     <string name="call_recording_shizuku_attribution_title">Engine für Anruf-Aufzeichnung</string>
@@ -840,8 +838,8 @@ Weißer Text</string>
     <string name="contact_management_standardize_supporting">Überflüssige Leerzeichen entfernen und internat. Format anwenden</string>
     <string name="contact_management_card_review">Prüfen &amp; Zusammenführen</string>
     <string name="contact_management_card_clean">Adressbuch bereinigen</string>
-    <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Tippen, um Speicher zu verwalten</string>
-    <string name="contact_management_card_dup_sub">Tippen, um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
+    <string name="contact_management_card_clean_sub">Alle Kontakte sind einzigartig • Antippen, um Speicher zu verwalten</string>
+    <string name="contact_management_card_dup_sub">Antippen, um Telefonnummern, E-Mails &amp; Informationen zu prüfen und zusammenzuführen</string>
     <string name="settings_contact_management_card">Kontaktverwaltungskarte anzeigen</string>
     <string name="settings_contact_management_card_supporting">Speicherübersicht, Bereinigungsstatus und Hinweise zu doppelten Kontakten</string>
     <!-- Floating Bar Customization & Blur -->
@@ -890,7 +888,7 @@ Weißer Text</string>
     <string name="settings_call_log_unsaved_actions_supporting">Aktionen, die beim Antippen eines Anruflisteneintrags für eine ungespeicherte Nummer angezeigt werden</string>
     <string name="settings_call_log_reset">Einstellungen für Anrufliste zurücksetzen</string>
     <string name="settings_call_log_click_behavior_title">Antipp-Interaktionen</string>
-    <string name="settings_call_log_click_behavior_supporting">Avatar öffnet die Kontaktdetails; die nachfolgende Schaltfläche löst die zugewiesene Aktion aus; das Tippen an einem anderen Ort öffnet die Schnell-Aktionen.</string>
+    <string name="settings_call_log_click_behavior_supporting">Avatar öffnet die Kontaktdetails; die nachfolgende Schaltfläche löst die zugewiesene Aktion aus; das Antippen an einem anderen Ort öffnet die Schnell-Aktionen.</string>
     <string name="action_none">Keine</string>
     <string name="swipe_action_preview_title">Interaktive Gesten-Vorschau</string>
     <string name="swipe_action_preview_supporting">Ziehen Sie diese Karte nach links oder rechts, um Material 3 Expressive Effekte zu erleben</string>
@@ -916,9 +914,6 @@ Weißer Text</string>
     <string name="settings_auto_decline_non_contacts_title">Auto-Ablehnen: Anrufe von Nicht-Kontakten</string>
     <string name="settings_auto_decline_non_contacts_supporting">Anrufe von nicht als Kontakt gespeicherten Nummern ablehnen</string>
     <string name="missed_call_msg_call_me_back">Ist ein Rückruf möglich?</string>
-    <string name="missed_call_msg_sorry_busy">Entschuldigung, ich bin gerade beschäftigt.</string>
-    <string name="missed_call_msg_call_right_back">Ich rufe gleich zurück</string>
-    <string name="missed_call_msg_cant_talk">Ich kann im Moment nicht telefonieren.</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d Favoriten</string>
     <string name="favorites_one_pill">1 Favorit</string>
@@ -931,7 +926,6 @@ Weißer Text</string>
     <string name="favorites_no_contacts_found">Keine Kontakte gefunden</string>
     <string name="search_contacts">Kontakte durchsuchen</string>
     <string name="action_add_to_favorites">Zu Favoriten hinzufügen</string>
-    <string name="content_desc_clear_search">Suche leeren</string>
     <string name="action_dismiss">Verwerfen</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Schaltflächen bei Dual-SIM</string>
@@ -1044,13 +1038,13 @@ Weißer Text</string>
     <string name="settings_group_support_about">Unterstützen &amp; Über</string>
     <string name="settings_display_banner_ads">Nicht aufdringliche Werbung</string>
     <string name="settings_display_banner_ads_supporting">Zeige kleine Anzeigen in Listen, um die Entwicklung zu unterstützen</string>
-    <string name="settings_support_development">Unterstütze die Entwicklung</string>
+    <string name="settings_support_development">Unterstützen Sie die Entwicklung</string>
     <string name="settings_support_development_supporting">Rivo-Entwicklung unterstützen</string>
-    <string name="settings_provide_tip">Tipp geben</string>
-    <string name="settings_provide_tip_supporting">Unterstütze die Entwicklung über Tip Jar oder Patreon</string>
+    <string name="settings_provide_tip">Trinkgeld geben</string>
+    <string name="settings_provide_tip_supporting">Unterstützen Sie die Entwicklung über Tip Jar oder Patreon</string>
     <string name="settings_patreon">Patreon</string>
     <string name="settings_patreon_supporting">Monatliche Patronage mit exklusiven Perks</string>
-    <string name="settings_watch_video_ad">Video anzeigen</string>
+    <string name="settings_watch_video_ad">Werbeclip ansehen</string>
     <string name="settings_watch_video_ad_supporting">Sehen Sie sich ein kurzes Video an, um die Entwicklung zu unterstützen</string>
     <string name="settings_rate_google_play">Bei Google Play bewerten</string>
     <string name="settings_rate_google_play_supporting">Unterstützen Sie Rivo im Google Play Store</string>
@@ -1089,7 +1083,7 @@ Weißer Text</string>
     <string name="settings_search_no_results">Keine Einstellungen gefunden, die mit \"%1$s \" übereinstimmen</string>
     <!-- Carrier in Recents -->
     <string name="settings_show_carrier_in_recents">SIM-Anzeige unter \"Zuletzt\"</string>
-    <string name="settings_show_carrier_in_recents_supporting">SIM 1- und SIM 2-Symbole in Anrufliste und Verlauf anzeigen</string>
+    <string name="settings_show_carrier_in_recents_supporting">SIM 1/2-Symbole in Anrufliste und Verlauf anzeigen</string>
     <!-- Standardized Phone Number Formatting & Country Code -->
     <string name="settings_show_country_code">Landesvorwahl anzeigen</string>
     <string name="settings_show_country_code_supporting">Landesvorwahl in Telefonnummern anzeigen</string>
@@ -1100,9 +1094,9 @@ Weißer Text</string>
     <string name="action_reset">Zurücksetzen</string>
     <!-- Floating Call Bubble -->
     <string name="settings_floating_call_bubble">Schwebendes Anruf-Fenster</string>
-    <string name="settings_floating_call_bubble_supporting">Verschiebbares Fenster mit Anrufsteuerung anzeigen, wenn der Anrufbildschirm verlassen wird</string>
+    <string name="settings_floating_call_bubble_supporting">Verschiebbares Fenster mit Anrufsteuerung anzeigen, wenn Anrufbildschirm verlassen wird</string>
     <string name="floating_bubble_overlay_permission_desc">Berechtigung zur Anzeige über anderen Apps ist erforderlich, um schwebende Anruf-Fenster anzuzeigen</string>
-    <string name="floating_bubble_permission_required_toast">Bitte gewähren Sie die Berechtigung \"Über anderen Apps anzeigen\", um das schwebende Anruf-Fenster zu verwenden</string>
+    <string name="floating_bubble_permission_required_toast">Bitte gewähren Sie die Berechtigung \"Über anderen Apps anzeigen\", um schwebendes Anruf-Fenster zu verwenden</string>
     <!-- Additional Call Log & Reminder Strings -->
     <string name="call_log_clear_contact_confirm">Sind Sie sicher, dass Sie alle Anruflisten für diesen Kontakt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="content_desc_clear_history">Verlauf löschen</string>
@@ -1130,7 +1124,7 @@ Weißer Text</string>
     <string name="palette_big_clock">Große Uhr</string>
     <string name="palette_candy">Zuckerbrot</string>
     <string name="palette_deep_ocean">Tiefsee</string>
-    <string name="palette_sunset_glow">Leuchten des Sonnenuntergangs</string>
+    <string name="palette_sunset_glow">Sonnenuntergang</string>
     <!-- Typography -->
     <string name="font_family_label">Schriftart</string>
     <string name="font_family_label_supporting">In der gesamten App verwendete Schriftart</string>
@@ -1161,30 +1155,34 @@ BiometricPrompt (App-Sperre) — Apache 2.0
 Shizuku (privilegierte Anruf-Aufzeichnungs-API) — Apache 2.0
 ShizuCallRecorder (Anruf-Aufzeichnungscode) — GPLv3 mit weiteren Begriffen aus Abschnitt 7</string>
     <string name="call_screen_preview_title">Vorschau</string>
-    <string name="call_slot_top">Obere Zeile \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Untere Zeile \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Nach oben</string>
     <string name="call_slot_move_down">Nach unten</string>
     <!-- Support Development & Video Ads -->
     <string name="video_ad_loading">Lade Video-Anzeige…</string>
     <string name="video_ad_failed">Video-Anzeige konnte nicht geladen werden. Bitte versuchen Sie es später erneut.</string>
-    <string name="support_video_ads_watched">Videowerbung gesehen: %1$d</string>
-    <string name="support_image_ads_watched">Anzeigewerbung: %1$d</string>
-    <string name="support_rivo_pro_unlocked">Rivo Pro freigeschaltet! Genieße deine Perks.</string>
+    <string name="support_video_ads_watched">Videoanzeigen angesehen: %1$d</string>
+    <string name="support_image_ads_watched">Bildwerbung angesehen: %1$d</string>
+    <string name="support_rivo_pro_unlocked">Rivo Pro freigeschaltet! Genießen Sie Ihre Perks.</string>
     <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
     <string name="support_rivo_pro_perk_app_icon">Benutzerdefiniertes App-Symbol</string>
-    <string name="support_foss_only_donate">Rivo Pro Perks sind in FOSS Versionen nicht verfügbar. Benutzen Sie den Play Store Build, um Pro zu entsperren, oder unterstützen Sie die Entwicklung über Patreon.
-Bitte überlegen Sie, über Patreon zu spenden, um die Entwicklung zu unterstützen.</string>
+    <string name="support_foss_only_donate">Rivo Pro Perks sind in FOSS-Versionen nicht verfügbar. Benutzen Sie die Play-Store-Version, um Pro zu entsperren, oder unterstützen Sie die Entwicklung über Patreon.
+Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstützen.</string>
     <string name="support_custom_app_icon">Benutzerdefiniertes App-Symbol</string>
     <string name="support_custom_app_icon_desc">Wählen Sie Ihr bevorzugtes App-Symbol</string>
     <string name="support_default_app_icon">Standard (Rivo)</string>
     <string name="support_pro_app_icon">Rivo Pro</string>
     <string name="support_ad_watch_limit_reached">Tägliches Anzeigenlimit erreicht. Versuchen Sie es morgen erneut.</string>
-    <string name="support_video_ad_not_ready">Video-Anzeige ist noch nicht fertig. Bitte warten Sie einen Moment.</string>
+    <string name="support_video_ad_not_ready">Video-Anzeige ist noch nicht bereit. Bitte warten Sie einen Moment.</string>
     <string name="support_pro_branding_enabled">Pro-Branding aktiviert</string>
     <string name="support_pro_branding_disabled">Pro-Branding deaktiviert</string>
     <string name="support_ads_enabled_pro">Werbung aktiviert - Pro Perks aktiv</string>
-    <string name="support_tip_jar_pro">Tipp Jar Kauf - Pro Perks aktiv</string>
+    <string name="support_tip_jar_pro">Tip Jar Kauf - Pro Perks aktiv</string>
     <string name="support_patreon_pro">Patreon Unterstützer - Pro Perks aktiv</string>
-    <string name="support_choose_app_icon_desc">Wählen Sie das Dialer Launcher Symbol aus und benennen Sie es zusammen. Nichts ändert sich, bis Sie Rivo bestätigen und neu starten.</string>
+    <string name="support_rewarded_pro">Belohntes Video - Pro ist für einen Tag aktiv</string>
+    <string name="support_pro_active_reason">Rivo Pro ist aktiv: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro ist nicht aktiv. Wählen Sie unten eine Support-Option.</string>
+    <string name="support_pro_foss_reason">Rivo Pro ist in der Play-Store-Version verfügbar. Patreon unterstützt die FOSS-Entwicklung.</string>
+    <string name="support_choose_app_icon_title">Branding wählen</string>
+    <string name="support_choose_app_icon_desc">Wählen Sie das Dialer App-Symbol und den App-Namen aus. Nichts ändert sich, bis Sie alles bestätigen und Rivo neu starten.</string>
+    <string name="content_desc_clear_search">Suche leeren</string>
 </resources>

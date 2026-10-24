@@ -420,8 +420,6 @@ BiometricPrompt (bloqueio de app) — Apache 2.
 Shizuku (API de gravação de chamadas privilegiada) — Apache 2.0
 ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 termos adicionais</string>
     <string name="call_screen_preview_title">Pré-visualizar</string>
-    <string name="call_slot_top">Linha superior \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Linha inferior \u2022 Espaço #%1$d</string>
     <string name="call_slot_move_up">Mover para cima</string>
     <string name="call_slot_move_down">Mover para baixo</string>
     <!-- Support Development & Video Ads -->
@@ -443,5 +441,10 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="support_ads_enabled_pro">Anúncios ativados - Vantagens Pro ativas</string>
     <string name="support_tip_jar_pro">Compra de gorjeta Jar - Perks Pro ativo</string>
     <string name="support_patreon_pro">Apoiador de Patreon - Perks Pro ativos</string>
+    <string name="support_rewarded_pro">Vídeo recompensado - Pro está ativo por um dia</string>
+    <string name="support_pro_active_reason">Rivo Pro está ativo: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro não está ativo. Escolha uma opção de suporte abaixo.</string>
+    <string name="support_pro_foss_reason">Rivo Pro está disponível na compilação da Play Store. Patreon suporta o desenvolvimento do FOSS.</string>
+    <string name="support_choose_app_icon_title">Escolha a Marca</string>
     <string name="support_choose_app_icon_desc">Escolha o ícone do lançador discador e label juntos. Nada muda até você confirmar e reiniciar o Rivo.</string>
 </resources>
