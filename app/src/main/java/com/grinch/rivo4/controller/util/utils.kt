@@ -118,40 +118,95 @@ fun clearFormattedNumberCache() {
 
 fun formatPhoneNumber(number: String, showCountryCode: Boolean? = null): String {
     if (number.isBlank()) return number
+    val trimmed = number.trim()
+
+    // Preserve special USSD / MMI codes
+    if (trimmed.contains('*') || trimmed.contains('#')) {
+        return trimmed
+    }
 
     val shouldShowCountryCode = showCountryCode ?: runCatching {
         org.koin.java.KoinJavaComponent.getKoin().get<PreferenceManager>().isShowCountryCodeEnabled()
     }.getOrDefault(true)
 
-    val cacheKey = "${shouldShowCountryCode}_$number"
+    val cacheKey = "${shouldShowCountryCode}_$trimmed"
     return formattedNumberCache.get(cacheKey) ?: run {
-        val defaultCountry = Locale.getDefault().country.ifEmpty { "US" }
-        val digitsOnly = number.filter { it.isDigit() }
-        val e164 = if (shouldShowCountryCode && !number.startsWith("+") && digitsOnly.length in 7..15 && !number.contains("*") && !number.contains("#")) {
-            PhoneNumberUtils.formatNumberToE164(number, defaultCountry)
-        } else {
-            null
+        val defaultCountry = runCatching {
+            val telephonyManager = org.koin.java.KoinJavaComponent.getKoin().get<Context>().getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+            telephonyManager?.simCountryIso?.takeIf { it.isNotBlank() }?.uppercase()
+                ?: telephonyManager?.networkCountryIso?.takeIf { it.isNotBlank() }?.uppercase()
+        }.getOrNull() ?: Locale.getDefault().country.ifEmpty { "US" }
+
+        val hasPlus = trimmed.startsWith("+") || trimmed.startsWith("00")
+        val digitsOnly = trimmed.filter { it.isDigit() }
+
+        if (digitsOnly.isEmpty()) {
+            return@run trimmed
         }
-        val numberToFormat = e164 ?: number
-        val formattedStandard = PhoneNumberUtils.formatNumber(numberToFormat, defaultCountry) ?: numberToFormat
-        
-        val result = if (shouldShowCountryCode) {
-            formattedStandard
+
+        val canonical = if (trimmed.startsWith("+")) {
+            "+$digitsOnly"
+        } else if (trimmed.startsWith("00")) {
+            "+${digitsOnly.removePrefix("00")}"
         } else {
-            // Strip leading "+" and country calling code if present
-            var stripped = formattedStandard.trim()
-            if (stripped.startsWith("+")) {
-                stripped = stripped.replace(Regex("^\\+\\d{1,4}[\\s\\-]"), "")
-                if (stripped.startsWith("+")) {
-                    stripped = stripped.replace(Regex("^\\+\\d{1,4}"), "")
-                }
-            } else if (stripped.startsWith("00")) {
-                stripped = stripped.replace(Regex("^00\\d{1,4}[\\s\\-]"), "")
+            digitsOnly
+        }
+
+        val formattedResult = if (shouldShowCountryCode) {
+            val e164 = if (!canonical.startsWith("+") && digitsOnly.length in 7..15) {
+                PhoneNumberUtils.formatNumberToE164(canonical, defaultCountry)
+            } else {
+                null
             }
-            stripped.ifBlank { formattedStandard }
+            val target = e164 ?: canonical
+            val standard = PhoneNumberUtils.formatNumber(target, defaultCountry)
+            standard ?: target
+        } else {
+            // National display format (without country code)
+            val withoutPrefix = if (canonical.startsWith("+")) {
+                val e164Formatted = PhoneNumberUtils.formatNumber(canonical, defaultCountry)
+                if (e164Formatted != null && e164Formatted.startsWith("+")) {
+                    var stripped = e164Formatted.replace(Regex("^\\+\\d{1,4}[\\s\\-]"), "")
+                    if (stripped.startsWith("+")) {
+                        stripped = stripped.replace(Regex("^\\+\\d{1,4}"), "")
+                    }
+                    stripped.trim()
+                } else {
+                    canonical.removePrefix("+")
+                }
+            } else {
+                canonical
+            }
+
+            val national = PhoneNumberUtils.formatNumber(withoutPrefix, defaultCountry)
+            if (national != null && !national.startsWith("+")) {
+                national
+            } else {
+                withoutPrefix
+            }
         }
-        formattedNumberCache.put(cacheKey, result)
-        result
+
+        // Clean up and guarantee consistent spacing / chunking if libphonenumber returned raw digits
+        val finalResult = if (formattedResult.none { it == ' ' || it == '-' || it == '(' || it == ')' } && digitsOnly.length >= 7) {
+            when (digitsOnly.length) {
+                7 -> "${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}"
+                10 -> "(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}"
+                11 -> if (digitsOnly.startsWith("1")) {
+                    if (shouldShowCountryCode) "+1 (${digitsOnly.substring(1, 4)}) ${digitsOnly.substring(4, 7)}-${digitsOnly.substring(7)}"
+                    else "(${digitsOnly.substring(1, 4)}) ${digitsOnly.substring(4, 7)}-${digitsOnly.substring(7)}"
+                } else if (digitsOnly.startsWith("0")) {
+                    "${digitsOnly.substring(0, 5)} ${digitsOnly.substring(5)}"
+                } else {
+                    "${digitsOnly.substring(0, 3)} ${digitsOnly.substring(3, 7)} ${digitsOnly.substring(7)}"
+                }
+                else -> formattedResult
+            }
+        } else {
+            formattedResult
+        }
+
+        formattedNumberCache.put(cacheKey, finalResult)
+        finalResult
     }
 }
 
@@ -177,15 +232,33 @@ fun areNumbersEqual(num1: String?, num2: String?): Boolean {
     if (digits1.isEmpty() || digits2.isEmpty()) return false
     if (digits1 == digits2) return true
     if (digits1.length < 3 || digits2.length < 3) return false
+
+    // Built-in telephony compare
     val compared = try {
         PhoneNumberUtils.compare(trim1, trim2)
     } catch (_: Exception) {
         false
     }
     if (compared) return true
-    // Fallback: match by last 7 digits if both numbers are sufficiently long
-    return if (digits1.length >= 7 && digits2.length >= 7) {
-        digits1.takeLast(7) == digits2.takeLast(7)
+
+    // Compare with leading trunk zero stripped
+    val noZero1 = digits1.trimStart('0')
+    val noZero2 = digits2.trimStart('0')
+    if (noZero1.isNotEmpty() && noZero1 == noZero2) return true
+
+    // Compare when one includes international country code and other is national
+    val (longer, shorter) = if (digits1.length >= digits2.length) Pair(digits1, digits2) else Pair(digits2, digits1)
+    val shorterNoZero = shorter.trimStart('0')
+    if (shorterNoZero.length >= 6 && longer.endsWith(shorterNoZero)) {
+        val prefix = longer.substring(0, longer.length - shorterNoZero.length).trimStart('0')
+        if (prefix.length in 1..4) {
+            return true
+        }
+    }
+
+    // Fallback: match by subscriber number if shorter is only 7-8 digits (local number)
+    return if (shorter.length in 7..8 && longer.length >= 9 && longer.endsWith(shorter)) {
+        true
     } else false
 }
 

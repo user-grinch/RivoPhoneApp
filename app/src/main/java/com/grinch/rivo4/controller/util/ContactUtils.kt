@@ -202,7 +202,20 @@ object ContactUtils {
         if (trimmedLeadingZero.isNotEmpty() && trimmedLeadingZero != digitsOnly) {
             keys.add(trimmedLeadingZero)
         }
-        for (len in listOf(7, 8, 9, 10)) {
+        // If number starts with international prefix (+ or 00), also add version with country code removed
+        val trimmed = number.trim()
+        if (trimmed.startsWith("+") || trimmed.startsWith("00")) {
+            val cleanDigits = if (trimmed.startsWith("00")) digitsOnly.removePrefix("00") else digitsOnly
+            for (codeLen in 1..3) {
+                if (cleanDigits.length > codeLen + 5) {
+                    val nationalPart = cleanDigits.substring(codeLen)
+                    keys.add(nationalPart)
+                    keys.add(nationalPart.trimStart('0'))
+                    keys.add("0${nationalPart.trimStart('0')}")
+                }
+            }
+        }
+        for (len in listOf(11, 10, 9, 8, 7)) {
             if (digitsOnly.length >= len) {
                 keys.add(digitsOnly.takeLast(len))
             }
@@ -210,6 +223,6 @@ object ContactUtils {
                 keys.add(trimmedLeadingZero.takeLast(len))
             }
         }
-        return keys.distinct()
+        return keys.distinct().sortedByDescending { it.length }
     }
 }

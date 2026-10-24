@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -228,6 +229,7 @@ fun RivoAvatar(
     name: String,
     photoUri: String? = null,
     icon: ImageVector? = null,
+    iconSize: Dp? = null,
     modifier: Modifier = Modifier,
     shape: Shape? = null,
     badgeIcon: ImageVector? = null,
@@ -311,7 +313,15 @@ fun RivoAvatar(
         Modifier.background(colors.container, avatarShape)
     }
 
-    Box(modifier = rootModifier) {
+    BoxWithConstraints(modifier = rootModifier) {
+        val effectiveIconSize = iconSize ?: run {
+            if (maxWidth != Dp.Unspecified && maxWidth > 56.dp) {
+                (maxWidth * 0.48f).coerceAtLeast(RivoAvatarDefaults.IconSize)
+            } else {
+                RivoAvatarDefaults.IconSize
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -331,14 +341,14 @@ fun RivoAvatar(
                     imageVector = icon,
                     contentDescription = null,
                     tint = colors.content,
-                    modifier = Modifier.size(RivoAvatarDefaults.IconSize)
+                    modifier = Modifier.size(effectiveIconSize)
                 )
             } else if (photoUri == "voicemail://icon" || name.equals("Voicemail", ignoreCase = true) || name.equals("Messagerie vocale", ignoreCase = true) || name.equals("Poczta głosowa", ignoreCase = true)) {
                 Icon(
                     imageVector = Icons.Outlined.Voicemail,
                     contentDescription = null,
                     tint = colors.content,
-                    modifier = Modifier.size(RivoAvatarDefaults.IconSize)
+                    modifier = Modifier.size(effectiveIconSize)
                 )
             } else if (style.showFirstLetter && hasLetters) {
                 Text(
@@ -351,7 +361,7 @@ fun RivoAvatar(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
                     tint = colors.content,
-                    modifier = Modifier.size(RivoAvatarDefaults.IconSize)
+                    modifier = Modifier.size(effectiveIconSize)
                 )
             }
         }

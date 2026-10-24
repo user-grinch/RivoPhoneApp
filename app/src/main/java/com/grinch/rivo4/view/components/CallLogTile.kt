@@ -58,6 +58,7 @@ import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.formatDate
 import com.grinch.rivo4.controller.util.formatPhoneNumber
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.formatTime
 import com.grinch.rivo4.modal.data.CallLogEntry
 
@@ -204,9 +205,16 @@ fun CallLogTileSimple(
         if (contact != null) {
             ContactUtils.formatContactName(contact, displayOrder)
         } else {
-            log.name?.let {
-                if (it.isNotEmpty()) ContactUtils.formatContactName(it, displayOrder) else null
-            } ?: formatPhoneNumber(log.number)
+            val isLogNameJustNumber = log.name != null && (
+                areNumbersEqual(log.name, log.number) ||
+                log.name!!.none { it.isLetter() }
+            )
+            if (isLogNameJustNumber) {
+                formatPhoneNumber(log.number)
+            } else {
+                log.name?.takeIf { it.isNotBlank() }?.let { ContactUtils.formatContactName(it, displayOrder) }
+                    ?: formatPhoneNumber(log.number)
+            }
         }
     }
 
@@ -412,9 +420,16 @@ fun CallLogTile(
         if (contact != null) {
             ContactUtils.formatContactName(contact, displayOrder)
         } else {
-            log.name?.let {
-                if (it.isNotEmpty()) ContactUtils.formatContactName(it, displayOrder) else null
-            } ?: formatPhoneNumber(log.number)
+            val isLogNameJustNumber = log.name != null && (
+                areNumbersEqual(log.name, log.number) ||
+                log.name!!.none { it.isLetter() }
+            )
+            if (isLogNameJustNumber) {
+                formatPhoneNumber(log.number)
+            } else {
+                log.name?.takeIf { it.isNotBlank() }?.let { ContactUtils.formatContactName(it, displayOrder) }
+                    ?: formatPhoneNumber(log.number)
+            }
         }
     }
 
@@ -428,7 +443,8 @@ fun CallLogTile(
 
     val isStacked = log.count > 1
     var isHistoryExpanded by remember { mutableStateOf(false) }
-    val isUnsaved = contact == null && (log.contactId == null || log.contactId == "null") && (log.name == null || log.name == log.number)
+    val isUnsaved = contact == null && (log.contactId == null || log.contactId == "null") &&
+        (log.name == null || log.name == log.number || areNumbersEqual(log.name, log.number) || log.name?.none { it.isLetter() } == true)
     val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd
 
     val tileBgColor = when {

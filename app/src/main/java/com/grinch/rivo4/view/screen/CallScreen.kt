@@ -12,7 +12,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.app.Activity
+import android.hardware.camera2.CaptureRequest
+import android.graphics.Matrix
 import android.graphics.SurfaceTexture
+import android.util.Size
+import android.view.WindowManager
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
@@ -801,6 +806,18 @@ fun ExpressiveCallScreen(
         ExpressiveBackground(photoUri, backgroundUri)
 
         val currentVideoCall = call.videoCall
+        var peerWidth by remember { mutableIntStateOf(0) }
+        var peerHeight by remember { mutableIntStateOf(0) }
+
+        LaunchedEffect(isVideoCall) {
+            if (isVideoCall) {
+                val route = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+                if (route == CallAudioState.ROUTE_EARPIECE) {
+                    CallService.setAudioRoute(CallAudioState.ROUTE_SPEAKER)
+                }
+            }
+        }
+
         DisposableEffect(currentVideoCall) {
             if (currentVideoCall != null) {
                 val callback = object : InCallService.VideoCall.Callback() {
@@ -817,13 +834,17 @@ fun ExpressiveCallScreen(
                         responseProfile: VideoProfile?
                     ) {}
                     override fun onCallSessionEvent(event: Int) {}
-                    override fun onPeerDimensionsChanged(width: Int, height: Int) {}
+                    override fun onPeerDimensionsChanged(width: Int, height: Int) {
+                        peerWidth = width
+                        peerHeight = height
+                    }
                     override fun onVideoQualityChanged(videoQuality: Int) {}
                     override fun onCallDataUsageChanged(dataUsage: Long) {}
                     override fun onCameraCapabilitiesChanged(cameraCapabilities: VideoProfile.CameraCapabilities?) {}
                 }
                 try {
                     currentVideoCall.registerCallback(callback)
+                    currentVideoCall.requestCameraCapabilities()
                 } catch (_: Exception) {}
                 onDispose {
                     try {
@@ -839,6 +860,8 @@ fun ExpressiveCallScreen(
             FullScreenVideoCallLayout(
                 call = call,
                 videoCall = currentVideoCall,
+                peerWidth = peerWidth,
+                peerHeight = peerHeight,
                 callState = callState,
                 contactName = contactName,
                 phoneNumber = phoneNumber,
@@ -2154,6 +2177,8 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
 fun FullScreenVideoCallLayout(
     call: Call,
     videoCall: InCallService.VideoCall?,
+    peerWidth: Int = 0,
+    peerHeight: Int = 0,
     callState: Int,
     contactName: String,
     phoneNumber: String,
@@ -2190,9 +2215,19 @@ fun FullScreenVideoCallLayout(
         }
     }
 
+    // Keep screen on during video call
+    val activity = context as? Activity
+    DisposableEffect(Unit) {
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     var areControlsVisible by remember { mutableStateOf(true) }
     var pipOffsetX by remember { mutableFloatStateOf(0f) }
     var pipOffsetY by remember { mutableFloatStateOf(0f) }
+    var remoteTextureView by remember { mutableStateOf<TextureView?>(null) }
 
     // Auto-hide controls after 4.5 seconds when the call is active
     LaunchedEffect(areControlsVisible, callState) {
@@ -2200,6 +2235,10 @@ fun FullScreenVideoCallLayout(
             delay(4500L)
             areControlsVisible = false
         }
+    }
+
+    LaunchedEffect(peerWidth, peerHeight, remoteTextureView) {
+        remoteTextureView?.let { applyVideoAspectRatio(it, peerWidth, peerHeight) }
     }
 
     LaunchedEffect(videoCall, useFrontCamera, hasCameraPermission, isCameraEnabled) {
@@ -2220,8 +2259,19 @@ fun FullScreenVideoCallLayout(
                 chars.get(CameraCharacteristics.LENS_FACING) == targetFacing
             } ?: cameraManager.cameraIdList.firstOrNull()
 
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+            val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                Surface.ROTATION_0 -> 0
+                Surface.ROTATION_90 -> 90
+                Surface.ROTATION_180 -> 180
+                Surface.ROTATION_270 -> 270
+                else -> 0
+            }
+            videoCall.setDeviceOrientation(displayRotation)
+
             if (cameraId != null) {
                 videoCall.setCamera(cameraId)
+                videoCall.requestCameraCapabilities()
             }
         } catch (_: Exception) {}
     }
@@ -2258,11 +2308,12 @@ fun FullScreenVideoCallLayout(
                 areControlsVisible = !areControlsVisible
             }
     ) {
-        // 1. Full-Screen Video Canvas
+        // 1. Full-Screen Video Canvas (Center-Crop Aspect Ratio, No Vertical Stretching)
         if (videoCall != null) {
             AndroidView(
                 factory = { ctx ->
                     TextureView(ctx).apply {
+                        remoteTextureView = this
                         surfaceTextureListener = object : TextureView.SurfaceTextureListener {
                             private var displaySurface: Surface? = null
 
@@ -2271,10 +2322,13 @@ fun FullScreenVideoCallLayout(
                                     displaySurface?.release()
                                     displaySurface = Surface(surface)
                                     videoCall.setDisplaySurface(displaySurface)
+                                    applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
                                 } catch (_: Exception) {}
                             }
 
-                            override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+                            override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+                                applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
+                            }
 
                             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                                 try {
@@ -2282,12 +2336,19 @@ fun FullScreenVideoCallLayout(
                                     displaySurface?.release()
                                     displaySurface = null
                                 } catch (_: Exception) {}
+                                if (remoteTextureView == this@apply) remoteTextureView = null
                                 return true
                             }
 
-                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
+                                applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
+                            }
                         }
                     }
+                },
+                update = { textureView ->
+                    remoteTextureView = textureView
+                    applyVideoAspectRatio(textureView, peerWidth, peerHeight)
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -2434,13 +2495,57 @@ fun FullScreenVideoCallLayout(
 
                                     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
                                         try {
+                                            val cameraManager = ctx.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+                                            val targetFacing = if (useFrontCamera) CameraCharacteristics.LENS_FACING_FRONT else CameraCharacteristics.LENS_FACING_BACK
+                                            val cameraId = cameraManager?.cameraIdList?.firstOrNull { id ->
+                                                val chars = cameraManager.getCameraCharacteristics(id)
+                                                chars.get(CameraCharacteristics.LENS_FACING) == targetFacing
+                                            } ?: cameraManager?.cameraIdList?.firstOrNull()
+
+                                            val chars = cameraId?.let { cameraManager?.getCameraCharacteristics(it) }
+                                            val map = chars?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                                            val optimalSize = map?.getOutputSizes(SurfaceTexture::class.java)?.firstOrNull { it.width in 480..1280 } ?: Size(640, 480)
+                                            surface.setDefaultBufferSize(optimalSize.width, optimalSize.height)
+
                                             previewSurface?.release()
                                             previewSurface = Surface(surface)
                                             videoCall.setPreviewSurface(previewSurface)
+
+                                            val windowManager = ctx.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                                            val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                                                Surface.ROTATION_0 -> 0
+                                                Surface.ROTATION_90 -> 90
+                                                Surface.ROTATION_180 -> 180
+                                                Surface.ROTATION_270 -> 270
+                                                else -> 0
+                                            }
+                                            videoCall.setDeviceOrientation(displayRotation)
+
+                                            if (cameraId != null) {
+                                                videoCall.setCamera(cameraId)
+                                                videoCall.requestCameraCapabilities()
+                                            }
+
+                                            val sensorOrientation = chars?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+                                            applyLocalPreviewTransform(this@apply, useFrontCamera, sensorOrientation, displayRotation)
                                         } catch (_: Exception) {}
                                     }
 
-                                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+                                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+                                        try {
+                                            val cameraManager = ctx.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+                                            val chars = cameraManager?.cameraIdList?.firstOrNull()?.let { cameraManager.getCameraCharacteristics(it) }
+                                            val sensorOrientation = chars?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+                                            val windowManager = ctx.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                                            val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                                                Surface.ROTATION_90 -> 90
+                                                Surface.ROTATION_180 -> 180
+                                                Surface.ROTATION_270 -> 270
+                                                else -> 0
+                                            }
+                                            applyLocalPreviewTransform(this@apply, useFrontCamera, sensorOrientation, displayRotation)
+                                        } catch (_: Exception) {}
+                                    }
 
                                     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                                         try {
@@ -2454,6 +2559,32 @@ fun FullScreenVideoCallLayout(
                                     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
                                 }
                             }
+                        },
+                        update = { textureView ->
+                            try {
+                                val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+                                val targetFacing = if (useFrontCamera) CameraCharacteristics.LENS_FACING_FRONT else CameraCharacteristics.LENS_FACING_BACK
+                                val cameraId = cameraManager?.cameraIdList?.firstOrNull { id ->
+                                    val chars = cameraManager.getCameraCharacteristics(id)
+                                    chars.get(CameraCharacteristics.LENS_FACING) == targetFacing
+                                } ?: cameraManager?.cameraIdList?.firstOrNull()
+
+                                val chars = cameraId?.let { cameraManager?.getCameraCharacteristics(it) }
+                                val sensorOrientation = chars?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+                                val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                                val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                                    Surface.ROTATION_90 -> 90
+                                    Surface.ROTATION_180 -> 180
+                                    Surface.ROTATION_270 -> 270
+                                    else -> 0
+                                }
+
+                                if (cameraId != null) {
+                                    videoCall.setCamera(cameraId)
+                                    videoCall.setDeviceOrientation(displayRotation)
+                                }
+                                applyLocalPreviewTransform(textureView, useFrontCamera, sensorOrientation, displayRotation)
+                            } catch (_: Exception) {}
                         },
                         modifier = Modifier.fillMaxSize()
                     )
@@ -2579,6 +2710,72 @@ private fun VideoCallCircleButton(
     }
 }
 
+private fun applyVideoAspectRatio(textureView: TextureView, videoW: Int, videoH: Int) {
+    val viewW = textureView.width.toFloat()
+    val viewH = textureView.height.toFloat()
+    if (viewW <= 0f || viewH <= 0f) return
+
+    val vW = if (videoW > 0) videoW.toFloat() else 720f
+    val vH = if (videoH > 0) videoH.toFloat() else 1280f
+
+    val viewAspect = viewW / viewH
+    val videoAspect = vW / vH
+
+    val matrix = Matrix()
+    val scaleX: Float
+    val scaleY: Float
+
+    // Center-crop to fill the view without vertical or horizontal stretching
+    if (videoAspect > viewAspect) {
+        scaleX = videoAspect / viewAspect
+        scaleY = 1.0f
+    } else {
+        scaleX = 1.0f
+        scaleY = viewAspect / videoAspect
+    }
+
+    matrix.setScale(scaleX, scaleY, viewW / 2f, viewH / 2f)
+    textureView.setTransform(matrix)
+}
+
+private fun applyLocalPreviewTransform(
+    textureView: TextureView,
+    useFrontCamera: Boolean,
+    sensorOrientation: Int,
+    displayRotation: Int
+) {
+    val viewW = textureView.width.toFloat()
+    val viewH = textureView.height.toFloat()
+    if (viewW <= 0f || viewH <= 0f) return
+
+    val matrix = Matrix()
+    val isRotated = (sensorOrientation - displayRotation + 360) % 180 != 0
+    val bufferW = if (isRotated) 480f else 640f
+    val bufferH = if (isRotated) 640f else 480f
+
+    val viewAspect = viewW / viewH
+    val bufferAspect = bufferW / bufferH
+
+    val scaleX: Float
+    val scaleY: Float
+    if (bufferAspect > viewAspect) {
+        scaleX = bufferAspect / viewAspect
+        scaleY = 1f
+    } else {
+        scaleX = 1f
+        scaleY = viewAspect / bufferAspect
+    }
+
+    matrix.setScale(scaleX, scaleY, viewW / 2f, viewH / 2f)
+
+    if (useFrontCamera) {
+        // Mirror front camera horizontally so user sees natural mirror
+        matrix.postScale(-1f, 1f, viewW / 2f, viewH / 2f)
+    }
+
+    textureView.setTransform(matrix)
+}
+
 @Composable
 private fun LocalCamera2Preview(
     useFrontCamera: Boolean,
@@ -2586,6 +2783,7 @@ private fun LocalCamera2Preview(
 ) {
     val context = LocalContext.current
     var surfaceTextureRef by remember { mutableStateOf<SurfaceTexture?>(null) }
+    var textureViewRef by remember { mutableStateOf<TextureView?>(null) }
 
     DisposableEffect(useFrontCamera, surfaceTextureRef) {
         val st = surfaceTextureRef
@@ -2597,7 +2795,7 @@ private fun LocalCamera2Preview(
         val handler = Handler(handlerThread.looper)
         var cameraDeviceRef: CameraDevice? = null
         var captureSessionRef: CameraCaptureSession? = null
-        val previewSurface = Surface(st)
+        var previewSurface: Surface? = null
 
         try {
             val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
@@ -2613,18 +2811,38 @@ private fun LocalCamera2Preview(
                 } ?: cameraManager.cameraIdList.firstOrNull()
 
                 if (cameraId != null) {
+                    val chars = cameraManager.getCameraCharacteristics(cameraId)
+                    val map = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    val optimalSize = map?.getOutputSizes(SurfaceTexture::class.java)?.firstOrNull { it.width in 480..1280 } ?: Size(640, 480)
+                    st.setDefaultBufferSize(optimalSize.width, optimalSize.height)
+                    previewSurface = Surface(st)
+
+                    val sensorOrientation = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+                    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                    val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                        Surface.ROTATION_90 -> 90
+                        Surface.ROTATION_180 -> 180
+                        Surface.ROTATION_270 -> 270
+                        else -> 0
+                    }
+                    textureViewRef?.let {
+                        applyLocalPreviewTransform(it, useFrontCamera, sensorOrientation, displayRotation)
+                    }
+
                     cameraManager.openCamera(
                         cameraId,
                         object : CameraDevice.StateCallback() {
                             override fun onOpened(camera: CameraDevice) {
                                 cameraDeviceRef = camera
                                 try {
+                                    val ps = previewSurface ?: return
                                     val requestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
-                                        addTarget(previewSurface)
+                                        addTarget(ps)
+                                        set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                                     }
                                     @Suppress("DEPRECATION")
                                     camera.createCaptureSession(
-                                        listOf(previewSurface),
+                                        listOf(ps),
                                         object : CameraCaptureSession.StateCallback() {
                                             override fun onConfigured(session: CameraCaptureSession) {
                                                 captureSessionRef = session
@@ -2656,7 +2874,7 @@ private fun LocalCamera2Preview(
         onDispose {
             try { captureSessionRef?.close() } catch (_: Exception) {}
             try { cameraDeviceRef?.close() } catch (_: Exception) {}
-            try { previewSurface.release() } catch (_: Exception) {}
+            try { previewSurface?.release() } catch (_: Exception) {}
             try { handlerThread.quitSafely() } catch (_: Exception) {}
         }
     }
@@ -2664,6 +2882,7 @@ private fun LocalCamera2Preview(
     AndroidView(
         factory = { ctx ->
             TextureView(ctx).apply {
+                textureViewRef = this
                 surfaceTextureListener = object : TextureView.SurfaceTextureListener {
                     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
                         surfaceTextureRef = surface
@@ -2671,11 +2890,15 @@ private fun LocalCamera2Preview(
                     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
                     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                         surfaceTextureRef = null
+                        if (textureViewRef == this@apply) textureViewRef = null
                         return true
                     }
                     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
                 }
             }
+        },
+        update = { textureView ->
+            textureViewRef = textureView
         },
         modifier = modifier
     )
