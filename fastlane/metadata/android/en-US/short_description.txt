@@ -1,0 +1,1 @@
+A clean, open-source dialer and contacts app built with Jetpack Compose

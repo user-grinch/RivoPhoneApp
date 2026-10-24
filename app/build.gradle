@@ -37,7 +37,11 @@ android {
         release {
             minifyEnabled = true
             shrinkResources = true
-            signingConfig = signingConfigs.release
+            // Without a real keystore, FOSS release stays unsigned so F-Droid can sign it
+            // or copy the upstream signature onto it (reproducible builds)
+            if (System.getenv("KEYSTORE_PATH")) {
+                signingConfig = signingConfigs.release
+            }
             debuggable = false
         }
         debug {
@@ -69,6 +73,12 @@ android {
         generateLocaleConfig = true
     }
 
+    // Dependency metadata is encrypted with Google's key, F-Droid rejects it in APKs
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = true
+    }
+
     splits {
         abi {
             enable = false
@@ -92,6 +102,7 @@ android {
         play {
             dimension "distribution"
             isDefault = true
+            signingConfig = signingConfigs.release
         }
         foss {
             dimension "distribution"

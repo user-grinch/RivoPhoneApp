@@ -1,0 +1,17 @@
+<p>Rivo is a clean, open-source dialer and contacts app for Android, built with Jetpack Compose and Material You.</p>
+
+<p><b>Features</b></p>
+<ul>
+<li><b>T9 Search &amp; Speed Dial</b>: quick contact lookup by name or number right on the keypad, plus 1–9 speed dial shortcuts.</li>
+<li><b>Dual SIM Support</b>: outbound SIM selector, per-contact preferred SIM memory, and carrier tags.</li>
+<li><b>Call Recording via Shizuku</b>: internal 2-way call audio capture via Shizuku ADB permissions, without needing root or accessibility services. Standard microphone recording fallback included.</li>
+<li><b>In-Call Screen</b>: audio routing (earpiece, speaker, Bluetooth, wired headset), hold, mute, in-call dialpad, and call notes.</li>
+<li><b>Call Notifications</b>: Android-native heads-up notifications with answer, decline, and speaker toggles.</li>
+<li><b>Private Contacts Vault</b>: keep specific contacts, their call history, and notifications locked behind biometrics or device PIN.</li>
+<li><b>Contact Management</b>: edit multiple numbers, emails, and addresses per contact with custom labels, contact deduplication, and local or cloud account storage.</li>
+<li><b>Fake Incoming Call</b>: simulate an incoming call with custom caller name, number, ringtone, and timer.</li>
+<li><b>Blocklist</b>: block spam numbers directly from call logs or contact details.</li>
+<li><b>Customization</b>: Material You dynamic color theming, configurable dialpad layouts, avatar shapes, and app-level biometric lock.</li>
+</ul>
+
+<p>This is the FOSS build: it contains no ads, no in-app purchases and no proprietary libraries.</p>
