@@ -76,6 +76,7 @@
     <string name="settings_work_in_progress">Arbejde i gang</string>
     <string name="support_ways_title">Måder at støtte</string>
     <string name="support_video_reminders">Video annonce påmindelser</string>
+    <string name="support_video_reminders_supporting">Vis en supportknap hver 6. time</string>
     <string name="support_patreon_instead">Støt på Patreon i stedet</string>
     <string name="support_restart_required">Genstart påkrævet</string>
     <string name="support_restart_now">Genstart nu</string>
@@ -181,8 +182,13 @@
     <string name="contact_create_new_desc">Gem som ny kontakt</string>
     <string name="contact_add_to_existing">Føj til eksisterende kontakt</string>
     <string name="contact_add_to_existing_desc">Tilføj dette nummer til en eksisterende kontakt</string>
+    <string name="contact_show_all_social_apps">Vis alle sociale apps (%1$d)</string>
+    <string name="contact_show_less">Vis mindre</string>
     <!-- Contact edit -->
     <string name="contact_edit_middle_name">Mellemnavn</string>
+    <string name="contact_edit_events_header">Vigtige Datoer</string>
+    <string name="contact_edit_add_event">Tilføj Dato</string>
+    <string name="contact_edit_select_date">Vælg dato</string>
     <!-- Dialpad -->
     <!-- Search -->
     <!-- Call screen -->
@@ -457,7 +463,6 @@ Hvid tekst</string>
     <string name="action_select_all">Vælg Alle</string>
     <string name="action_select_none">Fravælg Alle</string>
     <string name="settings_private_secret_code">Hemmelig Dialpad Kode</string>
-    <string name="about_rate_on_google_play">Bedøm på Google Play</string>
     <string name="about_supporter_badge">Støtter ⭐</string>
     <string name="settings_group_style_appearance">Stil &amp; Udseende</string>
     <string name="priority_contacts_select_title">Vælg Prioriteret Kontakt</string>

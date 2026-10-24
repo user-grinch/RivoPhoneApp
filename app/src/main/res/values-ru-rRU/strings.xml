@@ -1196,7 +1196,6 @@
     <string name="action_select_all">Выделить все</string>
     <string name="action_select_none">Отменить выбор</string>
     <string name="settings_private_secret_code">Секретный Dialpad код</string>
-    <string name="about_rate_on_google_play">Оценить на Google Play</string>
     <string name="about_supporter_badge">Сторонник ⭐</string>
     <string name="settings_group_style_appearance">Стиль &amp; внешний вид</string>
     <string name="priority_contacts_select_title">Выберите приоритетный контакт</string>

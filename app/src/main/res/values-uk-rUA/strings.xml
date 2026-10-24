@@ -444,7 +444,6 @@
     <string name="action_select_all">Виділити все</string>
     <string name="action_select_none">Відмінити все</string>
     <string name="settings_private_secret_code">Код секретної клавіатури</string>
-    <string name="about_rate_on_google_play">Оцінити в Google Play</string>
     <string name="about_supporter_badge">Підтримка ⭐</string>
     <string name="settings_group_style_appearance">Стиль &amp; Вигляд</string>
     <string name="priority_contacts_select_title">Вибрати пріоритет контакту</string>

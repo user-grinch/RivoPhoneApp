@@ -605,7 +605,6 @@
     <string name="action_select_all">选择所有</string>
     <string name="action_select_none">取消全选</string>
     <string name="settings_private_secret_code">密钥拨号键盘</string>
-    <string name="about_rate_on_google_play">在 Google Play 上评分</string>
     <string name="about_supporter_badge">支持者:star：</string>
     <string name="settings_group_style_appearance">样式 &amp; 外观</string>
     <string name="priority_contacts_select_title">选择优先级联系人</string>
