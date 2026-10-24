@@ -1176,8 +1176,22 @@ class FloatingCallService : Service(), KoinComponent {
             cachedPhotoBitmap = try {
                 if (!cachedPhotoUri.isNullOrEmpty()) {
                     val uri = Uri.parse(cachedPhotoUri)
+                    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
                     contentResolver.openInputStream(uri)?.use { stream ->
-                        BitmapFactory.decodeStream(stream)
+                        BitmapFactory.decodeStream(stream, null, bounds)
+                    }
+                    val reqSize = (60 * resources.displayMetrics.density).toInt().coerceAtLeast(180)
+                    var sampleSize = 1
+                    if (bounds.outHeight > reqSize || bounds.outWidth > reqSize) {
+                        val halfHeight = bounds.outHeight / 2
+                        val halfWidth = bounds.outWidth / 2
+                        while (halfHeight / sampleSize >= reqSize && halfWidth / sampleSize >= reqSize) {
+                            sampleSize *= 2
+                        }
+                    }
+                    val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+                    contentResolver.openInputStream(uri)?.use { stream ->
+                        BitmapFactory.decodeStream(stream, null, options)
                     }
                 } else null
             } catch (_: Exception) {

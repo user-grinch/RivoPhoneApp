@@ -409,8 +409,22 @@ object FakeCallNotificationManager {
         if (photoUriStr.isNullOrEmpty()) return null
         return try {
             val uri = Uri.parse(photoUriStr)
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             context.contentResolver.openInputStream(uri)?.use { stream ->
-                BitmapFactory.decodeStream(stream)
+                BitmapFactory.decodeStream(stream, null, bounds)
+            }
+            val reqSize = 256
+            var sampleSize = 1
+            if (bounds.outHeight > reqSize || bounds.outWidth > reqSize) {
+                val halfHeight = bounds.outHeight / 2
+                val halfWidth = bounds.outWidth / 2
+                while (halfHeight / sampleSize >= reqSize && halfWidth / sampleSize >= reqSize) {
+                    sampleSize *= 2
+                }
+            }
+            val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+            context.contentResolver.openInputStream(uri)?.use { stream ->
+                BitmapFactory.decodeStream(stream, null, options)
             }
         } catch (e: Exception) {
             null

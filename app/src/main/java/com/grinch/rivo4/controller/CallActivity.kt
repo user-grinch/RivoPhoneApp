@@ -122,6 +122,7 @@ class CallActivity : ComponentActivity() {
         CallService.isActivityVisible.value = true
         turnScreenOnAndShowWhileLocked()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         CallBackgroundStore.attach(preferenceManager)
         AdPreloader.preloadPostCallAd(this@CallActivity)

@@ -137,8 +137,22 @@ class CallService : InCallService() {
         if (photoUri == null) return null
         return try {
             val uri = Uri.parse(photoUri)
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
+                BitmapFactory.decodeStream(inputStream, null, bounds)
+            }
+            val reqSize = 256
+            var sampleSize = 1
+            if (bounds.outHeight > reqSize || bounds.outWidth > reqSize) {
+                val halfHeight = bounds.outHeight / 2
+                val halfWidth = bounds.outWidth / 2
+                while (halfHeight / sampleSize >= reqSize && halfWidth / sampleSize >= reqSize) {
+                    sampleSize *= 2
+                }
+            }
+            val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream, null, options)
             }
         } catch (e: Exception) {
             null

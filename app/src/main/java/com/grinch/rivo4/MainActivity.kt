@@ -115,7 +115,6 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         applySystemOrientationPolicy()
         intentState = intent
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         if (AppLockManager.isLocked(preferenceManager)) {
             isAppLocked = true
