@@ -1092,9 +1092,6 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_processing_blocklist">正在处理黑名单</string>
     <string name="loc_importing_blocked_numbers">正在导入阻止号码...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">一并按两个音量键切换勿扰模式</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
     <string name="loc_manage_storage_tools">管理存储 &amp; 工具</string>
     <string name="loc_remove_from_priority">从优先级删除</string>
     <string name="loc_granted">授予的</string>

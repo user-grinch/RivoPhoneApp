@@ -28,10 +28,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
@@ -39,6 +43,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -67,6 +72,7 @@ import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoSelectionDialog
 import com.grinch.rivo4.view.components.TopBar
 import com.grinch.rivo4.view.components.rememberCallLauncher
+import com.grinch.rivo4.view.components.rememberMessageLauncher
 import com.grinch.rivo4.view.components.rememberGridDragDropState
 import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import com.grinch.rivo4.view.theme.callColors
@@ -127,14 +133,19 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
     val settingsState by prefs.settingsChanged.collectAsState()
     val allContacts by contactsVM.allContacts.collectAsState()
     val callLauncher = rememberCallLauncher()
+    val messageLauncher = rememberMessageLauncher()
     val gridState = rememberLazyGridState()
     val view = LocalView.current
     var showAddSheet by remember { mutableStateOf(false) }
     var numberSelection by remember { mutableStateOf<NumberSelection?>(null) }
+    var isGridView by rememberSaveable { mutableStateOf(prefs.isFavoritesViewAsGrid()) }
 
     fun performAction(contact: Contact, number: String, action: FavoriteAction) {
         view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-        callLauncher.dial(number, contact)
+        when (action) {
+            FavoriteAction.CALL -> callLauncher.dial(number, contact)
+            FavoriteAction.MESSAGE -> messageLauncher.sendMessage(number, contact)
+        }
     }
 
     fun requestAction(contact: Contact, action: FavoriteAction) {
@@ -251,6 +262,23 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                FilledTonalIconButton(
+                    onClick = {
+                        isGridView = !isGridView
+                        prefs.setFavoritesViewAsGrid(isGridView)
+                    },
+                    modifier = Modifier.size(36.dp),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    )
+                ) {
+                    Icon(
+                        imageVector = if (isGridView) Icons.AutoMirrored.Filled.ViewList else Icons.Default.GridView,
+                        contentDescription = if (isGridView) stringResource(R.string.favorites_switch_to_list) else stringResource(R.string.favorites_switch_to_grid),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
                 if (!isEditing) {
                     FilledTonalIconButton(
                         onClick = { showAddSheet = true },
@@ -298,7 +326,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
 
         LazyVerticalGrid(
             state = gridState,
-            columns = GridCells.Adaptive(minSize = 104.dp),
+            columns = if (isGridView) GridCells.Adaptive(minSize = 108.dp) else GridCells.Fixed(1),
             modifier = Modifier
                 .fillMaxSize()
                 .then(
@@ -323,13 +351,13 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                     }
                 ),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 100.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(if (isGridView) 10.dp else 0.dp),
+            verticalArrangement = Arrangement.spacedBy(if (isGridView) 12.dp else 8.dp)
         ) {
             itemsIndexed(
                 items,
                 key = { _, contact -> "fav_${contact.id}" },
-                contentType = { _, _ -> "favorite" }
+                contentType = { _, _ -> if (isGridView) "favorite_grid" else "favorite_list" }
             ) { index, contact ->
                 val dragging = index == dragDropState.draggingItemIndex
                 val itemModifier = if (dragging) {
@@ -345,21 +373,41 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                     Modifier.animateItem()
                 }
 
-                ExpressiveFavoriteCard(
-                    modifier = itemModifier,
-                    contact = contact,
-                    displayOrder = displayOrder,
-                    isEditing = isEditing,
-                    isDragging = dragging,
-                    onUnfavorite = {
-                        contactsVM.toggleFavorite(contact)
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                    },
-                    onOpen = {
-                        navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
-                    },
-                    onCall = { requestAction(contact, FavoriteAction.CALL) },
-                )
+                if (isGridView) {
+                    ExpressiveFavoriteCard(
+                        modifier = itemModifier,
+                        contact = contact,
+                        displayOrder = displayOrder,
+                        isEditing = isEditing,
+                        isDragging = dragging,
+                        onUnfavorite = {
+                            contactsVM.toggleFavorite(contact)
+                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                        },
+                        onOpen = {
+                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                        },
+                        onCall = { requestAction(contact, FavoriteAction.CALL) },
+                        onMessage = { requestAction(contact, FavoriteAction.MESSAGE) }
+                    )
+                } else {
+                    ExpressiveFavoriteListItem(
+                        modifier = itemModifier,
+                        contact = contact,
+                        displayOrder = displayOrder,
+                        isEditing = isEditing,
+                        isDragging = dragging,
+                        onUnfavorite = {
+                            contactsVM.toggleFavorite(contact)
+                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                        },
+                        onOpen = {
+                            navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                        },
+                        onCall = { requestAction(contact, FavoriteAction.CALL) },
+                        onMessage = { requestAction(contact, FavoriteAction.MESSAGE) }
+                    )
+                }
             }
         }
     }
@@ -371,7 +419,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
             items = selection.contact.phoneNumbers.filter { it.isNotBlank() },
             itemLabel = ::formatPhoneNumber,
             itemSupporting = { selection.contact.name },
-            itemIcon = { Icons.Default.Call },
+            itemIcon = { if (selection.action == FavoriteAction.CALL) Icons.Default.Call else Icons.AutoMirrored.Filled.Message },
             onItemSelected = { number ->
                 numberSelection = null
                 performAction(selection.contact, number, selection.action)
@@ -393,7 +441,8 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
 }
 
 private enum class FavoriteAction {
-    CALL
+    CALL,
+    MESSAGE
 }
 
 private data class NumberSelection(
@@ -410,6 +459,7 @@ private fun ExpressiveFavoriteCard(
     onUnfavorite: () -> Unit,
     onOpen: () -> Unit,
     onCall: () -> Unit,
+    onMessage: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "favoriteWiggle")
@@ -446,24 +496,24 @@ private fun ExpressiveFavoriteCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 10.dp, vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (isEditing) {
-                        Surface(
-                            onClick = onUnfavorite,
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .size(30.dp),
-                            shape = RoundedCornerShape(rivoCornerDp(12, roundness)),
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                            tonalElevation = 2.dp
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isEditing) {
+                    Surface(
+                        onClick = onUnfavorite,
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(30.dp),
+                        shape = RoundedCornerShape(rivoCornerDp(12, roundness)),
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        tonalElevation = 2.dp
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
@@ -507,16 +557,16 @@ private fun ExpressiveFavoriteCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FilledTonalIconButton(
                     onClick = onCall,
                     enabled = !isEditing && contact.phoneNumbers.any { it.isNotBlank() },
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(38.dp)
                         .weight(1f)
-                        .clip(RoundedCornerShape(rivoCornerDp(16, roundness))),
+                        .clip(RoundedCornerShape(rivoCornerDp(14, roundness))),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -525,10 +575,192 @@ private fun ExpressiveFavoriteCard(
                     Icon(
                         imageVector = Icons.Default.Call,
                         contentDescription = stringResource(R.string.favorites_action_call),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
+                FilledTonalIconButton(
+                    onClick = onMessage,
+                    enabled = !isEditing && contact.phoneNumbers.any { it.isNotBlank() },
+                    modifier = Modifier
+                        .height(38.dp)
+                        .weight(1f)
+                        .clip(RoundedCornerShape(rivoCornerDp(14, roundness))),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Message,
+                        contentDescription = stringResource(R.string.favorites_action_message),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExpressiveFavoriteListItem(
+    contact: Contact,
+    displayOrder: Int,
+    isEditing: Boolean,
+    isDragging: Boolean,
+    onUnfavorite: () -> Unit,
+    onOpen: () -> Unit,
+    onCall: () -> Unit,
+    onMessage: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "favoriteListWiggle")
+    val wiggle by infiniteTransition.animateFloat(
+        initialValue = -0.8f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(140, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "listWiggle"
+    )
+
+    val roundness = LocalCardRoundness.current
+    val cardShape = RoundedCornerShape(rivoCornerDp(20, roundness))
+    val avatarShape = RoundedCornerShape(rivoCornerDp(16, roundness))
+
+    Card(
+        onClick = { if (!isEditing) onOpen() },
+        shape = cardShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 1.dp,
+            pressedElevation = 4.dp
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                if (isEditing && !isDragging) rotationZ = wiggle
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            if (isEditing) {
+                Surface(
+                    onClick = onUnfavorite,
+                    modifier = Modifier.size(32.dp),
+                    shape = RoundedCornerShape(rivoCornerDp(12, roundness)),
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    tonalElevation = 2.dp
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.Remove,
+                            contentDescription = stringResource(R.string.content_desc_remove_favorite),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                shape = avatarShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(50.dp)
+            ) {
+                RivoAvatar(
+                    name = contact.name,
+                    photoUri = contact.photoUri,
+                    textStyle = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(avatarShape),
+                    shape = avatarShape
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = ContactUtils.formatContactName(contact, displayOrder),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                val primaryNumber = contact.phoneNumbers.firstOrNull { it.isNotBlank() }
+                if (!primaryNumber.isNullOrBlank()) {
+                    Text(
+                        text = formatPhoneNumber(primaryNumber),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            if (isEditing) {
+                Icon(
+                    imageVector = Icons.Default.DragHandle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(24.dp)
+                )
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilledTonalIconButton(
+                        onClick = onCall,
+                        enabled = contact.phoneNumbers.any { it.isNotBlank() },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(rivoCornerDp(14, roundness))),
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Call,
+                            contentDescription = stringResource(R.string.favorites_action_call),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    FilledTonalIconButton(
+                        onClick = onMessage,
+                        enabled = contact.phoneNumbers.any { it.isNotBlank() },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(rivoCornerDp(14, roundness))),
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Message,
+                            contentDescription = stringResource(R.string.favorites_action_message),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
             }
         }
     }

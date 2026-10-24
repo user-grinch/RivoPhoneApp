@@ -95,6 +95,7 @@ fun CallNotesSheet(
 ) {
     val context = LocalContext.current
     val view = LocalView.current
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
     val notes by callNoteDao.getNotesForNumber(phoneNumber).collectAsState(initial = emptyList())

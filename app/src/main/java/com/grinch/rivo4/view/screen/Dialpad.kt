@@ -186,6 +186,7 @@ fun DialPadScreen(
     val settingsState by prefs.settingsChanged.collectAsState()
 
     val allContacts by contactsVM.allContacts.collectAsState()
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val messageLauncher = rememberMessageLauncher()
     val videoLauncher = rememberVideoLauncher()

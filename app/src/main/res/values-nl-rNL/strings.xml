@@ -841,7 +841,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_popular_settings">Populaire instellingen</string>
     <string name="loc_protect_app_with_biometrics_or_pin">Bescherm de app met biometrische of pincode</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9">Contacten toewijzen aan toetsenbordtoetsen 1-9</string>
-    <string name="loc_v_appinfo_first">v${appInfo.first}</string>
     <string name="loc_11_avatar_shapes_contact_photos_initials_cards">11 avatar vormen, neem contact op met foto\'s, initialen &amp; kaarten</string>
     <string name="loc_jane_doe">Jane Jansen</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
@@ -947,19 +946,13 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_call_history_settings">Instellingen oproepgeschiedenis</string>
     <string name="loc_save_to_call_history">Opslaan in oproepgeschiedenis</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Beantwoorde en gemiste nep oproepen verschijnen in recente oproepen</string>
-    <string name="loc_stringresource_r_string_fake_call_schedules_title_schedules_size">${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} geblokkeerd</string>
-    <string name="loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size">${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Gesprekken en sms-berichten van dit nummer worden onmiddellijk geblokkeerd.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNamedeblokkeren? Ze kunnen je weer bellen en je een bericht sturen.</string>
     <string name="loc_processing_blocklist">Verwerken blokkeerlijst</string>
     <string name="loc_importing_blocked_numbers">Geblokkeerde nummers importeren...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Druk op beide volumeknoppen om \"Niet storen\" in te schakelen</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
-    <string name="loc_indexbadge">$indexBadge</string>
     <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_manage_storage_tools">Opslagruimte beheren &amp; tools</string>
     <string name="loc_remove_from_priority">Verwijder uit prioriteit</string>

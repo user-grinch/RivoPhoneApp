@@ -20,6 +20,10 @@ import com.grinch.rivo4.modal.db.TrashedContactDao
 import com.grinch.rivo4.modal.db.TrashedContactEntity
 import com.grinch.rivo4.modal.db.PrivateContactEntity
 import com.grinch.rivo4.modal.data.AccountEntry
+import com.grinch.rivo4.modal.data.OrganizationEntry
+import com.grinch.rivo4.modal.data.PostalAddressEntry
+import com.grinch.rivo4.modal.data.RelationEntry
+import com.grinch.rivo4.modal.data.WebsiteEntry
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.controller.util.areNumbersEqual
@@ -531,7 +535,13 @@ class ContactsRepository(
                         }
                         ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
                             if (data1.isNullOrBlank()) currentContact else {
-                                currentContact.copy(addresses = (currentContact.addresses + data1).distinct())
+                                val type = if (data2Idx != -1) cursor.getInt(data2Idx) else ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
+                                val label = if (data3Idx != -1) cursor.getString(data3Idx) else null
+                                val entry = PostalAddressEntry(address = data1, type = type, label = label)
+                                currentContact.copy(
+                                    addresses = (currentContact.addresses + data1).distinct(),
+                                    addressEntries = (currentContact.addressEntries + entry).distinct()
+                                )
                             }
                         }
                         ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE -> {
@@ -545,6 +555,31 @@ class ContactsRepository(
                                 val label = cursor.getString(data3Idx)
                                 val event = ContactEvent(type, label, data1)
                                 currentContact.copy(events = (currentContact.events + event).distinct())
+                            }
+                        }
+                        ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE -> {
+                            if (data1.isNullOrBlank()) currentContact else {
+                                // DATA1=company, DATA4=title, DATA5=department (per CommonDataKinds.Organization)
+                                val title = if (data4Idx != -1) cursor.getString(data4Idx) else null
+                                val department = if (data5Idx != -1) cursor.getString(data5Idx) else null
+                                val entry = OrganizationEntry(company = data1, title = title, department = department)
+                                currentContact.copy(organizations = (currentContact.organizations + entry).distinct())
+                            }
+                        }
+                        ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE -> {
+                            if (data1.isNullOrBlank()) currentContact else {
+                                val type = cursor.getInt(data2Idx)
+                                val label = cursor.getString(data3Idx)
+                                val entry = WebsiteEntry(url = data1, type = type, label = label)
+                                currentContact.copy(websites = (currentContact.websites + entry).distinct())
+                            }
+                        }
+                        ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE -> {
+                            if (data1.isNullOrBlank()) currentContact else {
+                                val type = cursor.getInt(data2Idx)
+                                val label = cursor.getString(data3Idx)
+                                val entry = RelationEntry(name = data1, type = type, label = label)
+                                currentContact.copy(relations = (currentContact.relations + entry).distinct())
                             }
                         }
                         ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE -> {
@@ -899,7 +934,11 @@ class ContactsRepository(
             }
         }
         val effectiveAddresses = if (isSim) emptyList() else contact.addresses
+        val effectiveAddressEntries = if (isSim) emptyList() else contact.addressEntries.filter { it.address.isNotBlank() }
         val effectiveEvents = if (isSim) emptyList() else contact.events.filter { it.date.isNotBlank() }
+        val effectiveOrganizations = if (isSim) emptyList() else contact.organizations.filter { it.company.isNotBlank() }
+        val effectiveWebsites = if (isSim) emptyList() else contact.websites.filter { it.url.isNotBlank() }
+        val effectiveRelations = if (isSim) emptyList() else contact.relations.filter { it.name.isNotBlank() }
 
         val effectiveName = if (contact.name.isNotBlank() && contact.name != "Unnamed" && contact.name != unknownLabel) {
             contact.name
@@ -928,8 +967,8 @@ class ContactsRepository(
         } else Pair(null, null)
         val accountChanged = resolvedContactId != null && existingRawContactIds.isNotEmpty() &&
             (existingAcc.first != contact.accountName || existingAcc.second != contact.accountType)
-        val oldRawIdsOnAccountChange = if (accountChanged && resolvedContactId != null) {
-            getAllRawContactIds(resolvedContactId)
+        val oldRawIdsOnAccountChange = if (accountChanged) {
+            getAllRawContactIds(resolvedContactId!!)
         } else emptyList()
 
         val isNewInsert = resolvedContactId == null || existingRawContactIds.isEmpty() || accountChanged
@@ -1021,7 +1060,12 @@ class ContactsRepository(
                 )
             }
 
-            effectiveAddresses.forEach { address ->
+            val addressesToWrite = if (effectiveAddressEntries.isNotEmpty()) {
+                effectiveAddressEntries
+            } else {
+                effectiveAddresses.map { PostalAddressEntry(address = it) }
+            }
+            addressesToWrite.forEach { addressEntry ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
@@ -1029,11 +1073,9 @@ class ContactsRepository(
                             ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
-                        .withValue(
-                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
-                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
-                        )
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, addressEntry.address)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, addressEntry.type)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, addressEntry.label)
                         .build()
                 )
             }
@@ -1049,6 +1091,52 @@ class ContactsRepository(
                         .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, event.date)
                         .withValue(ContactsContract.CommonDataKinds.Event.TYPE, event.type)
                         .withValue(ContactsContract.CommonDataKinds.Event.LABEL, event.label)
+                        .build()
+                )
+            }
+
+            effectiveOrganizations.forEach { org ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, org.company)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.TITLE, org.title)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.DEPARTMENT, org.department)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
+                        .build()
+                )
+            }
+
+            effectiveWebsites.forEach { website ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Website.URL, website.url)
+                        .withValue(ContactsContract.CommonDataKinds.Website.TYPE, website.type)
+                        .withValue(ContactsContract.CommonDataKinds.Website.LABEL, website.label)
+                        .build()
+                )
+            }
+
+            effectiveRelations.forEach { relation ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactIndex)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Relation.NAME, relation.name)
+                        .withValue(ContactsContract.CommonDataKinds.Relation.TYPE, relation.type)
+                        .withValue(ContactsContract.CommonDataKinds.Relation.LABEL, relation.label)
                         .build()
                 )
             }
@@ -1202,7 +1290,12 @@ class ContactsRepository(
                     )
                     .build()
             )
-            effectiveAddresses.forEach { address ->
+            val addressesToUpdate = if (effectiveAddressEntries.isNotEmpty()) {
+                effectiveAddressEntries
+            } else {
+                effectiveAddresses.map { PostalAddressEntry(address = it) }
+            }
+            addressesToUpdate.forEach { addressEntry ->
                 ops.add(
                     ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
@@ -1210,11 +1303,9 @@ class ContactsRepository(
                             ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
                         )
-                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, address)
-                        .withValue(
-                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
-                            ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
-                        )
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, addressEntry.address)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, addressEntry.type)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, addressEntry.label)
                         .build()
                 )
             }
@@ -1238,6 +1329,76 @@ class ContactsRepository(
                         .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, event.date)
                         .withValue(ContactsContract.CommonDataKinds.Event.TYPE, event.type)
                         .withValue(ContactsContract.CommonDataKinds.Event.LABEL, event.label)
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            effectiveOrganizations.forEach { org ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, org.company)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.TITLE, org.title)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.DEPARTMENT, org.department)
+                        .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            effectiveWebsites.forEach { website ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Website.URL, website.url)
+                        .withValue(ContactsContract.CommonDataKinds.Website.TYPE, website.type)
+                        .withValue(ContactsContract.CommonDataKinds.Website.LABEL, website.label)
+                        .build()
+                )
+            }
+
+            ops.add(
+                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(
+                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)
+                    )
+                    .build()
+            )
+            effectiveRelations.forEach { relation ->
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.Relation.NAME, relation.name)
+                        .withValue(ContactsContract.CommonDataKinds.Relation.TYPE, relation.type)
+                        .withValue(ContactsContract.CommonDataKinds.Relation.LABEL, relation.label)
                         .build()
                 )
             }
@@ -1815,6 +1976,10 @@ class ContactsRepository(
         }
 
         val mergedEvents = (targetContact.events + sources.flatMap { it.events }).distinct()
+        val mergedOrganizations = (targetContact.organizations + sources.flatMap { it.organizations }).distinct()
+        val mergedWebsites = (targetContact.websites + sources.flatMap { it.websites }).distinct()
+        val mergedRelations = (targetContact.relations + sources.flatMap { it.relations }).distinct()
+        val mergedAddressEntries = (targetContact.addressEntries + sources.flatMap { it.addressEntries }).distinct()
 
         val notesList = mutableListOf<String>()
         if (!targetContact.notes.isNullOrBlank()) notesList.add(targetContact.notes)
@@ -1847,7 +2012,11 @@ class ContactsRepository(
             emails = mergedEmails,
             emailEntries = mergedEmailEntries,
             addresses = mergedAddresses,
+            addressEntries = mergedAddressEntries,
             events = mergedEvents,
+            organizations = mergedOrganizations,
+            websites = mergedWebsites,
+            relations = mergedRelations,
             notes = mergedNotes,
             photoUri = mergedPhoto,
             isFavorite = isFav,
@@ -2013,9 +2182,25 @@ class ContactsRepository(
                 contact.emails.forEach { append("EMAIL;TYPE=HOME:$it\n") }
                 contact.addresses.forEach { append("ADR;TYPE=HOME:;;$it;;;;\n") }
                 contact.events.forEach { event ->
-                    if (event.type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY && event.date.isNotBlank()) {
-                        append("BDAY:${event.date}\n")
+                    if (event.date.isNotBlank()) {
+                        when (event.type) {
+                            ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY -> append("BDAY:${event.date}\n")
+                            ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY -> append("ANNIVERSARY:${event.date}\n")
+                            else -> append("X-ANDROID-CUSTOM:vnd.android.cursor.item/contact_event;${event.date};${event.type};;;0\n")
+                        }
                     }
+                }
+                contact.organizations.filter { it.company.isNotBlank() }.forEach { org ->
+                    append("ORG:${org.company}")
+                    if (!org.department.isNullOrBlank()) append(";${org.department}")
+                    append("\n")
+                    if (!org.title.isNullOrBlank()) append("TITLE:${org.title}\n")
+                }
+                contact.websites.filter { it.url.isNotBlank() }.forEach { website ->
+                    append("URL:${website.url}\n")
+                }
+                contact.relations.filter { it.name.isNotBlank() }.forEach { relation ->
+                    append("RELATED:${relation.name}\n")
                 }
                 if (!contact.notes.isNullOrBlank()) {
                     append("NOTE:${contact.notes.replace("\n", "\\n")}\n")
@@ -2045,6 +2230,9 @@ class ContactsRepository(
                 val emails = mutableListOf<String>()
                 val addresses = mutableListOf<String>()
                 val events = mutableListOf<ContactEvent>()
+                val organizations = mutableListOf<OrganizationEntry>()
+                val websites = mutableListOf<WebsiteEntry>()
+                val relations = mutableListOf<RelationEntry>()
 
                 vCard.lines().forEach { rawLine ->
                     val line = rawLine.trim()
@@ -2071,11 +2259,39 @@ class ContactsRepository(
                         "BDAY" -> {
                             events.add(ContactEvent(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY, null, propVal))
                         }
+                        "ANNIVERSARY" -> {
+                            events.add(ContactEvent(ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY, null, propVal))
+                        }
+                        "ORG" -> {
+                            // ORG may carry "company;department" per RFC 6350 §6.6.4
+                            val parts = propVal.split(";").map { it.trim() }
+                            val company = parts.getOrNull(0)?.takeIf { it.isNotBlank() } ?: return@forEach
+                            val department = parts.getOrNull(1)?.takeIf { it.isNotBlank() }
+                            organizations.add(OrganizationEntry(company = company, department = department))
+                        }
+                        "TITLE" -> {
+                            if (organizations.isNotEmpty()) {
+                                organizations[organizations.size - 1] =
+                                    organizations.last().copy(title = propVal)
+                            } else {
+                                organizations.add(OrganizationEntry(company = "", title = propVal))
+                            }
+                        }
+                        "URL" -> {
+                            websites.add(WebsiteEntry(url = propVal))
+                        }
+                        "RELATED" -> {
+                            // RELATED value may carry parameters after a ";" — keep the name only
+                            val relatedName = propVal.substringBefore(";").trim()
+                            if (relatedName.isNotBlank()) relations.add(RelationEntry(name = relatedName))
+                        }
                         "NOTE" -> {
                             notes = propVal.replace("\\n", "\n")
                         }
                     }
                 }
+
+                val effectiveOrganizations = organizations.filter { it.company.isNotBlank() || !it.title.isNullOrBlank() }
 
                 if (name.isNotBlank() || numbers.isNotEmpty() || emails.isNotEmpty()) {
                     saveContact(Contact(
@@ -2086,6 +2302,9 @@ class ContactsRepository(
                         emails = emails,
                         addresses = addresses,
                         events = events,
+                        organizations = effectiveOrganizations,
+                        websites = websites,
+                        relations = relations,
                         notes = notes,
                         isPrivate = true
                     ))

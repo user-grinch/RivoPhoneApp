@@ -29,11 +29,18 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.Cake
+import androidx.compose.material.icons.outlined.Work
+import androidx.compose.material.icons.outlined.Business
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +48,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactTypeLabels
@@ -84,7 +95,37 @@ private data class EditableEmail(
 
 private data class EditableAddress(
     val id: Long = System.nanoTime() + (0..9999).random(),
-    val address: String
+    val address: String,
+    val type: Int = ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME,
+    val label: String? = null
+)
+
+private data class EditableEvent(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val date: String,
+    val type: Int = ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY,
+    val label: String? = null
+)
+
+private data class EditableOrganization(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val company: String,
+    val title: String = "",
+    val department: String = ""
+)
+
+private data class EditableWebsite(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val url: String,
+    val type: Int = ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE,
+    val label: String? = null
+)
+
+private data class EditableRelation(
+    val id: Long = System.nanoTime() + (0..9999).random(),
+    val name: String,
+    val type: Int = ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND,
+    val label: String? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,6 +162,10 @@ fun ContactEditScreen(
     }
     val emails = remember { mutableStateListOf(EditableEmail(address = "")) }
     val addresses = remember { mutableStateListOf(EditableAddress(address = "")) }
+    val events = remember { mutableStateListOf(EditableEvent(date = "")) }
+    val organizations = remember { mutableStateListOf(EditableOrganization(company = "")) }
+    val websites = remember { mutableStateListOf(EditableWebsite(url = "")) }
+    val relations = remember { mutableStateListOf(EditableRelation(name = "")) }
 
     val displayName = listOfNotNull(
         givenName.trim().ifBlank { null },
@@ -197,10 +242,50 @@ fun ContactEditScreen(
                 }
 
                 addresses.clear()
-                if (existing.addresses.isNotEmpty()) {
+                if (existing.addressEntries.isNotEmpty()) {
+                    addresses.addAll(existing.addressEntries.map {
+                        EditableAddress(address = it.address, type = it.type, label = it.label)
+                    })
+                } else if (existing.addresses.isNotEmpty()) {
                     addresses.addAll(existing.addresses.map { EditableAddress(address = it) })
                 } else {
                     addresses.add(EditableAddress(address = ""))
+                }
+
+                events.clear()
+                if (existing.events.isNotEmpty()) {
+                    events.addAll(existing.events.map {
+                        EditableEvent(date = it.date, type = it.type, label = it.label)
+                    })
+                } else {
+                    events.add(EditableEvent(date = ""))
+                }
+
+                organizations.clear()
+                if (existing.organizations.isNotEmpty()) {
+                    organizations.addAll(existing.organizations.map {
+                        EditableOrganization(company = it.company, title = it.title ?: "", department = it.department ?: "")
+                    })
+                } else {
+                    organizations.add(EditableOrganization(company = ""))
+                }
+
+                websites.clear()
+                if (existing.websites.isNotEmpty()) {
+                    websites.addAll(existing.websites.map {
+                        EditableWebsite(url = it.url, type = it.type, label = it.label)
+                    })
+                } else {
+                    websites.add(EditableWebsite(url = ""))
+                }
+
+                relations.clear()
+                if (existing.relations.isNotEmpty()) {
+                    relations.addAll(existing.relations.map {
+                        EditableRelation(name = it.name, type = it.type, label = it.label)
+                    })
+                } else {
+                    relations.add(EditableRelation(name = ""))
                 }
                 loadedContactId = contactId
             }
@@ -293,6 +378,27 @@ fun ContactEditScreen(
                                     EmailEntry(address = it.address.trim(), type = it.type, label = it.label)
                                 }
                                 val savedAddresses = addresses.map { it.address.trim() }.filter { it.isNotBlank() }
+                                val savedAddressEntries = addresses.filter { it.address.isNotBlank() }.map {
+                                    com.grinch.rivo4.modal.data.PostalAddressEntry(
+                                        address = it.address.trim(), type = it.type, label = it.label
+                                    )
+                                }
+                                val savedEvents = events.filter { it.date.isNotBlank() }.map {
+                                    com.grinch.rivo4.modal.data.ContactEvent(type = it.type, label = it.label, date = it.date.trim())
+                                }
+                                val savedOrganizations = organizations.filter { it.company.isNotBlank() }.map {
+                                    com.grinch.rivo4.modal.data.OrganizationEntry(
+                                        company = it.company.trim(),
+                                        title = it.title.trim().ifBlank { null },
+                                        department = it.department.trim().ifBlank { null }
+                                    )
+                                }
+                                val savedWebsites = websites.filter { it.url.isNotBlank() }.map {
+                                    com.grinch.rivo4.modal.data.WebsiteEntry(url = it.url.trim(), type = it.type, label = it.label)
+                                }
+                                val savedRelations = relations.filter { it.name.isNotBlank() }.map {
+                                    com.grinch.rivo4.modal.data.RelationEntry(name = it.name.trim(), type = it.type, label = it.label)
+                                }
 
                                 val fallbackName = nickname.trim().ifBlank {
                                     savedPhones.firstOrNull()?.number ?: savedEmails.firstOrNull()?.address ?: "Unnamed"
@@ -321,7 +427,11 @@ fun ContactEditScreen(
                                     phones = savedPhones,
                                     emailEntries = savedEmails,
                                     addresses = savedAddresses,
-                                    events = loadedExistingContact?.events ?: emptyList(),
+                                    addressEntries = savedAddressEntries,
+                                    events = savedEvents,
+                                    organizations = savedOrganizations,
+                                    websites = savedWebsites,
+                                    relations = savedRelations,
                                     photoUri = photoUri,
                                     isFavorite = loadedExistingContact?.isFavorite ?: false,
                                     customRingtone = loadedExistingContact?.customRingtone,
@@ -669,7 +779,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = phone.number,
                                     onValueChange = { phones[index] = phones[index].copy(number = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_contact_edit_phone_field_label_index_1),
+                                    label = "${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}",
                                     icon = Icons.Outlined.Phone,
                                     indexBadge = index + 1,
                                     typeValue = phone.type,
@@ -751,7 +861,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = email.address,
                                     onValueChange = { emails[index] = emails[index].copy(address = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_label_email_index_1),
+                                    label = "${stringResource(R.string.label_email)} ${index + 1}",
                                     icon = Icons.Outlined.Email,
                                     indexBadge = index + 1,
                                     typeValue = email.type,
@@ -830,12 +940,16 @@ fun ContactEditScreen(
                                 shape = shape,
                                 color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                RivoSegmentedRemovableField(
+                                RivoSegmentedTypedField(
                                     value = addr.address,
                                     onValueChange = { addresses[index] = addresses[index].copy(address = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_label_address_index_1),
+                                    label = "${stringResource(R.string.label_address)} ${index + 1}",
                                     icon = Icons.Outlined.LocationOn,
                                     indexBadge = index + 1,
+                                    typeValue = addr.type,
+                                    typeOptions = ContactTypeLabels.postalAddressTypeOptions,
+                                    typeLabel = { ContactTypeLabels.postalAddressTypeLabel(context, it, addr.label) },
+                                    onTypeChange = { addresses[index] = addresses[index].copy(type = it) },
                                     onDelete = if (addresses.size > 1 || addr.address.isNotBlank()) {
                                         {
                                             if (addresses.size > 1) {
@@ -877,6 +991,354 @@ fun ContactEditScreen(
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
                                     text = stringResource(R.string.contact_edit_add_address),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Events Group (Segmented) — RFC 6350 §6.1.4/§6.1.5 (BDAY, ANNIVERSARY, other dates)
+            item {
+                val total = events.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_events_header),
+                        icon = Icons.Outlined.Cake,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    events.forEachIndexed { index, event ->
+                        key(event.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
+                            ) {
+                                RivoSegmentedDateField(
+                                    value = event.date,
+                                    onValueChange = { events[index] = events[index].copy(date = it) },
+                                    label = stringResource(R.string.contact_event_generic),
+                                    icon = Icons.Outlined.Cake,
+                                    indexBadge = index + 1,
+                                    typeValue = event.type,
+                                    typeOptions = ContactTypeLabels.eventTypeOptions,
+                                    typeLabel = { ContactTypeLabels.eventTypeLabel(context, it, event.label) },
+                                    onTypeChange = { events[index] = events[index].copy(type = it) },
+                                    onDelete = if (events.size > 1 || event.date.isNotBlank()) {
+                                        {
+                                            if (events.size > 1) {
+                                                events.removeAt(index)
+                                            } else {
+                                                events[0] = EditableEvent(date = "")
+                                            }
+                                        }
+                                    } else null
+                                )
+                            }
+                        }
+                    }
+                    key("add_event") {
+                        val shape = rivoGroupedItemShape(events.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { events.add(EditableEvent(date = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_event),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Organization Group — RFC 6350 §6.6.4/§6.6.1 (ORG, TITLE)
+            item {
+                val total = organizations.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_organization_header),
+                        icon = Icons.Outlined.Work,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    organizations.forEachIndexed { index, org ->
+                        key(org.id) {
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = rivoGroupedItemShape(index, total),
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
+                            ) {
+                                Column {
+                                    RivoSegmentedTextField(
+                                        value = org.company,
+                                        onValueChange = { organizations[index] = organizations[index].copy(company = it) },
+                                        label = stringResource(R.string.contact_edit_company),
+                                        icon = Icons.Outlined.Work
+                                    )
+                                    RivoSegmentedTextField(
+                                        value = org.title,
+                                        onValueChange = { organizations[index] = organizations[index].copy(title = it) },
+                                        label = stringResource(R.string.contact_edit_job_title),
+                                        icon = Icons.Outlined.Badge
+                                    )
+                                    RivoSegmentedTextField(
+                                        value = org.department,
+                                        onValueChange = { organizations[index] = organizations[index].copy(department = it) },
+                                        label = stringResource(R.string.contact_edit_department),
+                                        icon = Icons.Outlined.Business
+                                    )
+                                    if (organizations.size > 1 || org.company.isNotBlank()) {
+                                        TextButton(
+                                            onClick = {
+                                                if (organizations.size > 1) {
+                                                    organizations.removeAt(index)
+                                                } else {
+                                                    organizations[0] = EditableOrganization(company = "")
+                                                }
+                                            },
+                                            modifier = Modifier.align(Alignment.End)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.RemoveCircleOutline,
+                                                contentDescription = stringResource(R.string.action_delete),
+                                                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(Modifier.width(6.dp))
+                                            Text(
+                                                stringResource(R.string.action_delete),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    key("add_organization") {
+                        val shape = rivoGroupedItemShape(organizations.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { organizations.add(EditableOrganization(company = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_organization),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Websites Group (Segmented) — RFC 6350 §6.7.3 (URL)
+            item {
+                val total = websites.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_websites_header),
+                        icon = Icons.Outlined.Language,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    websites.forEachIndexed { index, website ->
+                        key(website.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
+                            ) {
+                                RivoSegmentedTypedField(
+                                    value = website.url,
+                                    onValueChange = { websites[index] = websites[index].copy(url = it) },
+                                    label = stringResource(R.string.contact_edit_website),
+                                    icon = Icons.Outlined.Language,
+                                    indexBadge = index + 1,
+                                    typeValue = website.type,
+                                    typeOptions = ContactTypeLabels.websiteTypeOptions,
+                                    typeLabel = { ContactTypeLabels.websiteTypeLabel(context, it, website.label) },
+                                    onTypeChange = { websites[index] = websites[index].copy(type = it) },
+                                    onDelete = if (websites.size > 1 || website.url.isNotBlank()) {
+                                        {
+                                            if (websites.size > 1) {
+                                                websites.removeAt(index)
+                                            } else {
+                                                websites[0] = EditableWebsite(url = "")
+                                            }
+                                        }
+                                    } else null
+                                )
+                            }
+                        }
+                    }
+                    key("add_website") {
+                        val shape = rivoGroupedItemShape(websites.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { websites.add(EditableWebsite(url = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_website),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Relations Group (Segmented) — RFC 6350 §6.6.6 (RELATED)
+            item {
+                val total = relations.size + 1
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    RivoSectionHeader(
+                        title = stringResource(R.string.contact_edit_relations_header),
+                        icon = Icons.Outlined.Group,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+                    relations.forEachIndexed { index, relation ->
+                        key(relation.id) {
+                            val shape = rivoGroupedItemShape(index, total)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = shape,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
+                            ) {
+                                RivoSegmentedTypedField(
+                                    value = relation.name,
+                                    onValueChange = { relations[index] = relations[index].copy(name = it) },
+                                    label = stringResource(R.string.contact_edit_relation),
+                                    icon = Icons.Outlined.Group,
+                                    indexBadge = index + 1,
+                                    typeValue = relation.type,
+                                    typeOptions = ContactTypeLabels.relationTypeOptions,
+                                    typeLabel = { ContactTypeLabels.relationTypeLabel(context, it, relation.label) },
+                                    onTypeChange = { relations[index] = relations[index].copy(type = it) },
+                                    onDelete = if (relations.size > 1 || relation.name.isNotBlank()) {
+                                        {
+                                            if (relations.size > 1) {
+                                                relations.removeAt(index)
+                                            } else {
+                                                relations[0] = EditableRelation(name = "")
+                                            }
+                                        }
+                                    } else null
+                                )
+                            }
+                        }
+                    }
+                    key("add_relation") {
+                        val shape = rivoGroupedItemShape(relations.size, total)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = shape,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { relations.add(EditableRelation(name = "")) }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = stringResource(R.string.contact_edit_add_relation),
                                     color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Medium
@@ -1059,7 +1521,7 @@ fun RivoSegmentedTypedField(
                             Box(contentAlignment = Alignment.Center) {
                                 if (indexBadge != null) {
                                     Text(
-                                        text = stringResource(R.string.loc_indexbadge),
+                                        text = "$indexBadge",
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -1171,6 +1633,224 @@ fun RivoSegmentedTypedField(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RivoSegmentedDateField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    typeValue: Int,
+    typeOptions: List<Int>,
+    typeLabel: (Int) -> String,
+    onTypeChange: (Int) -> Unit,
+    indexBadge: Int? = null,
+    onDelete: (() -> Unit)? = null
+) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTypeMenu by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { showDatePicker = true }
+                    .padding(horizontal = 4.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier.size(36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        modifier = Modifier.size(30.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            if (indexBadge != null) {
+                                Text(
+                                    text = "$indexBadge",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    if (value.isNotBlank()) {
+                        Text(
+                            text = value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.contact_edit_select_date),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+
+                if (value.isNotEmpty()) {
+                    IconButton(
+                        onClick = { onValueChange("") },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.action_clear),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+
+            if (onDelete != null) {
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.RemoveCircleOutline,
+                        contentDescription = stringResource(R.string.action_delete),
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+        }
+
+        Box(modifier = Modifier.padding(start = 52.dp, top = 2.dp)) {
+            Surface(
+                onClick = { showTypeMenu = true },
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Sell,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = typeLabel(typeValue),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            RivoDropdownMenu(
+                expanded = showTypeMenu,
+                onDismissRequest = { showTypeMenu = false }
+            ) {
+                typeOptions.forEach { option ->
+                    RivoDropdownMenuItem(
+                        text = { Text(typeLabel(option)) },
+                        onClick = {
+                            onTypeChange(option)
+                            showTypeMenu = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    if (showDatePicker) {
+        val parsedMillis = remember(value) {
+            try {
+                if (value.isNotBlank()) {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }
+                    sdf.parse(value)?.time
+                } else null
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = parsedMillis ?: System.currentTimeMillis()
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { utcMillis ->
+                            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                                timeInMillis = utcMillis
+                            }
+                            val y = cal.get(Calendar.YEAR)
+                            val m = cal.get(Calendar.MONTH) + 1
+                            val d = cal.get(Calendar.DAY_OF_MONTH)
+                            onValueChange(String.format(Locale.US, "%04d-%02d-%02d", y, m, d))
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_done))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
 @Composable
 fun RivoSegmentedRemovableField(
     value: String,
@@ -1206,7 +1886,7 @@ fun RivoSegmentedRemovableField(
                         Box(contentAlignment = Alignment.Center) {
                             if (indexBadge != null) {
                                 Text(
-                                    text = stringResource(R.string.loc_indexbadge),
+                                    text = "$indexBadge",
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary

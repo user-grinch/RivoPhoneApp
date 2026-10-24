@@ -132,12 +132,15 @@ class ContactsViewModel(
         _sortOrder,
         _availableAccounts
     ) { args ->
+        @Suppress("UNCHECKED_CAST")
         val contacts = args[0] as List<Contact>
         val account = args[1] as Account?
         val privateOnly = args[2] as Boolean
         val localOnly = args[3] as Boolean
+        @Suppress("UNCHECKED_CAST")
         val visibleAccounts = args[4] as Set<String>?
         val sortOrder = args[5] as Int
+        @Suppress("UNCHECKED_CAST")
         val availableAccountsList = args[6] as List<Account>
 
         val baseFiltered = when {

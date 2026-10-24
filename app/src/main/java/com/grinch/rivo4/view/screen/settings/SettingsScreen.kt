@@ -59,7 +59,6 @@ import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.SettingsHighlightManager
-import com.grinch.rivo4.controller.util.ProBrandingManager
 import kotlinx.coroutines.delay
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
@@ -73,6 +72,7 @@ import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import com.grinch.rivo4.view.theme.rivoPolygonShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.*
@@ -91,7 +91,7 @@ fun SettingsScreen(
     val listState = rememberLazyListState()
     val searchListState = rememberLazyListState()
     val appInfo = remember { getAppVersion(context) }
-    val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.2f }
+    val cookie7Shape = rivoPolygonShape(RivoMaterialShapes.Cookie7Sided)
 
     var enableAds by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) }
     var showDisableAdsDialog by remember { mutableStateOf(false) }
@@ -193,7 +193,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_carrier_names_in_recents),
                 supporting = context.getString(R.string.loc_show_or_hide_carrier_and_sim_card_names_in_call_history_and_recents),
-                category = context.getString(R.string.loc_calling_sim_accounts),
+                category = context.getString(R.string.loc_calling_behavior),
                 icon = Icons.Outlined.SimCard,
                 keywords = listOf("carrier", "carrier name", "recents carrier", "sim", "hide carrier", "show carrier", "call log carrier", "recents sim"),
                 targetHeadline = context.getString(R.string.settings_show_carrier_in_recents),
@@ -202,7 +202,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_group_call_logs),
                 supporting = context.getString(R.string.loc_merge_repeated_calls_from_the_same_contact_into_a_single_entry),
-                category = context.getString(R.string.loc_calling_sim_accounts),
+                category = context.getString(R.string.loc_calling_behavior),
                 icon = Icons.AutoMirrored.Outlined.CallMerge,
                 keywords = listOf("group call logs", "call log grouping", "merge calls", "call history", "recents grouping"),
                 targetHeadline = context.getString(R.string.settings_group_call_logs),
@@ -328,13 +328,13 @@ val searchItems = remember(isSearchActive) {
                 supporting = context.getString(R.string.loc_font_text_size_and_system_font),
                 category = context.getString(R.string.loc_personalization_display),
                 icon = Icons.Outlined.TextFields,
-                keywords = listOf("font", "typeface", "text size", "typography", "system font", "serif", "monospace", "text scale"),
+                keywords = listOf("font", "typeface", "text size", "typography", "system font", "serif", "monospace", "cursive", "casual", "condensed", "font family", "text scale"),
                 onClick = { navigator.navigate(TypographyScreenDestination) }
             ),
             SettingSearchItem(
                 title = context.getString(R.string.loc_call_screen_buttons),
                 supporting = context.getString(R.string.loc_choose_the_position_of_each_in_call_button),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.loc_calling_behavior),
                 icon = Icons.Outlined.Dialpad,
                 keywords = listOf("call buttons", "rearrange", "button position", "call screen", "mute", "keypad", "hold"),
                 onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
@@ -348,10 +348,11 @@ val searchItems = remember(isSearchActive) {
                 targetHeadline = context.getString(R.string.settings_interface_hide_avatar_with_bg),
                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
             ),
+            // ==================== SOUND & VIBRATION ====================
             SettingSearchItem(
                 title = context.getString(R.string.settings_sound_vibration_headline),
                 supporting = context.getString(R.string.settings_sound_vibration_supporting),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
                 keywords = listOf("sound", "vibration", "volume"),
                 onClick = { navigator.navigate(SoundVibrationScreenDestination) }
@@ -359,7 +360,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_dialpad_dtmf_tones),
                 supporting = context.getString(R.string.loc_play_audible_audio_tones_when_tapping_keys_on_the_dialpad),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.Dialpad,
                 keywords = listOf("dtmf", "dialpad sound", "keypad tones", "audio beep", "dial tones"),
                 targetHeadline = context.getString(R.string.settings_sound_dtmf_tone),
@@ -368,7 +369,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_dialpad_vibration),
                 supporting = context.getString(R.string.loc_haptic_vibration_feedback_on_every_dialpad_key_press),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.Vibration,
                 keywords = listOf("dialpad vibration", "keypad haptics", "haptic feedback", "vibrate dialpad"),
                 targetHeadline = context.getString(R.string.settings_sound_dialpad_vibration),
@@ -377,7 +378,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_hold_0_for),
                 supporting = context.getString(R.string.loc_long_press_key_0_on_dialpad_to_insert_international_prefix),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.Add,
                 keywords = listOf("hold 0", "plus prefix", "international code", "long press zero"),
                 targetHeadline = context.getString(R.string.settings_sound_hold_zero_for_plus),
@@ -386,7 +387,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_vibrate_on_call_answer),
                 supporting = context.getString(R.string.loc_short_haptic_pulse_when_outgoing_call_is_answered_by_recipient),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.PhoneInTalk,
                 keywords = listOf("vibrate on answer", "vibrate connect", "call connect haptic", "answered call vibration"),
                 targetHeadline = context.getString(R.string.settings_sound_vibrate_on_answer),
@@ -395,7 +396,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_vibrate_on_call_hangup),
                 supporting = context.getString(R.string.loc_haptic_feedback_when_call_ends_or_remote_party_hangs_up),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.CallEnd,
                 keywords = listOf("vibrate on hangup", "vibrate call end", "disconnect vibration", "end call haptic"),
                 targetHeadline = context.getString(R.string.settings_sound_vibrate_on_hangup),
@@ -404,7 +405,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_haptic_feedback_on_scrolling),
                 supporting = context.getString(R.string.loc_subtle_tactile_tick_when_scrolling_past_contact_section_headers),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.TouchApp,
                 keywords = listOf("haptic scroll", "scroll haptics", "tactile tick", "section scroll vibration"),
                 targetHeadline = context.getString(R.string.settings_sound_haptic_scroll),
@@ -413,7 +414,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_flip_to_silence),
                 supporting = context.getString(R.string.loc_turn_phone_face_down_to_immediately_silence_incoming_ringtone),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.ScreenRotation,
                 keywords = listOf("flip to silence", "flip phone", "face down mute", "flip gesture"),
                 targetHeadline = context.getString(R.string.settings_sound_flip_to_silence),
@@ -422,7 +423,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_do_not_disturb_during_calls),
                 supporting = context.getString(R.string.loc_automatically_suppress_notification_chimes_while_actively_in_a_call),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.DoNotDisturb,
                 keywords = listOf("dnd during call", "silence notifications in call", "mute chimes in call"),
                 targetHeadline = context.getString(R.string.settings_sound_dnd_during_calls),
@@ -431,7 +432,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_volume_squeeze_for_dnd),
                 supporting = context.getString(R.string.loc_press_both_volume_keys_to_activate_do_not_disturb_mode),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.AutoMirrored.Outlined.VolumeDown,
                 keywords = listOf("volume squeeze", "volume dnd", "squeeze gesture", "quick dnd"),
                 targetHeadline = "Volume Squeeze for DND",
@@ -440,7 +441,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_missed_call_notifications),
                 supporting = context.getString(R.string.loc_show_status_bar_alerts_and_notification_cards_for_missed_calls),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.Notifications,
                 keywords = listOf("missed call alerts", "missed call notification", "lock screen missed call"),
                 targetHeadline = context.getString(R.string.settings_sound_missed_call_notifications),
@@ -449,7 +450,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.loc_phone_ringtone_sound_settings),
                 supporting = context.getString(R.string.loc_open_system_sound_settings_to_choose_phone_call_ringtone),
-                category = context.getString(R.string.loc_personalization_display),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.MusicNote,
                 keywords = listOf("ringtone", "call ringtone", "change ringtone", "phone sound", "system sounds"),
                 targetHeadline = context.getString(R.string.settings_sound_ringtone_settings),
@@ -743,7 +744,7 @@ val searchItems = remember(isSearchActive) {
             SettingSearchItem(
                 title = context.getString(R.string.priority_contacts_title),
                 supporting = context.getString(R.string.priority_contacts_supporting),
-                category = context.getString(R.string.loc_calling_behavior),
+                category = context.getString(R.string.settings_sound_vibration_headline),
                 icon = Icons.Outlined.NotificationImportant,
                 keywords = listOf("priority", "favorite", "vip", "dnd", "star", "important contacts"),
                 onClick = { navigator.navigate(PriorityContactsScreenDestination) }
@@ -1353,7 +1354,7 @@ val searchItems = remember(isSearchActive) {
                             ) {
                                 Surface(
                                     modifier = Modifier.size(54.dp),
-                                    shape = logoMorph,
+                                    shape = cookie7Shape,
                                     color = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.onPrimary,
                                     shadowElevation = 2.dp
@@ -1453,11 +1454,12 @@ val searchItems = remember(isSearchActive) {
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                             )
                             val categories = listOf(
-                                Triple("Personalization", Icons.Outlined.Palette, "Personalization & Display"),
-                                Triple("Calling", Icons.Outlined.Phone, "Calling & Behavior"),
-                                Triple("Security", Icons.Outlined.Security, "Call Protection & Security"),
-                                Triple("Contacts", Icons.Outlined.ManageAccounts, "Contacts & Data"),
-                                Triple("About", Icons.Outlined.Info, "Support & About")
+                                Triple("Personalization", Icons.Outlined.Palette, context.getString(R.string.loc_personalization_display)),
+                                Triple("Calling", Icons.Outlined.Phone, context.getString(R.string.loc_calling_behavior)),
+                                Triple("Sound", Icons.AutoMirrored.Outlined.VolumeUp, context.getString(R.string.settings_sound_vibration_headline)),
+                                Triple("Contacts", Icons.Outlined.ManageAccounts, context.getString(R.string.loc_contacts_data)),
+                                Triple("Security", Icons.Outlined.Security, context.getString(R.string.loc_call_protection_security)),
+                                Triple("About", Icons.Outlined.Info, context.getString(R.string.loc_support_about))
                             )
                             LazyRow(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -1493,70 +1495,6 @@ val searchItems = remember(isSearchActive) {
                         }
                     }
 
-                    // Popular Settings Group
-                    item {
-                        RivoExpressiveGroup(
-                            title = context.getString(R.string.loc_popular_settings),
-                            icon = Icons.Default.Star
-                        ) {
-                            item {
-                                RivoListItem(
-                                    headline = context.getString(R.string.loc_theme_appearance),
-                                    supporting = context.getString(R.string.loc_theme_mode_interface_appearance_and_visual_style),
-                                    leadingIcon = Icons.Outlined.Palette,
-                                    trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    onClick = {
-                                        isSearchActive = false
-                                        searchQuery = ""
-                                        prefs.addSettingsHistory("Theme & Appearance")
-                                        navigator.navigate(InterfaceScreenDestination)
-                                    }
-                                )
-                            }
-                            item {
-                                RivoListItem(
-                                    headline = context.getString(R.string.call_recordings_title),
-                                    supporting = context.getString(R.string.loc_auto_recording_shizuku_internal_audio_saved_recordings),
-                                    leadingIcon = Icons.Outlined.FiberManualRecord,
-                                    trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    onClick = {
-                                        isSearchActive = false
-                                        searchQuery = ""
-                                        prefs.addSettingsHistory("Call Recordings")
-                                        navigator.navigate(CallRecordingsScreenDestination())
-                                    }
-                                )
-                            }
-                            item {
-                                RivoListItem(
-                                    headline = context.getString(R.string.loc_app_lock),
-                                    supporting = context.getString(R.string.loc_protect_app_with_biometrics_or_pin),
-                                    leadingIcon = Icons.Outlined.Lock,
-                                    trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    onClick = {
-                                        isSearchActive = false
-                                        searchQuery = ""
-                                        prefs.addSettingsHistory("App Lock")
-                                        navigator.navigate(AppLockScreenDestination)
-                                    }
-                                )
-                            }
-                            item {
-                                RivoListItem(
-                                    headline = context.getString(R.string.loc_speed_dial),
-                                    supporting = context.getString(R.string.loc_assign_contacts_to_dialpad_keys_1_9),
-                                    leadingIcon = Icons.Outlined.Speed,
-                                    trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    onClick = {
-                                        isSearchActive = false
-                                        searchQuery = ""
-                                        prefs.addSettingsHistory("Speed Dial")
-                                        navigator.navigate(SpeedDialScreenDestination)
-                                    }
-                                )
-                            }
-                        }
-                    }
                 } else if (filteredSearchItems.isEmpty()) {
                     // MD3 Expressive Empty State
                     item {
@@ -1645,31 +1583,31 @@ val searchItems = remember(isSearchActive) {
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = if (ProBrandingManager.isActive(prefs)) {
-                                painterResource(R.drawable.pro_app_icon)
-                            } else {
-                                painterResource(R.drawable.logo)
-                            },
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(60.dp)
-                                .graphicsLayer {
-                                    scaleX = 1.15f
-                                    scaleY = 1.15f
-                                }
-                                .clip(CircleShape)
-                        )
+                        Surface(
+                            modifier = Modifier.size(60.dp),
+                            shape = cookie7Shape,
+                            color = Color.White,
+                            shadowElevation = 2.dp
+                        ) {
+                            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                Image(
+                                    painter = painterResource(R.drawable.logo),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .graphicsLayer {
+                                            scaleX = 1.25f
+                                            scaleY = 1.25f
+                                        }
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = if (ProBrandingManager.isActive(prefs)) {
-                                        "Rivo Pro"
-                                    } else {
-                                        context.getString(R.string.about_app_display_name)
-                                    },
+                                    text = context.getString(R.string.about_app_display_name),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -1681,7 +1619,7 @@ val searchItems = remember(isSearchActive) {
                                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                 ) {
                                     Text(
-                                        text = context.getString(R.string.loc_v_appinfo_first),
+                                        text = "v${appInfo.first}",
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -1724,6 +1662,17 @@ val searchItems = remember(isSearchActive) {
                     }
                     item {
                         RivoListItem(
+                            headline = context.getString(R.string.loc_typography),
+                            supporting = context.getString(R.string.loc_font_text_size_and_system_font),
+                            leadingIcon = Icons.Outlined.FormatSize,
+                            onClick = {
+                                prefs.addSettingsHistory("Typography")
+                                navigator.navigate(TypographyScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
                             headline = context.getString(R.string.loc_navigation_bar),
                             supporting = context.getString(R.string.loc_floating_bar_style_navigation_dock_and_tab_layout),
                             leadingIcon = Icons.Outlined.Dock,
@@ -1744,21 +1693,10 @@ val searchItems = remember(isSearchActive) {
                             }
                         )
                     }
-                    item {
-                        RivoListItem(
-                            headline = context.getString(R.string.settings_sound_vibration_headline),
-                            supporting = context.getString(R.string.settings_sound_vibration_supporting),
-                            leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
-                            onClick = {
-                                prefs.addSettingsHistory("Sound & Vibration")
-                                navigator.navigate(SoundVibrationScreenDestination)
-                            }
-                        )
-                    }
                 }
             }
 
-            // 2. Calling & Behavior
+            // 2. Calling & Dialer
             item {
                 RivoExpressiveGroup(
                     title = context.getString(R.string.loc_calling_behavior),
@@ -1777,12 +1715,45 @@ val searchItems = remember(isSearchActive) {
                     }
                     item {
                         RivoListItem(
-                            headline = context.getString(R.string.settings_swipe_actions_title),
-                            supporting = context.getString(R.string.settings_swipe_actions_supporting),
-                            leadingIcon = Icons.Outlined.Swipe,
+                            headline = context.getString(R.string.loc_call_screen_buttons),
+                            supporting = context.getString(R.string.loc_choose_the_position_of_each_in_call_button),
+                            leadingIcon = Icons.Outlined.Dialpad,
                             onClick = {
-                                prefs.addSettingsHistory("Swipe Actions")
-                                navigator.navigate(SwipeActionsScreenDestination)
+                                prefs.addSettingsHistory("In-Call Screen Layout")
+                                navigator.navigate(CallScreenCustomizationScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.loc_speed_dial),
+                            supporting = context.getString(R.string.loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing),
+                            leadingIcon = Icons.Outlined.Speed,
+                            onClick = {
+                                prefs.addSettingsHistory("Speed Dial")
+                                navigator.navigate(SpeedDialScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.loc_quick_responses),
+                            supporting = context.getString(R.string.loc_predefined_sms_messages_to_decline_incoming_calls),
+                            leadingIcon = Icons.AutoMirrored.Outlined.Message,
+                            onClick = {
+                                prefs.addSettingsHistory("Quick Responses")
+                                navigator.navigate(QuickResponsesScreenDestination())
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.loc_voicemail),
+                            supporting = context.getString(R.string.loc_carrier_voicemail_service_and_configuration),
+                            leadingIcon = Icons.Outlined.Voicemail,
+                            onClick = {
+                                prefs.addSettingsHistory("Voicemail")
+                                navigator.navigate(VoicemailScreenDestination)
                             }
                         )
                     }
@@ -1808,6 +1779,26 @@ val searchItems = remember(isSearchActive) {
                             }
                         )
                     }
+                }
+            }
+
+            // 3. Sound & Vibration
+            item {
+                RivoExpressiveGroup(
+                    title = context.getString(R.string.settings_sound_vibration_headline),
+                    icon = Icons.AutoMirrored.Outlined.VolumeUp
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.settings_sound_vibration_headline),
+                            supporting = context.getString(R.string.settings_sound_vibration_supporting),
+                            leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
+                            onClick = {
+                                prefs.addSettingsHistory("Sound & Vibration")
+                                navigator.navigate(SoundVibrationScreenDestination)
+                            }
+                        )
+                    }
                     item {
                         RivoListItem(
                             headline = context.getString(R.string.priority_contacts_title),
@@ -1822,7 +1813,71 @@ val searchItems = remember(isSearchActive) {
                 }
             }
 
-            // 3. Call Protection & Security
+            // 4. Contacts & Storage
+            item {
+                RivoExpressiveGroup(
+                    title = context.getString(R.string.loc_contacts_data),
+                    icon = Icons.Outlined.ManageAccounts
+                ) {
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.settings_contact_management_headline),
+                            supporting = context.getString(R.string.settings_contact_management_supporting),
+                            leadingIcon = Icons.Outlined.ManageAccounts,
+                            onClick = {
+                                prefs.addSettingsHistory("Contact Management")
+                                navigator.navigate(ContactManagementScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.settings_manage_visibility),
+                            supporting = context.getString(R.string.settings_manage_visibility_supporting),
+                            leadingIcon = Icons.Outlined.Visibility,
+                            onClick = {
+                                prefs.addSettingsHistory("Contact Visibility")
+                                navigator.navigate(ContactVisibilityScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.loc_private_storage),
+                            supporting = context.getString(R.string.loc_secret_dialpad_vault_stored_only_in_app_memory),
+                            leadingIcon = Icons.Outlined.FolderShared,
+                            onClick = {
+                                prefs.addSettingsHistory("Private Storage")
+                                navigator.navigate(PrivateContactsScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.loc_trash_contacts),
+                            supporting = context.getString(R.string.loc_view_and_restore_recently_deleted_contacts_within_30_days),
+                            leadingIcon = Icons.Outlined.Delete,
+                            onClick = {
+                                prefs.addSettingsHistory("Recycle Bin")
+                                navigator.navigate(TrashContactsScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.settings_backup_restore_headline),
+                            supporting = context.getString(R.string.settings_backup_restore_supporting),
+                            leadingIcon = Icons.Outlined.Backup,
+                            onClick = {
+                                prefs.addSettingsHistory("Backup & Restore")
+                                navigator.navigate(BackupRestoreScreenDestination)
+                            }
+                        )
+                    }
+                }
+            }
+
+            // 5. Call Protection & Security
             item {
                 val appLockEnabled = remember(settingsState) { prefs.isAppLockEnabled() }
                 RivoExpressiveGroup(
@@ -1842,23 +1897,23 @@ val searchItems = remember(isSearchActive) {
                     }
                     item {
                         RivoListItem(
-                            headline = context.getString(R.string.loc_private_storage),
-                            supporting = context.getString(R.string.loc_secret_dialpad_vault_stored_only_in_app_memory),
-                            leadingIcon = Icons.Outlined.FolderShared,
-                            onClick = {
-                                prefs.addSettingsHistory("Private Storage")
-                                navigator.navigate(PrivateContactsScreenDestination)
-                            }
-                        )
-                    }
-                    item {
-                        RivoListItem(
                             headline = context.getString(R.string.settings_blocked_numbers_headline),
                             supporting = context.getString(R.string.settings_blocked_numbers_supporting),
                             leadingIcon = Icons.Outlined.Block,
                             onClick = {
                                 prefs.addSettingsHistory("Blocked Numbers")
                                 navigator.navigate(BlockedNumbersScreenDestination)
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = context.getString(R.string.settings_swipe_actions_title),
+                            supporting = context.getString(R.string.settings_swipe_actions_supporting),
+                            leadingIcon = Icons.Outlined.Swipe,
+                            onClick = {
+                                prefs.addSettingsHistory("Swipe Actions")
+                                navigator.navigate(SwipeActionsScreenDestination)
                             }
                         )
                     }
@@ -1887,53 +1942,10 @@ val searchItems = remember(isSearchActive) {
                 }
             }
 
-            // 4. Contacts & Data
-            item {
-                val isContactManagementCardEnabled = remember(settingsState) { prefs.isContactManagementCardEnabled() }
-                RivoExpressiveGroup(
-                    title = context.getString(R.string.settings_contacts_management_title),
-                    icon = Icons.Outlined.ManageAccounts
-                ) {
-                    item {
-                        RivoListItem(
-                            headline = context.getString(R.string.settings_contact_management_headline),
-                            supporting = context.getString(R.string.settings_contact_management_supporting),
-                            leadingIcon = Icons.Outlined.ManageAccounts,
-                            onClick = { navigator.navigate(ContactManagementScreenDestination) }
-                        )
-                    }
-                    item {
-                        RivoSwitchListItem(
-                            headline = context.getString(R.string.settings_contact_management_card),
-                            supporting = context.getString(R.string.settings_contact_management_card_supporting),
-                            leadingIcon = Icons.Outlined.Info,
-                            checked = isContactManagementCardEnabled,
-                            onCheckedChange = { prefs.setContactManagementCardEnabled(it) }
-                        )
-                    }
-                    item {
-                        RivoListItem(
-                            headline = context.getString(R.string.settings_manage_visibility),
-                            supporting = context.getString(R.string.settings_manage_visibility_supporting),
-                            leadingIcon = Icons.Outlined.Visibility,
-                            onClick = { navigator.navigate(ContactVisibilityScreenDestination) }
-                        )
-                    }
-                    item {
-                        RivoListItem(
-                            headline = context.getString(R.string.settings_backup_restore_headline),
-                            supporting = context.getString(R.string.settings_backup_restore_supporting),
-                            leadingIcon = Icons.Outlined.Backup,
-                            onClick = { navigator.navigate(BackupRestoreScreenDestination) }
-                        )
-                    }
-                }
-            }
-
-            // 5. Support & About
+            // 6. Support & About
             item {
                 RivoExpressiveGroup(
-                    title = context.getString(R.string.settings_group_support_about),
+                    title = context.getString(R.string.loc_support_about),
                     icon = Icons.AutoMirrored.Outlined.HelpOutline
                 ) {
                     item {
@@ -2055,12 +2067,18 @@ private fun itemMatchesExplicitQuery(item: SettingSearchItem, query: String): Bo
     if (tokens.isEmpty()) return false
 
     val titleLower = item.title.lowercase()
-    // 1. Direct phrase match in main title/heading
     if (titleLower.contains(q)) return true
 
-    // 2. All tokens explicitly match words in main title/heading (e.g. "call log" matches "Call Logs")
-    val titleWords = extractWords(titleLower)
-    return tokens.all { token -> titleWords.any { wordMatchesToken(it, token, allowPrefix = true) } }
+    val categoryLower = item.category.lowercase()
+    if (categoryLower.contains(q)) return true
+
+    if (item.keywords.any { it.contains(q, ignoreCase = true) }) return true
+
+    val supportingLower = item.supporting.lowercase()
+    if (supportingLower.contains(q)) return true
+
+    val allWords = extractWords(titleLower) + extractWords(categoryLower) + item.keywords.flatMap { extractWords(it) } + extractWords(supportingLower)
+    return tokens.all { token -> allWords.any { wordMatchesToken(it, token, allowPrefix = true) } }
 }
 
 private fun scoreSearchItem(item: SettingSearchItem, query: String): Int {
@@ -2073,8 +2091,12 @@ private fun scoreSearchItem(item: SettingSearchItem, query: String): Int {
         titleLower == q -> 1000
         titleLower.startsWith(q) -> 900
         titleLower.contains(q) -> 850
-        tokens.isNotEmpty() && tokens.all { token -> titleWords.any { it == token } } -> 800
+        item.keywords.any { it.equals(q, ignoreCase = true) } -> 820
+        item.keywords.any { it.contains(q, ignoreCase = true) } -> 800
+        tokens.isNotEmpty() && tokens.all { token -> titleWords.any { it == token } } -> 780
         tokens.isNotEmpty() && tokens.all { token -> titleWords.any { wordMatchesToken(it, token, allowPrefix = true) } } -> 750
+        item.supporting.contains(q, ignoreCase = true) -> 600
+        item.category.contains(q, ignoreCase = true) -> 500
         else -> 100
     }
 }

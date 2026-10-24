@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.grinch.rivo4.controller.util
 import android.os.Build
 import androidx.core.content.pm.PackageInfoCompat

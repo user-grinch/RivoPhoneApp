@@ -24,6 +24,7 @@ val appModule = module {
             RivoDatabase::class.java,
             "rivo_database"
         ).allowMainThreadQueries()
+            .addMigrations(*com.grinch.rivo4.modal.db.RivoDatabase.ALL_MIGRATIONS)
             .fallbackToDestructiveMigration()
             .build()
     }

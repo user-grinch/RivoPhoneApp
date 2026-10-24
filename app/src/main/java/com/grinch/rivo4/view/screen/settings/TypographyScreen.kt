@@ -2,12 +2,16 @@ package com.grinch.rivo4.view.screen.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.FormatSize
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -18,6 +22,7 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.components.MenuTopAppBar
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
+import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoOptionRow
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
@@ -36,18 +41,35 @@ fun TypographyScreen(
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
 
-    var useSystemFont by remember(settingsState) {
+    var useSystemFont by remember {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_USE_SYSTEM_FONT, true))
     }
-    var fontFamily by remember(settingsState) {
+    var fontFamily by remember {
         mutableStateOf(
             prefs.getString(PreferenceManager.KEY_FONT_FAMILY, PreferenceManager.FONT_FAMILY_SANS_SERIF)
                 ?: PreferenceManager.FONT_FAMILY_SANS_SERIF
         )
     }
-    var fontSize by remember(settingsState) {
+    var fontSize by remember {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_FONT_SIZE, PreferenceManager.FONT_SIZE_MEDIUM))
     }
+    var showFontDialog by remember { mutableStateOf(false) }
+
+    val fontLabels = listOf(
+        stringResource(R.string.font_family_sans_serif),
+        stringResource(R.string.font_family_serif),
+        stringResource(R.string.font_family_monospace),
+        stringResource(R.string.font_family_cursive),
+        stringResource(R.string.font_family_casual),
+        stringResource(R.string.font_family_condensed),
+        stringResource(R.string.font_family_light),
+        stringResource(R.string.font_family_medium),
+        stringResource(R.string.font_family_black)
+    )
+
+    val selectedFontIndex =
+        PreferenceManager.ALL_FONT_FAMILIES.indexOf(fontFamily).coerceAtLeast(0)
+    val currentFontLabel = fontLabels.getOrElse(selectedFontIndex) { fontLabels[0] }
 
     val previewFamily = if (useSystemFont) {
         FontFamily.Default
@@ -112,19 +134,15 @@ fun TypographyScreen(
                         )
                     }
                     if (!useSystemFont) {
-                        val fontLabels = listOf(
-                            stringResource(R.string.font_family_sans_serif),
-                            stringResource(R.string.font_family_serif),
-                            stringResource(R.string.font_family_monospace),
-                            stringResource(R.string.font_family_cursive),
-                            stringResource(R.string.font_family_casual),
-                            stringResource(R.string.font_family_condensed),
-                            stringResource(R.string.font_family_light),
-                            stringResource(R.string.font_family_medium),
-                            stringResource(R.string.font_family_black)
-                        )
-                        val selectedFontIndex =
-                            PreferenceManager.ALL_FONT_FAMILIES.indexOf(fontFamily).coerceAtLeast(0)
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.font_family_label),
+                                supporting = currentFontLabel,
+                                leadingIcon = Icons.Outlined.TextFields,
+                                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                onClick = { showFontDialog = true }
+                            )
+                        }
                         item {
                             RivoVisualOptionSelectorRow(
                                 headline = stringResource(R.string.font_family_label),
@@ -173,6 +191,81 @@ fun TypographyScreen(
                     }
                 }
             }
+        }
+
+        if (showFontDialog) {
+            AlertDialog(
+                onDismissRequest = { showFontDialog = false },
+                title = {
+                    Text(
+                        text = stringResource(R.string.font_picker_dialog_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(PreferenceManager.ALL_FONT_FAMILIES.size) { index ->
+                            val id = PreferenceManager.ALL_FONT_FAMILIES[index]
+                            val label = fontLabels[index]
+                            val isSelected = (id == fontFamily)
+                            val family = rivoFontFamilyFromId(id)
+
+                            Surface(
+                                onClick = {
+                                    fontFamily = id
+                                    prefs.setString(PreferenceManager.KEY_FONT_FAMILY, id)
+                                    showFontDialog = false
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = isSelected,
+                                        onClick = {
+                                            fontFamily = id
+                                            prefs.setString(PreferenceManager.KEY_FONT_FAMILY, id)
+                                            showFontDialog = false
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = label,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontFamily = family,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.typography_preview_text),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontFamily = family,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    TextButton(onClick = { showFontDialog = false }) {
+                        Text(stringResource(R.string.action_cancel))
+                    }
+                }
+            )
         }
     }
 }

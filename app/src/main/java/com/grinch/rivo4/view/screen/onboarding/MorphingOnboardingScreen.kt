@@ -87,7 +87,6 @@ import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
 import com.grinch.rivo4.controller.util.getDefaultDialerIntent
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
-import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.RivoMorphShape
@@ -139,7 +138,10 @@ private const val STAGE_RECOMMENDED = 2
 private const val STAGE_COMPLETE = 3
 
 @Composable
-fun MorphingOnboardingScreen(onFinished: () -> Unit) {
+fun MorphingOnboardingScreen(
+    onFinished: () -> Unit,
+    onNavigateToSupport: () -> Unit
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val roundness = LocalCardRoundness.current
@@ -447,6 +449,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                     SetupCompleteStage(
                         essentialItems = essentialItems,
                         recommendedItems = recommendedItems,
+                        onNavigateToSupport = onNavigateToSupport,
                         onFinish = onFinished
                     )
                 }
@@ -922,16 +925,12 @@ private fun RecommendedPermissionsStage(
 private fun SetupCompleteStage(
     essentialItems: List<PermissionCheckItem>,
     recommendedItems: List<PermissionCheckItem>,
+    onNavigateToSupport: () -> Unit,
     onFinish: () -> Unit
 ) {
     val roundness = LocalCardRoundness.current
     val totalGranted = essentialItems.count { it.isGranted } + recommendedItems.count { it.isGranted }
     val totalItems = essentialItems.size + recommendedItems.size
-    var showTipJarDialog by remember { mutableStateOf(false) }
-
-    if (showTipJarDialog) {
-        TipJarDialog(onDismissRequest = { showTipJarDialog = false })
-    }
 
     Column(
         modifier = Modifier
@@ -1023,7 +1022,7 @@ private fun SetupCompleteStage(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 OutlinedButton(
-                    onClick = { showTipJarDialog = true },
+                    onClick = onNavigateToSupport,
                     shape = RoundedCornerShape(rivoCornerDp(16, roundness)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -1034,7 +1033,7 @@ private fun SetupCompleteStage(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Support Rivo (Tip Jar)",
+                        text = stringResource(R.string.settings_support_development),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )

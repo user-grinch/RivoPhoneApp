@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package com.grinch.rivo4.controller
 
 import android.app.ActivityOptions

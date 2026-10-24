@@ -476,7 +476,7 @@ fun BlockedNumbersScreen(
             } else {
                 item {
                     RivoSectionHeader(
-                        title = stringResource(R.string.loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size),
+                        title = "${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})",
                         icon = Icons.Outlined.Block,
                         modifier = Modifier.padding(top = 14.dp, bottom = 4.dp)
                     )

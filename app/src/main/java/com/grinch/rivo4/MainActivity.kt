@@ -55,6 +55,7 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
+import com.ramcosta.composedestinations.generated.destinations.SupportDevelopmentScreenDestination
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
 import com.grinch.rivo4.view.screen.transitions.LocalTransitionStyle
 import com.grinch.rivo4.view.screen.transitions.LocalTransitionTimeScale
@@ -144,6 +145,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val predictiveBackEnabled = remember(settingsState) { prefs.isPredictiveBackEnabled() }
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
+                var pendingDestinationAfterOnboarding by remember { mutableStateOf<String?>(null) }
                 val defaultTransitions = remember(transitionStyle, predictiveBackEnabled, transitionTimeScale) {
                     getAppTransition(transitionStyle, predictiveBackEnabled, transitionTimeScale)
                 }
@@ -190,6 +192,12 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                             prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
                             prefs.setBoolean(PreferenceManager.KEY_PERMISSION_POPUP_SHOWN, true)
                             showOnboarding = false
+                        },
+                        onNavigateToSupport = {
+                            prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
+                            prefs.setBoolean(PreferenceManager.KEY_PERMISSION_POPUP_SHOWN, true)
+                            pendingDestinationAfterOnboarding = SupportDevelopmentScreenDestination.route
+                            showOnboarding = false
                         }
                     )
                 } else {
@@ -228,6 +236,14 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 navController = navController,
                                 defaultTransitions = defaultTransitions
                             )
+
+                        LaunchedEffect(showOnboarding, pendingDestinationAfterOnboarding) {
+                            if (!showOnboarding && pendingDestinationAfterOnboarding != null) {
+                                val dest = pendingDestinationAfterOnboarding
+                                pendingDestinationAfterOnboarding = null
+                                navController.navigate(dest!!)
+                            }
+                        }
 
                         var showRatePrompt by remember { mutableStateOf(false) }
                         val rateShown = remember { prefs.getBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, false) }

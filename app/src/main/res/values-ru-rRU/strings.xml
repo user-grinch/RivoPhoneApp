@@ -1584,7 +1584,6 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="loc_popular_settings">Популярные настройки</string>
     <string name="loc_protect_app_with_biometrics_or_pin">Защитить приложение с помощью биометрических данных или PIN-кода</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9">Назначить контакты клавиатурам набора номера 1-9</string>
-    <string name="loc_v_appinfo_first">против${appInfo.first}</string>
     <string name="loc_11_avatar_shapes_contact_photos_initials_cards">11 аватаров, фотографии контактов, инициалы &amp; карты</string>
     <string name="loc_jane_doe">Джей-До</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
@@ -1690,19 +1689,13 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="loc_call_history_settings">Настройки журнала вызовов</string>
     <string name="loc_save_to_call_history">Сохранить в Журнал вызовов</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Отвеченные и пропущенные звонки будут отображаться в недавних</string>
-    <string name="loc_stringresource_r_string_fake_call_schedules_title_schedules_size">${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} заблокирован</string>
-    <string name="loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size">${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Звонки и текстовые сообщения с этого номера будут немедленно заблокированы.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Разблокировать $targetDisplayName? Он сможет звонить и отправлять вам снова.</string>
     <string name="loc_processing_blocklist">Обработка Blocklist</string>
     <string name="loc_importing_blocked_numbers">Импорт заблокированных чисел...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Нажмите обе кнопки громкости для переключения режима \"Не беспокоить\"</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
-    <string name="loc_indexbadge">$indexBadge</string>
     <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_manage_storage_tools">Управление хранилищем &amp; инструментов</string>
     <string name="loc_remove_from_priority">Удалить из приоритета</string>

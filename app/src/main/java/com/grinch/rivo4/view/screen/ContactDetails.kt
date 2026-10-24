@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -252,6 +253,7 @@ fun ContactDetailsScreen(
     var showOverflowMenu by remember { mutableStateOf(false) }
     var showFullScreenPhoto by remember { mutableStateOf(false) }
     var showNumberSelectionDialog by remember { mutableStateOf(false) }
+    var isSocialExpanded by rememberSaveable { mutableStateOf(false) }
     var pendingSocialAction by remember { mutableStateOf<((String) -> Unit)?>(null) }
     var selectionTitle by remember { mutableStateOf("") }
 
@@ -1260,19 +1262,91 @@ fun ContactDetailsScreen(
                                     }
                                 }
 
-                                fullContact?.addresses?.filter { it.isNotBlank() }?.forEach { address ->
+                                fullContact?.addressEntries?.filter { it.address.isNotBlank() }?.forEach { addressEntry ->
                                     item {
                                         RivoListItem(
-                                            headline = address,
-                                            supporting = stringResource(R.string.label_address),
+                                            headline = addressEntry.address,
+                                            supporting = ContactTypeLabels.postalAddressTypeLabel(
+                                                context, addressEntry.type, addressEntry.label
+                                            ).ifBlank { stringResource(R.string.label_address) },
                                             leadingIcon = Icons.Default.LocationOn,
                                             isCompact = true,
                                             onClick = {
                                                 val intent = Intent(
                                                     Intent.ACTION_VIEW,
-                                                    Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+                                                    Uri.parse("geo:0,0?q=${Uri.encode(addressEntry.address)}")
                                                 )
                                                 context.startActivity(intent)
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.events?.filter { it.date.isNotBlank() }?.forEach { event ->
+                                    item {
+                                        RivoListItem(
+                                            headline = event.date,
+                                            supporting = ContactTypeLabels.eventTypeLabel(context, event.type, event.label),
+                                            leadingIcon = Icons.Default.Cake,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.organizations?.filter { it.company.isNotBlank() }?.forEach { org ->
+                                    item {
+                                        val orgSupporting = listOfNotNull(
+                                            org.title?.takeIf { it.isNotBlank() },
+                                            org.department?.takeIf { it.isNotBlank() }
+                                        ).joinToString(" · ")
+                                        RivoListItem(
+                                            headline = org.company,
+                                            supporting = orgSupporting.ifBlank { stringResource(R.string.contact_edit_organization_header) },
+                                            leadingIcon = Icons.Default.Work,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.websites?.filter { it.url.isNotBlank() }?.forEach { website ->
+                                    item {
+                                        RivoListItem(
+                                            headline = website.url,
+                                            supporting = ContactTypeLabels.websiteTypeLabel(context, website.type, website.label),
+                                            leadingIcon = Icons.Default.Language,
+                                            isCompact = true,
+                                            onClick = {
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse(website.url)
+                                                )
+                                                context.startActivity(intent)
+                                            }
+                                        )
+                                    }
+                                }
+
+                                fullContact?.relations?.filter { it.name.isNotBlank() }?.forEach { relation ->
+                                    item {
+                                        RivoListItem(
+                                            headline = relation.name,
+                                            supporting = ContactTypeLabels.relationTypeLabel(context, relation.type, relation.label),
+                                            leadingIcon = Icons.Default.Group,
+                                            isCompact = true,
+                                            onClick = {
+                                                fullContact?.let {
+                                                    navigator.navigate(ContactEditScreenDestination(contactId = it.id))
+                                                }
                                             }
                                         )
                                     }
@@ -1534,25 +1608,58 @@ fun ContactDetailsScreen(
                                 icon = Icons.AutoMirrored.Filled.Chat
                             ) {
                                 item {
-                                    Row(
+                                    val visibleApps = if (isSocialExpanded) installedSocialApps else installedSocialApps.take(4)
+                                    val rows = visibleApps.chunked(4)
+
+                                    Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .horizontalScroll(rememberScrollState())
+                                            .animateContentSize()
                                             .padding(horizontal = 16.dp, vertical = 12.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
-                                        installedSocialApps.forEach { app ->
-                                            val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
-                                            RivoExpressiveButton(
-                                                painter = painter,
-                                                label = app.name,
-                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                                size = 52.dp,
-                                                iconSize = 32.dp,
-                                                onClick = {
-                                                    onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                        rows.forEach { rowApps ->
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                rowApps.forEach { app ->
+                                                    val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
+                                                    RivoExpressiveButton(
+                                                        painter = painter,
+                                                        label = app.name,
+                                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                        size = 52.dp,
+                                                        iconSize = 32.dp,
+                                                        onClick = {
+                                                            onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                                        },
+                                                        modifier = Modifier.weight(1f)
+                                                    )
                                                 }
+                                                val placeholders = 4 - rowApps.size
+                                                repeat(placeholders) {
+                                                    Spacer(modifier = Modifier.weight(1f))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (installedSocialApps.size > 4) {
+                                    item {
+                                        TextButton(
+                                            onClick = { isSocialExpanded = !isSocialExpanded },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = if (isSocialExpanded) {
+                                                    stringResource(R.string.contact_show_less)
+                                                } else {
+                                                    stringResource(R.string.contact_show_all_social_apps, installedSocialApps.size)
+                                                },
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold
                                             )
                                         }
                                     }

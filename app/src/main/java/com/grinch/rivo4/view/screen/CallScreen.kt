@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.grinch.rivo4.view.screen
 import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew

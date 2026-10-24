@@ -1,5 +1,6 @@
 package com.grinch.rivo4.modal.data
 
+import android.provider.ContactsContract
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
@@ -34,6 +35,54 @@ data class AccountEntry(
     val type: String?
 )
 
+/**
+ * Organization data (vCard ORG / TITLE, RFC 6350 §6.6.4 / §6.6.1).
+ * Mirrors ContactsContract.CommonDataKinds.Organization.
+ */
+@Immutable
+@Serializable
+data class OrganizationEntry(
+    val company: String,
+    val title: String? = null,
+    val department: String? = null
+)
+
+/**
+ * Website data (vCard URL, RFC 6350 §6.7.3).
+ * Mirrors ContactsContract.CommonDataKinds.Website.
+ */
+@Immutable
+@Serializable
+data class WebsiteEntry(
+    val url: String,
+    val type: Int = ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE,
+    val label: String? = null
+)
+
+/**
+ * Relation data (vCard RELATED, RFC 6350 §6.6.6).
+ * Mirrors ContactsContract.CommonDataKinds.Relation.
+ */
+@Immutable
+@Serializable
+data class RelationEntry(
+    val name: String,
+    val type: Int = ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND,
+    val label: String? = null
+)
+
+/**
+ * Typed postal address (vCard ADR with TYPE parameter, RFC 6350 §6.3.1).
+ * Mirrors ContactsContract.CommonDataKinds.StructuredPostal types.
+ */
+@Immutable
+@Serializable
+data class PostalAddressEntry(
+    val address: String,
+    val type: Int = ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME,
+    val label: String? = null
+)
+
 @Immutable
 @Serializable
 data class Contact(
@@ -50,7 +99,11 @@ data class Contact(
     val phones: List<PhoneNumberEntry> = emptyList(),
     val emailEntries: List<EmailEntry> = emptyList(),
     val addresses: List<String> = emptyList(),
+    val addressEntries: List<PostalAddressEntry> = emptyList(),
     val events: List<ContactEvent> = emptyList(),
+    val organizations: List<OrganizationEntry> = emptyList(),
+    val websites: List<WebsiteEntry> = emptyList(),
+    val relations: List<RelationEntry> = emptyList(),
     val photoUri: String? = null,
     val isFavorite: Boolean = false,
     val customRingtone: String? = null,

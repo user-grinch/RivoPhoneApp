@@ -206,6 +206,7 @@ fun ContactSearchContent(
     val messageLauncher = rememberMessageLauncher()
     val videoLauncher = rememberVideoLauncher()
     val context = LocalContext.current
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() }
     val swipeRightAction = remember(settingsState) {

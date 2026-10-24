@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ads.RewardedAdManager
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.controller.util.ProBrandingManager
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
@@ -42,9 +41,6 @@ import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.components.RivoDialogAction
-import com.grinch.rivo4.view.components.RivoSelectionDialog
-import com.grinch.rivo4.view.theme.RivoMaterialShapes
-import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -69,15 +65,10 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
             )
         )
     }
-    val selectedAppIcon by remember(settingsState) { mutableStateOf(prefs.getSelectedAppIcon()) }
     var reminderMode by remember(settingsState) { mutableIntStateOf(prefs.getVideoAdReminderMode()) }
 
     var showTipJarDialog by remember { mutableStateOf(false) }
     var showDisableAdsDialog by remember { mutableStateOf(false) }
-    var showAppIconPicker by remember { mutableStateOf(false) }
-    var showIconRestartDialog by remember { mutableStateOf(false) }
-    var pendingAppIcon by remember { mutableStateOf(selectedAppIcon) }
-    var showReminderPicker by remember { mutableStateOf(false) }
     var showFossDialog by remember { mutableStateOf(false) }
     var showVideoAdLoading by remember { mutableStateOf(false) }
     var videoAdError by remember { mutableStateOf<String?>(null) }
@@ -85,21 +76,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
     val isPlayStoreBuild = com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
     val isBillingSupported = com.grinch.rivo4.controller.billing.BillingManager.IS_BILLING_SUPPORTED
     val canUseProFeatures = isPlayStoreBuild && isBillingSupported
-
-    LaunchedEffect(settingsState) {
-        ProBrandingManager.apply(context, prefs)
-    }
-
-    // Ads-enabled access is intentional: it funds the app while keeping Pro perks small.
-    val shouldBePro = isPlayStoreBuild &&
-        (isSupporter || enableAds || prefs.hasAdSupportedPro())
-    val proSource = when {
-        !isPlayStoreBuild -> stringResource(R.string.support_pro_foss_reason)
-        isSupporter -> stringResource(R.string.support_tip_jar_pro)
-        prefs.hasAdSupportedPro() -> stringResource(R.string.support_rewarded_pro)
-        enableAds -> stringResource(R.string.support_ads_enabled_pro)
-        else -> stringResource(R.string.support_pro_not_active)
-    }
 
     val scope = rememberCoroutineScope()
     // Observe rewarded ad events
@@ -196,65 +172,11 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                         Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
                         Text(stringResource(R.string.settings_support_rivo_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text(
-                            "Support development and unlock Pro benefits.",
+                            stringResource(R.string.settings_support_rivo_description),
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
-                }
-            }
-
-            RivoExpressiveCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(stringResource(R.string.support_rivo_pro_perks_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    ProPerkRow(
-                        stringResource(R.string.support_dialer_icon_label),
-                        Icons.Default.Apps,
-                        shouldBePro,
-                        onClick = {
-                            pendingAppIcon = selectedAppIcon
-                            showAppIconPicker = true
-                        }
-                    )
-                    Button(
-                        onClick = {
-                            pendingAppIcon = selectedAppIcon
-                            showAppIconPicker = true
-                        },
-                        enabled = shouldBePro,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Apps, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(if (shouldBePro) "Choose icon & label" else "Unlock Pro to choose icon & label")
-                    }
-                    Text(
-                        if (canUseProFeatures) {
-                            "Watch a video for one day of Pro, even with ads disabled. Keep non-intrusive ads enabled for ongoing access, or tip once on Google Play for permanent Pro."
-                        } else {
-                            "Rivo Pro perks are unavailable in FOSS builds. Use the Play Store build to unlock them."
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = if (shouldBePro) {
-                            stringResource(R.string.support_pro_active_reason, proSource)
-                        } else {
-                            proSource
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (shouldBePro) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
                 }
             }
 
@@ -328,16 +250,17 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                 }
 
                 item {
-                    RivoListItem(
+                    RivoSwitchListItem(
                         headline = stringResource(R.string.support_video_reminders),
-                        supporting = when (reminderMode) {
-                            PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Show a support button every 6 hours"
-                            PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> stringResource(R.string.support_always_show)
-                            else -> stringResource(R.string.support_off)
-                        },
+                        supporting = stringResource(R.string.support_video_reminders_supporting),
                         leadingIcon = Icons.Outlined.Notifications,
                         enabled = isPlayStoreBuild,
-                        onClick = { showReminderPicker = true }
+                        checked = reminderMode != PreferenceManager.VIDEO_AD_REMINDER_OFF,
+                        onCheckedChange = { checked ->
+                            val newMode = if (checked) PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS else PreferenceManager.VIDEO_AD_REMINDER_OFF
+                            reminderMode = newMode
+                            prefs.setVideoAdReminderMode(newMode)
+                        }
                     )
                 }
 
@@ -420,38 +343,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
         TipJarDialog(onDismissRequest = { showTipJarDialog = false })
     }
 
-    if (showReminderPicker) {
-        RivoSelectionDialog(
-            onDismissRequest = { showReminderPicker = false },
-            title = stringResource(R.string.support_video_reminders),
-            items = listOf(
-                PreferenceManager.VIDEO_AD_REMINDER_OFF,
-                PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS,
-                PreferenceManager.VIDEO_AD_REMINDER_ALWAYS
-            ),
-            itemLabel = { mode ->
-                when (mode) {
-                    PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Every 6 hours"
-                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> context.getString(R.string.support_always)
-                    else -> context.getString(R.string.support_off)
-                }
-            },
-            itemSupporting = { mode ->
-                when (mode) {
-                    PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Show one support button every 6 hours"
-                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> context.getString(R.string.support_keep_button)
-                    else -> context.getString(R.string.support_hide_button)
-                }
-            },
-            itemIcon = { Icons.Outlined.Notifications },
-            isSelected = { it == reminderMode },
-            onItemSelected = {
-                reminderMode = it
-                prefs.setVideoAdReminderMode(it)
-            }
-        )
-    }
-
     if (showDisableAdsDialog) {
         RivoDialog(
             onDismissRequest = { showDisableAdsDialog = false },
@@ -494,84 +385,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    if (showAppIconPicker) {
-        RivoDialog(
-            modifier = Modifier.widthIn(max = 320.dp),
-            onDismissRequest = { showAppIconPicker = false },
-            title = stringResource(R.string.support_choose_app_icon_title),
-            icon = Icons.Default.Apps,
-            confirmAction = RivoDialogAction(
-                label = stringResource(R.string.action_confirm),
-                onClick = {
-                    if (pendingAppIcon != selectedAppIcon) {
-                        showAppIconPicker = false
-                        showIconRestartDialog = true
-                    } else {
-                        showAppIconPicker = false
-                    }
-                }
-            ),
-            dismissAction = RivoDialogAction(
-                label = stringResource(R.string.action_cancel),
-                onClick = { showAppIconPicker = false }
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AppIconOptions(
-                    selectedIcon = pendingAppIcon,
-                    onIconSelected = { iconName ->
-                        pendingAppIcon = iconName
-                    },
-                    isPro = shouldBePro
-                )
-            }
-        }
-    }
-
-    if (showIconRestartDialog) {
-        RivoDialog(
-            onDismissRequest = {
-                pendingAppIcon = selectedAppIcon
-                showIconRestartDialog = false
-            },
-            title = stringResource(R.string.support_restart_required),
-            icon = Icons.Default.RestartAlt,
-            confirmAction = RivoDialogAction(
-                label = stringResource(R.string.support_restart_now),
-                onClick = {
-                    val restartIntent = context.packageManager
-                        .getLaunchIntentForPackage(context.packageName)
-                        ?.apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        }
-                    prefs.setSelectedAppIcon(pendingAppIcon)
-                    ProBrandingManager.apply(context, prefs)
-                    showIconRestartDialog = false
-                    (context as? Activity)?.let { activity ->
-                        restartIntent?.let(activity::startActivity)
-                        activity.finishAndRemoveTask()
-                    }
-                }
-            ),
-            dismissAction = RivoDialogAction(
-                label = stringResource(R.string.support_dont_apply),
-                onClick = {
-                    pendingAppIcon = selectedAppIcon
-                    showIconRestartDialog = false
-                }
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.support_restart_message),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-
     if (showFossDialog) {
         RivoDialog(
             onDismissRequest = { showFossDialog = false },
@@ -604,212 +417,6 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun RowScope.StatItem(
-    label: String,
-    value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: Color
-) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = color.copy(alpha = 0.15f),
-            contentColor = color,
-            modifier = Modifier.size(56.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(12.dp)) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-        }
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = color
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            maxLines = 2
-        )
-    }
-}
-
-@Composable
-private fun RowScope.StatDetail(
-    label: String,
-    value: String
-) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-private fun ProPerkRow(
-        label: String,
-        icon: androidx.compose.ui.graphics.vector.ImageVector,
-        enabled: Boolean,
-        onClick: () -> Unit = {}
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(18.dp))
-                .clickable(enabled = enabled, onClick = onClick)
-                .padding(vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = if (enabled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
-                modifier = Modifier.size(30.dp)
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(6.dp)
-                )
-            }
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
-            )
-    }
-}
-
-@Composable
-private fun AppIconOptions(
-    selectedIcon: String,
-    onIconSelected: (String) -> Unit,
-    isPro: Boolean
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // Default icon
-        AppIconOption(
-            name = "Rivo",
-            iconName = "default",
-            isSelected = selectedIcon == "default",
-            isEnabled = true,
-            onClick = { onIconSelected("default") }
-        )
-
-        // Pro icon (only if pro)
-        if (isPro) {
-            AppIconOption(
-                name = "Rivo Pro",
-                iconName = "pro",
-                isSelected = selectedIcon == "pro",
-                isEnabled = true,
-                onClick = { onIconSelected("pro") }
-            )
-        } else {
-            AppIconOption(
-                name = "Rivo Pro",
-                iconName = "pro",
-                isSelected = false,
-                isEnabled = false,
-                onClick = {}
-            )
-        }
-    }
-}
-
-@Composable
-private fun AppIconOption(
-    name: String,
-    iconName: String,
-    isSelected: Boolean,
-    isEnabled: Boolean,
-    onClick: () -> Unit
-) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
-        border = if (isSelected)
-            androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-        else
-            androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = isEnabled, onClick = onClick),
-        contentColor = if (isEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
-            alpha = 0.38f
-        )
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(
-                    if (iconName == "pro") R.drawable.pro_app_icon else R.drawable.logo
-                ),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(48.dp)
-                    .graphicsLayer {
-                        scaleX = 1.2f
-                        scaleY = 1.2f
-                    }
-                    .clip(RoundedCornerShape(14.dp))
-            )
-            Spacer(modifier = Modifier.width(14.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-            RadioButton(
-                selected = isSelected,
-                enabled = isEnabled,
-                onClick = onClick
-            )
         }
     }
 }

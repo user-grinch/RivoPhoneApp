@@ -26,6 +26,7 @@ fun ImeiDialog(
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val info = remember { getDeviceImeiInfo(context) }
 

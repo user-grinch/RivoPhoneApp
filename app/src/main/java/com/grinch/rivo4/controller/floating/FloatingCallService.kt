@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.grinch.rivo4.controller.floating
 
 import android.annotation.SuppressLint
