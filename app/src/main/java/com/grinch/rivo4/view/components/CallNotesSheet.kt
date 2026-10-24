@@ -4,7 +4,12 @@ import com.grinch.rivo4.R
 
 import android.view.HapticFeedbackConstants
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,6 +76,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.modal.db.CallNoteEntity
+import com.grinch.rivo4.view.theme.LocalCardRoundness
+import com.grinch.rivo4.view.theme.RivoShapeDefaults
+import com.grinch.rivo4.view.theme.rivoCornerDp
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import kotlinx.coroutines.launch
@@ -78,12 +86,6 @@ import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private data class NoteTagItem(
-    val label: String,
-    val textToInsert: String,
-    val icon: ImageVector
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,21 +104,15 @@ fun CallNotesSheet(
     var noteInput by remember { mutableStateOf("") }
     val dateFormat = remember { SimpleDateFormat("MMM d · HH:mm", Locale.getDefault()) }
 
-    val quickTags = remember {
-        listOf(
-            NoteTagItem("Call back", "Call back", Icons.AutoMirrored.Outlined.PhoneCallback),
-            NoteTagItem("Follow-up", "Follow-up", Icons.Outlined.EventRepeat),
-            NoteTagItem("Meeting", "Meeting", Icons.Outlined.Schedule),
-            NoteTagItem("Important", "Important", Icons.Outlined.Star),
-            NoteTagItem("Address", "Address", Icons.Outlined.LocationOn),
-            NoteTagItem("Done", "Done", Icons.Outlined.CheckCircle)
-        )
-    }
+    val roundness = LocalCardRoundness.current
+    val sheetCorner = rivoCornerDp(RivoShapeDefaults.BaseExtraLarge, roundness)
+    val cardCorner = rivoCornerDp(RivoShapeDefaults.BaseLarge, roundness)
+    val itemCorner = rivoCornerDp(RivoShapeDefaults.BaseMedium, roundness)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        shape = RoundedCornerShape(topStart = sheetCorner, topEnd = sheetCorner),
         dragHandle = { BottomSheetDefaults.DragHandle() },
         modifier = Modifier.imePadding()
     ) {
@@ -127,8 +123,7 @@ fun CallNotesSheet(
                 .navigationBarsPadding()
                 .padding(horizontal = 20.dp, vertical = 6.dp)
         ) {
-            // Header: Avatar, Name/Number, Notes Count & Close Button
-            val headerMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.35f }
+            // Clean Header: "Call Notes" title & Close button (No name/number)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -138,77 +133,41 @@ fun CallNotesSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Surface(
-                        modifier = Modifier.size(46.dp),
-                        shape = headerMorph,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Notes,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
-                    Spacer(Modifier.width(14.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Call Notes",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            if (notes.isNotEmpty()) {
-                                Spacer(Modifier.width(8.dp))
-                                Surface(
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                ) {
-                                    Text(
-                                        text = "${notes.size}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                        }
+                    Text(
+                        text = stringResource(R.string.call_notes_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    if (notes.isNotEmpty()) {
+                        Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (contactName.isNotBlank()) "$contactName • $phoneNumber" else phoneNumber,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            text = "(${notes.size})",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-                Surface(
+                IconButton(
                     onClick = onDismiss,
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     modifier = Modifier.size(36.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.content_desc_close),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(R.string.content_desc_close),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Modern Note Composer Card (Material 3 Expressive)
+            // Clean Note Composer Card (No borders, no tag clutter)
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(cardCorner),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh
             ) {
                 Column(
@@ -221,19 +180,22 @@ fun CallNotesSheet(
                         onValueChange = { noteInput = it },
                         placeholder = {
                             Text(
-                                "Add note, callback, or reminder...",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                "Write a note...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp),
-                        minLines = 2,
-                        maxLines = 4,
+                        minLines = 3,
+                        maxLines = 6,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 22.sp
+                        ),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.35f),
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent
                         ),
                         trailingIcon = {
@@ -252,52 +214,6 @@ fun CallNotesSheet(
 
                     Spacer(Modifier.height(12.dp))
 
-                    // Quick suggestion tags with icons
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        quickTags.forEach { tag ->
-                            Surface(
-                                onClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                    noteInput = if (noteInput.isBlank()) {
-                                        tag.textToInsert
-                                    } else {
-                                        "$noteInput • ${tag.textToInsert}"
-                                    }
-                                },
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.surfaceContainerHighest
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = tag.icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(15.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(
-                                        text = tag.label,
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(14.dp))
-
-                    // Inline Action Bar (Character count & Save button)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -305,7 +221,7 @@ fun CallNotesSheet(
                     ) {
                         Text(
                             text = if (noteInput.isNotBlank()) "${noteInput.length} chars" else "",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
@@ -328,7 +244,7 @@ fun CallNotesSheet(
                             },
                             enabled = noteInput.isNotBlank(),
                             shape = CircleShape,
-                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 10.dp)
+                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 9.dp)
                         ) {
                             Icon(
                                 Icons.Default.Add,
@@ -336,7 +252,10 @@ fun CallNotesSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(6.dp))
-                            Text(stringResource(R.string.action_save_note), fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.action_save_note),
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -344,13 +263,13 @@ fun CallNotesSheet(
 
             Spacer(Modifier.height(16.dp))
 
-            // Notes History Section
+            // Notes History Section (Clean, borderless, no vertical accent bars)
             if (notes.isEmpty()) {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp),
-                    shape = RoundedCornerShape(24.dp),
+                        .padding(vertical = 4.dp),
+                    shape = RoundedCornerShape(cardCorner),
                     color = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
                     Column(
@@ -359,31 +278,22 @@ fun CallNotesSheet(
                             .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val emptyMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.4f }
-                        Surface(
-                            modifier = Modifier.size(52.dp),
-                            shape = emptyMorph,
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Outlined.EditNote,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(26.dp),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(12.dp))
+                        Icon(
+                            Icons.Outlined.EditNote,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                        Spacer(Modifier.height(10.dp))
                         Text(
-                            text = "No notes recorded yet",
+                            text = "No notes yet",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "Jot down reminders, callback tasks, or takeaways from this call.",
+                            text = "Jot down reminders or takeaways from this call.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -391,69 +301,48 @@ fun CallNotesSheet(
                     }
                 }
             } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Saved Notes",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "${notes.size} total",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Text(
+                    text = "Saved Notes (${notes.size})",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(6.dp))
 
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 280.dp),
+                        .heightIn(max = 380.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(notes, key = { it.id }) { item ->
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(itemCorner),
                             color = MaterialTheme.colorScheme.surfaceContainerHigh
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(14.dp),
+                                    .padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = item.note,
                                         style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Spacer(Modifier.height(6.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            Icons.Outlined.Schedule,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(14.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Spacer(Modifier.width(4.dp))
-                                        Text(
-                                            text = dateFormat.format(Date(item.timestamp)),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
+                                    Text(
+                                        text = dateFormat.format(Date(item.timestamp)),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
+                                Spacer(Modifier.width(8.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     IconButton(
                                         onClick = {
@@ -509,16 +398,6 @@ fun AddCallNoteDialog(
     val scope = rememberCoroutineScope()
     var noteText by remember { mutableStateOf("") }
 
-    val quickTags = remember {
-        listOf(
-            NoteTagItem("Call back", "Call back", Icons.AutoMirrored.Outlined.PhoneCallback),
-            NoteTagItem("Follow-up", "Follow-up", Icons.Outlined.EventRepeat),
-            NoteTagItem("Meeting", "Meeting", Icons.Outlined.Schedule),
-            NoteTagItem("Important", "Important", Icons.Outlined.Star),
-            NoteTagItem("Address", "Address", Icons.Outlined.LocationOn)
-        )
-    }
-
     RivoDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.dialog_add_call_note_title),
@@ -553,51 +432,8 @@ fun AddCallNoteDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Quick suggestion tags with icons
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                quickTags.forEach { tag ->
-                    Surface(
-                        onClick = {
-                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                            noteText = if (noteText.isBlank()) {
-                                tag.textToInsert
-                            } else {
-                                "$noteText • ${tag.textToInsert}"
-                            }
-                        },
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = tag.icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            Text(
-                                text = tag.label,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
-            }
-
             // Text Input
             OutlinedTextField(
                 value = noteText,
@@ -612,11 +448,11 @@ fun AddCallNoteDialog(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 6,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f),
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.25f),
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent
                 ),
                 trailingIcon = {

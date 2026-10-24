@@ -3,6 +3,7 @@ package com.grinch.rivo4.view.screen.transitions
 import androidx.compose.animation.*
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
@@ -17,7 +18,7 @@ val LocalTransitionStyle: ProvidableCompositionLocal<Int> = compositionLocalOf {
 val SmoothDecelerateEasing: Easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1.0f)
 val SmoothAccelerateEasing: Easing = CubicBezierEasing(0.3f, 0.0f, 0.8f, 0.15f)
 val SmoothStandardEasing: Easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-val PredictiveBackEasing: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1.0f)
+val PredictiveBackEasing: Easing = LinearEasing
 
 fun scaledDuration(baseMs: Int, timeScale: Float): Int =
     (baseMs * timeScale.coerceIn(0.1f, 5.0f)).roundToInt().coerceAtLeast(1)
@@ -59,16 +60,18 @@ fun createExpressiveSharedAxisTransitions(
 
         override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
             val dur = scaledDuration(300, timeScale)
-            val fadeDur = scaledDuration(220, timeScale)
+            val fadeDur = if (predictiveBack) dur else scaledDuration(220, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothDecelerateEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             slideInHorizontally(
-                initialOffsetX = { (-it * 0.25f).roundToInt() },
-                animationSpec = tween(dur, easing = SmoothDecelerateEasing)
+                initialOffsetX = { (-it * 0.20f).roundToInt() },
+                animationSpec = tween(dur, easing = easing)
             ) + fadeIn(
-                initialAlpha = 0.25f,
-                animationSpec = tween(fadeDur, easing = SmoothStandardEasing)
+                initialAlpha = if (predictiveBack) 0.5f else 0.25f,
+                animationSpec = tween(fadeDur, easing = fadeEasing)
             ) + if (predictiveBack) {
                 scaleIn(
-                    initialScale = 0.92f,
+                    initialScale = 0.94f,
                     animationSpec = tween(dur, easing = PredictiveBackEasing)
                 )
             } else {
@@ -78,16 +81,18 @@ fun createExpressiveSharedAxisTransitions(
 
         override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
             val dur = scaledDuration(280, timeScale)
-            val fadeDur = scaledDuration(200, timeScale)
+            val fadeDur = if (predictiveBack) dur else scaledDuration(200, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothAccelerateEasing
             slideOutHorizontally(
                 targetOffsetX = { it },
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                animationSpec = tween(dur, easing = easing)
             ) + fadeOut(
-                targetAlpha = if (predictiveBack) 0.6f else 0.8f,
-                animationSpec = tween(fadeDur, easing = SmoothAccelerateEasing)
+                targetAlpha = if (predictiveBack) 0.7f else 0.8f,
+                animationSpec = tween(fadeDur, easing = fadeEasing)
             ) + if (predictiveBack) {
                 scaleOut(
-                    targetScale = 0.88f,
+                    targetScale = 0.92f,
                     animationSpec = tween(dur, easing = PredictiveBackEasing)
                 )
             } else {
@@ -125,12 +130,15 @@ fun createParallaxSlideTransitions(
 
         override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
             val dur = scaledDuration(320, timeScale)
+            val fadeDur = if (predictiveBack) dur else dur / 2
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothDecelerateEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             slideInHorizontally(
-                initialOffsetX = { (-it * 0.30f).roundToInt() },
-                animationSpec = tween(dur, easing = SmoothDecelerateEasing)
+                initialOffsetX = { (-it * 0.25f).roundToInt() },
+                animationSpec = tween(dur, easing = easing)
             ) + fadeIn(
-                initialAlpha = 0.35f,
-                animationSpec = tween(dur / 2, easing = SmoothStandardEasing)
+                initialAlpha = if (predictiveBack) 0.5f else 0.35f,
+                animationSpec = tween(fadeDur, easing = fadeEasing)
             ) + if (predictiveBack) {
                 scaleIn(initialScale = 0.94f, animationSpec = tween(dur, easing = PredictiveBackEasing))
             } else {
@@ -140,12 +148,15 @@ fun createParallaxSlideTransitions(
 
         override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
             val dur = scaledDuration(300, timeScale)
+            val fadeDur = if (predictiveBack) dur else dur / 2
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothAccelerateEasing
             slideOutHorizontally(
                 targetOffsetX = { it },
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                animationSpec = tween(dur, easing = easing)
             ) + if (predictiveBack) {
-                scaleOut(targetScale = 0.90f, animationSpec = tween(dur, easing = PredictiveBackEasing)) +
-                        fadeOut(targetAlpha = 0.7f, animationSpec = tween(dur / 2, easing = SmoothAccelerateEasing))
+                scaleOut(targetScale = 0.92f, animationSpec = tween(dur, easing = PredictiveBackEasing)) +
+                        fadeOut(targetAlpha = 0.7f, animationSpec = tween(fadeDur, easing = fadeEasing))
             } else {
                 ExitTransition.None
             }
@@ -185,24 +196,29 @@ fun createExpressiveFloatTransitions(
 
         override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
             val dur = scaledDuration(280, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothDecelerateEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             fadeIn(
-                initialAlpha = 0.3f,
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                initialAlpha = if (predictiveBack) 0.5f else 0.3f,
+                animationSpec = tween(dur, easing = fadeEasing)
             ) + scaleIn(
                 initialScale = 0.95f,
-                animationSpec = tween(dur, easing = SmoothDecelerateEasing)
+                animationSpec = tween(dur, easing = easing)
             )
         }
 
         override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
             val dur = scaledDuration(260, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothAccelerateEasing
             slideOutVertically(
                 targetOffsetY = { (it * 0.16f).roundToInt() },
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                animationSpec = tween(dur, easing = easing)
             ) + fadeOut(
-                animationSpec = tween(dur, easing = SmoothAccelerateEasing)
+                targetAlpha = if (predictiveBack) 0.5f else 0f,
+                animationSpec = tween(dur, easing = fadeEasing)
             ) + scaleOut(
-                targetScale = if (predictiveBack) 0.88f else 0.94f,
+                targetScale = if (predictiveBack) 0.92f else 0.94f,
                 animationSpec = tween(dur, easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing)
             )
         }
@@ -237,22 +253,28 @@ fun createExpressiveZoomTransitions(
 
         override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
             val dur = scaledDuration(280, timeScale)
+            val fadeDur = if (predictiveBack) dur else dur / 2
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothDecelerateEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             scaleIn(
-                initialScale = 1.08f,
-                animationSpec = tween(dur, easing = SmoothDecelerateEasing)
+                initialScale = if (predictiveBack) 0.94f else 1.08f,
+                animationSpec = tween(dur, easing = easing)
             ) + fadeIn(
-                initialAlpha = 0.2f,
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                initialAlpha = if (predictiveBack) 0.5f else 0.2f,
+                animationSpec = tween(fadeDur, easing = fadeEasing)
             )
         }
 
         override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
             val dur = scaledDuration(250, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothAccelerateEasing
             scaleOut(
-                targetScale = if (predictiveBack) 0.84f else 0.88f,
+                targetScale = if (predictiveBack) 0.92f else 0.88f,
                 animationSpec = tween(dur, easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing)
             ) + fadeOut(
-                animationSpec = tween(dur, easing = SmoothAccelerateEasing)
+                targetAlpha = if (predictiveBack) 0.5f else 0f,
+                animationSpec = tween(dur, easing = fadeEasing)
             )
         }
     }
@@ -286,22 +308,26 @@ fun createDepthStackTransitions(
 
         override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
             val dur = scaledDuration(300, timeScale)
+            val fadeDur = if (predictiveBack) dur else dur / 2
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothDecelerateEasing
+            val fadeEasing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             scaleIn(
-                initialScale = 0.88f,
-                animationSpec = tween(dur, easing = SmoothDecelerateEasing)
+                initialScale = 0.92f,
+                animationSpec = tween(dur, easing = easing)
             ) + fadeIn(
-                initialAlpha = 0.35f,
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                initialAlpha = if (predictiveBack) 0.5f else 0.35f,
+                animationSpec = tween(fadeDur, easing = fadeEasing)
             )
         }
 
         override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
             val dur = scaledDuration(270, timeScale)
+            val easing = if (predictiveBack) PredictiveBackEasing else SmoothStandardEasing
             slideOutHorizontally(
                 targetOffsetX = { it },
-                animationSpec = tween(dur, easing = SmoothStandardEasing)
+                animationSpec = tween(dur, easing = easing)
             ) + if (predictiveBack) {
-                scaleOut(targetScale = 0.88f, animationSpec = tween(dur, easing = PredictiveBackEasing))
+                scaleOut(targetScale = 0.92f, animationSpec = tween(dur, easing = PredictiveBackEasing))
             } else {
                 ExitTransition.None
             }

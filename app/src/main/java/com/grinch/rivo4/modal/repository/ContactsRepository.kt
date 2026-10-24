@@ -27,6 +27,8 @@ import com.grinch.rivo4.modal.data.WebsiteEntry
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.deduplicateNumbers
 import com.grinch.rivo4.controller.util.areNumbersEqual
+import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.CallBackgroundStore
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -1775,7 +1777,6 @@ class ContactsRepository(
             }
         }
 
-        val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
         val projection = arrayOf(
             ContactsContract.PhoneLookup.CONTACT_ID,
             ContactsContract.PhoneLookup.DISPLAY_NAME,
@@ -1784,44 +1785,70 @@ class ContactsRepository(
             ContactsContract.PhoneLookup.CUSTOM_RINGTONE
         )
 
-        try {
-            contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CONTACT_ID)
-                    val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-                    val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
-                    val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
-                    val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
+        fun queryPhoneLookup(queryNum: String): Contact? {
+            val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(queryNum))
+            try {
+                contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val idIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CONTACT_ID)
+                        val nameIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
+                        val photoIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)
+                        val starredIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.STARRED)
+                        val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
 
-                    val id = if (idIdx != -1) cursor.getString(idIdx).orEmpty() else ""
-                    val name = if (nameIdx != -1) cursor.getString(nameIdx) else unknownLabel
-                    val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
-                    val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
-                    val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
+                        val id = if (idIdx != -1) cursor.getString(idIdx).orEmpty() else ""
+                        val name = if (nameIdx != -1) cursor.getString(nameIdx) else unknownLabel
+                        val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
+                        val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
+                        val ringtone = if (ringtoneIdx != -1) cursor.getString(ringtoneIdx) else null
 
-                    val numbers = if (id.isNotBlank()) {
-                        deduplicateNumbers(listOf(number) + getNumbersForContactId(id))
-                    } else {
-                        listOf(number)
+                        val numbers = if (id.isNotBlank()) {
+                            deduplicateNumbers(listOf(number) + getNumbersForContactId(id))
+                        } else {
+                            listOf(number)
+                        }
+
+                        val (accInfo, linked) = if (id.isNotBlank()) getAccountInfoWithLinked(id) else Pair(Pair(null, null), emptyList())
+                        return Contact(
+                            id = id,
+                            name = formatName(name ?: unknownLabel),
+                            photoUri = photoUri,
+                            isFavorite = starred,
+                            phoneNumbers = numbers,
+                            customRingtone = ringtone,
+                            accountName = accInfo.first,
+                            accountType = accInfo.second,
+                            linkedAccounts = linked
+                        )
                     }
-
-                    val (accInfo, linked) = if (id.isNotBlank()) getAccountInfoWithLinked(id) else Pair(Pair(null, null), emptyList())
-                    return Contact(
-                        id = id,
-                        name = formatName(name ?: unknownLabel),
-                        photoUri = photoUri,
-                        isFavorite = starred,
-                        phoneNumbers = numbers,
-                        customRingtone = ringtone,
-                        accountName = accInfo.first,
-                        accountType = accInfo.second,
-                        linkedAccounts = linked
-                    )
                 }
+            } catch (e: Exception) {
+                Log.e("ContactsRepository", "Error: ${e.message}", e)
             }
-        } catch (e: SecurityException) {
-            Log.e("ContactsRepository", "Error: \${e.message}", e)
+            return null
         }
+
+        // 1. Try PhoneLookup with exact number
+        queryPhoneLookup(number)?.let { return it }
+
+        // 2. Try normalized number if different
+        val normalized = normalizePhoneNumber(number)
+        if (normalized.isNotBlank() && normalized != number) {
+            queryPhoneLookup(normalized)?.let { return it }
+        }
+
+        // 3. Try standard formatted number
+        val formatted = formatPhoneNumber(number)
+        if (formatted.isNotBlank() && formatted != number && formatted != normalized) {
+            queryPhoneLookup(formatted)?.let { return it }
+        }
+
+        // 4. Fallback: Search all contacts (including accounts and local) using areNumbersEqual
+        try {
+            val allContacts = getContacts(includePrivate = true, includeHidden = preferenceManager.isHiddenContactsVisible())
+            allContacts.firstOrNull { c -> c.phoneNumbers.any { areNumbersEqual(it, number) } }?.let { return it }
+        } catch (_: Exception) {}
+
         return null
     }
 

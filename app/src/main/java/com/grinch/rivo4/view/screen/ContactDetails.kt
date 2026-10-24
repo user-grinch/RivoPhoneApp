@@ -239,7 +239,7 @@ fun ContactDetailsScreen(
 
     val unknownLabel = stringResource(R.string.label_unknown)
     val displayPhone = phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull() ?: unknownLabel
-    val displayName = fullContact?.formattedDisplayName ?: fullContact?.name ?: phoneNumber ?: unknownLabel
+    val displayName = fullContact?.formattedDisplayName ?: fullContact?.name ?: (if (phoneNumber != null && phoneNumber != unknownLabel) formatPhoneNumber(phoneNumber) else unknownLabel)
     val shareContactLabel = stringResource(R.string.contact_share)
 
     val context = LocalContext.current
@@ -946,6 +946,7 @@ fun ContactDetailsScreen(
                             RivoAvatar(
                                 name = displayName,
                                 photoUri = fullContact?.photoUri,
+                                iconSize = 64.dp,
                                 modifier = Modifier
                                     .size(130.dp)
                                     .clip(CircleShape)
@@ -975,11 +976,19 @@ fun ContactDetailsScreen(
                         }
                     }
 
-                    item {
-                        Row(
+                    stickyHeader {
+                        Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            color = MaterialTheme.colorScheme.surface,
+                            tonalElevation = 0.dp,
+                            shadowElevation = 0.dp
                         ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                             RivoExpressiveButton(
                                 icon = Icons.Default.Call,
                                 label = stringResource(R.string.contact_details_call),
@@ -1071,6 +1080,7 @@ fun ContactDetailsScreen(
                             }
                         }
                     }
+                }
 
                     item {
                         val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
@@ -1869,6 +1879,7 @@ fun ContactDetailsScreen(
                             RivoAvatar(
                                 name = displayName,
                                 photoUri = null,
+                                iconSize = 96.dp,
                                 modifier = Modifier.size(200.dp),
                                 textStyle = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
                             )

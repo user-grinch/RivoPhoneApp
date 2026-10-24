@@ -22,6 +22,7 @@ import com.grinch.rivo4.modal.data.CallLogEntry
 import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
+import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.ContactUtils
 
@@ -327,7 +328,13 @@ class CallLogRepository(
                 matchedContact = contactMap.values.find { c -> c.phoneNumbers.any { areNumbersEqual(it, number) } }
             }
             
-            val displayName = matchedContact?.name ?: cursor.getString(cachedNameIdx)
+            val rawCachedName = cursor.getString(cachedNameIdx)
+            val isCachedNameJustNumber = rawCachedName != null && (
+                areNumbersEqual(rawCachedName, number) ||
+                rawCachedName.none { it.isLetter() }
+            )
+            val effectiveCachedName = if (isCachedNameJustNumber) null else rawCachedName
+            val displayName = matchedContact?.name ?: effectiveCachedName
             val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
             val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
                 contactIdFromLookupUri(it)
@@ -338,7 +345,7 @@ class CallLogRepository(
             val singleEntry = CallLogEntry(
                 id = callId,
                 number = number,
-                name = displayName ?: number,
+                name = displayName ?: formatPhoneNumber(number),
                 type = type,
                 date = date,
                 duration = duration,
