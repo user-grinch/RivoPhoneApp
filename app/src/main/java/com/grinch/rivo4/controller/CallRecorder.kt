@@ -173,7 +173,6 @@ object CallRecorder {
 
     const val DIRECTORY_NAME = "Rivo Recordings"
 
-    /** Same value as [Environment.DIRECTORY_RECORDINGS], which only exists from API 31. */
     private const val RECORDINGS_STORAGE_DIR = "Recordings"
 
     @Volatile

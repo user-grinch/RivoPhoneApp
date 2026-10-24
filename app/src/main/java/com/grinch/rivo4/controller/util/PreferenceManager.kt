@@ -25,6 +25,18 @@ class PreferenceManager(context: Context) {
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(listener)
+        if (!prefs.contains("transition_speed_default_2_5")) {
+            if (!prefs.contains(KEY_TRANSITION_TIME_SCALE) || prefs.getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f) == 1.0f) {
+                prefs.edit().putFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).apply()
+            }
+            prefs.edit().putBoolean("transition_speed_default_2_5", true).apply()
+        }
+        if (!prefs.contains("transition_style_v2")) {
+            if (prefs.getInt(KEY_TRANSITION_STYLE, 0) == 3) {
+                prefs.edit().putInt(KEY_TRANSITION_STYLE, 5).apply()
+            }
+            prefs.edit().putBoolean("transition_style_v2", true).apply()
+        }
     }
 
     fun notifySettingsChanged() {
@@ -404,7 +416,6 @@ class PreferenceManager(context: Context) {
         const val FONT_FAMILY_MEDIUM = "sans_serif_medium"
         const val FONT_FAMILY_BLACK = "sans_serif_black"
 
-        /** Supported font family ids in picker order. */
         val ALL_FONT_FAMILIES = listOf(
             FONT_FAMILY_SANS_SERIF,
             FONT_FAMILY_SERIF,

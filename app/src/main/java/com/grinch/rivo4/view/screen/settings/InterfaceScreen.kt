@@ -449,7 +449,9 @@ fun InterfaceScreen(
                                         stringResource(R.string.option_standard) to 0,
                                         stringResource(R.string.settings_interface_transition_slide) to 1,
                                         stringResource(R.string.settings_interface_transition_fade) to 2,
-                                        stringResource(R.string.settings_interface_transition_none) to 3
+                                        stringResource(R.string.settings_interface_transition_zoom) to 3,
+                                        stringResource(R.string.settings_interface_transition_stack) to 4,
+                                        stringResource(R.string.settings_interface_transition_none) to 5
                                     ),
                                     selectedValue = transitionStyle,
                                     onValueChange = {
@@ -461,6 +463,8 @@ fun InterfaceScreen(
                                         0 -> Icons.Outlined.Animation
                                         1 -> Icons.AutoMirrored.Outlined.CompareArrows
                                         2 -> Icons.Outlined.AutoAwesome
+                                        3 -> Icons.Outlined.ZoomIn
+                                        4 -> Icons.Outlined.Layers
                                         else -> Icons.Outlined.Block
                                     }
                                     Icon(
@@ -472,7 +476,7 @@ fun InterfaceScreen(
                                 }
                             }
                         }
-                        if (transitionStyle != 3) {
+                        if (transitionStyle != 5) {
                             item {
                                 val snappedScale = ((transitionTimeScale * 20f).roundToInt() / 20f).coerceIn(0.25f, 5.0f)
                                 val scaleText = if (snappedScale * 100 % 10 == 0f) {

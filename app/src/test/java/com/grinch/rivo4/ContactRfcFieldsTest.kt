@@ -14,11 +14,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Regression tests for the RFC 6350 (vCard 4.0) contact fields:
- * events (BDAY/ANNIVERSARY §6.1.4/§6.1.5), organization (ORG/TITLE §6.6.4/§6.6.1),
- * websites (URL §6.7.3), relations (RELATED §6.6.6) and typed addresses (ADR §6.3.1).
- */
 class ContactRfcFieldsTest {
 
     private val json = Json {

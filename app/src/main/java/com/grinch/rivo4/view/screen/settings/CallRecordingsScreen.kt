@@ -79,9 +79,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/**
- * Immutable model for call recording items to allow Compose smart recomposition skipping.
- */
 @Immutable
 data class CallRecordingItem(
     val file: File,
@@ -94,14 +91,6 @@ data class CallRecordingItem(
     val durationMs: Long
 )
 
-/**
- * Extracts a human-friendly caller or contact label from a recording filename.
- * Handles formats like:
- * - ContactName_20260926_153000
- * - +1234567890_20260926_153000
- * - call_20260926_153000
- * - Custom names or single tokens
- */
 fun extractCallerLabel(nameWithoutExtension: String): String {
     val parts = nameWithoutExtension.split('_')
     return when {
@@ -116,9 +105,6 @@ fun extractCallerLabel(nameWithoutExtension: String): String {
     }
 }
 
-/**
- * Converts a raw recording [File] into a pre-computed [CallRecordingItem].
- */
 fun File.toCallRecordingItem(context: Context): CallRecordingItem {
     val lastMod = this.lastModified()
     val kb = this.length() / 1024
@@ -1246,9 +1232,6 @@ fun CallRecordingsContent(
     }
 }
 
-/**
- * MD3 Expressive Call Record Entry Card & Inline Player Component
- */
 @Composable
 fun CallRecordEntryCard(
     item: CallRecordingItem,
@@ -1573,9 +1556,6 @@ fun CallRecordEntryCard(
     }
 }
 
-/**
- * Legacy overload for backward compatibility with [File].
- */
 @Composable
 fun CallRecordEntryCard(
     file: File,
@@ -1619,9 +1599,6 @@ fun CallRecordEntryCard(
 
 
 
-/**
- * Full-width OEM action row with icon, title, subtitle, and trailing arrow.
- */
 @Composable
 private fun OemActionRow(
     icon: ImageVector,

@@ -95,10 +95,6 @@ object ContactTypeLabels {
         }
     }
 
-    /**
-     * Website exposes neither getTypeLabel(...) nor getTypeLabelResource(...) in the
-     * platform, so resolve labels from app resources (mirrors AOSP relationType/websiteType).
-     */
     fun websiteTypeLabel(context: Context, type: Int, label: String?): String {
         if (!label.isNullOrBlank()) return label
         val resId = when (type) {
@@ -119,10 +115,6 @@ object ContactTypeLabels {
         }
     }
 
-    /**
-     * Relation exposes neither getTypeLabel(...) in the public platform API nor reliably
-     * resolves getTypeLabelResource(...) via app context, so resolve labels from app resources.
-     */
     fun relationTypeLabel(context: Context, type: Int, label: String?): String {
         if (!label.isNullOrBlank()) return label
         val resId = when (type) {

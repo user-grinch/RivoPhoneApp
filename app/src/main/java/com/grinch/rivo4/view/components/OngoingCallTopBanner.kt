@@ -23,10 +23,6 @@ import com.grinch.rivo4.R
 
 val OngoingCallGreen = Color(0xFF165A27)
 
-/**
- * Top banner that appears when a phone call is active or holding while the user
- * is browsing inside the app, allowing immediate 1-tap return to the call screen.
- */
 @Composable
 fun OngoingCallTopBanner(
     onReturnToCall: () -> Unit,

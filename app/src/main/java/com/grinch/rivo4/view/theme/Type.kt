@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.controller.util.PreferenceManager
 
-/** Named system font resolved through [Typeface.create]; keeps a single mapping for the whole app. */
 private fun systemFontFamily(name: String): FontFamily =
     FontFamily(Typeface.create(name, Typeface.NORMAL))
 

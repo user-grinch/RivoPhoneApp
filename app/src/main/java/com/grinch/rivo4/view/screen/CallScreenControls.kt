@@ -73,10 +73,6 @@ import com.grinch.rivo4.view.theme.callColors
 import androidx.compose.runtime.collectAsState
 import org.koin.compose.koinInject
 
-/**
- * Ordered slots of the in-call action grid: the first three form the top row,
- * the last three the bottom row.
- */
 object RivoCallButtonOrder {
     const val MUTE = "mute"
     const val KEYPAD = "keypad"
@@ -87,7 +83,6 @@ object RivoCallButtonOrder {
 
     val All: List<String> = listOf(MUTE, KEYPAD, AUDIO, RECORD, HOLD, ADD)
 
-    /** Parses the comma-separated hidden-button pref into a sanitized set of known ids. */
     fun hiddenSet(raw: String?): Set<String> =
         raw?.split(',')?.map { it.trim() }?.filter { it in All }?.toSet().orEmpty()
 

@@ -16,10 +16,6 @@ import com.grinch.rivo4.R
 
 object CallNotificationHelper {
 
-    /**
-     * Returns the Material Design 3 Expressive theme accent color for notifications.
-     * Uses Android 12+ Material You dynamic color system if available, else Rivo's brand seed.
-     */
     fun getNotificationColor(context: Context): Int {
         val isNight =
             (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
@@ -33,12 +29,6 @@ object CallNotificationHelper {
         }
     }
 
-    /**
-     * Generates a circular avatar bitmap matching Material Design 3 Expressive / Google Dialer.
-     * If a photo bitmap is provided, it is clipped into a smooth circle.
-     * If no photo is provided, a dynamic M3 tonal colored circle is rendered with the contact's initial
-     * or a fallback call icon.
-     */
     fun getAvatarBitmap(context: Context, name: String, photo: Bitmap?): Bitmap {
         val density = context.resources.displayMetrics.density
         val size = (64 * density).toInt().coerceAtLeast(128)

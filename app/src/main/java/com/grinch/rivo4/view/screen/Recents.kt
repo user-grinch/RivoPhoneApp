@@ -84,12 +84,11 @@ import com.grinch.rivo4.modal.data.Contact
 import com.grinch.rivo4.modal.data.SwipeActionType
 import com.grinch.rivo4.controller.util.SocialUtils
 import com.grinch.rivo4.modal.data.displayLabel
-import com.grinch.rivo4.view.screen.transitions.NoTransitions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinActivityViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination<RootGraph>(style = NoTransitions::class)
+@Destination<RootGraph>
 @Composable
 fun RecentScreen(navController: NavController, navigator: DestinationsNavigator) {
     RecentScreenContent(navController, navigator)

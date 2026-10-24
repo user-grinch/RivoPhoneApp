@@ -1157,9 +1157,6 @@ class CallService : InCallService() {
                 builder.setFullScreenIntent(fullScreenPendingIntent, false)
                 builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_LIGHTS)
             } else {
-                // When device is locked, screen is blacked/off, or full screen is displayed:
-                // Keep notification completely silent, MIN priority, secret on lockscreen,
-                // and do not attach incoming CallStyle or fullScreenIntent to prevent duplicate popups.
                 builder.setPriority(NotificationCompat.PRIORITY_MIN)
                 builder.setSilent(true)
                 builder.setSound(null)
