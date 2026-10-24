@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
+import java.io.StringReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
@@ -57,7 +58,7 @@ class BackupViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val vCard = contactBackupManager.readContacts(context, uri)
-                vCard.reader().use { reader ->
+                BufferedReader(StringReader(vCard)).use { reader ->
                         var line: String?
                         var currentName = ""
                         var currentNickname: String? = null
