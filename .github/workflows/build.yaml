@@ -3,13 +3,15 @@ name: Build & Release
 on:
   push:
     paths-ignore:
-      - '*.md'         # Ignore documentation
+      - '*.md'
       - '.gitignore'
-      - 'LICENSE'    
-      - 'images/**'    # Ignore any images
-      - '.idea/**'     # Ignore IntelliJ
+      - 'LICENSE'
+      - 'images/**'
+      - '.idea/**'
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     paths-ignore:
       - '*.md'
@@ -45,27 +47,37 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Release APKs & Play AAB
+      - name: Build Play Store Artifacts
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEYSTORE_PATH: ../app/keystore.jks # Adjusted path for gradle context
+          KEYSTORE_PATH: ../app/keystore.jks
           BUILD_NUMBER: ${{ github.run_number }}
-          PREVIEW_BUILD: ${{ github.ref == 'refs/heads/main' }}
           GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
-          GRADLE_BUILD_DIR: ""
         run: |
           sed -i '/org.gradle.java.home/d' gradle.properties
-          ./gradlew assemblePlayRelease assembleFossRelease bundlePlayRelease
+          ./gradlew assemblePlayRelease bundlePlayRelease --no-daemon
 
-      - name: Collect outputs
+      - name: Build FOSS Artifact
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PATH: ../app/keystore.jks
+          # Match F-Droid's tag build, which does not provide a build number.
+          BUILD_NUMBER: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && '0' || github.run_number }}
+          GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
+        run: |
+          ./gradlew assembleFossRelease -PdisableDependencyInfo --no-daemon
+
+      - name: Collect and Organize Outputs
         run: |
           mkdir -p outputs
-          find . -type f \( -name "*.apk" -o -name "*.aab" \) -exec cp {} outputs/ \;
-          if [ -d "$HOME/.gradle-builds" ]; then
-            find "$HOME/.gradle-builds" -type f \( -name "*.apk" -o -name "*.aab" \) -exec cp {} outputs/ \;
-          fi
+
+          # Copy APKs and AABs from standard build directories
+          find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \) -exec cp {} outputs/ \;
+
           echo "Collected files in outputs/:"
           ls -lah outputs/
 
@@ -73,8 +85,7 @@ jobs:
         run: |
           echo "Extracting SHA256 Fingerprint from Keystore..."
           keytool -list -v -keystore app/keystore.jks -alias "${{ secrets.KEY_ALIAS }}" -storepass "${{ secrets.KEYSTORE_PASSWORD }}" > outputs/certificate_full_details.txt
-          
-          # Extract just the SHA256 line for easy viewing
+
           echo "APK Signing Certificate SHA256 Fingerprint:" > outputs/SIGNING_CERTIFICATE_SHA256.txt
           grep "SHA256: " outputs/certificate_full_details.txt | cut -d " " -f 3 >> outputs/SIGNING_CERTIFICATE_SHA256.txt
 
@@ -83,28 +94,26 @@ jobs:
           cd outputs
           sha256sum * > SHA256SUMS.txt || true
           for f in *; do
-            # Don't generate a checksum of a checksum file
             if [[ "$f" != *.sha256 && "$f" != "SHA256SUMS.txt" ]]; then
               sha256sum "$f" > "$f.sha256"
             fi
           done
 
-      - name: Upload artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Release-Artifacts
           path: outputs/
 
-      # Only run these steps if the push/PR is to the main branch
-      - name: Delete old release and tag
-        if: github.ref == 'refs/heads/main'
+      - name: Delete old preview release and tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete preview --cleanup-tag -y || true
 
-      - name: Publish Release
-        if: github.ref == 'refs/heads/main'
+      - name: Publish Preview Release (Main Branch)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
           tag: preview
@@ -113,3 +122,14 @@ jobs:
           artifacts: outputs/*
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
+
+      - name: Publish Production Release (Version Tags)
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          artifacts: outputs/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          prerelease: false

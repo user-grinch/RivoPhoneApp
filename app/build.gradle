@@ -37,6 +37,11 @@ android {
         release {
             minifyEnabled = true
             shrinkResources = true
+            // Without a real keystore, FOSS release stays unsigned so F-Droid can sign it
+            // or copy the upstream signature onto it (reproducible builds)
+            if (System.getenv("KEYSTORE_PATH")) {
+                signingConfig = signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig = signingConfigs.release
             debuggable = false
@@ -70,6 +75,13 @@ android {
         generateLocaleConfig = true
     }
 
+    def includeDependencyInfo = !project.hasProperty("disableDependencyInfo")
+
+    dependenciesInfo {
+        includeInApk = includeDependencyInfo
+        includeInBundle = includeDependencyInfo
+    }
+
     splits {
         abi {
             enable = false
@@ -93,6 +105,7 @@ android {
         play {
             dimension "distribution"
             isDefault = true
+            signingConfig = signingConfigs.release
         }
         foss {
             dimension "distribution"

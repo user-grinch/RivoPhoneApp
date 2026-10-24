@@ -1,0 +1,1 @@
+Rivo is a phone app built with Material 3 Expressive, with a focus on customization and a modern, intuitive calling experience.

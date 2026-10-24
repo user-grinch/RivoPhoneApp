@@ -1,0 +1,18 @@
+<p>Rivo is a clean, open-source dialer and contacts app for Android, built with Jetpack Compose.</p>
+
+<p><b>Features</b></p>
+<ul>
+<li><b>T9 Search &amp; Speed Dial</b>: Quick contact lookup by name or number right on the keypad, plus 1–9 speed dial shortcuts.</li>
+<li><b>Dual SIM Support</b>: Outbound SIM selector, per-contact preferred SIM memory, and carrier tags.</li>
+<li><b>Call Recording via Shizuku</b>: Internal 2-way call audio capture via Shizuku ADB permissions, without needing root or accessibility services (adapted from <a href="https://github.com/kitsumed/ShizuCallRecorder">ShizuCallRecorder</a>). Standard microphone recording fallback included.</li>
+<li><b>In-Call Screen</b>: Audio routing (earpiece, speaker, Bluetooth, wired headset), hold, mute, in-call dialpad, and call notes.</li>
+<li><b>Call Notifications</b>: Android-native heads-up notifications with answer, decline, and speaker toggles.</li>
+<li><b>Private Contacts Vault</b>: Keep specific contacts, their call history, and notifications locked behind biometrics or device PIN.</li>
+<li><b>Contact Management</b>: Edit multiple numbers, emails, and addresses per contact with custom labels, contact deduplication, and local or cloud account storage.</li>
+<li><b>Fake Incoming Call</b>: Simulate an incoming call with custom caller name, number, ringtone, and timer.</li>
+<li><b>Blocklist</b>: Block spam numbers directly from call logs or contact details.</li>
+<li><b>Customization</b>: Material You dynamic color theming, configurable dialpad layouts, avatar shapes, and app-level biometric lock.</li>
+</ul>
+
+<p><b>Support Rivo</b></p>
+<p>Rivo is free and open-source software. If you find the app useful and want to support ongoing development, you can contribute through the <a href="https://www.patreon.com/c/grinch_">Patreon</a> or by downloading the <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">Google Play version</a> to leave a tip through the in-app Tip Jar.</p>
