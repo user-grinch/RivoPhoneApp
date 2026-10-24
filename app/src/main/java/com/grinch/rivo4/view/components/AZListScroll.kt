@@ -64,6 +64,7 @@ fun AZListScroll(
     val callLauncher = rememberCallLauncher()
     val messageLauncher = rememberMessageLauncher()
     val videoLauncher = rememberVideoLauncher()
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val swipeEnabled = remember(settingsState) { prefs.isSwipeActionsEnabled() } && selectedIds.isEmpty()
     val swipeRightAction = remember(settingsState) { SwipeActionType.fromId(prefs.getSwipeRightAction()) }

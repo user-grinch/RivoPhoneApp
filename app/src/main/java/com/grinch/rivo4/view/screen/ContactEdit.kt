@@ -40,6 +40,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +48,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.ContactTypeLabels
@@ -774,7 +779,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = phone.number,
                                     onValueChange = { phones[index] = phones[index].copy(number = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_contact_edit_phone_field_label_index_1),
+                                    label = "${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}",
                                     icon = Icons.Outlined.Phone,
                                     indexBadge = index + 1,
                                     typeValue = phone.type,
@@ -856,7 +861,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = email.address,
                                     onValueChange = { emails[index] = emails[index].copy(address = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_label_email_index_1),
+                                    label = "${stringResource(R.string.label_email)} ${index + 1}",
                                     icon = Icons.Outlined.Email,
                                     indexBadge = index + 1,
                                     typeValue = email.type,
@@ -938,7 +943,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = addr.address,
                                     onValueChange = { addresses[index] = addresses[index].copy(address = it) },
-                                    label = stringResource(R.string.loc_stringresource_r_string_label_address_index_1),
+                                    label = "${stringResource(R.string.label_address)} ${index + 1}",
                                     icon = Icons.Outlined.LocationOn,
                                     indexBadge = index + 1,
                                     typeValue = addr.type,
@@ -1016,7 +1021,7 @@ fun ContactEditScreen(
                                 shape = shape,
                                 color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                RivoSegmentedTypedField(
+                                RivoSegmentedDateField(
                                     value = event.date,
                                     onValueChange = { events[index] = events[index].copy(date = it) },
                                     label = stringResource(R.string.contact_event_generic),
@@ -1091,60 +1096,53 @@ fun ContactEditScreen(
                     )
                     organizations.forEachIndexed { index, org ->
                         key(org.id) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 2.dp),
-                                verticalArrangement = Arrangement.spacedBy(3.dp)
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = rivoGroupedItemShape(index, total),
+                                color = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
-                                Surface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = rivoGroupedItemShape(index, total),
-                                    color = MaterialTheme.colorScheme.surfaceContainerLow
-                                ) {
-                                    Column {
-                                        RivoSegmentedTextField(
-                                            value = org.company,
-                                            onValueChange = { organizations[index] = organizations[index].copy(company = it) },
-                                            label = stringResource(R.string.contact_edit_company),
-                                            icon = Icons.Outlined.Work
-                                        )
-                                        RivoSegmentedTextField(
-                                            value = org.title,
-                                            onValueChange = { organizations[index] = organizations[index].copy(title = it) },
-                                            label = stringResource(R.string.contact_edit_job_title),
-                                            icon = Icons.Outlined.Badge
-                                        )
-                                        RivoSegmentedTextField(
-                                            value = org.department,
-                                            onValueChange = { organizations[index] = organizations[index].copy(department = it) },
-                                            label = stringResource(R.string.contact_edit_department),
-                                            icon = Icons.Outlined.Business
-                                        )
-                                        if (organizations.size > 1 || org.company.isNotBlank()) {
-                                            TextButton(
-                                                onClick = {
-                                                    if (organizations.size > 1) {
-                                                        organizations.removeAt(index)
-                                                    } else {
-                                                        organizations[0] = EditableOrganization(company = "")
-                                                    }
-                                                },
-                                                modifier = Modifier.align(Alignment.End)
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.RemoveCircleOutline,
-                                                    contentDescription = stringResource(R.string.action_delete),
-                                                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                                Spacer(Modifier.width(6.dp))
-                                                Text(
-                                                    stringResource(R.string.action_delete),
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
-                                                )
-                                            }
+                                Column {
+                                    RivoSegmentedTextField(
+                                        value = org.company,
+                                        onValueChange = { organizations[index] = organizations[index].copy(company = it) },
+                                        label = stringResource(R.string.contact_edit_company),
+                                        icon = Icons.Outlined.Work
+                                    )
+                                    RivoSegmentedTextField(
+                                        value = org.title,
+                                        onValueChange = { organizations[index] = organizations[index].copy(title = it) },
+                                        label = stringResource(R.string.contact_edit_job_title),
+                                        icon = Icons.Outlined.Badge
+                                    )
+                                    RivoSegmentedTextField(
+                                        value = org.department,
+                                        onValueChange = { organizations[index] = organizations[index].copy(department = it) },
+                                        label = stringResource(R.string.contact_edit_department),
+                                        icon = Icons.Outlined.Business
+                                    )
+                                    if (organizations.size > 1 || org.company.isNotBlank()) {
+                                        TextButton(
+                                            onClick = {
+                                                if (organizations.size > 1) {
+                                                    organizations.removeAt(index)
+                                                } else {
+                                                    organizations[0] = EditableOrganization(company = "")
+                                                }
+                                            },
+                                            modifier = Modifier.align(Alignment.End)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.RemoveCircleOutline,
+                                                contentDescription = stringResource(R.string.action_delete),
+                                                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(Modifier.width(6.dp))
+                                            Text(
+                                                stringResource(R.string.action_delete),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+                                            )
                                         }
                                     }
                                 }
@@ -1523,7 +1521,7 @@ fun RivoSegmentedTypedField(
                             Box(contentAlignment = Alignment.Center) {
                                 if (indexBadge != null) {
                                     Text(
-                                        text = stringResource(R.string.loc_indexbadge),
+                                        text = "$indexBadge",
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -1635,6 +1633,224 @@ fun RivoSegmentedTypedField(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RivoSegmentedDateField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    typeValue: Int,
+    typeOptions: List<Int>,
+    typeLabel: (Int) -> String,
+    onTypeChange: (Int) -> Unit,
+    indexBadge: Int? = null,
+    onDelete: (() -> Unit)? = null
+) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTypeMenu by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { showDatePicker = true }
+                    .padding(horizontal = 4.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier.size(36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        modifier = Modifier.size(30.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            if (indexBadge != null) {
+                                Text(
+                                    text = "$indexBadge",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    if (value.isNotBlank()) {
+                        Text(
+                            text = value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.contact_edit_select_date),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+
+                if (value.isNotEmpty()) {
+                    IconButton(
+                        onClick = { onValueChange("") },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.action_clear),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+
+            if (onDelete != null) {
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.RemoveCircleOutline,
+                        contentDescription = stringResource(R.string.action_delete),
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+        }
+
+        Box(modifier = Modifier.padding(start = 52.dp, top = 2.dp)) {
+            Surface(
+                onClick = { showTypeMenu = true },
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Sell,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = typeLabel(typeValue),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            RivoDropdownMenu(
+                expanded = showTypeMenu,
+                onDismissRequest = { showTypeMenu = false }
+            ) {
+                typeOptions.forEach { option ->
+                    RivoDropdownMenuItem(
+                        text = { Text(typeLabel(option)) },
+                        onClick = {
+                            onTypeChange(option)
+                            showTypeMenu = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    if (showDatePicker) {
+        val parsedMillis = remember(value) {
+            try {
+                if (value.isNotBlank()) {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }
+                    sdf.parse(value)?.time
+                } else null
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = parsedMillis ?: System.currentTimeMillis()
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { utcMillis ->
+                            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                                timeInMillis = utcMillis
+                            }
+                            val y = cal.get(Calendar.YEAR)
+                            val m = cal.get(Calendar.MONTH) + 1
+                            val d = cal.get(Calendar.DAY_OF_MONTH)
+                            onValueChange(String.format(Locale.US, "%04d-%02d-%02d", y, m, d))
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_done))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
 @Composable
 fun RivoSegmentedRemovableField(
     value: String,
@@ -1670,7 +1886,7 @@ fun RivoSegmentedRemovableField(
                         Box(contentAlignment = Alignment.Center) {
                             if (indexBadge != null) {
                                 Text(
-                                    text = stringResource(R.string.loc_indexbadge),
+                                    text = "$indexBadge",
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary

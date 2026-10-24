@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.RateReview
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.*
@@ -30,23 +31,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.*
 import com.grinch.rivo4.DISCORD_URL
 import com.grinch.rivo4.GITHUB_URL
-import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.PLAY_STORE_URL
-import com.grinch.rivo4.SHIZU_CALL_RECORDER_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.controller.util.ProBrandingManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
-import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import com.grinch.rivo4.view.theme.rivoPolygonShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
@@ -62,9 +61,9 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val appName = if (ProBrandingManager.isActive(prefs)) "Rivo Pro" else stringResource(R.string.about_app_display_name)
+    val appName = stringResource(R.string.about_app_display_name)
     val appInfo = getAppVersion(context)
-    val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.25f }
+    val logoShape = rivoPolygonShape(RivoMaterialShapes.Cookie7Sided)
 
     Scaffold(
         topBar = {
@@ -94,20 +93,26 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                         .fillMaxWidth()
                         .padding(vertical = 12.dp)
                 ) {
-                    Image(
-                        painter = painterResource(
-                            if (appName == "Rivo Pro") R.drawable.pro_app_icon else R.drawable.logo
-                        ),
-                        contentDescription = stringResource(R.string.about_logo_content_desc),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(88.dp)
-                            .graphicsLayer {
-                                scaleX = 1.15f
-                                scaleY = 1.15f
-                            }
-                            .clip(logoMorph)
-                    )
+                    Surface(
+                        modifier = Modifier.size(88.dp),
+                        shape = logoShape,
+                        color = Color.White,
+                        shadowElevation = 2.dp
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Image(
+                                painter = painterResource(R.drawable.logo),
+                                contentDescription = stringResource(R.string.about_logo_content_desc),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .graphicsLayer {
+                                        scaleX = 1.25f
+                                        scaleY = 1.25f
+                                    }
+                            )
+                        }
+                    }
 
                     Text(
                         text = appName,
@@ -158,47 +163,33 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            Button(
-                onClick = { openLink(context, PLAY_STORE_URL) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(22.dp), tint = Color(0xFFFFB300))
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = stringResource(R.string.about_rate_on_google_play),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = { navigator.navigate(ContributorsScreenDestination) },
+                    onClick = { openLink(context, PLAY_STORE_URL) },
                     modifier = Modifier
                         .weight(1f)
                         .height(52.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
-                    Icon(Icons.Outlined.Groups, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.RateReview,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.contributors_title),
+                        text = stringResource(R.string.about_rate_on_google_play),
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -220,12 +211,23 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                            text = "Support",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                        text = "Support",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
+            }
+
+            RivoExpressiveGroup {
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.contributors_title),
+                        supporting = stringResource(R.string.about_contributors_supporting),
+                        leadingIcon = Icons.Outlined.Groups,
+                        onClick = { navigator.navigate(ContributorsScreenDestination) }
+                    )
+                }
+            }
 
             RivoExpressiveGroup {
                 item {

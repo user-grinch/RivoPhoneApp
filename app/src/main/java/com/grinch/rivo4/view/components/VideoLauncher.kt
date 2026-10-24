@@ -369,6 +369,7 @@ object VideoCallHelper {
         return null
     }
 
+    @Suppress("DEPRECATION")
     fun launchCarrierVideoCall(context: Context, number: String, contactId: String? = null) {
         val trimmed = number.trim()
         if (trimmed.isBlank()) {
@@ -380,7 +381,7 @@ object VideoCallHelper {
         val existingCall = try {
             CallService.allCalls.value.firstOrNull { call ->
                 val handleNum = call.details?.handle?.schemeSpecificPart.orEmpty()
-                handleNum.isNotBlank() && PhoneNumberUtils.compare(handleNum, trimmed)
+                handleNum.isNotBlank() && PhoneNumberUtils.compare(context, handleNum, trimmed)
             }
         } catch (_: Exception) { null }
 

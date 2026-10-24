@@ -967,8 +967,8 @@ class ContactsRepository(
         } else Pair(null, null)
         val accountChanged = resolvedContactId != null && existingRawContactIds.isNotEmpty() &&
             (existingAcc.first != contact.accountName || existingAcc.second != contact.accountType)
-        val oldRawIdsOnAccountChange = if (accountChanged && resolvedContactId != null) {
-            getAllRawContactIds(resolvedContactId)
+        val oldRawIdsOnAccountChange = if (accountChanged) {
+            getAllRawContactIds(resolvedContactId!!)
         } else emptyList()
 
         val isNewInsert = resolvedContactId == null || existingRawContactIds.isEmpty() || accountChanged

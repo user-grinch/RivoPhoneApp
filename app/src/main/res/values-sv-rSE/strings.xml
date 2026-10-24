@@ -844,7 +844,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_popular_settings">Populära inställningar</string>
     <string name="loc_protect_app_with_biometrics_or_pin">Skydda appen med biometri eller PIN-kod</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9">Tilldela kontakter till knappsats 1-9</string>
-    <string name="loc_v_appinfo_first">V${appInfo.first}</string>
     <string name="loc_11_avatar_shapes_contact_photos_initials_cards">11 avatar former, kontakta foton, initialer &amp; kort</string>
     <string name="loc_jane_doe">Jane Doe</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
@@ -951,19 +950,13 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_call_history_settings">Inställningar för samtalshistorik</string>
     <string name="loc_save_to_call_history">Spara till samtalshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Svarade och missade falska samtal kommer att dyka upp i Senaste</string>
-    <string name="loc_stringresource_r_string_fake_call_schedules_title_schedules_size">${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blockerat</string>
-    <string name="loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size">${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtal och sms från detta nummer kommer att blockeras omedelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Avblockera $targetDisplayName? De kommer att kunna ringa och meddela dig igen.</string>
     <string name="loc_processing_blocklist">Bearbetar blocklista</string>
     <string name="loc_importing_blocked_numbers">Importerar blockerade nummer...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Tryck ihop båda volymknapparna för att växla Stör ej</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
-    <string name="loc_indexbadge">$indexBadge</string>
     <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_manage_storage_tools">Hantera lagring &amp; verktyg</string>
     <string name="loc_remove_from_priority">Ta bort från prioritet</string>

@@ -120,15 +120,27 @@ object ContactTypeLabels {
     }
 
     /**
-     * Relation exposes getTypeLabelResource(...) only; use it with a graceful fallback
-     * for unit-test stubs.
+     * Relation exposes neither getTypeLabel(...) in the public platform API nor reliably
+     * resolves getTypeLabelResource(...) via app context, so resolve labels from app resources.
      */
     fun relationTypeLabel(context: Context, type: Int, label: String?): String {
         if (!label.isNullOrBlank()) return label
-        val resId = try {
-            android.provider.ContactsContract.CommonDataKinds.Relation.getTypeLabelResource(type)
-        } catch (e: Exception) {
-            0
+        val resId = when (type) {
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_ASSISTANT -> R.string.relation_type_assistant
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_BROTHER -> R.string.relation_type_brother
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_CHILD -> R.string.relation_type_child
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_DOMESTIC_PARTNER -> R.string.relation_type_domestic_partner
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_FATHER -> R.string.relation_type_father
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND -> R.string.relation_type_friend
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_MANAGER -> R.string.relation_type_manager
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_MOTHER -> R.string.relation_type_mother
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_PARENT -> R.string.relation_type_parent
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_PARTNER -> R.string.relation_type_partner
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_REFERRED_BY -> R.string.relation_type_referred_by
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_RELATIVE -> R.string.relation_type_relative
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_SISTER -> R.string.relation_type_sister
+            android.provider.ContactsContract.CommonDataKinds.Relation.TYPE_SPOUSE -> R.string.relation_type_spouse
+            else -> 0
         }
         return if (resId != 0) {
             try { context.getString(resId) } catch (e: Exception) {

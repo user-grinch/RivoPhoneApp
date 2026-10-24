@@ -71,11 +71,6 @@ import com.grinch.rivo4.view.theme.RivoPaletteStyle
 import com.grinch.rivo4.view.theme.rivoPaletteSwatches
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.CallScreenCustomizationScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.CallLogCustomizationScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.TypographyScreenDestination
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -533,58 +528,6 @@ fun InterfaceScreen(
                             )
                         }
                     }
-                }
-
-                // 5. Related Styling Links
-                item {
-                    RivoExpressiveGroup(
-                        title = stringResource(R.string.settings_more_display),
-                        icon = Icons.Outlined.DisplaySettings
-                    ) {
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.typography_title),
-                                supporting = stringResource(R.string.typography_entry_supporting),
-                                leadingIcon = Icons.Outlined.TextFields,
-                                onClick = { navigator.navigate(TypographyScreenDestination) }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_navigation_bar),
-                                supporting = stringResource(R.string.settings_navigation_bar_supporting),
-                                leadingIcon = Icons.Outlined.Dock,
-                                onClick = { navigator.navigate(BottomNavScreenDestination) }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_avatars_cards),
-                                supporting = stringResource(R.string.settings_avatars_cards_supporting),
-                                leadingIcon = Icons.Outlined.AccountCircle,
-                                onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.call_screen_customization_title),
-                                supporting = stringResource(R.string.call_screen_customization_supporting),
-                                leadingIcon = Icons.Outlined.Dialpad,
-                                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_call_log_customization_title),
-                                supporting = stringResource(R.string.settings_call_log_customization_supporting),
-                                leadingIcon = Icons.Outlined.History,
-                                onClick = { navigator.navigate(CallLogCustomizationScreenDestination) }
-                            )
-                        }
-                    }
-                }
-
-                item {
                 }
 
                 item { Spacer(modifier = Modifier.height(32.dp)) }

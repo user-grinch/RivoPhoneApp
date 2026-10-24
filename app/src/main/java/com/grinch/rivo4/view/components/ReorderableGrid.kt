@@ -160,3 +160,78 @@ class RowDragDropState internal constructor(
         }
     }
 }
+
+@Composable
+fun rememberColumnDragDropState(
+    lazyListState: androidx.compose.foundation.lazy.LazyListState,
+    onMove: (fromIndex: Int, toIndex: Int) -> Unit
+): ColumnDragDropState {
+    val scope = rememberCoroutineScope()
+    return remember(lazyListState) {
+        ColumnDragDropState(state = lazyListState, scope = scope, onMove = onMove)
+    }
+}
+
+class ColumnDragDropState internal constructor(
+    private val state: androidx.compose.foundation.lazy.LazyListState,
+    private val scope: CoroutineScope,
+    private val onMove: (Int, Int) -> Unit
+) {
+    var draggingItemIndex by mutableStateOf<Int?>(null)
+        private set
+
+    internal val scrollChannel = Channel<Float>()
+
+    private var draggingItemDraggedDelta by mutableStateOf(Offset.Zero)
+    private var draggingItemInitialOffset by mutableStateOf(Offset.Zero)
+
+    internal val draggingItemOffset: Offset
+        get() = draggingItemLayoutInfo?.let { item ->
+            draggingItemInitialOffset + draggingItemDraggedDelta - Offset(0f, item.offset.toFloat())
+        } ?: Offset.Zero
+
+    private val draggingItemLayoutInfo: androidx.compose.foundation.lazy.LazyListItemInfo?
+        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
+
+    internal fun onDragStart(offset: Offset) {
+        state.layoutInfo.visibleItemsInfo.firstOrNull { item ->
+            offset.y.toInt() in item.offset..(item.offset + item.size)
+        }?.also {
+            draggingItemIndex = it.index
+            draggingItemInitialOffset = Offset(0f, it.offset.toFloat())
+        }
+    }
+
+    internal fun onDragInterrupted() {
+        draggingItemIndex = null
+        draggingItemDraggedDelta = Offset.Zero
+        draggingItemInitialOffset = Offset.Zero
+    }
+
+    internal fun onDrag(offset: Offset) {
+        draggingItemDraggedDelta += offset
+
+        val draggingItem = draggingItemLayoutInfo ?: return
+        val startOffset = draggingItemInitialOffset + draggingItemDraggedDelta
+        val middleY = startOffset.y + (draggingItem.size / 2f)
+
+        val targetItem = state.layoutInfo.visibleItemsInfo.find { item ->
+            middleY.toInt() in item.offset..(item.offset + item.size) &&
+                draggingItem.index != item.index
+        }
+
+        if (targetItem != null) {
+            onMove(draggingItem.index, targetItem.index)
+            draggingItemIndex = targetItem.index
+        } else {
+            val overscroll = when {
+                draggingItemDraggedDelta.y < 0 ->
+                    (startOffset.y - state.layoutInfo.viewportStartOffset).coerceAtMost(0f)
+                draggingItemDraggedDelta.y > 0 ->
+                    ((startOffset.y + draggingItem.size) - state.layoutInfo.viewportEndOffset).coerceAtLeast(0f)
+                else -> 0f
+            }
+            if (overscroll != 0f) scrollChannel.trySend(overscroll)
+        }
+    }
+}

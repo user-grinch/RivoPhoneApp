@@ -815,7 +815,6 @@
     <string name="loc_popular_settings">人気の設定</string>
     <string name="loc_protect_app_with_biometrics_or_pin">生体認証またはPINでアプリを保護</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9">連絡先をダイヤルパッドキー1-9に割り当てる</string>
-    <string name="loc_v_appinfo_first">v${appInfo.first}</string>
     <string name="loc_11_avatar_shapes_contact_photos_initials_cards">11 アバターの形、写真に連絡し、イニシャル &amp; カード</string>
     <string name="loc_jane_doe">ジェーン・ドゥ</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
@@ -920,19 +919,13 @@
     <string name="loc_call_history_settings">通話履歴設定</string>
     <string name="loc_save_to_call_history">通話履歴に保存</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">最近使った偽の通話に応答したり見逃した通話が表示されます</string>
-    <string name="loc_stringresource_r_string_fake_call_schedules_title_schedules_size">${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} がブロックしました</string>
-    <string name="loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size">${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">この番号からの通話とテキストメッセージは直ちにブロックされます。</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNameのブロックを解除しますか？再度電話とメッセージを送信することができます。</string>
     <string name="loc_processing_blocklist">ブロックリストを処理中</string>
     <string name="loc_importing_blocked_numbers">ブロックされた番号をインポートしています...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">両方の音量ボタンを同時に押してマナーモードを切り替える</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
-    <string name="loc_indexbadge">$indexBadge</string>
     <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_remove_from_priority">優先度から削除</string>
     <string name="loc_all_countsuffix">すべての$countSuffix</string>

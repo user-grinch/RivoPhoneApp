@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.grinch.rivo4.controller.fakecall
 
 import android.Manifest

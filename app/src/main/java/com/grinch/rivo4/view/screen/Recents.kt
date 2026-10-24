@@ -141,6 +141,7 @@ fun RecentScreenContent(
     }
 
     val isSelecting = selectedEntries.isNotEmpty()
+    @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val allSelected = allFilteredEntries.isNotEmpty() && selectedEntries.size >= allFilteredEntries.size
 
@@ -518,7 +519,8 @@ fun CallLogFullContent(
             isEditingFavorites = false
         }
         val context = LocalContext.current
-        val clipboardManager = LocalClipboardManager.current
+        @Suppress("DEPRECATION")
+    val clipboardManager = LocalClipboardManager.current
         val callLauncher = rememberCallLauncher()
         val messageLauncher = rememberMessageLauncher()
         val videoLauncher = rememberVideoLauncher()

@@ -845,7 +845,6 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_popular_settings">Populære Indstillinger</string>
     <string name="loc_protect_app_with_biometrics_or_pin">Beskyt app med biometri eller pinkode</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9">Tildel kontakter til opkaldstastaturtasterne 1-9</string>
-    <string name="loc_v_appinfo_first">v${appInfo.first}</string>
     <string name="loc_11_avatar_shapes_contact_photos_initials_cards">11 avatar figurer, kontaktbilleder, initialer &amp; kort</string>
     <string name="loc_jane_doe">Jane Doe</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
@@ -952,19 +951,13 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_call_history_settings">Indstillinger For Kaldhistorik</string>
     <string name="loc_save_to_call_history">Gem i opkaldshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Besvaret og savnet falske opkald vil dukke op i Seneste</string>
-    <string name="loc_stringresource_r_string_fake_call_schedules_title_schedules_size">${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blokeret</string>
-    <string name="loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size">${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Opkald og sms-beskeder fra dette nummer vil blive blokeret straks.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Fjern blokeringen af $targetDisplayName? De vil kunne ringe og sende dig besked igen.</string>
     <string name="loc_processing_blocklist">Behandler Blokeringsliste</string>
     <string name="loc_importing_blocked_numbers">Importerer blokerede numre...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Tryk på begge lydstyrkeknapper sammen for at skifte Forstyr Ikke</string>
-    <string name="loc_stringresource_r_string_contact_edit_phone_field_label_index_1">${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_email_index_1">${stringResource(R.string.label_email)} ${index + 1}</string>
-    <string name="loc_stringresource_r_string_label_address_index_1">${stringResource(R.string.label_address)} ${index + 1}</string>
-    <string name="loc_indexbadge">$indexBadge</string>
     <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_manage_storage_tools">Administrer lagring &amp; værktøjer</string>
     <string name="loc_remove_from_priority">Fjern fra prioritet</string>

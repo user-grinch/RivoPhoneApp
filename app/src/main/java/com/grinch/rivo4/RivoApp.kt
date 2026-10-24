@@ -45,7 +45,7 @@ class RivoApp : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        ProBrandingManager.apply(this, PreferenceManager(this))
+        ProBrandingManager.resetToDefault(this)
         startKoin {
             androidContext(this@RivoApp)
             modules(appModule)

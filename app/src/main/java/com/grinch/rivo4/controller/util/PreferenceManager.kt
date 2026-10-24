@@ -15,12 +15,11 @@ class PreferenceManager(context: Context) {
         deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
     }
 
-    private val _settingsChanged = MutableStateFlow(0)
-    val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()
+    val settingsChanged: StateFlow<Int> = _globalSettingsChanged.asStateFlow()
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB && key != KEY_SETTINGS_HISTORY) {
-            _settingsChanged.value += 1
+            _globalSettingsChanged.value += 1
         }
     }
 
@@ -29,7 +28,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun notifySettingsChanged() {
-        _settingsChanged.value += 1
+        _globalSettingsChanged.value += 1
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
@@ -42,6 +41,7 @@ class PreferenceManager(context: Context) {
 
     fun setBoolean(key: String, value: Boolean) {
         prefs.edit().putBoolean(key, value).apply()
+        notifySettingsChanged()
     }
 
     fun getLong(key: String, defaultValue: Long): Long =
@@ -53,6 +53,7 @@ class PreferenceManager(context: Context) {
 
     fun setLong(key: String, value: Long) {
         prefs.edit().putLong(key, value).apply()
+        notifySettingsChanged()
     }
 
     fun getString(key: String, defaultValue: String?): String? {
@@ -65,6 +66,7 @@ class PreferenceManager(context: Context) {
 
     fun setString(key: String, value: String?) {
         prefs.edit().putString(key, value).apply()
+        notifySettingsChanged()
     }
 
     fun getInt(key: String, defaultValue: Int): Int {
@@ -77,6 +79,7 @@ class PreferenceManager(context: Context) {
 
     fun setInt(key: String, value: Int) {
         prefs.edit().putInt(key, value).apply()
+        notifySettingsChanged()
     }
 
     fun getFloat(key: String, defaultValue: Float): Float {
@@ -89,6 +92,7 @@ class PreferenceManager(context: Context) {
 
     fun setFloat(key: String, value: Float) {
         prefs.edit().putFloat(key, value).apply()
+        notifySettingsChanged()
     }
 
     fun setLastUsedNumber(contactId: String, number: String) {
@@ -170,6 +174,14 @@ class PreferenceManager(context: Context) {
 
     fun setFavoritesOrder(order: List<String>) {
         setString(KEY_FAVORITES_ORDER, order.joinToString(","))
+    }
+
+    fun isFavoritesViewAsGrid(): Boolean {
+        return getBoolean(KEY_FAVORITES_VIEW_AS_GRID, true)
+    }
+
+    fun setFavoritesViewAsGrid(isGrid: Boolean) {
+        setBoolean(KEY_FAVORITES_VIEW_AS_GRID, isGrid)
     }
 
     fun getQuickResponses(): List<String> {
@@ -361,13 +373,14 @@ class PreferenceManager(context: Context) {
             }
         }
         prefs.edit().putStringSet(KEY_PRIORITY_CONTACTS, current).apply()
-        _settingsChanged.value += 1
+        notifySettingsChanged()
     }
 
     fun setPriorityContact(contactId: String, number: String?, isPriority: Boolean) =
         setPriorityContact(contactId, if (number != null) listOf(number) else null, isPriority)
 
     companion object {
+        private val _globalSettingsChanged = MutableStateFlow(0)
         const val KEY_LAST_SELECTED_TAB = "last_selected_bottom_tab"
         const val KEY_PRIORITY_CONTACTS = "priority_contacts_set"
         const val CONTACT_BACKGROUND_PREFIX = "contact_background_"
@@ -488,6 +501,7 @@ class PreferenceManager(context: Context) {
         const val KEY_LAST_USED_ACCOUNT_NAME = "last_used_account_name"
         const val KEY_LAST_USED_ACCOUNT_TYPE = "last_used_account_type"
         const val KEY_FAVORITES_ORDER = "favorites_order"
+        const val KEY_FAVORITES_VIEW_AS_GRID = "favorites_view_as_grid"
         const val KEY_VISIBLE_ACCOUNTS = "visible_accounts"
         const val KEY_CONTACT_SORT_ORDER = "contact_sort_order"
         const val KEY_CONTACT_DISPLAY_ORDER = "contact_display_order"
@@ -1096,7 +1110,7 @@ class PreferenceManager(context: Context) {
         }
 
         editor.apply()
-        _settingsChanged.value += 1
+        notifySettingsChanged()
         clearFormattedNumberCache()
         return restoredCount
     }

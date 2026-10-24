@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -252,6 +253,7 @@ fun ContactDetailsScreen(
     var showOverflowMenu by remember { mutableStateOf(false) }
     var showFullScreenPhoto by remember { mutableStateOf(false) }
     var showNumberSelectionDialog by remember { mutableStateOf(false) }
+    var isSocialExpanded by rememberSaveable { mutableStateOf(false) }
     var pendingSocialAction by remember { mutableStateOf<((String) -> Unit)?>(null) }
     var selectionTitle by remember { mutableStateOf("") }
 
@@ -1606,25 +1608,58 @@ fun ContactDetailsScreen(
                                 icon = Icons.AutoMirrored.Filled.Chat
                             ) {
                                 item {
-                                    Row(
+                                    val visibleApps = if (isSocialExpanded) installedSocialApps else installedSocialApps.take(4)
+                                    val rows = visibleApps.chunked(4)
+
+                                    Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .horizontalScroll(rememberScrollState())
+                                            .animateContentSize()
                                             .padding(horizontal = 16.dp, vertical = 12.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
-                                        installedSocialApps.forEach { app ->
-                                            val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
-                                            RivoExpressiveButton(
-                                                painter = painter,
-                                                label = app.name,
-                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                                size = 52.dp,
-                                                iconSize = 32.dp,
-                                                onClick = {
-                                                    onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                        rows.forEach { rowApps ->
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                rowApps.forEach { app ->
+                                                    val painter = rememberAsyncImagePainter(app.assetIcon ?: app.iconDrawable)
+                                                    RivoExpressiveButton(
+                                                        painter = painter,
+                                                        label = app.name,
+                                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                        size = 52.dp,
+                                                        iconSize = 32.dp,
+                                                        onClick = {
+                                                            onNumberActionClick({ num -> app.action(context, num) }, app.name)
+                                                        },
+                                                        modifier = Modifier.weight(1f)
+                                                    )
                                                 }
+                                                val placeholders = 4 - rowApps.size
+                                                repeat(placeholders) {
+                                                    Spacer(modifier = Modifier.weight(1f))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (installedSocialApps.size > 4) {
+                                    item {
+                                        TextButton(
+                                            onClick = { isSocialExpanded = !isSocialExpanded },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = if (isSocialExpanded) {
+                                                    stringResource(R.string.contact_show_less)
+                                                } else {
+                                                    stringResource(R.string.contact_show_all_social_apps, installedSocialApps.size)
+                                                },
+                                                style = MaterialTheme.typography.labelLarge,
+                                                fontWeight = FontWeight.Bold
                                             )
                                         }
                                     }
