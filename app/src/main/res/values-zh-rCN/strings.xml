@@ -591,5 +591,10 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="support_ads_enabled_pro">广告已启用 - 专业版已启用</string>
     <string name="support_tip_jar_pro">Prix Jar 购买 - 专业版已启用</string>
     <string name="support_patreon_pro">Patreon 支持者-专业版激活</string>
+    <string name="support_rewarded_pro">奖励视频 - 专业版已激活一天</string>
+    <string name="support_pro_active_reason">Rivo Pro 处于活动状态: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro 未激活。请在下面选择一个支持选项。</string>
+    <string name="support_pro_foss_reason">Rivo Pro 可在 Play Store 版本中使用。Patreon 支持自由和开放源码软件开发。</string>
+    <string name="support_choose_app_icon_title">选择品牌化</string>
     <string name="support_choose_app_icon_desc">请同时选择拨号器启动器图标和标签。在确认并重启Rivo之前，没有任何变化。</string>
 </resources>

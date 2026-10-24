@@ -421,8 +421,6 @@ BiometricPrompt (app lås) — Apache 2.
 Shizuku (privilegierad samtalsinspelning API) — Apache 2.0
 ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare villkor</string>
     <string name="call_screen_preview_title">Förhandsgranska</string>
-    <string name="call_slot_top">Översta raden \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Nedre raden \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Flytta upp</string>
     <string name="call_slot_move_down">Flytta ner</string>
     <!-- Support Development & Video Ads -->
@@ -446,5 +444,10 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="support_ads_enabled_pro">Annonser aktiverade - Pro perks aktiva</string>
     <string name="support_tip_jar_pro">Tips burk köp - Pro förmåner aktiva</string>
     <string name="support_patreon_pro">Patreon supporter - Pro förmåner aktiva</string>
+    <string name="support_rewarded_pro">Rewarded video - Pro är aktiv för en dag</string>
+    <string name="support_pro_active_reason">Rivo Pro är aktiv: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro är inte aktiv. Välj ett supportalternativ nedan.</string>
+    <string name="support_pro_foss_reason">Rivo Pro finns i Play Store-bygget. Patreon stöder FOSS utveckling.</string>
+    <string name="support_choose_app_icon_title">Välj varumärke</string>
     <string name="support_choose_app_icon_desc">Välj ikonen för dialer launcher och etikettera tillsammans. Inget ändras förrän du bekräftar och startar om Rivo.</string>
 </resources>

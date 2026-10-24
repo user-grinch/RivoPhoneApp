@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="permission_default_phone_app_title">Standard Telefon App</string>
+    <string name="permission_default_phone_app_description">Kræves for at besvare opkald, håndtere indgående telefonopkald og håndtere opkaldsblokering.</string>
+    <string name="permission_phone_sim_title">Telefon &amp; SIM-adgang</string>
+    <string name="permission_phone_sim_description">Kræves for at foretage opkald direkte, administrere dual SIM-kort, og registrere opkaldsstatus.</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_merge_calls">Flet opkald</string>
     <string name="conference_call">Opkald på konference</string>
@@ -422,8 +426,6 @@ BiometricPrompt (app lock) - Apache 2.
 Shizuku (privilegeret opkaldsregistreringsAPI) — Apache 2.0
 ShizuCallRecorder (opkaldsregistreringskode) — GPLv3 med afsnit 7 yderligere vilkår</string>
     <string name="call_screen_preview_title">Eksempelvisning</string>
-    <string name="call_slot_top">Top row \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Nederste række \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Flyt op</string>
     <string name="call_slot_move_down">Flyt ned</string>
     <!-- Support Development & Video Ads -->
@@ -447,5 +449,10 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="support_ads_enabled_pro">Annoncer aktiveret - Pro frynsegoder aktive</string>
     <string name="support_tip_jar_pro">Tip Jar køb - Pro frynser aktive</string>
     <string name="support_patreon_pro">Patreon supporter - Pro frynsegoder aktiv</string>
+    <string name="support_rewarded_pro">Tildelt video - Pro er aktiv i en dag</string>
+    <string name="support_pro_active_reason">Rivo Pro er aktiv: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro er ikke aktiv. Vælg en understøttelsesmulighed nedenfor.</string>
+    <string name="support_pro_foss_reason">Rivo Pro er tilgængelig i Play Store build. Patreon understøtter FOSS udvikling.</string>
+    <string name="support_choose_app_icon_title">Vælg Branding</string>
     <string name="support_choose_app_icon_desc">Vælg dialer launcher ikonet og etiket sammen. Intet ændrer sig, før du bekræfter og genstarter Rivo.</string>
 </resources>

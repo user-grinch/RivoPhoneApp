@@ -422,8 +422,6 @@ BiometricPrompt (blocco app) — Apache 2.
 Shizuku (API di registrazione delle chiamate privilegiate) — Apache 2.0
 ShizuCallRecorder (call recording code) — GPLv3 con la Sezione 7 termini aggiuntivi</string>
     <string name="call_screen_preview_title">Anteprima</string>
-    <string name="call_slot_top">Prima riga \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Riga inferiore \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Sposta in alto</string>
     <string name="call_slot_move_down">Sposta in basso</string>
     <!-- Support Development & Video Ads -->
@@ -447,5 +445,10 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="support_ads_enabled_pro">Annunci abilitati - Pro perks attivi</string>
     <string name="support_tip_jar_pro">Acquisto barattolo - Pro perks attivi</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks attivo</string>
+    <string name="support_rewarded_pro">Video premiato - Pro è attivo per un giorno</string>
+    <string name="support_pro_active_reason">Rivo Pro è attivo: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro non è attivo. Scegli un\'opzione di supporto qui sotto.</string>
+    <string name="support_pro_foss_reason">Rivo Pro è disponibile nella build di Play Store. Patreon supporta lo sviluppo di FOSS.</string>
+    <string name="support_choose_app_icon_title">Scegli Branding</string>
     <string name="support_choose_app_icon_desc">Scegli l\'icona del lanciatore dialer e l\'etichetta insieme. Nulla cambia finché non confermi e riavvii Rivo.</string>
 </resources>

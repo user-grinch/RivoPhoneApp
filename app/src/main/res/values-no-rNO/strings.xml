@@ -418,8 +418,6 @@ BiometricPrompt (applås) – Apache 2.
 Shizuku (privileged call recording API) - Apache 2.0
 ShizuCallRecorder (call recording code) - GPLv3 med del 7 flere vilkår</string>
     <string name="call_screen_preview_title">Forhåndsvisning</string>
-    <string name="call_slot_top">Topp rad \u2022 Spor #%1$d</string>
-    <string name="call_slot_bottom">Nederste rad \u2022 Spor #%1$d</string>
     <string name="call_slot_move_up">Flytt opp</string>
     <string name="call_slot_move_down">Flytt ned</string>
     <!-- Support Development & Video Ads -->
@@ -443,5 +441,10 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="support_ads_enabled_pro">Annonser aktivert - Pro perks aktive</string>
     <string name="support_tip_jar_pro">Tips Jar kjøp - Pro perks aktiv</string>
     <string name="support_patreon_pro">Patreon supporter - Pro perks aktiv</string>
+    <string name="support_rewarded_pro">Belønnet video - Pro er aktiv for en dag</string>
+    <string name="support_pro_active_reason">Naglo Pro er aktiv: %1$s</string>
+    <string name="support_pro_not_active">Naglo Pro er ikke aktiv. Velg et opsjon for støtte nedenfor.</string>
+    <string name="support_pro_foss_reason">Rivo Pro er tilgjengelig i Play Store build. Patreon støtter FOSS-utviklingen.</string>
+    <string name="support_choose_app_icon_title">Velg profilering</string>
     <string name="support_choose_app_icon_desc">Velg ikonet for dialer og merket sammen. Ingenting endres inntil du bekrefter og starter ned Nagla.</string>
 </resources>

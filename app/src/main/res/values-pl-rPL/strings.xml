@@ -538,7 +538,6 @@ Tekst biały</string>
     <string name="settings_manage_merge_duplicates">Scal duplikaty</string>
     <!-- Settings > Contact visibility -->
     <string name="settings_visibility_title">Widoczność kontaktów</string>
-    <string name="settings_visibility_description">Wybierz konta, które mają być widoczne na liście kontaktów. Odznaczenie konta ukryje jego kontakty, ale ich nie usunie.</string>
     <string name="settings_visibility_accounts_header">Konta</string>
     <string name="settings_visibility_local_memory_supporting">Kontakty zapisane na urządzeniu</string>
     <string name="settings_visibility_reset_all">Zresetuj, aby pokazać wszystko</string>
@@ -562,7 +561,6 @@ Tekst biały</string>
     <string name="settings_voicemail_carrier_settings">Ustawienia operatora</string>
     <string name="settings_voicemail_number">Numer poczty głosowej</string>
     <string name="content_desc_auto_detect_sim">Automatyczne wykrywanie z karty SIM</string>
-    <string name="settings_voicemail_number_hint">Numer dostępowy do poczty głosowej Twojego operatora.</string>
     <string name="settings_voicemail_call_voicemail">Zadzwoń na pocztę głosową</string>
     <string name="settings_voicemail_call_voicemail_supporting">Połącz się bezpośrednio z usługą poczty głosowej</string>
     <string name="settings_voicemail_notifications_header">Powiadomienia</string>
@@ -922,9 +920,6 @@ Tekst biały</string>
     <string name="settings_auto_decline_non_contacts_title">Automatyczne odrzucanie numerów spoza kontaktów</string>
     <string name="settings_auto_decline_non_contacts_supporting">Automatycznie odrzuć połączenia przychodzące z numerów telefonów nie zapisanych w kontaktach</string>
     <string name="missed_call_msg_call_me_back">Oddzwonisz do mnie?</string>
-    <string name="missed_call_msg_sorry_busy">Przepraszam, jestem zajęty</string>
-    <string name="missed_call_msg_call_right_back">Za chwilę oddzwonię</string>
-    <string name="missed_call_msg_cant_talk">Nie mogę teraz rozmawiać</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d ulubionych</string>
     <string name="favorites_one_pill">1 ulubiony</string>
@@ -937,7 +932,6 @@ Tekst biały</string>
     <string name="favorites_no_contacts_found">Nie znaleziono kontaktów</string>
     <string name="search_contacts">Szukaj kontaktów...</string>
     <string name="action_add_to_favorites">Dodaj do ulubionych</string>
-    <string name="content_desc_clear_search">Wyczyść wyszukiwanie</string>
     <string name="action_dismiss">Odrzuć</string>
     <!-- Dual SIM Buttons -->
     <string name="settings_interface_dual_sim_buttons_title">Przyciski połączeń Dual SIM</string>
@@ -1167,8 +1161,6 @@ BiometricPrompt (blokada aplikacji) — Apache 2.0
 Shizuku (API do nagrywania rozmów z uprawnieniami systemowymi) — Apache 2.0
 ShizuCallRecorder (kod nagrywania rozmów) — GPLv3 z dodatkowymi warunkami Sekcji 7</string>
     <string name="call_screen_preview_title">Podgląd</string>
-    <string name="call_slot_top">Górny wiersz \u2022 Slot #%1$d</string>
-    <string name="call_slot_bottom">Dolny rząd \u2022 Slot #%1$d</string>
     <string name="call_slot_move_up">Przesuń w górę</string>
     <string name="call_slot_move_down">Przesuń w dół</string>
     <!-- Support Development & Video Ads -->
@@ -1192,5 +1184,11 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="support_ads_enabled_pro">Reklamy włączone - Pro perks aktywny</string>
     <string name="support_tip_jar_pro">Zakup Porady - Pro perks aktywny</string>
     <string name="support_patreon_pro">Opiekun Patreon - aktywne umiejętności Pro</string>
+    <string name="support_rewarded_pro">Nagrodzony film - Pro jest aktywny przez jeden dzień</string>
+    <string name="support_pro_active_reason">Rivo Pro jest aktywne: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro nie jest aktywne. Wybierz opcję wsparcia poniżej.</string>
+    <string name="support_pro_foss_reason">Rivo Pro jest dostępny w wersji Sklep Play. Patreon wspiera rozwój FOSS.</string>
+    <string name="support_choose_app_icon_title">Wybierz markę</string>
     <string name="support_choose_app_icon_desc">Wybierz razem ikonę i etykietę. Nic nie zmienia się dopóki nie potwierdzisz i nie zrestartujesz Rivo.</string>
+    <string name="content_desc_clear_search">Wyczyść wyszukiwanie</string>
 </resources>

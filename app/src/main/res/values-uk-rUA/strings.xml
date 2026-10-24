@@ -419,5 +419,10 @@
     <string name="support_ads_enabled_pro">Реклама увімкнена - Pro дозволи активовано</string>
     <string name="support_tip_jar_pro">Покупка Tip Jar - Ввімкнено переваги Pro</string>
     <string name="support_patreon_pro">Команда Patreon - Підтримка Pro привілеїв</string>
+    <string name="support_rewarded_pro">Винагороджене відео - Pro активне на один день</string>
+    <string name="support_pro_active_reason">Rivo Pro активний: %1$s</string>
+    <string name="support_pro_not_active">Rivo Pro не активний. Виберіть варіант підтримки нижче.</string>
+    <string name="support_pro_foss_reason">Rivo Pro доступний в версії Play Store. Patreon підтримує розробку FOSS.</string>
+    <string name="support_choose_app_icon_title">Оберіть Брендінг</string>
     <string name="support_choose_app_icon_desc">Вибір значка запуску номеронабирача і ярлика разом. Нічого не зміниться, поки ви не підтвердите і перезавантажте Ріво.</string>
 </resources>
