@@ -216,7 +216,7 @@ fun SoundVibrationScreen(
                                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                             }
                                             context.startActivity(intent)
-                                            android.widget.Toast.makeText(context, "Grant Do Not Disturb permission to use this feature", android.widget.Toast.LENGTH_LONG).show()
+                                            android.widget.Toast.makeText(context, context.getString(R.string.dnd_permission_required), android.widget.Toast.LENGTH_LONG).show()
                                         } catch (_: Exception) {}
                                     }
                                 }
@@ -227,8 +227,8 @@ fun SoundVibrationScreen(
                     }
                     item {
                         RivoSwitchListItem(
-                            headline = "Volume Squeeze for DND",
-                            supporting = "Press both volume buttons together to toggle Do Not Disturb",
+                            headline = stringResource(R.string.loc_volume_squeeze_for_dnd),
+                            supporting = stringResource(R.string.loc_press_both_volume_buttons_together_to_toggle_do_not_disturb),
                             leadingIcon = Icons.Outlined.DoNotDisturbOn,
                             checked = volumeSqueezeDnd,
                             onCheckedChange = {

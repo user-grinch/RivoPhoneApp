@@ -110,7 +110,7 @@ fun AvatarCropDialog(
             isLoading = false
         } else {
             isLoading = false
-            Toast.makeText(context, "Failed to load image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_failed_load_image), Toast.LENGTH_SHORT).show()
             onDismiss()
         }
     }
@@ -309,7 +309,7 @@ fun AvatarCropDialog(
                                 if (croppedUri != null) {
                                     onCropSuccess(croppedUri)
                                 } else {
-                                    Toast.makeText(context, "Failed to crop avatar", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_failed_crop_avatar), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
@@ -571,4 +571,3 @@ private suspend fun loadOrientedBitmap(context: Context, uri: Uri, maxSize: Int 
             null
         }
     }
-

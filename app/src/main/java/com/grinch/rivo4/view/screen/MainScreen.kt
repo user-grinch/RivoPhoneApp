@@ -31,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -436,7 +438,7 @@ fun MainScreen(
                 ) {
                     Icon(
                         Icons.Default.PlayArrow,
-                        contentDescription = "Watch support video",
+                        contentDescription = stringResource(R.string.support_watch_video),
                         modifier = Modifier.size(20.dp)
                     )
                 }

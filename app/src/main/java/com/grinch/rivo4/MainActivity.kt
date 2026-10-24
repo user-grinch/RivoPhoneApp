@@ -130,6 +130,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
 
         setContent {
             Rivo4Theme {
+                val context = LocalContext.current
                 val navController = rememberNavController()
                 val requestedTab = remember {
                     mutableStateOf<Int?>(if (isContactsOnlyEntry) PreferenceManager.TAB_CONTACTS else null)
@@ -259,10 +260,10 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                     prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
                                     showRatePrompt = false
                                 },
-                                title = "Enjoying Rivo Phone?",
+                                title = stringResource(R.string.main_enjoying_rivo),
                                 icon = Icons.Default.Star,
                                 confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = "Rate on Google Play",
+                                    label = stringResource(R.string.main_rate_google_play),
                                     onClick = {
                                         openLink(context, PLAY_STORE_URL)
                                         prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
@@ -270,7 +271,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                     }
                                 ),
                                 dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = "Remind Me Later",
+                                    label = stringResource(R.string.main_remind_later),
                                     onClick = {
                                         val threeDaysLater = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000L)
                                         prefs.setString(PreferenceManager.KEY_RATE_APP_SNOOZED_TIME, threeDaysLater.toString())
@@ -279,7 +280,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 )
                             ) {
                                 Text(
-                                    text = "If Rivo has made managing your calls better, please consider leaving a 5-star rating on Google Play. Your support helps us keep the app free and independent!",
+                                    text = stringResource(R.string.main_rate_google_play_body),
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -466,7 +467,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
                 navController.navigate(
                     ContactSelectionScreenDestination(
-                        title = "Add to Existing Contact",
+                        title = getString(R.string.action_add_existing_contact),
                         initialPhoneToAssign = phone
                     ).route
                 )

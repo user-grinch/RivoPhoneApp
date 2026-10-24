@@ -125,10 +125,10 @@ fun PostCallScreen(
 
     val quickReplies = remember {
         listOf(
-            "Call you right back!",
-            "Sorry, I'm busy right now.",
-            "Can't talk now. What's up?",
-            "Type custom message..."
+            context.getString(R.string.missed_call_msg_call_right_back),
+            context.getString(R.string.missed_call_msg_sorry_busy),
+            context.getString(R.string.missed_call_msg_cant_talk),
+            context.getString(R.string.call_type_custom_message)
         )
     }
 
@@ -266,7 +266,7 @@ fun PostCallScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "Call Summary",
+                                    text = stringResource(R.string.call_summary_title),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -284,7 +284,7 @@ fun PostCallScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Close",
+                                    contentDescription = stringResource(R.string.content_desc_close),
                                     tint = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -351,9 +351,9 @@ fun PostCallScreen(
                                     val durationText = if (durationSeconds > 0) {
                                         val mins = durationSeconds / 60
                                         val secs = durationSeconds % 60
-                                        "Call ended • %02d:%02d".format(mins, secs)
+                                        context.getString(R.string.call_ended_duration, mins, secs)
                                     } else {
-                                        "Call ended"
+                                        context.getString(R.string.call_ended)
                                     }
 
                                     val formattedPhone = remember(phoneNumber) { formatPhoneNumber(phoneNumber) }
@@ -385,7 +385,7 @@ fun PostCallScreen(
                                         shape = rivoCornerShape(12, roundness),
                                         color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                         onClick = {
-                                            val body = if (text.startsWith("Type custom")) "" else text
+                                            val body = if (text == context.getString(R.string.call_type_custom_message)) "" else text
                                             sendSms(context, phoneNumber, body)
                                             onDismiss()
                                         }
@@ -419,7 +419,7 @@ fun PostCallScreen(
                                 ) {
                                     Icon(Icons.Outlined.Phone, contentDescription = null, modifier = Modifier.size(17.dp))
                                     Spacer(modifier = Modifier.width(5.dp))
-                                    Text("Call", style = MaterialTheme.typography.labelMedium)
+                                    Text(stringResource(R.string.action_call), style = MaterialTheme.typography.labelMedium)
                                 }
 
                                 // Message
@@ -434,7 +434,7 @@ fun PostCallScreen(
                                 ) {
                                     Icon(Icons.AutoMirrored.Filled.Message, contentDescription = null, modifier = Modifier.size(17.dp))
                                     Spacer(modifier = Modifier.width(5.dp))
-                                    Text("SMS", style = MaterialTheme.typography.labelMedium)
+                                    Text(stringResource(R.string.label_sms), style = MaterialTheme.typography.labelMedium)
                                 }
 
                                 // Note
@@ -446,7 +446,7 @@ fun PostCallScreen(
                                 ) {
                                     Icon(Icons.Outlined.EditNote, contentDescription = null, modifier = Modifier.size(17.dp))
                                     Spacer(modifier = Modifier.width(5.dp))
-                                    Text("Note", style = MaterialTheme.typography.labelMedium)
+                                    Text(stringResource(R.string.label_notes), style = MaterialTheme.typography.labelMedium)
                                 }
 
                                 // If unsaved number, show "Save" button
@@ -461,7 +461,7 @@ fun PostCallScreen(
                                     ) {
                                         Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(17.dp))
                                         Spacer(modifier = Modifier.width(5.dp))
-                                        Text("Save", style = MaterialTheme.typography.labelMedium)
+                                        Text(stringResource(R.string.action_save), style = MaterialTheme.typography.labelMedium)
                                     }
                                 }
                             }

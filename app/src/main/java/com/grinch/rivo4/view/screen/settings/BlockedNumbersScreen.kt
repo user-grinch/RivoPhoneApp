@@ -299,7 +299,7 @@ fun BlockedNumbersScreen(
                                         contentColor = MaterialTheme.colorScheme.onErrorContainer
                                     ) {
                                         Text(
-                                            text = "${blockedNumbers.size} blocked",
+                                            text = stringResource(R.string.loc_blockednumbers_size_blocked),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -476,7 +476,7 @@ fun BlockedNumbersScreen(
             } else {
                 item {
                     RivoSectionHeader(
-                        title = "${stringResource(R.string.blocked_list_title)} (${filteredBlockedNumbers.size})",
+                        title = stringResource(R.string.loc_stringresource_r_string_blocked_list_title_filteredblockednumbers_size),
                         icon = Icons.Outlined.Block,
                         modifier = Modifier.padding(top = 14.dp, bottom = 4.dp)
                     )
@@ -708,7 +708,7 @@ fun BlockedNumbersScreen(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "Calls and text messages from this number will be blocked immediately.",
+                    text = stringResource(R.string.loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -744,7 +744,7 @@ fun BlockedNumbersScreen(
                 refreshKey++
             },
             title = stringResource(R.string.action_unblock),
-            message = "Unblock $targetDisplayName? They will be able to call and message you again.",
+            message = stringResource(R.string.loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag),
             confirmLabel = stringResource(R.string.action_unblock),
             dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Outlined.LockOpen
@@ -755,7 +755,7 @@ fun BlockedNumbersScreen(
     if (isProcessingFile) {
         RivoDialog(
             onDismissRequest = { },
-            title = "Processing Blocklist",
+            title = stringResource(R.string.loc_processing_blocklist),
             icon = Icons.Outlined.HourglassEmpty
         ) {
             Column(
@@ -767,7 +767,7 @@ fun BlockedNumbersScreen(
                 CircularProgressIndicator()
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Importing blocked numbers...",
+                    text = stringResource(R.string.loc_importing_blocked_numbers),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

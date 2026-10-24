@@ -336,7 +336,7 @@ fun ContactEditScreen(
                                     navigator.navigateUp()
                                 } else {
                                     isSaving = false
-                                    Toast.makeText(context, "Failed to save contact", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.contact_save_failed), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
@@ -669,7 +669,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = phone.number,
                                     onValueChange = { phones[index] = phones[index].copy(number = it) },
-                                    label = "${stringResource(R.string.contact_edit_phone_field_label)} ${index + 1}",
+                                    label = stringResource(R.string.loc_stringresource_r_string_contact_edit_phone_field_label_index_1),
                                     icon = Icons.Outlined.Phone,
                                     indexBadge = index + 1,
                                     typeValue = phone.type,
@@ -751,7 +751,7 @@ fun ContactEditScreen(
                                 RivoSegmentedTypedField(
                                     value = email.address,
                                     onValueChange = { emails[index] = emails[index].copy(address = it) },
-                                    label = "${stringResource(R.string.label_email)} ${index + 1}",
+                                    label = stringResource(R.string.loc_stringresource_r_string_label_email_index_1),
                                     icon = Icons.Outlined.Email,
                                     indexBadge = index + 1,
                                     typeValue = email.type,
@@ -833,7 +833,7 @@ fun ContactEditScreen(
                                 RivoSegmentedRemovableField(
                                     value = addr.address,
                                     onValueChange = { addresses[index] = addresses[index].copy(address = it) },
-                                    label = "${stringResource(R.string.label_address)} ${index + 1}",
+                                    label = stringResource(R.string.loc_stringresource_r_string_label_address_index_1),
                                     icon = Icons.Outlined.LocationOn,
                                     indexBadge = index + 1,
                                     onDelete = if (addresses.size > 1 || addr.address.isNotBlank()) {
@@ -1059,7 +1059,7 @@ fun RivoSegmentedTypedField(
                             Box(contentAlignment = Alignment.Center) {
                                 if (indexBadge != null) {
                                     Text(
-                                        text = "$indexBadge",
+                                        text = stringResource(R.string.loc_indexbadge),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -1206,7 +1206,7 @@ fun RivoSegmentedRemovableField(
                         Box(contentAlignment = Alignment.Center) {
                             if (indexBadge != null) {
                                 Text(
-                                    text = "$indexBadge",
+                                    text = stringResource(R.string.loc_indexbadge),
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary

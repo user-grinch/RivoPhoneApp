@@ -483,7 +483,7 @@ fun CallRecordingsContent(
                                 IconButton(onClick = { showDeleteAllConfirm = true }) {
                                     Icon(
                                         imageVector = Icons.Outlined.DeleteSweep,
-                                        contentDescription = "Delete All",
+                                        contentDescription = stringResource(R.string.loc_delete_all),
                                         tint = MaterialTheme.colorScheme.error
                                     )
                                 }
@@ -492,7 +492,7 @@ fun CallRecordingsContent(
                             IconButton(onClick = { refreshKey++ }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Refresh,
-                                    contentDescription = "Refresh"
+                                    contentDescription = stringResource(R.string.loc_refresh)
                                 )
                             }
                         }
@@ -521,7 +521,7 @@ fun CallRecordingsContent(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Search recordings…") },
+                        placeholder = { Text(stringResource(R.string.call_recordings_search)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Search,
@@ -532,7 +532,7 @@ fun CallRecordingsContent(
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear search")
+                                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.content_desc_clear_search))
                                 }
                             }
                         },
@@ -591,7 +591,7 @@ fun CallRecordingsContent(
                         FilterChip(
                             selected = selectedFilterNumber == null,
                             onClick = { selectedFilterNumber = null },
-                            label = { Text("All Contacts") }
+                            label = { Text(stringResource(R.string.call_recordings_all_contacts)) }
                         )
                         uniqueCallerLabels.forEach { label ->
                             FilterChip(
@@ -637,7 +637,7 @@ fun CallRecordingsContent(
                             if (recordings.isNotEmpty()) {
                                 Spacer(Modifier.height(8.dp))
                                 Text(
-                                    text = "${recordings.size} total recordings are saved on this device",
+                                    text = stringResource(R.string.loc_recordings_size_total_recordings_are_saved_on_this_device),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
@@ -832,7 +832,7 @@ fun CallRecordingsContent(
                                         Spacer(Modifier.width(12.dp))
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                text = "${OemPermissionHelper.getOemBrandDisplayName()} Optimization",
+                                                text = stringResource(R.string.loc_oempermissionhelper_getoembranddisplayname_optimization),
                                                 style = MaterialTheme.typography.titleMedium,
                                                 fontWeight = FontWeight.Bold
                                             )
@@ -851,7 +851,7 @@ fun CallRecordingsContent(
                                         ) {
                                             Icon(
                                                 Icons.Outlined.Close,
-                                                contentDescription = "Dismiss",
+                                                contentDescription = stringResource(R.string.loc_dismiss),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 modifier = Modifier.size(20.dp)
                                             )
@@ -896,7 +896,7 @@ fun CallRecordingsContent(
                     RivoExpressiveGroup {
                         item {
                             RivoListItem(
-                                headline = "Saved Call Recordings",
+                                headline = stringResource(R.string.loc_saved_call_recordings),
                                 supporting = if (isLoadingRecordings) "Scanning recordings..." else "${recordings.size} recordings available",
                                 leadingIcon = Icons.Outlined.LibraryMusic,
                                 trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -909,13 +909,13 @@ fun CallRecordingsContent(
                 // 4. Recording Controls Section
                 item {
                     RivoExpressiveGroup(
-                        title = "Recording Controls",
+                        title = stringResource(R.string.loc_recording_controls),
                         icon = Icons.Outlined.SettingsVoice
                     ) {
                         item {
                             RivoSwitchListItem(
-                                headline = "Enable Call Recording",
-                                supporting = "Allow recording calls and show Record button during active calls",
+                                headline = stringResource(R.string.loc_enable_call_recording),
+                                supporting = stringResource(R.string.loc_allow_recording_calls_and_show_record_button_during_active_calls),
                                 leadingIcon = Icons.Outlined.Mic,
                                 checked = callRecordingEnabled,
                                 onCheckedChange = {
@@ -926,8 +926,8 @@ fun CallRecordingsContent(
                         }
                         item {
                             RivoSwitchListItem(
-                                headline = "Auto-Record Calls",
-                                supporting = "Automatically record calls as soon as they connect",
+                                headline = stringResource(R.string.loc_auto_record_calls),
+                                supporting = stringResource(R.string.loc_automatically_record_calls_as_soon_as_they_connect),
                                 leadingIcon = Icons.Outlined.PlayCircleOutline,
                                 checked = autoRecordEnabled,
                                 onCheckedChange = {
@@ -939,7 +939,7 @@ fun CallRecordingsContent(
                         if (autoRecordEnabled) {
                             item {
                                 RivoSelectListItem(
-                                    headline = "Auto-Record Filter",
+                                    headline = stringResource(R.string.loc_auto_record_filter),
                                     supporting = when (autoRecordFilter) {
                                         PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> "Recording incoming calls only"
                                         PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> "Recording outgoing calls only"
@@ -969,13 +969,13 @@ fun CallRecordingsContent(
                 // 5. Audio Quality & Filters Section
                 item {
                     RivoExpressiveGroup(
-                        title = "Audio Quality & Filters",
+                        title = stringResource(R.string.loc_audio_quality_filters),
                         icon = Icons.Outlined.GraphicEq
                     ) {
                         item {
                             RivoSelectListItem(
-                                headline = "Audio Bitrate",
-                                supporting = "Higher bitrate yields clearer audio output",
+                                headline = stringResource(R.string.loc_audio_bitrate),
+                                supporting = stringResource(R.string.loc_higher_bitrate_yields_clearer_audio_output),
                                 leadingIcon = Icons.Outlined.HighQuality,
                                 options = listOf(
                                     "64 kbps (Compact)" to 64000,
@@ -993,8 +993,8 @@ fun CallRecordingsContent(
                         }
                         item {
                             RivoSelectListItem(
-                                headline = "Minimum Duration Filter",
-                                supporting = "Discard ultra-short calls below threshold",
+                                headline = stringResource(R.string.loc_minimum_duration_filter),
+                                supporting = stringResource(R.string.loc_discard_ultra_short_calls_below_threshold),
                                 leadingIcon = Icons.Outlined.Timer,
                                 options = listOf(
                                     "Record All Calls" to 0,
@@ -1137,8 +1137,8 @@ fun CallRecordingsContent(
                 showDeleteAllConfirm = false
                 refreshKey++
             },
-            title = "Delete all recordings?",
-            message = "All ${recordings.size} recordings will be permanently removed from your device. This action cannot be undone.",
+            title = stringResource(R.string.loc_delete_all_recordings),
+            message = stringResource(R.string.loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d),
             confirmLabel = stringResource(R.string.action_delete),
             icon = Icons.Outlined.DeleteSweep,
             isDestructive = true
@@ -1186,7 +1186,7 @@ fun CallRecordingsContent(
                 state = datePickerState,
                 title = {
                     Text(
-                        text = "Select Start Date (From)",
+                        text = stringResource(R.string.loc_select_start_date_from),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
                     )
@@ -1236,7 +1236,7 @@ fun CallRecordingsContent(
                 state = datePickerState,
                 title = {
                     Text(
-                        text = "Select End Date (To)",
+                        text = stringResource(R.string.loc_select_end_date_to),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
                     )
@@ -1399,7 +1399,7 @@ fun CallRecordEntryCard(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play",
+                            contentDescription = stringResource(R.string.loc_play),
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -1428,7 +1428,7 @@ fun CallRecordEntryCard(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Outlined.Replay10,
-                                contentDescription = "Rewind 10s",
+                                contentDescription = stringResource(R.string.loc_rewind_10s),
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(19.dp)
                             )
@@ -1466,7 +1466,7 @@ fun CallRecordEntryCard(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Outlined.Forward10,
-                                contentDescription = "Forward 10s",
+                                contentDescription = stringResource(R.string.loc_forward_10s),
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(19.dp)
                             )

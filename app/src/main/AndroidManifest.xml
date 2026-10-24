@@ -227,7 +227,7 @@
             android:enabled="false"
             android:exported="true"
             android:icon="@drawable/pro_app_icon"
-            android:label="Rivo Pro"
+            android:label="@string/app_name_pro"
             android:roundIcon="@drawable/pro_app_icon"
             android:targetActivity=".MainActivity">
             <intent-filter>

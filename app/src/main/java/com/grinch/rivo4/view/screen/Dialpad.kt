@@ -988,7 +988,7 @@ fun DialPadScreen(
             onAddToExistingContact = {
                 navigator.navigate(
                     ContactSelectionScreenDestination(
-                        title = "Add to Existing Contact",
+                        title = context.getString(R.string.action_add_existing_contact),
                         initialPhoneToAssign = number
                     )
                 )

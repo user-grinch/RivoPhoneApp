@@ -299,7 +299,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
     if (showShizukuInstallDialog) {
         RivoDialog(
             onDismissRequest = { showShizukuInstallDialog = false },
-            title = "Install Shizuku",
+            title = stringResource(R.string.install_shizuku_title),
             icon = Icons.Outlined.GraphicEq,
             dismissAction = RivoDialogAction(
                 label = stringResource(R.string.action_cancel),
@@ -355,8 +355,8 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                         }
                         Spacer(Modifier.width(14.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Google Play Store", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
-                            Text("Recommended for automatic updates", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
+                            Text(stringResource(R.string.shizuku_google_play), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                            Text(stringResource(R.string.shizuku_recommended_updates), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
                         }
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
                     }
@@ -390,8 +390,8 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                         }
                         Spacer(Modifier.width(14.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Official Website / APK", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
-                            Text("Download directly from shizuku.rikka.app", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(stringResource(R.string.shizuku_official_website), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                            Text(stringResource(R.string.shizuku_download_directly), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
                     }

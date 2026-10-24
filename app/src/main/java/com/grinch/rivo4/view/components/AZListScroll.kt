@@ -281,14 +281,14 @@ fun AZListScroll(
                                     if (contact.isHidden) {
                                         Icon(
                                             imageVector = Icons.Outlined.VisibilityOff,
-                                            contentDescription = "Private Storage (Hidden)",
+                                            contentDescription = stringResource(R.string.loc_private_storage_hidden),
                                             tint = MaterialTheme.colorScheme.tertiary,
                                             modifier = Modifier.size(18.dp)
                                         )
                                     } else if (contact.isPrivate) {
                                         Icon(
                                             imageVector = Icons.Outlined.Lock,
-                                            contentDescription = "Private Storage",
+                                            contentDescription = stringResource(R.string.loc_private_storage),
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.size(18.dp)
                                         )

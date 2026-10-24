@@ -70,7 +70,7 @@ fun CallAnalyticsScreen(
                         RivoTopBarIconButton(
                             onClick = { viewModel.loadAnalytics(forceRefresh = true) },
                             icon = Icons.Outlined.Refresh,
-                            contentDescription = "Refresh"
+                            contentDescription = stringResource(R.string.call_analytics_refresh)
                         )
                     }
                 }
@@ -187,7 +187,7 @@ fun CallAnalyticsScreen(
                 // Most Talked Person Leaderboard
                 item {
                     Text(
-                        text = "Most Talked Persons",
+                        text = stringResource(R.string.call_analytics_most_talked),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -208,7 +208,7 @@ fun CallAnalyticsScreen(
                             ) {
                                 Icon(Icons.Outlined.PhoneDisabled, contentDescription = null, modifier = Modifier.size(36.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Spacer(Modifier.height(8.dp))
-                                Text("No call records found for this period", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(stringResource(R.string.call_analytics_no_records), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -228,7 +228,7 @@ fun CallAnalyticsScreen(
                 if (analytics.simUsage.size > 1) {
                     item {
                         RivoExpressiveCard(
-                            title = "SIM Usage Breakdown",
+                            title = stringResource(R.string.call_analytics_sim_breakdown),
                             icon = Icons.Outlined.SimCard
                         ) {
                             Column(
@@ -283,7 +283,7 @@ private fun HeroTalkTimeCard(analytics: CallAnalyticsSummary) {
             }
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Total Talk Time",
+                text = stringResource(R.string.call_analytics_total_talk_time),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
@@ -299,9 +299,9 @@ private fun HeroTalkTimeCard(analytics: CallAnalyticsSummary) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                HeroMetricItem(label = "Total Calls", value = "${analytics.totalCalls}")
-                HeroMetricItem(label = "Avg Duration", value = formatShortDuration(analytics.avgDurationSeconds))
-                HeroMetricItem(label = "Missed", value = "${analytics.missedCalls}")
+                HeroMetricItem(label = stringResource(R.string.call_analytics_total_calls), value = "${analytics.totalCalls}")
+                HeroMetricItem(label = stringResource(R.string.call_analytics_average_duration), value = formatShortDuration(analytics.avgDurationSeconds))
+                HeroMetricItem(label = stringResource(R.string.call_analytics_missed), value = "${analytics.missedCalls}")
             }
         }
     }
@@ -326,7 +326,7 @@ private fun HeroMetricItem(label: String, value: String) {
 @Composable
 private fun CallDistributionCard(analytics: CallAnalyticsSummary) {
     RivoExpressiveCard(
-        title = "Call Breakdown",
+        title = stringResource(R.string.call_analytics_breakdown),
         icon = Icons.Outlined.PieChart
     ) {
         Column(
@@ -381,17 +381,17 @@ private fun CallDistributionCard(analytics: CallAnalyticsSummary) {
             ) {
                 BreakdownLegend(
                     color = Color(0xFF2E7D32),
-                    label = "Incoming",
+                    label = stringResource(R.string.call_analytics_incoming),
                     count = analytics.incomingCalls
                 )
                 BreakdownLegend(
                     color = MaterialTheme.colorScheme.primary,
-                    label = "Outgoing",
+                    label = stringResource(R.string.call_analytics_outgoing),
                     count = analytics.outgoingCalls
                 )
                 BreakdownLegend(
                     color = MaterialTheme.colorScheme.error,
-                    label = "Missed",
+                    label = stringResource(R.string.call_analytics_missed),
                     count = analytics.missedCalls + analytics.rejectedCalls
                 )
             }

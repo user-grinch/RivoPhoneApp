@@ -309,7 +309,7 @@ fun PriorityContactsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Remove from priority",
+                                    contentDescription = stringResource(R.string.loc_remove_from_priority),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }

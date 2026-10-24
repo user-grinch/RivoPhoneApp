@@ -1014,7 +1014,7 @@ fun ExpressiveCallScreen(
                             delayMinutes = delayMinutes,
                             note = "Callback reminder from incoming call"
                         )
-                        Toast.makeText(context, "Reminder set for $label", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.call_reminder_set, label), Toast.LENGTH_SHORT).show()
                     }
                     CallService.rejectCall(call)
                     showQuickResponsesSheet = false
@@ -1094,14 +1094,14 @@ fun PocketModeOverlay(
             }
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Pocket Mode Active",
+                text = stringResource(R.string.pocket_mode_active),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Screen touches are locked to prevent accidental touches in your pocket.",
+                text = stringResource(R.string.pocket_mode_locked_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.7f),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -1113,7 +1113,7 @@ fun PocketModeOverlay(
             ) {
                 Icon(Icons.Outlined.LockOpen, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Dismiss Touch Guard")
+                Text(stringResource(R.string.call_dismiss_touch_guard))
             }
         }
     }
@@ -1164,12 +1164,12 @@ fun QuickResponsesBottomSheet(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Quick Response",
+                        text = stringResource(R.string.quick_response_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Decline call and reply to ${contactName.ifBlank { phoneNumber }}",
+                        text = stringResource(R.string.quick_response_description, contactName.ifBlank { phoneNumber }),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1177,7 +1177,7 @@ fun QuickResponsesBottomSheet(
                 IconButton(onClick = onOpenSmsApp) {
                     Icon(
                         Icons.AutoMirrored.Outlined.OpenInNew,
-                        contentDescription = "Open SMS app",
+                        contentDescription = stringResource(R.string.content_desc_open_sms),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -1224,7 +1224,7 @@ fun QuickResponsesBottomSheet(
                 ) {
                     Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Write a custom message...")
+                    Text(stringResource(R.string.call_write_custom_message))
                 }
             } else {
                 Row(
@@ -1234,7 +1234,7 @@ fun QuickResponsesBottomSheet(
                     OutlinedTextField(
                         value = customText,
                         onValueChange = { customText = it },
-                        placeholder = { Text("Type custom message...") },
+                        placeholder = { Text(stringResource(R.string.call_type_custom_message)) },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(14.dp),
                         singleLine = true
@@ -1250,7 +1250,7 @@ fun QuickResponsesBottomSheet(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Outlined.Send,
-                            contentDescription = "Send",
+                            contentDescription = stringResource(R.string.content_desc_send),
                             tint = if (customText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                         )
                     }
@@ -1262,7 +1262,7 @@ fun QuickResponsesBottomSheet(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "Remind Me to Call Back",
+                text = stringResource(R.string.remind_call_back),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -2389,7 +2389,7 @@ fun FullScreenVideoCallLayout(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Voice Call",
+                            text = stringResource(R.string.voice_call),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = Color.White

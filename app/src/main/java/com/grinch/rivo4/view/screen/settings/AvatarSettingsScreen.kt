@@ -119,7 +119,7 @@ fun AvatarSettingsScreen(
             }
 
             item {
-                RivoExpressiveGroup(title = "Display Options", icon = Icons.Outlined.AccountCircle) {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_display_options), icon = Icons.Outlined.AccountCircle) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_interface_show_picture),

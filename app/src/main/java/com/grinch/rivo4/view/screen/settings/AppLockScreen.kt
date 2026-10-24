@@ -116,7 +116,7 @@ fun AppLockScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = "App Lock",
+                text = context.getString(R.string.loc_app_lock),
                 navigator = navigator
             )
         }
@@ -130,13 +130,13 @@ fun AppLockScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             RivoExpressiveGroup(
-                title = "Security & Protection",
+                title = context.getString(R.string.loc_security_protection),
                 icon = Icons.Outlined.Security
             ) {
                 item {
                     RivoSwitchListItem(
-                        headline = "Enable App Lock",
-                        supporting = "Require authentication to open Rivo Phone",
+                        headline = context.getString(R.string.loc_enable_app_lock),
+                        supporting = context.getString(R.string.loc_require_authentication_to_open_rivo_phone),
                         leadingIcon = Icons.Outlined.Lock,
                         checked = isLockEnabled,
                         onCheckedChange = { enable ->
@@ -144,14 +144,14 @@ fun AppLockScreen(
                                 if (activity != null && AppLockManager.canAuthenticate(context)) {
                                     AppLockManager.authenticate(
                                         activity = activity,
-                                        title = "Enable App Lock",
-                                        subtitle = "Authenticate to confirm enabling lock",
+                                        title = context.getString(R.string.loc_enable_app_lock),
+                                        subtitle = context.getString(R.string.loc_authenticate_to_confirm_enabling_lock),
                                         onSuccess = {
                                             prefs.setAppLockEnabled(true)
-                                            Toast.makeText(context, "App lock enabled", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.app_lock_enabled), Toast.LENGTH_SHORT).show()
                                         },
                                         onError = {
-                                            Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.app_lock_authentication_failed, it), Toast.LENGTH_SHORT).show()
                                         }
                                     )
                                 } else {
@@ -161,19 +161,19 @@ fun AppLockScreen(
                                 if (activity != null && AppLockManager.canAuthenticate(context)) {
                                     AppLockManager.authenticate(
                                         activity = activity,
-                                        title = "Disable App Lock",
-                                        subtitle = "Authenticate to confirm disabling lock",
+                                        title = context.getString(R.string.loc_disable_app_lock),
+                                        subtitle = context.getString(R.string.loc_authenticate_to_confirm_disabling_lock),
                                         onSuccess = {
                                             prefs.setAppLockEnabled(false)
-                                            Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.app_lock_disabled), Toast.LENGTH_SHORT).show()
                                         },
                                         onError = {
-                                            Toast.makeText(context, "Authentication failed: $it", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.app_lock_authentication_failed, it), Toast.LENGTH_SHORT).show()
                                         }
                                     )
                                 } else {
                                     prefs.setAppLockEnabled(false)
-                                    Toast.makeText(context, "App lock disabled", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.app_lock_disabled), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -183,13 +183,13 @@ fun AppLockScreen(
                 if (isLockEnabled) {
                     item {
                         RivoSwitchListItem(
-                            headline = "Biometric Unlock",
-                            supporting = "Use Face, Fingerprint, or Device PIN/Password",
+                            headline = context.getString(R.string.loc_biometric_unlock),
+                            supporting = context.getString(R.string.loc_use_face_fingerprint_or_device_pin_password),
                             leadingIcon = Icons.Outlined.Fingerprint,
                             checked = isBiometricEnabled,
                             onCheckedChange = { enabled ->
                                 if (!enabled && !hasPin) {
-                                    Toast.makeText(context, "Set a Custom App PIN first before disabling Biometric Unlock", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.app_lock_pin_required_for_biometrics), Toast.LENGTH_SHORT).show()
                                 } else {
                                     prefs.setBiometricLockEnabled(enabled)
                                 }
@@ -198,15 +198,15 @@ fun AppLockScreen(
                     }
                     item {
                         RivoListItem(
-                            headline = if (hasPin) "Change App PIN" else "Set Custom App PIN",
-                            supporting = if (hasPin) "Custom PIN is configured" else "Optional separate PIN for Rivo Phone",
+                            headline = context.getString(if (hasPin) R.string.app_lock_change_pin else R.string.app_lock_set_pin),
+                            supporting = context.getString(if (hasPin) R.string.app_lock_pin_configured else R.string.app_lock_pin_optional),
                             leadingIcon = Icons.Outlined.Password,
                             onClick = { showPinDialog = true }
                         )
                     }
                     item {
                         RivoListItem(
-                            headline = "Lock Timeout",
+                            headline = context.getString(R.string.loc_lock_timeout),
                             supporting = currentTimeoutLabel,
                             leadingIcon = Icons.Default.Timer,
                             onClick = { showTimeoutDialog = true }
@@ -232,7 +232,7 @@ fun AppLockScreen(
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Supports Face Unlock, Fingerprint, Device PIN/Pattern/Password, and Custom App PIN.",
+                        text = context.getString(R.string.loc_supports_face_unlock_fingerprint_device_pin_pattern_password_and_custo),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -250,10 +250,10 @@ fun AppLockScreen(
 
         RivoDialog(
             onDismissRequest = { showPinDialog = false },
-            title = if (!isConfirming) "Set 4-Digit App PIN" else "Confirm Your PIN",
+            title = context.getString(if (!isConfirming) R.string.app_lock_set_four_digit_pin else R.string.app_lock_confirm_pin),
             icon = Icons.Default.Pin,
             confirmAction = RivoDialogAction(
-                label = if (!isConfirming) "Next" else "Save PIN",
+                label = context.getString(if (!isConfirming) R.string.action_next else R.string.action_save_pin),
                 enabled = if (!isConfirming) newPin.length == 4 else confirmPin.length == 4,
                 dismissOnClick = isConfirming,
                 onClick = {
@@ -262,16 +262,16 @@ fun AppLockScreen(
                             isConfirming = true
                             errorMessage = ""
                         } else {
-                            errorMessage = "PIN must be 4 digits"
+                            errorMessage = context.getString(R.string.app_lock_pin_must_be_four_digits)
                         }
                     } else {
                         if (confirmPin == newPin) {
                             prefs.setAppLockPin(newPin)
                             prefs.setAppLockEnabled(true)
-                            Toast.makeText(context, "App PIN saved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.app_lock_pin_saved), Toast.LENGTH_SHORT).show()
                             showPinDialog = false
                         } else {
-                            errorMessage = "PINs do not match. Try again."
+                            errorMessage = context.getString(R.string.app_lock_pins_do_not_match)
                             confirmPin = ""
                         }
                     }
@@ -280,7 +280,7 @@ fun AppLockScreen(
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                 Text(
-                    text = if (!isConfirming) "Enter a 4-digit PIN to lock Rivo Phone" else "Re-enter the 4-digit PIN to confirm",
+                    text = context.getString(if (!isConfirming) R.string.app_lock_enter_pin else R.string.app_lock_reenter_pin),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -313,7 +313,7 @@ fun AppLockScreen(
     if (showTimeoutDialog) {
         RivoSelectionDialog(
             onDismissRequest = { showTimeoutDialog = false },
-            title = "Lock Timeout",
+            title = context.getString(R.string.loc_lock_timeout),
             items = timeoutOptions,
             itemLabel = { it.second },
             onItemSelected = { selected ->
@@ -343,8 +343,8 @@ fun AppLockOverlay(
         if (activity != null && (isBiometricEnabled || customPin.isEmpty())) {
             AppLockManager.authenticate(
                 activity = activity,
-                title = "Unlock Rivo Phone",
-                subtitle = "Use Face, Fingerprint, PIN, or Password",
+                title = context.getString(R.string.loc_unlock_rivo_phone),
+                subtitle = context.getString(R.string.loc_use_face_fingerprint_pin_or_password),
                 onSuccess = {
                     onUnlocked()
                 },
@@ -380,7 +380,7 @@ fun AppLockOverlay(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         Icons.Default.Lock,
-                        contentDescription = "App Locked",
+                        contentDescription = context.getString(R.string.loc_app_locked),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -389,7 +389,7 @@ fun AppLockOverlay(
             Spacer(Modifier.height(20.dp))
 
             Text(
-                text = "Rivo Phone is Locked",
+                text = context.getString(R.string.loc_rivo_phone_is_locked),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -398,7 +398,7 @@ fun AppLockOverlay(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = if (customPin.isNotEmpty()) "Enter PIN or use biometrics to unlock" else "Authenticate to unlock",
+                text = if (customPin.isNotEmpty()) context.getString(R.string.app_lock_enter_pin_or_biometrics) else context.getString(R.string.app_lock_authenticate_to_unlock),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -430,7 +430,7 @@ fun AppLockOverlay(
 
                 if (pinError) {
                     Text(
-                        text = "Incorrect PIN",
+                        text = context.getString(R.string.loc_incorrect_pin),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(top = 4.dp)
@@ -466,7 +466,7 @@ fun AppLockOverlay(
                                                 Box(contentAlignment = Alignment.Center) {
                                                     Icon(
                                                         Icons.Default.Fingerprint,
-                                                        contentDescription = "Biometrics",
+                                                        contentDescription = context.getString(R.string.loc_biometrics),
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(28.dp)
                                                     )
@@ -491,7 +491,7 @@ fun AppLockOverlay(
                                             Box(contentAlignment = Alignment.Center) {
                                                 Icon(
                                                     Icons.AutoMirrored.Filled.Backspace,
-                                                    contentDescription = "Backspace",
+                                                    contentDescription = context.getString(R.string.loc_backspace),
                                                     modifier = Modifier.size(22.dp)
                                                 )
                                             }
@@ -542,7 +542,7 @@ fun AppLockOverlay(
                 ) {
                     Icon(Icons.Default.Fingerprint, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Unlock")
+                    Text(context.getString(R.string.loc_unlock))
                 }
             }
         }

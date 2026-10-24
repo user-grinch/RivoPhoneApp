@@ -160,7 +160,7 @@ fun CallScreenCustomizationScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-                RivoExpressiveGroup(title = "Call behavior", icon = Icons.Outlined.PhoneInTalk) {
+                RivoExpressiveGroup(title = stringResource(R.string.call_customization_behavior), icon = Icons.Outlined.PhoneInTalk) {
                     item {
                         RivoSwitchListItem(headline = stringResource(R.string.settings_call_proximity_sensor), supporting = stringResource(R.string.settings_call_proximity_sensor_supporting), leadingIcon = Icons.Outlined.Sensors, checked = proximitySensor, onCheckedChange = {
                             proximitySensor = it; prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
@@ -182,7 +182,7 @@ fun CallScreenCustomizationScreen(
                         })
                     }
                     item {
-                        RivoSwitchListItem(headline = "Pocket Mode", supporting = "Prevent accidental touches during incoming calls when the phone is in a pocket", leadingIcon = Icons.Outlined.ScreenLockPortrait, checked = pocketMode, onCheckedChange = {
+                        RivoSwitchListItem(headline = stringResource(R.string.call_customization_pocket_mode), supporting = stringResource(R.string.call_customization_pocket_mode_supporting), leadingIcon = Icons.Outlined.ScreenLockPortrait, checked = pocketMode, onCheckedChange = {
                             pocketMode = it; prefs.setBoolean(PreferenceManager.KEY_POCKET_MODE, it)
                         })
                     }
@@ -190,7 +190,7 @@ fun CallScreenCustomizationScreen(
             }
 
             item {
-                RivoExpressiveGroup(title = "Incoming call style", icon = Icons.Outlined.PhoneInTalk) {
+                RivoExpressiveGroup(title = stringResource(R.string.call_customization_incoming_style), icon = Icons.Outlined.PhoneInTalk) {
                     item {
                         Box(modifier = Modifier.padding(vertical = 4.dp)) {
                             RivoVisualOptionSelectorRow(
@@ -251,11 +251,11 @@ fun CallScreenCustomizationScreen(
                             modifier = Modifier.size(56.dp)
                         )
                         Text(
-                            text = "Jane Doe",
+                            text = stringResource(R.string.loc_jane_doe),
                             style = MaterialTheme.typography.titleMediumEmphasized
                         )
                         Text(
-                            text = "+1 (555) 123-4567",
+                            text = stringResource(R.string.loc_1_555_123_4567),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

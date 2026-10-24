@@ -137,7 +137,7 @@ class FloatingCallService : Service(), KoinComponent {
                 "Floating Call Bubble",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows floating controls for active call"
+                description = getString(R.string.floating_call_channel_description)
                 setShowBadge(false)
             }
             notificationManager.createNotificationChannel(channel)
@@ -154,8 +154,8 @@ class FloatingCallService : Service(), KoinComponent {
         )
 
         val notification: Notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Ongoing Call")
-            .setContentText("Tap to return to call")
+            .setContentTitle(getString(R.string.floating_call_ongoing))
+            .setContentText(getString(R.string.floating_call_return))
             .setSmallIcon(R.drawable.ic_call_ongoing)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
@@ -810,7 +810,7 @@ class FloatingCallService : Service(), KoinComponent {
         // 1. Back to call
         val (backRow, backIcon, backText) = createRow(
             iconRes = R.drawable.ic_floating_back_to_call,
-            label = "Back to call",
+            label = getString(R.string.floating_call_back),
             density = density,
             onClick = {
                 returnToCallActivity()
@@ -824,7 +824,7 @@ class FloatingCallService : Service(), KoinComponent {
         // 2. Mute
         val (mRow, mIcon, mText) = createRow(
             iconRes = R.drawable.ic_floating_mic_off,
-            label = "Mute",
+            label = getString(R.string.action_mute),
             density = density,
             onClick = {
                 val currentMute = CallService.audioState.value?.isMuted == true
@@ -840,7 +840,7 @@ class FloatingCallService : Service(), KoinComponent {
         // 3. Speaker
         val (sRow, sIcon, sText) = createRow(
             iconRes = R.drawable.ic_floating_speaker,
-            label = "Speaker",
+            label = getString(R.string.audio_route_speaker),
             density = density,
             onClick = {
                 CallService.cycleAudioRoute()

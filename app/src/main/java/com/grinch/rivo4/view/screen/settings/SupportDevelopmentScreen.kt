@@ -194,7 +194,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
-                        Text("Support Rivo", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.settings_support_rivo_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text(
                             "Support development and unlock Pro benefits.",
                             textAlign = TextAlign.Center,
@@ -209,9 +209,9 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text("How Pro perks work", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.support_rivo_pro_perks_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     ProPerkRow(
-                        "Dialer launcher icon and label",
+                        stringResource(R.string.support_dialer_icon_label),
                         Icons.Default.Apps,
                         shouldBePro,
                         onClick = {
@@ -260,7 +260,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
 
             // Support Options
             RivoExpressiveGroup(
-                title = "Ways to Support",
+                title = stringResource(R.string.support_ways_title),
                 icon = Icons.Default.Favorite
             ) {
                 // Provide a Tip (renamed from Rivo Supporter)
@@ -329,11 +329,11 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
 
                 item {
                     RivoListItem(
-                        headline = "Video ad reminders",
+                        headline = stringResource(R.string.support_video_reminders),
                         supporting = when (reminderMode) {
                             PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Show a support button every 6 hours"
-                            PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> "Always show a support button"
-                            else -> "Off"
+                            PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> stringResource(R.string.support_always_show)
+                            else -> stringResource(R.string.support_off)
                         },
                         leadingIcon = Icons.Outlined.Notifications,
                         enabled = isPlayStoreBuild,
@@ -423,7 +423,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
     if (showReminderPicker) {
         RivoSelectionDialog(
             onDismissRequest = { showReminderPicker = false },
-            title = "Video ad reminders",
+            title = stringResource(R.string.support_video_reminders),
             items = listOf(
                 PreferenceManager.VIDEO_AD_REMINDER_OFF,
                 PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS,
@@ -432,15 +432,15 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
             itemLabel = { mode ->
                 when (mode) {
                     PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Every 6 hours"
-                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> "Always"
-                    else -> "Off"
+                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> context.getString(R.string.support_always)
+                    else -> context.getString(R.string.support_off)
                 }
             },
             itemSupporting = { mode ->
                 when (mode) {
                     PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS -> "Show one support button every 6 hours"
-                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> "Keep the support button visible"
-                    else -> "Do not show a support button"
+                    PreferenceManager.VIDEO_AD_REMINDER_ALWAYS -> context.getString(R.string.support_keep_button)
+                    else -> context.getString(R.string.support_hide_button)
                 }
             },
             itemIcon = { Icons.Outlined.Notifications },
@@ -488,7 +488,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                         showDisableAdsDialog = false
                     }
                 ) {
-                    Text(text = "Support on Patreon instead")
+                    Text(text = stringResource(R.string.support_patreon_instead))
                 }
             }
         }
@@ -537,10 +537,10 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                 pendingAppIcon = selectedAppIcon
                 showIconRestartDialog = false
             },
-            title = "Restart required",
+            title = stringResource(R.string.support_restart_required),
             icon = Icons.Default.RestartAlt,
             confirmAction = RivoDialogAction(
-                label = "Restart now",
+                label = stringResource(R.string.support_restart_now),
                 onClick = {
                     val restartIntent = context.packageManager
                         .getLaunchIntentForPackage(context.packageName)
@@ -557,7 +557,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                 }
             ),
             dismissAction = RivoDialogAction(
-                label = "Don't apply",
+                label = stringResource(R.string.support_dont_apply),
                 onClick = {
                     pendingAppIcon = selectedAppIcon
                     showIconRestartDialog = false
@@ -565,7 +565,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
             )
         ) {
             Text(
-                text = "Rivo needs to restart to finish changing the dialer launcher icon and label. Your settings will be preserved.",
+                text = stringResource(R.string.support_restart_message),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -575,10 +575,10 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
     if (showFossDialog) {
         RivoDialog(
             onDismissRequest = { showFossDialog = false },
-            title = "Feature Unavailable",
+            title = stringResource(R.string.support_feature_unavailable),
             icon = Icons.Default.Info,
             confirmAction = RivoDialogAction(
-                label = "Support on Patreon",
+                label = stringResource(R.string.support_on_patreon),
                 onClick = {
                     val intent = Intent(
                         Intent.ACTION_VIEW,

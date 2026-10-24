@@ -367,7 +367,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
     numberSelection?.let { selection ->
         RivoSelectionDialog(
             onDismissRequest = { numberSelection = null },
-            title = "Choose a number",
+            title = stringResource(R.string.favorites_choose_number),
             items = selection.contact.phoneNumbers.filter { it.isNotBlank() },
             itemLabel = ::formatPhoneNumber,
             itemSupporting = { selection.contact.name },

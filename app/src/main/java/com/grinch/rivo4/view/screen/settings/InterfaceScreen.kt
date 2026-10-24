@@ -381,7 +381,7 @@ fun InterfaceScreen(
                                                 modifier = Modifier
                                                     .size(44.dp)
                                                     .semantics {
-                                                        contentDescription = "Custom color picker"
+                                                        contentDescription = context.getString(R.string.content_desc_custom_color_picker)
                                                     },
                                                 shape = swatchShape,
                                                 color = containerColor,
@@ -399,7 +399,7 @@ fun InterfaceScreen(
                                                     } else {
                                                         Icon(
                                                             imageVector = Icons.Outlined.Colorize,
-                                                            contentDescription = "Pick custom color",
+                                                            contentDescription = context.getString(R.string.content_desc_pick_custom_color),
                                                             modifier = Modifier.size(20.dp)
                                                         )
                                                     }
@@ -486,8 +486,8 @@ fun InterfaceScreen(
                                     String.format(java.util.Locale.US, "%.2fx", snappedScale)
                                 }
                                 RivoSliderListItem(
-                                    headline = "Transition Animation Speed",
-                                    supporting = "Adjust transition animation time scale across pages, tabs, and menus",
+                                    headline = stringResource(R.string.settings_transition_speed),
+                                    supporting = stringResource(R.string.settings_transition_speed_supporting),
                                     leadingIcon = Icons.Outlined.Speed,
                                     value = transitionTimeScale.coerceIn(0.25f, 5.0f),
                                     valueRange = 0.25f..5.0f,
@@ -538,7 +538,7 @@ fun InterfaceScreen(
                 // 5. Related Styling Links
                 item {
                     RivoExpressiveGroup(
-                        title = "More Display Settings",
+                        title = stringResource(R.string.settings_more_display),
                         icon = Icons.Outlined.DisplaySettings
                     ) {
                         item {
@@ -551,16 +551,16 @@ fun InterfaceScreen(
                         }
                         item {
                             RivoListItem(
-                                headline = "Navigation Bar",
-                                supporting = "Floating bar style, roundness & tab layout",
+                                headline = stringResource(R.string.settings_navigation_bar),
+                                supporting = stringResource(R.string.settings_navigation_bar_supporting),
                                 leadingIcon = Icons.Outlined.Dock,
                                 onClick = { navigator.navigate(BottomNavScreenDestination) }
                             )
                         }
                         item {
                             RivoListItem(
-                                headline = "Avatars & Contact Cards",
-                                supporting = "11 avatar shapes, contact photos, initials & cards",
+                                headline = stringResource(R.string.settings_avatars_cards),
+                                supporting = stringResource(R.string.settings_avatars_cards_supporting),
                                 leadingIcon = Icons.Outlined.AccountCircle,
                                 onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
                             )
@@ -905,7 +905,7 @@ fun RivoColorPickerDialog(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Tune,
-                    contentDescription = "Brightness",
+                    contentDescription = stringResource(R.string.content_desc_brightness),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )

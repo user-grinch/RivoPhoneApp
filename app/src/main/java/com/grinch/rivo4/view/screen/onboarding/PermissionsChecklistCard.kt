@@ -1,5 +1,7 @@
 package com.grinch.rivo4.view.screen.onboarding
 
+import com.grinch.rivo4.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
@@ -161,7 +163,7 @@ fun PermissionItemRow(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Granted",
+                                contentDescription = stringResource(R.string.loc_granted),
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp)
                             )

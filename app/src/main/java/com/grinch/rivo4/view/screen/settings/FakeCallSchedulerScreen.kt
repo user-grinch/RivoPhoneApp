@@ -213,7 +213,7 @@ fun FakeCallSchedulerScreen(
                                         )
                                     }
                                 } else {
-                                    Toast.makeText(context, "Could not schedule alarm. Check exact alarm permission.", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.fake_call_exact_alarm_error), Toast.LENGTH_LONG).show()
                                 }
                             }
                         ) {
@@ -437,7 +437,7 @@ fun FakeCallSchedulerScreen(
                                         )
                                     }
                                 } else {
-                                    Toast.makeText(context, "Could not schedule alarm. Check exact alarm permission.", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.fake_call_exact_alarm_error), Toast.LENGTH_LONG).show()
                                 }
                             },
                             shape = RoundedCornerShape(18.dp),
@@ -578,12 +578,12 @@ fun FakeCallSchedulerScreen(
                 // Next upcoming hero banner
                 item {
                     RivoExpressiveCard(
-                        title = "Call History Settings",
+                        title = stringResource(R.string.loc_call_history_settings),
                         icon = Icons.Outlined.History
                     ) {
                         RivoSwitchListItem(
-                            headline = "Save to Call History",
-                            supporting = "Answered and missed fake calls will show up in Recents",
+                            headline = stringResource(R.string.loc_save_to_call_history),
+                            supporting = stringResource(R.string.loc_answered_and_missed_fake_calls_will_show_up_in_recents),
                             leadingIcon = Icons.Outlined.History,
                             checked = logFakeCalls,
                             onCheckedChange = {
@@ -753,7 +753,7 @@ fun FakeCallSchedulerScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "${stringResource(R.string.fake_call_schedules_title)} (${schedules.size})",
+                            text = stringResource(R.string.loc_stringresource_r_string_fake_call_schedules_title_schedules_size),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -844,7 +844,7 @@ fun FakeCallSchedulerScreen(
                                         modifier = Modifier.size(14.dp)
                                     )
                                     Text(
-                                        text = "$formattedDate ($countdownStr)",
+                                        text = stringResource(R.string.loc_formatteddate_countdownstr),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Medium

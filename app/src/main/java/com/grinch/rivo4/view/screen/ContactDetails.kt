@@ -716,7 +716,7 @@ fun ContactDetailsScreen(
                 recordingsRefreshKey++
                 pendingDeleteRecording = null
             },
-            title = "Delete Recording",
+            title = stringResource(R.string.contact_delete_recording),
             message = "Delete ${fileToDelete.nameWithoutExtension}?",
             confirmLabel = stringResource(R.string.action_delete),
             isDestructive = true,
@@ -801,7 +801,7 @@ fun ContactDetailsScreen(
                                 )
                                 if (fc.isPrivate) {
                                     DropdownMenuItem(
-                                        text = { Text(if (fc.isHidden) "Unhide Contact" else "Hide Contact Completely") },
+                                        text = { Text(stringResource(if (fc.isHidden) R.string.contact_unhide else R.string.contact_hide_completely)) },
                                         leadingIcon = {
                                             Icon(
                                                 if (fc.isHidden) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
@@ -1427,7 +1427,7 @@ fun ContactDetailsScreen(
                     if (contactRecordings.isNotEmpty()) {
                         item {
                             RivoExpressiveGroup(
-                                title = "Call Recordings (${contactRecordings.size})",
+                                title = stringResource(R.string.contact_call_recordings_count, contactRecordings.size),
                                 icon = Icons.Outlined.Mic
                             ) {
                                 val recordingsToShow = contactRecordings.take(3)
@@ -1569,8 +1569,8 @@ fun ContactDetailsScreen(
                             ) {
                                 item {
                                     RivoListItem(
-                                        headline = "Callback Reminder",
-                                        supporting = "Schedule a reminder to call back",
+                                        headline = stringResource(R.string.contact_callback_reminder),
+                                        supporting = stringResource(R.string.contact_callback_reminder_supporting),
                                         leadingIcon = Icons.Outlined.Alarm,
                                         isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -1668,8 +1668,8 @@ fun ContactDetailsScreen(
                                 // 3. Callback Reminder
                                 item {
                                     RivoListItem(
-                                        headline = "Callback Reminder",
-                                        supporting = "Schedule a reminder to call back",
+                                        headline = stringResource(R.string.contact_callback_reminder),
+                                        supporting = stringResource(R.string.contact_callback_reminder_supporting),
                                         leadingIcon = Icons.Outlined.Alarm,
                                         isCompact = true,
                                         trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -1736,7 +1736,7 @@ fun ContactDetailsScreen(
                     addToContactNumber = null
                     navigator.navigate(
                         ContactSelectionScreenDestination(
-                            title = "Add to Existing Contact",
+                            title = context.getString(R.string.action_add_existing_contact),
                             initialPhoneToAssign = targetPhone
                         )
                     )

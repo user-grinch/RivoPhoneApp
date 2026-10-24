@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.grinch.rivo4.IShellService
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.shizuku.ScrcpyAudioCodec
 import com.grinch.rivo4.controller.shizuku.ScrcpyAudioMuxer
 import com.grinch.rivo4.controller.shizuku.ScrcpyClient
@@ -1016,7 +1017,7 @@ object CallRecorder {
 
         recorderScope.launch(Dispatchers.Main) {
             try {
-                Toast.makeText(ctx, "Call recorded: ${effectiveFile.name}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, ctx.getString(R.string.call_recorded, effectiveFile.name), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
             }
         }

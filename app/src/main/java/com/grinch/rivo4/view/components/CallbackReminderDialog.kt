@@ -74,10 +74,10 @@ fun CallbackReminderDialog(
 
     RivoDialog(
         onDismissRequest = onDismissRequest,
-        title = "Callback Reminder",
+        title = stringResource(R.string.dialog_callback_reminder_title),
         icon = Icons.Outlined.Alarm,
         confirmAction = RivoDialogAction(
-            label = "Set Reminder",
+            label = stringResource(R.string.dialog_callback_reminder_set),
             onClick = {
                 scope.launch {
                     reminderManager.scheduleReminder(
@@ -171,8 +171,8 @@ fun CallbackReminderDialog(
             OutlinedTextField(
                 value = noteText,
                 onValueChange = { noteText = it },
-                label = { Text("Note (optional)") },
-                placeholder = { Text("e.g. Call about the proposal") },
+                label = { Text(stringResource(R.string.dialog_callback_note_optional)) },
+                placeholder = { Text(stringResource(R.string.dialog_callback_note_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(14.dp)

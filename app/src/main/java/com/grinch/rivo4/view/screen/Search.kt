@@ -425,7 +425,7 @@ fun ContactSearchContent(
                                 onClick = { selectedFilter = SearchTabFilter.ALL },
                                 label = {
                                     val countSuffix = if (query.isNotBlank()) " (${filteredContacts.size + filteredCallLogs.size})" else ""
-                                    Text("All$countSuffix")
+                                    Text(stringResource(R.string.loc_all_countsuffix))
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = FilterChipDefaults.filterChipColors(
@@ -447,7 +447,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.CONTACTS || query.isNotBlank()) filteredContacts.size else contacts.size
-                                    Text("Contacts ($count)")
+                                    Text(stringResource(R.string.loc_contacts_count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Contacts, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -472,7 +472,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.FAVORITES) filteredContacts.size else favoritesCount
-                                    Text("Favorites ($count)")
+                                    Text(stringResource(R.string.loc_favorites_count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.StarOutline, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -497,7 +497,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.RECENTS || query.isNotBlank()) filteredCallLogs.size else callLogs.size
-                                    Text("Call Logs ($count)")
+                                    Text(stringResource(R.string.loc_call_logs_count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Call, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -524,7 +524,7 @@ fun ContactSearchContent(
                                     val count = if (selectedFilter == SearchTabFilter.MISSED) filteredCallLogs.size else callLogs.count {
                                         it.type == CallLog.Calls.MISSED_TYPE || it.types.contains(CallLog.Calls.MISSED_TYPE)
                                     }
-                                    Text("Missed ($count)")
+                                    Text(stringResource(R.string.loc_missed_count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.AutoMirrored.Outlined.CallMissed, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -605,7 +605,7 @@ fun ContactSearchContent(
 
                                     item {
                                         Text(
-                                            text = "Quick Filters",
+                                            text = stringResource(R.string.search_quick_filters),
                                             style = MaterialTheme.typography.labelLarge,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -640,7 +640,7 @@ fun ContactSearchContent(
                                                     )
                                                     Spacer(modifier = Modifier.height(6.dp))
                                                     Text(
-                                                        text = "Search Contacts",
+                                                        text = stringResource(R.string.search_contacts_action),
                                                         style = MaterialTheme.typography.labelMedium,
                                                         fontWeight = FontWeight.SemiBold,
                                                         textAlign = TextAlign.Center
@@ -670,7 +670,7 @@ fun ContactSearchContent(
                                                     )
                                                     Spacer(modifier = Modifier.height(6.dp))
                                                     Text(
-                                                        text = "Search Call History",
+                                                        text = stringResource(R.string.search_call_history_action),
                                                         style = MaterialTheme.typography.labelMedium,
                                                         fontWeight = FontWeight.SemiBold,
                                                         textAlign = TextAlign.Center

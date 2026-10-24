@@ -335,7 +335,7 @@ fun CallLogFullScreen(
                                         RivoTopBarIconButton(
                                             onClick = { showMenu = true },
                                             icon = Icons.Default.MoreVert,
-                                            contentDescription = "Options"
+                                            contentDescription = stringResource(R.string.content_desc_options)
                                         )
                                         DropdownMenu(
                                             expanded = showMenu,
@@ -382,13 +382,13 @@ fun CallLogFullScreen(
                                                 BlockedNumbersManager.isBlocked(context, targetPhoneNumber)
                                             }
                                             DropdownMenuItem(
-                                                text = { Text(if (isNumberBlocked) "Unblock number" else "Block number") },
+                                                text = { Text(stringResource(if (isNumberBlocked) R.string.action_unblock_number else R.string.action_block_number)) },
                                                 leadingIcon = { Icon(Icons.Outlined.Block, null) },
                                                 onClick = {
                                                     showMenu = false
                                                     if (isNumberBlocked) {
                                                         BlockedNumbersManager.unblock(context, targetPhoneNumber)
-                                                        android.widget.Toast.makeText(context, "Unblocked $targetPhoneNumber", android.widget.Toast.LENGTH_SHORT).show()
+                                                        android.widget.Toast.makeText(context, context.getString(R.string.toast_unblocked_number, targetPhoneNumber), android.widget.Toast.LENGTH_SHORT).show()
                                                     } else {
                                                         BlockedNumbersManager.block(context, targetPhoneNumber)
                                                         android.widget.Toast.makeText(context, context.getString(R.string.toast_blocked_number, targetPhoneNumber), android.widget.Toast.LENGTH_SHORT).show()
@@ -556,7 +556,7 @@ fun CallLogFullScreen(
                         showAddContactSheet = false
                         navigator.navigate(
                             ContactSelectionScreenDestination(
-                                title = "Add to Existing Contact",
+                                title = context.getString(R.string.contact_add_to_existing),
                                 initialPhoneToAssign = targetPhoneNumber
                             )
                         )

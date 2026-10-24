@@ -1,4 +1,6 @@
 package com.grinch.rivo4.view.components
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 
 import android.view.HapticFeedbackConstants
 import android.widget.Toast
@@ -67,7 +69,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.modal.db.CallNoteEntity
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
@@ -193,7 +194,7 @@ fun CallNotesSheet(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.content_desc_close),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
@@ -239,7 +240,7 @@ fun CallNotesSheet(
                                 IconButton(onClick = { noteInput = "" }) {
                                     Icon(
                                         Icons.Default.Clear,
-                                        contentDescription = "Clear",
+                                        contentDescription = stringResource(R.string.action_clear),
                                         modifier = Modifier.size(18.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -334,7 +335,7 @@ fun CallNotesSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(6.dp))
-                            Text("Save Note", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.action_save_note), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -457,13 +458,13 @@ fun CallNotesSheet(
                                         onClick = {
                                             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                             clipboardManager.setText(AnnotatedString(item.note))
-                                            Toast.makeText(context, "Note copied to clipboard", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.toast_note_copied), Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(36.dp)
                                     ) {
                                         Icon(
                                             Icons.Outlined.ContentCopy,
-                                            contentDescription = "Copy note",
+                                            contentDescription = stringResource(R.string.content_desc_copy_note),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.size(18.dp)
                                         )
@@ -479,7 +480,7 @@ fun CallNotesSheet(
                                     ) {
                                         Icon(
                                             Icons.Default.Delete,
-                                            contentDescription = "Delete note",
+                                            contentDescription = stringResource(R.string.content_desc_delete_note),
                                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
                                             modifier = Modifier.size(18.dp)
                                         )
@@ -519,11 +520,11 @@ fun AddCallNoteDialog(
 
     RivoDialog(
         onDismissRequest = onDismissRequest,
-        title = "Add Call Note",
+        title = stringResource(R.string.dialog_add_call_note_title),
         icon = Icons.AutoMirrored.Filled.Notes,
         supportingText = if (contactName.isNotBlank()) "$contactName • $phoneNumber" else phoneNumber,
         confirmAction = RivoDialogAction(
-            label = "Save Note",
+            label = stringResource(R.string.action_save_note),
             enabled = noteText.isNotBlank(),
             onClick = {
                 val text = noteText.trim()
@@ -622,7 +623,7 @@ fun AddCallNoteDialog(
                         IconButton(onClick = { noteText = "" }) {
                             Icon(
                                 Icons.Default.Clear,
-                                contentDescription = "Clear",
+                                contentDescription = stringResource(R.string.action_clear),
                                 modifier = Modifier.size(18.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -642,4 +643,3 @@ fun AddCallNoteDialog(
         }
     }
 }
-

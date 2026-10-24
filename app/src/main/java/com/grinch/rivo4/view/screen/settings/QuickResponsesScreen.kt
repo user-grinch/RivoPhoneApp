@@ -108,13 +108,13 @@ fun QuickResponsesScreen(
                             Spacer(Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "In-Call Quick Decline Messages",
+                                    text = stringResource(R.string.loc_in_call_quick_decline_messages),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(Modifier.height(2.dp))
                                 Text(
-                                    text = "Tap the message button during an incoming call to decline and send one of these canned replies via SMS.",
+                                    text = stringResource(R.string.loc_tap_the_message_button_during_an_incoming_call_to_decline_and_send_one),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -171,7 +171,7 @@ fun QuickResponsesScreen(
                                     ) {
                                         Icon(
                                             Icons.Default.Edit,
-                                            contentDescription = "Edit",
+                                            contentDescription = stringResource(R.string.loc_edit),
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.size(18.dp)
                                         )
@@ -185,7 +185,7 @@ fun QuickResponsesScreen(
                                     ) {
                                         Icon(
                                             Icons.Default.Delete,
-                                            contentDescription = "Delete",
+                                            contentDescription = stringResource(R.string.loc_delete),
                                             tint = MaterialTheme.colorScheme.error,
                                             modifier = Modifier.size(18.dp)
                                         )
@@ -205,10 +205,10 @@ fun QuickResponsesScreen(
     if (isAddingNew) {
         RivoDialog(
             onDismissRequest = { isAddingNew = false },
-            title = "New Quick Response",
+            title = stringResource(R.string.loc_new_quick_response),
             icon = Icons.Outlined.AddComment,
             confirmAction = RivoDialogAction(
-                label = "Add",
+                label = stringResource(R.string.loc_add),
                 enabled = editingText.isNotBlank(),
                 onClick = {
                     val trimmed = editingText.trim()
@@ -224,7 +224,7 @@ fun QuickResponsesScreen(
             OutlinedTextField(
                 value = editingText,
                 onValueChange = { editingText = it },
-                label = { Text("Message text") },
+                label = { Text(stringResource(R.string.quick_response_message_text)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 maxLines = 3
@@ -236,10 +236,10 @@ fun QuickResponsesScreen(
         val index = editingIndex!!
         RivoDialog(
             onDismissRequest = { editingIndex = null },
-            title = "Edit Quick Response",
+            title = stringResource(R.string.loc_edit_quick_response),
             icon = Icons.Outlined.Edit,
             confirmAction = RivoDialogAction(
-                label = "Save",
+                label = stringResource(R.string.loc_save),
                 enabled = editingText.isNotBlank(),
                 onClick = {
                     val trimmed = editingText.trim()
@@ -255,7 +255,7 @@ fun QuickResponsesScreen(
             OutlinedTextField(
                 value = editingText,
                 onValueChange = { editingText = it },
-                label = { Text("Message text") },
+                label = { Text(stringResource(R.string.quick_response_message_text)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 maxLines = 3
@@ -270,9 +270,9 @@ fun QuickResponsesScreen(
                 save(PreferenceManager.DEFAULT_QUICK_RESPONSES)
                 showResetConfirm = false
             },
-            title = "Reset to Defaults",
-            message = "Restore original preset quick responses?",
-            confirmLabel = "Reset",
+            title = stringResource(R.string.loc_reset_to_defaults),
+            message = stringResource(R.string.loc_restore_original_preset_quick_responses),
+            confirmLabel = stringResource(R.string.loc_reset),
             dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Outlined.RestartAlt,
             isDestructive = true

@@ -369,8 +369,8 @@ fun CallAccountsScreen(
                         }
                         item {
                             RivoListItem(
-                                headline = "Quick Responses",
-                                supporting = "Manage canned SMS decline responses for incoming calls",
+                                headline = stringResource(R.string.settings_quick_responses),
+                                supporting = stringResource(R.string.settings_quick_responses_supporting),
                                 leadingIcon = Icons.Outlined.Quickreply,
                                 onClick = {
                                     navigator.navigate(QuickResponsesScreenDestination())
@@ -410,8 +410,8 @@ fun CallAccountsScreen(
                         }
                         item {
                             RivoSwitchListItem(
-                                headline = "Post-Call Summary",
-                                supporting = "Show call duration and quick actions (call back, SMS, note) after ending a call",
+                                headline = stringResource(R.string.settings_post_call_summary),
+                                supporting = stringResource(R.string.settings_post_call_summary_supporting),
                                 leadingIcon = Icons.Outlined.CallEnd,
                                 checked = postCallSummary,
                                 onCheckedChange = {
@@ -554,7 +554,7 @@ fun CallAccountsScreen(
 
                 item {
                     RivoExpressiveGroup(
-                        title = "Work in Progress",
+                        title = stringResource(R.string.settings_work_in_progress),
                         icon = Icons.Outlined.Construction,
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
                     ) {
