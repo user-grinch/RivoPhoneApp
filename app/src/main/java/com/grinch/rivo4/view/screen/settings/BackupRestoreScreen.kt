@@ -316,6 +316,14 @@ fun BackupRestoreScreen(
                             onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard", "application/octet-stream", "*/*")) }
                         )
                     }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_import_encrypted_contacts),
+                            supporting = stringResource(R.string.settings_backup_import_encrypted_contacts_supporting),
+                            leadingIcon = Icons.Outlined.LockOpen,
+                            onClick = { importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*")) }
+                        )
+                    }
                 }
             }
 
