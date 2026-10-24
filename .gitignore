@@ -20,3 +20,4 @@ app/keystore.jks
 app/base64.txt
 .kotlin
 .idea/
+.codegraph/

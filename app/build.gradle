@@ -73,10 +73,11 @@ android {
         generateLocaleConfig = true
     }
 
-    // Dependency metadata is encrypted with Google's key, F-Droid rejects it in APKs
+    def includeDependencyInfo = !project.hasProperty("disableDependencyInfo")
+
     dependenciesInfo {
-        includeInApk = false
-        includeInBundle = true
+        includeInApk = includeDependencyInfo
+        includeInBundle = includeDependencyInfo
     }
 
     splits {

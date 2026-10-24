@@ -1,1 +1,26 @@
-* Initial F-Droid release
+RivoPhone v2.2
+
+What's new:
+* Shizuku-based call recording support
+* Floating call bubble and controls
+* App lock and private storage
+* Call notes and callback reminders
+* Smart call controls and automation
+* Audio toggles
+* Staged permissions onboarding
+* M3 Expressive floating bar and blur
+* Recording date and contact filters
+* Card and dialog modernization
+* Dual SIM dialpad and contact ergonomics
+* Multi-OEM call recording
+* Social integration and duplicate contact management
+
+Fixes and improvements:
+* Fixed Android 14+ notification crashes
+* Fixed call recorder issues
+* Improved call log search
+* Polished incoming call and dialog experiences
+* Improved Wi-Fi calling
+* Build cleanups
+* CI/CD pipeline upgrade
+* Localization sync
