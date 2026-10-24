@@ -6,10 +6,10 @@ plugins {
     id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
 }
 
-def baseVersionCode = 2026092011
+def baseVersionCode = 2026092012
 def buildNumber = (System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "0") as int
 def isPreviewBuild = System.getenv("PREVIEW_BUILD") == "true"
-def baseVersionName = "2.2"
+def baseVersionName = "2.3"
 
 android {
     namespace = 'com.grinch.rivo4'
@@ -42,6 +42,8 @@ android {
             if (System.getenv("KEYSTORE_PATH")) {
                 signingConfig = signingConfigs.release
             }
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig = signingConfigs.release
             debuggable = false
         }
         debug {
@@ -111,6 +113,10 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def flavorSuffix = (variant.flavorName == "foss") ? "-foss" : ""
@@ -153,7 +159,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.material3:material3:1.5.0-alpha18'
     implementation 'androidx.graphics:graphics-shapes:1.0.1'
-    implementation 'androidx.activity:activity-compose'
+    implementation 'androidx.activity:activity-compose:1.13.0'
     implementation 'androidx.compose.foundation:foundation'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.material:material-icons-extended'

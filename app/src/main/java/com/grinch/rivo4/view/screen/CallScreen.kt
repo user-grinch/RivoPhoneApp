@@ -8,16 +8,30 @@ import android.os.Build
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.SurfaceTexture
+import android.hardware.camera2.CameraCaptureSession
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraDevice
+import android.hardware.camera2.CameraManager
+import android.os.Handler
+import android.os.HandlerThread
+import androidx.compose.foundation.gestures.detectDragGestures
 import android.net.Uri
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.telecom.Call
+import android.telecom.InCallService
 import android.telecom.TelecomManager
 import android.telecom.CallAudioState
 import android.telecom.VideoProfile
 import android.view.HapticFeedbackConstants
+import android.view.Surface
+import android.view.TextureView
 import android.widget.Toast
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import java.util.Calendar
 import com.grinch.rivo4.controller.reminder.CallbackReminderManager
 import com.grinch.rivo4.view.components.CallNotesSheet
@@ -268,7 +282,11 @@ fun ExpressiveCallScreen(
         Call.STATE_HOLDING -> stringResource(R.string.call_status_on_hold)
         Call.STATE_ACTIVE -> formatDuration(callDuration)
         Call.STATE_DIALING -> stringResource(R.string.call_status_calling)
-        Call.STATE_RINGING -> stringResource(R.string.call_status_incoming)
+        Call.STATE_RINGING -> {
+            val vState = call.details?.videoState ?: VideoProfile.STATE_AUDIO_ONLY
+            if (VideoProfile.isVideo(vState)) stringResource(R.string.video_call_incoming_video)
+            else stringResource(R.string.call_status_incoming)
+        }
         Call.STATE_DISCONNECTING -> ""
         Call.STATE_CONNECTING -> stringResource(R.string.call_status_connecting)
         else -> ""
@@ -595,6 +613,21 @@ fun ExpressiveCallScreen(
 
     val canMerge = otherCall != null || (try { call.details.can(Call.Details.CAPABILITY_MERGE_CONFERENCE) } catch (_: Exception) { false })
 
+    val videoState = try { call.details?.videoState ?: VideoProfile.STATE_AUDIO_ONLY } catch (_: Exception) { VideoProfile.STATE_AUDIO_ONLY }
+    val extrasVideo = remember(call) {
+        try {
+            call.details?.intentExtras?.getBoolean("videocall", false) == true ||
+                call.details?.extras?.getBoolean("videocall", false) == true
+        } catch (_: Exception) {
+            false
+        }
+    }
+    var localVideoModeRequested by rememberSaveable { mutableStateOf(false) }
+    var isCameraEnabled by rememberSaveable { mutableStateOf(true) }
+    val isVideoCall = (VideoProfile.isVideo(videoState) || extrasVideo || localVideoModeRequested) && callState != Call.STATE_RINGING
+    val canVideoCall = true
+    var useFrontCamera by rememberSaveable { mutableStateOf(true) }
+
     val activeControls: @Composable (Boolean) -> Unit = { compact ->
         ActiveCallControls(
             callState = callState,
@@ -607,6 +640,8 @@ fun ExpressiveCallScreen(
             canMerge = canMerge,
             canSwap = canSwap,
             hasConference = hasConference,
+            isVideoCall = isVideoCall,
+            canVideoCall = canVideoCall,
             onMergeCalls = {
                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 CallService.mergeCalls()
@@ -618,6 +653,24 @@ fun ExpressiveCallScreen(
             onManageConference = {
                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                 showConferenceSheet = true
+            },
+            onToggleVideo = {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                localVideoModeRequested = !isVideoCall
+                if (localVideoModeRequested) {
+                    isCameraEnabled = true
+                }
+                try {
+                    val vc = call.videoCall
+                    if (vc != null) {
+                        val targetState = if (isVideoCall) VideoProfile.STATE_AUDIO_ONLY else VideoProfile.STATE_BIDIRECTIONAL
+                        vc.sendSessionModifyRequest(VideoProfile(targetState))
+                    }
+                } catch (_: Exception) {}
+            },
+            onSwitchCamera = {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                useFrontCamera = !useFrontCamera
             },
             onToggleMute = { CallService.mute(!isMuted) },
             onToggleKeypad = { showKeypad = !showKeypad },
@@ -707,7 +760,13 @@ fun ExpressiveCallScreen(
 
                 val onAnswerCallAction = {
                     CallRecorder.prepare(context)
-                    try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (e: Exception) {}
+                    val vState = try { call.details?.videoState ?: VideoProfile.STATE_AUDIO_ONLY } catch (_: Exception) { VideoProfile.STATE_AUDIO_ONLY }
+                    val answerState = if (VideoProfile.isVideo(vState)) vState else VideoProfile.STATE_AUDIO_ONLY
+                    try {
+                        call.answer(answerState)
+                    } catch (e: Exception) {
+                        try { call.answer(VideoProfile.STATE_AUDIO_ONLY) } catch (_: Exception) {}
+                    }
                 }
 
                 when (useCustomUI) {
@@ -739,7 +798,90 @@ fun ExpressiveCallScreen(
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         ExpressiveBackground(photoUri, backgroundUri)
 
-        if (isLandscape) {
+        val currentVideoCall = call.videoCall
+        DisposableEffect(currentVideoCall) {
+            if (currentVideoCall != null) {
+                val callback = object : InCallService.VideoCall.Callback() {
+                    override fun onSessionModifyRequestReceived(videoProfile: VideoProfile?) {
+                        if (videoProfile != null) {
+                            try {
+                                currentVideoCall.sendSessionModifyResponse(videoProfile)
+                            } catch (_: Exception) {}
+                        }
+                    }
+                    override fun onSessionModifyResponseReceived(
+                        status: Int,
+                        requestedProfile: VideoProfile?,
+                        responseProfile: VideoProfile?
+                    ) {}
+                    override fun onCallSessionEvent(event: Int) {}
+                    override fun onPeerDimensionsChanged(width: Int, height: Int) {}
+                    override fun onVideoQualityChanged(videoQuality: Int) {}
+                    override fun onCallDataUsageChanged(dataUsage: Long) {}
+                    override fun onCameraCapabilitiesChanged(cameraCapabilities: VideoProfile.CameraCapabilities?) {}
+                }
+                try {
+                    currentVideoCall.registerCallback(callback)
+                } catch (_: Exception) {}
+                onDispose {
+                    try {
+                        currentVideoCall.unregisterCallback(callback)
+                    } catch (_: Exception) {}
+                }
+            } else {
+                onDispose {}
+            }
+        }
+
+        if (isVideoCall) {
+            FullScreenVideoCallLayout(
+                call = call,
+                videoCall = currentVideoCall,
+                callState = callState,
+                contactName = contactName,
+                phoneNumber = phoneNumber,
+                photoUri = photoUri,
+                statusText = statusText,
+                isMuted = isMuted,
+                audioState = audioState,
+                useFrontCamera = useFrontCamera,
+                isCameraEnabled = isCameraEnabled,
+                onToggleCameraEnabled = {
+                    view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    isCameraEnabled = !isCameraEnabled
+                    try {
+                        val vc = call.videoCall
+                        if (vc != null) {
+                            val targetState = if (isCameraEnabled) VideoProfile.STATE_BIDIRECTIONAL else VideoProfile.STATE_RX_ENABLED
+                            vc.sendSessionModifyRequest(VideoProfile(targetState))
+                        }
+                    } catch (_: Exception) {}
+                },
+                onSwitchCamera = {
+                    view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    useFrontCamera = !useFrontCamera
+                },
+                onToggleMute = {
+                    view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    CallService.mute(!isMuted)
+                },
+                onAudioClick = {
+                    view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    if (hasBluetooth) showAudioPicker = true else CallService.cycleAudioRoute()
+                },
+                onSwitchToAudioCall = {
+                    view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    localVideoModeRequested = false
+                    try {
+                        call.videoCall?.sendSessionModifyRequest(VideoProfile(VideoProfile.STATE_AUDIO_ONLY))
+                    } catch (_: Exception) {}
+                },
+                onEndCall = {
+                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    try { call.disconnect() } catch (_: Exception) {}
+                }
+            )
+        } else if (isLandscape) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -856,10 +998,12 @@ fun ExpressiveCallScreen(
                 onSend = onSendQuickResponse,
                 onOpenSmsApp = {
                     CallService.rejectCall(call)
-                    val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("smsto:$phoneNumber")
-                    }
-                    context.startActivity(intent)
+                    try {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("smsto:${Uri.encode(phoneNumber)}")
+                        }
+                        context.startActivity(intent)
+                    } catch (_: Exception) {}
                     showQuickResponsesSheet = false
                 },
                 onScheduleReminder = { delayMinutes, label ->
@@ -870,7 +1014,7 @@ fun ExpressiveCallScreen(
                             delayMinutes = delayMinutes,
                             note = "Callback reminder from incoming call"
                         )
-                        Toast.makeText(context, "Reminder set for $label", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.call_reminder_set, label), Toast.LENGTH_SHORT).show()
                     }
                     CallService.rejectCall(call)
                     showQuickResponsesSheet = false
@@ -950,14 +1094,14 @@ fun PocketModeOverlay(
             }
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Pocket Mode Active",
+                text = stringResource(R.string.pocket_mode_active),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Screen touches are locked to prevent accidental touches in your pocket.",
+                text = stringResource(R.string.pocket_mode_locked_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.7f),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -969,7 +1113,7 @@ fun PocketModeOverlay(
             ) {
                 Icon(Icons.Outlined.LockOpen, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Dismiss Touch Guard")
+                Text(stringResource(R.string.call_dismiss_touch_guard))
             }
         }
     }
@@ -1020,12 +1164,12 @@ fun QuickResponsesBottomSheet(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Quick Response",
+                        text = stringResource(R.string.quick_response_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Decline call and reply to ${contactName.ifBlank { phoneNumber }}",
+                        text = stringResource(R.string.quick_response_description, contactName.ifBlank { phoneNumber }),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1033,7 +1177,7 @@ fun QuickResponsesBottomSheet(
                 IconButton(onClick = onOpenSmsApp) {
                     Icon(
                         Icons.AutoMirrored.Outlined.OpenInNew,
-                        contentDescription = "Open SMS app",
+                        contentDescription = stringResource(R.string.content_desc_open_sms),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -1080,7 +1224,7 @@ fun QuickResponsesBottomSheet(
                 ) {
                     Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Write a custom message...")
+                    Text(stringResource(R.string.call_write_custom_message))
                 }
             } else {
                 Row(
@@ -1090,7 +1234,7 @@ fun QuickResponsesBottomSheet(
                     OutlinedTextField(
                         value = customText,
                         onValueChange = { customText = it },
-                        placeholder = { Text("Type custom message...") },
+                        placeholder = { Text(stringResource(R.string.call_type_custom_message)) },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(14.dp),
                         singleLine = true
@@ -1106,7 +1250,7 @@ fun QuickResponsesBottomSheet(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Outlined.Send,
-                            contentDescription = "Send",
+                            contentDescription = stringResource(R.string.content_desc_send),
                             tint = if (customText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                         )
                     }
@@ -1118,7 +1262,7 @@ fun QuickResponsesBottomSheet(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "Remind Me to Call Back",
+                text = stringResource(R.string.remind_call_back),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -1294,7 +1438,7 @@ fun formatDuration(seconds: Long): String {
 @Composable
 fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-    val offsetX = remember { Animatable(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1315,7 +1459,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     }
     val triggerThreshold = maxDrag * 0.85f
 
-    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX.value / maxDrag else 0f } }
+    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetX / maxDrag else 0f } }
     val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -1415,7 +1559,7 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .graphicsLayer {
                     val idleFactor = (1f - dragNormal.value * 5f).coerceIn(0f, 1f)
                     scaleX = 1f + (handlePulseScale - 1f) * idleFactor
@@ -1428,26 +1572,42 @@ fun HorizontalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
+                            val current = offsetX
+                            when {
+                                current > triggerThreshold -> {
+                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    onAnswer()
+                                }
+                                current < -triggerThreshold -> {
+                                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                    onDecline()
+                                }
+                                else -> {
+                                    coroutineScope.launch {
+                                        Animatable(current).animateTo(
+                                            0f,
+                                            spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                        ) {
+                                            offsetX = value
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        onDragCancel = {
+                            val current = offsetX
                             coroutineScope.launch {
-                                when {
-                                    offsetX.value > triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                        onAnswer()
-                                    }
-                                    offsetX.value < -triggerThreshold -> {
-                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                        onDecline()
-                                    }
-                                    else -> offsetX.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                                Animatable(current).animateTo(
+                                    0f,
+                                    spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                ) {
+                                    offsetX = value
                                 }
                             }
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
-                            coroutineScope.launch { 
-                                val newOffset = (offsetX.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
-                                offsetX.snapTo(newOffset) 
-                            }
+                            offsetX = (offsetX + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
                         }
                     )
                 },
@@ -1477,7 +1637,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val coroutineScope = rememberCoroutineScope()
-    val offsetY = remember { Animatable(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1488,7 +1648,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
     val maxDrag = with(density) { (trackHeight / 2f - handleSize / 2f - 8.dp).toPx() }
     val triggerThreshold = maxDrag * 0.75f
 
-    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetY.value / maxDrag else 0f } }
+    val dragProgress = remember { derivedStateOf { if (maxDrag > 0f) offsetY / maxDrag else 0f } }
     val dragNormal = remember { derivedStateOf { abs(dragProgress.value) } }
 
     val infiniteTransition = rememberInfiniteTransition(label = "vertPulse")
@@ -1584,7 +1744,7 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset { IntOffset(0, offsetY.value.roundToInt()) }
+                    .offset { IntOffset(0, offsetY.roundToInt()) }
                     .graphicsLayer {
                         val idleFactor = (1f - dragNormal.value * 4f).coerceIn(0f, 1f)
                         scaleX = 1f + (pulseScale - 1f) * idleFactor
@@ -1596,26 +1756,42 @@ fun VerticalSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit) {
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragEnd = {
+                                val current = offsetY
+                                when {
+                                    current < -triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                        onAnswer()
+                                    }
+                                    current > triggerThreshold -> {
+                                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                                        onDecline()
+                                    }
+                                    else -> {
+                                        coroutineScope.launch {
+                                            Animatable(current).animateTo(
+                                                0f,
+                                                spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                            ) {
+                                                offsetY = value
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            onDragCancel = {
+                                val current = offsetY
                                 coroutineScope.launch {
-                                    when {
-                                        offsetY.value < -triggerThreshold -> {
-                                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                            onAnswer()
-                                        }
-                                        offsetY.value > triggerThreshold -> {
-                                            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                                            onDecline()
-                                        }
-                                        else -> offsetY.animateTo(0f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                                    Animatable(current).animateTo(
+                                        0f,
+                                        spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+                                    ) {
+                                        offsetY = value
                                     }
                                 }
                             },
                             onVerticalDrag = { change, dragAmount ->
                                 change.consume()
-                                coroutineScope.launch {
-                                    val newOffset = (offsetY.value + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
-                                    offsetY.snapTo(newOffset)
-                                }
+                                offsetY = (offsetY + dragAmount).coerceIn(-maxDrag * 1.1f, maxDrag * 1.1f)
                             }
                         )
                     },
@@ -1646,7 +1822,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     
     val coroutineScope = rememberCoroutineScope()
-    val offsetX = remember { Animatable(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
@@ -1761,7 +1937,7 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = handleSize + 16.dp)
-                    .graphicsLayer { alpha = (1f - (offsetX.value / maxDrag)).coerceIn(0f, 1f) },
+                    .graphicsLayer { alpha = (1f - (offsetX / maxDrag)).coerceIn(0f, 1f) },
                 style = MaterialTheme.typography.titleMedium.copy(
                     brush = brush,
                     fontWeight = FontWeight.SemiBold
@@ -1772,27 +1948,36 @@ fun IPhoneSwipeToAnswer(onAnswer: () -> Unit, onDecline: () -> Unit, onMessage: 
             Box(
                 modifier = Modifier
                     .padding(start = handlePadding)
-                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .offset { IntOffset(offsetX.roundToInt(), 0) }
                     .size(handleSize)
                     .clip(CircleShape)
                     .background(MaterialTheme.callColors.answer)
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onDragEnd = {
+                                val current = offsetX
+                                if (current > maxDrag * 0.85f) {
+                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    onAnswer()
+                                } else {
+                                    coroutineScope.launch {
+                                        Animatable(current).animateTo(0f, spring(dampingRatio = 0.8f)) {
+                                            offsetX = value
+                                        }
+                                    }
+                                }
+                            },
+                            onDragCancel = {
+                                val current = offsetX
                                 coroutineScope.launch {
-                                    if (offsetX.value > maxDrag * 0.85f) {
-                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                        onAnswer()
-                                    } else {
-                                        offsetX.animateTo(0f, spring(dampingRatio = 0.8f))
+                                    Animatable(current).animateTo(0f, spring(dampingRatio = 0.8f)) {
+                                        offsetX = value
                                     }
                                 }
                             },
                             onHorizontalDrag = { change, dragAmount ->
                                 change.consume()
-                                coroutineScope.launch {
-                                    offsetX.snapTo((offsetX.value + dragAmount).coerceIn(0f, maxDrag))
-                                }
+                                offsetX = (offsetX + dragAmount).coerceIn(0f, maxDrag)
                             }
                         )
                     },
@@ -1961,4 +2146,535 @@ fun IncomingCallButtons(onAnswer: () -> Unit, onDecline: () -> Unit) {
             )
         }
     }
+}
+
+@Composable
+fun FullScreenVideoCallLayout(
+    call: Call,
+    videoCall: InCallService.VideoCall?,
+    callState: Int,
+    contactName: String,
+    phoneNumber: String,
+    photoUri: String?,
+    statusText: String,
+    isMuted: Boolean,
+    audioState: CallAudioState?,
+    useFrontCamera: Boolean,
+    isCameraEnabled: Boolean,
+    onToggleCameraEnabled: () -> Unit,
+    onSwitchCamera: () -> Unit,
+    onToggleMute: () -> Unit,
+    onAudioClick: () -> Unit,
+    onSwitchToAudioCall: () -> Unit,
+    onEndCall: () -> Unit
+) {
+    val context = LocalContext.current
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            hasCameraPermission = granted
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    var areControlsVisible by remember { mutableStateOf(true) }
+    var pipOffsetX by remember { mutableFloatStateOf(0f) }
+    var pipOffsetY by remember { mutableFloatStateOf(0f) }
+
+    // Auto-hide controls after 4.5 seconds when the call is active
+    LaunchedEffect(areControlsVisible, callState) {
+        if (areControlsVisible && callState == Call.STATE_ACTIVE) {
+            delay(4500L)
+            areControlsVisible = false
+        }
+    }
+
+    LaunchedEffect(videoCall, useFrontCamera, hasCameraPermission, isCameraEnabled) {
+        if (videoCall == null) return@LaunchedEffect
+        if (!hasCameraPermission || !isCameraEnabled) {
+            try { videoCall.setCamera(null) } catch (_: Exception) {}
+            return@LaunchedEffect
+        }
+        try {
+            val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager ?: return@LaunchedEffect
+            val targetFacing = if (useFrontCamera) {
+                CameraCharacteristics.LENS_FACING_FRONT
+            } else {
+                CameraCharacteristics.LENS_FACING_BACK
+            }
+            val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                val chars = cameraManager.getCameraCharacteristics(id)
+                chars.get(CameraCharacteristics.LENS_FACING) == targetFacing
+            } ?: cameraManager.cameraIdList.firstOrNull()
+
+            if (cameraId != null) {
+                videoCall.setCamera(cameraId)
+            }
+        } catch (_: Exception) {}
+    }
+
+    DisposableEffect(videoCall) {
+        onDispose {
+            try {
+                videoCall?.setDisplaySurface(null)
+                videoCall?.setPreviewSurface(null)
+                videoCall?.setCamera(null)
+            } catch (_: Exception) {}
+        }
+    }
+
+    val displayName = remember(contactName, phoneNumber) {
+        if (contactName.isBlank() || contactName == phoneNumber) {
+            if (phoneNumber.isNotEmpty()) formatPhoneNumber(phoneNumber) else ""
+        } else {
+            contactName
+        }
+    }
+
+    val audioRoute = audioState?.route ?: CallAudioState.ROUTE_EARPIECE
+    val isSpeakerOrBt = audioRoute == CallAudioState.ROUTE_SPEAKER || audioRoute == CallAudioState.ROUTE_BLUETOOTH
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                areControlsVisible = !areControlsVisible
+            }
+    ) {
+        // 1. Full-Screen Video Canvas
+        if (videoCall != null) {
+            AndroidView(
+                factory = { ctx ->
+                    TextureView(ctx).apply {
+                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                            private var displaySurface: Surface? = null
+
+                            override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+                                try {
+                                    displaySurface?.release()
+                                    displaySurface = Surface(surface)
+                                    videoCall.setDisplaySurface(displaySurface)
+                                } catch (_: Exception) {}
+                            }
+
+                            override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+
+                            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                                try {
+                                    videoCall.setDisplaySurface(null)
+                                    displaySurface?.release()
+                                    displaySurface = null
+                                } catch (_: Exception) {}
+                                return true
+                            }
+
+                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            // When carrier remote video stream is not yet attached (e.g. dialing/connecting),
+            // show caller backdrop in center so the screen feels alive while local camera is in PiP
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    HeroAvatar(photoUri = photoUri, isLandscape = false)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = displayName,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+                    if (statusText.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = statusText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.75f)
+                        )
+                    }
+                }
+            }
+        }
+
+        // 2. Top-Left Hidable Caller Info & Voice Switch Pill
+        AnimatedVisibility(
+            visible = areControlsVisible,
+            enter = fadeIn(tween(200)) + slideInVertically(tween(200)) { -it / 2 },
+            exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { -it / 2 },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .padding(start = 16.dp, top = 16.dp, end = 148.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color.Black.copy(alpha = 0.55f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (callState == Call.STATE_ACTIVE) Color(0xFF34C759)
+                                    else Color(0xFFFFCC00)
+                                )
+                        )
+                        Column {
+                            Text(
+                                text = displayName,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            if (statusText.isNotEmpty()) {
+                                Text(
+                                    text = statusText,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Surface(
+                    onClick = onSwitchToAudioCall,
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.55f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.voice_call),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+
+        // 3. Top-Right Draggable Picture-in-Picture (PiP) Local Camera Preview
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .statusBarsPadding()
+                .padding(top = 16.dp, end = 16.dp)
+                .offset { IntOffset(pipOffsetX.roundToInt(), pipOffsetY.roundToInt()) }
+                .size(width = 116.dp, height = 168.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
+                .background(Color(0xFF1C1C1E))
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        pipOffsetX += dragAmount.x
+                        pipOffsetY += dragAmount.y
+                    }
+                }
+                .clickable {
+                    onSwitchCamera()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            if (hasCameraPermission && isCameraEnabled) {
+                if (videoCall != null) {
+                    AndroidView(
+                        factory = { ctx ->
+                            TextureView(ctx).apply {
+                                surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                                    private var previewSurface: Surface? = null
+
+                                    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+                                        try {
+                                            previewSurface?.release()
+                                            previewSurface = Surface(surface)
+                                            videoCall.setPreviewSurface(previewSurface)
+                                        } catch (_: Exception) {}
+                                    }
+
+                                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+
+                                    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                                        try {
+                                            videoCall.setPreviewSurface(null)
+                                            previewSurface?.release()
+                                            previewSurface = null
+                                        } catch (_: Exception) {}
+                                        return true
+                                    }
+
+                                    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    LocalCamera2Preview(
+                        useFrontCamera = useFrontCamera,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            } else {
+                Icon(
+                    imageVector = Icons.Default.VideocamOff,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.6f),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+
+        // 4. Hidable Compact Bottom Control Bar (matching reference design)
+        AnimatedVisibility(
+            visible = areControlsVisible,
+            enter = slideInVertically(tween(240)) { it } + fadeIn(tween(200)),
+            exit = slideOutVertically(tween(240)) { it } + fadeOut(tween(200)),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            Surface(
+                shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                color = Color(0xE61C1C1E),
+                tonalElevation = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 1. Video Camera On/Off
+                    VideoCallCircleButton(
+                        icon = if (isCameraEnabled) Icons.Default.Videocam else Icons.Default.VideocamOff,
+                        contentDescription = stringResource(R.string.video_call_toggle_video),
+                        isHighlighted = !isCameraEnabled,
+                        onClick = onToggleCameraEnabled
+                    )
+
+                    // 2. Flip Camera
+                    VideoCallCircleButton(
+                        icon = Icons.Default.Cameraswitch,
+                        contentDescription = stringResource(R.string.video_call_switch_camera),
+                        isHighlighted = false,
+                        onClick = onSwitchCamera
+                    )
+
+                    // 3. Microphone Mute/Unmute
+                    VideoCallCircleButton(
+                        icon = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                        contentDescription = stringResource(R.string.action_mute),
+                        isHighlighted = isMuted,
+                        onClick = onToggleMute
+                    )
+
+                    // 4. Speaker / Audio Route
+                    val routeIcon = when (audioRoute) {
+                        CallAudioState.ROUTE_BLUETOOTH -> Icons.Default.Bluetooth
+                        CallAudioState.ROUTE_WIRED_HEADSET -> Icons.Default.Headset
+                        else -> Icons.AutoMirrored.Filled.VolumeUp
+                    }
+                    VideoCallCircleButton(
+                        icon = routeIcon,
+                        contentDescription = stringResource(R.string.audio_output_title),
+                        isHighlighted = isSpeakerOrBt,
+                        onClick = onAudioClick
+                    )
+
+                    // 5. End Call (Red Circle)
+                    Surface(
+                        onClick = onEndCall,
+                        shape = CircleShape,
+                        color = Color(0xFFFF3B30),
+                        contentColor = Color.White,
+                        modifier = Modifier.size(56.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Icon(
+                                imageVector = Icons.Default.CallEnd,
+                                contentDescription = stringResource(R.string.action_end_call),
+                                tint = Color.White,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VideoCallCircleButton(
+    icon: ImageVector,
+    contentDescription: String,
+    isHighlighted: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = if (isHighlighted) Color.White else Color(0xFF3A3A3C),
+        contentColor = if (isHighlighted) Color.Black else Color.White,
+        modifier = Modifier.size(56.dp)
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = if (isHighlighted) Color.Black else Color.White,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun LocalCamera2Preview(
+    useFrontCamera: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    var surfaceTextureRef by remember { mutableStateOf<SurfaceTexture?>(null) }
+
+    DisposableEffect(useFrontCamera, surfaceTextureRef) {
+        val st = surfaceTextureRef
+        if (st == null || ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            return@DisposableEffect onDispose {}
+        }
+
+        val handlerThread = HandlerThread("RivoVideoPreviewThread").apply { start() }
+        val handler = Handler(handlerThread.looper)
+        var cameraDeviceRef: CameraDevice? = null
+        var captureSessionRef: CameraCaptureSession? = null
+        val previewSurface = Surface(st)
+
+        try {
+            val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+            if (cameraManager != null) {
+                val targetFacing = if (useFrontCamera) {
+                    CameraCharacteristics.LENS_FACING_FRONT
+                } else {
+                    CameraCharacteristics.LENS_FACING_BACK
+                }
+                val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                    val chars = cameraManager.getCameraCharacteristics(id)
+                    chars.get(CameraCharacteristics.LENS_FACING) == targetFacing
+                } ?: cameraManager.cameraIdList.firstOrNull()
+
+                if (cameraId != null) {
+                    cameraManager.openCamera(
+                        cameraId,
+                        object : CameraDevice.StateCallback() {
+                            override fun onOpened(camera: CameraDevice) {
+                                cameraDeviceRef = camera
+                                try {
+                                    val requestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
+                                        addTarget(previewSurface)
+                                    }
+                                    @Suppress("DEPRECATION")
+                                    camera.createCaptureSession(
+                                        listOf(previewSurface),
+                                        object : CameraCaptureSession.StateCallback() {
+                                            override fun onConfigured(session: CameraCaptureSession) {
+                                                captureSessionRef = session
+                                                try {
+                                                    session.setRepeatingRequest(requestBuilder.build(), null, handler)
+                                                } catch (_: Exception) {}
+                                            }
+                                            override fun onConfigureFailed(session: CameraCaptureSession) {}
+                                        },
+                                        handler
+                                    )
+                                } catch (_: Exception) {}
+                            }
+
+                            override fun onDisconnected(camera: CameraDevice) {
+                                try { camera.close() } catch (_: Exception) {}
+                            }
+
+                            override fun onError(camera: CameraDevice, error: Int) {
+                                try { camera.close() } catch (_: Exception) {}
+                            }
+                        },
+                        handler
+                    )
+                }
+            }
+        } catch (_: Exception) {}
+
+        onDispose {
+            try { captureSessionRef?.close() } catch (_: Exception) {}
+            try { cameraDeviceRef?.close() } catch (_: Exception) {}
+            try { previewSurface.release() } catch (_: Exception) {}
+            try { handlerThread.quitSafely() } catch (_: Exception) {}
+        }
+    }
+
+    AndroidView(
+        factory = { ctx ->
+            TextureView(ctx).apply {
+                surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+                        surfaceTextureRef = surface
+                    }
+                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+                    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                        surfaceTextureRef = null
+                        return true
+                    }
+                    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+                }
+            }
+        },
+        modifier = modifier
+    )
 }

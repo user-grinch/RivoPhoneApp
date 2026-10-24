@@ -2,6 +2,8 @@ package com.grinch.rivo4.view.components.ad
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -28,7 +30,10 @@ object AdPreloader {
     const val BANNER_MIN_REFRESH_INTERVAL_MS = 60_000L // 60 seconds minimum between banner loads
     const val POST_CALL_MIN_REFRESH_INTERVAL_MS = 30_000L // 30 seconds minimum between post-call loads
 
+    @Volatile
     private var isInitialized = false
+    @Volatile
+    private var isInitializing = false
 
     private val _bannerAdState = MutableStateFlow<NativeAd?>(null)
     val bannerAdState: StateFlow<NativeAd?> = _bannerAdState.asStateFlow()
@@ -50,11 +55,11 @@ object AdPreloader {
 
     fun init(context: Context) {
         val prefs = PreferenceManager(context)
-        if (prefs.isSupporter() || !prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, false)) {
+        if (!prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) {
             return
         }
-        if (!isInitialized) {
-            isInitialized = true
+        if (!isInitialized && !isInitializing) {
+            isInitializing = true
             val appContext = context.applicationContext
             try {
                 val requestConfiguration = RequestConfiguration.Builder()
@@ -63,10 +68,15 @@ object AdPreloader {
                 MobileAds.setRequestConfiguration(requestConfiguration)
 
                 MobileAds.initialize(appContext) {
-                    preloadBannerAd(appContext)
-                    preloadPostCallAd(appContext)
+                    Handler(Looper.getMainLooper()).post {
+                        isInitialized = true
+                        isInitializing = false
+                        preloadBannerAd(appContext)
+                        preloadPostCallAd(appContext)
+                    }
                 }
             } catch (e: Exception) {
+                isInitializing = false
                 Log.w(TAG, "MobileAds initialization error: ${e.message}")
             }
         }
@@ -79,6 +89,7 @@ object AdPreloader {
     fun requestBannerAd(context: Context, forceRefresh: Boolean = false) {
         val appContext = context.applicationContext
         init(appContext)
+        if (!isInitialized) return
 
         val now = System.currentTimeMillis()
         val hasValidAd = _bannerAdState.value != null
@@ -135,6 +146,7 @@ object AdPreloader {
     fun requestPostCallAd(context: Context, forceRefresh: Boolean = false) {
         val appContext = context.applicationContext
         init(appContext)
+        if (!isInitialized) return
 
         val now = System.currentTimeMillis()
         val hasValidAd = _postCallAdState.value != null

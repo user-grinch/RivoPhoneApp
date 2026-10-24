@@ -19,7 +19,7 @@ class PreferenceManager(context: Context) {
     val settingsChanged: StateFlow<Int> = _settingsChanged.asStateFlow()
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB) {
+        if (key != KEY_APP_USAGE_SECONDS && key != KEY_RATE_APP_SNOOZED_TIME && key != KEY_LAST_SELECTED_TAB && key != KEY_SETTINGS_HISTORY) {
             _settingsChanged.value += 1
         }
     }
@@ -44,6 +44,17 @@ class PreferenceManager(context: Context) {
         prefs.edit().putBoolean(key, value).apply()
     }
 
+    fun getLong(key: String, defaultValue: Long): Long =
+        try {
+            prefs.getLong(key, defaultValue)
+        } catch (e: Exception) {
+            defaultValue
+        }
+
+    fun setLong(key: String, value: Long) {
+        prefs.edit().putLong(key, value).apply()
+    }
+
     fun getString(key: String, defaultValue: String?): String? {
         return try {
             prefs.getString(key, defaultValue)
@@ -66,6 +77,18 @@ class PreferenceManager(context: Context) {
 
     fun setInt(key: String, value: Int) {
         prefs.edit().putInt(key, value).apply()
+    }
+
+    fun getFloat(key: String, defaultValue: Float): Float {
+        return try {
+            prefs.getFloat(key, defaultValue)
+        } catch (e: Exception) {
+            defaultValue
+        }
+    }
+
+    fun setFloat(key: String, value: Float) {
+        prefs.edit().putFloat(key, value).apply()
     }
 
     fun setLastUsedNumber(contactId: String, number: String) {
@@ -287,7 +310,8 @@ class PreferenceManager(context: Context) {
     }
 
     fun getLastSelectedTab(): Int? {
-        return if (prefs.contains(KEY_LAST_SELECTED_TAB)) prefs.getInt(KEY_LAST_SELECTED_TAB, -1).takeIf { it != -1 } else null
+        return if (prefs.contains(KEY_LAST_SELECTED_TAB)) prefs.getInt(KEY_LAST_SELECTED_TAB, -1)
+            .takeIf { it != -1 } else null
     }
 
     fun setLastSelectedTab(tab: Int) {
@@ -351,6 +375,42 @@ class PreferenceManager(context: Context) {
 
         const val KEY_DYNAMIC_COLORS = "dynamic_colors"
         const val KEY_AMOLED_MODE = "amoled_mode"
+        const val KEY_THEME_MODE = "theme_mode"
+        const val THEME_MODE_SYSTEM = 0
+        const val THEME_MODE_LIGHT = 1
+        const val THEME_MODE_DARK = 2
+        const val KEY_DYNAMIC_VARIANT = "dynamic_variant"
+        const val KEY_FONT_FAMILY = "font_family"
+        const val FONT_FAMILY_SANS_SERIF = "sans_serif"
+        const val FONT_FAMILY_SERIF = "serif"
+        const val FONT_FAMILY_MONOSPACE = "monospace"
+        const val FONT_FAMILY_CURSIVE = "cursive"
+        const val FONT_FAMILY_CASUAL = "casual"
+        const val FONT_FAMILY_CONDENSED = "sans_serif_condensed"
+        const val FONT_FAMILY_LIGHT = "sans_serif_light"
+        const val FONT_FAMILY_MEDIUM = "sans_serif_medium"
+        const val FONT_FAMILY_BLACK = "sans_serif_black"
+
+        /** Supported font family ids in picker order. */
+        val ALL_FONT_FAMILIES = listOf(
+            FONT_FAMILY_SANS_SERIF,
+            FONT_FAMILY_SERIF,
+            FONT_FAMILY_MONOSPACE,
+            FONT_FAMILY_CURSIVE,
+            FONT_FAMILY_CASUAL,
+            FONT_FAMILY_CONDENSED,
+            FONT_FAMILY_LIGHT,
+            FONT_FAMILY_MEDIUM,
+            FONT_FAMILY_BLACK
+        )
+        const val KEY_FONT_SIZE = "font_size"
+        const val FONT_SIZE_SMALL = 0
+        const val FONT_SIZE_MEDIUM = 1
+        const val FONT_SIZE_LARGE = 2
+        const val KEY_USE_SYSTEM_FONT = "use_system_font"
+        const val KEY_CALL_BUTTON_ORDER = "call_button_order"
+        const val DEFAULT_CALL_BUTTON_ORDER = "mute,keypad,audio,record,hold,add"
+        const val KEY_HIDDEN_CALL_BUTTONS = "hidden_call_buttons"
         const val KEY_SHOW_FIRST_LETTER = "show_first_letter"
         const val KEY_COLORFUL_AVATARS = "colorful_avatars"
         const val KEY_GRADIENT_AVATARS = "gradient_avatars"
@@ -362,6 +422,7 @@ class PreferenceManager(context: Context) {
         const val KEY_DIALPAD_VIBRATION = "dialpad_vibration"
         const val KEY_HOLD_ZERO_FOR_PLUS = "hold_zero_for_plus"
         const val KEY_SPEED_DIAL = "speed_dial"
+        const val KEY_DEFAULT_VIDEO_APP = "default_video_call_app"
         const val KEY_T9_DIALING = "t9_dialing"
         const val KEY_PROXIMITY_SENSOR = "proximity_sensor"
         const val KEY_AUTO_SPEAKER_PROXIMITY = "auto_speaker_proximity"
@@ -379,6 +440,7 @@ class PreferenceManager(context: Context) {
         const val KEY_ROUND_AVATARS = "round_avatars"
         const val KEY_SHOW_DIVIDERS = "show_dividers"
         const val KEY_TRANSITION_STYLE = "transition_animation_style"
+        const val KEY_TRANSITION_TIME_SCALE = "transition_time_scale"
         const val KEY_DIALPAD_STYLE = "dialpad_style"
         const val DIALPAD_STYLE_MODERN = 0
         const val DIALPAD_STYLE_CIRCLE = 1
@@ -403,6 +465,7 @@ class PreferenceManager(context: Context) {
         const val KEY_DISPLAY_CARRIER_INFO = "display_carrier_info"
         const val KEY_CALL_DURATION_DISPLAY = "call_duration_display_mode"
         const val KEY_CALL_LOG_GROUPING = "call_log_grouping"
+        const val KEY_GROUP_CALL_LOGS = "group_call_logs"
         const val KEY_DIALPAD_LAYOUT = "dialpad_layout_style"
         const val KEY_AVATAR_SHAPE = "avatar_shape"
         const val KEY_SWIPE_TO_CALL = "swipe_to_call"
@@ -459,6 +522,9 @@ class PreferenceManager(context: Context) {
         const val KEY_RECENTS_FAVORITES_COLLAPSED = "recents_favorites_collapsed"
         const val KEY_ENABLE_ADS = "enable_ads"
         const val KEY_IS_SUPPORTER = "is_supporter"
+        const val KEY_SUPPORT_PURCHASE_TOKEN = "support_purchase_token"
+        const val KEY_SUPPORT_PURCHASE_PRODUCT = "support_purchase_product"
+        const val KEY_PRO_AD_EXPIRY = "pro_ad_expiry"
         const val KEY_POST_CALL_SCREEN = "post_call_screen"
         const val KEY_NAV_BAR_STYLE = "nav_bar_style"
         const val NAV_BAR_STYLE_STANDARD = 0
@@ -509,6 +575,19 @@ class PreferenceManager(context: Context) {
         const val SWIPE_ACTION_WHATSAPP = 4
         const val SWIPE_ACTION_COPY_NUMBER = 5
         const val SWIPE_ACTION_DELETE = 6
+        const val SWIPE_ACTION_VIEW_CONTACT = 7
+        const val SWIPE_ACTION_SHARE = 8
+        const val SWIPE_ACTION_BLOCK = 9
+
+        const val KEY_CALL_LOG_ACTIONS = "call_log_actions"
+        const val KEY_CALL_LOG_ACTIONS_SAVED = "call_log_actions_saved"
+        const val KEY_CALL_LOG_ACTIONS_UNSAVED = "call_log_actions_unsaved"
+        const val KEY_CALL_LOG_TRAILING_BUTTON_ACTION = "call_log_trailing_button_action"
+
+        val DEFAULT_CALL_LOG_ACTIONS_SAVED = listOf("view_contact", "block", "message")
+        val DEFAULT_CALL_LOG_ACTIONS_UNSAVED = listOf("save", "block", "message")
+        const val DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION = "call"
+        val DEFAULT_CALL_LOG_ACTIONS = DEFAULT_CALL_LOG_ACTIONS_SAVED
 
         const val TAB_RECENTS = 0
         const val TAB_FAVORITES = 1
@@ -529,6 +608,19 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
         const val KEY_SHOW_COUNTRY_CODE = "show_country_code"
         const val KEY_SETTINGS_HISTORY = "settings_history"
+        const val KEY_PRO_STATUS = "pro_status"
+        const val KEY_VIDEO_AD_REMINDER_MODE = "video_ad_reminder_mode"
+        const val KEY_LAST_VIDEO_AD_REMINDER = "last_video_ad_reminder"
+        const val VIDEO_AD_REMINDER_OFF = 0
+        const val VIDEO_AD_REMINDER_SIX_HOURS = 1
+        const val VIDEO_AD_REMINDER_ALWAYS = 2
+        const val VIDEO_AD_REMINDER_INTERVAL_MILLIS = 6 * 60 * 60 * 1000L
+        const val KEY_PRO_BRANDING_DISABLED = "pro_branding_disabled"
+        const val KEY_SELECTED_APP_ICON = "selected_app_icon"
+
+        fun shouldShowVideoAdReminder(mode: Int, lastShown: Long, now: Long): Boolean =
+            mode == VIDEO_AD_REMINDER_SIX_HOURS &&
+                now - lastShown >= VIDEO_AD_REMINDER_INTERVAL_MILLIS
 
         val EXCLUDED_KEYS = setOf(
             KEY_APP_USAGE_SECONDS,
@@ -621,7 +713,12 @@ class PreferenceManager(context: Context) {
             KEY_SEPARATE_CONTACTS_ICON to false,
             KEY_CALL_ANALYTICS_TRACKING to true,
             KEY_SHOW_CONTACT_MANAGEMENT_CARD to true,
-            KEY_SHOW_COUNTRY_CODE to true
+            KEY_SHOW_COUNTRY_CODE to true,
+            KEY_GROUP_CALL_LOGS to true
+        )
+
+        fun getKnownDefaultFloats(): Map<String, Float> = mapOf(
+            KEY_TRANSITION_TIME_SCALE to 2.5f
         )
 
         fun getKnownDefaultIntegers(): Map<String, Int> = mapOf(
@@ -658,7 +755,9 @@ class PreferenceManager(context: Context) {
             KEY_QUICK_RESPONSES to DEFAULT_QUICK_RESPONSES.joinToString("|||"),
             KEY_BOTTOM_NAV_ORDER to DEFAULT_BOTTOM_NAV_ORDER.joinToString(","),
             KEY_BOTTOM_NAV_HIDDEN to listOf(TAB_RECORDINGS).joinToString(","),
-            KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE
+            KEY_SECRET_DIALPAD_CODE to DEFAULT_SECRET_DIALPAD_CODE,
+            KEY_DEFAULT_VIDEO_APP to "",
+            KEY_HIDDEN_CALL_BUTTONS to ""
         )
 
         fun getKnownDefaultStringSets(): Map<String, Set<String>> = mapOf(
@@ -695,6 +794,9 @@ class PreferenceManager(context: Context) {
     fun isPredictiveBackEnabled(): Boolean = getBoolean(KEY_PREDICTIVE_BACK_ENABLED, true)
     fun setPredictiveBackEnabled(enabled: Boolean) = setBoolean(KEY_PREDICTIVE_BACK_ENABLED, enabled)
 
+    fun getTransitionTimeScale(): Float = getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).coerceIn(0.2f, 5.0f)
+    fun setTransitionTimeScale(scale: Float) = setFloat(KEY_TRANSITION_TIME_SCALE, scale.coerceIn(0.2f, 5.0f))
+
     fun isOpenCallScreenOnAnswerEnabled(): Boolean = getBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, false)
     fun setOpenCallScreenOnAnswerEnabled(enabled: Boolean) = setBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, enabled)
     fun isHiddenContactsVisible(): Boolean = getBoolean(KEY_HIDDEN_CONTACTS_VISIBLE, false)
@@ -720,8 +822,59 @@ class PreferenceManager(context: Context) {
     fun getSwipeLeftAction(): Int = getInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     fun setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, action)
 
-    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, true)
+    fun getCallLogSavedActions(): List<String> {
+        val raw = getString(KEY_CALL_LOG_ACTIONS_SAVED, getString(KEY_CALL_LOG_ACTIONS, null))
+        if (raw == null) return DEFAULT_CALL_LOG_ACTIONS_SAVED
+        if (raw.isEmpty()) return emptyList()
+        return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    fun setCallLogSavedActions(actions: List<String>) {
+        setString(KEY_CALL_LOG_ACTIONS_SAVED, actions.joinToString(","))
+        setString(KEY_CALL_LOG_ACTIONS, actions.joinToString(","))
+    }
+
+    fun getCallLogExpandedActions(): List<String> = getCallLogSavedActions()
+    fun setCallLogExpandedActions(actions: List<String>) = setCallLogSavedActions(actions)
+
+    fun getCallLogUnsavedActions(): List<String> {
+        val raw = getString(KEY_CALL_LOG_ACTIONS_UNSAVED, null)
+        if (raw == null) return DEFAULT_CALL_LOG_ACTIONS_UNSAVED
+        if (raw.isEmpty()) return emptyList()
+        return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    fun setCallLogUnsavedActions(actions: List<String>) {
+        setString(KEY_CALL_LOG_ACTIONS_UNSAVED, actions.joinToString(","))
+    }
+
+    fun getCallLogTrailingAction(): String =
+        getString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION)
+            ?: DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION
+
+    fun setCallLogTrailingAction(action: String) = setString(KEY_CALL_LOG_TRAILING_BUTTON_ACTION, action)
+
+    fun resetCallLogCustomization() {
+        setCallLogSavedActions(DEFAULT_CALL_LOG_ACTIONS_SAVED)
+        setCallLogUnsavedActions(DEFAULT_CALL_LOG_ACTIONS_UNSAVED)
+        setCallLogTrailingAction(DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION)
+    }
+
+    fun isSupporter(): Boolean = getBoolean(KEY_IS_SUPPORTER, false)
     fun setSupporter(isSupporter: Boolean) = setBoolean(KEY_IS_SUPPORTER, isSupporter)
+    fun getSupportPurchaseToken(): String = getString(KEY_SUPPORT_PURCHASE_TOKEN, "") ?: ""
+    fun setSupportPurchase(token: String, productId: String) {
+        setString(KEY_SUPPORT_PURCHASE_TOKEN, token)
+        setString(KEY_SUPPORT_PURCHASE_PRODUCT, productId)
+        setSupporter(true)
+    }
+    fun hasAdSupportedPro(): Boolean = System.currentTimeMillis() < getLong(KEY_PRO_AD_EXPIRY, 0L)
+    fun grantAdSupportedPro(durationMillis: Long = 24 * 60 * 60 * 1000L) {
+        setLong(KEY_PRO_AD_EXPIRY, System.currentTimeMillis() + durationMillis)
+    }
+
+    fun getDefaultVideoApp(): String = getString(KEY_DEFAULT_VIDEO_APP, "") ?: ""
+    fun setDefaultVideoApp(appId: String?) = setString(KEY_DEFAULT_VIDEO_APP, appId ?: "")
 
     fun isPostCallScreenEnabled(): Boolean = getBoolean(KEY_POST_CALL_SCREEN, true)
     fun setPostCallScreenEnabled(enabled: Boolean) = setBoolean(KEY_POST_CALL_SCREEN, enabled)
@@ -767,6 +920,34 @@ class PreferenceManager(context: Context) {
         clearFormattedNumberCache()
     }
 
+
+    fun isProStatus(): Boolean = getBoolean(KEY_PRO_STATUS, false)
+    fun setProStatus(isPro: Boolean) = setBoolean(KEY_PRO_STATUS, isPro)
+
+    fun getVideoAdReminderMode(): Int =
+        getInt(KEY_VIDEO_AD_REMINDER_MODE, VIDEO_AD_REMINDER_SIX_HOURS)
+            .coerceIn(VIDEO_AD_REMINDER_OFF, VIDEO_AD_REMINDER_ALWAYS)
+    fun setVideoAdReminderMode(mode: Int) = setInt(KEY_VIDEO_AD_REMINDER_MODE, mode)
+    fun shouldShowVideoAdReminder(now: Long = System.currentTimeMillis()): Boolean {
+        return when (getVideoAdReminderMode()) {
+            VIDEO_AD_REMINDER_ALWAYS -> true
+            VIDEO_AD_REMINDER_SIX_HOURS -> shouldShowVideoAdReminder(
+                VIDEO_AD_REMINDER_SIX_HOURS,
+                getLong(KEY_LAST_VIDEO_AD_REMINDER, 0L),
+                now
+            )
+            else -> false
+        }
+    }
+    fun markVideoAdReminderShown(now: Long = System.currentTimeMillis()) =
+        setLong(KEY_LAST_VIDEO_AD_REMINDER, now)
+
+    fun isProBrandingDisabled(): Boolean = getBoolean(KEY_PRO_BRANDING_DISABLED, false)
+    fun setProBrandingDisabled(disabled: Boolean) = setBoolean(KEY_PRO_BRANDING_DISABLED, disabled)
+
+    fun getSelectedAppIcon(): String = getString(KEY_SELECTED_APP_ICON, "default") ?: "default"
+    fun setSelectedAppIcon(iconName: String) = setString(KEY_SELECTED_APP_ICON, iconName)
+
     fun isShowContactSectionHeaders(): Boolean = getBoolean(KEY_SHOW_CONTACT_SECTION_HEADERS, true)
     fun setShowContactSectionHeaders(enabled: Boolean) {
         setBoolean(KEY_SHOW_CONTACT_SECTION_HEADERS, enabled)
@@ -803,7 +984,7 @@ class PreferenceManager(context: Context) {
         val booleans = getKnownDefaultBooleans().toMutableMap()
         val integers = getKnownDefaultIntegers().toMutableMap()
         val longs = mutableMapOf<String, Long>()
-        val floats = mutableMapOf<String, Float>()
+        val floats = getKnownDefaultFloats().toMutableMap()
         val strings = getKnownDefaultStrings().toMutableMap()
         val stringSets = getKnownDefaultStringSets().toMutableMap()
 
@@ -851,7 +1032,8 @@ class PreferenceManager(context: Context) {
 
     fun restoreSettings(envelope: SettingsBackupEnvelope): Int {
         if (!envelope.app.equals(SettingsBackupEnvelope.DEFAULT_APP_IDENTIFIER, ignoreCase = true) &&
-            !envelope.app.equals("Rivo", ignoreCase = true)) {
+            !envelope.app.equals("Rivo", ignoreCase = true)
+        ) {
             throw IllegalArgumentException("Invalid backup file: not a Rivo backup")
         }
         if (envelope.backupType != SettingsBackupEnvelope.BACKUP_TYPE_SETTINGS && envelope.backupType.isNotEmpty()) {

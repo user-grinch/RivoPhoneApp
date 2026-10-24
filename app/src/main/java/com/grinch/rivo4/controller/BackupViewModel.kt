@@ -75,38 +75,68 @@ class BackupViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                    BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8)).use { reader ->
                         var line: String?
                         var currentName = ""
+                        var currentNickname: String? = null
                         val currentNumbers = mutableListOf<String>()
                         val currentEmails = mutableListOf<String>()
+                        val currentAddresses = mutableListOf<String>()
+                        var currentNotes: String? = null
                         
                         while (reader.readLine().also { line = it } != null) {
-                            when {
-                                line!!.startsWith("FN:") -> currentName = line!!.substring(3)
-                                line!!.startsWith("TEL") -> {
-                                    val parts = line!!.split(":")
-                                    if (parts.size > 1) currentNumbers.add(parts[1])
-                                }
-                                line!!.startsWith("EMAIL") -> {
-                                    val parts = line!!.split(":")
-                                    if (parts.size > 1) currentEmails.add(parts[1])
-                                }
-                                line!!.startsWith("END:VCARD") -> {
-                                    if (currentName.isNotEmpty()) {
-                                        contactsRepo.saveContact(
-                                            Contact(
-                                                id = "0",
-                                                name = currentName,
-                                                phoneNumbers = currentNumbers.toList(),
-                                                emails = currentEmails.toList()
-                                            )
-                                        )
+                            val trimmed = line!!.trim()
+                            if (trimmed.equals("END:VCARD", ignoreCase = true)) {
+                                if (currentName.isNotEmpty() || currentNumbers.isNotEmpty() || currentEmails.isNotEmpty()) {
+                                    val resolvedName = currentName.ifBlank {
+                                        currentNumbers.firstOrNull() ?: currentEmails.firstOrNull() ?: "Unknown"
                                     }
-                                    currentName = ""
-                                    currentNumbers.clear()
-                                    currentEmails.clear()
+                                    contactsRepo.saveContact(
+                                        Contact(
+                                            id = "0",
+                                            name = resolvedName,
+                                            nickname = currentNickname,
+                                            phoneNumbers = currentNumbers.toList(),
+                                            emails = currentEmails.toList(),
+                                            addresses = currentAddresses.toList(),
+                                            notes = currentNotes
+                                        )
+                                    )
                                 }
+                                currentName = ""
+                                currentNickname = null
+                                currentNumbers.clear()
+                                currentEmails.clear()
+                                currentAddresses.clear()
+                                currentNotes = null
+                                continue
+                            }
+                            if (!trimmed.contains(":")) continue
+                            val propKey = trimmed.substringBefore(":").substringBefore(";").substringAfterLast(".").uppercase()
+                            val propVal = trimmed.substringAfter(":").trim()
+                            if (propVal.isEmpty()) continue
+                            when (propKey) {
+                                "FN" -> currentName = propVal
+                                "N" -> {
+                                    if (currentName.isBlank()) {
+                                        val parts = propVal.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+                                        if (parts.isNotEmpty()) currentName = parts.reversed().joinToString(" ")
+                                    }
+                                }
+                                "NICKNAME" -> currentNickname = propVal
+                                "TEL" -> {
+                                    val num = propVal.removePrefix("tel:").removePrefix("TEL:").trim()
+                                    if (num.isNotEmpty()) currentNumbers.add(num)
+                                }
+                                "EMAIL" -> {
+                                    val email = propVal.removePrefix("mailto:").removePrefix("MAILTO:").trim()
+                                    if (email.isNotEmpty()) currentEmails.add(email)
+                                }
+                                "ADR" -> {
+                                    val addr = propVal.split(";").map { it.trim() }.filter { it.isNotEmpty() }.joinToString(", ")
+                                    if (addr.isNotEmpty()) currentAddresses.add(addr)
+                                }
+                                "NOTE" -> currentNotes = propVal.replace("\\n", "\n")
                             }
                         }
                     }
@@ -142,7 +172,13 @@ class BackupViewModel(
                     val jsonString = BufferedReader(InputStreamReader(inputStream)).readText()
                     val logs = json.decodeFromString<List<CallLogEntry>>(jsonString)
                     logs.forEach { log ->
-                        callLogRepo.saveCallLog(log)
+                        if (log.subLogs.isNotEmpty()) {
+                            log.subLogs.forEach { sub ->
+                                callLogRepo.saveCallLog(sub)
+                            }
+                        } else {
+                            callLogRepo.saveCallLog(log)
+                        }
                     }
                 }
                 _status.value = context.getString(R.string.backup_call_logs_import_success)

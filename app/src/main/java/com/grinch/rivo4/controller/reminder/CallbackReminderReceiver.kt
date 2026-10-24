@@ -39,7 +39,14 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
             return
         }
 
-        // Show notification
+        // Mark reminder completed and show notification
+        if (reminderId != -1L) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    callbackReminderDao.markCompleted(reminderId)
+                } catch (_: Exception) {}
+            }
+        }
         showReminderNotification(context, reminderId, phoneNumber, contactName, note)
     }
 
@@ -55,17 +62,22 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Call Back Reminders",
+                context.getString(R.string.callback_reminders_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications reminding you to call back contacts"
+                description = context.getString(R.string.callback_reminder_channel_description)
                 enableVibration(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
 
         // Call Action
-        val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber")).apply {
+        val hasCallPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.CALL_PHONE
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val callAction = if (hasCallPermission) Intent.ACTION_CALL else Intent.ACTION_DIAL
+        val callIntent = Intent(callAction, Uri.fromParts("tel", phoneNumber, null)).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val callPendingIntent = PendingIntent.getActivity(
@@ -100,13 +112,13 @@ class CallbackReminderReceiver : BroadcastReceiver(), KoinComponent {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.sym_action_call)
-            .setContentTitle("Call Back Reminder")
+            .setContentTitle(context.getString(R.string.dialog_callback_reminder_title))
             .setContentText(contentText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
-            .addAction(android.R.drawable.sym_action_call, "Call Now", callPendingIntent)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Dismiss", dismissPendingIntent)
+            .addAction(android.R.drawable.sym_action_call, context.getString(R.string.callback_reminder_call_now), callPendingIntent)
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, context.getString(R.string.action_dismiss), dismissPendingIntent)
 
         val notifId = if (reminderId > 0) reminderId.toInt() else phoneNumber.hashCode()
         notificationManager.notify(notifId, builder.build())

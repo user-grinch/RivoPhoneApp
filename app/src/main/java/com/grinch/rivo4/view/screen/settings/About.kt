@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen.settings
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Shield
@@ -21,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,17 +39,19 @@ import com.grinch.rivo4.PLAY_STORE_URL
 import com.grinch.rivo4.SHIZU_CALL_RECORDER_URL
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.ProBrandingManager
 import com.grinch.rivo4.controller.util.getAppVersion
 import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.TipJarDialog
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SupportDevelopmentScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ThirdPartyLicensesScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
 
@@ -56,8 +62,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
-    val isSupporter = remember(settingsState) { prefs.isSupporter() }
-    var showTipJarDialog by remember { mutableStateOf(false) }
+    val appName = if (ProBrandingManager.isActive(prefs)) "Rivo Pro" else stringResource(R.string.about_app_display_name)
     val appInfo = getAppVersion(context)
     val logoMorph = rememberRivoMorphShape(RivoMaterialShapes.Cookie12Sided, RivoMaterialShapes.Circle) { 0.25f }
 
@@ -89,24 +94,23 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                         .fillMaxWidth()
                         .padding(vertical = 12.dp)
                 ) {
-                    Surface(
-                        modifier = Modifier.size(88.dp),
-                        shape = logoMorph,
-                        color = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        shadowElevation = 4.dp
-                    ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.logo),
-                                contentDescription = stringResource(R.string.about_logo_content_desc),
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    }
+                    Image(
+                        painter = painterResource(
+                            if (appName == "Rivo Pro") R.drawable.pro_app_icon else R.drawable.logo
+                        ),
+                        contentDescription = stringResource(R.string.about_logo_content_desc),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(88.dp)
+                            .graphicsLayer {
+                                scaleX = 1.15f
+                                scaleY = 1.15f
+                            }
+                            .clip(logoMorph)
+                    )
 
                     Text(
-                        text = stringResource(R.string.about_app_display_name),
+                        text = appName,
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -199,29 +203,29 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 }
 
                 Button(
-                    onClick = { showTipJarDialog = true },
+                    onClick = { navigator.navigate(SupportDevelopmentScreenDestination) },
                     modifier = Modifier
                         .weight(1f)
                         .height(52.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSupporter) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primary,
-                        contentColor = if (isSupporter) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Icon(
-                        imageVector = if (isSupporter) Icons.Default.Star else Icons.Default.Favorite,
+                        imageVector = Icons.Default.Favorite,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isSupporter) stringResource(R.string.about_supporter_badge) else stringResource(R.string.about_patreon),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                            text = "Support",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
-            }
 
             RivoExpressiveGroup {
                 item {
@@ -248,53 +252,13 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                         onClick = { openLink(context, "$GITHUB_URL/releases") }
                     )
                 }
-            }
-
-            RivoExpressiveCard {
-                Column(
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.Code,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(R.string.about_shizucallrecorder_title),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Text(
-                        text = stringResource(R.string.about_shizucallrecorder_desc),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.about_third_party_licenses),
+                        supporting = stringResource(R.string.about_third_party_licenses_supporting),
+                        leadingIcon = Icons.Outlined.Gavel,
+                        onClick = { navigator.navigate(ThirdPartyLicensesScreenDestination) }
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Button(
-                        onClick = { openLink(context, SHIZU_CALL_RECORDER_URL) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors()
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.Launch,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.about_shizucallrecorder_action),
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
                 }
             }
 
@@ -307,8 +271,5 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             )
         }
 
-        if (showTipJarDialog) {
-            TipJarDialog(onDismissRequest = { showTipJarDialog = false })
-        }
     }
 }

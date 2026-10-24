@@ -191,7 +191,7 @@ fun MissedCallScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Close",
+                                    contentDescription = stringResource(R.string.content_desc_close),
                                     tint = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -358,7 +358,7 @@ fun MissedCallScreen(
                                 ) {
                                     Icon(Icons.Outlined.EditNote, contentDescription = null, modifier = Modifier.size(17.dp))
                                     Spacer(modifier = Modifier.width(5.dp))
-                                    Text("Note", style = MaterialTheme.typography.labelMedium)
+                                    Text(stringResource(R.string.label_notes), style = MaterialTheme.typography.labelMedium)
                                 }
 
                                 // If unsaved number, show "Save" button
@@ -373,7 +373,7 @@ fun MissedCallScreen(
                                     ) {
                                         Icon(Icons.Outlined.PersonAdd, contentDescription = null, modifier = Modifier.size(17.dp))
                                         Spacer(modifier = Modifier.width(5.dp))
-                                        Text("Save", style = MaterialTheme.typography.labelMedium)
+                                        Text(stringResource(R.string.action_save), style = MaterialTheme.typography.labelMedium)
                                     }
                                 }
                             }
@@ -516,7 +516,7 @@ fun MissedCallScreen(
 
 private fun sendOrComposeSms(context: Context, number: String, text: String) {
     val intl = SocialUtils.formatInternationalNumber(context, number)
-    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$intl")).apply {
+    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(intl)}")).apply {
         if (text.isNotEmpty()) {
             putExtra("sms_body", text)
         }

@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.components.ad
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,12 +93,16 @@ fun PostCallNativeAd(
             ) {
                 OutlinedButton(
                     onClick = {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(PATREON_URL)).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(intent)
-                        } catch (_: Exception) {}
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(PATREON_URL))
+                        if (intent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(Intent.createChooser(intent, "Open Patreon"))
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "No browser is available to open Patreon",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     },
                     modifier = Modifier.weight(1f).height(38.dp),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),

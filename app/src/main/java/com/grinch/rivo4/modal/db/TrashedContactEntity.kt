@@ -6,6 +6,13 @@ import com.grinch.rivo4.modal.data.Contact
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+private val trashJson = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+    isLenient = true
+    coerceInputValues = true
+}
+
 @Entity(tableName = "trashed_contacts")
 data class TrashedContactEntity(
     @PrimaryKey(autoGenerate = true) val localId: Long = 0,
@@ -16,7 +23,7 @@ data class TrashedContactEntity(
     val trashedAt: Long = System.currentTimeMillis()
 ) {
     fun toContact(): Contact? {
-        return runCatching { Json.decodeFromString<Contact>(contactJson) }.getOrNull()
+        return runCatching { trashJson.decodeFromString<Contact>(contactJson) }.getOrNull()
     }
 
     companion object {
@@ -24,8 +31,8 @@ data class TrashedContactEntity(
             return TrashedContactEntity(
                 originalId = contact.id,
                 name = contact.formattedDisplayName.ifBlank { contact.name },
-                phoneNumbersJson = Json.encodeToString(contact.phoneNumbers),
-                contactJson = Json.encodeToString(contact),
+                phoneNumbersJson = trashJson.encodeToString(contact.phoneNumbers),
+                contactJson = trashJson.encodeToString(contact),
                 trashedAt = System.currentTimeMillis()
             )
         }

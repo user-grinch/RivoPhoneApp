@@ -49,6 +49,7 @@ import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.CallLogFullScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ContactSelectionScreenDestination
@@ -121,10 +122,27 @@ fun RecentScreenContent(
     }
     val selectedFilter by viewModel.selectedFilter.collectAsState()
 
+    // Compute the currently filtered call-log entries so "select all" matches what's visible
+    val logs by viewModel.allCallLogs.collectAsState()
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    val blockLogVisibility = remember(settingsState) {
+        prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
+    }
+    val allFilteredEntries = remember(logs, selectedFilter, blockLogVisibility) {
+        val baseLogs = if (blockLogVisibility == 0) logs.filter { !it.isBlocked } else logs
+        when (selectedFilter) {
+            CallLogFilter.All -> baseLogs
+            CallLogFilter.Missed -> baseLogs.filter { it.type == CallLog.Calls.MISSED_TYPE }
+            CallLogFilter.Incoming -> baseLogs.filter { it.type == CallLog.Calls.INCOMING_TYPE }
+            CallLogFilter.Outgoing -> baseLogs.filter { it.type == CallLog.Calls.OUTGOING_TYPE }
+            CallLogFilter.Contacts -> baseLogs.filter { it.name != null && it.name != it.number }
+        }
+    }
+
     val isSelecting = selectedEntries.isNotEmpty()
     val clipboardManager = LocalClipboardManager.current
-    val singleSelected = if (selectedEntries.size == 1) selectedEntries.first() else null
-    val isUnsaved = singleSelected != null && (singleSelected.contactId == null || singleSelected.name == null || singleSelected.name == singleSelected.number)
+    val allSelected = allFilteredEntries.isNotEmpty() && selectedEntries.size >= allFilteredEntries.size
 
     val batchActionBar: @Composable () -> Unit = {
         BatchCallLogActionBar(
@@ -135,25 +153,12 @@ fun RecentScreenContent(
                 viewModel.deleteCallLogsByIds(allIdsToDelete)
                 selectedEntries = emptySet()
             },
-            onBlock = {
-                selectedEntries.forEach { entry ->
-                    com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, entry.number)
-                }
-                selectedEntries = emptySet()
-            },
-            onAddContact = if (isUnsaved && singleSelected != null) {
+            onSelectAll = if (allFilteredEntries.isNotEmpty()) {
                 {
-                    addToContactNumber = singleSelected.number
-                    selectedEntries = emptySet()
+                    selectedEntries = if (allSelected) emptySet() else allFilteredEntries.toSet()
                 }
             } else null,
-            onCopy = if (singleSelected != null) {
-                {
-                    clipboardManager.setText(AnnotatedString(singleSelected.number))
-                    Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
-                    selectedEntries = emptySet()
-                }
-            } else null
+            allSelected = allSelected
         )
     }
 
@@ -269,7 +274,7 @@ fun RecentScreenContent(
                 addToContactNumber = null
                 navigator.navigate(
                     ContactSelectionScreenDestination(
-                        title = "Add to Existing Contact",
+                        title = context.getString(R.string.action_add_existing_contact),
                         initialPhoneToAssign = targetPhone
                     )
                 )
@@ -445,6 +450,16 @@ fun CallLogFullContent(
         }
 
         val logs by viewModel.allCallLogs.collectAsState()
+        val groupCallLogs = remember(settingsState) {
+            prefs.getBoolean(com.grinch.rivo4.controller.util.PreferenceManager.KEY_GROUP_CALL_LOGS, true)
+        }
+        var lastGroupCallLogs by remember { mutableStateOf(groupCallLogs) }
+        LaunchedEffect(groupCallLogs) {
+            if (groupCallLogs != lastGroupCallLogs) {
+                lastGroupCallLogs = groupCallLogs
+                viewModel.fetchLogs()
+            }
+        }
         val todayStats by viewModel.todayStats.collectAsState()
         val allContacts by contactsVM.allContacts.collectAsState()
 
@@ -507,6 +522,12 @@ fun CallLogFullContent(
         val callLauncher = rememberCallLauncher()
         val messageLauncher = rememberMessageLauncher()
         val videoLauncher = rememberVideoLauncher()
+        var expandedLogId by remember { mutableStateOf<Long?>(null) }
+        var logToBlock by remember { mutableStateOf<CallLogEntry?>(null) }
+        var fullContentAddToContactNumber by remember { mutableStateOf<String?>(null) }
+        val callLogSavedActions = remember(settingsState) { prefs.getCallLogSavedActions() }
+        val callLogUnsavedActions = remember(settingsState) { prefs.getCallLogUnsavedActions() }
+        val callLogTrailingAction = remember(settingsState) { prefs.getCallLogTrailingAction() }
         val blockLogVisibility = prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)
         val displayOrder = remember(settingsState) { prefs.getInt(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
         val callLogConfig = remember(settingsState, selectedEntries.isNotEmpty()) {
@@ -515,7 +536,10 @@ fun CallLogFullContent(
                 swipeEnabled = prefs.isSwipeActionsEnabled() && selectedEntries.isEmpty(),
                 swipeRightAction = SwipeActionType.fromId(prefs.getSwipeRightAction()),
                 swipeLeftAction = SwipeActionType.fromId(prefs.getSwipeLeftAction()),
-                displayOrder = displayOrder
+                displayOrder = displayOrder,
+                savedActions = callLogSavedActions,
+                unsavedActions = callLogUnsavedActions,
+                trailingAction = callLogTrailingAction
             )
         }
         val contactsById = remember(allContacts) { allContacts.associateBy { it.id } }
@@ -820,7 +844,10 @@ fun CallLogFullContent(
                                                 if (showCards) {
                                                     Modifier
                                                         .clip(shape)
-                                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                                        .background(
+                                                            if (expandedLogId == lg.id) MaterialTheme.colorScheme.surfaceContainer
+                                                            else MaterialTheme.colorScheme.surfaceContainerLow
+                                                        )
                                                 } else Modifier
                                             )
                                     ) {
@@ -834,26 +861,104 @@ fun CallLogFullContent(
                                         swipeEnabled = callLogConfig.swipeEnabled,
                                         swipeRightAction = callLogConfig.swipeRightAction,
                                         swipeLeftAction = callLogConfig.swipeLeftAction,
+                                        isOptionsExpanded = expandedLogId == lg.id,
+                                        savedActions = callLogConfig.savedActions,
+                                        unsavedActions = callLogConfig.unsavedActions,
+                                        trailingAction = callLogConfig.trailingAction,
+                                        shape = shape,
+                                        onAvatarClick = { log ->
+                                            val contact = matchedContact ?: contactsById[log.contactId]
+                                            navigator.navigate(
+                                                ContactDetailsScreenDestination(
+                                                    contactId = contact?.id ?: log.contactId,
+                                                    phoneNumber = log.number
+                                                )
+                                            )
+                                        },
                                         onTileClick = { log ->
                                             if (selectedEntries.isNotEmpty()) {
                                                 onToggleSelection(log)
                                             } else {
-                                                navigator.navigate(
-                                                    ContactDetailsScreenDestination(
-                                                        contactId = log.contactId ?: "null",
-                                                        phoneNumber = log.number
-                                                    )
-                                                )
+                                                expandedLogId = if (expandedLogId == log.id) null else log.id
                                             }
                                         },
                                         onButtonClick = { log ->
                                             val contact = matchedContact ?: contactsById[log.contactId]
-                                            callLauncher.dial(log.number, contact)
+                                            when (callLogConfig.trailingAction) {
+                                                "message" -> messageLauncher.sendMessage(log.number, contact)
+                                                "video_call" -> videoLauncher.startVideoCall(log.number, contact)
+                                                "whatsapp" -> SocialUtils.openWhatsApp(context, log.number)
+                                                "view_contact" -> {
+                                                    navigator.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = contact?.id ?: log.contactId,
+                                                            phoneNumber = log.number
+                                                        )
+                                                    )
+                                                }
+                                                "history" -> {
+                                                    navigator.navigate(
+                                                        CallLogFullScreenDestination(
+                                                            contactId = log.contactId ?: "null",
+                                                            phoneNumber = log.number
+                                                        )
+                                                    )
+                                                }
+                                                else -> callLauncher.dial(log.number, contact)
+                                            }
                                         },
                                         onLongClick = { log ->
                                             onToggleSelection(log)
                                         },
                                         selected = selectedEntries.any { it.id == lg.id },
+                                        onActionClick = { actionKey, log ->
+                                            val contact = matchedContact ?: contactsById[log.contactId]
+                                            when (actionKey) {
+                                                "save" -> {
+                                                    fullContentAddToContactNumber = log.number
+                                                }
+                                                "call" -> callLauncher.dial(log.number, contact)
+                                                "video_call" -> videoLauncher.startVideoCall(log.number, contact)
+                                                "message" -> messageLauncher.sendMessage(log.number, contact)
+                                                "history" -> {
+                                                    navigator.navigate(
+                                                        CallLogFullScreenDestination(
+                                                            contactId = log.contactId ?: "null",
+                                                            phoneNumber = log.number
+                                                        )
+                                                    )
+                                                }
+                                                "view_contact" -> {
+                                                    navigator.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = log.contactId ?: "null",
+                                                            phoneNumber = log.number
+                                                        )
+                                                    )
+                                                }
+                                                "share" -> {
+                                                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                        type = "text/plain"
+                                                        putExtra(android.content.Intent.EXTRA_TEXT, "${log.name ?: log.number}: ${log.number}")
+                                                    }
+                                                    context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                }
+                                                "whatsapp" -> SocialUtils.openWhatsApp(context, log.number)
+                                                "copy_number" -> {
+                                                    clipboardManager.setText(AnnotatedString(log.number))
+                                                    Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                }
+                                                "block" -> {
+                                                    logToBlock = log
+                                                }
+                                            }
+                                        },
+                                        onAddContact = { log ->
+                                            fullContentAddToContactNumber = log.number
+                                        },
+                                        onBlockContact = { log ->
+                                            logToBlock = log
+                                        },
                                         onSwipeAction = { action, log ->
                                             if (action == SwipeActionType.DELETE) {
                                                 viewModel.deleteCallLogsByIds(log.ids)
@@ -867,6 +972,24 @@ fun CallLogFullContent(
                                                     SwipeActionType.COPY_NUMBER -> {
                                                         clipboardManager.setText(AnnotatedString(log.number))
                                                         Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    SwipeActionType.VIEW_CONTACT -> {
+                                                        navigator.navigate(
+                                                            ContactDetailsScreenDestination(
+                                                                contactId = log.contactId ?: "null",
+                                                                phoneNumber = log.number
+                                                            )
+                                                        )
+                                                    }
+                                                    SwipeActionType.SHARE -> {
+                                                        val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                            type = "text/plain"
+                                                            putExtra(android.content.Intent.EXTRA_TEXT, "${log.name ?: log.number}: ${log.number}")
+                                                        }
+                                                        context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                    }
+                                                    SwipeActionType.BLOCK -> {
+                                                        logToBlock = log
                                                     }
                                                     SwipeActionType.NONE, SwipeActionType.DELETE -> {}
                                                 }
@@ -894,6 +1017,49 @@ fun CallLogFullContent(
                 }
             }
             }
+        }
+
+        if (fullContentAddToContactNumber != null) {
+            val targetPhone = fullContentAddToContactNumber!!
+            AddToContactBottomSheet(
+                phoneNumber = targetPhone,
+                onDismissRequest = { fullContentAddToContactNumber = null },
+                onCreateNewContact = {
+                    fullContentAddToContactNumber = null
+                    navigator.navigate(
+                        ContactEditScreenDestination(
+                            initialPhone = targetPhone
+                        )
+                    )
+                },
+                onAddToExistingContact = {
+                    fullContentAddToContactNumber = null
+                    navigator.navigate(
+                        ContactSelectionScreenDestination(
+                            title = context.getString(R.string.action_add_existing_contact),
+                            initialPhoneToAssign = targetPhone
+                        )
+                    )
+                }
+            )
+        }
+
+        if (logToBlock != null) {
+            val bLog = logToBlock!!
+            RivoConfirmationDialog(
+                onDismissRequest = { logToBlock = null },
+                onConfirm = {
+                    com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, bLog.number)
+                    Toast.makeText(context, context.getString(R.string.toast_blocked_number, bLog.number), Toast.LENGTH_SHORT).show()
+                    logToBlock = null
+                },
+                title = stringResource(R.string.call_log_block_title),
+                message = stringResource(R.string.call_log_block_confirm_single, bLog.number),
+                confirmLabel = stringResource(R.string.action_block),
+                dismissLabel = stringResource(R.string.action_cancel),
+                icon = Icons.Default.Block,
+                isDestructive = true
+            )
         }
     } else {
         PermissionDeniedView(

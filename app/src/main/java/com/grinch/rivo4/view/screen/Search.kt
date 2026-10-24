@@ -1,12 +1,14 @@
 package com.grinch.rivo4.view.screen
 
 import android.Manifest
+import android.provider.CallLog
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,12 +31,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.CallMissed
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -93,6 +98,7 @@ import com.grinch.rivo4.view.components.ScrollToTopButton
 import com.grinch.rivo4.view.components.rememberCallLauncher
 import com.grinch.rivo4.view.components.rememberRivoAvatarStyle
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import com.ramcosta.composedestinations.generated.destinations.SupportDevelopmentScreenDestination
 import com.grinch.rivo4.view.components.rivoGroupedItemShape
 import com.grinch.rivo4.view.components.rivoSurfaceStyle
 import android.widget.Toast
@@ -147,7 +153,7 @@ fun SearchScreen(
 }
 
 private enum class SearchTabFilter {
-    ALL, CONTACTS, RECENTS
+    ALL, CONTACTS, FAVORITES, RECENTS, MISSED
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -212,10 +218,6 @@ fun ContactSearchContent(
     var query by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(SearchTabFilter.ALL) }
 
-    BackHandler(enabled = query.isNotEmpty()) {
-        query = ""
-    }
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -226,34 +228,76 @@ fun ContactSearchContent(
         keyboardController?.show()
     }
 
-    val filteredContacts = remember(query, contacts) {
-        if (query.isBlank()) emptyList()
-        else {
-            val cleanQuery = query.replace(" ", "")
-            contacts.asSequence().filter {
+    val favoritesCount = remember(contacts) { contacts.count { it.isFavorite } }
+
+    val filteredContacts = remember(query, contacts, selectedFilter) {
+        val baseContacts = if (selectedFilter == SearchTabFilter.FAVORITES) {
+            contacts.asSequence().filter { it.isFavorite }
+        } else {
+            contacts.asSequence()
+        }
+
+        if (query.isBlank()) {
+            if (selectedFilter == SearchTabFilter.CONTACTS || selectedFilter == SearchTabFilter.FAVORITES) {
+                baseContacts.take(100).toList()
+            } else {
+                emptyList()
+            }
+        } else {
+            val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+            baseContacts.filter {
                 val matchesName = it.name.contains(query, ignoreCase = true)
                 val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
-                val matchesNumber = it.phoneNumbers.any { number -> number.replace(" ", "").contains(cleanQuery) }
+                val matchesNumber = cleanQuery.isNotEmpty() && it.phoneNumbers.any { number ->
+                    number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
+                }
                 matchesName || matchesNickname || matchesNumber
             }.take(50).toList()
         }
     }
 
-    val filteredCallLogs = remember(query, callLogs) {
-        if (query.isBlank()) emptyList()
-        else {
-            val cleanQuery = query.replace(" ", "")
-            callLogs.asSequence().filter { log ->
+    val filteredCallLogs = remember(query, callLogs, selectedFilter) {
+        val baseLogs = if (selectedFilter == SearchTabFilter.MISSED) {
+            callLogs.asSequence().filter {
+                it.type == CallLog.Calls.MISSED_TYPE || it.types.contains(CallLog.Calls.MISSED_TYPE)
+            }
+        } else {
+            callLogs.asSequence()
+        }
+
+        if (query.isBlank()) {
+            if (selectedFilter == SearchTabFilter.RECENTS || selectedFilter == SearchTabFilter.MISSED) {
+                baseLogs.take(50).toList()
+            } else {
+                emptyList()
+            }
+        } else {
+            val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+            baseLogs.filter { log ->
                 val matchesName = log.name?.contains(query, ignoreCase = true) == true
-                val matchesNumber = log.number.replace(" ", "").contains(cleanQuery)
+                val matchesNumber = cleanQuery.isNotEmpty() &&
+                    log.number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
                 matchesName || matchesNumber
             }.take(30).toList()
         }
     }
 
-    val showContacts = selectedFilter == SearchTabFilter.ALL || selectedFilter == SearchTabFilter.CONTACTS
-    val showRecents = selectedFilter == SearchTabFilter.ALL || selectedFilter == SearchTabFilter.RECENTS
+    val showContacts = selectedFilter == SearchTabFilter.ALL ||
+        selectedFilter == SearchTabFilter.CONTACTS ||
+        selectedFilter == SearchTabFilter.FAVORITES
+    val showRecents = selectedFilter == SearchTabFilter.ALL ||
+        selectedFilter == SearchTabFilter.RECENTS ||
+        selectedFilter == SearchTabFilter.MISSED
     val totalResultsCount = (if (showContacts) filteredContacts.size else 0) + (if (showRecents) filteredCallLogs.size else 0)
+    val isFilterOrQueryActive = query.isNotBlank() || selectedFilter != SearchTabFilter.ALL
+
+    val placeholderText = when (selectedFilter) {
+        SearchTabFilter.CONTACTS -> "Search contacts…"
+        SearchTabFilter.FAVORITES -> "Search favorites…"
+        SearchTabFilter.RECENTS -> "Search call history…"
+        SearchTabFilter.MISSED -> "Search missed calls…"
+        SearchTabFilter.ALL -> stringResource(R.string.search_contacts_placeholder)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -288,7 +332,7 @@ fun ContactSearchContent(
                             ) {
                                 if (query.isEmpty()) {
                                     Text(
-                                        text = stringResource(R.string.search_contacts_placeholder),
+                                        text = placeholderText,
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                         maxLines = 1,
@@ -308,9 +352,15 @@ fun ContactSearchContent(
                                         .focusRequester(focusRequester)
                                 )
                             }
-                            if (query.isNotEmpty()) {
+                            if (query.isNotEmpty() || selectedFilter != SearchTabFilter.ALL) {
                                 Surface(
-                                    onClick = { query = "" },
+                                    onClick = {
+                                        if (query.isNotEmpty()) {
+                                            query = ""
+                                        } else {
+                                            selectedFilter = SearchTabFilter.ALL
+                                        }
+                                    },
                                     shape = CircleShape,
                                     color = MaterialTheme.colorScheme.surfaceVariant,
                                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -361,8 +411,8 @@ fun ContactSearchContent(
                 .fillMaxSize()
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Filter chips when query is active
-                if (query.isNotEmpty()) {
+                // Filter chips when query or quick filter is active
+                if (isFilterOrQueryActive) {
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -373,7 +423,10 @@ fun ContactSearchContent(
                             FilterChip(
                                 selected = selectedFilter == SearchTabFilter.ALL,
                                 onClick = { selectedFilter = SearchTabFilter.ALL },
-                                label = { Text("All (${filteredContacts.size + filteredCallLogs.size})") },
+                                label = {
+                                    val countSuffix = if (query.isNotBlank()) " (${filteredContacts.size + filteredCallLogs.size})" else ""
+                                    Text(stringResource(R.string.loc_all_countsuffix))
+                                },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = FilterChipDefaults.filterChipColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -385,8 +438,17 @@ fun ContactSearchContent(
                         item {
                             FilterChip(
                                 selected = selectedFilter == SearchTabFilter.CONTACTS,
-                                onClick = { selectedFilter = SearchTabFilter.CONTACTS },
-                                label = { Text("Contacts (${filteredContacts.size})") },
+                                onClick = {
+                                    selectedFilter = if (selectedFilter == SearchTabFilter.CONTACTS && query.isBlank()) {
+                                        SearchTabFilter.ALL
+                                    } else {
+                                        SearchTabFilter.CONTACTS
+                                    }
+                                },
+                                label = {
+                                    val count = if (selectedFilter == SearchTabFilter.CONTACTS || query.isNotBlank()) filteredContacts.size else contacts.size
+                                    Text(stringResource(R.string.loc_contacts_count))
+                                },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Contacts, contentDescription = null, modifier = Modifier.size(16.dp))
                                 },
@@ -400,11 +462,72 @@ fun ContactSearchContent(
                         }
                         item {
                             FilterChip(
+                                selected = selectedFilter == SearchTabFilter.FAVORITES,
+                                onClick = {
+                                    selectedFilter = if (selectedFilter == SearchTabFilter.FAVORITES && query.isBlank()) {
+                                        SearchTabFilter.ALL
+                                    } else {
+                                        SearchTabFilter.FAVORITES
+                                    }
+                                },
+                                label = {
+                                    val count = if (selectedFilter == SearchTabFilter.FAVORITES) filteredContacts.size else favoritesCount
+                                    Text(stringResource(R.string.loc_favorites_count))
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.StarOutline, contentDescription = null, modifier = Modifier.size(16.dp))
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            )
+                        }
+                        item {
+                            FilterChip(
                                 selected = selectedFilter == SearchTabFilter.RECENTS,
-                                onClick = { selectedFilter = SearchTabFilter.RECENTS },
-                                label = { Text("Call Logs (${filteredCallLogs.size})") },
+                                onClick = {
+                                    selectedFilter = if (selectedFilter == SearchTabFilter.RECENTS && query.isBlank()) {
+                                        SearchTabFilter.ALL
+                                    } else {
+                                        SearchTabFilter.RECENTS
+                                    }
+                                },
+                                label = {
+                                    val count = if (selectedFilter == SearchTabFilter.RECENTS || query.isNotBlank()) filteredCallLogs.size else callLogs.size
+                                    Text(stringResource(R.string.loc_call_logs_count))
+                                },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Call, contentDescription = null, modifier = Modifier.size(16.dp))
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            )
+                        }
+                        item {
+                            FilterChip(
+                                selected = selectedFilter == SearchTabFilter.MISSED,
+                                onClick = {
+                                    selectedFilter = if (selectedFilter == SearchTabFilter.MISSED && query.isBlank()) {
+                                        SearchTabFilter.ALL
+                                    } else {
+                                        SearchTabFilter.MISSED
+                                    }
+                                },
+                                label = {
+                                    val count = if (selectedFilter == SearchTabFilter.MISSED) filteredCallLogs.size else callLogs.count {
+                                        it.type == CallLog.Calls.MISSED_TYPE || it.types.contains(CallLog.Calls.MISSED_TYPE)
+                                    }
+                                    Text(stringResource(R.string.loc_missed_count))
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.AutoMirrored.Outlined.CallMissed, contentDescription = null, modifier = Modifier.size(16.dp))
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = FilterChipDefaults.filterChipColors(
@@ -420,7 +543,7 @@ fun ContactSearchContent(
                 Box(modifier = Modifier.weight(1f)) {
                     AnimatedContent(
                         targetState = when {
-                            query.isBlank() -> 1
+                            !isFilterOrQueryActive -> 1
                             (isContactsLoading && contacts.isEmpty()) && (isCallLogsLoading && callLogs.isEmpty()) -> 0
                             totalResultsCount == 0 -> 2
                             else -> 3
@@ -482,7 +605,7 @@ fun ContactSearchContent(
 
                                     item {
                                         Text(
-                                            text = "Quick Filters",
+                                            text = stringResource(R.string.search_quick_filters),
                                             style = MaterialTheme.typography.labelLarge,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -496,7 +619,11 @@ fun ContactSearchContent(
                                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                                         ) {
                                             Surface(
-                                                onClick = { query = "a" },
+                                                onClick = {
+                                                    selectedFilter = SearchTabFilter.CONTACTS
+                                                    focusRequester.requestFocus()
+                                                    keyboardController?.show()
+                                                },
                                                 shape = RoundedCornerShape(16.dp),
                                                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                                 modifier = Modifier.weight(1f)
@@ -513,7 +640,7 @@ fun ContactSearchContent(
                                                     )
                                                     Spacer(modifier = Modifier.height(6.dp))
                                                     Text(
-                                                        text = "Browse Contacts",
+                                                        text = stringResource(R.string.search_contacts_action),
                                                         style = MaterialTheme.typography.labelMedium,
                                                         fontWeight = FontWeight.SemiBold,
                                                         textAlign = TextAlign.Center
@@ -524,7 +651,8 @@ fun ContactSearchContent(
                                             Surface(
                                                 onClick = {
                                                     selectedFilter = SearchTabFilter.RECENTS
-                                                    query = " "
+                                                    focusRequester.requestFocus()
+                                                    keyboardController?.show()
                                                 },
                                                 shape = RoundedCornerShape(16.dp),
                                                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -542,7 +670,7 @@ fun ContactSearchContent(
                                                     )
                                                     Spacer(modifier = Modifier.height(6.dp))
                                                     Text(
-                                                        text = "Call History",
+                                                        text = stringResource(R.string.search_call_history_action),
                                                         style = MaterialTheme.typography.labelMedium,
                                                         fontWeight = FontWeight.SemiBold,
                                                         textAlign = TextAlign.Center
@@ -614,15 +742,24 @@ fun ContactSearchContent(
 
                                     if (showContacts && filteredContacts.isNotEmpty()) {
                                         item {
+                                            val headerTitle = if (selectedFilter == SearchTabFilter.FAVORITES) {
+                                                "Favorites (${filteredContacts.size})"
+                                            } else {
+                                                "${stringResource(R.string.nav_contacts)} (${filteredContacts.size})"
+                                            }
                                             RivoSectionHeader(
-                                                title = "${stringResource(R.string.nav_contacts)} (${filteredContacts.size})",
+                                                title = headerTitle,
                                                 modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
                                                 contentPadding = PaddingValues(horizontal = 4.dp)
                                             )
                                         }
 
                                         val showCards = surfaceStyle.showCards
-                                        itemsIndexed(filteredContacts, key = { _, c -> "contact_${c.id}" }) { index, contact ->
+                                        itemsIndexed(
+                                            filteredContacts,
+                                            key = { _, c -> "contact_${c.id}" },
+                                            contentType = { _, _ -> "contact" }
+                                        ) { index, contact ->
                                             val shape = rivoGroupedItemShape(index, filteredContacts.size)
                                             Column(modifier = Modifier.fillMaxWidth()) {
                                                 Surface(
@@ -645,6 +782,22 @@ fun ContactSearchContent(
                                                                     if (phone.isNotBlank()) {
                                                                         clipboardManager.setText(AnnotatedString(phone))
                                                                         Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }
+                                                                SwipeActionType.VIEW_CONTACT -> {
+                                                                    navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+                                                                }
+                                                                SwipeActionType.SHARE -> {
+                                                                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                                        type = "text/plain"
+                                                                        putExtra(android.content.Intent.EXTRA_TEXT, "${contact.name}: $phone")
+                                                                    }
+                                                                    context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                                }
+                                                                SwipeActionType.BLOCK -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                                        Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
                                                                     }
                                                                 }
                                                                 SwipeActionType.DELETE -> {}
@@ -692,15 +845,24 @@ fun ContactSearchContent(
 
                                     if (showRecents && filteredCallLogs.isNotEmpty()) {
                                         item {
+                                            val headerTitle = if (selectedFilter == SearchTabFilter.MISSED) {
+                                                "Missed Calls (${filteredCallLogs.size})"
+                                            } else {
+                                                "${stringResource(R.string.nav_recents)} (${filteredCallLogs.size})"
+                                            }
                                             RivoSectionHeader(
-                                                title = "${stringResource(R.string.nav_recents)} (${filteredCallLogs.size})",
+                                                title = headerTitle,
                                                 modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
                                                 contentPadding = PaddingValues(horizontal = 4.dp)
                                             )
                                         }
 
                                         val showCards = surfaceStyle.showCards
-                                        itemsIndexed(filteredCallLogs, key = { _, lg -> "call_${lg.id}_${lg.date}" }) { index, lg ->
+                                        itemsIndexed(
+                                            filteredCallLogs,
+                                            key = { _, lg -> "call_${lg.id}_${lg.date}" },
+                                            contentType = { _, _ -> "call_log" }
+                                        ) { index, lg ->
                                             val shape = rivoGroupedItemShape(index, filteredCallLogs.size)
                                             Column(modifier = Modifier.fillMaxWidth()) {
                                                 Surface(
@@ -723,6 +885,27 @@ fun ContactSearchContent(
                                                                     if (phone.isNotBlank()) {
                                                                         clipboardManager.setText(AnnotatedString(phone))
                                                                         Toast.makeText(context, context.getString(R.string.number_copied_toast), Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }
+                                                                SwipeActionType.VIEW_CONTACT -> {
+                                                                    navigator.navigate(
+                                                                        ContactDetailsScreenDestination(
+                                                                            contactId = lg.contactId,
+                                                                            phoneNumber = lg.number
+                                                                        )
+                                                                    )
+                                                                }
+                                                                SwipeActionType.SHARE -> {
+                                                                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                                        type = "text/plain"
+                                                                        putExtra(android.content.Intent.EXTRA_TEXT, "${lg.name ?: lg.number}: $phone")
+                                                                    }
+                                                                    context.startActivity(android.content.Intent.createChooser(shareIntent, null))
+                                                                }
+                                                                SwipeActionType.BLOCK -> {
+                                                                    if (phone.isNotBlank()) {
+                                                                        com.grinch.rivo4.controller.util.BlockedNumbersManager.block(context, phone)
+                                                                        Toast.makeText(context, context.getString(R.string.toast_blocked_number, phone), Toast.LENGTH_SHORT).show()
                                                                     }
                                                                 }
                                                                 SwipeActionType.DELETE -> {}

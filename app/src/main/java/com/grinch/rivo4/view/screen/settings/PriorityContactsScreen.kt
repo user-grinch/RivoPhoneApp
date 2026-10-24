@@ -89,9 +89,9 @@ fun PriorityContactsScreen(
     }
 
     val priorityContactsList = remember(allContacts, settingsState, displayOrder) {
-        val prioritySet = prefs.getPriorityContacts()
         allContacts.filter { contact ->
-            prefs.isPriorityContact(contact.id, contact.phoneNumbers.firstOrNull())
+            prefs.isPriorityContact(contact.id, null) ||
+                contact.phoneNumbers.any { num -> prefs.isPriorityContact(contact.id, num) }
         }.sortedWith { c1, c2 -> ContactUtils.compareContacts(c1, c2, displayOrder) }
     }
 
@@ -309,7 +309,7 @@ fun PriorityContactsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Remove from priority",
+                                    contentDescription = stringResource(R.string.loc_remove_from_priority),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }

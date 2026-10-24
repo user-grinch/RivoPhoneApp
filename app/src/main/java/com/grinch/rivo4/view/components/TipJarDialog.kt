@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.grinch.rivo4.R
 import com.grinch.rivo4.PATREON_URL
 import com.grinch.rivo4.controller.billing.BillingManager
 import com.grinch.rivo4.controller.billing.TipProduct
@@ -57,7 +59,7 @@ fun TipJarDialog(
 
     RivoDialog(
         onDismissRequest = onDismissRequest,
-        title = "Rivo Tip Jar",
+        title = stringResource(R.string.dialog_tip_jar_title),
         icon = Icons.Outlined.Favorite
     ) {
         Column(
@@ -162,27 +164,6 @@ fun TipJarDialog(
                     }
                 )
 
-                if (!isAlreadySupporter && !showSuccessBanner) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextButton(
-                        onClick = {
-                            prefs.setSupporter(true)
-                            isAlreadySupporter = true
-                            showSuccessBanner = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Star,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Already a Patron? Activate Supporter Badge ⭐",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                }
             }
         }
     }

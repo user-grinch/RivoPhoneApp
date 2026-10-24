@@ -74,15 +74,31 @@ class BillingManager(
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Log.d(TAG, "Billing client setup successfully connected.")
                     queryProducts()
+                    restorePurchases()
                 } else {
                     Log.w(TAG, "Billing setup finished with code: ${billingResult.responseCode} - ${billingResult.debugMessage}")
                 }
+
             }
 
             override fun onBillingServiceDisconnected() {
                 Log.w(TAG, "Billing service disconnected.")
             }
         })
+    }
+
+    private fun restorePurchases() {
+        billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder()
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        ) { result, purchases ->
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                purchases.forEach(::handlePurchase)
+            } else {
+                Log.w(TAG, "Failed to restore purchases: ${result.debugMessage}")
+            }
+        }
     }
 
     private fun queryProducts() {
@@ -170,19 +186,25 @@ class BillingManager(
 
     private fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            val consumeParams = ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
+            val productId = purchase.products.firstOrNull() ?: return
+            fun grantVerifiedPurchase() {
+                preferenceManager.setSupportPurchase(purchase.purchaseToken, productId)
+                scope.launch { _purchaseSuccessEvent.emit(true) }
+            }
 
-            billingClient.consumeAsync(consumeParams) { billingResult, _ ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    Log.d(TAG, "Purchase consumed successfully. Granting Supporter status.")
-                    preferenceManager.setSupporter(true)
-                    scope.launch {
-                        _purchaseSuccessEvent.emit(true)
+            if (purchase.isAcknowledged) {
+                grantVerifiedPurchase()
+            } else {
+                val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+                billingClient.acknowledgePurchase(acknowledgeParams) { billingResult ->
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        Log.d(TAG, "Purchase acknowledged and supporter entitlement restored.")
+                        grantVerifiedPurchase()
+                    } else {
+                        Log.w(TAG, "Failed to acknowledge purchase: ${billingResult.debugMessage}")
                     }
-                } else {
-                    Log.w(TAG, "Failed to consume purchase: ${billingResult.responseCode} - ${billingResult.debugMessage}")
                 }
             }
         }

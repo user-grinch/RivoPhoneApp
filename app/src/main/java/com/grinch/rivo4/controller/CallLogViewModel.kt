@@ -18,6 +18,8 @@ import android.database.ContentObserver
 import android.os.Handler
 import android.os.Looper
 import android.provider.CallLog
+import android.util.Log
+
 
 data class TodayCallStats(
     val totalCalls: Int = 0,
@@ -60,8 +62,9 @@ class CallLogViewModel(
         try {
             contentResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, contentObserver)
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            Log.e("CallLogViewModel", "Error: ${e.message}", e)
         }
+        fetchLogs()
     }
 
     override fun onCleared() {
@@ -70,7 +73,7 @@ class CallLogViewModel(
         try {
             contentResolver.unregisterContentObserver(contentObserver)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogViewModel", "Error: ${e.message}", e)
         }
     }
 
@@ -95,7 +98,7 @@ class CallLogViewModel(
         _isLoading.value = false
     }
 
-    private fun calculateTodayStats(logs: List<CallLogEntry>): TodayCallStats {
+    internal fun calculateTodayStats(logs: List<CallLogEntry>): TodayCallStats {
         val cal = java.util.Calendar.getInstance().apply {
             set(java.util.Calendar.HOUR_OF_DAY, 0)
             set(java.util.Calendar.MINUTE, 0)
@@ -103,7 +106,8 @@ class CallLogViewModel(
             set(java.util.Calendar.MILLISECOND, 0)
         }
         val startOfDay = cal.timeInMillis
-        val todayLogs = logs.filter { it.date >= startOfDay }
+        val flattenedLogs = logs.flatMap { if (it.subLogs.isNotEmpty()) it.subLogs else listOf(it) }
+        val todayLogs = flattenedLogs.filter { it.date >= startOfDay }
         val totalCalls = todayLogs.sumOf { it.count }
         val incomingCalls = todayLogs.sumOf { entry ->
             if (entry.types.isNotEmpty()) entry.types.count { it == CallLog.Calls.INCOMING_TYPE }

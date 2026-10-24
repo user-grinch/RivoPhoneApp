@@ -1,4 +1,5 @@
 package com.grinch.rivo4.view.screen.settings
+import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import androidx.compose.material.icons.automirrored.outlined.PhoneMissed
 import androidx.compose.material.icons.automirrored.outlined.PhoneCallback
 import androidx.compose.material.icons.automirrored.outlined.ContactSupport
@@ -12,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CallEnd
+import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.PersonOff
 import androidx.compose.material.icons.outlined.Person
@@ -99,6 +101,9 @@ fun CallAccountsScreen(
     var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
     var autoPasteClipboard by remember(settingsState) { mutableStateOf(prefs.isAutoPasteClipboardEnabled()) }
     var callLogLimit by remember(settingsState) { mutableStateOf(prefs.getCallLogLimit()) }
+    var groupCallLogs by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, true))
+    }
 
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var unknownCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.unknownModel(context)) }
@@ -154,6 +159,8 @@ fun CallAccountsScreen(
 
     var showSimDialog by remember { mutableStateOf(false) }
     var showCallWaitingDialog by remember { mutableStateOf(false) }
+    var showDefaultVideoAppDialog by remember { mutableStateOf(false) }
+    var defaultVideoApp by remember(settingsState) { mutableStateOf(prefs.getDefaultVideoApp()) }
 
     LaunchedEffect(SettingsHighlightManager.highlightEpoch) {
         if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
@@ -277,6 +284,20 @@ fun CallAccountsScreen(
                             )
                         }
                         item {
+                            val availableVideoApps = remember(context) { com.grinch.rivo4.view.components.VideoCallHelper.getAvailableVideoApps(context) }
+                            val defaultVideoAppName = when {
+                                defaultVideoApp.isBlank() || defaultVideoApp == "always_ask" -> stringResource(R.string.video_call_always_ask)
+                                defaultVideoApp == "system" -> stringResource(R.string.video_call_carrier)
+                                else -> availableVideoApps.find { it.id == defaultVideoApp }?.name ?: stringResource(R.string.video_call_always_ask)
+                            }
+                            RivoListItem(
+                                headline = stringResource(R.string.video_call_default_app),
+                                supporting = defaultVideoAppName,
+                                leadingIcon = Icons.Default.VideoCall,
+                                onClick = { showDefaultVideoAppDialog = true }
+                            )
+                        }
+                        item {
                             RivoListItem(
                                 headline = stringResource(R.string.settings_call_calling_accounts),
                                 supporting = stringResource(R.string.settings_call_calling_accounts_supporting),
@@ -347,96 +368,24 @@ fun CallAccountsScreen(
                             )
                         }
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_proximity_sensor),
-                                supporting = stringResource(R.string.settings_call_proximity_sensor_supporting),
-                                leadingIcon = Icons.Outlined.Sensors,
-                                checked = proximitySensor,
-                                onCheckedChange = {
-                                    proximitySensor = it
-                                    prefs.setBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_auto_speaker_proximity),
-                                supporting = stringResource(R.string.settings_call_auto_speaker_proximity_supporting),
-                                leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
-                                checked = autoSpeakerProximity,
-                                onCheckedChange = {
-                                    autoSpeakerProximity = it
-                                    prefs.setBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, it)
-                                }
-                            )
-                        }
-                        item {
-                            Box(modifier = Modifier.padding(vertical = 4.dp)) {
-                                RivoVisualOptionSelectorRow(
-                                    headline = stringResource(R.string.settings_call_incoming_ui),
-                                    supporting = stringResource(R.string.settings_call_incoming_ui_supporting),
-                                    leadingIcon = Icons.Outlined.PhoneInTalk,
-                                    options = listOf(
-                                        stringResource(R.string.settings_call_incoming_ui_horizontal_swipe) to 0,
-                                        stringResource(R.string.settings_call_incoming_ui_buttons) to 1,
-                                        stringResource(R.string.settings_call_incoming_ui_slide_ios) to 2,
-                                        stringResource(R.string.settings_call_incoming_ui_vertical_swipe) to 3
-                                    ),
-                                    selectedValue = incomingCallUI,
-                                    onValueChange = {
-                                        incomingCallUI = it
-                                        prefs.setInt(PreferenceManager.KEY_INCOMING_CALL_UI_MODE, it)
-                                    },
-                                    tileWidth = 110.dp,
-                                    tileHeight = 76.dp
-                                ) { value, _ ->
-                                    IncomingCallUiPreview(value)
-                                }
-                            }
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_call_always_fullscreen),
-                                supporting = stringResource(R.string.settings_call_always_fullscreen_supporting),
-                                leadingIcon = Icons.Outlined.Fullscreen,
-                                checked = alwaysFullScreenCalls,
-                                onCheckedChange = {
-                                    alwaysFullScreenCalls = it
-                                    prefs.setBoolean(PreferenceManager.KEY_ALWAYS_FULL_SCREEN_CALLS, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_open_call_screen_on_answer_title),
-                                supporting = stringResource(R.string.settings_open_call_screen_on_answer_supporting),
-                                leadingIcon = Icons.Outlined.PhoneInTalk,
-                                checked = openCallScreenOnAnswer,
-                                onCheckedChange = {
-                                    openCallScreenOnAnswer = it
-                                    prefs.setOpenCallScreenOnAnswerEnabled(it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = "Pocket Mode",
-                                supporting = "Prevent accidental touches during incoming calls when phone is in pocket",
-                                leadingIcon = Icons.Outlined.ScreenLockPortrait,
-                                checked = pocketMode,
-                                onCheckedChange = {
-                                    pocketMode = it
-                                    prefs.setBoolean(PreferenceManager.KEY_POCKET_MODE, it)
-                                }
-                            )
-                        }
-                        item {
                             RivoListItem(
-                                headline = "Quick Responses",
-                                supporting = "Manage canned SMS decline responses for incoming calls",
+                                headline = stringResource(R.string.settings_quick_responses),
+                                supporting = stringResource(R.string.settings_quick_responses_supporting),
                                 leadingIcon = Icons.Outlined.Quickreply,
                                 onClick = {
                                     navigator.navigate(QuickResponsesScreenDestination())
+                                }
+                            )
+                        }
+                        item {
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_group_call_logs),
+                                supporting = stringResource(R.string.settings_group_call_logs_supporting),
+                                leadingIcon = Icons.AutoMirrored.Outlined.CallMerge,
+                                checked = groupCallLogs,
+                                onCheckedChange = { enabled ->
+                                    groupCallLogs = enabled
+                                    prefs.setBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, enabled)
                                 }
                             )
                         }
@@ -461,8 +410,8 @@ fun CallAccountsScreen(
                         }
                         item {
                             RivoSwitchListItem(
-                                headline = "Post-Call Summary",
-                                supporting = "Show call duration and quick actions (call back, SMS, note) after ending a call",
+                                headline = stringResource(R.string.settings_post_call_summary),
+                                supporting = stringResource(R.string.settings_post_call_summary_supporting),
                                 leadingIcon = Icons.Outlined.CallEnd,
                                 checked = postCallSummary,
                                 onCheckedChange = {
@@ -605,7 +554,7 @@ fun CallAccountsScreen(
 
                 item {
                     RivoExpressiveGroup(
-                        title = "Work in Progress",
+                        title = stringResource(R.string.settings_work_in_progress),
                         icon = Icons.Outlined.Construction,
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
                     ) {
@@ -623,40 +572,6 @@ fun CallAccountsScreen(
                                 supporting = stringResource(R.string.settings_call_waiting_supporting),
                                 leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
                                 onClick = { showCallWaitingDialog = true }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    RivoExpressiveGroup(
-                        title = stringResource(R.string.settings_call_backgrounds_title),
-                        icon = Icons.Outlined.Wallpaper
-                    ) {
-                        item {
-                            CallBackgroundSettingTile(
-                                headline = stringResource(R.string.settings_call_default_background),
-                                supporting = if (defaultCallBg != null) {
-                                    stringResource(R.string.settings_call_default_background_set)
-                                } else {
-                                    stringResource(R.string.settings_call_default_background_none)
-                                },
-                                backgroundModel = defaultCallBg,
-                                icon = Icons.Outlined.Wallpaper,
-                                onClick = { showDefaultBgDialog = true }
-                            )
-                        }
-                        item {
-                            CallBackgroundSettingTile(
-                                headline = stringResource(R.string.settings_call_unknown_background),
-                                supporting = if (unknownCallBg != null) {
-                                    stringResource(R.string.settings_call_unknown_background_set)
-                                } else {
-                                    stringResource(R.string.settings_call_unknown_background_none)
-                                },
-                                backgroundModel = unknownCallBg,
-                                icon = Icons.AutoMirrored.Outlined.ContactSupport,
-                                onClick = { showUnknownBgDialog = true }
                             )
                         }
                     }
@@ -784,6 +699,29 @@ fun CallAccountsScreen(
                     defaultSim = index
                     prefs.setInt("default_sim", index)
                     showSimDialog = false
+                }
+            )
+        }
+
+        if (showDefaultVideoAppDialog) {
+            val availableApps = com.grinch.rivo4.view.components.VideoCallHelper.getAvailableVideoApps(context)
+            val options = listOf("always_ask" to stringResource(R.string.video_call_always_ask)) +
+                availableApps.map { it.id to it.name }
+            val currentSelected = if (defaultVideoApp.isBlank()) "always_ask" else defaultVideoApp
+
+            RivoSelectionDialog(
+                onDismissRequest = { showDefaultVideoAppDialog = false },
+                title = stringResource(R.string.video_call_default_app),
+                icon = Icons.Default.VideoCall,
+                items = options,
+                itemLabel = { it.second },
+                itemIcon = { Icons.Default.VideoCall },
+                isSelected = { it.first == currentSelected },
+                onItemSelected = { selectedOption ->
+                    val newId = if (selectedOption.first == "always_ask") "" else selectedOption.first
+                    defaultVideoApp = newId
+                    prefs.setDefaultVideoApp(newId)
+                    showDefaultVideoAppDialog = false
                 }
             )
         }

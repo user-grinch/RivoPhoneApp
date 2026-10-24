@@ -61,6 +61,7 @@ class CallAnalyticsViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    @Volatile
     private var cachedCallLogs: List<CallLogEntry>? = null
 
     init {
@@ -139,7 +140,22 @@ class CallAnalyticsViewModel(
         }
         val logs = cachedCallLogs ?: emptyList()
         val cutoff = calculateCutoffTime(_selectedRange.value)
-        val filtered = if (cutoff > 0L) logs.filter { it.date >= cutoff } else logs
+        val flattenedLogs = logs.flatMap { parent ->
+            if (parent.subLogs.isNotEmpty()) {
+                parent.subLogs.map { sub ->
+                    sub.copy(
+                        name = sub.name ?: parent.name,
+                        photoUri = sub.photoUri ?: parent.photoUri,
+                        contactId = sub.contactId ?: parent.contactId,
+                        simNumber = sub.simNumber ?: parent.simNumber,
+                        simLabel = sub.simLabel ?: parent.simLabel
+                    )
+                }
+            } else {
+                listOf(parent)
+            }
+        }
+        val filtered = if (cutoff > 0L) flattenedLogs.filter { it.date >= cutoff } else flattenedLogs
 
         var totalTalkTime = 0L
         var totalCalls = 0
@@ -215,7 +231,8 @@ class CallAnalyticsViewModel(
                 )
             }
 
-        val avgDuration = if (totalCalls > 0) totalTalkTime / totalCalls else 0L
+        val connectedCalls = incoming + outgoing
+        val avgDuration = if (connectedCalls > 0) totalTalkTime / connectedCalls else 0L
 
         _analytics.value = CallAnalyticsSummary(
             totalTalkTimeSeconds = totalTalkTime,

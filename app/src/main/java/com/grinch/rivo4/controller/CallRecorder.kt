@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.grinch.rivo4.IShellService
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.shizuku.ScrcpyAudioCodec
 import com.grinch.rivo4.controller.shizuku.ScrcpyAudioMuxer
 import com.grinch.rivo4.controller.shizuku.ScrcpyClient
@@ -172,6 +173,9 @@ object CallRecorder {
 
     const val DIRECTORY_NAME = "Rivo Recordings"
 
+    /** Same value as [Environment.DIRECTORY_RECORDINGS], which only exists from API 31. */
+    private const val RECORDINGS_STORAGE_DIR = "Recordings"
+
     @Volatile
     private var recordingStartTimeMillis: Long = 0L
 
@@ -189,7 +193,7 @@ object CallRecorder {
 
     fun hasStoragePermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            false
+            Environment.isExternalStorageManager()
         } else {
             ContextCompat.checkSelfPermission(
                 context,
@@ -282,7 +286,7 @@ object CallRecorder {
 
         // 2. Standard public Recordings folder: /storage/emulated/0/Recordings/Rivo Recordings
         val pubRecordings = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS),
+            Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR),
             DIRECTORY_NAME
         )
         if (isWritableDirectory(pubRecordings)) {
@@ -299,7 +303,7 @@ object CallRecorder {
         }
 
         // 4. App-specific external storage (always writable)
-        val extDir = context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)
+        val extDir = context.getExternalFilesDir(RECORDINGS_STORAGE_DIR)
             ?: context.getExternalFilesDir(null)
         if (extDir != null) {
             val dir = File(extDir, DIRECTORY_NAME)
@@ -337,7 +341,7 @@ object CallRecorder {
         }
         runCatching {
             val d =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), DIRECTORY_NAME)
+                File(Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR), DIRECTORY_NAME)
             if (d.exists() && d.isDirectory) dirs.add(d)
         }
         runCatching {
@@ -368,11 +372,11 @@ object CallRecorder {
         }
         runCatching {
             val d =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RECORDINGS), "Voice Recorder")
+                File(Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR), "Voice Recorder")
             if (d.exists() && d.isDirectory) dirs.add(d)
         }
         runCatching {
-            context.getExternalFilesDir(Environment.DIRECTORY_RECORDINGS)?.let {
+            context.getExternalFilesDir(RECORDINGS_STORAGE_DIR)?.let {
                 val d = File(it, DIRECTORY_NAME)
                 if (d.exists() && d.isDirectory) dirs.add(d)
             }
@@ -1013,7 +1017,7 @@ object CallRecorder {
 
         recorderScope.launch(Dispatchers.Main) {
             try {
-                Toast.makeText(ctx, "Call recorded: ${effectiveFile.name}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, ctx.getString(R.string.call_recorded, effectiveFile.name), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
             }
         }
@@ -1038,22 +1042,24 @@ object CallRecorder {
     fun listRecordings(context: Context): List<File> {
         val destinationDir = getRecordingsDirectory(context)
 
-        // 1. Recover any unmigrated staging files from cacheDir
-        runCatching {
-            context.cacheDir.listFiles()
-                ?.filter { it.isFile && it.name.startsWith("staging_") && it.length() > 0 }
-                ?.forEach { staging ->
-                    try {
-                        val recoveredName = staging.name.removePrefix("staging_")
-                        val recoveredFile = File(destinationDir, recoveredName)
-                        if (staging.canonicalPath != recoveredFile.canonicalPath) {
-                            staging.copyTo(recoveredFile, overwrite = true)
-                            staging.delete()
+        // 1. Recover any unmigrated staging files from cacheDir (only when not actively recording)
+        if (!_isRecording.value && !isStarting.get()) {
+            runCatching {
+                context.cacheDir.listFiles()
+                    ?.filter { it.isFile && it.name.startsWith("staging_") && it.length() > 0 }
+                    ?.forEach { staging ->
+                        try {
+                            val recoveredName = staging.name.removePrefix("staging_")
+                            val recoveredFile = File(destinationDir, recoveredName)
+                            if (staging.canonicalPath != recoveredFile.canonicalPath) {
+                                staging.copyTo(recoveredFile, overwrite = true)
+                                staging.delete()
+                            }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
                         }
-                    } catch (e: Exception) {
-                        Log.w(TAG, "Failed recovering staging file: ${staging.name}", e)
                     }
-                }
+            }
         }
 
         // 2. Scan recording directories

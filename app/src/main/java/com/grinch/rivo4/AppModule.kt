@@ -10,6 +10,8 @@ import com.grinch.rivo4.modal.`interface`.IContactsRepository
 import com.grinch.rivo4.modal.repository.CallLogRepository
 import com.grinch.rivo4.modal.repository.ContactsRepository
 import com.grinch.rivo4.controller.CallAnalyticsViewModel
+import com.grinch.rivo4.controller.ads.RewardedAdManager
+import com.grinch.rivo4.controller.billing.BillingManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -44,6 +46,9 @@ val appModule = module {
     }
     single {
         com.grinch.rivo4.controller.billing.BillingManager(androidContext(), get())
+    }
+    single {
+        RewardedAdManager(androidContext())
     }
     viewModel { ContactsViewModel(get(), get(), get(), androidContext()) }
     viewModel { CallLogViewModel(get(), androidContext().contentResolver) }

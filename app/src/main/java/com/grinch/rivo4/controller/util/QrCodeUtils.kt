@@ -2,6 +2,8 @@ package com.grinch.rivo4.controller.util
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Log
+
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -26,7 +28,7 @@ object QrCodeUtils {
             }
             bitmap
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("QrCodeUtils", "Error: ${e.message}", e)
             null
         }
     }
@@ -36,8 +38,12 @@ object QrCodeUtils {
             append("BEGIN:VCARD\n")
             append("VERSION:3.0\n")
             append("FN:$name\n")
-            if (phone != null) append("TEL;TYPE=CELL:$phone\n")
-            if (email != null) append("EMAIL:$email\n")
+            if (!phone.isNullOrBlank() && !phone.equals("Unknown", ignoreCase = true)) {
+                append("TEL;TYPE=CELL:$phone\n")
+            }
+            if (!email.isNullOrBlank()) {
+                append("EMAIL:$email\n")
+            }
             append("END:VCARD")
         }
     }

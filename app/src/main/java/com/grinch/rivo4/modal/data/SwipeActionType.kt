@@ -3,11 +3,14 @@ package com.grinch.rivo4.modal.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoNotDisturb
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -55,6 +58,21 @@ enum class SwipeActionType(
         id = PreferenceManager.SWIPE_ACTION_DELETE,
         titleRes = R.string.swipe_action_delete,
         icon = Icons.Default.Delete
+    ),
+    VIEW_CONTACT(
+        id = PreferenceManager.SWIPE_ACTION_VIEW_CONTACT,
+        titleRes = R.string.swipe_action_view_contact,
+        icon = Icons.Default.Person
+    ),
+    SHARE(
+        id = PreferenceManager.SWIPE_ACTION_SHARE,
+        titleRes = R.string.swipe_action_share,
+        icon = Icons.Default.Share
+    ),
+    BLOCK(
+        id = PreferenceManager.SWIPE_ACTION_BLOCK,
+        titleRes = R.string.swipe_action_block,
+        icon = Icons.Default.Block
     );
 
     @Composable
@@ -66,6 +84,9 @@ enum class SwipeActionType(
         WHATSAPP -> Color(0xFF25D366)
         COPY_NUMBER -> MaterialTheme.colorScheme.secondaryContainer
         DELETE -> MaterialTheme.colorScheme.errorContainer
+        VIEW_CONTACT -> Color(0xFF00897B)
+        SHARE -> Color(0xFF5E35B1)
+        BLOCK -> MaterialTheme.colorScheme.error
     }
 
     @Composable
@@ -77,6 +98,9 @@ enum class SwipeActionType(
         WHATSAPP -> Color.White
         COPY_NUMBER -> MaterialTheme.colorScheme.onSecondaryContainer
         DELETE -> MaterialTheme.colorScheme.onErrorContainer
+        VIEW_CONTACT -> Color.White
+        SHARE -> Color.White
+        BLOCK -> Color.White
     }
 
     companion object {

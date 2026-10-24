@@ -2,8 +2,6 @@ package com.grinch.rivo4.view.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -13,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +23,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.modal.data.SwipeActionType
@@ -57,58 +53,36 @@ fun RivoSwipeToActionBox(
     val scope = rememberCoroutineScope()
     val cardRoundness = LocalCardRoundness.current
 
-    val thresholdPx = with(density) { 96.dp.toPx() }
-    val maxDragPx = with(density) { 150.dp.toPx() }
+    val thresholdPx = with(density) { 54.dp.toPx() }
+    val maxDragPx = with(density) { 110.dp.toPx() }
+    val initialDeadzonePx = with(density) { 4.dp.toPx() }
 
-    val offsetX = remember { Animatable(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
     var hasTriggeredHaptic by remember { mutableStateOf(false) }
 
     val outerShape = RoundedCornerShape(cardRoundness.dp)
+    val slidingShape = RoundedCornerShape(16.dp)
 
-    val currentOffset = offsetX.value
-    val isSwipingRight = currentOffset > 0 && swipeRightAction != SwipeActionType.NONE
-    val isSwipingLeft = currentOffset < 0 && swipeLeftAction != SwipeActionType.NONE
-    val isDragging = abs(currentOffset) > 1f
-
-    val isArmed = abs(currentOffset) >= thresholdPx
-
-    val hasMoved = abs(currentOffset) > 0.5f
-
-    val animatedElevation by if (hasMoved) {
-        animateDpAsState(
-            targetValue = if (isDragging) 6.dp else 0.dp,
-            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-            label = "swipeElevation"
-        )
-    } else {
-        remember { mutableStateOf(0.dp) }
+    val isSwipingRight by remember {
+        derivedStateOf { offsetX > 0.5f && swipeRightAction != SwipeActionType.NONE }
     }
-
-    val slidingCornerRadius by if (hasMoved) {
-        animateDpAsState(
-            targetValue = if (isDragging) 16.dp else 0.dp,
-            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-            label = "slidingCorner"
-        )
-    } else {
-        remember { mutableStateOf(0.dp) }
+    val isSwipingLeft by remember {
+        derivedStateOf { offsetX < -0.5f && swipeLeftAction != SwipeActionType.NONE }
     }
-    val slidingShape = if (hasMoved) RoundedCornerShape(slidingCornerRadius) else RoundedCornerShape(0.dp)
+    val isDragging by remember {
+        derivedStateOf { abs(offsetX) > 1f }
+    }
+    val isArmed by remember {
+        derivedStateOf { abs(offsetX) >= thresholdPx }
+    }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(outerShape)
     ) {
-        // Revealed Background Track
+        // Revealed Background Track (Right Swipe Action)
         if (isSwipingRight) {
-            val progress = (abs(currentOffset) / thresholdPx).coerceIn(0f, 1f)
-            val badgeScale by animateFloatAsState(
-                targetValue = if (isArmed) 1.12f else (0.8f + (progress * 0.2f)),
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
-                label = "badgeScaleRight"
-            )
-
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -119,15 +93,20 @@ fun RivoSwipeToActionBox(
                     modifier = Modifier
                         .padding(start = 24.dp)
                         .graphicsLayer {
-                            scaleX = badgeScale
-                            scaleY = badgeScale
-                            alpha = if (isArmed) 1f else 0.70f + (progress * 0.30f)
+                            val current = abs(offsetX)
+                            val progress = (current / thresholdPx).coerceIn(0f, 1f)
+                            val armed = current >= thresholdPx
+                            val scale = if (armed) 1.12f else (0.8f + (progress * 0.2f))
+                            scaleX = scale
+                            scaleY = scale
+                            alpha = if (armed) 1f else 0.70f + (progress * 0.30f)
                         },
                     contentAlignment = Alignment.Center
                 ) {
+                    val armed = isArmed
                     Surface(
                         shape = CircleShape,
-                        color = swipeRightAction.contentColor().copy(alpha = if (isArmed) 0.30f else 0.18f),
+                        color = swipeRightAction.contentColor().copy(alpha = if (armed) 0.30f else 0.18f),
                         modifier = Modifier.size(42.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -142,13 +121,7 @@ fun RivoSwipeToActionBox(
                 }
             }
         } else if (isSwipingLeft) {
-            val progress = (abs(currentOffset) / thresholdPx).coerceIn(0f, 1f)
-            val badgeScale by animateFloatAsState(
-                targetValue = if (isArmed) 1.12f else (0.8f + (progress * 0.2f)),
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
-                label = "badgeScaleLeft"
-            )
-
+            // Revealed Background Track (Left Swipe Action)
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -159,15 +132,20 @@ fun RivoSwipeToActionBox(
                     modifier = Modifier
                         .padding(end = 24.dp)
                         .graphicsLayer {
-                            scaleX = badgeScale
-                            scaleY = badgeScale
-                            alpha = if (isArmed) 1f else 0.70f + (progress * 0.30f)
+                            val current = abs(offsetX)
+                            val progress = (current / thresholdPx).coerceIn(0f, 1f)
+                            val armed = current >= thresholdPx
+                            val scale = if (armed) 1.12f else (0.8f + (progress * 0.2f))
+                            scaleX = scale
+                            scaleY = scale
+                            alpha = if (armed) 1f else 0.70f + (progress * 0.30f)
                         },
                     contentAlignment = Alignment.Center
                 ) {
+                    val armed = isArmed
                     Surface(
                         shape = CircleShape,
-                        color = swipeLeftAction.contentColor().copy(alpha = if (isArmed) 0.30f else 0.18f),
+                        color = swipeLeftAction.contentColor().copy(alpha = if (armed) 0.30f else 0.18f),
                         modifier = Modifier.size(42.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -187,12 +165,12 @@ fun RivoSwipeToActionBox(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset { IntOffset(currentOffset.roundToInt(), 0) }
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .then(
                     if (isDragging) {
                         Modifier
                             .shadow(
-                                elevation = animatedElevation,
+                                elevation = 6.dp,
                                 shape = slidingShape,
                                 clip = false
                             )
@@ -206,48 +184,52 @@ fun RivoSwipeToActionBox(
                     shape = if (isDragging) slidingShape else RoundedCornerShape(0.dp)
                 )
                 .pointerInput(enabled, swipeRightAction, swipeLeftAction) {
+                    if (!enabled) return@pointerInput
                     detectHorizontalDragGestures(
                         onDragStart = {
                             hasTriggeredHaptic = false
                         },
                         onDragEnd = {
-                            val finalOffset = offsetX.value
+                            val finalOffset = offsetX
                             if (finalOffset >= thresholdPx && swipeRightAction != SwipeActionType.NONE) {
                                 onTriggerAction(swipeRightAction)
                             } else if (finalOffset <= -thresholdPx && swipeLeftAction != SwipeActionType.NONE) {
                                 onTriggerAction(swipeLeftAction)
                             }
+                            hasTriggeredHaptic = false
                             scope.launch {
-                                offsetX.animateTo(
+                                Animatable(finalOffset).animateTo(
                                     targetValue = 0f,
                                     animationSpec = spring(
                                         stiffness = Spring.StiffnessMedium,
                                         dampingRatio = Spring.DampingRatioLowBouncy
                                     )
-                                )
+                                ) {
+                                    offsetX = value
+                                }
                             }
-                            hasTriggeredHaptic = false
                         },
                         onDragCancel = {
+                            hasTriggeredHaptic = false
+                            val current = offsetX
                             scope.launch {
-                                offsetX.animateTo(
+                                Animatable(current).animateTo(
                                     targetValue = 0f,
                                     animationSpec = spring(
                                         stiffness = Spring.StiffnessMedium,
                                         dampingRatio = Spring.DampingRatioLowBouncy
                                     )
-                                )
+                                ) {
+                                    offsetX = value
+                                }
                             }
-                            hasTriggeredHaptic = false
                         },
                         onHorizontalDrag = { change, dragAmount ->
                             change.consume()
 
-                            // Intent-based resistance: deliberate drag inertia so accidental swipes don't trigger easily
-                            val currentMag = abs(offsetX.value)
-                            val initialDeadzonePx = with(density) { 24.dp.toPx() }
-                            val friction = if (currentMag < initialDeadzonePx) 0.45f else 0.62f
-                            val rawNext = offsetX.value + (dragAmount * friction)
+                            val currentMag = abs(offsetX)
+                            val friction = if (currentMag < initialDeadzonePx) 0.90f else 1.0f
+                            val rawNext = offsetX + (dragAmount * friction)
 
                             val next = when {
                                 rawNext > 0 && swipeRightAction == SwipeActionType.NONE -> 0f
@@ -255,7 +237,6 @@ fun RivoSwipeToActionBox(
                                 else -> rawNext
                             }
 
-                            // Damped spring resistance past threshold
                             val direction = if (next >= 0) 1f else -1f
                             val mag = abs(next)
                             val dampedMag = if (mag > thresholdPx) {
@@ -264,10 +245,7 @@ fun RivoSwipeToActionBox(
                                 mag
                             }
                             val clamped = (dampedMag * direction).coerceIn(-maxDragPx, maxDragPx)
-
-                            scope.launch {
-                                offsetX.snapTo(clamped)
-                            }
+                            offsetX = clamped
 
                             if (abs(clamped) >= thresholdPx && !hasTriggeredHaptic) {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

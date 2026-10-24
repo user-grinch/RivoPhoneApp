@@ -8,6 +8,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.R
 
 object AppLockManager {
     private const val TAG = "AppLockManager"
@@ -40,6 +41,8 @@ object AppLockManager {
     fun onAppForegrounded(prefs: PreferenceManager) {
         if (isLocked(prefs)) {
             isUnlocked = false
+        } else {
+            lastBackgroundTime = 0L
         }
     }
 
@@ -72,8 +75,8 @@ object AppLockManager {
 
     fun authenticate(
         activity: FragmentActivity,
-        title: String = "Unlock Rivo Phone",
-        subtitle: String = "Use your Face, Fingerprint, PIN, or Password",
+        title: String = activity.getString(R.string.app_lock_unlock_title),
+        subtitle: String = activity.getString(R.string.app_lock_unlock_subtitle),
         onSuccess: () -> Unit,
         onError: (String) -> Unit = {}
     ) {

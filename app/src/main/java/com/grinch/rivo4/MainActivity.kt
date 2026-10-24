@@ -2,12 +2,14 @@ package com.grinch.rivo4
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.Settings
+import android.util.Log
+
 import android.telecom.Call
-import android.window.OnBackInvokedCallback
-import android.window.OnBackInvokedDispatcher
 import com.grinch.rivo4.controller.CallActivity
 import com.grinch.rivo4.controller.CallService
 import com.grinch.rivo4.view.components.OngoingCallTopBanner
@@ -38,6 +40,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +56,8 @@ import com.grinch.rivo4.controller.util.openLink
 import com.grinch.rivo4.view.components.RivoDialog
 import com.grinch.rivo4.view.screen.onboarding.MorphingOnboardingScreen
 import com.grinch.rivo4.view.screen.transitions.AppTransitions
+import com.grinch.rivo4.view.screen.transitions.LocalTransitionStyle
+import com.grinch.rivo4.view.screen.transitions.LocalTransitionTimeScale
 import com.grinch.rivo4.view.screen.transitions.getAppTransition
 import com.grinch.rivo4.view.theme.Rivo4Theme
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -107,9 +112,9 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        applySystemOrientationPolicy()
         intentState = intent
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         if (AppLockManager.isLocked(preferenceManager)) {
             isAppLocked = true
@@ -124,79 +129,30 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
 
         setContent {
             Rivo4Theme {
+                val context = LocalContext.current
                 val navController = rememberNavController()
                 val requestedTab = remember {
                     mutableStateOf<Int?>(if (isContactsOnlyEntry) PreferenceManager.TAB_CONTACTS else null)
                 }
                 currentRequestedTab = requestedTab
 
-                CompositionLocalProvider(
-                    LocalRequestedTab provides requestedTab
-                ) {
-
                 val prefs = koinInject<PreferenceManager>()
                 val settingsState by prefs.settingsChanged.collectAsState()
-                val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
-                val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
+                val defBar = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0) }
+                val transitionStyle = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0) }
+                val transitionTimeScale = remember(settingsState) { prefs.getTransitionTimeScale() }
                 val predictiveBackEnabled = remember(settingsState) { prefs.isPredictiveBackEnabled() }
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
-
-                DisposableEffect(predictiveBackEnabled) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        val dispatcher = onBackInvokedDispatcher
-                        if (!predictiveBackEnabled) {
-                            var isDispatching = false
-                            var callback: OnBackInvokedCallback? = null
-                            callback = OnBackInvokedCallback {
-                                if (isDispatching) return@OnBackInvokedCallback
-                                isDispatching = true
-                                try {
-                                    callback?.let { cb ->
-                                        try {
-                                            dispatcher.unregisterOnBackInvokedCallback(cb)
-                                        } catch (_: Exception) {}
-                                    }
-                                    if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-                                        onBackPressedDispatcher.onBackPressed()
-                                    } else {
-                                        moveTaskToBack(true)
-                                    }
-                                } catch (_: Exception) {
-                                    finish()
-                                } finally {
-                                    isDispatching = false
-                                    if (!prefs.isPredictiveBackEnabled()) {
-                                        callback?.let { cb ->
-                                            try {
-                                                dispatcher.registerOnBackInvokedCallback(
-                                                    OnBackInvokedDispatcher.PRIORITY_OVERLAY,
-                                                    cb
-                                                )
-                                            } catch (_: Exception) {}
-                                        }
-                                    }
-                                }
-                            }
-                            try {
-                                dispatcher.registerOnBackInvokedCallback(
-                                    OnBackInvokedDispatcher.PRIORITY_OVERLAY,
-                                    callback
-                                )
-                            } catch (_: Exception) {}
-
-                            onDispose {
-                                try {
-                                    dispatcher.unregisterOnBackInvokedCallback(callback)
-                                } catch (_: Exception) {}
-                            }
-                        } else {
-                            onDispose {}
-                        }
-                    } else {
-                        onDispose {}
-                    }
+                val defaultTransitions = remember(transitionStyle, predictiveBackEnabled, transitionTimeScale) {
+                    getAppTransition(transitionStyle, predictiveBackEnabled, transitionTimeScale)
                 }
+
+                CompositionLocalProvider(
+                    LocalRequestedTab provides requestedTab,
+                    LocalTransitionStyle provides transitionStyle,
+                    LocalTransitionTimeScale provides transitionTimeScale
+                ) {
 
                 val currentCallSession by CallService.currentCallSession.collectAsState()
                 val isCallOngoing = currentCallSession != null &&
@@ -205,7 +161,11 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 currentCallSession?.state == Call.STATE_DIALING ||
                                 currentCallSession?.state == Call.STATE_CONNECTING)
 
-                val darkTheme = isSystemInDarkTheme()
+                val darkTheme = when (prefs.getInt(PreferenceManager.KEY_THEME_MODE, PreferenceManager.THEME_MODE_SYSTEM)) {
+                    PreferenceManager.THEME_MODE_LIGHT -> false
+                    PreferenceManager.THEME_MODE_DARK -> true
+                    else -> isSystemInDarkTheme()
+                }
                 DisposableEffect(isCallOngoing, darkTheme) {
                     val insetsController = WindowCompat.getInsetsController(window, window.decorView)
                     if (isCallOngoing) {
@@ -266,7 +226,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                             DestinationsNavHost(
                                 navGraph = NavGraphs.root,
                                 navController = navController,
-                                defaultTransitions = getAppTransition(transitionStyle, predictiveBackEnabled)
+                                defaultTransitions = defaultTransitions
                             )
 
                         var showRatePrompt by remember { mutableStateOf(false) }
@@ -299,10 +259,10 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                     prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
                                     showRatePrompt = false
                                 },
-                                title = "Enjoying Rivo Phone?",
+                                title = stringResource(R.string.main_enjoying_rivo),
                                 icon = Icons.Default.Star,
                                 confirmAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = "Rate on Google Play",
+                                    label = stringResource(R.string.main_rate_google_play),
                                     onClick = {
                                         openLink(context, PLAY_STORE_URL)
                                         prefs.setBoolean(PreferenceManager.KEY_RATE_APP_SHOWN, true)
@@ -310,7 +270,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                     }
                                 ),
                                 dismissAction = com.grinch.rivo4.view.components.RivoDialogAction(
-                                    label = "Remind Me Later",
+                                    label = stringResource(R.string.main_remind_later),
                                     onClick = {
                                         val threeDaysLater = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000L)
                                         prefs.setString(PreferenceManager.KEY_RATE_APP_SNOOZED_TIME, threeDaysLater.toString())
@@ -319,7 +279,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 )
                             ) {
                                 Text(
-                                    text = "If Rivo has made managing your calls better, please consider leaving a 5-star rating on Google Play. Your support helps us keep the app free and independent!",
+                                    text = stringResource(R.string.main_rate_google_play_body),
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -354,6 +314,24 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 }
                 }
             }
+        }
+    }
+
+    private fun applySystemOrientationPolicy() {
+        val rotationEnabled = try {
+            Settings.System.getInt(
+                contentResolver,
+                Settings.System.ACCELEROMETER_ROTATION,
+                1
+            ) != 0
+        } catch (_: SecurityException) {
+            true
+        }
+
+        requestedOrientation = if (rotationEnabled) {
+            ActivityInfo.SCREEN_ORIENTATION_USER
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
     }
 
@@ -405,7 +383,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                             launchSingleTop = true
                         }
                     } catch (e2: Exception) {
-                        e2.printStackTrace()
+                        Log.e("MainActivity", "Error navigating to main screen: ${e2.message}", e2)
                     }
                 }
             }
@@ -426,7 +404,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val telecomManager = getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager
                 telecomManager?.cancelMissedCallsNotification()
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("MainActivity", "Error canceling missed calls: ${e.message}", e)
             }
             navController.navigate(MainScreenDestination(initialTab = 0).route) {
                 popUpTo(navController.graph.startDestinationId)
@@ -488,7 +466,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 val phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE)
                 navController.navigate(
                     ContactSelectionScreenDestination(
-                        title = "Add to Existing Contact",
+                        title = getString(R.string.action_add_existing_contact),
                         initialPhoneToAssign = phone
                     ).route
                 )
@@ -522,3 +500,6 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         return super.dispatchKeyEvent(event)
     }
 }
+
+
+// TODO: Convert to M3 DynamicColor - use MaterialTheme.dynamicColorScheme

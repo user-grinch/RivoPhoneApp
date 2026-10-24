@@ -14,6 +14,7 @@ import android.content.ContentValues
 import android.telephony.SubscriptionManager
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.grinch.rivo4.R
 import com.grinch.rivo4.modal.`interface`.ICallLogRepository
@@ -37,7 +38,14 @@ class CallLogRepository(
     override fun getCallLogs(): List<CallLogEntry> {
         val callLogs = mutableListOf<CallLogEntry>()
 
-        val allContacts = try { contactsRepo.getContacts() } catch (e: Exception) { emptyList() }
+        val allContacts = try {
+            contactsRepo.getContacts(
+                includePrivate = true,
+                includeHidden = preferenceManager.isHiddenContactsVisible()
+            )
+        } catch (e: Exception) {
+            emptyList()
+        }
         val contactMap = mutableMapOf<String, Contact>()
         allContacts.forEach { contact ->
             contact.phoneNumbers.forEach { number ->
@@ -61,6 +69,7 @@ class CallLogRepository(
         baseProjection.add("phone_account_label")
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_ID)
         baseProjection.add(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
+        baseProjection.add(CallLog.Calls.FEATURES)
 
         val limit = preferenceManager.getCallLogLimit()
 
@@ -99,7 +108,8 @@ class CallLogRepository(
                     CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
                     CallLog.Calls.CACHED_PHOTO_URI, CallLog.Calls.CACHED_LOOKUP_URI,
                     CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.DURATION,
-                    CallLog.Calls.PHONE_ACCOUNT_ID, CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME
+                    CallLog.Calls.PHONE_ACCOUNT_ID, CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME,
+                    CallLog.Calls.FEATURES
                 )
                 val cursor = contentResolver.query(
                     CallLog.Calls.CONTENT_URI,
@@ -110,7 +120,7 @@ class CallLogRepository(
                 )
                 cursor?.use { parseCursor(it, callLogs, contactMap, limit) }
             } catch (e2: Exception) {
-                e2.printStackTrace()
+                Log.e("CallLogRepository", "Error reading call logs: ${e2.message}", e2)
             }
         }
 
@@ -123,13 +133,20 @@ class CallLogRepository(
             put(CallLog.Calls.TYPE, entry.type)
             put(CallLog.Calls.DATE, entry.date)
             put(CallLog.Calls.DURATION, entry.duration)
-            put(CallLog.Calls.NEW, 1)
+            put(CallLog.Calls.NEW, 0)
         }
         try {
             contentResolver.insert(CallLog.Calls.CONTENT_URI, values)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error saving call log entry: ${e.message}", e)
         }
+    }
+
+    private fun isSameCalendarDay(t1: Long, t2: Long): Boolean {
+        val cal1 = java.util.Calendar.getInstance().apply { timeInMillis = t1 }
+        val cal2 = java.util.Calendar.getInstance().apply { timeInMillis = t2 }
+        return cal1.get(java.util.Calendar.YEAR) == cal2.get(java.util.Calendar.YEAR) &&
+               cal1.get(java.util.Calendar.DAY_OF_YEAR) == cal2.get(java.util.Calendar.DAY_OF_YEAR)
     }
 
     private fun contactIdFromLookupUri(lookupUri: String): String? {
@@ -178,7 +195,7 @@ class CallLogRepository(
         if ((!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) && (accountSimMap.size == 1 || labelSimMap.size == 1)) {
             return 1
         }
-        return if (!accountId.isNullOrEmpty() || !rawLabel.isNullOrBlank()) 1 else null
+        return null
     }
 
     private fun parseCursor(cursor: Cursor, callLogs: MutableList<CallLogEntry>, contactMap: Map<String, Contact>, limit: Int = 0) {
@@ -194,6 +211,7 @@ class CallLogRepository(
         val labelIdx = cursor.getColumnIndex("phone_account_label")
         val accountIdIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID)
         val componentNameIdx = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME)
+        val featuresIdx = cursor.getColumnIndex(CallLog.Calls.FEATURES)
 
         val accountSimMap = mutableMapOf<String, Int>()
         val labelSimMap = mutableMapOf<String, Int>()
@@ -249,6 +267,11 @@ class CallLogRepository(
         } catch (e: Exception) {
             emptySet()
         }
+
+        val groupCallLogs = preferenceManager.getBoolean(
+            com.grinch.rivo4.controller.util.PreferenceManager.KEY_GROUP_CALL_LOGS,
+            true
+        )
 
         while (cursor.moveToNext()) {
             if (limit > 0 && tempLogs.size >= limit) {
@@ -310,6 +333,8 @@ class CallLogRepository(
                 contactIdFromLookupUri(it)
             }
 
+            val features = if (featuresIdx != -1) cursor.getInt(featuresIdx) else 0
+
             val singleEntry = CallLogEntry(
                 id = callId,
                 number = number,
@@ -322,22 +347,25 @@ class CallLogRepository(
                 simLabel = simLabel,
                 simNumber = simNumber,
                 isBlocked = isBlocked,
+                features = features,
                 types = listOf(type),
                 ids = listOf(callId)
             )
 
             val lastEntry = tempLogs.lastOrNull()
             val sameContact = if (lastEntry != null) {
-                (contactId != null && lastEntry.contactId == contactId) ||
-                areNumbersEqual(lastEntry.number, number)
+                ((contactId != null && lastEntry.contactId == contactId) ||
+                areNumbersEqual(lastEntry.number, number)) &&
+                isSameCalendarDay(lastEntry.date, date)
             } else false
 
-            if (lastEntry != null && sameContact) {
+            if (lastEntry != null && sameContact && groupCallLogs) {
                 val currentSubLogs = if (lastEntry.subLogs.isEmpty()) listOf(lastEntry) else lastEntry.subLogs
                 tempLogs[tempLogs.size - 1] = lastEntry.copy(
                     types = lastEntry.types + type,
                     ids = lastEntry.ids + callId,
                     isBlocked = lastEntry.isBlocked || isBlocked,
+                    features = lastEntry.features or features,
                     simNumber = lastEntry.simNumber ?: simNumber,
                     subLogs = currentSubLogs + singleEntry
                 )
@@ -350,23 +378,34 @@ class CallLogRepository(
 
     override fun deleteCallLog(number: String) {
         try {
-            contentResolver.delete(
-                CallLog.Calls.CONTENT_URI,
-                "${CallLog.Calls.NUMBER} = ?",
-                arrayOf(number)
-            )
+            val unknownLabel = context.getString(R.string.label_unknown)
+            if (number.isBlank() || number.equals(unknownLabel, ignoreCase = true) || number.equals("Unknown", ignoreCase = true)) {
+                contentResolver.delete(
+                    CallLog.Calls.CONTENT_URI,
+                    "${CallLog.Calls.NUMBER} IS NULL OR ${CallLog.Calls.NUMBER} = '' OR ${CallLog.Calls.NUMBER} = ?",
+                    arrayOf(number)
+                )
+            } else {
+                contentResolver.delete(
+                    CallLog.Calls.CONTENT_URI,
+                    "${CallLog.Calls.NUMBER} = ?",
+                    arrayOf(number)
+                )
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error deleting call log: ${e.message}", e)
         }
     }
 
     override fun deleteCallLogsByIds(ids: List<Long>) {
         if (ids.isEmpty()) return
         try {
-            val selection = "${CallLog.Calls._ID} IN (${ids.joinToString(",")})"
-            contentResolver.delete(CallLog.Calls.CONTENT_URI, selection, null)
+            ids.chunked(500).forEach { chunk ->
+                val selection = "${CallLog.Calls._ID} IN (${chunk.joinToString(",")})"
+                contentResolver.delete(CallLog.Calls.CONTENT_URI, selection, null)
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error deleting call log entries: ${e.message}", e)
         }
     }
 
@@ -374,7 +413,7 @@ class CallLogRepository(
         try {
             contentResolver.delete(CallLog.Calls.CONTENT_URI, null, null)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("CallLogRepository", "Error clearing call logs: ${e.message}", e)
         }
     }
 }

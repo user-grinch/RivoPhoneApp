@@ -75,7 +75,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-@Destination<RootGraph>(style = NoTransitions::class)
+@Destination<RootGraph>
 @Composable
 fun ContactScreen(navController: NavController, navigator: DestinationsNavigator) {
     ContactScreenContent(navController, navigator)
@@ -455,7 +455,7 @@ fun ContactContent(
     var showMergeAllDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isGranted) {
-        if (isGranted) {
+        if (isGranted && contacts.isEmpty()) {
             contactsVM.fetchContacts()
         }
     }
@@ -683,7 +683,7 @@ fun ContactManagementTopCard(
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer
                             ) {
                                 Text(
-                                    text = "$totalDuplicates",
+                                    text = stringResource(R.string.loc_totalduplicates),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -710,7 +710,7 @@ fun ContactManagementTopCard(
                     ) {
                         Icon(
                             Icons.Outlined.Close,
-                            contentDescription = "Dismiss",
+                            contentDescription = stringResource(R.string.loc_dismiss),
                             modifier = Modifier.size(18.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -788,7 +788,7 @@ fun ContactManagementTopCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Manage storage & tools",
+                        text = stringResource(R.string.loc_manage_storage_tools),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary

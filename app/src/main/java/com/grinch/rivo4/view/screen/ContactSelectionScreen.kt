@@ -49,12 +49,13 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 fun ContactSelectionScreen(
     navigator: DestinationsNavigator,
     resultNavigator: ResultBackNavigator<String>,
-    title: String = "Select Contact",
+    title: String? = null,
     isMultiSelect: Boolean = false,
     actionButtonText: String = "Select",
     returnContactId: Boolean = false,
     initialPhoneToAssign: String? = null
 ) {
+    val screenTitle = title ?: stringResource(R.string.search_contacts_title)
     val view = LocalView.current
     val viewModel: ContactsViewModel = koinActivityViewModel()
     val allContacts by viewModel.allContacts.collectAsState()
@@ -96,7 +97,7 @@ fun ContactSelectionScreen(
         }
     }
 
-    val totalSelectedCount = maxOf(selectedContactIds.size, selectedPhoneNumbers.size)
+    val totalSelectedCount = if (returnContactId) selectedContactIds.size else selectedPhoneNumbers.size
 
     CompositionLocalProvider(LocalRivoAvatarStyle provides avatarStyle) {
         Scaffold(
@@ -107,7 +108,7 @@ fun ContactSelectionScreen(
                             text = if (isMultiSelect && totalSelectedCount > 0) {
                                 "$totalSelectedCount selected"
                             } else {
-                                title
+                                screenTitle
                             },
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 6.dp)
@@ -143,11 +144,13 @@ fun ContactSelectionScreen(
                                 onClick = {
                                     view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                                     if (allSelected) {
-                                        selectedContactIds = emptySet()
-                                        selectedPhoneNumbers = emptySet()
+                                        val idsToRemove = filteredContacts.map { it.id }.toSet()
+                                        val numsToRemove = filteredContacts.flatMap { it.phoneNumbers }.toSet()
+                                        selectedContactIds = selectedContactIds - idsToRemove
+                                        selectedPhoneNumbers = selectedPhoneNumbers - numsToRemove
                                     } else {
-                                        selectedContactIds = filteredContacts.map { it.id }.toSet()
-                                        selectedPhoneNumbers = filteredContacts.flatMap { it.phoneNumbers }.toSet()
+                                        selectedContactIds = selectedContactIds + filteredContacts.map { it.id }.toSet()
+                                        selectedPhoneNumbers = selectedPhoneNumbers + filteredContacts.flatMap { it.phoneNumbers }.toSet()
                                     }
                                 }
                             ) {
@@ -215,7 +218,7 @@ fun ContactSelectionScreen(
                                         selectedPhoneNumbers = emptySet()
                                     }
                                 ) {
-                                    Text("Clear")
+                                    Text(stringResource(R.string.action_clear_short))
                                 }
                                 Button(
                                     onClick = {
@@ -288,7 +291,7 @@ fun ContactSelectionScreen(
                                     Spacer(Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = title,
+                                            text = screenTitle,
                                             style = MaterialTheme.typography.titleLarge,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface

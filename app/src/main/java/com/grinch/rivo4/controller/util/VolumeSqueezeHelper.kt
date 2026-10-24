@@ -1,5 +1,7 @@
 package com.grinch.rivo4.controller.util
 
+import com.grinch.rivo4.R
+
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -57,9 +59,9 @@ class VolumeSqueezeHelper(private val context: Context, private val preferenceMa
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     context.startActivity(intent)
-                    Toast.makeText(context, "Grant Do Not Disturb permission to use Volume Squeeze", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.volume_squeeze_grant_permission), Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Cannot open Do Not Disturb settings", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.volume_squeeze_settings_error), Toast.LENGTH_SHORT).show()
                 }
                 return true
             }
@@ -70,15 +72,15 @@ class VolumeSqueezeHelper(private val context: Context, private val preferenceMa
             try {
                 if (isCurrentlyDnd) {
                     notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
-                    Toast.makeText(context, "Do Not Disturb: OFF", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.volume_squeeze_off), Toast.LENGTH_SHORT).show()
                 } else {
                     notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
-                    Toast.makeText(context, "Do Not Disturb: ON", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.volume_squeeze_on), Toast.LENGTH_SHORT).show()
                 }
                 vibrateFeedback()
                 return true
             } catch (e: Exception) {
-                Toast.makeText(context, "Failed to toggle Do Not Disturb", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.volume_squeeze_toggle_error), Toast.LENGTH_SHORT).show()
             }
         }
         return false

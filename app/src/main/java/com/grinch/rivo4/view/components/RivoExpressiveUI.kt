@@ -470,7 +470,8 @@ fun RivoExpressiveButton(
     iconSize: Dp = 24.dp,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    labelMaxLines: Int = 1
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -486,6 +487,22 @@ fun RivoExpressiveButton(
 
     val description = contentDescription
     val hasVisibleLabel = label != null
+
+    val effectiveContainerColor = if (enabled) {
+        containerColor
+    } else {
+        containerColor.copy(alpha = 0.38f)
+    }
+    val effectiveContentColor = if (enabled) {
+        contentColor
+    } else {
+        contentColor.copy(alpha = 0.38f)
+    }
+    val effectiveLabelColor = if (enabled) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -503,8 +520,8 @@ fun RivoExpressiveButton(
                 .widthIn(max = size * 1.3f)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(cornerRadius),
-            color = containerColor,
-            contentColor = contentColor,
+            color = effectiveContainerColor,
+            contentColor = effectiveContentColor,
             interactionSource = interactionSource,
             shadowElevation = RivoElevation.Flat
         ) {
@@ -513,14 +530,15 @@ fun RivoExpressiveButton(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(iconSize)
+                        modifier = Modifier.size(iconSize),
+                        tint = effectiveContentColor
                     )
                 } else if (painter != null) {
                     Icon(
                         painter = painter,
                         contentDescription = null,
                         modifier = Modifier.size(iconSize),
-                        tint = Color.Unspecified
+                        tint = if (enabled) Color.Unspecified else effectiveContentColor
                     )
                 }
             }
@@ -530,9 +548,9 @@ fun RivoExpressiveButton(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMediumEmphasized,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = effectiveLabelColor,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
+                maxLines = labelMaxLines,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -553,7 +571,7 @@ fun RivoListItem(
     badgeIcon: ImageVector? = null,
     badgeColor: Color? = null,
     headlineColor: Color = Color.Unspecified,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     selected: Boolean = false,
     isCompact: Boolean = false,
@@ -593,14 +611,16 @@ fun RivoListItem(
         RivoListItemDefaults.Spacing
     }
 
-    val isHighlighted = remember(SettingsHighlightManager.highlightEpoch, headline) {
-        SettingsHighlightManager.matches(headline)
+    val highlightEpoch = SettingsHighlightManager.highlightEpoch
+    val isHighlighted = remember(highlightEpoch, headline) {
+        highlightEpoch != 0L && SettingsHighlightManager.matches(headline)
     }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val highlightPulse = remember { Animatable(0f) }
-
-    LaunchedEffect(isHighlighted, SettingsHighlightManager.highlightEpoch) {
-        if (isHighlighted) {
+    var pulseVal = 0f
+    var highlightModifier: Modifier = Modifier
+    if (isHighlighted) {
+        val bringIntoViewRequester = remember { BringIntoViewRequester() }
+        val highlightPulse = remember { Animatable(0f) }
+        LaunchedEffect(isHighlighted, highlightEpoch) {
             delay(350L)
             try {
                 bringIntoViewRequester.bringIntoView()
@@ -615,27 +635,30 @@ fun RivoListItem(
             }
             SettingsHighlightManager.clear()
         }
+        pulseVal = highlightPulse.value
+        highlightModifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
     }
 
-    val pulseVal = highlightPulse.value
     val baseContainer = when {
         containerColor.isSpecified -> containerColor
         selected -> MaterialTheme.colorScheme.secondaryContainer
         else -> Color.Transparent
     }
-    val animatedBaseContainer by animateColorAsState(
-        targetValue = baseContainer,
-        animationSpec = RivoMotion.colorChange(),
-        label = "RivoListItemContainer"
-    )
     val effectiveContainer = if (pulseVal > 0f) {
         lerp(
             baseContainer,
             MaterialTheme.colorScheme.primaryContainer,
             pulseVal * 0.95f
         )
-    } else {
+    } else if (selectable || selected) {
+        val animatedBaseContainer by animateColorAsState(
+            targetValue = baseContainer,
+            animationSpec = RivoMotion.colorChange(),
+            label = "RivoListItemContainer"
+        )
         animatedBaseContainer
+    } else {
+        baseContainer
     }
 
     val isSelected = selected
@@ -643,23 +666,35 @@ fun RivoListItem(
     val resolvedRole = role ?: if (selectable) Role.Checkbox else Role.Button
     val selectedDescription = stringResource(R.string.content_desc_selected_item)
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val itemScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.97f else 1f,
-        animationSpec = RivoMotion.pressFeedback(),
-        label = "RivoListItemScale"
-    )
-
     val roundness = LocalCardRoundness.current
     val restCorner = rivoCornerDp(24, roundness)
-    val pressedCorner = rivoCornerDp(12, roundness)
-    val animatedCornerRadius by animateDpAsState(
-        targetValue = if (isPressed) pressedCorner else restCorner,
-        animationSpec = RivoMotion.shapeMorph(),
-        label = "RivoListItemCorner"
-    )
+    val itemShape = remember(restCorner) { RoundedCornerShape(restCorner) }
+
+    val hasClickAction = (onClick != null || onLongClick != null) && enabled
+    val clickModifier = if (hasClickAction) {
+        val interactionSource = remember { MutableInteractionSource() }
+        val isPressed by interactionSource.collectIsPressedAsState()
+        val itemScale by animateFloatAsState(
+            targetValue = if (isPressed) 0.97f else 1f,
+            animationSpec = RivoMotion.pressFeedback(),
+            label = "RivoListItemScale"
+        )
+        Modifier
+            .graphicsLayer {
+                scaleX = itemScale
+                scaleY = itemScale
+            }
+            .combinedClickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                enabled = true,
+                onClickLabel = onClickLabel,
+                role = resolvedRole,
+                onLongClickLabel = onLongClickLabel,
+                onLongClick = onLongClick,
+                onClick = onClick ?: {}
+            )
+    } else Modifier
 
     Surface(
         color = effectiveContainer,
@@ -674,28 +709,17 @@ fun RivoListItem(
                 color = MaterialTheme.colorScheme.primary.copy(alpha = pulseVal)
             )
         } else null,
-        shape = RoundedCornerShape(animatedCornerRadius),
+        shape = itemShape,
         shadowElevation = RivoElevation.Flat,
         modifier = modifier
             .fillMaxWidth()
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .graphicsLayer {
-                scaleX = itemScale
-                scaleY = itemScale
-            }
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = ripple(),
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                role = resolvedRole,
-                onLongClickLabel = onLongClickLabel,
-                onLongClick = onLongClick,
-                onClick = onClick
-            )
+            .then(highlightModifier)
+            .then(clickModifier)
             .semantics(mergeDescendants = true) {
                 this.selected = isSelected
-                this.role = resolvedRole
+                if (hasClickAction) {
+                    this.role = resolvedRole
+                }
                 if (toggleState != null) {
                     this.toggleableState = ToggleableState(toggleState)
                 }
@@ -791,6 +815,33 @@ fun RivoListItem(
     }
 }
 
+/** Material 3 Expressive switch with a checkmark thumb when enabled. */
+@Composable
+fun RivoSwitch(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Switch(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        enabled = enabled,
+        thumbContent = if (checked) {
+            {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+        } else {
+            null
+        }
+    )
+}
+
 @Composable
 fun RivoSwitchListItem(
     headline: String,
@@ -815,7 +866,7 @@ fun RivoSwitchListItem(
         headlineMaxLines = headlineMaxLines,
         supportingMaxLines = supportingMaxLines,
         trailingContent = {
-            Switch(
+            RivoSwitch(
                 checked = checked,
                 onCheckedChange = null,
                 enabled = enabled
