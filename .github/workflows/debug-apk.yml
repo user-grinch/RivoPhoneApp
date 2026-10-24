@@ -1,0 +1,38 @@
+name: Build Debug APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      - name: Build debug APK
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          GRADLE_OPTS: "-Xmx4096m -XX:+UseParallelGC"
+        run: ./gradlew assembleFossDebug --no-daemon
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RivoPhone-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/foss/debug/*.apk
+          if-no-files-found: error

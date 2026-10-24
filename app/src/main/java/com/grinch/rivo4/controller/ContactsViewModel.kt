@@ -34,7 +34,8 @@ class ContactsViewModel(
     private val contactsRepo: IContactsRepository,
     private val preferenceManager: PreferenceManager,
     private val trashedContactDao: TrashedContactDao,
-    private val context: android.content.Context
+    private val context: android.content.Context,
+    private val contactBackupManager: ContactBackupManager
 ) : ViewModel() {
 
     private val recentlyDeletedIds = Collections.synchronizedSet(mutableSetOf<String>())
@@ -404,6 +405,13 @@ class ContactsViewModel(
                         _allContacts.value = currentList.map {
                             if (it.id == contact.id || it.id == finalId) updatedContact else it
                         }
+                    }
+                }
+                if (isNew && preferenceManager.isContactAutoExportEnabled()) {
+                    try {
+                        contactBackupManager.exportAutomatic(context)
+                    } catch (e: Exception) {
+                        android.util.Log.e("ContactsVM", "Automatic contact backup failed", e)
                     }
                 }
                 scheduleRefresh(delayMs = 500)
