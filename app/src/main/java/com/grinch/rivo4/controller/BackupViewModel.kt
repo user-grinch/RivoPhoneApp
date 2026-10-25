@@ -47,11 +47,15 @@ class BackupViewModel(
         coerceInputValues = true
     }
 
-    fun exportContacts(context: Context, uri: Uri) {
+    fun exportContacts(context: Context, uri: Uri, encrypted: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                contactBackupManager.exportContacts(context, uri)
-                _status.value = context.getString(R.string.backup_contacts_export_success)
+                contactBackupManager.exportContacts(context, uri, forceEncrypted = encrypted)
+                _status.value = if (encrypted) {
+                    context.getString(R.string.backup_encrypted_contacts_export_success)
+                } else {
+                    context.getString(R.string.backup_contacts_export_success)
+                }
             } catch (e: Exception) {
                 _status.value = context.getString(R.string.backup_export_failed, e.message)
             }

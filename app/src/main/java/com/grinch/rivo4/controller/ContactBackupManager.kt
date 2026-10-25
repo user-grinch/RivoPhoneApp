@@ -22,9 +22,11 @@ class ContactBackupManager(
     private val contactsRepo: IContactsRepository,
     private val preferenceManager: PreferenceManager
 ) {
-    fun exportContacts(context: Context, uri: Uri) {
+    fun exportContacts(context: Context, uri: Uri, forceEncrypted: Boolean? = null) {
+        val shouldEncrypt = forceEncrypted ?: isEncryptionEnabled()
         val bytes = buildVCard(contactsRepo.getContacts()).toByteArray(Charsets.UTF_8)
-        context.contentResolver.openOutputStream(uri)?.use { it.write(encode(bytes)) }
+        val dataToWrite = if (shouldEncrypt) encryptBytes(bytes) else bytes
+        context.contentResolver.openOutputStream(uri)?.use { it.write(dataToWrite) }
             ?: throw IllegalArgumentException("Could not open backup destination")
     }
 
@@ -35,18 +37,21 @@ class ContactBackupManager(
             ?: throw IllegalStateException("The selected backup folder is unavailable")
         if (!directory.canWrite()) throw IllegalStateException("The selected backup folder is not writable")
 
-        val extension = if (isEncryptionEnabled()) ".vcf.enc" else ".vcf"
+        val shouldEncrypt = preferenceManager.isAutoBackupEncryptionEnabled() && preferenceManager.getContactBackupPassword().isNotEmpty()
+        val extension = if (shouldEncrypt) ".vcf.enc" else ".vcf"
         val fileName = "$AUTO_FILE_PREFIX${
             SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(Date())
         }$extension"
         directory.findFile(LEGACY_PLAIN_NAME)?.delete()
         directory.findFile(LEGACY_ENCRYPTED_NAME)?.delete()
         val file = directory.createFile(
-            if (isEncryptionEnabled()) "application/octet-stream" else "text/vcard",
+            if (shouldEncrypt) "application/octet-stream" else "text/vcard",
             fileName
         ) ?: throw IllegalStateException("Could not create the automatic backup file")
+        val bytes = buildVCard(contactsRepo.getContacts()).toByteArray(Charsets.UTF_8)
+        val dataToWrite = if (shouldEncrypt) encryptBytes(bytes) else bytes
         context.contentResolver.openOutputStream(file.uri)?.use {
-            it.write(encode(buildVCard(contactsRepo.getContacts()).toByteArray(Charsets.UTF_8)))
+            it.write(dataToWrite)
         } ?: throw IllegalStateException("Could not write the automatic backup file")
         pruneAutomaticBackups(directory)
     }
@@ -59,10 +64,10 @@ class ContactBackupManager(
 
     fun isEncryptionEnabled(): Boolean = preferenceManager.isContactBackupEncryptionEnabled()
 
-    private fun encode(plainText: ByteArray): ByteArray {
-        if (!isEncryptionEnabled()) return plainText
-        require(preferenceManager.getContactBackupPassword().isNotEmpty()) {
-            "Set a backup password before enabling encryption"
+    private fun encryptBytes(plainText: ByteArray): ByteArray {
+        val password = preferenceManager.getContactBackupPassword()
+        require(password.isNotEmpty()) {
+            "Set a backup password before exporting encrypted backup"
         }
         val salt = ByteArray(SALT_SIZE)
         val nonce = ByteArray(NONCE_SIZE)
@@ -84,6 +89,10 @@ class ContactBackupManager(
     private fun decode(bytes: ByteArray): ByteArray {
         if (!bytes.startsWithMagic()) return bytes
         if (bytes.size <= HEADER_SIZE) throw IllegalArgumentException("Invalid encrypted contact backup")
+        val password = preferenceManager.getContactBackupPassword()
+        if (password.isEmpty()) {
+            throw IllegalArgumentException("Please enter your backup password to decrypt this backup")
+        }
         val buffer = ByteBuffer.wrap(bytes)
         if (buffer.get(MAGIC.size).toInt() != VERSION) {
             throw IllegalArgumentException("Unsupported encrypted contact backup version")

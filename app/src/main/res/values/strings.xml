@@ -132,6 +132,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_back">Back</string>
     <string name="action_edit">Edit</string>
+    <string name="action_change">Change</string>
     <string name="action_done">Done</string>
     <string name="action_clear">Clear</string>
     <string name="action_clear_selection">Clear selection</string>
@@ -458,6 +459,7 @@
 
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Contacts exported successfully</string>
+    <string name="backup_encrypted_contacts_export_success">Encrypted contacts exported successfully</string>
     <string name="backup_contacts_import_success">Contacts imported successfully</string>
     <string name="backup_call_logs_export_success">Call logs exported successfully</string>
     <string name="backup_call_logs_import_success">Call logs imported successfully</string>
@@ -719,33 +721,51 @@ White text</string>
 
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Backup &amp; Restore</string>
+    <string name="settings_backup_standard_contacts_header">Standard Contacts Backup</string>
+    <string name="settings_backup_encrypted_header">Encrypted Backups</string>
+    <string name="settings_backup_automatic_header">Automatic Backups</string>
     <string name="settings_backup_contacts_header">Contacts</string>
     <string name="settings_backup_export_contacts">Export Contacts</string>
-    <string name="settings_backup_export_contacts_supporting">Save contacts to a VCF file</string>
+    <string name="settings_backup_export_contacts_supporting">Save contacts to an unencrypted VCF file</string>
     <string name="settings_backup_import_contacts">Import Contacts</string>
-    <string name="settings_backup_import_contacts_supporting">Restore contacts from a VCF or encrypted VCF backup</string>
-    <string name="settings_backup_import_encrypted_contacts">Import Encrypted Contact Backup</string>
-    <string name="settings_backup_import_encrypted_contacts_supporting">Select a .vcf.enc file and enter the same backup password first</string>
+    <string name="settings_backup_import_contacts_supporting">Restore contacts from a standard VCF backup file</string>
+    <string name="settings_backup_export_encrypted_contacts">Export Encrypted Backup</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Save contacts as an AES-256 encrypted .vcf.enc file</string>
+    <string name="settings_backup_import_encrypted_contacts">Import Encrypted Backup</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Restore contacts from an encrypted .vcf.enc file</string>
     <string name="settings_backup_encryption">Encrypt contact backups</string>
-    <string name="settings_backup_encryption_supporting">Use AES encryption for manual and automatic contact backups</string>
+    <string name="settings_backup_encryption_supporting">Use AES-256-GCM encryption for contact backups</string>
     <string name="settings_backup_password">Backup password</string>
     <string name="settings_backup_password_supporting">Required to encrypt and import encrypted contact backups</string>
     <string name="settings_backup_password_not_set">No password set</string>
     <string name="settings_backup_password_set">Password saved securely</string>
+    <string name="settings_backup_password_status_configured">Configured</string>
+    <string name="settings_backup_password_status_not_set">Not Set</string>
+    <string name="settings_backup_password_desc_configured">Protected with AES-256-GCM. Required to decrypt and restore backups.</string>
+    <string name="settings_backup_password_desc_not_set">Set a password to encrypt and secure your exported backups.</string>
+    <string name="settings_backup_confirm_password">Confirm Password</string>
+    <string name="settings_backup_password_mismatch">Passwords do not match</string>
+    <string name="settings_backup_remove_password">Remove Password</string>
+    <string name="settings_backup_remove_password_confirm">Remove the backup password? Contact backup encryption will be disabled.</string>
+    <string name="settings_backup_password_helper">This password protects your contacts with AES-256 encryption. Keep it safe — it cannot be recovered if lost.</string>
+    <string name="settings_backup_password_saved">Backup password saved</string>
+    <string name="settings_backup_password_cleared">Backup password removed</string>
     <string name="settings_backup_set_password">Set password</string>
     <string name="settings_backup_change_password">Change password</string>
     <string name="settings_backup_password_dialog_title">Enter backup password</string>
     <string name="settings_backup_import_progress_title">Importing contacts</string>
     <string name="settings_backup_import_progress_count">%1$d of %2$d contacts imported</string>
-    <string name="settings_backup_auto_export">Automatically export after new contacts</string>
-    <string name="settings_backup_auto_export_supporting">Keep the latest contact backup in your selected local folder</string>
+    <string name="settings_backup_auto_export">Automatically export contacts</string>
+    <string name="settings_backup_auto_export_supporting">Export backups whenever contacts are created, edited, or deleted</string>
+    <string name="settings_backup_auto_encrypt">Encrypt automatic backups</string>
+    <string name="settings_backup_auto_encrypt_supporting">Save automatic backups as AES-256 encrypted .vcf.enc files</string>
     <string name="settings_backup_folder">Automatic backup folder</string>
     <string name="settings_backup_folder_supporting">Choose a local folder where the latest backup will be saved</string>
     <string name="settings_backup_folder_not_set">No local folder selected</string>
     <string name="settings_backup_choose_folder">Choose backup folder</string>
     <string name="settings_backup_retention">Automatic backup versions</string>
     <string name="settings_backup_retention_supporting">Keep this many timestamped backups to recover older contact lists</string>
-    <string name="settings_backup_retention_count">%1$d versions</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_call_logs_header">Call Logs</string>
     <string name="settings_backup_export_logs">Export Call Logs</string>
     <string name="settings_backup_export_logs_supporting">Save history to a JSON file</string>
@@ -860,6 +880,7 @@ White text</string>
     <string name="settings_top_card_donate">Donate</string>
 
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Author</string>
     <string name="contributor_role_lead_developer">Lead Developer</string>
     <string name="contributor_role_developer">Developer</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Author</string>
