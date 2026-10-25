@@ -460,6 +460,22 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">加密联系人备份</string>
+    <string name="settings_backup_password">备份密码</string>
+    <string name="settings_backup_password_supporting">需要加密并导入加密的联系人备份</string>
+    <string name="settings_backup_password_not_set">未设置密码</string>
+    <string name="settings_backup_password_set">密码安全保存</string>
+    <string name="settings_backup_set_password">设置密码</string>
+    <string name="settings_backup_change_password">更改密码</string>
+    <string name="settings_backup_password_dialog_title">输入备份密码</string>
+    <string name="settings_backup_import_progress_title">正在导入联系人</string>
+    <string name="settings_backup_import_progress_count">导入的 %1$d 联系人中的 %2$d</string>
+    <string name="settings_backup_folder">自动备份文件夹</string>
+    <string name="settings_backup_folder_supporting">选择保存最新备份的本地文件夹</string>
+    <string name="settings_backup_folder_not_set">未选择本地文件夹</string>
+    <string name="settings_backup_choose_folder">选择备份文件夹</string>
+    <string name="settings_backup_retention">自动备份版本</string>
+    <string name="settings_backup_retention_supporting">保留这么多时间戳备份以恢复旧的联系人列表</string>
     <string name="settings_backup_app_settings_header">应用设置 &amp;</string>
     <string name="settings_backup_export_settings">导出应用设置</string>
     <string name="settings_backup_export_settings_supporting">备份主题、拨号键盘样式和配置到 JSON</string>

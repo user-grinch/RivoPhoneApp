@@ -131,6 +131,7 @@
     <string name="action_settings">Réglages</string>
     <string name="action_back">Retour</string>
     <string name="action_edit">Modifier</string>
+    <string name="action_change">Changement</string>
     <string name="action_done">Terminé</string>
     <string name="action_clear">Effacer</string>
     <string name="action_clear_selection">Effacer la sélection</string>
@@ -442,6 +443,7 @@
     <string name="notif_active_call">Appel en cours</string>
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Contacts exportés avec succès</string>
+    <string name="backup_encrypted_contacts_export_success">Contacts chiffrés exportés avec succès</string>
     <string name="backup_contacts_import_success">Contacts importés avec succès</string>
     <string name="backup_call_logs_export_success">Journaux d’appels exportés avec succès</string>
     <string name="backup_call_logs_import_success">Journaux d’appels importés avec succès</string>
@@ -690,16 +692,28 @@ blanc</string>
     <string name="settings_blocked_system_button">Numéros bloqués du système</string>
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Sauvegarde et restauration</string>
+    <string name="settings_backup_standard_contacts_header">Sauvegarde standard des contacts</string>
+    <string name="settings_backup_encrypted_header">Sauvegardes chiffrées</string>
+    <string name="settings_backup_automatic_header">Sauvegardes automatiques</string>
     <string name="settings_backup_contacts_header">Contacts</string>
     <string name="settings_backup_export_contacts">Exporter les contacts</string>
-    <string name="settings_backup_export_contacts_supporting">Enregistrer les contacts dans un fichier VCF</string>
     <string name="settings_backup_import_contacts">Importer les contacts</string>
-    <string name="settings_backup_import_contacts_supporting">Restaurer les contacts à partir d\'une sauvegarde VCF chiffrée ou VCF</string>
-    <string name="settings_backup_import_encrypted_contacts">Importer une sauvegarde de contact chiffrée</string>
-    <string name="settings_backup_import_encrypted_contacts_supporting">Sélectionnez un fichier .vcf.enc et entrez le même mot de passe de sauvegarde en premier</string>
     <string name="settings_backup_encryption">Chiffrer les sauvegardes des contacts</string>
-    <string name="settings_backup_encryption_supporting">Utiliser le cryptage AES pour les sauvegardes manuelles et automatiques des contacts</string>
     <string name="settings_backup_password">Mot de passe de sauvegarde</string>
+    <string name="settings_backup_password_supporting">Requis pour chiffrer et importer des sauvegardes de contact chiffrées</string>
+    <string name="settings_backup_password_not_set">Aucun mot de passe défini</string>
+    <string name="settings_backup_password_set">Mot de passe enregistré en toute sécurité</string>
+    <string name="settings_backup_set_password">Définir le mot de passe</string>
+    <string name="settings_backup_change_password">Changer le mot de passe</string>
+    <string name="settings_backup_password_dialog_title">Entrez le mot de passe de sauvegarde</string>
+    <string name="settings_backup_import_progress_title">Importation des contacts en cours</string>
+    <string name="settings_backup_import_progress_count">%1$d des contacts %2$d importés</string>
+    <string name="settings_backup_folder">Dossier de sauvegarde automatique</string>
+    <string name="settings_backup_folder_supporting">Choisissez un dossier local où la dernière sauvegarde sera enregistrée</string>
+    <string name="settings_backup_folder_not_set">Aucun dossier local sélectionné</string>
+    <string name="settings_backup_choose_folder">Choisir le dossier de sauvegarde</string>
+    <string name="settings_backup_retention">Versions de sauvegarde automatique</string>
+    <string name="settings_backup_retention_supporting">Garder ce nombre de sauvegardes horodatées pour récupérer les anciennes listes de contacts</string>
     <string name="settings_backup_call_logs_header">Journaux d’appels</string>
     <string name="settings_backup_export_logs">Exporter les journaux d’appels</string>
     <string name="settings_backup_export_logs_supporting">Enregistrer l’historique dans un fichier JSON</string>

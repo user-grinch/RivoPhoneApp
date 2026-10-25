@@ -17,7 +17,7 @@
     <string name="permission_background_popup_description">Pozwala Rivo na wyświetlanie powiadomień o połączeniach oraz banerów o połączeniach przychodzących podczas korzystania z innych aplikacji.</string>
     <string name="permission_autostart_title">Automatyczne uruchamianie i ochrona w tle</string>
     <string name="permission_autostart_description">Zapobiega zamykaniu usług telefonicznych w tle przez MIUI / HyperOS i blokowaniu połączeń po ponownym uruchomieniu.</string>
-    <string name="permission_floating_bubble_title">Pływający bąbelek połączenia</string>
+    <string name="permission_floating_bubble_title">Pływający bańka połączenia</string>
     <string name="permission_floating_bubble_description">Wielozadaniowość podczas rozmowy dzięki pływającemu paskowi z przyciskami wyciszenia, głośnika i zakończenia połączenia.</string>
     <string name="permission_reliable_calls_title">Niezawodne połączenia w tle</string>
     <string name="permission_reliable_calls_description">Zapobiega osłabianiu połączeń przychodzących przez systemowe oszczędzanie baterii, gdy ekran jest zablokowany.</string>
@@ -696,8 +696,23 @@ Biały tekst</string>
     <string name="settings_backup_title">Kopia zapasowa i przywracanie</string>
     <string name="settings_backup_contacts_header">Kontakty</string>
     <string name="settings_backup_export_contacts">Eksportuj kontakty</string>
-    <string name="settings_backup_export_contacts_supporting">Zapisz kontakty do pliku VCF</string>
     <string name="settings_backup_import_contacts">Importuj kontakty</string>
+    <string name="settings_backup_encryption">Szyfruj kopie zapasowe kontaktów</string>
+    <string name="settings_backup_password">Hasło kopii zapasowej</string>
+    <string name="settings_backup_password_supporting">Wymagane do szyfrowania i importowania zaszyfrowanych kopii zapasowych kontaktów</string>
+    <string name="settings_backup_password_not_set">Nie ustawiono hasła</string>
+    <string name="settings_backup_password_set">Hasło zapisane bezpiecznie</string>
+    <string name="settings_backup_set_password">Ustaw hasło</string>
+    <string name="settings_backup_change_password">Zmień hasło</string>
+    <string name="settings_backup_password_dialog_title">Wprowadź hasło kopii zapasowej</string>
+    <string name="settings_backup_import_progress_title">Importowanie kontaktów</string>
+    <string name="settings_backup_import_progress_count">%1$d z %2$d zaimportowanych kontaktów</string>
+    <string name="settings_backup_folder">Folder automatycznej kopii zapasowej</string>
+    <string name="settings_backup_folder_supporting">Wybierz lokalny folder, w którym zostanie zapisana najnowsza kopia zapasowa</string>
+    <string name="settings_backup_folder_not_set">Nie wybrano folderu lokalnego</string>
+    <string name="settings_backup_choose_folder">Wybierz folder kopii zapasowej</string>
+    <string name="settings_backup_retention">Automatyczna kopia zapasowa wersji</string>
+    <string name="settings_backup_retention_supporting">Zachowaj wiele kopii zapasowych znaczników czasu, aby odzyskać starsze listy kontaktów</string>
     <string name="settings_backup_call_logs_header">Rejestry połączeń</string>
     <string name="settings_backup_export_logs">Eksportuj rejestr połączeń</string>
     <string name="settings_backup_export_logs_supporting">Zapisuj historię do pliku JSON</string>
@@ -1777,6 +1792,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="contact_mgmt_total_contacts">Łącznie Kontakty</string>
     <string name="contact_mgmt_duplicates_empty_desc">Wszystkie nazwy kontaktów, numery telefonów i wiadomości e-mail są unikalne.</string>
     <string name="contact_mgmt_merge_desc">Połącz zbędne szczegóły i zachowuj czyste kontakty.</string>
+    <string name="contact_mgmt_merged_for">Scalone kontakty dla: %1$s</string>
     <string name="contact_mgmt_ready_to_move">%1$d kontaktów gotowych do przeniesienia do %2$s</string>
     <string name="contact_mgmt_matching_contacts">%1$d pasujących kontaktów • %2$s</string>
     <string name="contact_mgmt_contacts_to_combine">Kontakty, które mają być łączone:</string>
@@ -1796,9 +1812,9 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="storage_sim">SIM</string>
     <string name="storage_private">Prywatny</string>
     <!-- Live corner roundness -->
-    <string name="live_corner_roundness_format">Zaokrąglenie narożnika na żywo: %1$ddp</string>
+    <string name="live_corner_roundness_format">Zaokrąglenie rogów: %1$ddp</string>
     <!-- Default start location -->
-    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_default_tab">Domyślna karta</string>
     <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
     <string name="start_location_dialpad_contacts">Klawiatura numerów (Kontakty)</string>
     <!-- Call recordings -->

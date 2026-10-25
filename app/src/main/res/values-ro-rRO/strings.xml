@@ -123,6 +123,7 @@
     <string name="action_allow">Permite</string>
     <string name="action_manage">Gestionează</string>
     <string name="action_settings">Setări</string>
+    <string name="action_change">Schimbă</string>
     <string name="action_add_existing_contact">Adăugați la un contact existent</string>
     <string name="action_merge_calls">Îmbinare apeluri</string>
     <string name="conference_call">Apel conferință</string>
@@ -226,6 +227,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Contacte criptate exportate cu succes</string>
     <string name="backup_settings_export_success">Setări aplicație exportate cu succes</string>
     <string name="backup_settings_import_success">Setările aplicației restaurate cu succes</string>
     <!-- Settings > root -->
@@ -309,12 +311,25 @@ Text alb</string>
     <string name="settings_call_dialpad_size_large">Periculos</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
-    <string name="settings_backup_import_contacts_supporting">Restaurează contactele dintr-o copie de rezervă VCF sau VCF criptată</string>
-    <string name="settings_backup_import_encrypted_contacts">Importă backup criptat pentru contacte</string>
-    <string name="settings_backup_import_encrypted_contacts_supporting">Selectați un fișier .vcf.enc și introduceți mai întâi aceeași parolă pentru copia de rezervă</string>
+    <string name="settings_backup_standard_contacts_header">Backup contacte standard</string>
+    <string name="settings_backup_encrypted_header">Copii de rezervă criptate</string>
+    <string name="settings_backup_automatic_header">Backup-uri automate</string>
     <string name="settings_backup_encryption">Criptează copiile de rezervă ale contactelor</string>
-    <string name="settings_backup_encryption_supporting">Utilizați criptarea AES pentru copiile de siguranță manuale și automate ale contactelor</string>
     <string name="settings_backup_password">Parolă de rezervă</string>
+    <string name="settings_backup_password_supporting">Necesar pentru criptarea și importarea copiilor de siguranță criptate ale contactelor</string>
+    <string name="settings_backup_password_not_set">Nicio parolă setată</string>
+    <string name="settings_backup_password_set">Parola salvată în siguranță</string>
+    <string name="settings_backup_set_password">Setează parola</string>
+    <string name="settings_backup_change_password">Schimbă parola</string>
+    <string name="settings_backup_password_dialog_title">Introduceți parola de rezervă</string>
+    <string name="settings_backup_import_progress_title">Importare contacte</string>
+    <string name="settings_backup_import_progress_count">%1$d din %2$d contacte importate</string>
+    <string name="settings_backup_folder">Dosar de rezervă automat</string>
+    <string name="settings_backup_folder_supporting">Alegeți un folder local unde va fi salvată ultima copie de rezervă</string>
+    <string name="settings_backup_folder_not_set">Nici un folder local selectat</string>
+    <string name="settings_backup_choose_folder">Alege directorul de backup</string>
+    <string name="settings_backup_retention">Versiuni de rezervă automate</string>
+    <string name="settings_backup_retention_supporting">Păstrați atâtea copii de rezervă încărcate pentru a recupera listele de contacte mai vechi</string>
     <string name="settings_backup_app_settings_header">Setări aplicație &amp; Preferințe</string>
     <string name="settings_backup_export_settings">Exportă setările aplicației</string>
     <string name="settings_backup_export_settings_supporting">Creaţi o copie de rezervă a temelor, stilurilor de tastatură şi configuraţiilor JSON</string>

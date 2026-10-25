@@ -308,6 +308,22 @@ witte tekst</string>
     <string name="settings_call_dialpad_size_large">Ruime</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Back-ups van contacten versleutelen</string>
+    <string name="settings_backup_password">Back-up wachtwoord</string>
+    <string name="settings_backup_password_supporting">Vereist om versleutelen en versleutelde back-up van contact te importeren</string>
+    <string name="settings_backup_password_not_set">Geen wachtwoord ingesteld</string>
+    <string name="settings_backup_password_set">Wachtwoord veilig opgeslagen</string>
+    <string name="settings_backup_set_password">Wachtwoord instellen</string>
+    <string name="settings_backup_change_password">Wachtwoord wijzigen</string>
+    <string name="settings_backup_password_dialog_title">Wachtwoord voor back-up invoeren</string>
+    <string name="settings_backup_import_progress_title">Contacten importeren</string>
+    <string name="settings_backup_import_progress_count">%1$d van %2$d contacten geïmporteerd</string>
+    <string name="settings_backup_folder">Back-up map automatisch</string>
+    <string name="settings_backup_folder_supporting">Kies een lokale map waar de laatste back-up zal worden opgeslagen</string>
+    <string name="settings_backup_folder_not_set">Geen lokale map geselecteerd</string>
+    <string name="settings_backup_choose_folder">Back-upmap kiezen</string>
+    <string name="settings_backup_retention">Automatische back-up versies</string>
+    <string name="settings_backup_retention_supporting">Houd deze vele tijdgestuurde back-ups om oudere contactlijsten te herstellen</string>
     <string name="settings_backup_app_settings_header">App-instellingen &amp; Voorkeuren</string>
     <string name="settings_backup_export_settings">App instellingen exporteren</string>
     <string name="settings_backup_export_settings_supporting">Maak een backup van thema\'s, telefoonstijlen en configuraties naar JSON</string>

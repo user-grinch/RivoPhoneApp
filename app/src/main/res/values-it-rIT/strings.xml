@@ -308,6 +308,22 @@ Testo bianco</string>
     <string name="settings_call_dialpad_size_large">Spazioso</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Cifra i backup dei contatti</string>
+    <string name="settings_backup_password">Backup password</string>
+    <string name="settings_backup_password_supporting">Richiesto per crittografare e importare i backup dei contatti crittografati</string>
+    <string name="settings_backup_password_not_set">Nessuna password impostata</string>
+    <string name="settings_backup_password_set">Password salvata in modo sicuro</string>
+    <string name="settings_backup_set_password">Imposta password</string>
+    <string name="settings_backup_change_password">Cambia password</string>
+    <string name="settings_backup_password_dialog_title">Inserisci password di backup</string>
+    <string name="settings_backup_import_progress_title">Importazione contatti</string>
+    <string name="settings_backup_import_progress_count">%1$d dei contatti importati di %2$d</string>
+    <string name="settings_backup_folder">Cartella di backup automatica</string>
+    <string name="settings_backup_folder_supporting">Scegliere una cartella locale in cui verrà salvato l\'ultimo backup</string>
+    <string name="settings_backup_folder_not_set">Nessuna cartella locale selezionata</string>
+    <string name="settings_backup_choose_folder">Scegli cartella di backup</string>
+    <string name="settings_backup_retention">Versioni di backup automatico</string>
+    <string name="settings_backup_retention_supporting">Mantieni questo backup temporizzato per recuperare le vecchie liste di contatti</string>
     <string name="settings_backup_app_settings_header">Impostazioni App &amp; Preferenze</string>
     <string name="settings_backup_export_settings">Esporta Impostazioni App</string>
     <string name="settings_backup_export_settings_supporting">Backup temi, stili dialpad e configurazioni in JSON</string>

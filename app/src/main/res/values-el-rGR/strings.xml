@@ -122,6 +122,7 @@
     <string name="action_allow">Αποδοχή</string>
     <string name="action_manage">Διαχείριση</string>
     <string name="action_settings">Ρυθμίσεις</string>
+    <string name="action_change">Αλλαγή</string>
     <string name="action_add_existing_contact">Προσθήκη στην υπάρχουσα επαφή</string>
     <string name="action_merge_calls">Συγχώνευση κλήσεων</string>
     <string name="conference_call">Κλήση συνδιάσκεψης</string>
@@ -224,6 +225,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Επιτυχής εξαγωγή κρυπτογραφημένων επαφών</string>
     <string name="backup_settings_export_success">Οι ρυθμίσεις εφαρμογής εξήχθησαν επιτυχώς</string>
     <string name="backup_settings_import_success">Επιτυχής επαναφορά ρυθμίσεων εφαρμογής</string>
     <!-- Settings > root -->
@@ -301,6 +303,25 @@
     <string name="settings_call_dialpad_size_large">Ευρύχωρο</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Πρότυπο Αντίγραφο Ασφαλείας Επαφών</string>
+    <string name="settings_backup_encrypted_header">Κρυπτογραφημένα Αντίγραφα Ασφαλείας</string>
+    <string name="settings_backup_automatic_header">Αυτόματα Αντίγραφα Ασφαλείας</string>
+    <string name="settings_backup_encryption">Κρυπτογράφηση αντιγράφων ασφαλείας επαφών</string>
+    <string name="settings_backup_password">Κωδικός αντιγράφου ασφαλείας</string>
+    <string name="settings_backup_password_supporting">Απαιτείται κρυπτογράφηση και εισαγωγή κρυπτογραφημένων αντιγράφων ασφαλείας επαφών</string>
+    <string name="settings_backup_password_not_set">Δεν ορίστηκε κωδικός πρόσβασης</string>
+    <string name="settings_backup_password_set">Ο κωδικός πρόσβασης αποθηκεύτηκε με ασφάλεια</string>
+    <string name="settings_backup_set_password">Ορισμός κωδικού πρόσβασης</string>
+    <string name="settings_backup_change_password">Αλλαγή κωδικού πρόσβασης</string>
+    <string name="settings_backup_password_dialog_title">Εισαγωγή εφεδρικού κωδικού πρόσβασης</string>
+    <string name="settings_backup_import_progress_title">Εισαγωγή επαφών</string>
+    <string name="settings_backup_import_progress_count">%1$d εισαγωγή επαφών %2$d</string>
+    <string name="settings_backup_folder">Αυτόματος φάκελος αντιγράφων ασφαλείας</string>
+    <string name="settings_backup_folder_supporting">Επιλέξτε έναν τοπικό φάκελο στον οποίο θα αποθηκευτεί το τελευταίο αντίγραφο ασφαλείας</string>
+    <string name="settings_backup_folder_not_set">Δεν επιλέχθηκε τοπικός φάκελος</string>
+    <string name="settings_backup_choose_folder">Επιλογή φακέλου αντιγράφου ασφαλείας</string>
+    <string name="settings_backup_retention">Αυτόματες εκδόσεις αντιγράφων ασφαλείας</string>
+    <string name="settings_backup_retention_supporting">Κρατήστε αυτό το πολλά timestamped αντίγραφα ασφαλείας για να ανακτήσετε παλαιότερες λίστες επαφών</string>
     <string name="settings_backup_app_settings_header">Ρυθμίσεις Εφαρμογής &amp; Προτιμήσεις</string>
     <string name="settings_backup_export_settings">Εξαγωγή Ρυθμίσεων Εφαρμογής</string>
     <string name="settings_backup_export_settings_supporting">Δημιουργία αντιγράφων ασφαλείας για θέματα, στυλ dialpad και ρυθμίσεις για JSON</string>
