@@ -20,17 +20,23 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
+import java.io.StringReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 class BackupViewModel(
     private val contactsRepo: IContactsRepository,
     private val callLogRepo: ICallLogRepository,
-    private val preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager,
+    private val contactBackupManager: ContactBackupManager
 ) : ViewModel() {
+
+    data class ImportProgress(val imported: Int, val total: Int)
 
     private val _status = MutableStateFlow<String?>(null)
     val status = _status.asStateFlow()
+    private val _contactImportProgress = MutableStateFlow<ImportProgress?>(null)
+    val contactImportProgress = _contactImportProgress.asStateFlow()
 
     private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
     private val settingsJson = Json {
@@ -44,46 +50,7 @@ class BackupViewModel(
     fun exportContacts(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val contacts = contactsRepo.getContacts()
-                val vCard = buildString {
-                    contacts.forEach { contact ->
-                        append("BEGIN:VCARD\n")
-                        append("VERSION:3.0\n")
-                        append("FN:${contact.name}\n")
-                        contact.phoneNumbers.forEach { number ->
-                            append("TEL;TYPE=CELL:$number\n")
-                        }
-                        contact.emails.forEach { email ->
-                            append("EMAIL;TYPE=INTERNET:$email\n")
-                        }
-                        if (!contact.nickname.isNullOrBlank()) {
-                            append("NICKNAME:${contact.nickname}\n")
-                        }
-                        contact.organizations.filter { it.company.isNotBlank() }.forEach { org ->
-                            append("ORG:${org.company}\n")
-                            if (!org.title.isNullOrBlank()) append("TITLE:${org.title}\n")
-                        }
-                        contact.websites.filter { it.url.isNotBlank() }.forEach { website ->
-                            append("URL:${website.url}\n")
-                        }
-                        contact.events.forEach { event ->
-                            if (event.date.isBlank()) return@forEach
-                            when (event.type) {
-                                android.provider.ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY -> append("BDAY:${event.date}\n")
-                                android.provider.ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY -> append("ANNIVERSARY:${event.date}\n")
-                            }
-                        }
-                        if (!contact.notes.isNullOrBlank()) {
-                            append("NOTE:${contact.notes.replace("\n", "\\n")}\n")
-                        }
-                        append("END:VCARD\n")
-                    }
-                }
-                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                    OutputStreamWriter(outputStream).use { writer ->
-                        writer.write(vCard)
-                    }
-                }
+                contactBackupManager.exportContacts(context, uri)
                 _status.value = context.getString(R.string.backup_contacts_export_success)
             } catch (e: Exception) {
                 _status.value = context.getString(R.string.backup_export_failed, e.message)
@@ -94,8 +61,10 @@ class BackupViewModel(
     fun importContacts(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8)).use { reader ->
+                val vCard = contactBackupManager.readContacts(context, uri)
+                val totalContacts = Regex("(?im)^BEGIN:VCARD\\s*$").findAll(vCard).count()
+                _contactImportProgress.value = ImportProgress(0, totalContacts)
+                BufferedReader(StringReader(vCard)).use { reader ->
                         var line: String?
                         var currentName = ""
                         var currentNickname: String? = null
@@ -104,6 +73,7 @@ class BackupViewModel(
                         val currentAddresses = mutableListOf<String>()
                         var currentNotes: String? = null
                         
+                        var importedContacts = 0
                         while (reader.readLine().also { line = it } != null) {
                             val trimmed = line!!.trim()
                             if (trimmed.equals("END:VCARD", ignoreCase = true)) {
@@ -122,6 +92,9 @@ class BackupViewModel(
                                             notes = currentNotes
                                         )
                                     )
+                                    importedContacts++
+                                    _contactImportProgress.value =
+                                        ImportProgress(importedContacts, totalContacts)
                                 }
                                 currentName = ""
                                 currentNickname = null
@@ -160,10 +133,11 @@ class BackupViewModel(
                             }
                         }
                     }
-                }
                 _status.value = context.getString(R.string.backup_contacts_import_success)
             } catch (e: Exception) {
                 _status.value = context.getString(R.string.backup_import_failed, e.message)
+            } finally {
+                    _contactImportProgress.value = null
             }
         }
     }

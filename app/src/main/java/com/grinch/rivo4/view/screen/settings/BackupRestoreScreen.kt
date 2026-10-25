@@ -2,6 +2,7 @@ package com.grinch.rivo4.view.screen.settings
 import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.net.Uri
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -19,11 +20,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
+import com.grinch.rivo4.view.components.RivoLinearProgressIndicator
 import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -46,7 +51,24 @@ fun BackupRestoreScreen(
     val scope = rememberCoroutineScope()
     val viewModel: BackupViewModel = koinActivityViewModel()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val prefs = org.koin.compose.koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsState()
+    var encryptionEnabled by remember(settingsState) { mutableStateOf(prefs.isContactBackupEncryptionEnabled()) }
+    var autoExportEnabled by remember(settingsState) { mutableStateOf(prefs.isContactAutoExportEnabled()) }
+    var backupPassword by remember(settingsState) { mutableStateOf(prefs.getContactBackupPassword()) }
+    var backupFolderUri by remember(settingsState) {
+        mutableStateOf(prefs.getContactBackupDirectoryUri())
+    }
+    var retentionCount by remember(settingsState) {
+        mutableIntStateOf(prefs.getContactBackupRetentionCount())
+    }
+    var retentionMenuExpanded by remember { mutableStateOf(false) }
+    var showPasswordDialog by remember { mutableStateOf(false) }
+    var passwordDraft by remember { mutableStateOf("") }
+    var passwordDialogForImport by remember { mutableStateOf(false) }
+    var passwordDialogEnablesEncryption by remember { mutableStateOf(false) }
     val status by viewModel.status.collectAsState()
+    val contactImportProgress by viewModel.contactImportProgress.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showStandardizeConfirm by remember { mutableStateOf(false) }
 
@@ -58,7 +80,7 @@ fun BackupRestoreScreen(
     }
 
     val exportContactsLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("text/vcard")
+        ActivityResultContracts.CreateDocument("*/*")
     ) { uri ->
         uri?.let { viewModel.exportContacts(context, it) }
     }
@@ -67,6 +89,41 @@ fun BackupRestoreScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let { viewModel.importContacts(context, it) }
+    }
+
+    fun requestPassword(
+        forEncryptedImport: Boolean = false,
+        enablesEncryption: Boolean = false
+    ) {
+        passwordDraft = backupPassword
+        passwordDialogForImport = forEncryptedImport
+        passwordDialogEnablesEncryption = enablesEncryption
+        showPasswordDialog = true
+    }
+
+    fun launchEncryptedImport() {
+        if (backupPassword.isBlank()) {
+            requestPassword(forEncryptedImport = true)
+        } else {
+            importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+        }
+    }
+
+    val backupFolderLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        uri?.let {
+            val selectedUri = it
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    selectedUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }.onSuccess {
+                backupFolderUri = selectedUri.toString()
+                prefs.setContactBackupDirectoryUri(selectedUri.toString())
+            }
+        }
     }
 
     val exportLogsLauncher = rememberLauncherForActivityResult(
@@ -147,10 +204,159 @@ fun BackupRestoreScreen(
                 ) {
                     item {
                         RivoListItem(
+                            headline = stringResource(R.string.settings_backup_encryption),
+                            supporting = stringResource(R.string.settings_backup_encryption_supporting),
+                            leadingIcon = Icons.Outlined.Lock,
+                            onClick = {
+                                if (!encryptionEnabled && backupPassword.isBlank()) {
+                                    requestPassword(enablesEncryption = true)
+                                } else {
+                                    encryptionEnabled = !encryptionEnabled
+                                    prefs.setContactBackupEncryptionEnabled(encryptionEnabled)
+                                }
+                            },
+                            toggled = encryptionEnabled,
+                            trailingContent = {
+                                Switch(
+                                    checked = encryptionEnabled,
+                                    onCheckedChange = {
+                                        if (it && backupPassword.isBlank()) {
+                                            requestPassword(enablesEncryption = true)
+                                        } else {
+                                            encryptionEnabled = it
+                                            prefs.setContactBackupEncryptionEnabled(it)
+                                        }
+                                    }
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                            OutlinedTextField(
+                                value = if (backupPassword.isBlank()) "" else "********",
+                                onValueChange = {},
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { Text(stringResource(R.string.settings_backup_password)) },
+                                supportingText = {
+                                    Text(
+                                        if (backupPassword.isBlank()) {
+                                            stringResource(R.string.settings_backup_password_not_set)
+                                        } else {
+                                            stringResource(R.string.settings_backup_password_set)
+                                        }
+                                    )
+                                },
+                                singleLine = true,
+                                enabled = encryptionEnabled,
+                                readOnly = true
+                            )
+                            TextButton(onClick = { requestPassword() }) {
+                                Text(
+                                    stringResource(
+                                        if (backupPassword.isBlank()) {
+                                            R.string.settings_backup_set_password
+                                        } else {
+                                            R.string.settings_backup_change_password
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_auto_export),
+                            supporting = if (backupFolderUri == null) {
+                                stringResource(R.string.settings_backup_folder_not_set)
+                            } else {
+                                stringResource(R.string.settings_backup_auto_export_supporting)
+                            },
+                            leadingIcon = Icons.Outlined.AutoMode,
+                            onClick = {
+                                if (!autoExportEnabled && backupFolderUri == null) {
+                                    backupFolderLauncher.launch(null)
+                                } else {
+                                    autoExportEnabled = !autoExportEnabled
+                                    prefs.setContactAutoExportEnabled(autoExportEnabled)
+                                }
+                            },
+                            toggled = autoExportEnabled,
+                            trailingContent = {
+                                Switch(
+                                    checked = autoExportEnabled,
+                                    onCheckedChange = {
+                                        if (it && backupFolderUri == null) {
+                                            backupFolderLauncher.launch(null)
+                                        } else {
+                                            autoExportEnabled = it
+                                            prefs.setContactAutoExportEnabled(it)
+                                        }
+                                    }
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_folder),
+                            supporting = if (backupFolderUri == null) {
+                                stringResource(R.string.settings_backup_folder_not_set)
+                            } else {
+                                stringResource(R.string.settings_backup_folder_supporting)
+                            },
+                            leadingIcon = Icons.Outlined.Folder,
+                            onClick = { backupFolderLauncher.launch(null) }
+                        )
+                    }
+                    item {
+                        Box {
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_backup_retention),
+                                supporting = stringResource(
+                                    R.string.settings_backup_retention_supporting
+                                ),
+                                leadingIcon = Icons.Outlined.History,
+                                onClick = { retentionMenuExpanded = true },
+                                trailingContent = {
+                                    TextButton(onClick = { retentionMenuExpanded = true }) {
+                                        Text(stringResource(R.string.settings_backup_retention_count, retentionCount))
+                                    }
+                                }
+                            )
+                            DropdownMenu(
+                                expanded = retentionMenuExpanded,
+                                onDismissRequest = { retentionMenuExpanded = false }
+                            ) {
+                                (1..20).forEach { count ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(stringResource(R.string.settings_backup_retention_count, count))
+                                        },
+                                        onClick = {
+                                            retentionCount = count
+                                            prefs.setContactBackupRetentionCount(count)
+                                            retentionMenuExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        RivoListItem(
                             headline = stringResource(R.string.settings_backup_export_contacts),
                             supporting = stringResource(R.string.settings_backup_export_contacts_supporting),
                             leadingIcon = Icons.Outlined.FileUpload,
-                            onClick = { exportContactsLauncher.launch("contacts_backup.vcf") }
+                            onClick = {
+                                if (encryptionEnabled && backupPassword.isBlank()) {
+                                    requestPassword()
+                                } else {
+                                    exportContactsLauncher.launch(
+                                        if (encryptionEnabled) "contacts_backup.vcf.enc" else "contacts_backup.vcf"
+                                    )
+                                }
+                            }
                         )
                     }
                     item {
@@ -158,7 +364,15 @@ fun BackupRestoreScreen(
                             headline = stringResource(R.string.settings_backup_import_contacts),
                             supporting = stringResource(R.string.settings_backup_import_contacts_supporting),
                             leadingIcon = Icons.Outlined.FileDownload,
-                            onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard")) }
+                            onClick = { importContactsLauncher.launch(arrayOf("text/vcard", "text/x-vcard", "application/octet-stream", "*/*")) }
+                        )
+                    }
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_backup_import_encrypted_contacts),
+                            supporting = stringResource(R.string.settings_backup_import_encrypted_contacts_supporting),
+                            leadingIcon = Icons.Outlined.LockOpen,
+                            onClick = { launchEncryptedImport() }
                         )
                     }
                 }
@@ -270,6 +484,73 @@ fun BackupRestoreScreen(
             message = stringResource(R.string.settings_backup_restore_confirm_message),
             confirmLabel = stringResource(R.string.settings_backup_restore_confirm_action),
             icon = Icons.Outlined.Restore
+        )
+    }
+
+    if (showPasswordDialog) {
+        AlertDialog(
+            onDismissRequest = { showPasswordDialog = false },
+            title = { Text(stringResource(R.string.settings_backup_password_dialog_title)) },
+            text = {
+                OutlinedTextField(
+                    value = passwordDraft,
+                    onValueChange = { passwordDraft = it },
+                    label = { Text(stringResource(R.string.settings_backup_password)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = passwordDraft.isNotBlank(),
+                    onClick = {
+                        backupPassword = passwordDraft
+                        prefs.setContactBackupPassword(passwordDraft)
+                        if (passwordDialogEnablesEncryption) {
+                            encryptionEnabled = true
+                            prefs.setContactBackupEncryptionEnabled(true)
+                        }
+                        showPasswordDialog = false
+                        if (passwordDialogForImport) {
+                            importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+                        }
+                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPasswordDialog = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
+    }
+
+    contactImportProgress?.let { progress ->
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text(stringResource(R.string.settings_backup_import_progress_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    RivoLinearProgressIndicator(
+                        progress = {
+                            if (progress.total == 0) 0f
+                            else progress.imported.toFloat() / progress.total
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        stringResource(
+                            R.string.settings_backup_import_progress_count,
+                            progress.imported,
+                            progress.total
+                        )
+                    )
+                }
+            },
+            confirmButton = {}
         )
     }
 }

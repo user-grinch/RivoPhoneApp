@@ -642,6 +642,12 @@ class PreferenceManager(context: Context) {
         const val KEY_CALL_LOG_LIMIT = "call_log_limit"
         const val CALL_LOG_LIMIT_DEFAULT = 500
         const val KEY_AUTO_PASTE_CLIPBOARD = "auto_paste_clipboard"
+        const val KEY_CONTACT_BACKUP_ENCRYPTION = "contact_backup_encryption"
+        const val KEY_CONTACT_BACKUP_PASSWORD = "contact_backup_password"
+        const val KEY_CONTACT_AUTO_EXPORT = "contact_auto_export"
+        const val KEY_CONTACT_BACKUP_DIRECTORY_URI = "contact_backup_directory_uri"
+        const val KEY_CONTACT_BACKUP_RETENTION_COUNT = "contact_backup_retention_count"
+        const val CONTACT_BACKUP_RETENTION_DEFAULT = 1
         const val KEY_SEPARATE_CONTACTS_ICON = "separate_contacts_icon"
         const val KEY_CALL_ANALYTICS_TRACKING = "call_analytics_tracking"
         const val KEY_SHOW_CONTACT_MANAGEMENT_CARD = "show_contact_management_card"
@@ -672,6 +678,7 @@ class PreferenceManager(context: Context) {
             KEY_SETTINGS_HISTORY,
             KEY_LAST_SELECTED_TAB,
             KEY_APP_LOCK_PIN,
+            KEY_CONTACT_BACKUP_PASSWORD,
             KEY_APP_LOCK_ENABLED,
             KEY_CALL_RECORDING_FOLDER_URI,
             KEY_CALL_RECORDING_FOLDER_NAME,
@@ -787,7 +794,8 @@ class PreferenceManager(context: Context) {
             KEY_SWIPE_RIGHT_ACTION to SWIPE_ACTION_CALL,
             KEY_SWIPE_LEFT_ACTION to SWIPE_ACTION_MESSAGE,
             KEY_CALL_LOG_LIMIT to CALL_LOG_LIMIT_DEFAULT,
-            KEY_DEFAULT_BOTTOM_NAV to 0
+            KEY_DEFAULT_BOTTOM_NAV to 0,
+            KEY_CONTACT_BACKUP_RETENTION_COUNT to CONTACT_BACKUP_RETENTION_DEFAULT
         )
 
         fun getKnownDefaultStrings(): Map<String, String> = mapOf(
@@ -809,6 +817,19 @@ class PreferenceManager(context: Context) {
 
     fun isAutoPasteClipboardEnabled(): Boolean = getBoolean(KEY_AUTO_PASTE_CLIPBOARD, false)
     fun setAutoPasteClipboardEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_PASTE_CLIPBOARD, enabled)
+
+    fun isContactBackupEncryptionEnabled(): Boolean = getBoolean(KEY_CONTACT_BACKUP_ENCRYPTION, false)
+    fun setContactBackupEncryptionEnabled(enabled: Boolean) = setBoolean(KEY_CONTACT_BACKUP_ENCRYPTION, enabled)
+    fun getContactBackupPassword(): String = getString(KEY_CONTACT_BACKUP_PASSWORD, "") ?: ""
+    fun setContactBackupPassword(password: String) = setString(KEY_CONTACT_BACKUP_PASSWORD, password)
+    fun isContactAutoExportEnabled(): Boolean = getBoolean(KEY_CONTACT_AUTO_EXPORT, false)
+    fun setContactAutoExportEnabled(enabled: Boolean) = setBoolean(KEY_CONTACT_AUTO_EXPORT, enabled)
+    fun getContactBackupDirectoryUri(): String? = getString(KEY_CONTACT_BACKUP_DIRECTORY_URI, null)
+    fun setContactBackupDirectoryUri(uri: String?) = setString(KEY_CONTACT_BACKUP_DIRECTORY_URI, uri)
+    fun getContactBackupRetentionCount(): Int =
+        getInt(KEY_CONTACT_BACKUP_RETENTION_COUNT, CONTACT_BACKUP_RETENTION_DEFAULT).coerceIn(1, 20)
+    fun setContactBackupRetentionCount(count: Int) =
+        setInt(KEY_CONTACT_BACKUP_RETENTION_COUNT, count.coerceIn(1, 20))
 
     fun isSeparateContactsIconEnabled(): Boolean = getBoolean(KEY_SEPARATE_CONTACTS_ICON, false)
     fun setSeparateContactsIconEnabled(enabled: Boolean) = setBoolean(KEY_SEPARATE_CONTACTS_ICON, enabled)
