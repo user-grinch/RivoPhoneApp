@@ -308,6 +308,22 @@ Vit text</string>
     <string name="settings_call_dialpad_size_large">Rymlig</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Kryptera kontaktsäkerhetskopior</string>
+    <string name="settings_backup_password">Säkerhetskopiera lösenord</string>
+    <string name="settings_backup_password_supporting">Krävs för att kryptera och importera krypterade kontaktsäkerhetskopior</string>
+    <string name="settings_backup_password_not_set">Inget lösenord angett</string>
+    <string name="settings_backup_password_set">Lösenordet har sparats säkert</string>
+    <string name="settings_backup_set_password">Ange lösenord</string>
+    <string name="settings_backup_change_password">Ändra lösenord</string>
+    <string name="settings_backup_password_dialog_title">Ange lösenord för säkerhetskopia</string>
+    <string name="settings_backup_import_progress_title">Importerar kontakter</string>
+    <string name="settings_backup_import_progress_count">%1$d av %2$d kontakter importerade</string>
+    <string name="settings_backup_folder">Automatisk säkerhetskopieringsmapp</string>
+    <string name="settings_backup_folder_supporting">Välj en lokal mapp där den senaste säkerhetskopian kommer att sparas</string>
+    <string name="settings_backup_folder_not_set">Ingen lokal mapp vald</string>
+    <string name="settings_backup_choose_folder">Välj mapp för säkerhetskopiering</string>
+    <string name="settings_backup_retention">Automatiska säkerhetskopieringsversioner</string>
+    <string name="settings_backup_retention_supporting">Håll så här många tidsstämplade säkerhetskopior för att återställa äldre kontaktlistor</string>
     <string name="settings_backup_app_settings_header">Appinställningar &amp; Inställningar</string>
     <string name="settings_backup_export_settings">Exportera appinställningar</string>
     <string name="settings_backup_export_settings_supporting">Säkerhetskopiera teman, knappsatsen stilar och konfigurationer till JSON</string>

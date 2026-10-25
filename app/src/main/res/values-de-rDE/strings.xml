@@ -131,6 +131,7 @@
     <string name="action_settings">Einstellungen</string>
     <string name="action_back">Zurück</string>
     <string name="action_edit">Bearbeiten</string>
+    <string name="action_change">Ändern</string>
     <string name="action_done">Fertig</string>
     <string name="action_clear">Leeren</string>
     <string name="action_clear_selection">Auswahl aufheben</string>
@@ -441,6 +442,7 @@
     <string name="notif_active_call">Aktiver Anruf</string>
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Kontakte erfolgreich exportiert</string>
+    <string name="backup_encrypted_contacts_export_success">Verschlüsselte Kontakte erfolgreich exportiert</string>
     <string name="backup_contacts_import_success">Kontakte erfolgreich importiert</string>
     <string name="backup_call_logs_export_success">Anrufliste erfolgreich exportiert</string>
     <string name="backup_call_logs_import_success">Anrufliste erfolgreich importiert</string>
@@ -689,10 +691,28 @@ Weißer Text</string>
     <string name="settings_blocked_system_button">Systemweit blockierte Nummern</string>
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Sichern &amp; Wiederherstellen</string>
+    <string name="settings_backup_standard_contacts_header">Sicherung der Standard-Kontakte</string>
+    <string name="settings_backup_encrypted_header">Verschlüsselte Sicherungen</string>
+    <string name="settings_backup_automatic_header">Automatische Sicherungen</string>
     <string name="settings_backup_contacts_header">Kontakte</string>
     <string name="settings_backup_export_contacts">Kontakte exportieren</string>
-    <string name="settings_backup_export_contacts_supporting">Kontakte in VCF-Datei speichern</string>
     <string name="settings_backup_import_contacts">Kontakte importieren</string>
+    <string name="settings_backup_encryption">Kontakt-Sicherungen verschlüsseln</string>
+    <string name="settings_backup_password">Passwort sichern</string>
+    <string name="settings_backup_password_supporting">Erforderlich zum Verschlüsseln und Importieren von verschlüsselten Kontaktsicherungen</string>
+    <string name="settings_backup_password_not_set">Kein Passwort gesetzt</string>
+    <string name="settings_backup_password_set">Passwort sicher gespeichert</string>
+    <string name="settings_backup_set_password">Passwort festlegen</string>
+    <string name="settings_backup_change_password">Passwort ändern</string>
+    <string name="settings_backup_password_dialog_title">Sicherungspasswort eingeben</string>
+    <string name="settings_backup_import_progress_title">Kontakte importieren</string>
+    <string name="settings_backup_import_progress_count">%1$d von %2$d Kontakte importiert</string>
+    <string name="settings_backup_folder">Automatischer Sicherungsordner</string>
+    <string name="settings_backup_folder_supporting">Wählen Sie einen lokalen Ordner, in dem die neueste Sicherung gespeichert wird</string>
+    <string name="settings_backup_folder_not_set">Kein lokaler Ordner ausgewählt</string>
+    <string name="settings_backup_choose_folder">Sicherungsordner auswählen</string>
+    <string name="settings_backup_retention">Automatische Sicherungsversionen</string>
+    <string name="settings_backup_retention_supporting">Behalte so viele Timestamped Backups um ältere Kontaktlisten wiederherzustellen</string>
     <string name="settings_backup_call_logs_header">Anrufliste</string>
     <string name="settings_backup_export_logs">Anrufliste exportieren</string>
     <string name="settings_backup_export_logs_supporting">Anrufliste in JSON-Datei speichern</string>

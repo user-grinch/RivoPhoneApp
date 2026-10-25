@@ -301,6 +301,22 @@
     <string name="settings_call_dialpad_size_large">Специус</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Шифрувати резервні копії контактів</string>
+    <string name="settings_backup_password">Пароль резервної копії</string>
+    <string name="settings_backup_password_supporting">Потрібно шифрувати та імпортувати зашифровані резервні копії контактів</string>
+    <string name="settings_backup_password_not_set">Пароль не налаштовано</string>
+    <string name="settings_backup_password_set">Пароль надійно збережено</string>
+    <string name="settings_backup_set_password">Задати пароль</string>
+    <string name="settings_backup_change_password">Змінити пароль</string>
+    <string name="settings_backup_password_dialog_title">Введіть пароль резервної копії</string>
+    <string name="settings_backup_import_progress_title">Імпортування контактів</string>
+    <string name="settings_backup_import_progress_count">%1$d %2$d контакти імпортовано</string>
+    <string name="settings_backup_folder">Автоматична резервна тека</string>
+    <string name="settings_backup_folder_supporting">Виберіть локальну папку, в якій буде збережено останню резервну копію</string>
+    <string name="settings_backup_folder_not_set">Локальна папка не вибрана</string>
+    <string name="settings_backup_choose_folder">Виберіть папку з резервною копією</string>
+    <string name="settings_backup_retention">Автоматичні резервні копії версій</string>
+    <string name="settings_backup_retention_supporting">Тримати цю кількість часових міток для відновлення старих списків контактів</string>
     <string name="settings_backup_app_settings_header">Налаштування програми &amp; Налаштування</string>
     <string name="settings_backup_export_settings">Експортувати налаштування додатку</string>
     <string name="settings_backup_export_settings_supporting">Створити резервну копію тем, стилів кнопок в номеронабирах і конфігурацій у JSON</string>

@@ -123,6 +123,7 @@
     <string name="action_allow">Tillad</string>
     <string name="action_manage">Administrer</string>
     <string name="action_settings">Indstillinger</string>
+    <string name="action_change">Skift</string>
     <string name="action_add_existing_contact">Føj til eksisterende kontakt</string>
     <string name="action_merge_calls">Flet opkald</string>
     <string name="conference_call">Opkald på konference</string>
@@ -225,6 +226,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Krypterede kontakter eksporteret</string>
     <string name="backup_settings_export_success">App indstillinger eksporteret succesfuldt</string>
     <string name="backup_settings_import_success">App-indstillinger gendannet succesfuldt</string>
     <!-- Settings > root -->
@@ -308,6 +310,25 @@ Hvid tekst</string>
     <string name="settings_call_dialpad_size_large">Rummelig</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Standard Kontaktsikkerhedskopi</string>
+    <string name="settings_backup_encrypted_header">Krypterede Sikkerhedskopier</string>
+    <string name="settings_backup_automatic_header">Automatiske Sikkerhedskopier</string>
+    <string name="settings_backup_encryption">Kryptér kontaktsikkerhedskopier</string>
+    <string name="settings_backup_password">Sikkerhedskopiér adgangskode</string>
+    <string name="settings_backup_password_supporting">Kræves for at kryptere og importere krypterede kontaktsikkerhedskopier</string>
+    <string name="settings_backup_password_not_set">Ingen adgangskode angivet</string>
+    <string name="settings_backup_password_set">Adgangskode gemt sikkert</string>
+    <string name="settings_backup_set_password">Angiv adgangskode</string>
+    <string name="settings_backup_change_password">Skift adgangskode</string>
+    <string name="settings_backup_password_dialog_title">Indtast adgangskode til sikkerhedskopi</string>
+    <string name="settings_backup_import_progress_title">Importerer kontakter</string>
+    <string name="settings_backup_import_progress_count">%1$d af %2$d kontakter importeret</string>
+    <string name="settings_backup_folder">Automatisk sikkerhedsmappe</string>
+    <string name="settings_backup_folder_supporting">Vælg en lokal mappe, hvor den nyeste sikkerhedskopi vil blive gemt</string>
+    <string name="settings_backup_folder_not_set">Ingen lokal mappe valgt</string>
+    <string name="settings_backup_choose_folder">Vælg sikkerhedsmappe</string>
+    <string name="settings_backup_retention">Automatiske sikkerhedskopieringsversioner</string>
+    <string name="settings_backup_retention_supporting">Behold dette mange tidsstemplede sikkerhedskopier til at gendanne ældre kontaktlister</string>
     <string name="settings_backup_app_settings_header">Appindstillinger &amp; Præferencer</string>
     <string name="settings_backup_export_settings">Eksporter App-indstillinger</string>
     <string name="settings_backup_export_settings_supporting">Sikkerhedskopiere temaer, dialpad stilarter og konfigurationer til JSON</string>

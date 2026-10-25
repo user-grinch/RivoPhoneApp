@@ -305,6 +305,22 @@ valkoinen teksti</string>
     <string name="settings_call_dialpad_size_large">Tilava</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Salaa yhteystietojen varmuuskopiot</string>
+    <string name="settings_backup_password">Varmuuskopioi salasana</string>
+    <string name="settings_backup_password_supporting">Vaadittu salaamaan ja tuomaan salatut yhteystietojen varmuuskopiot</string>
+    <string name="settings_backup_password_not_set">Salasanaa ei ole asetettu</string>
+    <string name="settings_backup_password_set">Salasana tallennettu turvallisesti</string>
+    <string name="settings_backup_set_password">Aseta salasana</string>
+    <string name="settings_backup_change_password">Vaihda salasana</string>
+    <string name="settings_backup_password_dialog_title">Syötä varmuuskopion salasana</string>
+    <string name="settings_backup_import_progress_title">Tuodaan yhteystietoja</string>
+    <string name="settings_backup_import_progress_count">%1$d / %2$d yhteystietoa tuotu</string>
+    <string name="settings_backup_folder">Automaattinen varmuuskopio kansio</string>
+    <string name="settings_backup_folder_supporting">Valitse paikallinen kansio, jossa uusin varmuuskopio tallennetaan</string>
+    <string name="settings_backup_folder_not_set">Paikallista kansiota ei ole valittu</string>
+    <string name="settings_backup_choose_folder">Valitse varmuuskopio kansio</string>
+    <string name="settings_backup_retention">Automaattiset varmuuskopiointiversiot</string>
+    <string name="settings_backup_retention_supporting">Pidä tämä monta aikaleimattua varmuuskopiota palauttaaksesi vanhemmat yhteystietolistat</string>
     <string name="settings_backup_app_settings_header">Sovellusasetukset &amp; Asetukset</string>
     <string name="settings_backup_export_settings">Vie Sovelluksen Asetukset</string>
     <string name="settings_backup_export_settings_supporting">Varmuuskopioi teemoja, dialappityylejä ja konfiguraatioita JSON</string>

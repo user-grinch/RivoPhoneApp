@@ -305,6 +305,22 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">連絡先のバックアップを暗号化</string>
+    <string name="settings_backup_password">バックアップパスワード</string>
+    <string name="settings_backup_password_supporting">暗号化された連絡先バックアップの暗号化とインポートに必要です</string>
+    <string name="settings_backup_password_not_set">パスワードが未設定です</string>
+    <string name="settings_backup_password_set">パスワードを安全に保存しました</string>
+    <string name="settings_backup_set_password">パスワードを設定</string>
+    <string name="settings_backup_change_password">パスワードの変更</string>
+    <string name="settings_backup_password_dialog_title">バックアップパスワードを入力してください</string>
+    <string name="settings_backup_import_progress_title">連絡先をインポート中</string>
+    <string name="settings_backup_import_progress_count">%1$d の %2$d 連絡先がインポートされました</string>
+    <string name="settings_backup_folder">自動バックアップフォルダ</string>
+    <string name="settings_backup_folder_supporting">最新のバックアップを保存するローカルフォルダを選択してください</string>
+    <string name="settings_backup_folder_not_set">ローカルフォルダが選択されていません</string>
+    <string name="settings_backup_choose_folder">バックアップフォルダを選択</string>
+    <string name="settings_backup_retention">自動バックアップバージョン</string>
+    <string name="settings_backup_retention_supporting">古い連絡先リストを復元するには、この多くのタイムスタンプされたバックアップを保管してください</string>
     <string name="settings_backup_app_settings_header">アプリ設定 &amp; 設定</string>
     <string name="settings_backup_export_settings">アプリの設定をエクスポート</string>
     <string name="settings_backup_export_settings_supporting">テーマ、ダイヤルパッドのスタイル、設定をJSONにバックアップする</string>

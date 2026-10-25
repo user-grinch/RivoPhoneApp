@@ -308,6 +308,22 @@ Texto branco</string>
     <string name="settings_call_dialpad_size_large">Indomável</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Criptografar backups de contatos</string>
+    <string name="settings_backup_password">Senha de backup</string>
+    <string name="settings_backup_password_supporting">Necessário para criptografar e importar backups dos contatos criptografados</string>
+    <string name="settings_backup_password_not_set">Nenhuma senha definida</string>
+    <string name="settings_backup_password_set">Senha salva com segurança</string>
+    <string name="settings_backup_set_password">Definir senha</string>
+    <string name="settings_backup_change_password">Mudar Senha</string>
+    <string name="settings_backup_password_dialog_title">Inserir senha do backup</string>
+    <string name="settings_backup_import_progress_title">Importando contatos</string>
+    <string name="settings_backup_import_progress_count">%1$d dos contatos %2$d importados</string>
+    <string name="settings_backup_folder">Pasta de backup automática</string>
+    <string name="settings_backup_folder_supporting">Escolha uma pasta local onde o backup mais recente será salvo</string>
+    <string name="settings_backup_folder_not_set">Nenhuma pasta local selecionada</string>
+    <string name="settings_backup_choose_folder">Escolher pasta de backup</string>
+    <string name="settings_backup_retention">Versões automáticas de backup</string>
+    <string name="settings_backup_retention_supporting">Mantenha esta quantidade de backups no horário para recuperar listas de contatos mais antigas</string>
     <string name="settings_backup_app_settings_header">Configurações do App &amp; Preferências</string>
     <string name="settings_backup_export_settings">Exportar configurações do aplicativo</string>
     <string name="settings_backup_export_settings_supporting">Fazer backup de temas, estilos do discador e configurações para JSON</string>

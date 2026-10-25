@@ -308,6 +308,22 @@ Hvit tekst</string>
     <string name="settings_call_dialpad_size_large">Sterk</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_encryption">Krypter kontakter sikkerhetskopier</string>
+    <string name="settings_backup_password">Sikkerhetskopier passord</string>
+    <string name="settings_backup_password_supporting">Nødvendig for å kryptere og importere krypterte kontakt-sikkerhetskopier</string>
+    <string name="settings_backup_password_not_set">Ingen passord er angitt</string>
+    <string name="settings_backup_password_set">Trygt passordlagret</string>
+    <string name="settings_backup_set_password">Angi passord</string>
+    <string name="settings_backup_change_password">Endre passord</string>
+    <string name="settings_backup_password_dialog_title">Angi passord for sikkerhetskopiering</string>
+    <string name="settings_backup_import_progress_title">Importerer kontakter</string>
+    <string name="settings_backup_import_progress_count">%1$d av %2$d kontakter importert</string>
+    <string name="settings_backup_folder">Automatisk sikkerhetskopieringsmappe</string>
+    <string name="settings_backup_folder_supporting">Velg en lokal mappe hvor du lagrer den siste sikkerhetskopien</string>
+    <string name="settings_backup_folder_not_set">Ingen lokal mappe valgt</string>
+    <string name="settings_backup_choose_folder">Velg sikkerhetskopimappe</string>
+    <string name="settings_backup_retention">Automatiske sikkerhetskopiversjoner</string>
+    <string name="settings_backup_retention_supporting">Behold så mange tidsstemplede sikkerhetskopier for å gjenopprette eldre kontaktlister</string>
     <string name="settings_backup_export_settings">Eksporter app-innstillinger</string>
     <string name="settings_backup_export_settings_supporting">Sikkerhetskopier tema, dialpad stiler og konfigurasjoner til JSON</string>
     <string name="settings_backup_import_settings">Gjenopprett Appinnstillinger</string>

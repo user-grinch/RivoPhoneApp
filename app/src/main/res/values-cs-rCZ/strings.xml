@@ -123,6 +123,7 @@
     <string name="action_allow">Povolit</string>
     <string name="action_manage">Spravovat</string>
     <string name="action_settings">Nastavení</string>
+    <string name="action_change">Změnit</string>
     <string name="action_add_existing_contact">Přidat do existujícího kontaktu</string>
     <string name="action_merge_calls">Sloučit hovory</string>
     <string name="conference_call">Konferenční hovor</string>
@@ -225,6 +226,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Šifrované kontakty úspěšně exportovány</string>
     <string name="backup_settings_export_success">Nastavení aplikace bylo úspěšně exportováno</string>
     <string name="backup_settings_import_success">Nastavení aplikace bylo úspěšně obnoveno</string>
     <!-- Settings > root -->
@@ -308,6 +310,25 @@ Bílý text</string>
     <string name="settings_call_dialpad_size_large">Prostor</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Standardní záloha kontaktů</string>
+    <string name="settings_backup_encrypted_header">Šifrované zálohy</string>
+    <string name="settings_backup_automatic_header">Automatické zálohy</string>
+    <string name="settings_backup_encryption">Šifrovat zálohy kontaktů</string>
+    <string name="settings_backup_password">Heslo pro zálohu</string>
+    <string name="settings_backup_password_supporting">Vyžadováno pro šifrování a import šifrovaných záloh kontaktů</string>
+    <string name="settings_backup_password_not_set">Žádné heslo nenastaveno</string>
+    <string name="settings_backup_password_set">Heslo bylo uloženo bezpečně</string>
+    <string name="settings_backup_set_password">Nastavit heslo</string>
+    <string name="settings_backup_change_password">Změnit heslo</string>
+    <string name="settings_backup_password_dialog_title">Zadejte heslo pro zálohu</string>
+    <string name="settings_backup_import_progress_title">Import kontaktů</string>
+    <string name="settings_backup_import_progress_count">%1$d z %2$d kontaktů importováno</string>
+    <string name="settings_backup_folder">Automatická složka zálohy</string>
+    <string name="settings_backup_folder_supporting">Vyberte místní složku, kde bude uložena poslední záloha</string>
+    <string name="settings_backup_folder_not_set">Nebyla vybrána žádná místní složka</string>
+    <string name="settings_backup_choose_folder">Vyberte záložní složku</string>
+    <string name="settings_backup_retention">Automatické záložní verze</string>
+    <string name="settings_backup_retention_supporting">Ponechat toto mnoho časových záloh pro obnovení starších seznamů kontaktů</string>
     <string name="settings_backup_app_settings_header">Nastavení aplikace &amp; Předvolby</string>
     <string name="settings_backup_export_settings">Exportovat nastavení aplikace</string>
     <string name="settings_backup_export_settings_supporting">Zálohovat motivy, styl číselníku a konfigurace na JSON</string>
