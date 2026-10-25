@@ -57,7 +57,7 @@
     <string name="shizuku_download_directly">shizuku.rikka.app から直接ダウンロード</string>
     <string name="settings_open_system">アプリシステム設定を開く</string>
     <string name="settings_open_system_supporting">Android端末の設定で直接権限の表示と管理</string>
-    <string name="settings_transition_speed">トランジションアニメーション速度</string>
+    <string name="settings_transition_speed">トランジションアニメーション時間</string>
     <string name="settings_transition_speed_supporting">ページ、タブ、メニュー全体でトランジションアニメーションの時間スケールを調整する</string>
     <string name="settings_more_display">その他の表示設定</string>
     <string name="settings_navigation_bar">ナビゲーションバー</string>
@@ -286,6 +286,8 @@
     <string name="dynamic_color">動的な色</string>
     <string name="enable_dynamic_color">壁紙からの動的な色を有効にする</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">ズーム</string>
+    <string name="settings_interface_transition_stack">深さスタック</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">0を長押しして+にする</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">ダイヤルパッドの0ボタンを長押しして+と入力します</string>
@@ -490,6 +492,7 @@
     <string name="settings_permissions_system_title">システム</string>
     <string name="settings_private_contacts_count">保護された連絡先 (%1$d)</string>
     <string name="action_select_all">すべて選択</string>
+    <string name="action_deselect_all">すべての選択を解除</string>
     <string name="action_select_none">すべての選択を解除</string>
     <string name="settings_private_secret_code">シークレットダイヤルパッドコード</string>
     <string name="about_rate_on_google_play">アプリを評価</string>
@@ -649,7 +652,7 @@
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">微妙から超丸まで角の曲率を調整する</string>
     <string name="loc_transition_animations">トランジションアニメーション</string>
     <string name="loc_screen_transition_animations_and_motion_effects">画面切り替えアニメーションとモーションエフェクト</string>
-    <string name="loc_transition_animation_speed">トランジションアニメーション速度</string>
+    <string name="loc_transition_animation_speed">トランジションアニメーション時間</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">ページ、タブ、メニュー全体でトランジションアニメーションの時間スケールを調整する</string>
     <string name="loc_predictive_back_gestures">予測背面ジェスチャー</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">戻るときのインタラクティブなスワイプからプレビューのアニメーション</string>
@@ -884,7 +887,7 @@
     <string name="loc_rewind_10s">10秒巻き戻し</string>
     <string name="loc_forward_10s">10秒進む</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} が選択されました</string>
-    <string name="loc_privatecontacts_size_secured">%1$d を保護しました</string>
+    <string name="loc_privatecontacts_size_secured">%1$d セキュア化</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">ローカルにRivoのサンドボックス入り保管庫に保存されています。• WhatsAppとシステムアプリから非表示になります</string>
     <string name="loc_select_contacts_for_private_storage">プライベートストレージの連絡先を選択</string>
     <string name="loc_move_to_private_storage">プライベートストレージに移動</string>
@@ -963,7 +966,7 @@
     <string name="loc_save_to_call_history">通話履歴に保存</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">最近使った偽の通話に応答したり見逃した通話が表示されます</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d がブロックしました</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d がブロックされました</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">この番号からの通話とテキストメッセージは直ちにブロックされます。</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNameのブロックを解除しますか？再度電話とメッセージを送信することができます。</string>
     <string name="loc_processing_blocklist">ブロックリストを処理中</string>
@@ -984,4 +987,15 @@
     <string name="call_customization_incoming_style">着信のスタイル</string>
     <string name="content_desc_more_actions">その他のアクション</string>
     <string name="quick_response_message_text">メッセージ テキスト</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

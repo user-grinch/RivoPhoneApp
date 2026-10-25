@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Scarica direttamente da shizuku.rikka.app</string>
     <string name="settings_open_system">Apri Impostazioni Di Sistema App</string>
     <string name="settings_open_system_supporting">Visualizza e gestisci le autorizzazioni direttamente nelle impostazioni del dispositivo Android</string>
-    <string name="settings_transition_speed">Velocità Di Animazione Transizione</string>
+    <string name="settings_transition_speed">Tempo Di Animazione Transizione</string>
     <string name="settings_transition_speed_supporting">Regola la scala temporale dell\'animazione di transizione tra pagine, schede e menu</string>
     <string name="settings_more_display">Altre Impostazioni Di Visualizzazione</string>
     <string name="settings_navigation_bar">Barra Di Navigazione</string>
@@ -289,6 +289,8 @@ Testo bianco</string>
     <string name="dynamic_color">Colore Dinamico</string>
     <string name="enable_dynamic_color">Abilita colore dinamico dallo sfondo</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Zoom</string>
+    <string name="settings_interface_transition_stack">Pila Di Profondità</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Tieni premuto 0 per +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Digita + tenendo premuto il pulsante 0 sul tastierino</string>
@@ -498,6 +500,7 @@ Testo bianco</string>
     <string name="settings_permissions_system_title">Sistema</string>
     <string name="settings_private_contacts_count">Contatti Protetti (%1$d)</string>
     <string name="action_select_all">Seleziona Tutto</string>
+    <string name="action_deselect_all">Deseleziona Tutto</string>
     <string name="action_select_none">Deseleziona Tutto</string>
     <string name="settings_private_secret_code">Codice Tastierino Segreto</string>
     <string name="about_rate_on_google_play">Valuta l\'app</string>
@@ -674,7 +677,7 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Regola la curvatura dell\'angolo da sottile a ultra arrotondato</string>
     <string name="loc_transition_animations">Animazioni Di Transizione</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animazioni di transizione schermo ed effetti di movimento</string>
-    <string name="loc_transition_animation_speed">Velocità Di Animazione Transizione</string>
+    <string name="loc_transition_animation_speed">Tempo Di Animazione Transizione</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Regola la scala temporale dell\'animazione di transizione tra pagine, schede e menu</string>
     <string name="loc_predictive_back_gestures">Gesti Indietro Predictive</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Animazioni interattive di swipe-to-preview quando si naviga indietro</string>
@@ -1015,4 +1018,15 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="call_customization_incoming_style">Stile chiamata in arrivo</string>
     <string name="content_desc_more_actions">Altre azioni</string>
     <string name="quick_response_message_text">Testo del messaggio</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

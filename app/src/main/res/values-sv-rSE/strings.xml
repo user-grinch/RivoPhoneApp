@@ -58,7 +58,6 @@
     <string name="shizuku_download_directly">Ladda ner direkt från shizuku.rikka.app</string>
     <string name="settings_open_system">Öppna appens systeminställningar</string>
     <string name="settings_open_system_supporting">Visa och hantera behörigheter direkt i Android-enhetens inställningar</string>
-    <string name="settings_transition_speed">Övergång animationshastighet</string>
     <string name="settings_transition_speed_supporting">Justera övergångsanimering tidsskala över sidor, flikar och menyer</string>
     <string name="settings_more_display">Fler inställningar för visning</string>
     <string name="settings_navigation_bar">Navigeringsfält</string>
@@ -289,6 +288,8 @@ Vit text</string>
     <string name="dynamic_color">Dynamisk färg</string>
     <string name="enable_dynamic_color">Aktivera dynamisk färg från bakgrundsbild</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Zooma</string>
+    <string name="settings_interface_transition_stack">Djup stapel</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Håll 0 i +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Skriv + genom att hålla 0 knappen på knappsatsen</string>
@@ -673,7 +674,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Justera hörn krökning från subtil till ultra rundad</string>
     <string name="loc_transition_animations">Övergång Animationer</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Skärmövergångsanimationer och rörelseeffekter</string>
-    <string name="loc_transition_animation_speed">Övergång animationshastighet</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Justera övergångsanimering tidsskala över sidor, flikar och menyer</string>
     <string name="loc_predictive_back_gestures">Förutsägande tillbaka gester</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktiva svep-till-förhandsgranska animationer när du navigerar tillbaka</string>
@@ -913,7 +913,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_rewind_10s">Spola tillbaka 10s</string>
     <string name="loc_forward_10s">Vidarebefordra 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} vald</string>
-    <string name="loc_privatecontacts_size_secured">%1$d säkrad</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagrad lokalt i Rivos sandlådade valv • Gömd från WhatsApp och systemappar</string>
     <string name="loc_select_contacts_for_private_storage">Välj kontakter för privat lagring</string>
     <string name="loc_move_to_private_storage">Flytta till privat lagring</string>
@@ -994,7 +993,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_save_to_call_history">Spara till samtalshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Svarade och missade falska samtal kommer att dyka upp i Senaste</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d blockerat</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtal och sms från detta nummer kommer att blockeras omedelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Avblockera $targetDisplayName? De kommer att kunna ringa och meddela dig igen.</string>
     <string name="loc_processing_blocklist">Bearbetar blocklista</string>
@@ -1016,4 +1014,15 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="call_customization_incoming_style">Stil på inkommande samtal</string>
     <string name="content_desc_more_actions">Fler åtgärder</string>
     <string name="quick_response_message_text">Meddelande text</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

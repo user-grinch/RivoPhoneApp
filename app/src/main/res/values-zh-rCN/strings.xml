@@ -58,7 +58,6 @@
     <string name="shizuku_download_directly">直接从 shizuku.rika.app 下载</string>
     <string name="settings_open_system">打开应用系统设置</string>
     <string name="settings_open_system_supporting">直接在 Android 设备设置中查看和管理权限</string>
-    <string name="settings_transition_speed">过渡动画速度</string>
     <string name="settings_transition_speed_supporting">调整跨页、标签和菜单的过渡动画时间比例</string>
     <string name="settings_more_display">更多显示设置</string>
     <string name="settings_navigation_bar">导航栏</string>
@@ -441,6 +440,8 @@
     <string name="dynamic_color">动态颜色</string>
     <string name="enable_dynamic_color">启用壁纸中的动态颜色</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">缩放</string>
+    <string name="settings_interface_transition_stack">深度应用</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">按 0 键++</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">按住拨号键键盘上的 0 按钮键输入 +</string>
@@ -818,7 +819,6 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">将圆角曲线从微型曲线调整到越型圆角</string>
     <string name="loc_transition_animations">过渡动画</string>
     <string name="loc_screen_transition_animations_and_motion_effects">屏幕过渡动画和运动特效</string>
-    <string name="loc_transition_animation_speed">过渡动画速度</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">调整跨页、标签和菜单的过渡动画时间比例</string>
     <string name="loc_predictive_back_gestures">预测背部手势</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">返回时交互滑动预览动画</string>
@@ -1144,4 +1144,15 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="call_customization_incoming_style">来电样式</string>
     <string name="content_desc_more_actions">更多操作</string>
     <string name="quick_response_message_text">消息文本</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

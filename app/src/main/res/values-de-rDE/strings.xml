@@ -59,7 +59,7 @@
     <string name="shizuku_download_directly">Direkt von shizuku.rikka.app herunterladen</string>
     <string name="settings_open_system">App-Systemeinstellungen öffnen</string>
     <string name="settings_open_system_supporting">Berechtigungen direkt in den Android-Geräteeinstellungen anzeigen und verwalten</string>
-    <string name="settings_transition_speed">Übergangs-Animationsgeschwindigkeit</string>
+    <string name="settings_transition_speed">Übergangs-Animationszeit</string>
     <string name="settings_transition_speed_supporting">Zeitskalierung der Übergangsanimation über Seiten, Tabs und Menüs hinweg anpassen</string>
     <string name="settings_more_display">Weitere Anzeigeeinstellungen</string>
     <string name="settings_navigation_bar">Navigationsleiste</string>
@@ -570,6 +570,8 @@ Weißer Text</string>
     <string name="settings_interface_transition_animation_supporting">Animationsstil zwischen Bildschirmen</string>
     <string name="settings_interface_transition_slide">Streichen</string>
     <string name="settings_interface_transition_fade">Verblassen</string>
+    <string name="settings_interface_transition_zoom">Zoom</string>
+    <string name="settings_interface_transition_stack">Tiefenstapel</string>
     <string name="settings_interface_transition_none">Keine</string>
     <string name="settings_interface_search_matching_mode">Suchmodus</string>
     <string name="settings_interface_search_matching_mode_supporting">Verhalten des Filter-Algorithmus für Kontakte</string>
@@ -1230,6 +1232,7 @@ Weißer Text</string>
     <string name="settings_permissions_system_title">System</string>
     <string name="settings_private_contacts_count">Gesicherte Kontakte (%1$d)</string>
     <string name="action_select_all">Alle auswählen</string>
+    <string name="action_deselect_all">Alle abwählen</string>
     <string name="action_select_none">Alle abwählen</string>
     <string name="settings_private_secret_code">Geheimer Tastenfeld-Code</string>
     <string name="about_rate_on_google_play">App bewerten</string>
@@ -1406,7 +1409,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Eckkrümmung von subtil bis extrem abgerundet anpassen</string>
     <string name="loc_transition_animations">Übergangsanimationen</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Bildschirm-Übergangsanimationen und Bewegungseffekte</string>
-    <string name="loc_transition_animation_speed">Geschwindigkeit Übergangs-Animationen</string>
+    <string name="loc_transition_animation_speed">Übergangs-Animationszeit</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Zeitskalierung der Übergangsanimation für alle Seiten, Tabs und Menüs anpassen</string>
     <string name="loc_predictive_back_gestures">Zurück-Gesten mit Vorschau</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktive Vorschau-Animationen beim Zurücknavigieren</string>
@@ -1750,4 +1753,15 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="content_desc_more_actions">Weitere Aktionen</string>
     <string name="quick_response_message_text">Nachrichtentext</string>
     <string name="content_desc_clear_search">Suche leeren</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

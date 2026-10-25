@@ -58,7 +58,6 @@
     <string name="shizuku_download_directly">Last ned direkte fra shizuku.rikka.app</string>
     <string name="settings_open_system">Åpne Systeminnstillinger for App</string>
     <string name="settings_open_system_supporting">Se og administrer tillatelser direkte i innstillinger for Android enheter</string>
-    <string name="settings_transition_speed">Overgang Animasjon Hastighet</string>
     <string name="settings_transition_speed_supporting">Juster tidsskala for overgang mellom sider, faner og menyer</string>
     <string name="settings_more_display">Flere visningsinnstillinger</string>
     <string name="settings_navigation_bar">Navigasjonsfelt (Automatic Translation)</string>
@@ -289,6 +288,8 @@ Hvit tekst</string>
     <string name="dynamic_color">Dynamisk farge</string>
     <string name="enable_dynamic_color">Aktiver dynamisk farge fra bakgrunn</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Forstørre</string>
+    <string name="settings_interface_transition_stack">Dybde stabel</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Hold 0 til +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Skriv + ved å holde 0 knappen på talltastaturet</string>
@@ -668,7 +669,6 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Juster hjørnekrumning fra subtil eldrebølger avrundet</string>
     <string name="loc_transition_animations">Overgang Animasjoner</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animasjoner og bevegelseseffekter på skjermen</string>
-    <string name="loc_transition_animation_speed">Overgang Animasjon Hastighet</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Juster tidsskala for overgang mellom sider, faner og menyer</string>
     <string name="loc_predictive_back_gestures">Forutsigende Ryggbevegelser</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktive swipe-to preview animasjoner ved navigering tilbake</string>
@@ -905,7 +905,6 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_play">Spill</string>
     <string name="loc_rewind_10s">Tilbakespoling av 10</string>
     <string name="loc_forward_10s">Videresend 10 sekunder</string>
-    <string name="loc_privatecontacts_size_secured">%1$d sikret</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagret lokalt i Rivastigmine sitt sandbokserte hvelv • Skjult fra WhatsApp og systemapper</string>
     <string name="loc_select_contacts_for_private_storage">Velg kontakter for privat lagring</string>
     <string name="loc_move_to_private_storage">Flytt til privat lagring</string>
@@ -986,7 +985,6 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_save_to_call_history">Lagre i Samtalelogg</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Besvarte og tapte falske anrop vil vises hos Nylige</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d blokkert</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtaler og tekstmeldinger fra dette nummeret vil bli blokkert umiddelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Oppheve blokkeringen av $targetDisplayName? De vil kunne ringe og sende en melding til deg igjen.</string>
     <string name="loc_processing_blocklist">Behandling av blokkliste</string>
@@ -1008,4 +1006,15 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="call_customization_incoming_style">Stil for innkommende samtale</string>
     <string name="content_desc_more_actions">Flere handlinger</string>
     <string name="quick_response_message_text">Tekst på melding</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

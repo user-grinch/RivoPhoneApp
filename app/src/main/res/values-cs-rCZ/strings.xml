@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Stáhnout přímo z aplikace shizuku.rikka.app</string>
     <string name="settings_open_system">Otevřít nastavení systému aplikace</string>
     <string name="settings_open_system_supporting">Zobrazit a spravovat oprávnění přímo v nastavení zařízení Android</string>
-    <string name="settings_transition_speed">Rychlost přechodové animace</string>
+    <string name="settings_transition_speed">Animace přechodu</string>
     <string name="settings_transition_speed_supporting">Upravit časový rozsah animace přechodů napříč stránkami, kartami a nabídkami</string>
     <string name="settings_more_display">Další nastavení zobrazení</string>
     <string name="settings_navigation_bar">Navigační lišta</string>
@@ -500,6 +500,7 @@ Bílý text</string>
     <string name="settings_permissions_system_title">Systém</string>
     <string name="settings_private_contacts_count">Zabezpečené kontakty (%1$d)</string>
     <string name="action_select_all">Vybrat vše</string>
+    <string name="action_deselect_all">Zrušit výběr všech</string>
     <string name="action_select_none">Zrušit výběr všech</string>
     <string name="settings_private_secret_code">Tajný kód číselníku</string>
     <string name="about_rate_on_google_play">Ohodnoťte aplikaci</string>
@@ -676,7 +677,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Nastavit křivost rohu od jemné po ultra zaoblené</string>
     <string name="loc_transition_animations">Animace přechodu</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animace přechodu obrazovky a efekty pohybu</string>
-    <string name="loc_transition_animation_speed">Rychlost přechodové animace</string>
+    <string name="loc_transition_animation_speed">Animace přechodu</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Upravit časový rozsah animace přechodů napříč stránkami, kartami a nabídkami</string>
     <string name="loc_predictive_back_gestures">Předpovědní gesta zad</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktivní animace při přejetí zpět</string>
@@ -997,7 +998,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_save_to_call_history">Uložit do historie hovorů</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Přijaté a zmeškané falešné hovory se zobrazí v nedávných</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d zablokován</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d zablokováno</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Volání a textové zprávy z tohoto čísla budou okamžitě zablokovány.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokovat $targetDisplayName? Budou vám moci znovu zavolat a poslat.</string>
     <string name="loc_processing_blocklist">Zpracovávání seznamu bloků</string>
@@ -1019,4 +1020,15 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="call_customization_incoming_style">Styl příchozího hovoru</string>
     <string name="content_desc_more_actions">Další akce</string>
     <string name="quick_response_message_text">Text zprávy</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

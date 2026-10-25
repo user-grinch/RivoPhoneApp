@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Download direkte fra shizuku.rikka.app</string>
     <string name="settings_open_system">Åbn App Systemindstillinger</string>
     <string name="settings_open_system_supporting">Se og administrer tilladelser direkte i Android-enheds indstillinger</string>
-    <string name="settings_transition_speed">Overgang Animation Hastighed</string>
+    <string name="settings_transition_speed">Animationstid For Overgang</string>
     <string name="settings_transition_speed_supporting">Justere overgang animation tidsskala på tværs af sider, faner og menuer</string>
     <string name="settings_more_display">Flere Visningsindstillinger</string>
     <string name="settings_navigation_bar">Navigationsbjælke</string>
@@ -289,6 +289,8 @@ Hvid tekst</string>
     <string name="dynamic_color">Dynamisk Farve</string>
     <string name="enable_dynamic_color">Aktivér dynamisk farve fra baggrund</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Zoom</string>
+    <string name="settings_interface_transition_stack">Dybde Stak</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Hold 0 for +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Type + ved at holde 0-knappen på opkaldsblokken nede</string>
@@ -498,6 +500,7 @@ Hvid tekst</string>
     <string name="settings_permissions_system_title">System</string>
     <string name="settings_private_contacts_count">Sikrede kontakter (%1$d)</string>
     <string name="action_select_all">Vælg Alle</string>
+    <string name="action_deselect_all">Fravælg Alle</string>
     <string name="action_select_none">Fravælg Alle</string>
     <string name="settings_private_secret_code">Hemmelig Dialpad Kode</string>
     <string name="about_rate_on_google_play">Bedøm appen</string>
@@ -674,7 +677,7 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Justere hjørne krumning fra subtile til ultra afrundet</string>
     <string name="loc_transition_animations">Overgangsanimationer</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Screen overgangs animationer og bevægelseseffekter</string>
-    <string name="loc_transition_animation_speed">Overgang Animation Hastighed</string>
+    <string name="loc_transition_animation_speed">Animationstid For Overgang</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Justere overgang animation tidsskala på tværs af sider, faner og menuer</string>
     <string name="loc_predictive_back_gestures">Predictive Back Gestures</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktiv swipe-to-preview animationer, når du navigerer tilbage</string>
@@ -1017,4 +1020,15 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="call_customization_incoming_style">Stilen for indgående opkald</string>
     <string name="content_desc_more_actions">Flere handlinger</string>
     <string name="quick_response_message_text">Besked tekst</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

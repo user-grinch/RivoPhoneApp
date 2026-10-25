@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Direct vanuit shizuku.rikka.app downloaden</string>
     <string name="settings_open_system">Open App Systeem Instellingen</string>
     <string name="settings_open_system_supporting">Rechten direct bekijken en beheren in de instellingen van Android-apparaat</string>
-    <string name="settings_transition_speed">Transitie Animatie Snelheid</string>
+    <string name="settings_transition_speed">Overgang Animatie Tijd</string>
     <string name="settings_transition_speed_supporting">overgangsanimatieschaal aanpassen over pagina\'s, tabbladen en menu\'s</string>
     <string name="settings_more_display">Meer beeldscherminstellingen</string>
     <string name="settings_navigation_bar">Navigatie balk</string>
@@ -289,6 +289,8 @@ witte tekst</string>
     <string name="dynamic_color">Dynamische kleur</string>
     <string name="enable_dynamic_color">Activeer dynamische kleur van achtergrond</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Inzoomen</string>
+    <string name="settings_interface_transition_stack">Diepte Stack</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Houd 0 voor +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Type + door de 0 knop op het dialoogblok ingedrukt te houden</string>
@@ -497,6 +499,7 @@ witte tekst</string>
     <string name="settings_permissions_system_title">Systeem</string>
     <string name="settings_private_contacts_count">Beveiligde contacten (%1$d)</string>
     <string name="action_select_all">Alles selecteren</string>
+    <string name="action_deselect_all">Deselecteer alles</string>
     <string name="action_select_none">Deselecteer alles</string>
     <string name="settings_private_secret_code">Geheim toetsenbord code</string>
     <string name="about_rate_on_google_play">Beoordeel de app</string>
@@ -670,7 +673,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Pas de hoek curvature aan van subtle naar ultra afgerond</string>
     <string name="loc_transition_animations">Overgang Animaties</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Schermovergang animaties en bewegingseffecten</string>
-    <string name="loc_transition_animation_speed">Transitie Animatie Snelheid</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">overgangsanimatieschaal aanpassen over pagina\'s, tabbladen en menu\'s</string>
     <string name="loc_predictive_back_gestures">Voorspelde Terug Gebaren</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interactief vegen-naar-preview animaties bij terugnavigeren</string>
@@ -910,7 +912,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_rewind_10s">10s terugspoelen</string>
     <string name="loc_forward_10s">10s doorsturen</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} geselecteerd</string>
-    <string name="loc_privatecontacts_size_secured">%1$d beveiligd</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lokaal opgeslagen in Rivo\'s sandboxed kluis • Verborgen in WhatsApp en systeem apps</string>
     <string name="loc_select_contacts_for_private_storage">Contactpersonen voor Privé Opslag selecteren</string>
     <string name="loc_move_to_private_storage">Verplaats naar Privé Opslag</string>
@@ -990,7 +991,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_save_to_call_history">Opslaan in oproepgeschiedenis</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Beantwoorde en gemiste nep oproepen verschijnen in recente oproepen</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d geblokkeerd</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Gesprekken en sms-berichten van dit nummer worden onmiddellijk geblokkeerd.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNamedeblokkeren? Ze kunnen je weer bellen en je een bericht sturen.</string>
     <string name="loc_processing_blocklist">Verwerken blokkeerlijst</string>
@@ -1012,4 +1012,15 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="call_customization_incoming_style">Inkomende gespreksstijl</string>
     <string name="content_desc_more_actions">Meer acties</string>
     <string name="quick_response_message_text">Bericht tekst</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

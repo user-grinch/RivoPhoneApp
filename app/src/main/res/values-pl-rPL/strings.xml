@@ -59,7 +59,6 @@
     <string name="shizuku_download_directly">Pobierz bezpośrednio z shizuku.rikka.app</string>
     <string name="settings_open_system">Otwórz ustawienia systemowe aplikacji</string>
     <string name="settings_open_system_supporting">Przeglądaj i zarządzaj uprawnieniami bezpośrednio w ustawieniach urządzenia Android</string>
-    <string name="settings_transition_speed">Szybkość animacji przejścia</string>
     <string name="settings_transition_speed_supporting">Dostosuj zakres czasu animacji przejścia na stronach, zakładkach i menu</string>
     <string name="settings_more_display">Więcej ustawień wyświetlania</string>
     <string name="settings_navigation_bar">Pasek nawigacji</string>
@@ -509,7 +508,7 @@ Biały tekst</string>
     <string name="font_size_medium">Średni</string>
     <string name="font_size_large">Duży</string>
     <string name="font_family_serif">Serif</string>
-    <string name="font_family_sans_serif">Sansy Serif</string>
+    <string name="font_family_sans_serif">Sans Serif</string>
     <string name="font_family_monospace">Monospace</string>
     <string name="font_family_cursive">Kursywa</string>
     <string name="font_family_casual">Zwykła</string>
@@ -575,6 +574,8 @@ Biały tekst</string>
     <string name="settings_interface_transition_animation_supporting">Styl animacji między ekranami</string>
     <string name="settings_interface_transition_slide">Przesunięcie</string>
     <string name="settings_interface_transition_fade">Przenikanie</string>
+    <string name="settings_interface_transition_zoom">Powiększ</string>
+    <string name="settings_interface_transition_stack">Głęboki stos</string>
     <string name="settings_interface_transition_none">Brak</string>
     <string name="settings_interface_search_matching_mode">Tryb dopasowania wyszukiwania</string>
     <string name="settings_interface_search_matching_mode_supporting">Zachowanie algorytmu filtrowania kontaktów</string>
@@ -1191,7 +1192,7 @@ Biały tekst</string>
     <string name="settings_sound_dnd_during_calls_supporting">Automatycznie wyciszaj powiadomienia i inne zakłócenia podczas trwania połączenia</string>
     <!-- Unknown Call Background & Image Preview Strings -->
     <string name="settings_call_backgrounds_title">Tła połączenia</string>
-    <string name="settings_call_unknown_background">Nieznane tło połączenia</string>
+    <string name="settings_call_unknown_background">Tło ekranu od nieznanych połączeń</string>
     <string name="settings_call_unknown_background_set">Niestandardowy obraz jest wyświetlany dla nieznanych rozmówców</string>
     <string name="settings_call_unknown_background_none">Nie ustawione — używa domyślnego tła połączenia</string>
     <string name="settings_call_unknown_background_supporting">Pokazuj przy połączeniach przychodzących z nieznanych lub niezapisanych numerów telefonów.</string>
@@ -1413,7 +1414,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Dostosuj zaokrąglenie rogów od subtelnego po maksymalne</string>
     <string name="loc_transition_animations">Animacje przejścia</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animacje przejścia ekranu i efekty ruchu</string>
-    <string name="loc_transition_animation_speed">Szybkość animacji przejścia</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Dostosuj zakres czasu animacji przejścia na stronach, zakładkach i menu</string>
     <string name="loc_predictive_back_gestures">Przewidywane gesty wstecz</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktywne animacje przewijania do podglądu podczas nawigacji wstecz</string>
@@ -1509,8 +1509,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_receive_alerts_for_incoming_calls_while_already_on_another_call">Otrzymuj powiadomienia o połączeniach przychodzących podczas innej rozmowy</string>
     <string name="loc_default_call_screen_background">Domyślne tło ekranu połączenia</string>
     <string name="loc_custom_photo_wallpaper_or_gradient_for_active_phone_calls">Własne zdjęcie, tapeta lub gradient dla aktywnych połączeń telefonicznych</string>
-    <string name="loc_unknown_caller_background">Nieznane tło dzwoniącego</string>
-    <string name="loc_specialized_wallpaper_for_numbers_not_in_your_address_book">Tapeta specjalistyczna dla numerów spoza książki adresowej</string>
+    <string name="loc_unknown_caller_background">Tło ekranu od nieznanego rozmówcy</string>
+    <string name="loc_specialized_wallpaper_for_numbers_not_in_your_address_book">Specjalna tapeta dla numerów spoza Twojej książki adresowej</string>
     <string name="loc_speed_dial">Szybkie wybieranie</string>
     <string name="loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing">Przypisz kontakty do klawiszy klawiszy 1-9 do szybkiego wybierania</string>
     <string name="loc_quick_responses">Szybkie odpowiedzi</string>
@@ -1653,7 +1653,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_rewind_10s">Przewiń 10s</string>
     <string name="loc_forward_10s">Do przodu 10s</string>
     <string name="loc_selectedcontactids_size_selected">Wybrano ${selectedContactIds.size}</string>
-    <string name="loc_privatecontacts_size_secured">%1$d zabezpieczono</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Przechowywane lokalnie w bezpiecznym schowku Rivo • Ukryte przed WhatsAppem i aplikacjami systemowymi</string>
     <string name="loc_select_contacts_for_private_storage">Wybierz kontakty do pamięci prywatnej</string>
     <string name="loc_move_to_private_storage">Przenieś do pamięci prywatnej</string>
@@ -1734,7 +1733,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_save_to_call_history">Zapisz do historii połączeń</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Odebrane i nieodebrane fałszywe połączenia będą widoczne w historii</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d zablokowany</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Połączenia i wiadomości tekstowe z tego numeru zostaną natychmiast zablokowane.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokuj $targetDisplayName? Będą mogli zadzwonić i wysłać Ci wiadomość ponownie.</string>
     <string name="loc_processing_blocklist">Przetwarzanie listy zablokowanych</string>
@@ -1757,4 +1755,15 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="content_desc_more_actions">Więcej akcji</string>
     <string name="quick_response_message_text">Tekst wiadomości</string>
     <string name="content_desc_clear_search">Wyczyść wyszukiwanie</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>
