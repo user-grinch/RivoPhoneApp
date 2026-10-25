@@ -1012,14 +1012,77 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="content_desc_more_actions">Lisää toimintoja</string>
     <string name="quick_response_message_text">Viestin teksti</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung Yksi</string>
+    <string name="font_family_inter">Inter</string>
+    <string name="font_family_poppins">Poppinit</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Asetukset</string>
+    <string name="shortcut_new_contact">Uusi Yhteystieto</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Yksityisen Tallennustilan Holvi</string>
+    <string name="contact_management_private_vault_supporting">Hallitse salaisia paikallisia yhteystietoja, jotka on tallennettu tiukasti sovellustietokantaan</string>
+    <string name="contact_mgmt_total_contacts">Yhteystiedot Yhteensä</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Kaikki yhteystiedot, puhelinnumerot ja sähköpostit ovat ainutlaatuisia.</string>
+    <string name="contact_mgmt_merge_desc">Yhdistä tarpeettomat tiedot ja pidä puhtaat kontaktit.</string>
+    <string name="contact_mgmt_merged_for">Yhdistetyt yhteystiedot %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d yhteystietoa valmis siirtymään %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d vastaavat yhteystiedot • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Yhdistetyt yhteystiedot:</string>
+    <string name="contact_mgmt_primary">Ensisijainen</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Ei numeroita</string>
+    <string name="contact_mgmt_contacts_count">%1$d yhteystietoa</string>
+    <string name="contact_mgmt_select_contacts_to_move">Valitse siirrettävät yhteystiedot</string>
+    <string name="contact_mgmt_move_from_to">Alkaen %1$s ja %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d / %2$d valittu</string>
+    <string name="contact_mgmt_no_number">Ei numeroa</string>
+    <string name="storage_device">Laite</string>
+    <string name="storage_private_vault">Yksityinen Varasto (APP-Holvi)</string>
+    <string name="storage_sim_card_format">SIM-kortti (%1$s)</string>
+    <string name="storage_local">Paikallinen</string>
+    <string name="storage_cloud">Pilvi</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Yksityinen</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Live Corner Äänitys: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Näppäimistö (yhteystiedot)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Skannataan nauhoituksia…</string>
+    <string name="recordings_saved_count">%1$d tallennetut tallenteet</string>
+    <string name="recordings_available_count">%1$d äänitystä saatavilla</string>
+    <string name="recording_min_duration_all_calls">Tallenna Kaikki Puhelut</string>
+    <string name="recording_min_duration_ignore_3s">Ohita puhelut &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ohita puhelut &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ohita &lt; 10 -puhelut</string>
     <!-- Permissions -->
+    <string name="action_set">Aseta</string>
+    <string name="action_grant">Myönnä</string>
+    <string name="action_enable">Aktivoi</string>
+    <string name="action_move_all">Siirrä Kaikki</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Käytössä (Kasvo, Sormenjälki, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Tänään</string>
+    <string name="analytics_time_this_week">Tällä Viikolla</string>
+    <string name="analytics_time_this_month">Tässä Kuussa</string>
+    <string name="analytics_time_all_time">Koko Aika</string>
+    <string name="call_analytics_talked">puhuttu</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Mukauttaminen</string>
+    <string name="settings_category_calling">Soitetaan</string>
+    <string name="settings_category_sound">Ääni</string>
+    <string name="settings_category_contacts">Yhteystiedot</string>
+    <string name="settings_category_security">Turvallisuus</string>
+    <string name="settings_category_about">Tietoja</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Näytä holvissa</string>
+    <string name="private_vault_hide_completely">Piilota Täysin</string>
 </resources>

@@ -56,6 +56,7 @@
     <string name="shizuku_download_directly">Завантажити безпосередньо з shizuku.rika.app</string>
     <string name="settings_open_system">Відкрити налаштування системи додатку</string>
     <string name="settings_open_system_supporting">Перегляд та керування дозволами безпосередньо в налаштуваннях пристрою Android</string>
+    <string name="settings_transition_speed">Час анімації переходу</string>
     <string name="settings_transition_speed_supporting">Регулювання шкали часу анімації переходів між сторінками, вкладками та меню</string>
     <string name="settings_more_display">Додаткові параметри показу</string>
     <string name="settings_navigation_bar">Панель навігації</string>
@@ -485,6 +486,7 @@
     <string name="settings_quick_responses_add">Добавити відповідь</string>
     <string name="settings_permissions_system_title">Система</string>
     <string name="action_select_all">Виділити все</string>
+    <string name="action_deselect_all">Відмінити все</string>
     <string name="action_select_none">Відмінити все</string>
     <string name="settings_private_secret_code">Код секретної клавіатури</string>
     <string name="about_rate_on_google_play">Оцініть програму</string>
@@ -640,6 +642,7 @@
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Налаштуйте криву кута від тонки до ультра округлених</string>
     <string name="loc_transition_animations">Анімація переходів</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Анімація переходу на екран та ефекти руху</string>
+    <string name="loc_transition_animation_speed">Час анімації переходу</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Регулювання шкали часу анімації переходів між сторінками, вкладками та меню</string>
     <string name="loc_predictive_back_gestures">Прогнозований жести назад</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Інтерактивна анімація свайпу для перегляду під час повернення</string>
@@ -947,6 +950,7 @@
     <string name="loc_save_to_call_history">Зберегти в історію дзвінків</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">В Нещодавніх випадках, на які ви відповіли та пропущені дзвінки будуть відображені</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d заблоковано</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Виклики та текстові повідомлення з цього номера будуть блокуватися відразу.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Розблокувати $targetDisplayName? Вони зможуть телефонувати та надсилати вам повідомлення.</string>
     <string name="loc_processing_blocklist">Обробка списку блокування</string>
@@ -969,14 +973,70 @@
     <string name="content_desc_more_actions">Більше дій</string>
     <string name="quick_response_message_text">Текст повідомлення</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung один</string>
+    <string name="font_family_inter">Інтер</string>
+    <string name="font_family_poppins">Поппен</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Налаштування</string>
+    <string name="shortcut_new_contact">Новий контакт</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Приватне сховище</string>
+    <string name="contact_management_private_vault_supporting">Керування приватними локальними контактами, що зберігаються суворо в базі даних програм</string>
+    <string name="contact_mgmt_total_contacts">Всього контактів</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Усі імена контактів, номери телефонів і електронні листи унікальні.</string>
+    <string name="contact_mgmt_merge_desc">З\'єднайте надлишкові дані та зберігайте чисті контакти.</string>
+    <string name="contact_mgmt_merged_for">Об\'єднані контакти для %1$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d відповідні контакти • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Контакти що підлягають відображенню:</string>
+    <string name="contact_mgmt_primary">Первинний</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Номери відсутні</string>
+    <string name="contact_mgmt_contacts_count">%1$d контакти</string>
+    <string name="contact_mgmt_select_contacts_to_move">Виберіть контакти для переміщення</string>
+    <string name="contact_mgmt_no_number">Немає номера</string>
+    <string name="storage_device">Пристрій</string>
+    <string name="storage_private_vault">Приватне сховище (див. про блудники)</string>
+    <string name="storage_sim_card_format">SIM-карта (%1$s)</string>
+    <string name="storage_local">Місцевий</string>
+    <string name="storage_cloud">Хмара</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Приватний</string>
     <!-- Live corner roundness -->
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Цифрова клавіатура (Контакти)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Сканування записів…</string>
+    <string name="recordings_available_count">%1$d записи доступні</string>
+    <string name="recording_min_duration_all_calls">Записати всі дзвінки</string>
     <!-- Permissions -->
+    <string name="action_set">Сет</string>
+    <string name="action_grant">Грант</string>
+    <string name="action_enable">Увімкнено</string>
+    <string name="action_move_all">Перемістити все</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Увімкнено (Фаза, відбиток пальця, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Сьогодні</string>
+    <string name="analytics_time_this_week">На цьому тижні</string>
+    <string name="analytics_time_this_month">Цього місяця</string>
+    <string name="analytics_time_all_time">За весь час</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d виклики (%2$d in, %3$d out)</string>
+    <string name="call_analytics_talked">розмовляв</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Персоналізація</string>
+    <string name="settings_category_calling">Дзвонить</string>
+    <string name="settings_category_sound">Звук</string>
+    <string name="settings_category_contacts">Контакти</string>
+    <string name="settings_category_security">Безпека</string>
+    <string name="settings_category_about">Про програму</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Відкрити у сховищі</string>
+    <string name="private_vault_hide_completely">Приховати повністю</string>
 </resources>

@@ -988,14 +988,77 @@
     <string name="content_desc_more_actions">その他のアクション</string>
     <string name="quick_response_message_text">メッセージ テキスト</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung One</string>
+    <string name="font_family_inter">インターー</string>
+    <string name="font_family_poppins">Poppins</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">設定</string>
+    <string name="shortcut_new_contact">新しい連絡先</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">プライベートストレージボールト</string>
+    <string name="contact_management_private_vault_supporting">アプリのデータベースに厳密に保存された秘密のローカル連絡先を管理します</string>
+    <string name="contact_mgmt_total_contacts">連絡先の合計</string>
+    <string name="contact_mgmt_duplicates_empty_desc">すべての連絡先名、電話番号、および電子メールは一意です。</string>
+    <string name="contact_mgmt_merge_desc">冗長な詳細を組み合わせ、クリーンな連絡先を維持します。</string>
+    <string name="contact_mgmt_merged_for">%1$sの統合された連絡先</string>
+    <string name="contact_mgmt_ready_to_move">%1$d コンタクトは %2$sへの移行準備ができています</string>
+    <string name="contact_mgmt_matching_contacts">%1$d マッチング連絡先 • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">組み合わせる連絡先:</string>
+    <string name="contact_mgmt_primary">プライマリ（プライマリ）</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">数字がありません</string>
+    <string name="contact_mgmt_contacts_count">%1$d 連絡先</string>
+    <string name="contact_mgmt_select_contacts_to_move">移動する連絡先を選択</string>
+    <string name="contact_mgmt_move_from_to">%1$s から %2$s まで</string>
+    <string name="contact_mgmt_selected_of_total">%1$d の %2$d が選択されました</string>
+    <string name="contact_mgmt_no_number">番号なし</string>
+    <string name="storage_device">デバイス</string>
+    <string name="storage_private_vault">プライベートストレージ (App Vault)</string>
+    <string name="storage_sim_card_format">SIMカード（%1$s）</string>
+    <string name="storage_local">ローカル</string>
+    <string name="storage_cloud">クラウド</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">非公開</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">ライブコーナーの丸み: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">ダイヤルパッド（連絡先）</string>
     <!-- Call recordings -->
+    <string name="recordings_saved_count">%1$d が録音を保存しました</string>
+    <string name="recordings_available_count">%1$d 録音可能</string>
+    <string name="recording_min_duration_all_calls">すべての通話を記録</string>
+    <string name="recording_min_duration_ignore_3s">通話 &lt; 3秒を無視</string>
+    <string name="recording_min_duration_ignore_5s">通話 &lt; 5秒を無視</string>
+    <string name="recording_min_duration_ignore_10s">呼び出し &lt; 10秒を無視</string>
     <!-- Permissions -->
+    <string name="action_set">設定</string>
+    <string name="action_grant">許可</string>
+    <string name="action_enable">有効にする</string>
+    <string name="action_move_all">すべて移動</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">有効 (指紋認証、PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">今日</string>
+    <string name="analytics_time_this_week">今週中</string>
+    <string name="analytics_time_this_month">今月</string>
+    <string name="analytics_time_all_time">すべて</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d calls (%2$d in, %3$d out)</string>
+    <string name="call_analytics_talked">話をしました</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">個人設定</string>
+    <string name="settings_category_calling">発信中</string>
+    <string name="settings_category_sound">サウンド</string>
+    <string name="settings_category_contacts">連絡先</string>
+    <string name="settings_category_security">セキュリティ</string>
+    <string name="settings_category_about">About</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">保管庫で再表示する</string>
+    <string name="private_vault_hide_completely">完全に隠す</string>
 </resources>

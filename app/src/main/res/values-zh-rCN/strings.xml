@@ -58,6 +58,7 @@
     <string name="shizuku_download_directly">直接从 shizuku.rika.app 下载</string>
     <string name="settings_open_system">打开应用系统设置</string>
     <string name="settings_open_system_supporting">直接在 Android 设备设置中查看和管理权限</string>
+    <string name="settings_transition_speed">过渡动画时间</string>
     <string name="settings_transition_speed_supporting">调整跨页、标签和菜单的过渡动画时间比例</string>
     <string name="settings_more_display">更多显示设置</string>
     <string name="settings_navigation_bar">导航栏</string>
@@ -646,6 +647,7 @@
     <string name="settings_permissions_system_title">系统</string>
     <string name="settings_private_contacts_count">已加密联系人 (%1$d)</string>
     <string name="action_select_all">选择所有</string>
+    <string name="action_deselect_all">取消全选</string>
     <string name="action_select_none">取消全选</string>
     <string name="settings_private_secret_code">密钥拨号键盘</string>
     <string name="about_rate_on_google_play">给这个应用评分</string>
@@ -819,6 +821,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">将圆角曲线从微型曲线调整到越型圆角</string>
     <string name="loc_transition_animations">过渡动画</string>
     <string name="loc_screen_transition_animations_and_motion_effects">屏幕过渡动画和运动特效</string>
+    <string name="loc_transition_animation_speed">过渡动画时间</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">调整跨页、标签和菜单的过渡动画时间比例</string>
     <string name="loc_predictive_back_gestures">预测背部手势</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">返回时交互滑动预览动画</string>
@@ -1053,6 +1056,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_play">播放</string>
     <string name="loc_rewind_10s">倒退10秒</string>
     <string name="loc_forward_10s">转发10秒</string>
+    <string name="loc_privatecontacts_size_secured">已保护 %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">在 Rivo sandbox 保险库 • 从WhatsApp 和系统应用程序隐藏中</string>
     <string name="loc_select_contacts_for_private_storage">选择私人存储的联系人</string>
     <string name="loc_move_to_private_storage">移动到私人存储</string>
@@ -1130,6 +1134,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_call_history_settings">通话历史设置</string>
     <string name="loc_save_to_call_history">保存到通话记录</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">应答和错过的虚假通话将显示在最近任务中</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d 已阻止</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">来自此号码的通话和短信将立即被阻止。</string>
     <string name="loc_processing_blocklist">正在处理黑名单</string>
     <string name="loc_importing_blocked_numbers">正在导入阻止号码...</string>
@@ -1145,14 +1150,76 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="content_desc_more_actions">更多操作</string>
     <string name="quick_response_message_text">消息文本</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">三星一</string>
+    <string name="font_family_inter">倒计时</string>
+    <string name="font_family_poppins">弹出色</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">设置</string>
+    <string name="shortcut_new_contact">新建联系人</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">私有存储库</string>
+    <string name="contact_management_private_vault_supporting">管理存储在应用数据库中的秘密本地联系人</string>
+    <string name="contact_mgmt_total_contacts">联系人总数</string>
+    <string name="contact_mgmt_duplicates_empty_desc">所有联系人姓名、电话号码和电子邮件都是唯一的。</string>
+    <string name="contact_mgmt_merge_desc">合并冗余详细信息并保持清理联系人。</string>
+    <string name="contact_mgmt_merged_for">已合并 %1$s 的联系人</string>
+    <string name="contact_mgmt_ready_to_move">%1$d 联系人已准备好移动到 %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d 匹配的联系人 • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">要合并的联系人：</string>
+    <string name="contact_mgmt_primary">主要的</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">没有数字</string>
+    <string name="contact_mgmt_contacts_count">%1$d 联系人</string>
+    <string name="contact_mgmt_select_contacts_to_move">选择要移动的联系人</string>
+    <string name="contact_mgmt_move_from_to">从 %1$s 到 %2$s</string>
+    <string name="contact_mgmt_no_number">无号码</string>
+    <string name="storage_device">设备</string>
+    <string name="storage_private_vault">私有存储 (App Vault)</string>
+    <string name="storage_sim_card_format">SIM 卡 (%1$s)</string>
+    <string name="storage_local">本地的</string>
+    <string name="storage_cloud">云端</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">非公开的</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">实时圆角： %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">拨号键盘 (联系人)</string>
     <!-- Call recordings -->
+    <string name="recordings_saved_count">%1$d 保存的录音</string>
+    <string name="recordings_available_count">%1$d 录音可用</string>
+    <string name="recording_min_duration_all_calls">记录所有通话记录</string>
+    <string name="recording_min_duration_ignore_3s">忽略调用 &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">忽略呼叫 &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">忽略调用 &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">设置</string>
+    <string name="action_grant">授权</string>
+    <string name="action_enable">启用</string>
+    <string name="action_move_all">移动所有</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">启用 (脸，指纹，PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">今日：</string>
+    <string name="analytics_time_this_week">本周</string>
+    <string name="analytics_time_this_month">本月</string>
+    <string name="analytics_time_all_time">全部时间</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d 通话(%2$d in， %3$d out)</string>
+    <string name="call_analytics_talked">已聊天</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">个性化</string>
+    <string name="settings_category_calling">呼叫中</string>
+    <string name="settings_category_sound">声音</string>
+    <string name="settings_category_contacts">联系人</string>
+    <string name="settings_category_security">安全</string>
+    <string name="settings_category_about">关于</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">在保险库中取消隐藏</string>
+    <string name="private_vault_hide_completely">完全隐藏</string>
 </resources>

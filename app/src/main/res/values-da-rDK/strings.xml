@@ -1021,14 +1021,78 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="content_desc_more_actions">Flere handlinger</string>
     <string name="quick_response_message_text">Besked tekst</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung En</string>
+    <string name="font_family_inter">Inter</string>
+    <string name="font_family_poppins">Poppiner</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Indstillinger</string>
+    <string name="shortcut_new_contact">Ny Kontakt</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Boks For Privat Lagring</string>
+    <string name="contact_management_private_vault_supporting">Administrer hemmelige lokale kontakter gemt strengt i app-database</string>
+    <string name="contact_mgmt_total_contacts">Samlede Kontakter</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Alle kontaktnavne, telefonnumre og e-mails er unikke.</string>
+    <string name="contact_mgmt_merge_desc">Kombiner overflødige detaljer og holde rene kontakter.</string>
+    <string name="contact_mgmt_merged_for">Sammenflettede kontakter for %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d kontakter klar til at flytte til %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d matchende kontakter • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Kontakter, der skal kombineres:</string>
+    <string name="contact_mgmt_primary">Primær</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Ingen numre</string>
+    <string name="contact_mgmt_contacts_count">%1$d kontakter</string>
+    <string name="contact_mgmt_select_contacts_to_move">Vælg kontakter at flytte</string>
+    <string name="contact_mgmt_move_from_to">Fra %1$s til %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d af %2$d valgt</string>
+    <string name="contact_mgmt_no_number">Intet nummer</string>
+    <string name="storage_device">Enhed</string>
+    <string name="storage_private_vault">Privat Lagerplads (APP-bruger)</string>
+    <string name="storage_sim_card_format">SIM-kort (%1$s)</string>
+    <string name="storage_local">Lokal</string>
+    <string name="storage_cloud">Sky</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privat</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Live Corner Roundness: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Opkaldsblok (Kontakter)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Scanner optagelser…</string>
+    <string name="recordings_saved_count">%1$d gemte optagelser</string>
+    <string name="recordings_available_count">%1$d optagelser tilgængelige</string>
+    <string name="recording_min_duration_all_calls">Optag Alle Opkald</string>
+    <string name="recording_min_duration_ignore_3s">Ignorer opkald &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ignorer opkald &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ignorer opkald &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">Indstil</string>
+    <string name="action_grant">Tildel</string>
+    <string name="action_enable">Aktiver</string>
+    <string name="action_move_all">Flyt Alle</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Aktiveret (Ansigt, Fingeraftryk, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Idag</string>
+    <string name="analytics_time_this_week">Denne Uge</string>
+    <string name="analytics_time_this_month">Denne Måned</string>
+    <string name="analytics_time_all_time">Al Tid</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d opkald (%2$d i, %3$d ud)</string>
+    <string name="call_analytics_talked">talte</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personliggørelse</string>
+    <string name="settings_category_calling">Ringer</string>
+    <string name="settings_category_sound">Lyd</string>
+    <string name="settings_category_contacts">Kontakter</string>
+    <string name="settings_category_security">Sikkerhed</string>
+    <string name="settings_category_about">Om</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Vis i boks</string>
+    <string name="private_vault_hide_completely">Skjul Helt</string>
 </resources>
