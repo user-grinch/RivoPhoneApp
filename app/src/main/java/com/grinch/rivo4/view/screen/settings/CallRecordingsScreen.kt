@@ -779,7 +779,11 @@ fun CallRecordingsContent(
                                 )
                                 Spacer(Modifier.height(4.dp))
                                 Text(
-                                    text = if (isLoadingRecordings) "Scanning recordings..." else "${recordings.size} saved recordings",
+                                    text = if (isLoadingRecordings) {
+                                        stringResource(R.string.recordings_scanning)
+                                    } else {
+                                        stringResource(R.string.recordings_saved_count, recordings.size)
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -883,7 +887,11 @@ fun CallRecordingsContent(
                         item {
                             RivoListItem(
                                 headline = stringResource(R.string.loc_saved_call_recordings),
-                                supporting = if (isLoadingRecordings) "Scanning recordings..." else "${recordings.size} recordings available",
+                                supporting = if (isLoadingRecordings) {
+                                    stringResource(R.string.recordings_scanning)
+                                } else {
+                                    stringResource(R.string.recordings_available_count, recordings.size)
+                                },
                                 leadingIcon = Icons.Outlined.LibraryMusic,
                                 trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                 onClick = { showingRecordingsList = true }
@@ -983,10 +991,10 @@ fun CallRecordingsContent(
                                 supporting = stringResource(R.string.loc_discard_ultra_short_calls_below_threshold),
                                 leadingIcon = Icons.Outlined.Timer,
                                 options = listOf(
-                                    "Record All Calls" to 0,
-                                    "Ignore calls < 3s" to 3,
-                                    "Ignore calls < 5s" to 5,
-                                    "Ignore calls < 10s" to 10
+                                    stringResource(R.string.recording_min_duration_all_calls) to 0,
+                                    stringResource(R.string.recording_min_duration_ignore_3s) to 3,
+                                    stringResource(R.string.recording_min_duration_ignore_5s) to 5,
+                                    stringResource(R.string.recording_min_duration_ignore_10s) to 10
                                 ),
                                 selectedValue = minDurationFilter,
                                 onValueChange = {

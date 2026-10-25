@@ -68,7 +68,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.about_title),
+                text = stringResource(R.string.settings_about_rivo),
                 navigator = navigator
             )
         },

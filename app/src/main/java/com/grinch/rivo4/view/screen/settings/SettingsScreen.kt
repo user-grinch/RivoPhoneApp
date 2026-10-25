@@ -177,8 +177,8 @@ val searchItems = remember(isSearchActive) {
                 supporting = context.getString(R.string.loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus),
                 category = context.getString(R.string.loc_personalization_display),
                 icon = Icons.Outlined.Speed,
-                keywords = listOf("transition speed", "animation speed", "time scale", "duration", "fast animations", "slow animations"),
-                targetHeadline = "Transition Animation Speed",
+                keywords = listOf("transition time", "transition speed", "animation time", "animation speed", "time scale", "duration", "fast animations", "slow animations"),
+                targetHeadline = context.getString(R.string.settings_transition_speed),
                 onClick = { navigator.navigate(InterfaceScreenDestination) }
             ),
             SettingSearchItem(
@@ -777,7 +777,7 @@ val searchItems = remember(isSearchActive) {
             // ==================== CALL PROTECTION & SECURITY ====================
             SettingSearchItem(
                 title = context.getString(R.string.loc_app_lock),
-                supporting = if (prefs.isAppLockEnabled()) "Enabled (Face, Fingerprint, PIN)" else "Protect app with biometrics or PIN",
+                supporting = if (prefs.isAppLockEnabled()) context.getString(R.string.app_lock_enabled_summary) else context.getString(R.string.loc_protect_app_with_biometrics_or_pin),
                 category = context.getString(R.string.loc_call_protection_security),
                 icon = Icons.Outlined.Lock,
                 keywords = listOf("app lock", "lock", "biometric", "fingerprint", "face", "pin", "password", "security", "protect"),
@@ -1454,12 +1454,12 @@ val searchItems = remember(isSearchActive) {
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                             )
                             val categories = listOf(
-                                Triple("Personalization", Icons.Outlined.Palette, context.getString(R.string.loc_personalization_display)),
-                                Triple("Calling", Icons.Outlined.Phone, context.getString(R.string.loc_calling_behavior)),
-                                Triple("Sound", Icons.AutoMirrored.Outlined.VolumeUp, context.getString(R.string.settings_sound_vibration_headline)),
-                                Triple("Contacts", Icons.Outlined.ManageAccounts, context.getString(R.string.loc_contacts_data)),
-                                Triple("Security", Icons.Outlined.Security, context.getString(R.string.loc_call_protection_security)),
-                                Triple("About", Icons.Outlined.Info, context.getString(R.string.loc_support_about))
+                                Triple(context.getString(R.string.settings_category_personalization), Icons.Outlined.Palette, context.getString(R.string.loc_personalization_display)),
+                                Triple(context.getString(R.string.settings_category_calling), Icons.Outlined.Phone, context.getString(R.string.loc_calling_behavior)),
+                                Triple(context.getString(R.string.settings_category_sound), Icons.AutoMirrored.Outlined.VolumeUp, context.getString(R.string.settings_sound_vibration_headline)),
+                                Triple(context.getString(R.string.settings_category_contacts), Icons.Outlined.ManageAccounts, context.getString(R.string.loc_contacts_data)),
+                                Triple(context.getString(R.string.settings_category_security), Icons.Outlined.Security, context.getString(R.string.loc_call_protection_security)),
+                                Triple(context.getString(R.string.settings_category_about), Icons.Outlined.Info, context.getString(R.string.loc_support_about))
                             )
                             LazyRow(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -1650,45 +1650,49 @@ val searchItems = remember(isSearchActive) {
                     icon = Icons.Outlined.Palette
                 ) {
                     item {
+                        val headline = context.getString(R.string.loc_theme_appearance)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_theme_appearance),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_theme_mode_interface_appearance_and_visual_style),
                             leadingIcon = Icons.Outlined.Palette,
                             onClick = {
-                                prefs.addSettingsHistory("Theme & Appearance")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(InterfaceScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_typography)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_typography),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_font_text_size_and_system_font),
                             leadingIcon = Icons.Outlined.FormatSize,
                             onClick = {
-                                prefs.addSettingsHistory("Typography")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(TypographyScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_navigation_bar)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_navigation_bar),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_floating_bar_style_navigation_dock_and_tab_layout),
                             leadingIcon = Icons.Outlined.Dock,
                             onClick = {
-                                prefs.addSettingsHistory("Navigation Bar")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(BottomNavScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_avatars_contact_cards)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_avatars_contact_cards),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_11_avatar_shapes_contact_photos_initials_cards),
                             leadingIcon = Icons.Outlined.AccountCircle,
                             onClick = {
-                                prefs.addSettingsHistory("Avatars & Contact Cards")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(AvatarSettingsScreenDestination)
                             }
                         )
@@ -1703,78 +1707,85 @@ val searchItems = remember(isSearchActive) {
                     icon = Icons.Outlined.Phone
                 ) {
                     item {
+                        val headline = context.getString(R.string.settings_call_settings_headline)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_call_settings_headline),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_call_settings_supporting),
                             leadingIcon = Icons.Outlined.SimCard,
                             onClick = {
-                                prefs.addSettingsHistory("Calling & SIM Accounts")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(CallAccountsScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_call_screen_buttons)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_call_screen_buttons),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_choose_the_position_of_each_in_call_button),
                             leadingIcon = Icons.Outlined.Dialpad,
                             onClick = {
-                                prefs.addSettingsHistory("In-Call Screen Layout")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(CallScreenCustomizationScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_speed_dial)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_speed_dial),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing),
                             leadingIcon = Icons.Outlined.Speed,
                             onClick = {
-                                prefs.addSettingsHistory("Speed Dial")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(SpeedDialScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_quick_responses)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_quick_responses),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_predefined_sms_messages_to_decline_incoming_calls),
                             leadingIcon = Icons.AutoMirrored.Outlined.Message,
                             onClick = {
-                                prefs.addSettingsHistory("Quick Responses")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(QuickResponsesScreenDestination())
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_voicemail)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_voicemail),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_carrier_voicemail_service_and_configuration),
                             leadingIcon = Icons.Outlined.Voicemail,
                             onClick = {
-                                prefs.addSettingsHistory("Voicemail")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(VoicemailScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.call_recordings_title)
                         RivoListItem(
-                            headline = context.getString(R.string.call_recordings_title),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_auto_recording_shizuku_internal_audio_saved_recordings),
                             leadingIcon = Icons.Outlined.FiberManualRecord,
                             onClick = {
-                                prefs.addSettingsHistory("Call Recordings")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(CallRecordingsScreenDestination())
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.settings_call_analytics_title)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_call_analytics_title),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_call_analytics_supporting),
                             leadingIcon = Icons.Outlined.Analytics,
                             onClick = {
-                                prefs.addSettingsHistory("Call Analytics")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(CallAnalyticsScreenDestination)
                             }
                         )
@@ -1789,23 +1800,25 @@ val searchItems = remember(isSearchActive) {
                     icon = Icons.AutoMirrored.Outlined.VolumeUp
                 ) {
                     item {
+                        val headline = context.getString(R.string.settings_sound_vibration_headline)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_sound_vibration_headline),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_sound_vibration_supporting),
                             leadingIcon = Icons.AutoMirrored.Outlined.VolumeUp,
                             onClick = {
-                                prefs.addSettingsHistory("Sound & Vibration")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(SoundVibrationScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.priority_contacts_title)
                         RivoListItem(
-                            headline = context.getString(R.string.priority_contacts_title),
+                            headline = headline,
                             supporting = context.getString(R.string.priority_contacts_supporting),
                             leadingIcon = Icons.Outlined.NotificationImportant,
                             onClick = {
-                                prefs.addSettingsHistory("Priority Contacts")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(PriorityContactsScreenDestination)
                             }
                         )
@@ -1820,56 +1833,61 @@ val searchItems = remember(isSearchActive) {
                     icon = Icons.Outlined.ManageAccounts
                 ) {
                     item {
+                        val headline = context.getString(R.string.settings_contact_management_headline)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_contact_management_headline),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_contact_management_supporting),
                             leadingIcon = Icons.Outlined.ManageAccounts,
                             onClick = {
-                                prefs.addSettingsHistory("Contact Management")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(ContactManagementScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.settings_manage_visibility)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_manage_visibility),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_manage_visibility_supporting),
                             leadingIcon = Icons.Outlined.Visibility,
                             onClick = {
-                                prefs.addSettingsHistory("Contact Visibility")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(ContactVisibilityScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_private_storage)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_private_storage),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_secret_dialpad_vault_stored_only_in_app_memory),
                             leadingIcon = Icons.Outlined.FolderShared,
                             onClick = {
-                                prefs.addSettingsHistory("Private Storage")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(PrivateContactsScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_trash_contacts)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_trash_contacts),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_view_and_restore_recently_deleted_contacts_within_30_days),
                             leadingIcon = Icons.Outlined.Delete,
                             onClick = {
-                                prefs.addSettingsHistory("Recycle Bin")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(TrashContactsScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.settings_backup_restore_headline)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_backup_restore_headline),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_backup_restore_supporting),
                             leadingIcon = Icons.Outlined.Backup,
                             onClick = {
-                                prefs.addSettingsHistory("Backup & Restore")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(BackupRestoreScreenDestination)
                             }
                         )
@@ -1885,56 +1903,61 @@ val searchItems = remember(isSearchActive) {
                     icon = Icons.Outlined.Security
                 ) {
                     item {
+                        val headline = context.getString(R.string.loc_app_lock)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_app_lock),
-                            supporting = if (appLockEnabled) "Enabled (Face, Fingerprint, PIN)" else "Protect app with biometrics or PIN",
+                            headline = headline,
+                            supporting = if (appLockEnabled) context.getString(R.string.app_lock_enabled_summary) else context.getString(R.string.loc_protect_app_with_biometrics_or_pin),
                             leadingIcon = Icons.Outlined.Lock,
                             onClick = {
-                                prefs.addSettingsHistory("App Lock")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(AppLockScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.settings_blocked_numbers_headline)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_blocked_numbers_headline),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_blocked_numbers_supporting),
                             leadingIcon = Icons.Outlined.Block,
                             onClick = {
-                                prefs.addSettingsHistory("Blocked Numbers")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(BlockedNumbersScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.settings_swipe_actions_title)
                         RivoListItem(
-                            headline = context.getString(R.string.settings_swipe_actions_title),
+                            headline = headline,
                             supporting = context.getString(R.string.settings_swipe_actions_supporting),
                             leadingIcon = Icons.Outlined.Swipe,
                             onClick = {
-                                prefs.addSettingsHistory("Swipe Actions")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(SwipeActionsScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.fake_call_title)
                         RivoListItem(
-                            headline = context.getString(R.string.fake_call_title),
+                            headline = headline,
                             supporting = context.getString(R.string.fake_call_subtitle),
                             leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
                             onClick = {
-                                prefs.addSettingsHistory("Fake Call Scheduler")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(FakeCallSchedulerScreenDestination)
                             }
                         )
                     }
                     item {
+                        val headline = context.getString(R.string.loc_permissions_app_setup)
                         RivoListItem(
-                            headline = context.getString(R.string.loc_permissions_app_setup),
+                            headline = headline,
                             supporting = context.getString(R.string.loc_review_granted_permissions_and_system_capabilities),
                             leadingIcon = Icons.Outlined.VerifiedUser,
                             onClick = {
-                                prefs.addSettingsHistory("Permissions & App Setup")
+                                prefs.addSettingsHistory(headline)
                                 navigator.navigate(PermissionsChecklistScreenDestination)
                             }
                         )

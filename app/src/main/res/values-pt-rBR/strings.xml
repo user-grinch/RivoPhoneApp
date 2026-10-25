@@ -865,7 +865,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_rewind_10s">Retroceder 10s</string>
     <string name="loc_forward_10s">Avançar 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selecionado</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} protegido</string>
+    <string name="loc_privatecontacts_size_secured">%1$d protegido</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Armazenado localmente no sandboxed vault do Rivo • Oculto para aplicativos do WhatsApp e sistema</string>
     <string name="loc_select_contacts_for_private_storage">Selecionar Contatos para Armazenamento Privado</string>
     <string name="loc_move_to_private_storage">Mover para armazenamento privado</string>

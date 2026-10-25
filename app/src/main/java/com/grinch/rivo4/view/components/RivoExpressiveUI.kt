@@ -1568,7 +1568,7 @@ fun RivoInteractiveRoundnessSlider(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Live Corner Roundness: ${value.roundToInt()}dp",
+                        text = stringResource(R.string.live_corner_roundness_format, value.roundToInt()),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )

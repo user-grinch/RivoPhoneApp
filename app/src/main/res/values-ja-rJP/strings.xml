@@ -840,7 +840,7 @@
     <string name="loc_rewind_10s">10秒巻き戻し</string>
     <string name="loc_forward_10s">10秒進む</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} が選択されました</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} を保護しました</string>
+    <string name="loc_privatecontacts_size_secured">%1$d を保護しました</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">ローカルにRivoのサンドボックス入り保管庫に保存されています。• WhatsAppとシステムアプリから非表示になります</string>
     <string name="loc_select_contacts_for_private_storage">プライベートストレージの連絡先を選択</string>
     <string name="loc_move_to_private_storage">プライベートストレージに移動</string>
@@ -919,7 +919,7 @@
     <string name="loc_save_to_call_history">通話履歴に保存</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">最近使った偽の通話に応答したり見逃した通話が表示されます</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} がブロックしました</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d がブロックしました</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">この番号からの通話とテキストメッセージは直ちにブロックされます。</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNameのブロックを解除しますか？再度電話とメッセージを送信することができます。</string>
     <string name="loc_processing_blocklist">ブロックリストを処理中</string>

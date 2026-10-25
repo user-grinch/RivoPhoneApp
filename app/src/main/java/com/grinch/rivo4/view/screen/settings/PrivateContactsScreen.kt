@@ -186,7 +186,7 @@ fun PrivateContactsScreen(
                 )
             } else {
                 MenuTopAppBar(
-                    text = context.getString(R.string.settings_private_title),
+                    text = context.getString(R.string.loc_private_storage),
                     navigator = navigator,
                     actions = {
                         if (filteredPrivateContacts.isNotEmpty()) {
@@ -249,11 +249,17 @@ fun PrivateContactsScreen(
                                 }
                                 Spacer(Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
                                         Text(
                                             text = context.getString(R.string.settings_private_title),
                                             style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.weight(1f, fill = false)
                                         )
                                         Spacer(Modifier.width(8.dp))
                                         Surface(
@@ -262,10 +268,11 @@ fun PrivateContactsScreen(
                                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                         ) {
                                             Text(
-                                                text = context.getString(R.string.loc_privatecontacts_size_secured),
+                                                text = context.getString(R.string.loc_privatecontacts_size_secured, privateContacts.size),
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.SemiBold,
-                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                                maxLines = 1
                                             )
                                         }
                                     }
@@ -770,7 +777,14 @@ private fun PrivateContactListItem(
                 }
                 RivoDropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     RivoDropdownMenuItem(
-                        text = { Text(if (contact.isHidden) "Unhide in Vault" else "Hide Completely") },
+                        text = {
+                            Text(
+                                stringResource(
+                                    if (contact.isHidden) R.string.private_vault_unhide_in_vault
+                                    else R.string.private_vault_hide_completely
+                                )
+                            )
+                        },
                         onClick = {
                             showMenu = false
                             onToggleHidden()

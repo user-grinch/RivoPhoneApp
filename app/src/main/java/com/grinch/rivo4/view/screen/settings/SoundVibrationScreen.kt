@@ -89,7 +89,7 @@ fun SoundVibrationScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_sound_title),
+                text = stringResource(R.string.settings_sound_vibration_headline),
                 navigator = navigator
             )
         },

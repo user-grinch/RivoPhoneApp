@@ -125,7 +125,7 @@ fun BackupRestoreScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_backup_title),
+                text = stringResource(R.string.settings_backup_restore_headline),
                 navigator = navigator
             )
         },

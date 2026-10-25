@@ -171,12 +171,12 @@ fun PermissionItemRow(
                     }
                 } else {
                     val label = item.actionLabel ?: when (item.actionType) {
-                        PermissionActionType.ROLE_DIALER -> "Set"
-                        PermissionActionType.OVERLAY -> "Enable"
-                        PermissionActionType.BATTERY_OPTIMIZATION -> "Allow"
-                        PermissionActionType.STORAGE -> "Allow"
-                        PermissionActionType.SHIZUKU -> "Grant"
-                        else -> "Grant"
+                        PermissionActionType.ROLE_DIALER -> stringResource(R.string.action_set)
+                        PermissionActionType.OVERLAY -> stringResource(R.string.action_enable)
+                        PermissionActionType.BATTERY_OPTIMIZATION -> stringResource(R.string.action_allow)
+                        PermissionActionType.STORAGE -> stringResource(R.string.action_allow)
+                        PermissionActionType.SHIZUKU -> stringResource(R.string.action_grant)
+                        else -> stringResource(R.string.action_grant)
                     }
                     FilledTonalButton(
                         onClick = onClick,

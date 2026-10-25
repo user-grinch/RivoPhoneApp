@@ -407,6 +407,11 @@ class PreferenceManager(context: Context) {
         const val KEY_DYNAMIC_VARIANT = "dynamic_variant"
         const val KEY_FONT_FAMILY = "font_family"
         const val FONT_FAMILY_SANS_SERIF = "sans_serif"
+        const val FONT_FAMILY_ROBOTO = "roboto"
+        const val FONT_FAMILY_UBUNTU = "ubuntu"
+        const val FONT_FAMILY_SAMSUNG_ONE = "samsung_one"
+        const val FONT_FAMILY_INTER = "inter"
+        const val FONT_FAMILY_POPPINS = "poppins"
         const val FONT_FAMILY_SERIF = "serif"
         const val FONT_FAMILY_MONOSPACE = "monospace"
         const val FONT_FAMILY_CURSIVE = "cursive"
@@ -418,6 +423,11 @@ class PreferenceManager(context: Context) {
 
         val ALL_FONT_FAMILIES = listOf(
             FONT_FAMILY_SANS_SERIF,
+            FONT_FAMILY_ROBOTO,
+            FONT_FAMILY_UBUNTU,
+            FONT_FAMILY_SAMSUNG_ONE,
+            FONT_FAMILY_INTER,
+            FONT_FAMILY_POPPINS,
             FONT_FAMILY_SERIF,
             FONT_FAMILY_MONOSPACE,
             FONT_FAMILY_CURSIVE,
@@ -431,6 +441,10 @@ class PreferenceManager(context: Context) {
         const val FONT_SIZE_SMALL = 0
         const val FONT_SIZE_MEDIUM = 1
         const val FONT_SIZE_LARGE = 2
+        const val KEY_FONT_SCALE = "font_scale"
+        const val DEFAULT_FONT_SCALE = 1.0f
+        const val MIN_FONT_SCALE = 0.80f
+        const val MAX_FONT_SCALE = 1.30f
         const val KEY_USE_SYSTEM_FONT = "use_system_font"
         const val KEY_CALL_BUTTON_ORDER = "call_button_order"
         const val DEFAULT_CALL_BUTTON_ORDER = "mute,keypad,audio,record,hold,add"
@@ -821,6 +835,28 @@ class PreferenceManager(context: Context) {
 
     fun getTransitionTimeScale(): Float = getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).coerceIn(0.2f, 5.0f)
     fun setTransitionTimeScale(scale: Float) = setFloat(KEY_TRANSITION_TIME_SCALE, scale.coerceIn(0.2f, 5.0f))
+
+    fun getFontScale(): Float {
+        if (prefs.contains(KEY_FONT_SCALE)) {
+            return getFloat(KEY_FONT_SCALE, DEFAULT_FONT_SCALE).coerceIn(MIN_FONT_SCALE, MAX_FONT_SCALE)
+        }
+        return when (getInt(KEY_FONT_SIZE, FONT_SIZE_MEDIUM)) {
+            FONT_SIZE_SMALL -> 0.90f
+            FONT_SIZE_LARGE -> 1.12f
+            else -> 1.0f
+        }
+    }
+
+    fun setFontScale(scale: Float) {
+        val clamped = scale.coerceIn(MIN_FONT_SCALE, MAX_FONT_SCALE)
+        setFloat(KEY_FONT_SCALE, clamped)
+        val legacy = when {
+            clamped <= 0.92f -> FONT_SIZE_SMALL
+            clamped >= 1.08f -> FONT_SIZE_LARGE
+            else -> FONT_SIZE_MEDIUM
+        }
+        setInt(KEY_FONT_SIZE, legacy)
+    }
 
     fun isOpenCallScreenOnAnswerEnabled(): Boolean = getBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, false)
     fun setOpenCallScreenOnAnswerEnabled(enabled: Boolean) = setBoolean(KEY_OPEN_CALL_SCREEN_ON_ANSWER, enabled)

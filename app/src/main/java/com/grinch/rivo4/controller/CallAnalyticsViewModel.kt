@@ -11,13 +11,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.grinch.rivo4.R
 import java.util.Calendar
 
-enum class AnalyticsTimeRange(val label: String) {
-    TODAY("Today"),
-    THIS_WEEK("This Week"),
-    THIS_MONTH("This Month"),
-    ALL_TIME("All Time")
+enum class AnalyticsTimeRange(val labelResId: Int) {
+    TODAY(R.string.analytics_time_today),
+    THIS_WEEK(R.string.analytics_time_this_week),
+    THIS_MONTH(R.string.analytics_time_this_month),
+    ALL_TIME(R.string.analytics_time_all_time);
+
+    val label: String get() = when (this) {
+        TODAY -> "Today"
+        THIS_WEEK -> "This Week"
+        THIS_MONTH -> "This Month"
+        ALL_TIME -> "All Time"
+    }
 }
 
 data class TopContactStat(

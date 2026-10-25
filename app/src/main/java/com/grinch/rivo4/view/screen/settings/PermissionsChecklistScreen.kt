@@ -303,7 +303,7 @@ fun PermissionsChecklistScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_permissions_app_setup_title),
+                text = stringResource(R.string.loc_permissions_app_setup),
                 navigator = navigator
             )
         },

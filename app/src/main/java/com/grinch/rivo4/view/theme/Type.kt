@@ -3,13 +3,29 @@ package com.grinch.rivo4.view.theme
 import android.graphics.Typeface
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 
 private fun systemFontFamily(name: String): FontFamily =
     FontFamily(Typeface.create(name, Typeface.NORMAL))
+
+private fun samsungOneFontFamily(): FontFamily {
+    return try {
+        val tf = Typeface.create("samsung-one", Typeface.NORMAL)
+        if (tf != Typeface.DEFAULT) {
+            FontFamily(tf)
+        } else {
+            val secTf = Typeface.create("sec", Typeface.NORMAL)
+            if (secTf != Typeface.DEFAULT) FontFamily(secTf) else FontFamily.SansSerif
+        }
+    } catch (e: Exception) {
+        FontFamily.SansSerif
+    }
+}
 
 fun rivoFontFamilyFromId(id: String?): FontFamily = when (id) {
     PreferenceManager.FONT_FAMILY_SERIF -> FontFamily.Serif
@@ -20,6 +36,11 @@ fun rivoFontFamilyFromId(id: String?): FontFamily = when (id) {
     PreferenceManager.FONT_FAMILY_LIGHT -> systemFontFamily("sans-serif-light")
     PreferenceManager.FONT_FAMILY_MEDIUM -> systemFontFamily("sans-serif-medium")
     PreferenceManager.FONT_FAMILY_BLACK -> systemFontFamily("sans-serif-black")
+    PreferenceManager.FONT_FAMILY_ROBOTO -> systemFontFamily("roboto")
+    PreferenceManager.FONT_FAMILY_UBUNTU -> FontFamily(Font(R.font.ubuntu_regular))
+    PreferenceManager.FONT_FAMILY_SAMSUNG_ONE -> samsungOneFontFamily()
+    PreferenceManager.FONT_FAMILY_INTER -> FontFamily(Font(R.font.inter_regular))
+    PreferenceManager.FONT_FAMILY_POPPINS -> FontFamily(Font(R.font.poppins_regular))
     else -> FontFamily.SansSerif
 }
 

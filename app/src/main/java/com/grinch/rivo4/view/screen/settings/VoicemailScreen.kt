@@ -89,7 +89,7 @@ fun VoicemailScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_voicemail_title),
+                text = stringResource(R.string.loc_voicemail),
                 navigator = navigator
             )
         },

@@ -8,12 +8,28 @@ object ProBrandingManager {
     private const val DEFAULT_LAUNCHER = "com.grinch.rivo4.DefaultLauncherAlias"
     private const val PRO_LAUNCHER = "com.grinch.rivo4.ProLauncherAlias"
 
+    fun getActiveLauncherComponent(context: Context): ComponentName {
+        val pm = context.packageManager
+        val proComponent = ComponentName(context, PRO_LAUNCHER)
+        val state = try {
+            pm.getComponentEnabledSetting(proComponent)
+        } catch (_: Exception) {
+            PackageManager.COMPONENT_ENABLED_STATE_DEFAULT
+        }
+        return if (state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+            proComponent
+        } else {
+            ComponentName(context, DEFAULT_LAUNCHER)
+        }
+    }
+
     fun isActive(preferences: PreferenceManager): Boolean = false
 
     fun resetToDefault(context: Context) {
         val packageManager = context.packageManager
         setState(packageManager, context, DEFAULT_LAUNCHER, true)
         setState(packageManager, context, PRO_LAUNCHER, false)
+        AppShortcutsHelper.init(context)
     }
 
     fun apply(context: Context, preferences: PreferenceManager) {

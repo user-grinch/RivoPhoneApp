@@ -876,7 +876,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_rewind_10s">Rulează 10s</string>
     <string name="loc_forward_10s">Redirecționează 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selectate</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} securizat</string>
+    <string name="loc_privatecontacts_size_secured">%1$d securizat</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Stocat local în seiful sandboxat al Rivo-ului • Ascuns din WhatsApp și aplicații de sistem</string>
     <string name="loc_select_contacts_for_private_storage">Selectați Contactele pentru Depozitare Privată</string>
     <string name="loc_move_to_private_storage">Mută la stocarea privată</string>
@@ -957,7 +957,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_save_to_call_history">Salvează în Istoricul apelurilor</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Apelurile false și răspuns vor apărea în Recente</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blocat</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d blocat</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Apelurile și mesajele text de la acest număr vor fi blocate imediat.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Deblochează $targetDisplayName? Ei vor putea suna și trimite mesaje din nou.</string>
     <string name="loc_processing_blocklist">Procesare Blocklist</string>

@@ -146,7 +146,7 @@ fun CallScreenCustomizationScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.call_screen_customization_title),
+                text = stringResource(R.string.loc_call_screen_buttons),
                 navigator = navigator
             )
         },

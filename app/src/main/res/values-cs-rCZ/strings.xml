@@ -876,7 +876,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_rewind_10s">Převrátit 10 s</string>
     <string name="loc_forward_10s">Přeposlat 10 s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} vybrán</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} zabezpečeno</string>
+    <string name="loc_privatecontacts_size_secured">%1$d zabezpečeno</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Uloženo lokálně v trezoru Rivo s pískem • Skryté v WhatsApp a systémové aplikace</string>
     <string name="loc_select_contacts_for_private_storage">Vyberte kontakty pro soukromé úložiště</string>
     <string name="loc_move_to_private_storage">Přesunout do soukromého úložiště</string>
@@ -957,7 +957,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_save_to_call_history">Uložit do historie hovorů</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Přijaté a zmeškané falešné hovory se zobrazí v nedávných</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} zablokován</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d zablokován</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Volání a textové zprávy z tohoto čísla budou okamžitě zablokovány.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokovat $targetDisplayName? Budou vám moci znovu zavolat a poslat.</string>
     <string name="loc_processing_blocklist">Zpracovávání seznamu bloků</string>

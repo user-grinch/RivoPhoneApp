@@ -53,7 +53,7 @@ fun SpeedDialScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_speed_dial_title),
+                text = stringResource(R.string.loc_speed_dial),
                 navigator = navigator
             )
         },

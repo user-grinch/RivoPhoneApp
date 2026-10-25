@@ -828,7 +828,7 @@
     <string name="loc_rewind_10s">Перемотати 10 сек</string>
     <string name="loc_forward_10s">Переслати 10 сек</string>
     <string name="loc_selectedcontactids_size_selected">Вибрано ${selectedContactIds.size}</string>
-    <string name="loc_privatecontacts_size_secured">Безпечний ${privateContacts.size}</string>
+    <string name="loc_privatecontacts_size_secured">Безпечний %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Зберігається на місці в ізольованому сховищі Ріво • Приховано з WhatsApp і системних додатків</string>
     <string name="loc_select_contacts_for_private_storage">Виберіть контакти для приватного сховища</string>
     <string name="loc_move_to_private_storage">Перемістити в приватне сховище</string>
@@ -905,7 +905,7 @@
     <string name="loc_save_to_call_history">Зберегти в історію дзвінків</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">В Нещодавніх випадках, на які ви відповіли та пропущені дзвінки будуть відображені</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} заблоковано</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d заблоковано</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Виклики та текстові повідомлення з цього номера будуть блокуватися відразу.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Розблокувати $targetDisplayName? Вони зможуть телефонувати та надсилати вам повідомлення.</string>
     <string name="loc_processing_blocklist">Обробка списку блокування</string>

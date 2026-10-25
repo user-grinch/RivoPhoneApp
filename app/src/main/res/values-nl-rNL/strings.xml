@@ -866,7 +866,7 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_rewind_10s">10s terugspoelen</string>
     <string name="loc_forward_10s">10s doorsturen</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} geselecteerd</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} beveiligd</string>
+    <string name="loc_privatecontacts_size_secured">%1$d beveiligd</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lokaal opgeslagen in Rivo\'s sandboxed kluis • Verborgen in WhatsApp en systeem apps</string>
     <string name="loc_select_contacts_for_private_storage">Contactpersonen voor Privé Opslag selecteren</string>
     <string name="loc_move_to_private_storage">Verplaats naar Privé Opslag</string>
@@ -946,7 +946,7 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_save_to_call_history">Opslaan in oproepgeschiedenis</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Beantwoorde en gemiste nep oproepen verschijnen in recente oproepen</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} geblokkeerd</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d geblokkeerd</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Gesprekken en sms-berichten van dit nummer worden onmiddellijk geblokkeerd.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayNamedeblokkeren? Ze kunnen je weer bellen en je een bericht sturen.</string>
     <string name="loc_processing_blocklist">Verwerken blokkeerlijst</string>
