@@ -28,6 +28,7 @@ import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.BackupViewModel
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
+import com.grinch.rivo4.view.components.RivoLinearProgressIndicator
 import com.grinch.rivo4.view.components.RivoListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -62,7 +63,12 @@ fun BackupRestoreScreen(
         mutableIntStateOf(prefs.getContactBackupRetentionCount())
     }
     var retentionMenuExpanded by remember { mutableStateOf(false) }
+    var showPasswordDialog by remember { mutableStateOf(false) }
+    var passwordDraft by remember { mutableStateOf("") }
+    var passwordDialogForImport by remember { mutableStateOf(false) }
+    var passwordDialogEnablesEncryption by remember { mutableStateOf(false) }
     val status by viewModel.status.collectAsState()
+    val contactImportProgress by viewModel.contactImportProgress.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showStandardizeConfirm by remember { mutableStateOf(false) }
 
@@ -83,6 +89,24 @@ fun BackupRestoreScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let { viewModel.importContacts(context, it) }
+    }
+
+    fun requestPassword(
+        forEncryptedImport: Boolean = false,
+        enablesEncryption: Boolean = false
+    ) {
+        passwordDraft = backupPassword
+        passwordDialogForImport = forEncryptedImport
+        passwordDialogEnablesEncryption = enablesEncryption
+        showPasswordDialog = true
+    }
+
+    fun launchEncryptedImport() {
+        if (backupPassword.isBlank()) {
+            requestPassword(forEncryptedImport = true)
+        } else {
+            importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+        }
     }
 
     val backupFolderLauncher = rememberLauncherForActivityResult(
@@ -184,16 +208,24 @@ fun BackupRestoreScreen(
                             supporting = stringResource(R.string.settings_backup_encryption_supporting),
                             leadingIcon = Icons.Outlined.Lock,
                             onClick = {
-                                encryptionEnabled = !encryptionEnabled
-                                prefs.setContactBackupEncryptionEnabled(encryptionEnabled)
+                                if (!encryptionEnabled && backupPassword.isBlank()) {
+                                    requestPassword(enablesEncryption = true)
+                                } else {
+                                    encryptionEnabled = !encryptionEnabled
+                                    prefs.setContactBackupEncryptionEnabled(encryptionEnabled)
+                                }
                             },
                             toggled = encryptionEnabled,
                             trailingContent = {
                                 Switch(
                                     checked = encryptionEnabled,
                                     onCheckedChange = {
-                                        encryptionEnabled = it
-                                        prefs.setContactBackupEncryptionEnabled(it)
+                                        if (it && backupPassword.isBlank()) {
+                                            requestPassword(enablesEncryption = true)
+                                        } else {
+                                            encryptionEnabled = it
+                                            prefs.setContactBackupEncryptionEnabled(it)
+                                        }
                                     }
                                 )
                             }
@@ -202,19 +234,34 @@ fun BackupRestoreScreen(
                     item {
                         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                             OutlinedTextField(
-                                value = backupPassword,
-                                onValueChange = {
-                                    backupPassword = it
-                                    prefs.setContactBackupPassword(it)
-                                },
+                                value = if (backupPassword.isBlank()) "" else "********",
+                                onValueChange = {},
                                 modifier = Modifier.fillMaxWidth(),
                                 label = { Text(stringResource(R.string.settings_backup_password)) },
-                                supportingText = { Text(stringResource(R.string.settings_backup_password_supporting)) },
-                                visualTransformation = PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                supportingText = {
+                                    Text(
+                                        if (backupPassword.isBlank()) {
+                                            stringResource(R.string.settings_backup_password_not_set)
+                                        } else {
+                                            stringResource(R.string.settings_backup_password_set)
+                                        }
+                                    )
+                                },
                                 singleLine = true,
-                                enabled = encryptionEnabled
+                                enabled = encryptionEnabled,
+                                readOnly = true
                             )
+                            TextButton(onClick = { requestPassword() }) {
+                                Text(
+                                    stringResource(
+                                        if (backupPassword.isBlank()) {
+                                            R.string.settings_backup_set_password
+                                        } else {
+                                            R.string.settings_backup_change_password
+                                        }
+                                    )
+                                )
+                            }
                         }
                     }
                     item {
@@ -302,9 +349,13 @@ fun BackupRestoreScreen(
                             supporting = stringResource(R.string.settings_backup_export_contacts_supporting),
                             leadingIcon = Icons.Outlined.FileUpload,
                             onClick = {
-                                exportContactsLauncher.launch(
-                                    if (encryptionEnabled) "contacts_backup.vcf.enc" else "contacts_backup.vcf"
-                                )
+                                if (encryptionEnabled && backupPassword.isBlank()) {
+                                    requestPassword()
+                                } else {
+                                    exportContactsLauncher.launch(
+                                        if (encryptionEnabled) "contacts_backup.vcf.enc" else "contacts_backup.vcf"
+                                    )
+                                }
                             }
                         )
                     }
@@ -321,7 +372,7 @@ fun BackupRestoreScreen(
                             headline = stringResource(R.string.settings_backup_import_encrypted_contacts),
                             supporting = stringResource(R.string.settings_backup_import_encrypted_contacts_supporting),
                             leadingIcon = Icons.Outlined.LockOpen,
-                            onClick = { importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*")) }
+                            onClick = { launchEncryptedImport() }
                         )
                     }
                 }
@@ -433,6 +484,73 @@ fun BackupRestoreScreen(
             message = stringResource(R.string.settings_backup_restore_confirm_message),
             confirmLabel = stringResource(R.string.settings_backup_restore_confirm_action),
             icon = Icons.Outlined.Restore
+        )
+    }
+
+    if (showPasswordDialog) {
+        AlertDialog(
+            onDismissRequest = { showPasswordDialog = false },
+            title = { Text(stringResource(R.string.settings_backup_password_dialog_title)) },
+            text = {
+                OutlinedTextField(
+                    value = passwordDraft,
+                    onValueChange = { passwordDraft = it },
+                    label = { Text(stringResource(R.string.settings_backup_password)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = passwordDraft.isNotBlank(),
+                    onClick = {
+                        backupPassword = passwordDraft
+                        prefs.setContactBackupPassword(passwordDraft)
+                        if (passwordDialogEnablesEncryption) {
+                            encryptionEnabled = true
+                            prefs.setContactBackupEncryptionEnabled(true)
+                        }
+                        showPasswordDialog = false
+                        if (passwordDialogForImport) {
+                            importContactsLauncher.launch(arrayOf("application/octet-stream", "*/*"))
+                        }
+                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPasswordDialog = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
+    }
+
+    contactImportProgress?.let { progress ->
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text(stringResource(R.string.settings_backup_import_progress_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    RivoLinearProgressIndicator(
+                        progress = {
+                            if (progress.total == 0) 0f
+                            else progress.imported.toFloat() / progress.total
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        stringResource(
+                            R.string.settings_backup_import_progress_count,
+                            progress.imported,
+                            progress.total
+                        )
+                    )
+                }
+            },
+            confirmButton = {}
         )
     }
 }
