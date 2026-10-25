@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Λήψη απευθείας από shizuku.rikka.app</string>
     <string name="settings_open_system">Άνοιγμα Ρυθμίσεων Συστήματος Εφαρμογών</string>
     <string name="settings_open_system_supporting">Προβολή και διαχείριση δικαιωμάτων απευθείας στις ρυθμίσεις συσκευής Android</string>
-    <string name="settings_transition_speed">Ταχύτητα Κίνησης Μετάβασης</string>
+    <string name="settings_transition_speed">Κίνηση Μετάβασης</string>
     <string name="settings_transition_speed_supporting">Προσαρμόστε την κλίμακα χρόνου μετάβασης σε σελίδες, καρτέλες και μενού</string>
     <string name="settings_more_display">Περισσότερες Ρυθμίσεις Εμφάνισης</string>
     <string name="settings_navigation_bar">Γραμμή Πλοήγησης</string>
@@ -282,6 +282,8 @@
     <string name="dynamic_color">Δυναμικό Χρώμα</string>
     <string name="enable_dynamic_color">Ενεργοποίηση δυναμικού χρώματος από την ταπετσαρία</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Εστίαση</string>
+    <string name="settings_interface_transition_stack">Στοίβα Βάθους</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Κρατήστε 0 για +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Πληκτρολογήστε + κρατώντας πατημένο το κουμπί 0 στο πληκτρολόγιο κλήσης</string>
@@ -485,6 +487,7 @@
     <string name="settings_permissions_system_title">Σύστημα</string>
     <string name="settings_private_contacts_count">Ασφαλισμένες Επαφές (%1$d)</string>
     <string name="action_select_all">Επιλογή Όλων</string>
+    <string name="action_deselect_all">Αποεπιλογή Όλων</string>
     <string name="action_select_none">Αποεπιλογή Όλων</string>
     <string name="settings_private_secret_code">Μυστικός Κωδικός Πληκτρολόγησης</string>
     <string name="about_rate_on_google_play">Αξιολογήστε την εφαρμογή</string>
@@ -654,7 +657,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Ρύθμιση καμπυλότητας γωνίας από λεπτή σε εξαιρετικά στρογγυλεμένη</string>
     <string name="loc_transition_animations">Εφέ Μετάβασης</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Εφέ μετάβασης οθόνης και εφέ κίνησης</string>
-    <string name="loc_transition_animation_speed">Ταχύτητα Κίνησης Μετάβασης</string>
+    <string name="loc_transition_animation_speed">Κίνηση Μετάβασης</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Προσαρμόστε την κλίμακα χρόνου μετάβασης σε σελίδες, καρτέλες και μενού</string>
     <string name="loc_predictive_back_gestures">Πρόβλεψη Πίσω Χειρονομίες</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Διαδραστικά κινούμενα σχέδια swipe-to-preview κατά την πλοήγηση πίσω</string>
@@ -890,6 +893,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_play">Αναπαραγωγή</string>
     <string name="loc_rewind_10s">Επαναφορά 10S</string>
     <string name="loc_forward_10s">Προώθηση 10δ</string>
+    <string name="loc_privatecontacts_size_secured">%1$d ασφαλές</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Αποθηκεύεται τοπικά στο sandboxed θόλο του Rivo • Κρυφό από εφαρμογές WhatsApp και συστήματος</string>
     <string name="loc_select_contacts_for_private_storage">Επιλέξτε Επαφές για ιδιωτικό χώρο αποθήκευσης</string>
     <string name="loc_move_to_private_storage">Μετακίνηση στον ιδιωτικό χώρο αποθήκευσης</string>
@@ -968,6 +972,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_save_to_call_history">Αποθήκευση στο ιστορικό κλήσεων</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Απαντημένες και αναπάντητες ψεύτικες κλήσεις θα εμφανιστούν στα πρόσφατα</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d μπλοκαρισμένο</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Κλήσεις και μηνύματα κειμένου από αυτόν τον αριθμό θα αποκλειστούν αμέσως.</string>
     <string name="loc_processing_blocklist">Επεξεργασία Λίστας Αποκλεισμού</string>
     <string name="loc_importing_blocked_numbers">Εισαγωγή μπλοκαρισμένων αριθμών...</string>
@@ -982,4 +987,15 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="call_customization_incoming_style">Στυλ εισερχόμενης κλήσης</string>
     <string name="content_desc_more_actions">Περισσότερες ενέργειες</string>
     <string name="quick_response_message_text">Κείμενο μηνύματος</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

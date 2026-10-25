@@ -57,7 +57,7 @@
     <string name="shizuku_download_directly">Lataa suoraan shizuku.rikka.app</string>
     <string name="settings_open_system">Avaa Sovellusjärjestelmän Asetukset</string>
     <string name="settings_open_system_supporting">Tarkastele ja hallitse käyttöoikeuksia suoraan Android-laitteen asetuksissa</string>
-    <string name="settings_transition_speed">Siirtymän Animaation Nopeus</string>
+    <string name="settings_transition_speed">Siirtymän Animaation Aika</string>
     <string name="settings_transition_speed_supporting">Säädä siirtymän animaation aika-asteikkoa sivuille, välilehteille ja valikoille</string>
     <string name="settings_more_display">Lisää Näyttöasetuksia</string>
     <string name="settings_navigation_bar">Navigointipalkki</string>
@@ -286,6 +286,8 @@ valkoinen teksti</string>
     <string name="dynamic_color">Dynaaminen Väri</string>
     <string name="enable_dynamic_color">Ota dynaaminen väri käyttöön taustakuvasta</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Zoomaus</string>
+    <string name="settings_interface_transition_stack">Syvyys Pino</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Pidä 0 pohjassa +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Kirjoita + pitämällä 0-näppäintä painettuna valintaikkunassa</string>
@@ -494,6 +496,7 @@ valkoinen teksti</string>
     <string name="settings_permissions_system_title">Järjestelmä</string>
     <string name="settings_private_contacts_count">Suojatut Yhteystiedot (%1$d)</string>
     <string name="action_select_all">Valitse Kaikki</string>
+    <string name="action_deselect_all">Poista Kaikki Valinnat</string>
     <string name="action_select_none">Poista Kaikki Valinnat</string>
     <string name="settings_private_secret_code">Salainen Näppäimistön Koodi</string>
     <string name="about_rate_on_google_play">Arvostele sovellus</string>
@@ -669,7 +672,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Säädä kulman kaarevuus hienovaraisuudesta ultra pyöristetty</string>
     <string name="loc_transition_animations">Siirtymän Animaatiot</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Näytön siirtymisen animaatiot ja liikeefektit</string>
-    <string name="loc_transition_animation_speed">Siirtymän Animaation Nopeus</string>
+    <string name="loc_transition_animation_speed">Siirtymän Animaation Aika</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Säädä siirtymän animaation aika-asteikkoa sivuille, välilehteille ja valikoille</string>
     <string name="loc_predictive_back_gestures">Ennustavat Selkäeleet</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktiivinen pyyhkäisy esikatseluun kun selkä navigoidaan</string>
@@ -1008,4 +1011,15 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="call_customization_incoming_style">Saapuvan puhelun tyyli</string>
     <string name="content_desc_more_actions">Lisää toimintoja</string>
     <string name="quick_response_message_text">Viestin teksti</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

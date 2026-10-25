@@ -58,7 +58,6 @@
     <string name="shizuku_download_directly">Baixar diretamente do shizuku.rikka.app</string>
     <string name="settings_open_system">Abrir Configurações do Sistema de Aplicativos</string>
     <string name="settings_open_system_supporting">Ver e gerenciar as permissões diretamente nas configurações do dispositivo Android</string>
-    <string name="settings_transition_speed">Animação de Transição</string>
     <string name="settings_transition_speed_supporting">Ajustar escala de tempo de animação de transição entre páginas, guias e menus</string>
     <string name="settings_more_display">Mais Configurações de Exibição</string>
     <string name="settings_navigation_bar">Barra de Navegação</string>
@@ -289,6 +288,8 @@ Texto branco</string>
     <string name="dynamic_color">Cor dinâmica</string>
     <string name="enable_dynamic_color">Ativar cor dinâmica do papel de parede</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Ampliar</string>
+    <string name="settings_interface_transition_stack">Pilha de Profundidade</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Segure 0 para +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Digite + segurando o botão 0 no teclado de discagem</string>
@@ -670,7 +671,6 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Ajustar a curvatura do canto do sutil para a ultra arredondada</string>
     <string name="loc_transition_animations">Animações de transição</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animações de transição de tela e efeitos de movimento</string>
-    <string name="loc_transition_animation_speed">Animação de Transição</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Ajustar escala de tempo de animação de transição entre páginas, guias e menus</string>
     <string name="loc_predictive_back_gestures">Gestos preditivos para trás</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Deslizar para pré-visualizar animações interativas ao navegar para trás</string>
@@ -909,7 +909,6 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_rewind_10s">Retroceder 10s</string>
     <string name="loc_forward_10s">Avançar 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selecionado</string>
-    <string name="loc_privatecontacts_size_secured">%1$d protegido</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Armazenado localmente no sandboxed vault do Rivo • Oculto para aplicativos do WhatsApp e sistema</string>
     <string name="loc_select_contacts_for_private_storage">Selecionar Contatos para Armazenamento Privado</string>
     <string name="loc_move_to_private_storage">Mover para armazenamento privado</string>
@@ -1008,4 +1007,15 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="call_customization_incoming_style">Estilo de chamada recebida</string>
     <string name="content_desc_more_actions">Mais ações</string>
     <string name="quick_response_message_text">Texto da mensagem</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

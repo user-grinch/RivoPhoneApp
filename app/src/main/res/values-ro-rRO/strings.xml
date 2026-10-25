@@ -58,7 +58,7 @@
     <string name="shizuku_download_directly">Descarcă direct de la shizuku.rika.app</string>
     <string name="settings_open_system">Deschideți setările de Sistem Aplicații</string>
     <string name="settings_open_system_supporting">Vizualizați și gestionați permisiunile direct în setările dispozitivului Android</string>
-    <string name="settings_transition_speed">Viteza de tranziție animație</string>
+    <string name="settings_transition_speed">Timp de tranziție animație</string>
     <string name="settings_transition_speed_supporting">Reglaţi timpul de animaţie de tranziţie prin pagini, file şi meniuri</string>
     <string name="settings_more_display">Mai multe setări de afișare</string>
     <string name="settings_navigation_bar">Bara de navigare</string>
@@ -501,6 +501,7 @@ Text alb</string>
     <string name="settings_permissions_system_title">Sistem</string>
     <string name="settings_private_contacts_count">Contacte securizate (%1$d)</string>
     <string name="action_select_all">Selectează tot</string>
+    <string name="action_deselect_all">Deselectează tot</string>
     <string name="action_select_none">Deselectează tot</string>
     <string name="settings_private_secret_code">Cod Dialpad secret</string>
     <string name="about_rate_on_google_play">Evaluează aplicația</string>
@@ -677,7 +678,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Reglaţi curbura de colţ de la subtil la ultra rotunjit</string>
     <string name="loc_transition_animations">Animații de tranziție</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animații de tranziție ecran și efecte de mișcare</string>
-    <string name="loc_transition_animation_speed">Viteza de tranziție animație</string>
+    <string name="loc_transition_animation_speed">Timp de tranziție animație</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Reglaţi timpul de animaţie de tranziţie prin pagini, file şi meniuri</string>
     <string name="loc_predictive_back_gestures">Gesturi predictive înapoi</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Animații interactive swipe-to-preview la navigarea înapoi</string>
@@ -1018,4 +1019,15 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="call_customization_incoming_style">Stil apel primit</string>
     <string name="content_desc_more_actions">Mai multe acțiuni</string>
     <string name="quick_response_message_text">Text mesaj</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>

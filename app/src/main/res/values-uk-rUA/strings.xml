@@ -56,7 +56,6 @@
     <string name="shizuku_download_directly">Завантажити безпосередньо з shizuku.rika.app</string>
     <string name="settings_open_system">Відкрити налаштування системи додатку</string>
     <string name="settings_open_system_supporting">Перегляд та керування дозволами безпосередньо в налаштуваннях пристрою Android</string>
-    <string name="settings_transition_speed">Швидкість анімації переходу</string>
     <string name="settings_transition_speed_supporting">Регулювання шкали часу анімації переходів між сторінками, вкладками та меню</string>
     <string name="settings_more_display">Додаткові параметри показу</string>
     <string name="settings_navigation_bar">Панель навігації</string>
@@ -282,6 +281,8 @@
     <string name="dynamic_color">Динамічний колір</string>
     <string name="enable_dynamic_color">Увімкнути динамічний колір шпалер</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_transition_zoom">Масштабування</string>
+    <string name="settings_interface_transition_stack">Глибина стека</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Утримуйте 0 для +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Тип + , утримуючи кнопку 0 на номеронабирачі</string>
@@ -639,7 +640,6 @@
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Налаштуйте криву кута від тонки до ультра округлених</string>
     <string name="loc_transition_animations">Анімація переходів</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Анімація переходу на екран та ефекти руху</string>
-    <string name="loc_transition_animation_speed">Швидкість анімації переходу</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Регулювання шкали часу анімації переходів між сторінками, вкладками та меню</string>
     <string name="loc_predictive_back_gestures">Прогнозований жести назад</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Інтерактивна анімація свайпу для перегляду під час повернення</string>
@@ -871,7 +871,6 @@
     <string name="loc_rewind_10s">Перемотати 10 сек</string>
     <string name="loc_forward_10s">Переслати 10 сек</string>
     <string name="loc_selectedcontactids_size_selected">Вибрано ${selectedContactIds.size}</string>
-    <string name="loc_privatecontacts_size_secured">Безпечний %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Зберігається на місці в ізольованому сховищі Ріво • Приховано з WhatsApp і системних додатків</string>
     <string name="loc_select_contacts_for_private_storage">Виберіть контакти для приватного сховища</string>
     <string name="loc_move_to_private_storage">Перемістити в приватне сховище</string>
@@ -948,7 +947,6 @@
     <string name="loc_save_to_call_history">Зберегти в історію дзвінків</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">В Нещодавніх випадках, на які ви відповіли та пропущені дзвінки будуть відображені</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d заблоковано</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Виклики та текстові повідомлення з цього номера будуть блокуватися відразу.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Розблокувати $targetDisplayName? Вони зможуть телефонувати та надсилати вам повідомлення.</string>
     <string name="loc_processing_blocklist">Обробка списку блокування</string>
@@ -970,4 +968,15 @@
     <string name="call_customization_incoming_style">Стиль вхідного дзвінка</string>
     <string name="content_desc_more_actions">Більше дій</string>
     <string name="quick_response_message_text">Текст повідомлення</string>
+    <!-- Typography -->
+    <!-- Shortcuts -->
+    <!-- Contact Management -->
+    <!-- Live corner roundness -->
+    <!-- Default start location -->
+    <!-- Call recordings -->
+    <!-- Permissions -->
+    <!-- App lock -->
+    <!-- Call Analytics -->
+    <!-- Settings Search -->
+    <!-- Private Contacts -->
 </resources>
