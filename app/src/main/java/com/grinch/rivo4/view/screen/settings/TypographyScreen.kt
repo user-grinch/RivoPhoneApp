@@ -24,6 +24,7 @@ import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
 import com.grinch.rivo4.view.components.RivoOptionRow
+import com.grinch.rivo4.view.components.RivoSliderListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.RivoVisualOptionSelectorRow
 import com.grinch.rivo4.view.theme.rivoFontFamilyFromId
@@ -31,6 +32,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.compose.koinInject
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -50,13 +52,18 @@ fun TypographyScreen(
                 ?: PreferenceManager.FONT_FAMILY_SANS_SERIF
         )
     }
-    var fontSize by remember {
-        mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_FONT_SIZE, PreferenceManager.FONT_SIZE_MEDIUM))
+    var fontScale by remember {
+        mutableFloatStateOf(prefs.getFontScale())
     }
     var showFontDialog by remember { mutableStateOf(false) }
 
     val fontLabels = listOf(
         stringResource(R.string.font_family_sans_serif),
+        stringResource(R.string.font_family_roboto),
+        stringResource(R.string.font_family_ubuntu),
+        stringResource(R.string.font_family_samsung_one),
+        stringResource(R.string.font_family_inter),
+        stringResource(R.string.font_family_poppins),
         stringResource(R.string.font_family_serif),
         stringResource(R.string.font_family_monospace),
         stringResource(R.string.font_family_cursive),
@@ -76,16 +83,12 @@ fun TypographyScreen(
     } else {
         rivoFontFamilyFromId(fontFamily)
     }
-    val previewScale = when (fontSize) {
-        PreferenceManager.FONT_SIZE_SMALL -> 0.9f
-        PreferenceManager.FONT_SIZE_LARGE -> 1.12f
-        else -> 1f
-    }
+    val previewScale = fontScale
 
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.typography_title),
+                text = stringResource(R.string.loc_typography),
                 navigator = navigator
             )
         },
@@ -173,6 +176,11 @@ fun TypographyScreen(
                         }
                     }
                     item {
+                        val currentPreset = when {
+                            fontScale <= 0.92f -> PreferenceManager.FONT_SIZE_SMALL
+                            fontScale >= 1.08f -> PreferenceManager.FONT_SIZE_LARGE
+                            else -> PreferenceManager.FONT_SIZE_MEDIUM
+                        }
                         RivoOptionRow(
                             headline = stringResource(R.string.font_size_label),
                             supporting = stringResource(R.string.font_size_label_supporting),
@@ -182,10 +190,31 @@ fun TypographyScreen(
                                 stringResource(R.string.font_size_medium) to PreferenceManager.FONT_SIZE_MEDIUM,
                                 stringResource(R.string.font_size_large) to PreferenceManager.FONT_SIZE_LARGE
                             ),
-                            selectedValue = fontSize,
+                            selectedValue = currentPreset,
                             onValueChange = { value ->
-                                fontSize = value
-                                prefs.setInt(PreferenceManager.KEY_FONT_SIZE, value)
+                                val newScale = when (value) {
+                                    PreferenceManager.FONT_SIZE_SMALL -> 0.90f
+                                    PreferenceManager.FONT_SIZE_LARGE -> 1.15f
+                                    else -> 1.0f
+                                }
+                                fontScale = newScale
+                                prefs.setFontScale(newScale)
+                            }
+                        )
+                    }
+                    item {
+                        RivoSliderListItem(
+                            headline = stringResource(R.string.font_size_granular_label),
+                            supporting = "${(fontScale * 100).roundToInt()}%",
+                            value = fontScale,
+                            valueRange = PreferenceManager.MIN_FONT_SCALE..PreferenceManager.MAX_FONT_SCALE,
+                            steps = 9,
+                            valueLabel = "${(fontScale * 100).roundToInt()}%",
+                            leadingIcon = Icons.Outlined.FormatSize,
+                            onValueChange = { scale ->
+                                val rounded = (scale * 20f).roundToInt() / 20f
+                                fontScale = rounded
+                                prefs.setFontScale(rounded)
                             }
                         )
                     }

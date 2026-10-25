@@ -913,7 +913,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_rewind_10s">Spola tillbaka 10s</string>
     <string name="loc_forward_10s">Vidarebefordra 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} vald</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} säkrad</string>
+    <string name="loc_privatecontacts_size_secured">%1$d säkrad</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagrad lokalt i Rivos sandlådade valv • Gömd från WhatsApp och systemappar</string>
     <string name="loc_select_contacts_for_private_storage">Välj kontakter för privat lagring</string>
     <string name="loc_move_to_private_storage">Flytta till privat lagring</string>
@@ -994,7 +994,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_save_to_call_history">Spara till samtalshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Svarade och missade falska samtal kommer att dyka upp i Senaste</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blockerat</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d blockerat</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtal och sms från detta nummer kommer att blockeras omedelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Avblockera $targetDisplayName? De kommer att kunna ringa och meddela dig igen.</string>
     <string name="loc_processing_blocklist">Bearbetar blocklista</string>

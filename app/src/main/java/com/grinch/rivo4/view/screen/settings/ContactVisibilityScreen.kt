@@ -90,7 +90,7 @@ fun ContactVisibilityScreen(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_visibility_title),
+                text = stringResource(R.string.settings_manage_visibility),
                 navigator = navigator
             )
         }

@@ -905,7 +905,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_play">Spill</string>
     <string name="loc_rewind_10s">Tilbakespoling av 10</string>
     <string name="loc_forward_10s">Videresend 10 sekunder</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} sikret</string>
+    <string name="loc_privatecontacts_size_secured">%1$d sikret</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagret lokalt i Rivastigmine sitt sandbokserte hvelv • Skjult fra WhatsApp og systemapper</string>
     <string name="loc_select_contacts_for_private_storage">Velg kontakter for privat lagring</string>
     <string name="loc_move_to_private_storage">Flytt til privat lagring</string>
@@ -986,7 +986,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_save_to_call_history">Lagre i Samtalelogg</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Besvarte og tapte falske anrop vil vises hos Nylige</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blokkert</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d blokkert</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtaler og tekstmeldinger fra dette nummeret vil bli blokkert umiddelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Oppheve blokkeringen av $targetDisplayName? De vil kunne ringe og sende en melding til deg igjen.</string>
     <string name="loc_processing_blocklist">Behandling av blokkliste</string>

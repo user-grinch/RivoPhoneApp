@@ -230,7 +230,7 @@ fun CallAccountsScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_call_title),
+                text = stringResource(R.string.settings_call_settings_headline),
                 navigator = navigator
             )
         },

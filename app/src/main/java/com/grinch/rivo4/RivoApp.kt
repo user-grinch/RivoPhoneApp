@@ -47,6 +47,7 @@ class RivoApp : Application(), ImageLoaderFactory {
         super.onCreate()
         instance = this
         ProBrandingManager.resetToDefault(this)
+        com.grinch.rivo4.controller.util.AppShortcutsHelper.init(this)
         startKoin {
             androidContext(this@RivoApp)
             modules(appModule)

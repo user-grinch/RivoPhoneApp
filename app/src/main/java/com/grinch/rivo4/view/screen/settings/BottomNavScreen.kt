@@ -117,7 +117,7 @@ fun BottomNavScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_bottom_nav_title),
+                text = stringResource(R.string.loc_navigation_bar),
                 navigator = navigator
             )
         },
@@ -331,9 +331,9 @@ fun BottomNavScreen(
                                 supporting = stringResource(R.string.settings_default_start_screen_supporting),
                                 leadingIcon = Icons.Outlined.Home,
                                 options = listOf(
-                                    "Default Tab" to PreferenceManager.START_LOCATION_NORMAL,
-                                    "Dialpad (Recents)" to PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
-                                    "Dialpad (Contacts)" to PreferenceManager.START_LOCATION_DIALPAD_CONTACTS
+                                    stringResource(R.string.start_location_default_tab) to PreferenceManager.START_LOCATION_NORMAL,
+                                    stringResource(R.string.start_location_dialpad_recents) to PreferenceManager.START_LOCATION_DIALPAD_RECENTS,
+                                    stringResource(R.string.start_location_dialpad_contacts) to PreferenceManager.START_LOCATION_DIALPAD_CONTACTS
                                 ),
                                 selectedValue = startLocation,
                                 onValueChange = {

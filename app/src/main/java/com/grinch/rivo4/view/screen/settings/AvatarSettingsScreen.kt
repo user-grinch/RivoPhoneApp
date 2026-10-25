@@ -72,7 +72,7 @@ fun AvatarSettingsScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_avatars_title),
+                text = stringResource(R.string.loc_avatars_contact_cards),
                 navigator = navigator
             )
         },

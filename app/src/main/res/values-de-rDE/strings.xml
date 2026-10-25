@@ -1646,7 +1646,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_rewind_10s">10 Sekunden zurückspulen</string>
     <string name="loc_forward_10s">10 Sekunden vorspulen</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} ausgewählt</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} gesichert</string>
+    <string name="loc_privatecontacts_size_secured">%1$d gesichert</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lokal in Rivos Sandboxbereich gespeichert • Verborgen vor WhatsApp und System-Apps</string>
     <string name="loc_select_contacts_for_private_storage">Kontakte für den privaten Speicher auswählen</string>
     <string name="loc_move_to_private_storage">In privaten Speicher verschieben</string>
@@ -1727,7 +1727,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_save_to_call_history">In Anrufliste speichern</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Angenommene und verpasste Anrufe werden in \"Zuletzt\" angezeigt</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} blockiert</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d blockiert</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Anrufe und Textnachrichten von dieser Nummer werden sofort gesperrt.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">$targetDisplayName entsperren ? Sie werden Sie erneut anrufen und benachrichtigen können.</string>
     <string name="loc_processing_blocklist">Blockliste wird verarbeitet...</string>

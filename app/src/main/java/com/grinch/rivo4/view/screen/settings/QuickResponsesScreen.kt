@@ -56,7 +56,7 @@ fun QuickResponsesScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_quick_responses_title),
+                text = stringResource(R.string.loc_quick_responses),
                 navigator = navigator,
                 actions = {
                     IconButton(onClick = { showResetConfirm = true }) {

@@ -168,7 +168,7 @@ fun CallAnalyticsScreen(
                                 onClick = { viewModel.setTimeRange(range) },
                                 shape = SegmentedButtonDefaults.itemShape(index = index, count = AnalyticsTimeRange.entries.size)
                             ) {
-                                Text(range.label, maxLines = 1, style = MaterialTheme.typography.labelMedium)
+                                Text(stringResource(range.labelResId), maxLines = 1, style = MaterialTheme.typography.labelMedium)
                             }
                         }
                     }
@@ -481,7 +481,12 @@ private fun TopContactLeaderboardItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "${contact.totalCalls} calls (${contact.incomingCount} in, ${contact.outgoingCount} out)",
+                    text = stringResource(
+                        R.string.call_analytics_contact_calls_breakdown,
+                        contact.totalCalls,
+                        contact.incomingCount,
+                        contact.outgoingCount
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -497,7 +502,7 @@ private fun TopContactLeaderboardItem(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "talked",
+                    text = stringResource(R.string.call_analytics_talked),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

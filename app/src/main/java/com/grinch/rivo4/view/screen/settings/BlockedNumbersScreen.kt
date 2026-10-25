@@ -218,7 +218,7 @@ fun BlockedNumbersScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_blocked_title),
+                text = stringResource(R.string.settings_blocked_numbers_headline),
                 navigator = navigator,
                 actions = {
                     IconButton(onClick = { showAddManualDialog = true }) {
@@ -286,11 +286,17 @@ fun BlockedNumbersScreen(
                             }
                             Spacer(Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
                                     Text(
                                         text = stringResource(R.string.settings_blocked_numbers_headline),
                                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
                                     )
                                     Spacer(Modifier.width(8.dp))
                                     Surface(
@@ -299,10 +305,11 @@ fun BlockedNumbersScreen(
                                         contentColor = MaterialTheme.colorScheme.onErrorContainer
                                     ) {
                                         Text(
-                                            text = stringResource(R.string.loc_blockednumbers_size_blocked),
+                                            text = stringResource(R.string.loc_blockednumbers_size_blocked, blockedNumbers.size),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                            maxLines = 1
                                         )
                                     }
                                 }

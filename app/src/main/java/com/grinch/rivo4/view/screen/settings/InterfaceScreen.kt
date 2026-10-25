@@ -172,6 +172,7 @@ fun InterfaceScreen(
 
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_card_roundness)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_transition_animation)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_transition_speed)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_predictive_back_title)) ||
             target.contains("Card", ignoreCase = true) ||
             target.contains("Roundness", ignoreCase = true) ||
@@ -195,7 +196,7 @@ fun InterfaceScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.settings_interface_title),
+                text = stringResource(R.string.loc_theme_appearance),
                 navigator = navigator
             )
         },

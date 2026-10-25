@@ -907,7 +907,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_rewind_10s">Rewind 10s</string>
     <string name="loc_forward_10s">Eteenpäin 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} valittu</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} suojattu</string>
+    <string name="loc_privatecontacts_size_secured">%1$d suojattu</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Paikallisesti tallennettu Rivan hiekkalaatikkoon • Piilotettu WhatsAppista ja järjestelmäsovelluksista</string>
     <string name="loc_select_contacts_for_private_storage">Valitse Yksityisen tallennustilan yhteystiedot</string>
     <string name="loc_move_to_private_storage">Siirrä yksityiseen tallennustilaan</string>
@@ -987,7 +987,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_call_history_settings">Puheluhistorian Asetukset</string>
     <string name="loc_save_to_call_history">Tallenna puheluhistoriaan</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Vastatut ja vastaamattomat väärennetyt puhelut näkyvät Viimeisimmät</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} estetty</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d estetty</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Puhelut ja tekstiviestit tästä numerosta estetään välittömästi.</string>
     <string name="loc_processing_blocklist">Käsitellään Lohkoluetteloa</string>
     <string name="loc_importing_blocked_numbers">Tuodaan estettyjä numeroita...</string>

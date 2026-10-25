@@ -1653,7 +1653,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_rewind_10s">Przewiń 10s</string>
     <string name="loc_forward_10s">Do przodu 10s</string>
     <string name="loc_selectedcontactids_size_selected">Wybrano ${selectedContactIds.size}</string>
-    <string name="loc_privatecontacts_size_secured">${privateContacts.size} zabezpieczono</string>
+    <string name="loc_privatecontacts_size_secured">%1$d zabezpieczono</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Przechowywane lokalnie w bezpiecznym schowku Rivo • Ukryte przed WhatsAppem i aplikacjami systemowymi</string>
     <string name="loc_select_contacts_for_private_storage">Wybierz kontakty do pamięci prywatnej</string>
     <string name="loc_move_to_private_storage">Przenieś do pamięci prywatnej</string>
@@ -1734,7 +1734,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_save_to_call_history">Zapisz do historii połączeń</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Odebrane i nieodebrane fałszywe połączenia będą widoczne w historii</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">${blockedNumbers.size} zablokowany</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d zablokowany</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Połączenia i wiadomości tekstowe z tego numeru zostaną natychmiast zablokowane.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokuj $targetDisplayName? Będą mogli zadzwonić i wysłać Ci wiadomość ponownie.</string>
     <string name="loc_processing_blocklist">Przetwarzanie listy zablokowanych</string>

@@ -61,7 +61,7 @@ fun TrashContactsScreen(
     Scaffold(
         topBar = {
             MenuTopAppBar(
-                text = stringResource(R.string.contacts_trash_title),
+                text = stringResource(R.string.loc_trash_contacts),
                 navigator = navigator,
                 actions = {
                     if (trashedContacts.isNotEmpty()) {

@@ -100,11 +100,7 @@ fun Rivo4Theme(
                 prefs.getString(PreferenceManager.KEY_FONT_FAMILY, PreferenceManager.FONT_FAMILY_SANS_SERIF)
             )
         }
-        val scale = when (prefs.getInt(PreferenceManager.KEY_FONT_SIZE, PreferenceManager.FONT_SIZE_MEDIUM)) {
-            PreferenceManager.FONT_SIZE_SMALL -> 0.9f
-            PreferenceManager.FONT_SIZE_LARGE -> 1.12f
-            else -> 1f
-        }
+        val scale = prefs.getFontScale()
         rivoTypography(fontFamily, scale)
     }
 

@@ -74,6 +74,7 @@ import com.ramcosta.composedestinations.generated.destinations.ContactSelectionS
 import com.ramcosta.composedestinations.generated.destinations.ContactScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DefaultDialerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.RecentScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SettingsScreenDestination
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import com.grinch.rivo4.controller.lock.AppLockManager
@@ -118,6 +119,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
         applySystemOrientationPolicy()
         intentState = intent
         enableEdgeToEdge()
+        com.grinch.rivo4.controller.util.AppShortcutsHelper.init(this)
 
         if (AppLockManager.isLocked(preferenceManager)) {
             isAppLocked = true
@@ -321,13 +323,15 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 intentState?.component?.className?.endsWith("ContactsAliasActivity") == true ||
                                 intentState?.action == "com.grinch.rivo4.ACTION_VIEW_CONTACTS" ||
                                 intentState?.hasCategory(Intent.CATEGORY_APP_CONTACTS) == true
-                        if (!isContacts && !isAlreadyDefaultDialer(this@MainActivity)) {
+                        val isSettings = intentState?.action == "com.grinch.rivo4.ACTION_OPEN_SETTINGS" ||
+                                intentState?.action == Intent.ACTION_APPLICATION_PREFERENCES
+                        if (!isContacts && !isSettings && !isAlreadyDefaultDialer(this@MainActivity)) {
                             navController.navigate(DefaultDialerScreenDestination.route) {
                                 popUpTo(MainScreenDestination.route) {
                                     inclusive = true
                                 }
                             }
-                        } else if (!isContacts && (intentState?.action == null || intentState?.action == Intent.ACTION_MAIN)) {
+                        } else if (!isContacts && !isSettings && (intentState?.action == null || intentState?.action == Intent.ACTION_MAIN)) {
                             val startLocation = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
                             if (startLocation == PreferenceManager.START_LOCATION_DIALPAD_RECENTS || startLocation == PreferenceManager.START_LOCATION_DIALPAD_CONTACTS) {
                                 navController.navigate(DialPadScreenDestination().route)
@@ -433,8 +437,28 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error canceling missed calls: ${e.message}", e)
             }
-            navController.navigate(MainScreenDestination(initialTab = 0).route) {
-                popUpTo(navController.graph.startDestinationId)
+            requestedTab?.value = PreferenceManager.TAB_RECENTS
+            if (navController.currentDestination?.route != MainScreenDestination.route) {
+                try {
+                    navController.popBackStack(MainScreenDestination.route, inclusive = false)
+                } catch (e: Exception) {
+                    try {
+                        navController.navigate(MainScreenDestination(initialTab = PreferenceManager.TAB_RECENTS).route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    } catch (e2: Exception) {
+                        Log.e("MainActivity", "Error navigating to main screen: ${e2.message}", e2)
+                    }
+                }
+            }
+            return
+        }
+
+        if (action == "com.grinch.rivo4.ACTION_OPEN_SETTINGS" || action == Intent.ACTION_APPLICATION_PREFERENCES) {
+            navController.navigate(SettingsScreenDestination.route) {
                 launchSingleTop = true
             }
             return
