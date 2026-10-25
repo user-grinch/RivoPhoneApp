@@ -309,6 +309,12 @@ Text alb</string>
     <string name="settings_call_dialpad_size_large">Periculos</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_import_contacts_supporting">Restaurează contactele dintr-o copie de rezervă VCF sau VCF criptată</string>
+    <string name="settings_backup_import_encrypted_contacts">Importă backup criptat pentru contacte</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Selectați un fișier .vcf.enc și introduceți mai întâi aceeași parolă pentru copia de rezervă</string>
+    <string name="settings_backup_encryption">Criptează copiile de rezervă ale contactelor</string>
+    <string name="settings_backup_encryption_supporting">Utilizați criptarea AES pentru copiile de siguranță manuale și automate ale contactelor</string>
+    <string name="settings_backup_password">Parolă de rezervă</string>
     <string name="settings_backup_app_settings_header">Setări aplicație &amp; Preferințe</string>
     <string name="settings_backup_export_settings">Exportă setările aplicației</string>
     <string name="settings_backup_export_settings_supporting">Creaţi o copie de rezervă a temelor, stilurilor de tastatură şi configuraţiilor JSON</string>
@@ -1020,14 +1026,78 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="content_desc_more_actions">Mai multe acțiuni</string>
     <string name="quick_response_message_text">Text mesaj</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung Unu</string>
+    <string name="font_family_inter">Intrare</string>
+    <string name="font_family_poppins">Poppin-uri</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Setări</string>
+    <string name="shortcut_new_contact">Contact nou</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Seif de stocare privată</string>
+    <string name="contact_management_private_vault_supporting">Gestionați contactele locale stocate strict în baza de date a aplicațiilor</string>
+    <string name="contact_mgmt_total_contacts">Total contacte</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Toate numele contactelor, numerele de telefon și e-mailurile sunt unice.</string>
+    <string name="contact_mgmt_merge_desc">Combinați detaliile redundante și păstrați contactele curate.</string>
+    <string name="contact_mgmt_merged_for">Contacte îmbinate pentru %1$s</string>
+    <string name="contact_mgmt_ready_to_move">Contactele %1$d sunt gata să se mute la %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d contacte care se potrivesc • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Contacte de combinat:</string>
+    <string name="contact_mgmt_primary">Primară</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Fără numere</string>
+    <string name="contact_mgmt_contacts_count">Contacte %1$d</string>
+    <string name="contact_mgmt_select_contacts_to_move">Selectați contactele pentru mutare</string>
+    <string name="contact_mgmt_move_from_to">De la %1$s la %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d din %2$d selectat</string>
+    <string name="contact_mgmt_no_number">Niciun număr</string>
+    <string name="storage_device">Dispozitiv</string>
+    <string name="storage_private_vault">Stocare privată (App Vault)</string>
+    <string name="storage_sim_card_format">Cartela SIM (%1$s)</string>
+    <string name="storage_local">Local</string>
+    <string name="storage_cloud">Nor</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privat</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Rotunjire colț viu: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Dialpad (Contacte)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Se scanează înregistrările…</string>
+    <string name="recordings_saved_count">%1$d înregistrări salvate</string>
+    <string name="recordings_available_count">%1$d înregistrări disponibile</string>
+    <string name="recording_min_duration_all_calls">Înregistrează toate apelurile</string>
+    <string name="recording_min_duration_ignore_3s">Ignoră apelurile &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ignoră apelurile &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ignoră apelurile &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">Setează</string>
+    <string name="action_grant">Acordă</string>
+    <string name="action_enable">Activare</string>
+    <string name="action_move_all">Mută tot</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Activat (Atac, amprentă digitală, cod PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Astăzi</string>
+    <string name="analytics_time_this_week">Săptămâna aceasta</string>
+    <string name="analytics_time_this_month">Luna aceasta</string>
+    <string name="analytics_time_all_time">Tot timpul</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d apeluri (%2$d in, %3$d ex.)</string>
+    <string name="call_analytics_talked">vorbit</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personalizare</string>
+    <string name="settings_category_calling">Apelare</string>
+    <string name="settings_category_sound">Sunet</string>
+    <string name="settings_category_contacts">Contacte</string>
+    <string name="settings_category_security">Securitate</string>
+    <string name="settings_category_about">Despre</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Reafişează în seif</string>
+    <string name="private_vault_hide_completely">Ascunde complet</string>
 </resources>

@@ -693,7 +693,6 @@ Weißer Text</string>
     <string name="settings_backup_export_contacts">Kontakte exportieren</string>
     <string name="settings_backup_export_contacts_supporting">Kontakte in VCF-Datei speichern</string>
     <string name="settings_backup_import_contacts">Kontakte importieren</string>
-    <string name="settings_backup_import_contacts_supporting">Kontakte aus VCF-Datei wiederherstellen</string>
     <string name="settings_backup_call_logs_header">Anrufliste</string>
     <string name="settings_backup_export_logs">Anrufliste exportieren</string>
     <string name="settings_backup_export_logs_supporting">Anrufliste in JSON-Datei speichern</string>
@@ -1754,14 +1753,77 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="quick_response_message_text">Nachrichtentext</string>
     <string name="content_desc_clear_search">Suche leeren</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung eins</string>
+    <string name="font_family_inter">Inter</string>
+    <string name="font_family_poppins">Popps</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Einstellungen</string>
+    <string name="shortcut_new_contact">Neuer Kontakt</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Privater Speicher Tresor</string>
+    <string name="contact_management_private_vault_supporting">Verwalten Sie geheime lokale Kontakte, die streng in der App-Datenbank gespeichert sind</string>
+    <string name="contact_mgmt_total_contacts">Gesamte Kontakte</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Alle Kontaktnamen, Telefonnummern und E-Mails sind einzigartig.</string>
+    <string name="contact_mgmt_merge_desc">Kombinieren Sie redundante Details und halten Sie saubere Kontakte.</string>
+    <string name="contact_mgmt_merged_for">Zusammengeführte Kontakte für %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d Kontakte bereit um zu %2$s zu wechseln</string>
+    <string name="contact_mgmt_matching_contacts">%1$d passende Kontakte • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Zu kombinierende Kontakte:</string>
+    <string name="contact_mgmt_primary">Primär</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Keine Zahlen</string>
+    <string name="contact_mgmt_contacts_count">%1$d Kontakte</string>
+    <string name="contact_mgmt_select_contacts_to_move">Kontakte zum Verschieben auswählen</string>
+    <string name="contact_mgmt_move_from_to">Von %1$s bis %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d von %2$d ausgewählt</string>
+    <string name="contact_mgmt_no_number">Keine Nummer</string>
+    <string name="storage_device">Gerät</string>
+    <string name="storage_private_vault">Privater Speicher (App-Tresort)</string>
+    <string name="storage_sim_card_format">SIM-Karte (%1$s)</string>
+    <string name="storage_local">Lokal</string>
+    <string name="storage_cloud">Wolke</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privat</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Live-Eckenrunde: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Wählfeld (Kontakte)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Scanne Aufnahmen…</string>
+    <string name="recordings_saved_count">%1$d gespeicherte Aufnahmen</string>
+    <string name="recordings_available_count">%1$d Aufnahmen verfügbar</string>
+    <string name="recording_min_duration_all_calls">Alle Anrufe aufzeichnen</string>
+    <string name="recording_min_duration_ignore_3s">Anrufe &lt; 3s ignorieren</string>
+    <string name="recording_min_duration_ignore_5s">Anrufe &lt; 5s ignorieren</string>
+    <string name="recording_min_duration_ignore_10s">Anrufe &lt; 10s ignorieren</string>
     <!-- Permissions -->
+    <string name="action_set">Setzen</string>
+    <string name="action_grant">Zuschuss</string>
+    <string name="action_enable">Aktivieren</string>
+    <string name="action_move_all">Alle verschieben</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Aktiviert (Fake, Fingerabdruck, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Heute</string>
+    <string name="analytics_time_this_week">Diese Woche</string>
+    <string name="analytics_time_this_month">Diesen Monat</string>
+    <string name="analytics_time_all_time">Alle Zeiten</string>
+    <string name="call_analytics_talked">sprach</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personalisierung</string>
+    <string name="settings_category_calling">Anruf</string>
+    <string name="settings_category_sound">Ton</string>
+    <string name="settings_category_contacts">Kontakte</string>
+    <string name="settings_category_security">Sicherheit</string>
+    <string name="settings_category_about">Über</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Im Tresor anzeigen</string>
+    <string name="private_vault_hide_completely">Komplett ausblenden</string>
 </resources>

@@ -1019,14 +1019,78 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="content_desc_more_actions">Altre azioni</string>
     <string name="quick_response_message_text">Testo del messaggio</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung One</string>
+    <string name="font_family_inter">Interno</string>
+    <string name="font_family_poppins">Poppins</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Impostazioni</string>
+    <string name="shortcut_new_contact">Nuovo Contatto</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Deposito Privato</string>
+    <string name="contact_management_private_vault_supporting">Gestisci i contatti locali segreti archiviati rigorosamente nel database delle app</string>
+    <string name="contact_mgmt_total_contacts">Contatti Totali</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Tutti i nomi dei contatti, i numeri di telefono e le e-mail sono unici.</string>
+    <string name="contact_mgmt_merge_desc">Combina dettagli ridondanti e mantieni contatti puliti.</string>
+    <string name="contact_mgmt_merged_for">Contatti uniti per %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d contatti pronti per passare a %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d contatti corrispondenti • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Contatti da combinare:</string>
+    <string name="contact_mgmt_primary">Principale</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Nessun numero</string>
+    <string name="contact_mgmt_contacts_count">%1$d contatti</string>
+    <string name="contact_mgmt_select_contacts_to_move">Seleziona contatti da spostare</string>
+    <string name="contact_mgmt_move_from_to">Da %1$s a %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d di %2$d selezionato</string>
+    <string name="contact_mgmt_no_number">Nessun numero</string>
+    <string name="storage_device">Dispositivo</string>
+    <string name="storage_private_vault">Memoria Privata (App Vault)</string>
+    <string name="storage_sim_card_format">SIM Card (%1$s)</string>
+    <string name="storage_local">Locale</string>
+    <string name="storage_cloud">Cloud</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privato</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Circonferenza dell\'angolo dal vivo: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Tastierino (contatti)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Scansione registrazioni…</string>
+    <string name="recordings_saved_count">%1$d registrazioni salvate</string>
+    <string name="recordings_available_count">%1$d registrazioni disponibili</string>
+    <string name="recording_min_duration_all_calls">Registra Tutte Le Chiamate</string>
+    <string name="recording_min_duration_ignore_3s">Ignora le chiamate &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ignora le chiamate &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ignora le chiamate &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">Imposta</string>
+    <string name="action_grant">Concedi</string>
+    <string name="action_enable">Abilita</string>
+    <string name="action_move_all">Sposta Tutto</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Abilitato (viso, impronta digitale, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Oggi</string>
+    <string name="analytics_time_this_week">Questa Settimana</string>
+    <string name="analytics_time_this_month">Questo Mese</string>
+    <string name="analytics_time_all_time">Tutto Il Tempo</string>
+    <string name="call_analytics_contact_calls_breakdown">Chiamate %1$d (%2$d in, %3$d out)</string>
+    <string name="call_analytics_talked">parlato</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personalizzazione</string>
+    <string name="settings_category_calling">Chiamata</string>
+    <string name="settings_category_sound">Suono</string>
+    <string name="settings_category_contacts">Contatti</string>
+    <string name="settings_category_security">Sicurezza</string>
+    <string name="settings_category_about">Informazioni</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Mostra nella cassaforte</string>
+    <string name="private_vault_hide_completely">Nascondi Completamente</string>
 </resources>

@@ -58,6 +58,7 @@
     <string name="shizuku_download_directly">Ladda ner direkt från shizuku.rikka.app</string>
     <string name="settings_open_system">Öppna appens systeminställningar</string>
     <string name="settings_open_system_supporting">Visa och hantera behörigheter direkt i Android-enhetens inställningar</string>
+    <string name="settings_transition_speed">Övergång animationstid</string>
     <string name="settings_transition_speed_supporting">Justera övergångsanimering tidsskala över sidor, flikar och menyer</string>
     <string name="settings_more_display">Fler inställningar för visning</string>
     <string name="settings_navigation_bar">Navigeringsfält</string>
@@ -499,6 +500,7 @@ Vit text</string>
     <string name="settings_permissions_system_title">System</string>
     <string name="settings_private_contacts_count">Säkrade kontakter (%1$d)</string>
     <string name="action_select_all">Markera alla</string>
+    <string name="action_deselect_all">Avmarkera alla</string>
     <string name="action_select_none">Avmarkera alla</string>
     <string name="settings_private_secret_code">Hemlig uppringningskod</string>
     <string name="about_rate_on_google_play">Betygsätt appen</string>
@@ -674,6 +676,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Justera hörn krökning från subtil till ultra rundad</string>
     <string name="loc_transition_animations">Övergång Animationer</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Skärmövergångsanimationer och rörelseeffekter</string>
+    <string name="loc_transition_animation_speed">Övergång animationstid</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Justera övergångsanimering tidsskala över sidor, flikar och menyer</string>
     <string name="loc_predictive_back_gestures">Förutsägande tillbaka gester</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Interaktiva svep-till-förhandsgranska animationer när du navigerar tillbaka</string>
@@ -913,6 +916,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_rewind_10s">Spola tillbaka 10s</string>
     <string name="loc_forward_10s">Vidarebefordra 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} vald</string>
+    <string name="loc_privatecontacts_size_secured">%1$d säkrad</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagrad lokalt i Rivos sandlådade valv • Gömd från WhatsApp och systemappar</string>
     <string name="loc_select_contacts_for_private_storage">Välj kontakter för privat lagring</string>
     <string name="loc_move_to_private_storage">Flytta till privat lagring</string>
@@ -993,6 +997,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_save_to_call_history">Spara till samtalshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Svarade och missade falska samtal kommer att dyka upp i Senaste</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d blockerad</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtal och sms från detta nummer kommer att blockeras omedelbart.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Avblockera $targetDisplayName? De kommer att kunna ringa och meddela dig igen.</string>
     <string name="loc_processing_blocklist">Bearbetar blocklista</string>
@@ -1015,14 +1020,78 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="content_desc_more_actions">Fler åtgärder</string>
     <string name="quick_response_message_text">Meddelande text</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung en</string>
+    <string name="font_family_inter">Inter</string>
+    <string name="font_family_poppins">Poppins</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Inställningar</string>
+    <string name="shortcut_new_contact">Ny kontakt</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Privat lagringsvalv</string>
+    <string name="contact_management_private_vault_supporting">Hantera hemliga lokala kontakter lagrade strikt i appdatabasen</string>
+    <string name="contact_mgmt_total_contacts">Totalt antal kontakter</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Alla kontaktnamn, telefonnummer och e-post är unika.</string>
+    <string name="contact_mgmt_merge_desc">Kombinera överflödiga detaljer och hålla rena kontakter.</string>
+    <string name="contact_mgmt_merged_for">Sammanfogade kontakter för %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d kontakter redo att flytta till %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d matchande kontakter • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Kontakter som ska kombineras:</string>
+    <string name="contact_mgmt_primary">Primär</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Inga nummer</string>
+    <string name="contact_mgmt_contacts_count">%1$d kontakter</string>
+    <string name="contact_mgmt_select_contacts_to_move">Välj kontakter att flytta</string>
+    <string name="contact_mgmt_move_from_to">Från %1$s till %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d av %2$d vald</string>
+    <string name="contact_mgmt_no_number">Inget nummer</string>
+    <string name="storage_device">Enhet</string>
+    <string name="storage_private_vault">Privat lagring (App Vault)</string>
+    <string name="storage_sim_card_format">SIM-kort (%1$s)</string>
+    <string name="storage_local">Lokal</string>
+    <string name="storage_cloud">Moln</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privat</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Live Corner Roundness: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Knappsats (kontakter)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Skannar inspelningar…</string>
+    <string name="recordings_saved_count">%1$d sparade inspelningar</string>
+    <string name="recordings_available_count">%1$d inspelningar tillgängliga</string>
+    <string name="recording_min_duration_all_calls">Spela in alla samtal</string>
+    <string name="recording_min_duration_ignore_3s">Ignorera samtal &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ignorera samtal &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ignorera samtal &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">Ange</string>
+    <string name="action_grant">Bevilja</string>
+    <string name="action_enable">Aktivera</string>
+    <string name="action_move_all">Flytta alla</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Aktiverad (ansikte, fingeravtryck, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Idag</string>
+    <string name="analytics_time_this_week">Denna vecka</string>
+    <string name="analytics_time_this_month">Denna månad</string>
+    <string name="analytics_time_all_time">Hela tiden</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d samtal (%2$d i, %3$d ut)</string>
+    <string name="call_analytics_talked">pratade</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personalisering</string>
+    <string name="settings_category_calling">Ringer</string>
+    <string name="settings_category_sound">Ljud</string>
+    <string name="settings_category_contacts">Kontakter</string>
+    <string name="settings_category_security">Säkerhet</string>
+    <string name="settings_category_about">Om</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Visa i valvet</string>
+    <string name="private_vault_hide_completely">Dölj helt</string>
 </resources>

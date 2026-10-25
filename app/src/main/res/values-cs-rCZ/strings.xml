@@ -1021,14 +1021,78 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="content_desc_more_actions">Další akce</string>
     <string name="quick_response_message_text">Text zprávy</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Samsung jedna</string>
+    <string name="font_family_inter">Vnitřní</string>
+    <string name="font_family_poppins">Poppiny</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Nastavení</string>
+    <string name="shortcut_new_contact">Nový kontakt</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Trezor pro soukromé úložiště</string>
+    <string name="contact_management_private_vault_supporting">Správa tajných místních kontaktů uložených striktně v databázi aplikací</string>
+    <string name="contact_mgmt_total_contacts">Celkový počet kontaktů</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Všechna jména kontaktů, telefonní čísla a e-maily jsou jedinečné.</string>
+    <string name="contact_mgmt_merge_desc">Kombinujte nadbytečné údaje a udržujte čisté kontakty.</string>
+    <string name="contact_mgmt_merged_for">Sloučené kontakty pro %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d kontaktů připraveny k přesunutí do %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d odpovídajících kontaktů • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Kontakty, které mají být kombinovány:</string>
+    <string name="contact_mgmt_primary">Primární</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Žádná čísla</string>
+    <string name="contact_mgmt_contacts_count">%1$d kontaktů</string>
+    <string name="contact_mgmt_select_contacts_to_move">Vyberte kontakty k přesunutí</string>
+    <string name="contact_mgmt_move_from_to">Od %1$s do %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d z %2$d vybráno</string>
+    <string name="contact_mgmt_no_number">Bez čísla</string>
+    <string name="storage_device">Zařízení</string>
+    <string name="storage_private_vault">Soukromé úložiště (App Vault)</string>
+    <string name="storage_sim_card_format">SIM karta (%1$s)</string>
+    <string name="storage_local">Místní</string>
+    <string name="storage_cloud">Cloud</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Soukromé</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Kolem živého rohu: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Číselník (kontakty)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Skenování nahrávek…</string>
+    <string name="recordings_saved_count">%1$d uložené nahrávky</string>
+    <string name="recordings_available_count">%1$d dostupných nahrávek</string>
+    <string name="recording_min_duration_all_calls">Zaznamenat všechna volání</string>
+    <string name="recording_min_duration_ignore_3s">Ignorovat hovory &lt; 3 s</string>
+    <string name="recording_min_duration_ignore_5s">Ignorovat hovory &lt; 5 s</string>
+    <string name="recording_min_duration_ignore_10s">Ignorovat hovory &lt; 10 s</string>
     <!-- Permissions -->
+    <string name="action_set">Nastavit</string>
+    <string name="action_grant">Udělit</string>
+    <string name="action_enable">Povolit</string>
+    <string name="action_move_all">Přesunout vše</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Povoleno (prostor, otisk prstu, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">Dnes</string>
+    <string name="analytics_time_this_week">Tento týden</string>
+    <string name="analytics_time_this_month">Tento měsíc</string>
+    <string name="analytics_time_all_time">Celý čas</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d hovory (%2$d ven, %3$d ven)</string>
+    <string name="call_analytics_talked">mluveno</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Přizpůsobení</string>
+    <string name="settings_category_calling">Volání</string>
+    <string name="settings_category_sound">Zvuk</string>
+    <string name="settings_category_contacts">Kontakty</string>
+    <string name="settings_category_security">Zabezpečení</string>
+    <string name="settings_category_about">O aplikaci</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Odkrýt v trezoru</string>
+    <string name="private_vault_hide_completely">Skrýt kompletně</string>
 </resources>

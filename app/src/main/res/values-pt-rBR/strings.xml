@@ -58,6 +58,7 @@
     <string name="shizuku_download_directly">Baixar diretamente do shizuku.rikka.app</string>
     <string name="settings_open_system">Abrir Configurações do Sistema de Aplicativos</string>
     <string name="settings_open_system_supporting">Ver e gerenciar as permissões diretamente nas configurações do dispositivo Android</string>
+    <string name="settings_transition_speed">Tempo de transição</string>
     <string name="settings_transition_speed_supporting">Ajustar escala de tempo de animação de transição entre páginas, guias e menus</string>
     <string name="settings_more_display">Mais Configurações de Exibição</string>
     <string name="settings_navigation_bar">Barra de Navegação</string>
@@ -498,6 +499,7 @@ Texto branco</string>
     <string name="settings_permissions_system_title">SISTEMA</string>
     <string name="settings_private_contacts_count">Contatos seguros (%1$d)</string>
     <string name="action_select_all">Selecionar Todos</string>
+    <string name="action_deselect_all">Desmarcar Todos</string>
     <string name="action_select_none">Desmarcar Todos</string>
     <string name="settings_private_secret_code">Código de teclado secreto</string>
     <string name="about_rate_on_google_play">Avalie o aplicativo</string>
@@ -671,6 +673,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_adjust_corner_curvature_from_subtle_to_ultra_rounded">Ajustar a curvatura do canto do sutil para a ultra arredondada</string>
     <string name="loc_transition_animations">Animações de transição</string>
     <string name="loc_screen_transition_animations_and_motion_effects">Animações de transição de tela e efeitos de movimento</string>
+    <string name="loc_transition_animation_speed">Tempo de transição</string>
     <string name="loc_adjust_transition_animation_time_scale_across_pages_tabs_and_menus">Ajustar escala de tempo de animação de transição entre páginas, guias e menus</string>
     <string name="loc_predictive_back_gestures">Gestos preditivos para trás</string>
     <string name="loc_interactive_swipe_to_preview_animations_when_navigating_back">Deslizar para pré-visualizar animações interativas ao navegar para trás</string>
@@ -909,6 +912,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_rewind_10s">Retroceder 10s</string>
     <string name="loc_forward_10s">Avançar 10s</string>
     <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selecionado</string>
+    <string name="loc_privatecontacts_size_secured">%1$d protegido</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Armazenado localmente no sandboxed vault do Rivo • Oculto para aplicativos do WhatsApp e sistema</string>
     <string name="loc_select_contacts_for_private_storage">Selecionar Contatos para Armazenamento Privado</string>
     <string name="loc_move_to_private_storage">Mover para armazenamento privado</string>
@@ -987,6 +991,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_call_history_settings">Configurações do histórico de chamadas</string>
     <string name="loc_save_to_call_history">Salvar no Histórico de Chamadas</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Chamadas falsas atendidas e perdidas aparecerão em Recentes</string>
+    <string name="loc_blockednumbers_size_blocked">%1$d bloqueado</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Chamadas e mensagens de texto deste número serão bloqueadas imediatamente.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Desbloquear $targetDisplayName? Ele poderá ligar e enviar mensagens novamente.</string>
     <string name="loc_processing_blocklist">Processando Bloqueio</string>
@@ -1008,14 +1013,78 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="content_desc_more_actions">Mais ações</string>
     <string name="quick_response_message_text">Texto da mensagem</string>
     <!-- Typography -->
+    <string name="font_family_roboto">Roboto</string>
+    <string name="font_family_ubuntu">Ubuntu</string>
+    <string name="font_family_samsung_one">Pessoa Samsung</string>
+    <string name="font_family_inter">Interior</string>
+    <string name="font_family_poppins">Poppins</string>
+    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
+    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_settings">Confirgurações</string>
+    <string name="shortcut_new_contact">Novo Contato</string>
     <!-- Contact Management -->
+    <string name="contact_management_private_vault_title">Baú de Armazenamento Privado</string>
+    <string name="contact_management_private_vault_supporting">Gerenciar contatos locais secretos armazenados estritamente no banco de dados do aplicativo</string>
+    <string name="contact_mgmt_total_contacts">Total de contatos</string>
+    <string name="contact_mgmt_duplicates_empty_desc">Todos os nomes de contato, números de telefone, e e-mails são únicos.</string>
+    <string name="contact_mgmt_merge_desc">Combine detalhes redundantes e mantenha contatos limpos.</string>
+    <string name="contact_mgmt_merged_for">Mesclar contatos para %1$s</string>
+    <string name="contact_mgmt_ready_to_move">%1$d contatos prontos para mover para %2$s</string>
+    <string name="contact_mgmt_matching_contacts">%1$d contatos correspondentes • %2$s</string>
+    <string name="contact_mgmt_contacts_to_combine">Contatos a serem combinados:</string>
+    <string name="contact_mgmt_primary">Primário</string>
+    <string name="contact_mgmt_duplicate_number">Duplicate #%1$d</string>
+    <string name="contact_mgmt_no_numbers">Sem números</string>
+    <string name="contact_mgmt_contacts_count">%1$d contatos</string>
+    <string name="contact_mgmt_select_contacts_to_move">Selecione Contatos para Mover</string>
+    <string name="contact_mgmt_move_from_to">De %1$s para %2$s</string>
+    <string name="contact_mgmt_selected_of_total">%1$d de %2$d selecionados</string>
+    <string name="contact_mgmt_no_number">Nenhum número</string>
+    <string name="storage_device">Dispositivo</string>
+    <string name="storage_private_vault">Armazenamento Privado (App Vault)</string>
+    <string name="storage_sim_card_format">Cartão SIM (%1$s)</string>
+    <string name="storage_local">Localização</string>
+    <string name="storage_cloud">Nuvem</string>
+    <string name="storage_sim">SIM</string>
+    <string name="storage_private">Privado</string>
     <!-- Live corner roundness -->
+    <string name="live_corner_roundness_format">Limite de Canto Ao Vivo: %1$ddp</string>
     <!-- Default start location -->
+    <string name="start_location_default_tab">Default Tab</string>
+    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
+    <string name="start_location_dialpad_contacts">Discador (Contatos)</string>
     <!-- Call recordings -->
+    <string name="recordings_scanning">Verificando gravações…</string>
+    <string name="recordings_saved_count">Gravações salvas no %1$d</string>
+    <string name="recordings_available_count">Gravações %1$d disponíveis</string>
+    <string name="recording_min_duration_all_calls">Gravar todas as chamadas</string>
+    <string name="recording_min_duration_ignore_3s">Ignorar chamadas &lt; 3s</string>
+    <string name="recording_min_duration_ignore_5s">Ignorar chamadas &lt; 5s</string>
+    <string name="recording_min_duration_ignore_10s">Ignorar chamadas &lt; 10s</string>
     <!-- Permissions -->
+    <string name="action_set">Definir</string>
+    <string name="action_grant">Conceder</string>
+    <string name="action_enable">Habilitado</string>
+    <string name="action_move_all">Mover Todos</string>
     <!-- App lock -->
+    <string name="app_lock_enabled_summary">Ativado (Face, Impressão digital, PIN)</string>
     <!-- Call Analytics -->
+    <string name="analytics_time_today">hoje</string>
+    <string name="analytics_time_this_week">Esta semana</string>
+    <string name="analytics_time_this_month">Este Mês</string>
+    <string name="analytics_time_all_time">Todos os tempos</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d chamadas (%2$d dentro, %3$d fora)</string>
+    <string name="call_analytics_talked">convertido</string>
     <!-- Settings Search -->
+    <string name="settings_category_personalization">Personalização</string>
+    <string name="settings_category_calling">Chamando</string>
+    <string name="settings_category_sound">Som</string>
+    <string name="settings_category_contacts">CONTATOS</string>
+    <string name="settings_category_security">Segurança</string>
+    <string name="settings_category_about">SOBRE</string>
     <!-- Private Contacts -->
+    <string name="private_vault_unhide_in_vault">Reexibir no Cofre</string>
+    <string name="private_vault_hide_completely">Ocultar Completamente</string>
 </resources>
