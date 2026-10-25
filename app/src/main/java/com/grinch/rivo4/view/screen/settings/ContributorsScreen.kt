@@ -36,21 +36,21 @@ data class Contributor(
 val appContributors = listOf(
     Contributor(
         name = "Grinch_",
-        role = R.string.contributor_role_lead_developer,
+        role = R.string.contributor_role_author,
         githubUrl = "https://github.com/user-grinch",
         imageAsset = "grinch.jpeg"
     ),
     Contributor(
         name = "Hamma",
-        role = R.string.contributor_role_developer,
+        role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/MoHamed-B-M",
         imageAsset = "hamma.jpeg"
     ),
     Contributor(
-        name = "Crowdin Bot",
-        role = R.string.contributor_role_localization,
-        githubUrl = "https://github.com/crowdin-bot",
-        imageAsset = "crowdin.png"
+        name = "azeemsher788",
+        role = R.string.contributor_role_contributor,
+        githubUrl = "https://github.com/azeemsher788",
+        imageAsset = "azeemsher788.png"
     ),
     Contributor(
         name = "Victor-root",
@@ -59,16 +59,34 @@ val appContributors = listOf(
         imageAsset = "victor.png"
     ),
     Contributor(
+        name = "tmpjx555",
+        role = R.string.contributor_role_contributor,
+        githubUrl = "https://github.com/tmpjx555",
+        imageAsset = "tmpjx555.png"
+    ),
+    Contributor(
         name = "master-bob",
         role = R.string.contributor_role_contributor,
         githubUrl = "https://github.com/master-bob",
         imageAsset = "master_bob.png"
     ),
     Contributor(
-        name = "tmpjx555",
+        name = "Federico Iosue",
         role = R.string.contributor_role_contributor,
-        githubUrl = "https://github.com/tmpjx555",
-        imageAsset = "tmpjx555.png"
+        githubUrl = "https://github.com/federicoiosue",
+        imageAsset = "federicoiosue.png"
+    ),
+    Contributor(
+        name = "Maxime Monroux",
+        role = R.string.contributor_role_contributor,
+        githubUrl = "https://github.com/maxime-monroux",
+        imageAsset = "maxime_monroux.png"
+    ),
+    Contributor(
+        name = "SaeedDev94",
+        role = R.string.contributor_role_contributor,
+        githubUrl = "https://github.com/SaeedDev94",
+        imageAsset = "saeeddev94.png"
     ),
     Contributor(
         name = "kitsumed (Med)",

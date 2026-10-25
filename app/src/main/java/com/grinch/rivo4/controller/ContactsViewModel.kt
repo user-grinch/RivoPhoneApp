@@ -407,16 +407,20 @@ class ContactsViewModel(
                         }
                     }
                 }
-                if (isNew && preferenceManager.isContactAutoExportEnabled()) {
-                    try {
-                        contactBackupManager.exportAutomatic(context)
-                    } catch (e: Exception) {
-                        android.util.Log.e("ContactsVM", "Automatic contact backup failed", e)
-                    }
-                }
+                triggerAutoBackup()
                 scheduleRefresh(delayMs = 500)
             }
             success
+        }
+    }
+
+    private fun triggerAutoBackup() {
+        if (preferenceManager.isContactAutoExportEnabled()) {
+            try {
+                contactBackupManager.exportAutomatic(context)
+            } catch (e: Exception) {
+                android.util.Log.e("ContactsVM", "Automatic contact backup failed", e)
+            }
         }
     }
     
@@ -441,6 +445,7 @@ class ContactsViewModel(
             contactsRepo.restoreTrashedContact(localId)
             _trashedContacts.value = contactsRepo.getTrashedContacts()
             fetchContacts()
+            triggerAutoBackup()
             withContext(Dispatchers.Main) {
                 onDone?.invoke()
             }
@@ -492,6 +497,7 @@ class ContactsViewModel(
                 }
 
                 contactsRepo.deleteContact(contactId)
+                triggerAutoBackup()
 
                 viewModelScope.launch {
                     delay(5000)
@@ -528,6 +534,7 @@ class ContactsViewModel(
                     }
                 }
                 contactsRepo.deleteContacts(contactIds)
+                triggerAutoBackup()
                 
                 val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()
                 var changed = false
