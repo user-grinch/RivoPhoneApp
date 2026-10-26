@@ -307,7 +307,6 @@
     <string name="contact_details_video">Video</string>
     <string name="contact_details_info_title">Kontakt-Informationen</string>
     <string name="contact_bullet_favorite">" • Favorit"</string>
-    <string name="contact_bullet_default">" • Standard"</string>
     <string name="contact_bullet_recent">" • Zuletzt"</string>
     <string name="content_desc_favorite">Favorit</string>
     <string name="contact_clear_favorite">Favoriten leeren</string>
@@ -841,7 +840,6 @@ Weißer Text</string>
     <string name="call_recording_shizuku_attribution_title">Engine für Anruf-Aufzeichnung</string>
     <string name="call_recording_shizuku_attribution_desc">Die interne Anrufaufnahme über Shizuku beinhaltet Code aus dem Open-Source ShizuCallRecorder Projekt nach kitsumed (GPLv3).</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorder besuchen</string>
-    <string name="settings_top_card_subtext">Auf Updates überprüfen • Mitwirkende • Spenden</string>
     <string name="settings_top_card_updates">Updates</string>
     <string name="settings_top_card_donate">Spenden</string>
     <!-- Settings > Contributors -->
@@ -1491,7 +1489,6 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Dynamischen Verlaufshintergrund anwenden, um erste Avatare zu kontaktieren</string>
     <string name="loc_typography">Schrift</string>
     <string name="loc_font_text_size_and_system_font">Schriftart, Textgröße und Systemschriftart</string>
-    <string name="loc_call_screen_buttons">Anruf-Bildschirm</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Wählen Sie die Position jeder Anrufschaltfläche</string>
     <string name="loc_hide_avatar_with_wallpaper">Avatar mit Hintergrundbild ausblenden</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Avatar-Kreis abbrechen, wenn ein vollständiger Kontakthintergrund-Hintergrund gesetzt ist</string>
@@ -1673,8 +1670,6 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Alle löschen</string>
     <string name="loc_refresh">Aktualisieren</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d Gesamtaufnahmen werden auf diesem Gerät gespeichert</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimierung</string>
     <string name="loc_dismiss">Verwerfen</string>
     <string name="loc_saved_call_recordings">Gespeicherte Anrufaufnahmen</string>
     <string name="loc_recording_controls">Aufnahmeeinstellungen</string>
@@ -1687,13 +1682,11 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_minimum_duration_filter">Filter: Mindestdauer</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Sehr kurze Anrufe unter Grenzwert ignorieren</string>
     <string name="loc_delete_all_recordings">Alle Aufnahmen löschen?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d Aufnahmen werden dauerhaft von Ihrem Gerät entfernt. Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="loc_select_start_date_from">Startdatum auswählen (ab)</string>
     <string name="loc_select_end_date_to">Enddatum auswählen (bis)</string>
     <string name="loc_play">Abspielen</string>
     <string name="loc_rewind_10s">10 Sekunden zurückspulen</string>
     <string name="loc_forward_10s">10 Sekunden vorspulen</string>
-    <string name="loc_selectedcontactids_size_selected">%1$d ausgewählt</string>
     <string name="loc_privatecontacts_size_secured">%1$d gesichert</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Ausschließlich in Rivo gespeichert • Verborgen vor WhatsApp und System-Apps</string>
     <string name="loc_select_contacts_for_private_storage">Kontakte für den privaten Speicher auswählen</string>
@@ -1707,9 +1700,8 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_hide_from_settings">In Einstellungen ausblenden</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Privaten Speicher aus Einstellungsmenü entfernen (nur über Geheimcode erreichbar)</string>
     <string name="loc_pick_contacts_for_vault">Kontakte für privaten Speicher auswählen</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">%1$d ausgewählte Kontakte(n) dauerhaft aus privatem Speicher löschen?</string>
-    <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Geben Sie diesen geheimen Code auf der Wähltastatur ein, um Kontakte im privaten Speicher anzuzeigen.</string>
-    <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Nur der geheime Wähltastatur-Code gewährt Zugriff auf den privaten Speicher</string>
+    <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Geben Sie diesen geheimen Code auf Tastenfeld ein, um Kontakte im privaten Speicher anzuzeigen.</string>
+    <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Nur der geheime Tastenfeld-Code gewährt Zugriff auf den privaten Speicher</string>
     <string name="loc_security_protection">Sicherheit &amp; Schutz</string>
     <string name="loc_enable_app_lock">App-Sperre aktivieren</string>
     <string name="loc_require_authentication_to_open_rivo_phone">Authentifizierung zum Öffnen von Rivo Phone erforderlich</string>
@@ -1873,4 +1865,5 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Im privaten Speicher anzeigen</string>
     <string name="private_vault_hide_completely">Komplett ausblenden</string>
+    <!-- Settings Groups -->
 </resources>

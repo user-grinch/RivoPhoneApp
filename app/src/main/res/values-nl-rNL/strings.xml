@@ -755,7 +755,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Gebruik dynamische verloop achtergronden om contact op te nemen met eerste avatars</string>
     <string name="loc_typography">Typografie</string>
     <string name="loc_font_text_size_and_system_font">Lettertype, tekstgrootte en systeemlettertype</string>
-    <string name="loc_call_screen_buttons">Bellen naar scherm knoppen</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Kies de positie van elke oproep knop</string>
     <string name="loc_hide_avatar_with_wallpaper">Verberg Avatar met achtergrond</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Avatar cirkel verlaten wanneer een volledige contact achtergrond is ingesteld</string>
@@ -937,8 +936,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Alles verwijderen</string>
     <string name="loc_refresh">Vernieuwen</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d totale opnames worden op dit apparaat opgeslagen</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimalisatie</string>
     <string name="loc_dismiss">Uitschakelen</string>
     <string name="loc_saved_call_recordings">Gespreksopnamen opgeslagen</string>
     <string name="loc_recording_controls">Opname Controls</string>
@@ -951,13 +948,11 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_minimum_duration_filter">Minimale duur Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">ultra-korte oproepen onder drempelwaarden weggooien</string>
     <string name="loc_delete_all_recordings">Alle opnames verwijderen?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d opnames worden permanent van uw apparaat verwijderd. Deze actie kan niet ongedaan worden gemaakt.</string>
     <string name="loc_select_start_date_from">Selecteer startdatum (van)</string>
     <string name="loc_select_end_date_to">Selecteer einddatum (tot)</string>
     <string name="loc_play">Afspelen</string>
     <string name="loc_rewind_10s">10s terugspoelen</string>
     <string name="loc_forward_10s">10s doorsturen</string>
-    <string name="loc_selectedcontactids_size_selected">%1$d geselecteerd</string>
     <string name="loc_privatecontacts_size_secured">%1$d beveiligd</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lokaal opgeslagen in Rivo\'s sandboxed kluis • Verborgen in WhatsApp en systeem apps</string>
     <string name="loc_select_contacts_for_private_storage">Contactpersonen voor Privé Opslag selecteren</string>
@@ -971,7 +966,6 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="loc_hide_from_settings">Verbergen in instellingen</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Privéopslag uit het instellingenmenu verwijderen (alleen toegankelijk via geheime code)</string>
     <string name="loc_pick_contacts_for_vault">Contacten voor kluis kiezen</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">%1$d geselecteerde contactpersonen permanent verwijderen uit privé opslag?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Typ deze geheime code op het dialpad om contacten in een privéopslag te onthullen.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Alleen de code van de geheime kiestoetsenbord krijgt toegang tot privéopslag</string>
     <string name="loc_security_protection">Beveiliging &amp; Bescherming</string>
@@ -1135,4 +1129,5 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Weergeven in kluis</string>
     <string name="private_vault_hide_completely">Helemaal verbergen</string>
+    <!-- Settings Groups -->
 </resources>

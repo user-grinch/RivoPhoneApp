@@ -179,6 +179,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • Standard"</string>
     <string name="contact_create_new">Opret ny kontakt</string>
     <string name="contact_create_new_desc">Gem som ny kontakt</string>
     <string name="contact_add_to_existing">Føj til eksisterende kontakt</string>
@@ -293,6 +294,7 @@ Hvid tekst</string>
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Zoom</string>
     <string name="settings_interface_transition_stack">Dybde Stak</string>
+    <string name="settings_avatar_style">Avatar Stil</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_hold_zero_for_plus">Hold 0 for +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Type + ved at holde 0-knappen på opkaldsblokken nede</string>
@@ -759,7 +761,6 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Anvend dynamiske gradientbaggrund til at kontakte oprindelige avatarer</string>
     <string name="loc_typography">Typografi</string>
     <string name="loc_font_text_size_and_system_font">Skrifttype, tekststørrelse og systemskrifttype</string>
-    <string name="loc_call_screen_buttons">Ring Til Skærmknapper</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Vælg positionen for hver opkaldsknap</string>
     <string name="loc_hide_avatar_with_wallpaper">Skjul Avatar med baggrundsbillede</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Udelad avatar cirkel, når en fuld kontakt baggrund tapet er indstillet</string>
@@ -941,8 +942,6 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Slet Alle</string>
     <string name="loc_refresh">Opdater</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d samlede optagelser gemmes på denne enhed</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimering</string>
     <string name="loc_dismiss">Afvis</string>
     <string name="loc_saved_call_recordings">Gemte Optagelser</string>
     <string name="loc_recording_controls">Optager Kontroller</string>
@@ -955,13 +954,11 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_minimum_duration_filter">Minimum Varigheds Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Slet ultrakorte opkald under tærsklen</string>
     <string name="loc_delete_all_recordings">Slet alle optagelser?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d optagelser vil blive fjernet permanent fra din enhed. Denne handling kan ikke fortrydes.</string>
     <string name="loc_select_start_date_from">Vælg Startdato (From)</string>
     <string name="loc_select_end_date_to">Vælg Slutdato (Til)</string>
     <string name="loc_play">Afspil</string>
     <string name="loc_rewind_10s">Genvind 10s</string>
     <string name="loc_forward_10s">Videresend 10s</string>
-    <string name="loc_selectedcontactids_size_selected">%1$d valgt</string>
     <string name="loc_privatecontacts_size_secured">%1$d sikret</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Gemt lokalt i Rivos sandkasse boks • Skjult fra WhatsApp og system apps</string>
     <string name="loc_select_contacts_for_private_storage">Vælg kontakter til privat lagerplads</string>
@@ -975,7 +972,6 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_hide_from_settings">Skjul i Indstillinger</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Fjern Privat lagerplads fra indstillingsmenuen (kun tilgængelig via hemmelig kode)</string>
     <string name="loc_pick_contacts_for_vault">Vælg kontakter til boks</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slet permanent %1$d valgte kontakt(r) fra privat lagerplads?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Skriv denne hemmelige kode på opkaldsblokken for at afsløre kontakter i privat lagerplads.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Kun den hemmelige dialpad kode vil tilgå privat lagerplads</string>
     <string name="loc_security_protection">Sikkerhed &amp; Beskyttelse</string>
@@ -1140,4 +1136,5 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Vis i boks</string>
     <string name="private_vault_hide_completely">Skjul Helt</string>
+    <!-- Settings Groups -->
 </resources>
