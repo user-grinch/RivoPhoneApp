@@ -123,6 +123,7 @@
     <string name="action_allow">Tillat</string>
     <string name="action_manage">Administrer</string>
     <string name="action_settings">Innstillinger</string>
+    <string name="action_change">Endre</string>
     <string name="action_add_existing_contact">Legg til eksisterende kontakt</string>
     <string name="action_merge_calls">Slå sammen samtaler</string>
     <string name="conference_call">Telefonmøte i konferansen</string>
@@ -225,6 +226,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Krypterte kontakter ble eksportert</string>
     <string name="backup_settings_export_success">App-innstillinger er eksportert vellykket</string>
     <string name="backup_settings_import_success">Appinnstillinger gjenopprettet</string>
     <!-- Settings > root -->
@@ -308,22 +310,48 @@ Hvit tekst</string>
     <string name="settings_call_dialpad_size_large">Sterk</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Standard kontakter backup</string>
+    <string name="settings_backup_encrypted_header">Krypterte sikkerhetskopier</string>
+    <string name="settings_backup_automatic_header">Automatiske sikkerhetskopier</string>
+    <string name="settings_backup_export_contacts_supporting">Lagre kontakter til en ukryptert VCF-fil</string>
+    <string name="settings_backup_import_contacts_supporting">Gjenopprett kontakter fra en standard VCF-sikkerhetskopifil</string>
+    <string name="settings_backup_export_encrypted_contacts">Eksporter kryptert sikkerhetskopi</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Lagre kontakter som en AES-256 kryptert .vcf.enc fil</string>
+    <string name="settings_backup_import_encrypted_contacts">Importer kryptert Sikkerhetskopi</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Gjenopprett kontakter fra en kryptert .vcf.enc fil</string>
     <string name="settings_backup_encryption">Krypter kontakter sikkerhetskopier</string>
+    <string name="settings_backup_encryption_supporting">Bruk AES-256-GCM kryptering til kontakt sikkerhetskopiering</string>
     <string name="settings_backup_password">Sikkerhetskopier passord</string>
     <string name="settings_backup_password_supporting">Nødvendig for å kryptere og importere krypterte kontakt-sikkerhetskopier</string>
     <string name="settings_backup_password_not_set">Ingen passord er angitt</string>
     <string name="settings_backup_password_set">Trygt passordlagret</string>
+    <string name="settings_backup_password_status_configured">Konfigurert</string>
+    <string name="settings_backup_password_status_not_set">Ikke satt</string>
+    <string name="settings_backup_password_desc_configured">Beskyttet med AES-256-GCM. Påkrevd for å dekryptere og gjenopprette sikkerhetskopier.</string>
+    <string name="settings_backup_password_desc_not_set">Angi et passord for å kryptere og sikre eksporterte sikkerhetskopier. (Automatic Translation)</string>
+    <string name="settings_backup_confirm_password">Bekreft passord</string>
+    <string name="settings_backup_password_mismatch">Passordene samsvarer ikke</string>
+    <string name="settings_backup_remove_password">Fjern passord</string>
+    <string name="settings_backup_remove_password_confirm">Fjerne passordet for sikkerhetskopien? Kryptering av kontakt blir deaktivert.</string>
+    <string name="settings_backup_password_helper">Dette passordet beskytter dine kontakter med AES-256 kryptering. Hold det trygt - den kan ikke gjenopprettes hvis du går tapt.</string>
+    <string name="settings_backup_password_saved">Sikkerhetskopi av passordet lagret</string>
+    <string name="settings_backup_password_cleared">Sikkerhetskopierings passord er fjernet</string>
     <string name="settings_backup_set_password">Angi passord</string>
     <string name="settings_backup_change_password">Endre passord</string>
     <string name="settings_backup_password_dialog_title">Angi passord for sikkerhetskopiering</string>
     <string name="settings_backup_import_progress_title">Importerer kontakter</string>
     <string name="settings_backup_import_progress_count">%1$d av %2$d kontakter importert</string>
+    <string name="settings_backup_auto_export">Eksporter kontakter automatisk</string>
+    <string name="settings_backup_auto_export_supporting">Eksporter sikkerhetskopier når kontakter opprettes, redigeres eller slettes</string>
+    <string name="settings_backup_auto_encrypt">Krypter automatiske sikkerhetskopier</string>
+    <string name="settings_backup_auto_encrypt_supporting">Lagre automatisk sikkerhetskopier som AES-256 kryptert .vcf.enc filer</string>
     <string name="settings_backup_folder">Automatisk sikkerhetskopieringsmappe</string>
     <string name="settings_backup_folder_supporting">Velg en lokal mappe hvor du lagrer den siste sikkerhetskopien</string>
     <string name="settings_backup_folder_not_set">Ingen lokal mappe valgt</string>
     <string name="settings_backup_choose_folder">Velg sikkerhetskopimappe</string>
     <string name="settings_backup_retention">Automatiske sikkerhetskopiversjoner</string>
     <string name="settings_backup_retention_supporting">Behold så mange tidsstemplede sikkerhetskopier for å gjenopprette eldre kontaktlister</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_export_settings">Eksporter app-innstillinger</string>
     <string name="settings_backup_export_settings_supporting">Sikkerhetskopier tema, dialpad stiler og konfigurasjoner til JSON</string>
     <string name="settings_backup_import_settings">Gjenopprett Appinnstillinger</string>
@@ -351,6 +379,7 @@ Hvit tekst</string>
     <string name="call_recording_shizuku_attribution_desc">Intern samtaleopptak via Shizuku har kode fra ShizuCallRecorder prosjektet fra kitran (GPLv3). Ikke tilknyttet eller godkjent av ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Besøk ShizuCallOpptak</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Forfatter</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

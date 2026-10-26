@@ -313,22 +313,45 @@ Bílý text</string>
     <string name="settings_backup_standard_contacts_header">Standardní záloha kontaktů</string>
     <string name="settings_backup_encrypted_header">Šifrované zálohy</string>
     <string name="settings_backup_automatic_header">Automatické zálohy</string>
+    <string name="settings_backup_export_contacts_supporting">Uložit kontakty do nešifrovaného VCF souboru</string>
+    <string name="settings_backup_import_contacts_supporting">Obnovit kontakty ze standardního záložního souboru VCF.</string>
+    <string name="settings_backup_export_encrypted_contacts">Exportovat šifrovanou zálohu</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Ukládat kontakty jako šifrovaný .vcf.enc soubor AES-256</string>
+    <string name="settings_backup_import_encrypted_contacts">Importovat šifrovanou zálohu</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Obnovit kontakty ze šifrovaného souboru .vcf.enc</string>
     <string name="settings_backup_encryption">Šifrovat zálohy kontaktů</string>
+    <string name="settings_backup_encryption_supporting">Použít AES-256-GCM šifrování pro zálohování kontaktů</string>
     <string name="settings_backup_password">Heslo pro zálohu</string>
     <string name="settings_backup_password_supporting">Vyžadováno pro šifrování a import šifrovaných záloh kontaktů</string>
     <string name="settings_backup_password_not_set">Žádné heslo nenastaveno</string>
     <string name="settings_backup_password_set">Heslo bylo uloženo bezpečně</string>
+    <string name="settings_backup_password_status_configured">Konfigurováno</string>
+    <string name="settings_backup_password_status_not_set">Nenastaveno</string>
+    <string name="settings_backup_password_desc_configured">Chráněno pomocí AES-256-GCM. Vyžadováno pro dešifrování a obnovení záloh.</string>
+    <string name="settings_backup_password_desc_not_set">Nastavte heslo pro zašifrování a zabezpečení exportovaných záloh.</string>
+    <string name="settings_backup_confirm_password">Potvrzení hesla</string>
+    <string name="settings_backup_password_mismatch">Hesla se neshodují</string>
+    <string name="settings_backup_remove_password">Odstranit heslo</string>
+    <string name="settings_backup_remove_password_confirm">Odstranit heslo pro zálohu? Šifrování zálohy kontaktů bude zakázáno.</string>
+    <string name="settings_backup_password_helper">Toto heslo chrání vaše kontakty pomocí šifrování AES-256. Uchovávejte je v bezpečí - nelze je obnovit, pokud ztratíte.</string>
+    <string name="settings_backup_password_saved">Heslo pro zálohu bylo uloženo</string>
+    <string name="settings_backup_password_cleared">Heslo pro zálohu odstraněno</string>
     <string name="settings_backup_set_password">Nastavit heslo</string>
     <string name="settings_backup_change_password">Změnit heslo</string>
     <string name="settings_backup_password_dialog_title">Zadejte heslo pro zálohu</string>
     <string name="settings_backup_import_progress_title">Import kontaktů</string>
     <string name="settings_backup_import_progress_count">%1$d z %2$d kontaktů importováno</string>
+    <string name="settings_backup_auto_export">Automaticky exportovat kontakty</string>
+    <string name="settings_backup_auto_export_supporting">Exportovat zálohy, když jsou kontakty vytvořeny, upraveny nebo odstraněny</string>
+    <string name="settings_backup_auto_encrypt">Šifrovat automatické zálohy</string>
+    <string name="settings_backup_auto_encrypt_supporting">Uložit automatické zálohování jako AES-256 šifrované .vcf.cc soubory</string>
     <string name="settings_backup_folder">Automatická složka zálohy</string>
     <string name="settings_backup_folder_supporting">Vyberte místní složku, kde bude uložena poslední záloha</string>
     <string name="settings_backup_folder_not_set">Nebyla vybrána žádná místní složka</string>
     <string name="settings_backup_choose_folder">Vyberte záložní složku</string>
     <string name="settings_backup_retention">Automatické záložní verze</string>
     <string name="settings_backup_retention_supporting">Ponechat toto mnoho časových záloh pro obnovení starších seznamů kontaktů</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">Nastavení aplikace &amp; Předvolby</string>
     <string name="settings_backup_export_settings">Exportovat nastavení aplikace</string>
     <string name="settings_backup_export_settings_supporting">Zálohovat motivy, styl číselníku a konfigurace na JSON</string>
@@ -357,6 +380,7 @@ Bílý text</string>
     <string name="call_recording_shizuku_attribution_desc">Interní nahrávání hovorů přes Shizuku obsahuje kód z open-source projektu ShizuCallRecorder po kitsumu (GPLv3). Není přidružen k ani schválen ShizuCRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Navštívit ShizuCall Recorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">Zapisovač ShizuCallOrorder autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

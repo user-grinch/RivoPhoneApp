@@ -131,6 +131,7 @@
     <string name="action_settings">Настройки</string>
     <string name="action_back">Назад</string>
     <string name="action_edit">Редактировать</string>
+    <string name="action_change">Изменить</string>
     <string name="action_done">Выполнено</string>
     <string name="action_clear">Очистить</string>
     <string name="action_clear_selection">Снять выбор</string>
@@ -446,6 +447,7 @@
     <string name="notif_active_call">Активный вызов</string>
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Контакты успешно экспортированы</string>
+    <string name="backup_encrypted_contacts_export_success">Зашифрованные контакты успешно экспортированы</string>
     <string name="backup_contacts_import_success">Контакты успешно импортированы</string>
     <string name="backup_call_logs_export_success">Журналы вызовов успешно экспортированы</string>
     <string name="backup_call_logs_import_success">Журналы вызовов успешно импортированы</string>
@@ -694,25 +696,51 @@
     <string name="settings_blocked_system_button">Системный список заблокированных номеров</string>
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Резервное копирование и восстановление</string>
+    <string name="settings_backup_standard_contacts_header">Стандартная резервная копия контактов</string>
+    <string name="settings_backup_encrypted_header">Зашифрованные резервные копии</string>
+    <string name="settings_backup_automatic_header">Автоматическое резервное копирование</string>
     <string name="settings_backup_contacts_header">Контакты</string>
     <string name="settings_backup_export_contacts">Экспорт контактов</string>
+    <string name="settings_backup_export_contacts_supporting">Сохранить контакты в незашифрованный файл VCF</string>
     <string name="settings_backup_import_contacts">Импорт контактов</string>
+    <string name="settings_backup_import_contacts_supporting">Восстановить контакты из стандартного файла резервной копии VCF</string>
+    <string name="settings_backup_export_encrypted_contacts">Экспорт зашифрованной резервной копии</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Сохранить контакты как AES-256 зашифрованный .vcf.enc файл</string>
+    <string name="settings_backup_import_encrypted_contacts">Импорт зашифрованной резервной копии</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Восстановить контакты из зашифрованного файла .vcf.enc</string>
     <string name="settings_backup_encryption">Зашифровать резервные копии контактов</string>
+    <string name="settings_backup_encryption_supporting">Использовать шифрование AES-256-GCM для резервного копирования контактов</string>
     <string name="settings_backup_password">Пароль резервного копирования</string>
     <string name="settings_backup_password_supporting">Требуется для шифрования и импорта резервных копий зашифрованных контактов</string>
     <string name="settings_backup_password_not_set">Пароль не установлен</string>
     <string name="settings_backup_password_set">Пароль успешно сохранен</string>
+    <string name="settings_backup_password_status_configured">Настроено</string>
+    <string name="settings_backup_password_status_not_set">Не задано</string>
+    <string name="settings_backup_password_desc_configured">Защищено с помощью AES-256-GCM. Требуется для расшифровки и восстановления резервных копий.</string>
+    <string name="settings_backup_password_desc_not_set">Задайте пароль для шифрования и защиты экспортированных резервных копий.</string>
+    <string name="settings_backup_confirm_password">Подтверждение пароля</string>
+    <string name="settings_backup_password_mismatch">Пароли не совпадают</string>
+    <string name="settings_backup_remove_password">Удалить пароль</string>
+    <string name="settings_backup_remove_password_confirm">Удалить пароль резервного копирования? Папка резервного копирования будет отключена.</string>
+    <string name="settings_backup_password_helper">Этот пароль защищает ваши контакты с помощью AES-256 шифрования. Держите его в безопасности — он не может быть восстановлен, если потерян.</string>
+    <string name="settings_backup_password_saved">Пароль резервного копирования сохранен</string>
+    <string name="settings_backup_password_cleared">Пароль резервного копирования удален</string>
     <string name="settings_backup_set_password">Установить пароль</string>
     <string name="settings_backup_change_password">Изменить пароль</string>
     <string name="settings_backup_password_dialog_title">Введите пароль для резервной копии</string>
     <string name="settings_backup_import_progress_title">Импорт контактов</string>
     <string name="settings_backup_import_progress_count">Импортировано %1$d контактов из %2$d</string>
+    <string name="settings_backup_auto_export">Автоэкспорт контактов</string>
+    <string name="settings_backup_auto_export_supporting">Экспортировать резервные копии при создании, редактировании или удалении контактов</string>
+    <string name="settings_backup_auto_encrypt">Шифровать автоматические резервные копии</string>
+    <string name="settings_backup_auto_encrypt_supporting">Сохранять автоматические резервные копии в виде файлов .vcf.enc AES-256</string>
     <string name="settings_backup_folder">Автоматическая папка резервного копирования</string>
     <string name="settings_backup_folder_supporting">Выберите локальную папку, где будет сохранена последняя резервная копия</string>
     <string name="settings_backup_folder_not_set">Локальная папка не выбрана</string>
     <string name="settings_backup_choose_folder">Выберите папку для резервного копирования</string>
     <string name="settings_backup_retention">Автоматическая резервная копия версий</string>
     <string name="settings_backup_retention_supporting">Сохранять это много меток времени для восстановления старых списков контактов</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_call_logs_header">Журналы вызовов</string>
     <string name="settings_backup_export_logs">Экспорт журнала вызовов</string>
     <string name="settings_backup_export_logs_supporting">Сохранить историю в JSON-файл</string>
@@ -820,6 +848,7 @@
     <string name="settings_top_card_updates">Обновления</string>
     <string name="settings_top_card_donate">Поддержать проект</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Автор</string>
     <string name="contributor_role_lead_developer">Ведущий разработчик</string>
     <string name="contributor_role_developer">Разработчик</string>
     <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>

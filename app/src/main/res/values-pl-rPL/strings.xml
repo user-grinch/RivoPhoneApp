@@ -111,7 +111,7 @@
     <string name="callback_reminder_channel_description">Powiadomienia przypominające o oddzwanianiu kontaktów</string>
     <string name="callback_reminders_channel_name">Przypomnienia o dzwonieniu</string>
     <string name="callback_reminder_call_now">Zadzwoń teraz</string>
-    <string name="call_analytics_most_talked">Najczęściej mówione osoby</string>
+    <string name="call_analytics_most_talked">Osoby, z którymi rozmawiasz najczęściej</string>
     <string name="call_analytics_total_talk_time">Całkowity czas rozmowy</string>
     <string name="support_always_show">Zawsze pokazuj przycisk wsparcia</string>
     <string name="support_off">Wyłączony</string>
@@ -131,6 +131,7 @@
     <string name="action_settings">Ustawienia</string>
     <string name="action_back">Wstecz</string>
     <string name="action_edit">Edytuj</string>
+    <string name="action_change">Zmiana</string>
     <string name="action_done">Gotowe</string>
     <string name="action_clear">Wyczyść</string>
     <string name="action_clear_selection">Wyczyść zaznaczenie</string>
@@ -222,7 +223,7 @@
     <string name="permission_shizuku_not_installed_status">Nie zainstalowano</string>
     <string name="permission_shizuku_open">Otwórz</string>
     <string name="permission_shizuku_service_stopped_status">Usługa zatrzymana</string>
-    <string name="permission_shizuku_grant">Przyznanie</string>
+    <string name="permission_shizuku_grant">Przyznaj</string>
     <string name="permission_shizuku_needs_permission_status">Potrzebuje uprawnień</string>
     <string name="permission_shizuku_audio_title">Shizuku 2-kierunkowy dźwięk</string>
     <string name="call_recorded">Połączenie zarejestrowane: %1$s</string>
@@ -446,6 +447,7 @@
     <string name="notif_active_call">Aktywne połączenie</string>
     <!-- Backup & restore (status messages) -->
     <string name="backup_contacts_export_success">Kontakty wyeksportowane pomyślnie</string>
+    <string name="backup_encrypted_contacts_export_success">Zaszyfrowane kontakty wyeksportowane pomyślnie</string>
     <string name="backup_contacts_import_success">Kontakty zaimportowane pomyślnie</string>
     <string name="backup_call_logs_export_success">Rejestry połączeń wyeksportowane pomyślnie</string>
     <string name="backup_call_logs_import_success">Rejestry połączeń zaimportowane pomyślnie</string>
@@ -694,25 +696,51 @@ Biały tekst</string>
     <string name="settings_blocked_system_button">Systemowe zablokowane numery</string>
     <!-- Settings > Backup & Restore -->
     <string name="settings_backup_title">Kopia zapasowa i przywracanie</string>
+    <string name="settings_backup_standard_contacts_header">Standardowa kopia zapasowa kontaktów</string>
+    <string name="settings_backup_encrypted_header">Zaszyfrowane kopie zapasowe</string>
+    <string name="settings_backup_automatic_header">Automatyczne kopie zapasowe</string>
     <string name="settings_backup_contacts_header">Kontakty</string>
     <string name="settings_backup_export_contacts">Eksportuj kontakty</string>
+    <string name="settings_backup_export_contacts_supporting">Zapisz kontakty do niezaszyfrowanego pliku VCF</string>
     <string name="settings_backup_import_contacts">Importuj kontakty</string>
+    <string name="settings_backup_import_contacts_supporting">Przywróć kontakty ze standardowego pliku kopii zapasowej VCF</string>
+    <string name="settings_backup_export_encrypted_contacts">Eksportuj zaszyfrowaną kopię zapasową</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Zapisz kontakty jako zaszyfrowany plik .vcf.enc AES-256</string>
+    <string name="settings_backup_import_encrypted_contacts">Importuj zaszyfrowaną kopię zapasową</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Przywróć kontakty z zaszyfrowanego pliku .vcf.enc</string>
     <string name="settings_backup_encryption">Szyfruj kopie zapasowe kontaktów</string>
+    <string name="settings_backup_encryption_supporting">Użyj szyfrowania AES-256-GCM dla kopii zapasowych kontaktów</string>
     <string name="settings_backup_password">Hasło kopii zapasowej</string>
     <string name="settings_backup_password_supporting">Wymagane do szyfrowania i importowania zaszyfrowanych kopii zapasowych kontaktów</string>
     <string name="settings_backup_password_not_set">Nie ustawiono hasła</string>
     <string name="settings_backup_password_set">Hasło zapisane bezpiecznie</string>
+    <string name="settings_backup_password_status_configured">Skonfigurowane</string>
+    <string name="settings_backup_password_status_not_set">Nie ustawiono</string>
+    <string name="settings_backup_password_desc_configured">Chronione AES-256-GCM. Wymagane do odszyfrowania i przywrócenia kopii zapasowych.</string>
+    <string name="settings_backup_password_desc_not_set">Ustaw hasło, aby zaszyfrować i zabezpieczyć eksportowane kopie zapasowe.</string>
+    <string name="settings_backup_confirm_password">Potwierdź hasło</string>
+    <string name="settings_backup_password_mismatch">Hasła nie pasują</string>
+    <string name="settings_backup_remove_password">Usuń hasło</string>
+    <string name="settings_backup_remove_password_confirm">Usunąć hasło kopii zapasowej? Szyfrowanie kopii zapasowej kontaktu zostanie wyłączone.</string>
+    <string name="settings_backup_password_helper">To hasło chroni Twoje kontakty za pomocą szyfrowania AES-256. Zachowaj jego bezpieczeństwo — nie można go odzyskać, jeśli zostanie utracony.</string>
+    <string name="settings_backup_password_saved">Hasło kopii zapasowej zostało zapisane</string>
+    <string name="settings_backup_password_cleared">Hasło kopii zapasowej zostało usunięte</string>
     <string name="settings_backup_set_password">Ustaw hasło</string>
     <string name="settings_backup_change_password">Zmień hasło</string>
     <string name="settings_backup_password_dialog_title">Wprowadź hasło kopii zapasowej</string>
     <string name="settings_backup_import_progress_title">Importowanie kontaktów</string>
     <string name="settings_backup_import_progress_count">%1$d z %2$d zaimportowanych kontaktów</string>
+    <string name="settings_backup_auto_export">Automatycznie eksportuj kontakty</string>
+    <string name="settings_backup_auto_export_supporting">Eksportuj kopie zapasowe za każdym razem, gdy kontakty są tworzone, edytowane lub usuwane</string>
+    <string name="settings_backup_auto_encrypt">Szyfruj automatyczne kopie zapasowe</string>
+    <string name="settings_backup_auto_encrypt_supporting">Zapisz automatyczne kopie zapasowe jako zaszyfrowane pliki .vcf.enc</string>
     <string name="settings_backup_folder">Folder automatycznej kopii zapasowej</string>
     <string name="settings_backup_folder_supporting">Wybierz lokalny folder, w którym zostanie zapisana najnowsza kopia zapasowa</string>
     <string name="settings_backup_folder_not_set">Nie wybrano folderu lokalnego</string>
     <string name="settings_backup_choose_folder">Wybierz folder kopii zapasowej</string>
     <string name="settings_backup_retention">Automatyczna kopia zapasowa wersji</string>
     <string name="settings_backup_retention_supporting">Zachowaj wiele kopii zapasowych znaczników czasu, aby odzyskać starsze listy kontaktów</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_call_logs_header">Rejestry połączeń</string>
     <string name="settings_backup_export_logs">Eksportuj rejestr połączeń</string>
     <string name="settings_backup_export_logs_supporting">Zapisuj historię do pliku JSON</string>
@@ -810,7 +838,7 @@ Biały tekst</string>
     <string name="about_attributions_title">Specjalne atrybuty</string>
     <string name="about_third_party_libraries_title">Biblioteki &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">Atrybut ShizuCallRecorder</string>
-    <string name="about_shizucallrecorder_short_desc">Silnik nagrywania połączeń przez zwijanie</string>
+    <string name="about_shizucallrecorder_short_desc">Silnik nagrywania połączeń przez: kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo zawiera kod nagrywania wywołań ze ShizuCallRecorder (licencjonowany na mocy GPLv3 z dodatkowymi warunkami w sekcji 7). Rivo jest niezależnym projektem i nie jest oficjalnie powiązany z ShizuCallRecorder ani przez niego zatwierdzony.\n\nSzukasz dedykowanego, darmowego i otwartego źródła oraz szanującego prywatność alternatywy bez reklam lub monetyzacji? Sprawdź oryginalny projekt ShizuCallRecorder</string>
     <string name="about_shizucallrecorder_action">Zobacz ShizuCallRecorder na GitHub</string>
     <string name="call_recording_shizuku_attribution_title">Silnik nagrywania połączeń</string>
@@ -820,6 +848,7 @@ Biały tekst</string>
     <string name="settings_top_card_updates">Aktualizacje</string>
     <string name="settings_top_card_donate">Darowizna</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_lead_developer">Główny programista</string>
     <string name="contributor_role_developer">Programista</string>
     <string name="contributor_role_upstream_call_recording">Autor ShizuCallRecorder</string>
@@ -1529,7 +1558,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_unknown_caller_background">Tło ekranu od nieznanego rozmówcy</string>
     <string name="loc_specialized_wallpaper_for_numbers_not_in_your_address_book">Specjalna tapeta dla numerów spoza Twojej książki adresowej</string>
     <string name="loc_speed_dial">Szybkie wybieranie</string>
-    <string name="loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing">Przypisz kontakty do klawiszy klawiszy 1-9 do szybkiego wybierania</string>
+    <string name="loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing">Przypisz kontakty do klawiszy 1-9 do szybkiego wybierania</string>
     <string name="loc_quick_responses">Szybkie odpowiedzi</string>
     <string name="loc_predefined_sms_messages_to_decline_incoming_calls">Predefiniowane wiadomości SMS do odrzucenia połączeń przychodzących</string>
     <string name="loc_swipe_right_action">Akcja przesunięcia w prawo</string>
@@ -1540,7 +1569,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_auto_record_calls">Automatyczne nagrywanie połączeń</string>
     <string name="loc_automatically_start_recording_as_soon_as_a_call_is_connected">Automatycznie rozpoczynaj nagrywanie natychmiast po nawiązaniu połączenia</string>
     <string name="loc_auto_record_filter">Automatyczny filtr rekordów</string>
-    <string name="loc_choose_to_auto_record_all_calls_non_contacts_or_specific_numbers">Wybierz do automatycznego nagrywania wszystkich połączeń, nie-kontaktów lub określonych numerów</string>
+    <string name="loc_choose_to_auto_record_all_calls_non_contacts_or_specific_numbers">Wybierz do automatycznego nagrywania wszystkich połączeń, niezapisanych kontaktów lub określonych numerów</string>
     <string name="loc_audio_recording_quality_bitrate">Jakość nagrywania dźwięku i bitrate</string>
     <string name="loc_configure_audio_bitrate_64k_128k_192k_256k_and_format">Konfiguruj bitrate audio (64k, 128k, 192k, 256k) i format</string>
     <string name="loc_minimum_duration_filter_for_recordings">Minimalny filtr czasu trwania dla nagrań</string>
@@ -1777,10 +1806,10 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <!-- Typography -->
     <string name="font_family_roboto">Roboto</string>
     <string name="font_family_ubuntu">Ubuntu</string>
-    <string name="font_family_samsung_one">Samsung Jeden</string>
-    <string name="font_family_inter">Wewnątrz</string>
-    <string name="font_family_poppins">Popiny</string>
-    <string name="font_size_granular_label">Fine Font Size</string>
+    <string name="font_family_samsung_one">Samsung One</string>
+    <string name="font_family_inter">Inter</string>
+    <string name="font_family_poppins">Poppins</string>
+    <string name="font_size_granular_label">Precyzyjny rozmiar czcionki</string>
     <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
     <string name="shortcut_recents">Recents</string>
@@ -1807,16 +1836,16 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="storage_device">Urządzenie</string>
     <string name="storage_private_vault">Prywatna pamięć (sejf aplikacji)</string>
     <string name="storage_sim_card_format">Karta SIM (%1$s)</string>
-    <string name="storage_local">Lokalny</string>
+    <string name="storage_local">Lokalnie</string>
     <string name="storage_cloud">Chmura</string>
     <string name="storage_sim">SIM</string>
-    <string name="storage_private">Prywatny</string>
+    <string name="storage_private">Prywatne</string>
     <!-- Live corner roundness -->
     <string name="live_corner_roundness_format">Zaokrąglenie rogów: %1$ddp</string>
     <!-- Default start location -->
     <string name="start_location_default_tab">Domyślna karta</string>
-    <string name="start_location_dialpad_recents">Dialpad (Recents)</string>
-    <string name="start_location_dialpad_contacts">Klawiatura numerów (Kontakty)</string>
+    <string name="start_location_dialpad_recents">Klawiatura (Ostatnie)</string>
+    <string name="start_location_dialpad_contacts">Klawiatura (Kontakty)</string>
     <!-- Call recordings -->
     <string name="recordings_scanning">Skanowanie nagrań…</string>
     <string name="recordings_saved_count">%1$d zapisanych nagrań</string>
@@ -1827,7 +1856,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="recording_min_duration_ignore_10s">Ignoruj połączenia &lt; 10s</string>
     <!-- Permissions -->
     <string name="action_set">Ustaw</string>
-    <string name="action_grant">Przyznanie</string>
+    <string name="action_grant">Przyznaj</string>
     <string name="action_enable">Włącz</string>
     <string name="action_move_all">Przenieś wszystko</string>
     <!-- App lock -->
@@ -1836,12 +1865,12 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="analytics_time_today">Dziś</string>
     <string name="analytics_time_this_week">W tym tygodniu</string>
     <string name="analytics_time_this_month">Ten Miesiąc</string>
-    <string name="analytics_time_all_time">Cały czas</string>
+    <string name="analytics_time_all_time">Cały okres</string>
     <string name="call_analytics_contact_calls_breakdown">%1$d wywołań (%2$d , %3$d out)</string>
     <string name="call_analytics_talked">rozmawiał</string>
     <!-- Settings Search -->
     <string name="settings_category_personalization">Personalizacja</string>
-    <string name="settings_category_calling">Dzwonienie</string>
+    <string name="settings_category_calling">Połączenia</string>
     <string name="settings_category_sound">Dźwięk</string>
     <string name="settings_category_contacts">Kontakty</string>
     <string name="settings_category_security">Bezpieczeństwo</string>

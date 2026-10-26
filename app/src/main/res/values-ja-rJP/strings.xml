@@ -122,6 +122,7 @@
     <string name="action_allow">許可する</string>
     <string name="action_manage">管理</string>
     <string name="action_settings">設定</string>
+    <string name="action_change">変更</string>
     <string name="action_add_existing_contact">既存の連絡先に追加</string>
     <string name="action_merge_calls">通話をマージ</string>
     <string name="conference_call">電話会議</string>
@@ -224,6 +225,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">暗号化された連絡先が正常にエクスポートされました</string>
     <string name="backup_settings_export_success">アプリの設定が正常にエクスポートされました</string>
     <string name="backup_settings_import_success">アプリの設定が正常に復元されました</string>
     <!-- Settings > root -->
@@ -305,22 +307,48 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">標準の連絡先のバックアップ</string>
+    <string name="settings_backup_encrypted_header">暗号化されたバックアップ</string>
+    <string name="settings_backup_automatic_header">自動バックアップ</string>
+    <string name="settings_backup_export_contacts_supporting">暗号化されていないVCFファイルに連絡先を保存</string>
+    <string name="settings_backup_import_contacts_supporting">標準のVCFバックアップファイルから連絡先を復元</string>
+    <string name="settings_backup_export_encrypted_contacts">暗号化されたバックアップをエクスポート</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">AES-256暗号化された.vcf.encファイルとして連絡先を保存</string>
+    <string name="settings_backup_import_encrypted_contacts">暗号化されたバックアップをインポート</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">暗号化された .vcf.enc ファイルから連絡先を復元します</string>
     <string name="settings_backup_encryption">連絡先のバックアップを暗号化</string>
+    <string name="settings_backup_encryption_supporting">連絡先バックアップにはAES-256-GCM暗号化を使用してください</string>
     <string name="settings_backup_password">バックアップパスワード</string>
     <string name="settings_backup_password_supporting">暗号化された連絡先バックアップの暗号化とインポートに必要です</string>
     <string name="settings_backup_password_not_set">パスワードが未設定です</string>
     <string name="settings_backup_password_set">パスワードを安全に保存しました</string>
+    <string name="settings_backup_password_status_configured">設定済み</string>
+    <string name="settings_backup_password_status_not_set">未設定</string>
+    <string name="settings_backup_password_desc_configured">AES-256-GCM で保護されます。バックアップの復号化と復元に必要です。</string>
+    <string name="settings_backup_password_desc_not_set">エクスポートしたバックアップを暗号化して保護するためのパスワードを設定します。</string>
+    <string name="settings_backup_confirm_password">パスワードの確認</string>
+    <string name="settings_backup_password_mismatch">パスワードが一致しません</string>
+    <string name="settings_backup_remove_password">パスワードを削除</string>
+    <string name="settings_backup_remove_password_confirm">バックアップパスワードを削除しますか？連絡先の暗号化は無効になります。</string>
+    <string name="settings_backup_password_helper">このパスワードは、AES-256暗号化で連絡先を保護します。紛失した場合は復元できません。</string>
+    <string name="settings_backup_password_saved">バックアップパスワードを保存しました</string>
+    <string name="settings_backup_password_cleared">バックアップパスワードを削除しました</string>
     <string name="settings_backup_set_password">パスワードを設定</string>
     <string name="settings_backup_change_password">パスワードの変更</string>
     <string name="settings_backup_password_dialog_title">バックアップパスワードを入力してください</string>
     <string name="settings_backup_import_progress_title">連絡先をインポート中</string>
     <string name="settings_backup_import_progress_count">%1$d の %2$d 連絡先がインポートされました</string>
+    <string name="settings_backup_auto_export">連絡先を自動的にエクスポート</string>
+    <string name="settings_backup_auto_export_supporting">連絡先が作成、編集、または削除されるたびにバックアップをエクスポート</string>
+    <string name="settings_backup_auto_encrypt">自動バックアップを暗号化</string>
+    <string name="settings_backup_auto_encrypt_supporting">AES-256暗号化された.vcf.encファイルとして自動バックアップを保存します</string>
     <string name="settings_backup_folder">自動バックアップフォルダ</string>
     <string name="settings_backup_folder_supporting">最新のバックアップを保存するローカルフォルダを選択してください</string>
     <string name="settings_backup_folder_not_set">ローカルフォルダが選択されていません</string>
     <string name="settings_backup_choose_folder">バックアップフォルダを選択</string>
     <string name="settings_backup_retention">自動バックアップバージョン</string>
     <string name="settings_backup_retention_supporting">古い連絡先リストを復元するには、この多くのタイムスタンプされたバックアップを保管してください</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">アプリ設定 &amp; 設定</string>
     <string name="settings_backup_export_settings">アプリの設定をエクスポート</string>
     <string name="settings_backup_export_settings_supporting">テーマ、ダイヤルパッドのスタイル、設定をJSONにバックアップする</string>
@@ -349,6 +377,7 @@
     <string name="call_recording_shizuku_attribution_desc">Shizukuによる内部通話録音には、ShitiCallRecorderとは提携していない、または承認されていないkitumed(GPLv3)によるオープンソースShizuCallRecorderプロジェクトのコードが組み込まれています。</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorderをご覧ください</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">作成者</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder著者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

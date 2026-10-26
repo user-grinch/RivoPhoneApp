@@ -119,6 +119,7 @@
     <string name="action_allow">Дозволити</string>
     <string name="action_manage">Керування</string>
     <string name="action_settings">Налаштування</string>
+    <string name="action_change">Змінити</string>
     <string name="action_add_existing_contact">Додати до існуючого контакту</string>
     <string name="action_merge_calls">Об’єдн. дзвінки</string>
     <string name="conference_call">Конференц-виклик</string>
@@ -220,6 +221,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Зашифровані контакти успішно експортовано</string>
     <string name="backup_settings_export_success">Параметри програми успішно експортовано</string>
     <string name="backup_settings_import_success">Налаштування додатків успішно відновлені</string>
     <!-- Settings > root -->
@@ -301,22 +303,48 @@
     <string name="settings_call_dialpad_size_large">Специус</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Стандартне резервне копіювання контактів</string>
+    <string name="settings_backup_encrypted_header">Зашифровані резервні копії</string>
+    <string name="settings_backup_automatic_header">Автоматичне резервне копіювання</string>
+    <string name="settings_backup_export_contacts_supporting">Зберегти контакти до незашифрованого файлу VCF</string>
+    <string name="settings_backup_import_contacts_supporting">Відновити контакти зі стандартного файлу резервної копії VCF</string>
+    <string name="settings_backup_export_encrypted_contacts">Експорт зашифрованої резервної копії</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Зберегти контакти як зашифрований файл .vcf.enc</string>
+    <string name="settings_backup_import_encrypted_contacts">Імпорт зашифрованої резервної копії</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Відновити контакти з зашифрованого файлу .vcf.enc</string>
     <string name="settings_backup_encryption">Шифрувати резервні копії контактів</string>
+    <string name="settings_backup_encryption_supporting">Використовувати шифрування AES-256-GCM для контактів</string>
     <string name="settings_backup_password">Пароль резервної копії</string>
     <string name="settings_backup_password_supporting">Потрібно шифрувати та імпортувати зашифровані резервні копії контактів</string>
     <string name="settings_backup_password_not_set">Пароль не налаштовано</string>
     <string name="settings_backup_password_set">Пароль надійно збережено</string>
+    <string name="settings_backup_password_status_configured">Налаштовано</string>
+    <string name="settings_backup_password_status_not_set">Не задано</string>
+    <string name="settings_backup_password_desc_configured">Захищений AES-256-GCM. Необхідно розшифрувати та відновлювати резервні копії.</string>
+    <string name="settings_backup_password_desc_not_set">Встановити пароль для шифрування і захисту ваших експортованих резервних копій.</string>
+    <string name="settings_backup_confirm_password">Підтвердити пароль</string>
+    <string name="settings_backup_password_mismatch">Паролі не збігаються</string>
+    <string name="settings_backup_remove_password">Видалити пароль</string>
+    <string name="settings_backup_remove_password_confirm">Видалити пароль резервного копіювання? Шифрування резервної копії буде вимкнено.</string>
+    <string name="settings_backup_password_helper">Цей пароль захищає ваші контакти від шифрування AES-256. Захистіть його, оскільки його неможливо буде відновити.</string>
+    <string name="settings_backup_password_saved">Пароль резервної копії збережено</string>
+    <string name="settings_backup_password_cleared">Пароль резервної копії видалено</string>
     <string name="settings_backup_set_password">Задати пароль</string>
     <string name="settings_backup_change_password">Змінити пароль</string>
     <string name="settings_backup_password_dialog_title">Введіть пароль резервної копії</string>
     <string name="settings_backup_import_progress_title">Імпортування контактів</string>
     <string name="settings_backup_import_progress_count">%1$d %2$d контакти імпортовано</string>
+    <string name="settings_backup_auto_export">Автоматично експортувати контакти</string>
+    <string name="settings_backup_auto_export_supporting">Експортувати резервні копії після створення контактів, редагування або видалення</string>
+    <string name="settings_backup_auto_encrypt">Шифрувати автоматичні резервні копії</string>
+    <string name="settings_backup_auto_encrypt_supporting">Зберігати автоматичні резервні копії AES-256 зашифрованими файлами .vcf.enc</string>
     <string name="settings_backup_folder">Автоматична резервна тека</string>
     <string name="settings_backup_folder_supporting">Виберіть локальну папку, в якій буде збережено останню резервну копію</string>
     <string name="settings_backup_folder_not_set">Локальна папка не вибрана</string>
     <string name="settings_backup_choose_folder">Виберіть папку з резервною копією</string>
     <string name="settings_backup_retention">Автоматичні резервні копії версій</string>
     <string name="settings_backup_retention_supporting">Тримати цю кількість часових міток для відновлення старих списків контактів</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">Налаштування програми &amp; Налаштування</string>
     <string name="settings_backup_export_settings">Експортувати налаштування додатку</string>
     <string name="settings_backup_export_settings_supporting">Створити резервну копію тем, стилів кнопок в номеронабирах і конфігурацій у JSON</string>
@@ -345,6 +373,7 @@
     <string name="call_recording_shizuku_attribution_desc">Запис внутрішнього виклику через Shizuku включає код з проекту ShizuCallRecorder з відкритим кодом (kitsumed (GPLv3). Не пов\'язаний з або схваленим ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Відвідати ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Автор</string>
     <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
