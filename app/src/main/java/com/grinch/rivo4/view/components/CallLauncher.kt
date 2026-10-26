@@ -9,6 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -110,16 +112,21 @@ fun rememberCallLauncher(): CallLauncher {
     val callLauncher = remember {
         CallLauncher { number, contact ->
             if (number.isBlank() && contact != null) {
-                if (contact.phoneNumbers.size > 1) {
-                    val favNum = prefs.getFavoriteNumber(contact.id)
-                    if (favNum != null) {
-                        initiateCall(favNum, contact)
+                val validNumbers = contact.phoneNumbers.filter { it.isNotBlank() }
+                if (validNumbers.size > 1) {
+                    val defaultNum = prefs.getFavoriteNumber(contact.id)
+                    val matchingDefault = if (defaultNum != null) {
+                        validNumbers.find { areNumbersEqual(it, defaultNum) }
+                    } else null
+
+                    if (matchingDefault != null) {
+                        initiateCall(matchingDefault, contact)
                     } else {
                         pendingContact = contact
                         showNumberPicker = true
                     }
-                } else if (contact.phoneNumbers.isNotEmpty()) {
-                    initiateCall(contact.phoneNumbers.first(), contact)
+                } else if (validNumbers.isNotEmpty()) {
+                    initiateCall(validNumbers.first(), contact)
                 }
             } else if (number.isNotBlank()) {
                 initiateCall(number, contact)
@@ -130,19 +137,30 @@ fun rememberCallLauncher(): CallLauncher {
     if (showNumberPicker && pendingContact != null) {
         val contact = pendingContact!!
         val lastUsed = prefs.getLastUsedNumber(contact.id)
+        val defaultNum = prefs.getFavoriteNumber(contact.id)
+        val validNumbers = contact.phoneNumbers.filter { it.isNotBlank() }
         
         RivoSelectionDialog(
-            onDismissRequest = { showNumberPicker = false },
+            onDismissRequest = { 
+                showNumberPicker = false 
+                pendingContact = null
+            },
             title = stringResource(R.string.select_number_title),
-            items = contact.phoneNumbers,
+            items = validNumbers,
             itemLabel = { formatPhoneNumber(it) },
             onItemSelected = { selectedNumber ->
-                initiateCall(selectedNumber, contact)
+                showNumberPicker = false
+                val c = pendingContact
+                pendingContact = null
+                if (c != null) {
+                    prefs.setLastUsedNumber(c.id, selectedNumber)
+                }
+                initiateCall(selectedNumber, c ?: contact)
             },
             itemSupporting = { mobileLabel },
             icon = Icons.Default.Phone,
-            itemIcon = { Icons.Default.Phone },
-            isSelected = { areNumbersEqual(lastUsed, it) }
+            itemIcon = { if (areNumbersEqual(defaultNum, it)) Icons.Default.CheckCircle else if (areNumbersEqual(lastUsed, it)) Icons.Default.History else Icons.Default.Phone },
+            isSelected = { areNumbersEqual(defaultNum, it) || areNumbersEqual(lastUsed, it) }
         )
     }
 

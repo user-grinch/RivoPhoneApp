@@ -281,6 +281,7 @@
     <string name="contact_details_video">视频通话</string>
     <string name="contact_details_info_title">联系人信息</string>
     <string name="contact_bullet_favorite">" • 收藏"</string>
+    <string name="contact_bullet_default">" • 默认"</string>
     <string name="contact_bullet_recent">" • 最近通话"</string>
     <string name="content_desc_favorite">收藏</string>
     <string name="contact_clear_favorite">清除收藏</string>
@@ -1083,7 +1084,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">全部删除</string>
     <string name="loc_refresh">刷新</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} 优化</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s 优化</string>
     <string name="loc_dismiss">关闭</string>
     <string name="loc_saved_call_recordings">已保存通话记录</string>
     <string name="loc_recording_controls">录制控制</string>

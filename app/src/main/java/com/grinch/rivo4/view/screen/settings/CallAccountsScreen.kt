@@ -52,6 +52,8 @@ import com.grinch.rivo4.controller.util.makeCall
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.BlockedNumbersScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.FakeCallSchedulerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.QuickResponsesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SpeedDialScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VoicemailScreenDestination
@@ -80,9 +82,7 @@ fun CallAccountsScreen(
     }
     
     val settingsState by prefs.settingsChanged.collectAsState()
-    var speedDial by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SPEED_DIAL, true)) }
-    var showCarrierInRecents by remember(settingsState) { mutableStateOf(prefs.isShowCarrierInRecents()) }
-    var showCountryCode by remember(settingsState) { mutableStateOf(prefs.isShowCountryCodeEnabled()) }
+    var dualSimButtons by remember(settingsState) { mutableStateOf(prefs.isDualSimDialpadButtonsEnabled()) }
     var t9Dialing by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)) }
     var proximitySensor by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_PROXIMITY_SENSOR, true)) }
     var autoSpeakerProximity by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AUTO_SPEAKER_PROXIMITY, false)) }
@@ -97,10 +97,6 @@ fun CallAccountsScreen(
     var postCallSummary by remember(settingsState) { mutableStateOf(prefs.isPostCallScreenEnabled()) }
     var missedCallCard by remember(settingsState) { mutableStateOf(prefs.isMissedCallCardEnabled()) }
     var floatingCallBubble by remember(settingsState) { mutableStateOf(prefs.isFloatingCallBubbleEnabled()) }
-    var autoDeclineUnknown by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineUnknownEnabled()) }
-    var autoDeclineNonContacts by remember(settingsState) { mutableStateOf(prefs.isAutoDeclineNonContactsEnabled()) }
-    var autoPasteClipboard by remember(settingsState) { mutableStateOf(prefs.isAutoPasteClipboardEnabled()) }
-    var callLogLimit by remember(settingsState) { mutableStateOf(prefs.getCallLogLimit()) }
     var groupCallLogs by remember(settingsState) {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, true))
     }
@@ -167,57 +163,40 @@ fun CallAccountsScreen(
         val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
         val targetIndex = when {
             target.contains("Carrier", ignoreCase = true) ||
-            target.contains("Speed Dial", ignoreCase = true) ||
             target.contains("Default SIM", ignoreCase = true) ||
+            target.contains("Dual SIM", ignoreCase = true) ||
             target.contains("Calling Accounts", ignoreCase = true) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_show_carrier_in_recents)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_speed_dial)) ||
+            target.contains("Waiting", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_dual_sim_buttons_title)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_default_sim)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_waiting)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_calling_accounts)) -> 0
 
-            target.contains("Country Code", ignoreCase = true) ||
             target.contains("T9", ignoreCase = true) ||
-            target.contains("Auto-Paste", ignoreCase = true) ||
-            target.contains("Clipboard", ignoreCase = true) ||
             target.contains("Proximity", ignoreCase = true) ||
             target.contains("Speaker", ignoreCase = true) ||
             target.contains("Incoming", ignoreCase = true) ||
             target.contains("Fullscreen", ignoreCase = true) ||
             target.contains("Answer", ignoreCase = true) ||
             target.contains("Pocket", ignoreCase = true) ||
-            target.contains("Log Limit", ignoreCase = true) ||
             target.contains("Summary", ignoreCase = true) ||
             target.contains("Missed Call Card", ignoreCase = true) ||
             target.contains("Bubble", ignoreCase = true) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_show_country_code)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_t9_dialing)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_paste_clipboard)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_proximity_sensor)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_auto_speaker_proximity)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_incoming_ui)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_always_fullscreen)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_open_call_screen_on_answer_title)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_log_limit)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_missed_call_card_title)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_floating_call_bubble)) -> 1
 
-            target.contains("Screening", ignoreCase = true) ||
-            target.contains("Decline Unknown", ignoreCase = true) ||
-            target.contains("Decline Non", ignoreCase = true) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_unknown_title)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_auto_decline_non_contacts_title)) -> 2
-
             target.contains("Redial", ignoreCase = true) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_auto_redial)) -> 3
-
-            target.contains("Voicemail", ignoreCase = true) ||
-            target.contains("Waiting", ignoreCase = true) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_voicemail)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_waiting)) -> 4
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_auto_redial)) -> 2
 
             target.contains("Background", ignoreCase = true) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_default_background)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_call_unknown_background)) -> 5
+            SettingsHighlightManager.matches(context.getString(R.string.settings_call_unknown_background)) -> 3
 
             else -> -1
         }
@@ -251,23 +230,23 @@ fun CallAccountsScreen(
                     val askEveryTimeLabel = stringResource(R.string.sim_ask_every_time)
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_sim_calling_prefs), icon = Icons.Outlined.SimCard) {
                         item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_call_speed_dial),
-                                supporting = if (speedDial) stringResource(R.string.settings_call_enabled) else stringResource(R.string.settings_call_disabled),
-                                leadingIcon = Icons.Outlined.Speed,
-                                onClick = { navigator.navigate(SpeedDialScreenDestination) }
+                            RivoSwitchListItem(
+                                headline = stringResource(R.string.settings_interface_dual_sim_buttons_title),
+                                supporting = stringResource(R.string.settings_interface_dual_sim_buttons_supporting),
+                                leadingIcon = Icons.Outlined.SimCard,
+                                checked = dualSimButtons,
+                                onCheckedChange = {
+                                    dualSimButtons = it
+                                    prefs.setDualSimDialpadButtonsEnabled(it)
+                                }
                             )
                         }
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_show_carrier_in_recents),
-                                supporting = stringResource(R.string.settings_show_carrier_in_recents_supporting),
-                                leadingIcon = Icons.Outlined.SimCard,
-                                checked = showCarrierInRecents,
-                                onCheckedChange = {
-                                    showCarrierInRecents = it
-                                    prefs.setShowCarrierInRecents(it)
-                                }
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_call_waiting),
+                                supporting = stringResource(R.string.settings_call_waiting_supporting),
+                                leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
+                                onClick = { showCallWaitingDialog = true }
                             )
                         }
                         item {
@@ -295,6 +274,14 @@ fun CallAccountsScreen(
                                 supporting = defaultVideoAppName,
                                 leadingIcon = Icons.Default.VideoCall,
                                 onClick = { showDefaultVideoAppDialog = true }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_voicemail),
+                                supporting = stringResource(R.string.loc_carrier_voicemail_service_and_configuration),
+                                leadingIcon = Icons.Outlined.Voicemail,
+                                onClick = { navigator.navigate(VoicemailScreenDestination) }
                             )
                         }
                         item {
@@ -332,15 +319,11 @@ fun CallAccountsScreen(
                 item {
                     RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialer_screen_exp), icon = Icons.Outlined.Dialpad) {
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_show_country_code),
-                                supporting = stringResource(R.string.settings_show_country_code_supporting),
-                                leadingIcon = Icons.Outlined.Public,
-                                checked = showCountryCode,
-                                onCheckedChange = {
-                                    showCountryCode = it
-                                    prefs.setShowCountryCodeEnabled(it)
-                                }
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_speed_dial),
+                                supporting = stringResource(R.string.loc_assign_contacts_to_dialpad_keys_1_9_for_quick_dialing),
+                                leadingIcon = Icons.Outlined.Speed,
+                                onClick = { navigator.navigate(SpeedDialScreenDestination) }
                             )
                         }
                         item {
@@ -352,18 +335,6 @@ fun CallAccountsScreen(
                                 onCheckedChange = {
                                     t9Dialing = it
                                     prefs.setBoolean(PreferenceManager.KEY_T9_DIALING, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_auto_paste_clipboard),
-                                supporting = stringResource(R.string.settings_auto_paste_clipboard_supporting),
-                                leadingIcon = Icons.Outlined.ContentPaste,
-                                checked = autoPasteClipboard,
-                                onCheckedChange = {
-                                    autoPasteClipboard = it
-                                    prefs.setAutoPasteClipboardEnabled(it)
                                 }
                             )
                         }
@@ -386,25 +357,6 @@ fun CallAccountsScreen(
                                 onCheckedChange = { enabled ->
                                     groupCallLogs = enabled
                                     prefs.setBoolean(PreferenceManager.KEY_GROUP_CALL_LOGS, enabled)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSelectListItem(
-                                headline = stringResource(R.string.settings_call_log_limit),
-                                supporting = stringResource(R.string.settings_call_log_limit_supporting),
-                                leadingIcon = Icons.Outlined.History,
-                                options = listOf(
-                                    stringResource(R.string.settings_call_log_limit_100) to 100,
-                                    stringResource(R.string.settings_call_log_limit_250) to 250,
-                                    stringResource(R.string.settings_call_log_limit_500) to 500,
-                                    stringResource(R.string.settings_call_log_limit_1000) to 1000,
-                                    stringResource(R.string.settings_call_log_limit_unlimited) to 0
-                                ),
-                                selectedValue = callLogLimit,
-                                onValueChange = {
-                                    callLogLimit = it
-                                    prefs.setCallLogLimit(it)
                                 }
                             )
                         }
@@ -466,30 +418,24 @@ fun CallAccountsScreen(
                     }
                 }
 
+
+
                 item {
-                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_call_screening_prot), icon = Icons.Outlined.Security) {
+                    RivoExpressiveGroup(title = stringResource(R.string.loc_call_protection_security), icon = Icons.Outlined.Security) {
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_auto_decline_unknown_title),
-                                supporting = stringResource(R.string.settings_auto_decline_unknown_supporting),
-                                leadingIcon = Icons.Outlined.PhoneDisabled,
-                                checked = autoDeclineUnknown,
-                                onCheckedChange = {
-                                    autoDeclineUnknown = it
-                                    prefs.setAutoDeclineUnknownEnabled(it)
-                                }
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_blocked_numbers_headline),
+                                supporting = stringResource(R.string.settings_blocked_numbers_supporting),
+                                leadingIcon = Icons.Outlined.Block,
+                                onClick = { navigator.navigate(BlockedNumbersScreenDestination) }
                             )
                         }
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_auto_decline_non_contacts_title),
-                                supporting = stringResource(R.string.settings_auto_decline_non_contacts_supporting),
-                                leadingIcon = Icons.Outlined.PersonOff,
-                                checked = autoDeclineNonContacts,
-                                onCheckedChange = {
-                                    autoDeclineNonContacts = it
-                                    prefs.setAutoDeclineNonContactsEnabled(it)
-                                }
+                            RivoListItem(
+                                headline = stringResource(R.string.fake_call_title),
+                                supporting = stringResource(R.string.fake_call_subtitle),
+                                leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
+                                onClick = { navigator.navigate(FakeCallSchedulerScreenDestination) }
                             )
                         }
                     }
@@ -552,30 +498,7 @@ fun CallAccountsScreen(
                     }
                 }
 
-                item {
-                    RivoExpressiveGroup(
-                        title = stringResource(R.string.settings_work_in_progress),
-                        icon = Icons.Outlined.Construction,
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
-                    ) {
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_call_voicemail),
-                                supporting = stringResource(R.string.settings_call_voicemail_supporting),
-                                leadingIcon = Icons.Outlined.Voicemail,
-                                onClick = { navigator.navigate(VoicemailScreenDestination) }
-                            )
-                        }
-                        item {
-                            RivoListItem(
-                                headline = stringResource(R.string.settings_call_waiting),
-                                supporting = stringResource(R.string.settings_call_waiting_supporting),
-                                leadingIcon = Icons.AutoMirrored.Outlined.PhoneCallback,
-                                onClick = { showCallWaitingDialog = true }
-                            )
-                        }
-                    }
-                }
+
 
                 item {
                 }

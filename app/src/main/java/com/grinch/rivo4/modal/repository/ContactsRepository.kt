@@ -323,14 +323,23 @@ class ContactsRepository(
                 val familyIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME)
                 val suffixIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.SUFFIX)
                 while (cursor.moveToNext()) {
-                    val id = cursor.getString(idIdx)
-                    if (id != null && !structuredNameMap.containsKey(id)) {
+                    val id = cursor.getString(idIdx) ?: continue
+                    val p = if (prefixIdx != -1) cursor.getString(prefixIdx)?.trim()?.ifBlank { null } else null
+                    val g = if (givenIdx != -1) cursor.getString(givenIdx)?.trim()?.ifBlank { null } else null
+                    val m = if (middleIdx != -1) cursor.getString(middleIdx)?.trim()?.ifBlank { null } else null
+                    val f = if (familyIdx != -1) cursor.getString(familyIdx)?.trim()?.ifBlank { null } else null
+                    val s = if (suffixIdx != -1) cursor.getString(suffixIdx)?.trim()?.ifBlank { null } else null
+
+                    val existing = structuredNameMap[id]
+                    if (existing == null) {
+                        structuredNameMap[id] = StructuredNameData(p, g, m, f, s)
+                    } else {
                         structuredNameMap[id] = StructuredNameData(
-                            prefix = if (prefixIdx != -1) cursor.getString(prefixIdx) else null,
-                            givenName = if (givenIdx != -1) cursor.getString(givenIdx) else null,
-                            middleName = if (middleIdx != -1) cursor.getString(middleIdx) else null,
-                            familyName = if (familyIdx != -1) cursor.getString(familyIdx) else null,
-                            suffix = if (suffixIdx != -1) cursor.getString(suffixIdx) else null
+                            prefix = existing.prefix ?: p,
+                            givenName = existing.givenName ?: g,
+                            middleName = existing.middleName ?: m,
+                            familyName = existing.familyName ?: f,
+                            suffix = existing.suffix ?: s
                         )
                     }
                 }
@@ -359,12 +368,17 @@ class ContactsRepository(
                 else -> contact.name
             }
 
+            val (splitGiven, splitMiddle, splitFamily) = ContactUtils.splitDisplayName(resolvedName)
+            val effectiveGiven = nameData?.givenName ?: contact.givenName ?: splitGiven.ifBlank { null }
+            val effectiveMiddle = nameData?.middleName ?: contact.middleName ?: splitMiddle.ifBlank { null }
+            val effectiveFamily = nameData?.familyName ?: contact.familyName ?: splitFamily.ifBlank { null }
+
             contact.copy(
                 name = resolvedName,
                 prefix = nameData?.prefix ?: contact.prefix,
-                givenName = nameData?.givenName ?: contact.givenName,
-                middleName = nameData?.middleName ?: contact.middleName,
-                familyName = nameData?.familyName ?: contact.familyName,
+                givenName = effectiveGiven,
+                middleName = effectiveMiddle,
+                familyName = effectiveFamily,
                 suffix = nameData?.suffix ?: contact.suffix,
                 nickname = nickname ?: contact.nickname
             )
@@ -627,9 +641,17 @@ class ContactsRepository(
             val updateUri = ContactsContract.Contacts.CONTENT_URI.buildUpon()
                 .appendPath(resolvedId)
                 .build()
-            contentResolver.update(updateUri, contentValue, null, null)
+            val rows = contentResolver.update(updateUri, contentValue, null, null)
+            if (rows == 0) {
+                contentResolver.update(
+                    ContactsContract.Contacts.CONTENT_URI,
+                    contentValue,
+                    "${ContactsContract.Contacts._ID} = ?",
+                    arrayOf(resolvedId)
+                )
+            }
         } catch (e: Exception) {
-            android.util.Log.e("ContactsRepo", "Error toggling favorite for contactId ", e)
+            android.util.Log.e("ContactsRepo", "Error toggling favorite for contactId $contactId", e)
         }
     }
 

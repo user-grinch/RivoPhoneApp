@@ -317,6 +317,7 @@
     <string name="contact_details_video">Video</string>
     <string name="contact_details_info_title">Contact Info</string>
     <string name="contact_bullet_favorite">" • Favorite"</string>
+    <string name="contact_bullet_default">" • Default"</string>
     <string name="contact_bullet_recent">" • Recent"</string>
     <string name="content_desc_favorite">Favorite</string>
     <string name="contact_clear_favorite">Clear Favorite</string>
@@ -617,9 +618,16 @@ White text</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Flips the position of the contacts &amp; recents tabs</string>
     <string name="settings_interface_icon_only_bar">Icon-only bottom bar</string>
     <string name="settings_interface_icon_only_bar_supporting">Removes text labels from navigation</string>
+    <string name="settings_avatar_style">Avatar Style</string>
+    <string name="settings_avatar_style_supporting">Choose between colorful, gradient, or plain avatars</string>
+    <string name="avatar_style_colorful">Colorful</string>
+    <string name="avatar_style_gradient">Gradient</string>
+    <string name="avatar_style_none">None</string>
 
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Sound &amp; Vibration</string>
+    <string name="settings_appwide_vibration_title">Appwide Haptic Feedback</string>
+    <string name="settings_appwide_vibration_supporting">Vibrate when scrolling using the alphabet scrollbar on the contacts page</string>
     <string name="settings_sound_dtmf_tone">DTMF tone</string>
     <string name="settings_sound_dtmf_tone_supporting">Dialpad tone that plays during keypress</string>
     <string name="settings_sound_dialpad_vibration">Dialpad vibration</string>
@@ -875,7 +883,7 @@ White text</string>
     <string name="call_recording_shizuku_attribution_title">Call Recording Engine</string>
     <string name="call_recording_shizuku_attribution_desc">Internal call recording via Shizuku incorporates code from the open-source ShizuCallRecorder project by kitsumed (GPLv3). Not affiliated with or endorsed by ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Visit ShizuCallRecorder</string>
-    <string name="settings_top_card_subtext">Check updates • Contributors • Donate</string>
+    <string name="settings_top_card_subtext">Check updates • Contributors • Info</string>
     <string name="settings_top_card_updates">Updates</string>
     <string name="settings_top_card_donate">Donate</string>
 
@@ -1567,7 +1575,7 @@ Please consider donating via Patreon to support development.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Apply dynamic gradient backdrops to contact initial avatars</string>
     <string name="loc_typography">Typography</string>
     <string name="loc_font_text_size_and_system_font">Font, text size and system font</string>
-    <string name="loc_call_screen_buttons">Call Screen Buttons</string>
+    <string name="loc_call_screen_buttons">Call Screen</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Choose the position of each in-call button</string>
     <string name="loc_hide_avatar_with_wallpaper">Hide Avatar with Wallpaper</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omit avatar circle when a full contact background wallpaper is set</string>
@@ -1749,8 +1757,8 @@ Please consider donating via Patreon to support development.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Delete All</string>
     <string name="loc_refresh">Refresh</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} total recordings are saved on this device</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimization</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d total recordings are saved on this device</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimization</string>
     <string name="loc_dismiss">Dismiss</string>
     <string name="loc_saved_call_recordings">Saved Call Recordings</string>
     <string name="loc_recording_controls">Recording Controls</string>
@@ -1763,13 +1771,13 @@ Please consider donating via Patreon to support development.</string>
     <string name="loc_minimum_duration_filter">Minimum Duration Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Discard ultra-short calls below threshold</string>
     <string name="loc_delete_all_recordings">Delete all recordings?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">All ${recordings.size} recordings will be permanently removed from your device. This action cannot be undone.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">All %1$d recordings will be permanently removed from your device. This action cannot be undone.</string>
     <string name="loc_select_start_date_from">Select Start Date (From)</string>
     <string name="loc_select_end_date_to">Select End Date (To)</string>
     <string name="loc_play">Play</string>
     <string name="loc_rewind_10s">Rewind 10s</string>
     <string name="loc_forward_10s">Forward 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selected</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d selected</string>
     <string name="loc_privatecontacts_size_secured">%1$d secured</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Stored locally in Rivo’s sandboxed vault • Hidden from WhatsApp and system apps</string>
     <string name="loc_select_contacts_for_private_storage">Select Contacts for Private Storage</string>
@@ -1783,7 +1791,7 @@ Please consider donating via Patreon to support development.</string>
     <string name="loc_hide_from_settings">Hide from Settings</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Remove Private Storage from the settings menu (accessible only via secret code)</string>
     <string name="loc_pick_contacts_for_vault">Pick Contacts for Vault</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Permanently delete ${selectedContactIds.size} selected contact(s) from private storage?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Permanently delete %1$d selected contact(s) from private storage?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Type this secret code on the dialpad to reveal contacts in private storage.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Only the secret dialpad code will access private storage</string>
     <string name="loc_security_protection">Security &amp; Protection</string>
@@ -1960,4 +1968,10 @@ Please consider donating via Patreon to support development.</string>
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Unhide in Vault</string>
     <string name="private_vault_hide_completely">Hide Completely</string>
+
+    <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Calls &amp; Contacts</string>
+    <string name="settings_group_appearance_preferences">Appearance &amp; Preferences</string>
+    <string name="settings_group_system_about">System &amp; About</string>
+    <string name="thank_you_for_your_support">Thank you for your support!</string>
 </resources>

@@ -82,7 +82,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.CallLogViewModel
 import com.grinch.rivo4.controller.ContactsViewModel
+import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.formatPhoneNumber
 import com.grinch.rivo4.view.components.CallLogTileSimple
 import com.grinch.rivo4.view.components.LocalRivoAvatarStyle
@@ -202,6 +204,7 @@ fun ContactSearchContent(
 
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
+    val displayOrder = remember(settingsState) { prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0) }
     val callLauncher = rememberCallLauncher()
     val messageLauncher = rememberMessageLauncher()
     val videoLauncher = rememberVideoLauncher()
@@ -231,7 +234,7 @@ fun ContactSearchContent(
 
     val favoritesCount = remember(contacts) { contacts.count { it.isFavorite } }
 
-    val filteredContacts = remember(query, contacts, selectedFilter) {
+    val filteredContacts = remember(query, contacts, selectedFilter, displayOrder) {
         val baseContacts = if (selectedFilter == SearchTabFilter.FAVORITES) {
             contacts.asSequence().filter { it.isFavorite }
         } else {
@@ -247,12 +250,7 @@ fun ContactSearchContent(
         } else {
             val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
             baseContacts.filter {
-                val matchesName = it.name.contains(query, ignoreCase = true)
-                val matchesNickname = it.nickname?.contains(query, ignoreCase = true) ?: false
-                val matchesNumber = cleanQuery.isNotEmpty() && it.phoneNumbers.any { number ->
-                    number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
-                }
-                matchesName || matchesNickname || matchesNumber
+                ContactUtils.matchesContact(it, query, cleanQuery, displayOrder)
             }.take(50).toList()
         }
     }
@@ -775,8 +773,8 @@ fun ContactSearchContent(
                                                         onTriggerAction = { action ->
                                                             val phone = contact.phoneNumbers.firstOrNull().orEmpty()
                                                             when (action) {
-                                                                SwipeActionType.CALL -> callLauncher.dial(phone, contact)
-                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, contact)
+                                                                SwipeActionType.CALL -> callLauncher.dial("", contact)
+                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage("", contact)
                                                                 SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, contact)
                                                                 SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
                                                                 SwipeActionType.COPY_NUMBER -> {
@@ -806,21 +804,29 @@ fun ContactSearchContent(
                                                             }
                                                         }
                                                     ) {
+                                                        val displayName = if (contact.name.isNotBlank() && contact.name != stringResource(R.string.label_unknown) && contact.name != "Unnamed") {
+                                                            ContactUtils.formatContactName(contact, displayOrder)
+                                                        } else {
+                                                            contact.emails.firstOrNull()
+                                                                ?: contact.emailEntries.firstOrNull()?.address
+                                                                ?: contact.phoneNumbers.firstOrNull()?.let { formatPhoneNumber(it) }
+                                                                ?: contact.name.ifBlank { stringResource(R.string.label_unknown) }
+                                                        }
                                                         RivoListItem(
-                                                            headline = contact.name,
+                                                            headline = displayName,
                                                             supporting = buildString {
                                                                 contact.nickname?.let { append("$it • ") }
                                                                 contact.phoneNumbers.firstOrNull()?.let { append(formatPhoneNumber(it)) }
                                                             }.ifEmpty { null },
-                                                            avatarName = contact.name,
+                                                            avatarName = displayName,
                                                             photoUri = contact.photoUri,
                                                             onClick = {
                                                                 navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
                                                             },
                                                             trailingContent = {
-                                                                contact.phoneNumbers.firstOrNull()?.let { num ->
+                                                                if (contact.phoneNumbers.any { it.isNotBlank() }) {
                                                                     IconButton(
-                                                                        onClick = { callLauncher.dial(num, contact) }
+                                                                        onClick = { callLauncher.dial("", contact) }
                                                                     ) {
                                                                         Icon(
                                                                             Icons.Rounded.Call,
@@ -864,6 +870,13 @@ fun ContactSearchContent(
                                             key = { _, lg -> "call_${lg.id}_${lg.date}" },
                                             contentType = { _, _ -> "call_log" }
                                         ) { index, lg ->
+                                            val matchedContact = remember(lg.number, lg.contactId, contacts) {
+                                                if (!lg.contactId.isNullOrBlank() && lg.contactId != "0") {
+                                                    contacts.firstOrNull { it.id == lg.contactId }
+                                                } else {
+                                                    contacts.firstOrNull { c -> c.phoneNumbers.any { areNumbersEqual(it, lg.number) } }
+                                                }
+                                            }
                                             val shape = rivoGroupedItemShape(index, filteredCallLogs.size)
                                             Column(modifier = Modifier.fillMaxWidth()) {
                                                 Surface(
@@ -878,9 +891,9 @@ fun ContactSearchContent(
                                                         onTriggerAction = { action ->
                                                             val phone = lg.number
                                                             when (action) {
-                                                                SwipeActionType.CALL -> callLauncher.dial(phone, null)
-                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, null)
-                                                                SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, null)
+                                                                SwipeActionType.CALL -> callLauncher.dial(phone, matchedContact)
+                                                                SwipeActionType.MESSAGE -> messageLauncher.sendMessage(phone, matchedContact)
+                                                                SwipeActionType.VIDEO_CALL -> videoLauncher.startVideoCall(phone, matchedContact)
                                                                 SwipeActionType.WHATSAPP -> SocialUtils.openWhatsApp(context, phone)
                                                                 SwipeActionType.COPY_NUMBER -> {
                                                                     if (phone.isNotBlank()) {
@@ -891,7 +904,7 @@ fun ContactSearchContent(
                                                                 SwipeActionType.VIEW_CONTACT -> {
                                                                     navigator.navigate(
                                                                         ContactDetailsScreenDestination(
-                                                                            contactId = lg.contactId,
+                                                                            contactId = lg.contactId ?: matchedContact?.id,
                                                                             phoneNumber = lg.number
                                                                         )
                                                                     )
@@ -916,13 +929,18 @@ fun ContactSearchContent(
                                                     ) {
                                                         CallLogTileSimple(
                                                             log = lg,
+                                                            contact = matchedContact,
+                                                            displayOrder = displayOrder,
                                                             onClick = {
                                                                 navigator.navigate(
                                                                     ContactDetailsScreenDestination(
-                                                                        contactId = lg.contactId,
+                                                                        contactId = lg.contactId ?: matchedContact?.id,
                                                                         phoneNumber = lg.number
                                                                     )
                                                                 )
+                                                            },
+                                                            onCallClick = {
+                                                                callLauncher.dial(lg.number, matchedContact)
                                                             }
                                                         )
                                                     }

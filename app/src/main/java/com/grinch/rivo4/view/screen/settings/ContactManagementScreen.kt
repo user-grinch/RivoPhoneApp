@@ -7,6 +7,7 @@ import com.grinch.rivo4.view.theme.rivoCornerDp
 
 import androidx.compose.material.icons.automirrored.outlined.CallMerge
 import com.grinch.rivo4.view.components.MenuTopAppBar
+import com.grinch.rivo4.view.components.RivoTopBarIconButton
 
 import android.accounts.Account
 import android.view.HapticFeedbackConstants
@@ -51,7 +52,7 @@ import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContactVisibilityScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.PrivateContactsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.PriorityContactsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.TrashContactsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
@@ -206,7 +207,14 @@ fun ContactManagementScreen(
         topBar = {
             MenuTopAppBar(
                 text = stringResource(R.string.settings_contact_management_headline),
-                navigator = navigator
+                navigator = navigator,
+                actions = {
+                    RivoTopBarIconButton(
+                        onClick = { navigator.navigate(TrashContactsScreenDestination) },
+                        icon = Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.loc_trash_contacts)
+                    )
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -631,37 +639,10 @@ fun ContactManagementScreen(
 
                     item {
                         RivoListItem(
-                            headline = stringResource(R.string.contact_management_private_vault_title),
-                            supporting = stringResource(R.string.contact_management_private_vault_supporting),
-                            leadingIcon = Icons.Outlined.Lock,
-                            onClick = { navigator.navigate(PrivateContactsScreenDestination) }
-                        )
-                    }
-
-                    item {
-                        var trashEnabled by remember(settingsState) { mutableStateOf(prefs.isContactsTrashEnabled()) }
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_contacts_trash_title),
-                            supporting = stringResource(R.string.settings_contacts_trash_supporting),
-                            leadingIcon = Icons.Outlined.Delete,
-                            checked = trashEnabled,
-                            onCheckedChange = { enabled ->
-                                trashEnabled = enabled
-                                prefs.setContactsTrashEnabled(enabled)
-                            }
-                        )
-                    }
-
-                    item {
-                        val trashedContacts by contactsVM.trashedContacts.collectAsState()
-                        LaunchedEffect(Unit) {
-                            contactsVM.fetchTrashedContacts()
-                        }
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_contacts_trash_view),
-                            supporting = stringResource(R.string.settings_contacts_trash_view_supporting, trashedContacts.size),
-                            leadingIcon = Icons.Outlined.RestoreFromTrash,
-                            onClick = { navigator.navigate(TrashContactsScreenDestination) }
+                            headline = stringResource(R.string.priority_contacts_title),
+                            supporting = stringResource(R.string.priority_contacts_supporting),
+                            leadingIcon = Icons.Outlined.NotificationImportant,
+                            onClick = { navigator.navigate(PriorityContactsScreenDestination) }
                         )
                     }
 

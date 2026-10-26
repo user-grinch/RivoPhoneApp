@@ -307,6 +307,7 @@
     <string name="contact_details_video">Video</string>
     <string name="contact_details_info_title">Información de contacto</string>
     <string name="contact_bullet_favorite">" • Favorito"</string>
+    <string name="contact_bullet_default">" • Predeterminado"</string>
     <string name="contact_bullet_recent">" • Recientes"</string>
     <string name="content_desc_favorite">Favorito</string>
     <string name="contact_clear_favorite">Borrar favorito</string>
@@ -1490,7 +1491,7 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Aplicar fondos de gradiente dinámicos para contactar los avatares iniciales</string>
     <string name="loc_typography">Tipografía</string>
     <string name="loc_font_text_size_and_system_font">Fuente, tamaño de texto y fuente del sistema</string>
-    <string name="loc_call_screen_buttons">Botones de pantalla de llamada</string>
+    <string name="loc_call_screen_buttons">Pantalla de llamada</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Elige la posición de cada botón de llamada</string>
     <string name="loc_hide_avatar_with_wallpaper">Ocultar avatar con fondo de pantalla</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omitir círculo de avatar cuando se establece un fondo de pantalla de contacto completo</string>
@@ -1671,8 +1672,8 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Borrar todo</string>
     <string name="loc_refresh">Refrescar</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">Un total de grabaciones ${recordings.size} se guardan en este dispositivo</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimización</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">Un total de grabaciones %1$d se guardan en este dispositivo</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimización</string>
     <string name="loc_dismiss">Descartar</string>
     <string name="loc_saved_call_recordings">Grabaciones de llamadas guardadas</string>
     <string name="loc_recording_controls">Controles de grabación</string>
@@ -1685,13 +1686,13 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_minimum_duration_filter">Filtro de duración mínimo</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Descartar llamadas ultrarrápidas por debajo del umbral</string>
     <string name="loc_delete_all_recordings">¿Borrar todas las grabaciones?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Todas las grabaciones ${recordings.size} se eliminarán permanentemente de tu dispositivo. Esta acción no se puede deshacer.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Todas las grabaciones %1$d se eliminarán permanentemente de tu dispositivo. Esta acción no se puede deshacer.</string>
     <string name="loc_select_start_date_from">Seleccionar fecha de inicio (From)</string>
     <string name="loc_select_end_date_to">Seleccionar fecha final (hasta)</string>
     <string name="loc_play">Jugar</string>
     <string name="loc_rewind_10s">Rebobinar 10 s</string>
     <string name="loc_forward_10s">Reenviar 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} seleccionado</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d seleccionado</string>
     <string name="loc_privatecontacts_size_secured">%1$d asegurado</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Almacenado localmente en la bóveda de arena de Rivo • oculto de las aplicaciones de WhatsApp y del sistema</string>
     <string name="loc_select_contacts_for_private_storage">Seleccionar contactos para almacenamiento privado</string>
@@ -1705,7 +1706,7 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_hide_from_settings">Ocultar de Ajustes</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Eliminar el almacenamiento privado del menú de configuración (accesible sólo a través del código secreto)</string>
     <string name="loc_pick_contacts_for_vault">Escoge contactos para la bóveda</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">¿Eliminar Permanentemente ${selectedContactIds.size} contacto(s) seleccionados del almacenamiento privado?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">¿Eliminar Permanentemente %1$d contacto(s) seleccionados del almacenamiento privado?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Escriba este código secreto en el teclado para revelar contactos en el almacenamiento privado.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Solo el código secreto de dialpad accederá al almacenamiento privado</string>
     <string name="loc_security_protection">Seguridad &amp; Protección</string>

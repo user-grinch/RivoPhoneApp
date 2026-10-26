@@ -339,6 +339,18 @@ fun ContactDetailsScreen(
         }
     }
 
+    val writeContactsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            fullContact?.let { contact ->
+                val newFavorite = !contact.isFavorite
+                fullContact = contact.copy(isFavorite = newFavorite)
+                contactsViewModel.toggleFavorite(contact)
+            }
+        }
+    }
+
     val backgroundPickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
@@ -499,7 +511,15 @@ fun ContactDetailsScreen(
     }
 
     val onNumberActionClick = { action: (String) -> Unit, title: String ->
-        if (fullContact != null && fullContact!!.phoneNumbers.size > 1) {
+        val validNumbers = fullContact?.phoneNumbers?.filter { it.isNotBlank() } ?: emptyList()
+        val defaultNum = favoriteNumber
+        val matchingDefault = if (defaultNum != null) {
+            validNumbers.find { areNumbersEqual(it, defaultNum) }
+        } else null
+
+        if (matchingDefault != null) {
+            action(matchingDefault)
+        } else if (validNumbers.size > 1) {
             selectionTitle = title
             pendingSocialAction = { action(it) }
             showNumberSelectionDialog = true
@@ -594,7 +614,7 @@ fun ContactDetailsScreen(
             onItemSelected = { pendingSocialAction?.invoke(it) },
             itemSupporting = { mobileLabel },
             icon = Icons.Default.Phone,
-            itemIcon = { if (areNumbersEqual(favoriteNumber, it)) Icons.Default.Star else Icons.Default.Phone },
+            itemIcon = { if (areNumbersEqual(favoriteNumber, it)) Icons.Default.CheckCircle else Icons.Default.Phone },
             isSelected = { areNumbersEqual(favoriteNumber, it) }
         )
     }
@@ -1070,9 +1090,13 @@ fun ContactDetailsScreen(
                                     iconSize = 22.dp,
                                     onClick = {
                                         fullContact?.let { contact ->
-                                            val newFavorite = !contact.isFavorite
-                                            fullContact = contact.copy(isFavorite = newFavorite)
-                                            contactsViewModel.toggleFavorite(contact)
+                                            if (contact.isPrivate || ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                                                val newFavorite = !contact.isFavorite
+                                                fullContact = contact.copy(isFavorite = newFavorite)
+                                                contactsViewModel.toggleFavorite(contact)
+                                            } else {
+                                                writeContactsLauncher.launch(Manifest.permission.WRITE_CONTACTS)
+                                            }
                                         }
                                     },
                                     modifier = Modifier.weight(1f)
@@ -1086,6 +1110,7 @@ fun ContactDetailsScreen(
                         val lastUsed = fullContact?.id?.let { prefs.getLastUsedNumber(it) }
                         val mobileLabel = stringResource(R.string.label_mobile)
                         val bulletFavorite = stringResource(R.string.contact_bullet_favorite)
+                        val bulletDefault = stringResource(R.string.contact_bullet_default)
                         val bulletRecent = stringResource(R.string.contact_bullet_recent)
                         RivoExpressiveGroup(
                             title = stringResource(R.string.contact_details_info_title),
@@ -1112,11 +1137,11 @@ fun ContactDetailsScreen(
                                                 headline = formatPhoneNumber(number),
                                                 supporting = buildString {
                                                     append(typeText.ifBlank { mobileLabel })
-                                                    if (isFav) append(bulletFavorite)
+                                                    if (isFav) append(bulletDefault)
                                                     if (isRecent) append(bulletRecent)
                                                 },
                                                 leadingIcon = Icons.Default.Phone,
-                                                trailingIcon = if (isFav) Icons.Default.Star else if (isRecent) Icons.Default.History else null,
+                                                trailingIcon = if (isFav) Icons.Default.CheckCircle else if (isRecent) Icons.Default.History else null,
                                                 isCompact = true,
                                                 onClick = { callLauncher.dial(number, fullContact) },
                                                 onLongClick = { showMenu = true }
@@ -1129,8 +1154,8 @@ fun ContactDetailsScreen(
                                                 RivoDropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            if (isFav) stringResource(R.string.contact_clear_favorite) else stringResource(
-                                                                R.string.contact_set_as_favorite
+                                                            if (isFav) stringResource(R.string.contact_clear_default) else stringResource(
+                                                                R.string.contact_set_as_default
                                                             )
                                                         )
                                                     },
@@ -1148,7 +1173,7 @@ fun ContactDetailsScreen(
                                                     },
                                                     leadingIcon = {
                                                         Icon(
-                                                            if (isFav) Icons.Default.StarOutline else Icons.Default.Star,
+                                                            if (isFav) Icons.Default.RemoveCircleOutline else Icons.Default.CheckCircle,
                                                             null
                                                         )
                                                     }
@@ -1207,10 +1232,9 @@ fun ContactDetailsScreen(
                                         Box {
                                             RivoListItem(
                                                 headline = email,
-                                                supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) stringResource(
-                                                    R.string.contact_bullet_favorite
-                                                ) else "",
+                                                supporting = emailTypeText.ifBlank { stringResource(R.string.label_email) } + if (isFav) bulletDefault else "",
                                                 leadingIcon = Icons.Default.Email,
+                                                trailingIcon = if (isFav) Icons.Default.CheckCircle else null,
                                                 isCompact = true,
                                                 onClick = { emailLauncher.sendEmail(email, fullContact) },
                                                 onLongClick = { showMenu = true }
@@ -1240,7 +1264,7 @@ fun ContactDetailsScreen(
                                                     },
                                                     leadingIcon = {
                                                         Icon(
-                                                            if (isFav) Icons.Default.StarOutline else Icons.Default.Star,
+                                                            if (isFav) Icons.Default.RemoveCircleOutline else Icons.Default.CheckCircle,
                                                             null
                                                         )
                                                     }

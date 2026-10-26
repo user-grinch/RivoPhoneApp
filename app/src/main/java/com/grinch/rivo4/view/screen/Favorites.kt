@@ -1,10 +1,16 @@
 package com.grinch.rivo4.view.screen
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.rivoCornerDp
 
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.view.HapticFeedbackConstants
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -140,6 +146,28 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
     var numberSelection by remember { mutableStateOf<NumberSelection?>(null) }
     var isGridView by rememberSaveable { mutableStateOf(prefs.isFavoritesViewAsGrid()) }
 
+    val context = LocalContext.current
+    var pendingFavContact by remember { mutableStateOf<Contact?>(null) }
+    val writeContactsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            pendingFavContact?.let {
+                contactsVM.toggleFavorite(it)
+                pendingFavContact = null
+            }
+        }
+    }
+
+    val toggleFavoriteWithPermission: (Contact) -> Unit = { contact ->
+        if (contact.isPrivate || ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            contactsVM.toggleFavorite(contact)
+        } else {
+            pendingFavContact = contact
+            writeContactsLauncher.launch(Manifest.permission.WRITE_CONTACTS)
+        }
+    }
+
     fun performAction(contact: Contact, number: String, action: FavoriteAction) {
         view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         when (action) {
@@ -150,10 +178,19 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
 
     fun requestAction(contact: Contact, action: FavoriteAction) {
         val numbers = contact.phoneNumbers.filter { it.isNotBlank() }
-        when {
-            numbers.isEmpty() -> Unit
-            numbers.size == 1 -> performAction(contact, numbers.first(), action)
-            else -> numberSelection = NumberSelection(contact, action)
+        if (numbers.isEmpty()) return
+
+        val defaultNum = prefs.getFavoriteNumber(contact.id)
+        val matchingDefault = if (defaultNum != null) {
+            numbers.find { areNumbersEqual(it, defaultNum) }
+        } else null
+
+        if (matchingDefault != null) {
+            performAction(contact, matchingDefault, action)
+        } else if (numbers.size == 1) {
+            performAction(contact, numbers.first(), action)
+        } else {
+            numberSelection = NumberSelection(contact, action)
         }
     }
 
@@ -381,7 +418,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                         isEditing = isEditing,
                         isDragging = dragging,
                         onUnfavorite = {
-                            contactsVM.toggleFavorite(contact)
+                            toggleFavoriteWithPermission(contact)
                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                         },
                         onOpen = {
@@ -398,7 +435,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
                         isEditing = isEditing,
                         isDragging = dragging,
                         onUnfavorite = {
-                            contactsVM.toggleFavorite(contact)
+                            toggleFavoriteWithPermission(contact)
                             view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                         },
                         onOpen = {
@@ -413,6 +450,8 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
     }
 
     numberSelection?.let { selection ->
+        val lastUsed = prefs.getLastUsedNumber(selection.contact.id)
+        val defaultNum = prefs.getFavoriteNumber(selection.contact.id)
         RivoSelectionDialog(
             onDismissRequest = { numberSelection = null },
             title = stringResource(R.string.favorites_choose_number),
@@ -420,8 +459,10 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
             itemLabel = ::formatPhoneNumber,
             itemSupporting = { selection.contact.name },
             itemIcon = { if (selection.action == FavoriteAction.CALL) Icons.Default.Call else Icons.AutoMirrored.Filled.Message },
+            isSelected = { areNumbersEqual(it, defaultNum) || areNumbersEqual(it, lastUsed) },
             onItemSelected = { number ->
                 numberSelection = null
+                prefs.setLastUsedNumber(selection.contact.id, number)
                 performAction(selection.contact, number, selection.action)
             }
         )
@@ -433,7 +474,7 @@ private fun FavoritesGridContent(navigator: DestinationsNavigator) {
             displayOrder = displayOrder,
             onDismiss = { showAddSheet = false },
             onAddFavorite = { contact ->
-                contactsVM.toggleFavorite(contact)
+                toggleFavoriteWithPermission(contact)
                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
             }
         )

@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.provider.Settings
 import android.util.Log
 
 import android.telecom.Call
@@ -116,7 +115,7 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        applySystemOrientationPolicy()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         intentState = intent
         enableEdgeToEdge()
         com.grinch.rivo4.controller.util.AppShortcutsHelper.init(this)
@@ -345,24 +344,6 @@ open class MainActivity : androidx.fragment.app.FragmentActivity() {
                 }
                 }
             }
-        }
-    }
-
-    private fun applySystemOrientationPolicy() {
-        val rotationEnabled = try {
-            Settings.System.getInt(
-                contentResolver,
-                Settings.System.ACCELEROMETER_ROTATION,
-                1
-            ) != 0
-        } catch (_: SecurityException) {
-            true
-        }
-
-        requestedOrientation = if (rotationEnabled) {
-            ActivityInfo.SCREEN_ORIENTATION_USER
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
     }
 

@@ -941,8 +941,8 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Şterge tot</string>
     <string name="loc_refresh">Împrospătează</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} înregistrările totale sunt salvate pe acest dispozitiv</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimizare</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d înregistrările totale sunt salvate pe acest dispozitiv</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimizare</string>
     <string name="loc_dismiss">Renunţaţi</string>
     <string name="loc_saved_call_recordings">Înregistrări de apeluri salvate</string>
     <string name="loc_recording_controls">Controale de înregistrare</string>
@@ -955,13 +955,13 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_minimum_duration_filter">Filtru minim de durată</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Renunță la apelurile ultra-scurte sub prag</string>
     <string name="loc_delete_all_recordings">Ștergeți toate înregistrările?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Toate înregistrările ${recordings.size} vor fi eliminate permanent de pe dispozitiv. Această acțiune nu poate fi anulată.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Toate înregistrările %1$d vor fi eliminate permanent de pe dispozitiv. Această acțiune nu poate fi anulată.</string>
     <string name="loc_select_start_date_from">Selectați data de început (de la)</string>
     <string name="loc_select_end_date_to">Selectaţi data de încheiere (la)</string>
     <string name="loc_play">Redare</string>
     <string name="loc_rewind_10s">Rulează 10s</string>
     <string name="loc_forward_10s">Redirecționează 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selectate</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d selectate</string>
     <string name="loc_privatecontacts_size_secured">%1$d securizat</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Stocat local în seiful sandboxat al Rivo-ului • Ascuns din WhatsApp și aplicații de sistem</string>
     <string name="loc_select_contacts_for_private_storage">Selectați Contactele pentru Depozitare Privată</string>
@@ -975,7 +975,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_hide_from_settings">Ascunde din Setări</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Elimină stocarea privată din meniul de setări (accesibil doar prin codul secret)</string>
     <string name="loc_pick_contacts_for_vault">Alege Contacte pentru seif</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Ștergeți permanent ${selectedContactIds.size} contactele selectate din stocarea privată?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Ștergeți permanent %1$d contactele selectate din stocarea privată?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Introduceţi acest cod secret pe fereastra de apel pentru a dezvălui contactele din stocarea privată.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Doar codul de apel secret va accesa stocarea privată</string>
     <string name="loc_security_protection">Securitate &amp; Protecție</string>

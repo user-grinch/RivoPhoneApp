@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ads.RewardedAdManager
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.findActivity
 import com.grinch.rivo4.view.components.RivoExpressiveCard
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
@@ -86,7 +87,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                 showVideoAdLoading = false
                 android.widget.Toast.makeText(
                     context,
-                    "Thank you for supporting Rivo!",
+                    "Thank you for your support!",
                     android.widget.Toast.LENGTH_LONG
                 ).show()
             }
@@ -238,9 +239,11 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                             if (isPlayStoreBuild) {
                                 showVideoAdLoading = true
                                 videoAdError = null
-                                val activity = context as? Activity
-                                activity?.let {
-                                    rewardedAdManager.showAd(it) {}
+                                val activity = context.findActivity()
+                                if (activity != null) {
+                                    rewardedAdManager.showAd(activity)
+                                } else {
+                                    showVideoAdLoading = false
                                 }
                             } else {
                                 showFossDialog = true

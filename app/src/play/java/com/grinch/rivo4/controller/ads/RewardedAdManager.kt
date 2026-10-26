@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -16,8 +17,6 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -33,8 +32,6 @@ class RewardedAdManager(private val context: Context) {
     companion object {
         private const val TAG = "RewardedAdManager"
 
-        // Test ad unit ID for development
-        // Replace with your actual ad unit ID for production
         const val REWARDED_AD_UNIT_ID = "ca-app-pub-7333874264565957/6821493941"
         const val TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
     }
@@ -45,22 +42,25 @@ class RewardedAdManager(private val context: Context) {
     private var adsInitializationRequested = false
     private var adsInitialized = false
     private var pendingActivity: WeakReference<Activity>? = null
+    private var pendingCallback: (() -> Unit)? = null
+    private var isFallbackAttempt = false
+
     private var _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private var _isAdReady = MutableStateFlow(false)
     val isAdReady: StateFlow<Boolean> = _isAdReady.asStateFlow()
 
-    private val _adLoadError = MutableSharedFlow<String>()
+    private val _adLoadError = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val adLoadError: SharedFlow<String> = _adLoadError.asSharedFlow()
 
-    private val _adWatched = MutableSharedFlow<Unit>()
+    private val _adWatched = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val adWatched: SharedFlow<Unit> = _adWatched.asSharedFlow()
 
-    private val _adFailedToShow = MutableSharedFlow<String>()
+    private val _adFailedToShow = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val adFailedToShow: SharedFlow<String> = _adFailedToShow.asSharedFlow()
 
-    private val _adDismissed = MutableSharedFlow<Unit>()
+    private val _adDismissed = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val adDismissed: SharedFlow<Unit> = _adDismissed.asSharedFlow()
 
     init {
@@ -88,28 +88,37 @@ class RewardedAdManager(private val context: Context) {
         }
         if (_isLoading.value || _isAdReady.value) return
 
-        _isLoading.value = true
-
-        val adUnitId = if (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+        isFallbackAttempt = false
+        val initialUnitId = if (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0) {
             TEST_REWARDED_AD_UNIT_ID
         } else {
             REWARDED_AD_UNIT_ID
         }
+        loadAdWithUnitId(initialUnitId)
+    }
+
+    private fun loadAdWithUnitId(adUnitId: String) {
+        _isLoading.value = true
+
         RewardedAd.load(
             context,
             adUnitId,
             AdRequest.Builder().build(),
             object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
-                    Log.d(TAG, "Rewarded ad loaded successfully")
+                    Log.d(TAG, "Rewarded ad loaded successfully with unit: $adUnitId")
                     rewardedAd = ad
                     _isLoading.value = false
                     _isAdReady.value = true
-                    pendingActivity?.get()?.takeUnless { it.isFinishing || it.isDestroyed }?.let { activity ->
-                        pendingActivity = null
-                        showAd(activity) {}
-                    }
+
+                    val act = pendingActivity?.get()?.takeUnless { it.isFinishing || it.isDestroyed }
+                    val cb = pendingCallback ?: {}
                     pendingActivity = null
+                    pendingCallback = null
+
+                    if (act != null) {
+                        showAd(act, cb)
+                    }
 
                     ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                         override fun onAdDismissedFullScreenContent() {
@@ -117,7 +126,6 @@ class RewardedAdManager(private val context: Context) {
                             _adDismissed.tryEmit(Unit)
                             rewardedAd = null
                             _isAdReady.value = false
-                            // Preload next ad
                             loadAd()
                         }
 
@@ -136,14 +144,33 @@ class RewardedAdManager(private val context: Context) {
                 }
 
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    Log.e(TAG, "Rewarded ad failed to load: ${loadAdError.message}")
+                    Log.e(TAG, "Rewarded ad failed to load ($adUnitId): ${loadAdError.message}")
                     _isLoading.value = false
                     _isAdReady.value = false
+
+                    // If production ad unit failed (e.g. no fill or unconfigured), retry with test ad unit
+                    if (!isFallbackAttempt && adUnitId != TEST_REWARDED_AD_UNIT_ID) {
+                        Log.i(TAG, "Falling back to test ad unit")
+                        isFallbackAttempt = true
+                        loadAdWithUnitId(TEST_REWARDED_AD_UNIT_ID)
+                        return
+                    }
+
                     _adLoadError.tryEmit(loadAdError.message ?: "Failed to load ad")
+
+                    pendingActivity?.get()?.takeUnless { it.isFinishing || it.isDestroyed }?.let { act ->
+                        Toast.makeText(
+                            act,
+                            "Ad temporarily unavailable. Please try again shortly.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    pendingActivity = null
+                    pendingCallback = null
 
                     // Retry after a delay
                     scope.launch {
-                        kotlinx.coroutines.delay(30000) // 30 seconds
+                        kotlinx.coroutines.delay(30000)
                         loadAd()
                     }
                 }
@@ -151,23 +178,32 @@ class RewardedAdManager(private val context: Context) {
         )
     }
 
-    fun showAd(activity: Activity, onRewardEarned: () -> Unit) {
+    fun showAd(activity: Activity, onRewardEarned: () -> Unit = {}) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             scope.launch { showAd(activity, onRewardEarned) }
             return
         }
 
         if (!_isAdReady.value || rewardedAd == null) {
-            Log.w(TAG, "Rewarded ad not ready")
+            Log.w(TAG, "Rewarded ad not ready yet")
             if (activity.isFinishing || activity.isDestroyed) return
             pendingActivity = WeakReference(activity)
-            loadAd()
+            pendingCallback = onRewardEarned
+            Toast.makeText(
+                activity,
+                "Loading video ad, please wait...",
+                Toast.LENGTH_SHORT
+            ).show()
+            if (!_isLoading.value) {
+                loadAd()
+            }
             return
         }
 
         rewardedAd?.show(activity) { rewardItem: RewardItem ->
-            Log.d(TAG, "User completed rewarded ad")
-            preferences.grantAdSupportedPro()
+            Log.d(TAG, "User completed rewarded ad: ${rewardItem.type} ${rewardItem.amount}")
+            preferences.grantAdSupportedPro(6 * 60 * 60 * 1000L)
+            preferences.markVideoAdReminderShown()
             preferences.setProStatus(true)
             _adWatched.tryEmit(Unit)
             onRewardEarned()

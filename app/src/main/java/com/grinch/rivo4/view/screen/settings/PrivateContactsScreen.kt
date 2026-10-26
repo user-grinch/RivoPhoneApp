@@ -138,7 +138,7 @@ fun PrivateContactsScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = context.getString(R.string.loc_selectedcontactids_size_selected),
+                            text = context.getString(R.string.loc_selectedcontactids_size_selected, selectedContactIds.size),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -544,7 +544,10 @@ fun PrivateContactsScreen(
                 showDeleteConfirmDialog = false
             },
             title = stringResource(R.string.action_delete),
-            message = context.getString(R.string.loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri),
+            message = context.getString(
+                R.string.loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri,
+                selectedContactIds.size
+            ),
             confirmLabel = stringResource(R.string.action_delete),
             dismissLabel = context.getString(R.string.action_cancel),
             icon = Icons.Outlined.Delete

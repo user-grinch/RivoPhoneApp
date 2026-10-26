@@ -65,9 +65,6 @@ fun BottomNavScreen(
     var startLocation by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL))
     }
-    var mergeFavorites by remember(settingsState) {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true))
-    }
     var predictiveBackEnabled by remember(settingsState) {
         mutableStateOf(prefs.isPredictiveBackEnabled())
     }
@@ -354,18 +351,6 @@ fun BottomNavScreen(
                                 )
                             }
                         }
-                    }
-                    item {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_interface_merge_favorites),
-                            supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
-                            leadingIcon = Icons.Outlined.Star,
-                            checked = mergeFavorites,
-                            onCheckedChange = {
-                                mergeFavorites = it
-                                prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
-                            }
-                        )
                     }
                     item {
                         RivoSwitchListItem(

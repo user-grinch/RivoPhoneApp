@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,16 +51,21 @@ fun rememberMessageLauncher(): MessageLauncher {
     val messageLauncher = remember {
         MessageLauncher { number, contact ->
             if (number.isBlank() && contact != null) {
-                if (contact.phoneNumbers.size > 1) {
-                    val favNum = prefs.getFavoriteNumber(contact.id)
-                    if (favNum != null) {
-                        initiateMessage(favNum, contact)
+                val validNumbers = contact.phoneNumbers.filter { it.isNotBlank() }
+                if (validNumbers.size > 1) {
+                    val defaultNum = prefs.getFavoriteNumber(contact.id)
+                    val matchingDefault = if (defaultNum != null) {
+                        validNumbers.find { areNumbersEqual(it, defaultNum) }
+                    } else null
+
+                    if (matchingDefault != null) {
+                        initiateMessage(matchingDefault, contact)
                     } else {
                         pendingContact = contact
                         showNumberPicker = true
                     }
-                } else if (contact.phoneNumbers.isNotEmpty()) {
-                    initiateMessage(contact.phoneNumbers.first(), contact)
+                } else if (validNumbers.isNotEmpty()) {
+                    initiateMessage(validNumbers.first(), contact)
                 }
             } else if (number.isNotBlank()) {
                 initiateMessage(number, contact)
@@ -69,19 +76,30 @@ fun rememberMessageLauncher(): MessageLauncher {
     if (showNumberPicker && pendingContact != null) {
         val contact = pendingContact!!
         val lastUsed = prefs.getLastUsedNumber(contact.id)
+        val defaultNum = prefs.getFavoriteNumber(contact.id)
+        val validNumbers = contact.phoneNumbers.filter { it.isNotBlank() }
         
         RivoSelectionDialog(
-            onDismissRequest = { showNumberPicker = false },
+            onDismissRequest = { 
+                showNumberPicker = false 
+                pendingContact = null
+            },
             title = stringResource(R.string.select_number_title),
-            items = contact.phoneNumbers,
+            items = validNumbers,
             itemLabel = { formatPhoneNumber(it) },
             onItemSelected = { selectedNumber ->
-                initiateMessage(selectedNumber, contact)
+                showNumberPicker = false
+                val c = pendingContact
+                pendingContact = null
+                if (c != null) {
+                    prefs.setLastUsedNumber(c.id, selectedNumber)
+                }
+                initiateMessage(selectedNumber, c ?: contact)
             },
             itemSupporting = { mobileLabel },
             icon = Icons.AutoMirrored.Filled.Message,
-            itemIcon = { Icons.AutoMirrored.Filled.Message },
-            isSelected = { areNumbersEqual(lastUsed, it) }
+            itemIcon = { if (areNumbersEqual(defaultNum, it)) Icons.Default.CheckCircle else if (areNumbersEqual(lastUsed, it)) Icons.Default.History else Icons.AutoMirrored.Filled.Message },
+            isSelected = { areNumbersEqual(defaultNum, it) || areNumbersEqual(lastUsed, it) }
         )
     }
 

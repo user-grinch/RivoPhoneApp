@@ -118,6 +118,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:enableOnBackInvokedCallback="true"
             android:theme="@style/Theme.App.Starting">
@@ -258,6 +259,7 @@
             android:exported="true"
             android:enabled="false"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:icon="@mipmap/ic_launcher_contacts"
             android:roundIcon="@mipmap/ic_launcher_contacts_round"
             android:label="@string/app_name_contacts"

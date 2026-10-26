@@ -311,6 +311,7 @@
     <string name="contact_details_video">Wideo</string>
     <string name="contact_details_info_title">Informacje o kontakcie</string>
     <string name="contact_bullet_favorite">" • Ulubione"</string>
+    <string name="contact_bullet_default">" • Domyślny"</string>
     <string name="contact_bullet_recent">" • Ostatnie"</string>
     <string name="content_desc_favorite">Ulubione</string>
     <string name="contact_clear_favorite">Usuń z ulubionych</string>
@@ -1678,8 +1679,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Usuń wszystkie</string>
     <string name="loc_refresh">Odśwież</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} wszystkie nagrania są zapisywane na tym urządzeniu</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optymalizacja ${OemPermissionHelper.getOemBrandDisplayName()}</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d wszystkie nagrania są zapisywane na tym urządzeniu</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optymalizacja %1$s</string>
     <string name="loc_dismiss">Odrzuć</string>
     <string name="loc_saved_call_recordings">Zapisane nagrania połączeń</string>
     <string name="loc_recording_controls">Sterowanie nagrywaniem</string>
@@ -1692,13 +1693,13 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_minimum_duration_filter">Filtr minimalnego czasu trwania</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Odrzuć bardzo krótkie połączenia poniżej progu</string>
     <string name="loc_delete_all_recordings">Usunąć wszystkie nagrania?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Wszystkie nagrania ${recordings.size} zostaną trwale usunięte z Twojego urządzenia. Tej czynności nie można cofnąć.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Wszystkie nagrania %1$d zostaną trwale usunięte z Twojego urządzenia. Tej czynności nie można cofnąć.</string>
     <string name="loc_select_start_date_from">Wybierz datę rozpoczęcia (Od)</string>
     <string name="loc_select_end_date_to">Wybierz datę zakończenia (To)</string>
     <string name="loc_play">Odtwórz</string>
     <string name="loc_rewind_10s">Przewiń 10s</string>
     <string name="loc_forward_10s">Do przodu 10s</string>
-    <string name="loc_selectedcontactids_size_selected">Wybrano ${selectedContactIds.size}</string>
+    <string name="loc_selectedcontactids_size_selected">Wybrano %1$d</string>
     <string name="loc_privatecontacts_size_secured">%1$d zabezpieczony</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Przechowywane lokalnie w bezpiecznym schowku Rivo • Ukryte przed WhatsAppem i aplikacjami systemowymi</string>
     <string name="loc_select_contacts_for_private_storage">Wybierz kontakty do pamięci prywatnej</string>
@@ -1712,7 +1713,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_hide_from_settings">Ukryj w ustawieniach</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Usuń pamięć prywatną z menu ustawień (dostępna tylko za pomocą tajnego kodu)</string>
     <string name="loc_pick_contacts_for_vault">Wybierz kontakty do sejfu</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Czy na stałe usunąć wybrane kontakty (${selectedContactIds.size}) z pamięci prywatnej?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Czy na stałe usunąć wybrane kontakty (%1$d) z pamięci prywatnej?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Wpisz ten tajny kod na klawiaturze numerycznej, aby ujawnić kontakty w pamięci prywatnej.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Tylko tajny kod klawiatury będzie miał dostęp do pamięci prywatnej</string>
     <string name="loc_security_protection">Bezpieczeństwo i ochrona</string>

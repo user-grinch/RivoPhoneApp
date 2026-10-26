@@ -44,7 +44,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.PreferenceManager
@@ -88,7 +88,12 @@ fun ContactScreenContent(
     navigator: DestinationsNavigator,
     onSelectionStateChange: ((Boolean, (@Composable () -> Unit)?) -> Unit)? = null
 ) {
-    val permState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+    val permState = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_CONTACTS
+        )
+    )
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val contactsVM: ContactsViewModel = koinActivityViewModel()
@@ -106,11 +111,20 @@ fun ContactScreenContent(
     }
 
     val availableAccounts by contactsVM.availableAccounts.collectAsState()
+    val contacts by contactsVM.filteredContacts.collectAsState()
     val isSelecting = selectedIds.isNotEmpty()
+    val allSelected = contacts.isNotEmpty() && selectedIds.size >= contacts.size
+
     val batchActionBar: @Composable () -> Unit = {
         BatchActionBar(
             selectedCount = selectedIds.size,
             onClear = { selectedIds = emptySet() },
+            onSelectAll = if (contacts.isNotEmpty()) {
+                {
+                    selectedIds = if (allSelected) emptySet() else contacts.map { it.id }.toSet()
+                }
+            } else null,
+            allSelected = allSelected,
             onDelete = {
                 contactsVM.deleteContacts(selectedIds.toList())
                 selectedIds = emptySet()
@@ -130,7 +144,7 @@ fun ContactScreenContent(
         )
     }
 
-    LaunchedEffect(isSelecting, selectedIds.size, availableAccounts) {
+    LaunchedEffect(isSelecting, selectedIds.size, availableAccounts, allSelected) {
         onSelectionStateChange?.invoke(isSelecting, if (isSelecting) batchActionBar else null)
     }
 
@@ -186,8 +200,8 @@ fun ContactScreenContent(
         ) {
             ContactContent(
                 navigator = navigator,
-                isGranted = permState.status == PermissionStatus.Granted,
-                onRequestPermission = { permState.launchPermissionRequest() },
+                isGranted = permState.allPermissionsGranted,
+                onRequestPermission = { permState.launchMultiplePermissionRequest() },
                 listState = listState,
                 selectedIds = selectedIds,
                 onToggleSelection = { id ->
@@ -259,14 +273,21 @@ fun BatchActionBar(
     onDelete: () -> Unit,
     onMove: (Account?) -> Unit,
     onMoveToPrivate: () -> Unit,
-    availableAccounts: List<Account>
+    availableAccounts: List<Account>,
+    onSelectAll: (() -> Unit)? = null,
+    allSelected: Boolean = false
 ) {
     var showMoveDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.statusBars)
+            .windowInsetsPadding(
+                WindowInsets.statusBars
+                    .union(WindowInsets.displayCutout)
+                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+            )
             .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = RoundedCornerShape(28.dp),
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -287,13 +308,39 @@ fun BatchActionBar(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
+            if (onSelectAll != null) {
+                IconButton(onClick = onSelectAll) {
+                    Icon(
+                        imageVector = if (allSelected) Icons.Default.Deselect else Icons.Default.SelectAll,
+                        contentDescription = stringResource(
+                            if (allSelected) R.string.action_select_none else R.string.action_select_all
+                        )
+                    )
+                }
+            }
             IconButton(onClick = { showMoveDialog = true }) {
                 Icon(Icons.AutoMirrored.Filled.DriveFileMove, stringResource(R.string.content_desc_move))
             }
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = { showDeleteConfirmDialog = true }) {
                 Icon(Icons.Default.Delete, stringResource(R.string.action_delete))
             }
         }
+    }
+
+    if (showDeleteConfirmDialog) {
+        RivoConfirmationDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            onConfirm = {
+                showDeleteConfirmDialog = false
+                onDelete()
+            },
+            title = stringResource(R.string.contact_delete_dialog_title),
+            message = pluralStringResource(R.plurals.selection_count_selected, selectedCount, selectedCount),
+            confirmLabel = stringResource(R.string.action_delete),
+            dismissLabel = stringResource(R.string.action_cancel),
+            icon = Icons.Default.Delete,
+            isDestructive = true
+        )
     }
 
     if (showMoveDialog) {

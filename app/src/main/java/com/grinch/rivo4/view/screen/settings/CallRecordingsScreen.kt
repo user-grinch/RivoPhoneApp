@@ -180,9 +180,6 @@ fun CallRecordingsContent(
     var showingRecordingsList by remember { mutableStateOf(initialShowList) }
 
     // Settings state
-    var callRecordingEnabled by remember {
-        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING, true))
-    }
     var autoRecordEnabled by remember {
         mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_CALL_RECORDING_AUTO, false))
     }
@@ -193,13 +190,6 @@ fun CallRecordingsContent(
                 PreferenceManager.RECORD_FILTER_ALL
             )
         )
-    }
-
-    var bitrate by remember {
-        mutableIntStateOf(prefs.getInt("call_recording_bitrate", 128000))
-    }
-    var minDurationFilter by remember {
-        mutableIntStateOf(prefs.getInt("call_recording_min_duration", 0))
     }
 
     // Storage path state
@@ -623,7 +613,7 @@ fun CallRecordingsContent(
                             if (recordings.isNotEmpty()) {
                                 Spacer(Modifier.height(8.dp))
                                 Text(
-                                    text = stringResource(R.string.loc_recordings_size_total_recordings_are_saved_on_this_device),
+                                    text = stringResource(R.string.loc_recordings_size_total_recordings_are_saved_on_this_device, recordings.size),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
@@ -822,7 +812,10 @@ fun CallRecordingsContent(
                                         Spacer(Modifier.width(12.dp))
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                text = stringResource(R.string.loc_oempermissionhelper_getoembranddisplayname_optimization),
+                                                text = stringResource(
+                                                    R.string.loc_oempermissionhelper_getoembranddisplayname_optimization,
+                                                    OemPermissionHelper.getOemBrandDisplayName()
+                                                ),
                                                 style = MaterialTheme.typography.titleMedium,
                                                 fontWeight = FontWeight.Bold
                                             )
@@ -908,18 +901,6 @@ fun CallRecordingsContent(
                     ) {
                         item {
                             RivoSwitchListItem(
-                                headline = stringResource(R.string.loc_enable_call_recording),
-                                supporting = stringResource(R.string.loc_allow_recording_calls_and_show_record_button_during_active_calls),
-                                leadingIcon = Icons.Outlined.Mic,
-                                checked = callRecordingEnabled,
-                                onCheckedChange = {
-                                    callRecordingEnabled = it
-                                    prefs.setBoolean(PreferenceManager.KEY_CALL_RECORDING, it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSwitchListItem(
                                 headline = stringResource(R.string.loc_auto_record_calls),
                                 supporting = stringResource(R.string.loc_automatically_record_calls_as_soon_as_they_connect),
                                 leadingIcon = Icons.Outlined.PlayCircleOutline,
@@ -960,53 +941,7 @@ fun CallRecordingsContent(
                     }
                 }
 
-                // 5. Audio Quality & Filters Section
-                item {
-                    RivoExpressiveGroup(
-                        title = stringResource(R.string.loc_audio_quality_filters),
-                        icon = Icons.Outlined.GraphicEq
-                    ) {
-                        item {
-                            RivoSelectListItem(
-                                headline = stringResource(R.string.loc_audio_bitrate),
-                                supporting = stringResource(R.string.loc_higher_bitrate_yields_clearer_audio_output),
-                                leadingIcon = Icons.Outlined.HighQuality,
-                                options = listOf(
-                                    "64 kbps (Compact)" to 64000,
-                                    "96 kbps (Balanced)" to 96000,
-                                    "128 kbps (High Quality)" to 128000,
-                                    "192 kbps (Ultra)" to 192000,
-                                    "256 kbps (Maximum)" to 256000
-                                ),
-                                selectedValue = bitrate,
-                                onValueChange = {
-                                    bitrate = it
-                                    prefs.setInt("call_recording_bitrate", it)
-                                }
-                            )
-                        }
-                        item {
-                            RivoSelectListItem(
-                                headline = stringResource(R.string.loc_minimum_duration_filter),
-                                supporting = stringResource(R.string.loc_discard_ultra_short_calls_below_threshold),
-                                leadingIcon = Icons.Outlined.Timer,
-                                options = listOf(
-                                    stringResource(R.string.recording_min_duration_all_calls) to 0,
-                                    stringResource(R.string.recording_min_duration_ignore_3s) to 3,
-                                    stringResource(R.string.recording_min_duration_ignore_5s) to 5,
-                                    stringResource(R.string.recording_min_duration_ignore_10s) to 10
-                                ),
-                                selectedValue = minDurationFilter,
-                                onValueChange = {
-                                    minDurationFilter = it
-                                    prefs.setInt("call_recording_min_duration", it)
-                                }
-                            )
-                        }
-                    }
-                }
-
-                // 6. Storage & Location Section
+                // 5. Storage & Location Section
                 item {
                     RivoExpressiveGroup(
                         title = stringResource(R.string.settings_recording_storage_title),
@@ -1045,60 +980,6 @@ fun CallRecordingsContent(
                         }
                     }
                 }
-
-                // 7. Engine & Attribution Section
-                item {
-                    RivoExpressiveCard(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                RivoLeadingIconTile(
-                                    icon = Icons.Outlined.Code,
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                Spacer(Modifier.width(12.dp))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.call_recording_shizuku_attribution_title),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(Modifier.height(2.dp))
-                                    Text(
-                                        text = stringResource(R.string.call_recording_shizuku_attribution_desc),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(10.dp))
-                            OutlinedButton(
-                                onClick = { openLink(context, SHIZU_CALL_RECORDER_URL) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Outlined.Launch,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.call_recording_shizuku_attribution_action),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -1132,7 +1013,10 @@ fun CallRecordingsContent(
                 refreshKey++
             },
             title = stringResource(R.string.loc_delete_all_recordings),
-            message = stringResource(R.string.loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d),
+            message = stringResource(
+                R.string.loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d,
+                recordings.size
+            ),
             confirmLabel = stringResource(R.string.action_delete),
             icon = Icons.Outlined.DeleteSweep,
             isDestructive = true

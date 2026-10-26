@@ -941,8 +941,8 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Slet Alle</string>
     <string name="loc_refresh">Opdater</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} samlede optagelser gemmes på denne enhed</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimering</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d samlede optagelser gemmes på denne enhed</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimering</string>
     <string name="loc_dismiss">Afvis</string>
     <string name="loc_saved_call_recordings">Gemte Optagelser</string>
     <string name="loc_recording_controls">Optager Kontroller</string>
@@ -955,13 +955,13 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_minimum_duration_filter">Minimum Varigheds Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Slet ultrakorte opkald under tærsklen</string>
     <string name="loc_delete_all_recordings">Slet alle optagelser?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle ${recordings.size} optagelser vil blive fjernet permanent fra din enhed. Denne handling kan ikke fortrydes.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d optagelser vil blive fjernet permanent fra din enhed. Denne handling kan ikke fortrydes.</string>
     <string name="loc_select_start_date_from">Vælg Startdato (From)</string>
     <string name="loc_select_end_date_to">Vælg Slutdato (Til)</string>
     <string name="loc_play">Afspil</string>
     <string name="loc_rewind_10s">Genvind 10s</string>
     <string name="loc_forward_10s">Videresend 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} valgt</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d valgt</string>
     <string name="loc_privatecontacts_size_secured">%1$d sikret</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Gemt lokalt i Rivos sandkasse boks • Skjult fra WhatsApp og system apps</string>
     <string name="loc_select_contacts_for_private_storage">Vælg kontakter til privat lagerplads</string>
@@ -975,7 +975,7 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_hide_from_settings">Skjul i Indstillinger</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Fjern Privat lagerplads fra indstillingsmenuen (kun tilgængelig via hemmelig kode)</string>
     <string name="loc_pick_contacts_for_vault">Vælg kontakter til boks</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slet permanent ${selectedContactIds.size} valgte kontakt(r) fra privat lagerplads?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slet permanent %1$d valgte kontakt(r) fra privat lagerplads?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Skriv denne hemmelige kode på opkaldsblokken for at afsløre kontakter i privat lagerplads.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Kun den hemmelige dialpad kode vil tilgå privat lagerplads</string>
     <string name="loc_security_protection">Sikkerhed &amp; Beskyttelse</string>

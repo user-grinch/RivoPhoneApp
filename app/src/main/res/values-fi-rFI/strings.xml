@@ -935,7 +935,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Poista Kaikki</string>
     <string name="loc_refresh">Päivitä</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimointi</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimointi</string>
     <string name="loc_dismiss">Hylkää</string>
     <string name="loc_saved_call_recordings">Tallennetut Puheluäänitykset</string>
     <string name="loc_recording_controls">Tallennuksen Ohjaimet</string>
@@ -948,13 +948,13 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_minimum_duration_filter">Pienin Kesto Suodatin</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Hylkää erittäin lyhyet puhelut kynnysarvon alle</string>
     <string name="loc_delete_all_recordings">Poista kaikki nauhoitukset?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Kaikki ${recordings.size} tallenteet poistetaan laitteestasi pysyvästi. Tätä toimintoa ei voi peruuttaa.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Kaikki %1$d tallenteet poistetaan laitteestasi pysyvästi. Tätä toimintoa ei voi peruuttaa.</string>
     <string name="loc_select_start_date_from">Valitse Aloituspäivä (tyhjä)</string>
     <string name="loc_select_end_date_to">Valitse Päättymispäivä (Päättyessä)</string>
     <string name="loc_play">Toista</string>
     <string name="loc_rewind_10s">Rewind 10s</string>
     <string name="loc_forward_10s">Eteenpäin 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} valittu</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d valittu</string>
     <string name="loc_privatecontacts_size_secured">%1$d suojattu</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Paikallisesti tallennettu Rivan hiekkalaatikkoon • Piilotettu WhatsAppista ja järjestelmäsovelluksista</string>
     <string name="loc_select_contacts_for_private_storage">Valitse Yksityisen tallennustilan yhteystiedot</string>
@@ -968,7 +968,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_hide_from_settings">Piilota asetuksista</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Poista Yksityinen tallennustila asetusvalikosta (käytettävissä vain salaisen koodin kautta)</string>
     <string name="loc_pick_contacts_for_vault">Valitse holvin yhteystiedot</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Poistetaanko ${selectedContactIds.size} valitut yhteystiedot pysyvästi yksityisestä tallennustilasta?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Poistetaanko %1$d valitut yhteystiedot pysyvästi yksityisestä tallennustilasta?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Kirjoita tämä salainen koodi dialpadille paljastaaksesi yksityisvarastossa olevat yhteystiedot.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Vain salainen dialpad koodi käyttää yksityistä tallennustilaa</string>
     <string name="loc_security_protection">Turvallisuus &amp; Suojaus</string>

@@ -105,4 +105,64 @@ class ContactUtilsTest {
         assertEquals(null, contact.accountName)
         assertEquals(null, contact.accountType)
     }
+
+    @Test
+    fun testSplitDisplayName() {
+        val single = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName("Alice")
+        assertEquals("Alice", single.first)
+        assertEquals("", single.second)
+        assertEquals("", single.third)
+
+        val two = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName("Alice Smith")
+        assertEquals("Alice", two.first)
+        assertEquals("", two.second)
+        assertEquals("Smith", two.third)
+
+        val three = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName("Alice Marie Smith")
+        assertEquals("Alice", three.first)
+        assertEquals("Marie", three.second)
+        assertEquals("Smith", three.third)
+
+        val four = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName("Alice Anne Marie Smith")
+        assertEquals("Alice", four.first)
+        assertEquals("Anne Marie", four.second)
+        assertEquals("Smith", four.third)
+    }
+
+    @Test
+    fun testMatchesContactSearch() {
+        val contact = Contact(
+            id = "1",
+            name = "John Doe",
+            givenName = "John",
+            middleName = "Michael",
+            familyName = "Doe",
+            nickname = "Johnny",
+            phoneNumbers = listOf("+1 555-0199")
+        )
+
+        // Middle name search
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Michael"))
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "mich"))
+
+        // Last name search
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Doe"))
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "doe"))
+
+        // First name search
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "John"))
+
+        // Multi-token out-of-order query
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Doe John"))
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Michael Doe"))
+
+        // Nickname
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Johnny"))
+
+        // Phone number
+        assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "5550199"))
+
+        // Non-matching
+        assertFalse(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(contact, "Williams"))
+    }
 }

@@ -311,6 +311,7 @@
     <string name="contact_details_video">Видео</string>
     <string name="contact_details_info_title">Информация о контакте</string>
     <string name="contact_bullet_favorite">" • Избранные"</string>
+    <string name="contact_bullet_default">" • По умолчанию"</string>
     <string name="contact_bullet_recent">" • Недавние"</string>
     <string name="content_desc_favorite">Изар</string>
     <string name="contact_clear_favorite">Очистить избранное</string>
@@ -1678,7 +1679,7 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Удалить все</string>
     <string name="loc_refresh">Обновить</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Оптимизация</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Оптимизация</string>
     <string name="loc_dismiss">Отклонить</string>
     <string name="loc_saved_call_recordings">Записи о звонках сохранены</string>
     <string name="loc_recording_controls">Управление записями</string>
@@ -1691,13 +1692,13 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="loc_minimum_duration_filter">Фильтр минимальной длительности</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Отменить ультракороткие звонки ниже порога</string>
     <string name="loc_delete_all_recordings">Удалить все записи?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Все записи ${recordings.size} будут удалены с вашего устройства. Это действие нельзя отменить.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Все записи %1$d будут удалены с вашего устройства. Это действие нельзя отменить.</string>
     <string name="loc_select_start_date_from">Выберите дату начала (От)</string>
     <string name="loc_select_end_date_to">Выберите дату окончания (для)</string>
     <string name="loc_play">Играть</string>
     <string name="loc_rewind_10s">Перемотка 10 с назад</string>
     <string name="loc_forward_10s">Переслать 10 с</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} выбран</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d выбран</string>
     <string name="loc_privatecontacts_size_secured">%1$d защищён</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Сохранено локально в песочнице Rivo • Скрыто из WhatsApp и системных приложений</string>
     <string name="loc_select_contacts_for_private_storage">Выберите контакты для личного хранения</string>
@@ -1711,7 +1712,7 @@ ShizuCallRecorder (код записи вызова) — GPLv3 с раздело
     <string name="loc_hide_from_settings">Скрыть из настроек</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Удалить Приватное Хранилище из меню настроек (доступно только через секретный код)</string>
     <string name="loc_pick_contacts_for_vault">Выбрать контакты для Хранилище</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Окончательно удалить выбранный ${selectedContactIds.size} контакт(ы) из приватного хранилища?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Окончательно удалить выбранный %1$d контакт(ы) из приватного хранилища?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Введите этот секретный код на клавиатуре для раскрытия контактов в личном хранилище.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Только секретный код набора будет иметь доступ к приватному хранилищу</string>
     <string name="loc_security_protection">Безопасность &amp; Защита</string>

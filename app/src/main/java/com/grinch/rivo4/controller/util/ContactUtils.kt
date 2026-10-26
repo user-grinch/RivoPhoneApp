@@ -225,4 +225,95 @@ object ContactUtils {
         }
         return keys.distinct().sortedByDescending { it.length }
     }
+
+    fun splitDisplayName(full: String): Triple<String, String, String> {
+        val trimmed = full.trim()
+        if (trimmed.isEmpty()) return Triple("", "", "")
+        val parts = trimmed.split(Regex("\\s+"))
+        return when (parts.size) {
+            1 -> Triple(parts[0], "", "")
+            2 -> Triple(parts[0], "", parts[1])
+            else -> Triple(
+                parts.first(),
+                parts.subList(1, parts.size - 1).joinToString(" "),
+                parts.last()
+            )
+        }
+    }
+
+    fun matchesContact(
+        contact: Contact,
+        query: String,
+        cleanQuery: String = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' },
+        displayOrder: Int = 0
+    ): Boolean {
+        val q = query.trim()
+        if (q.isEmpty()) return false
+
+        // 1. Phone number match
+        if (cleanQuery.isNotEmpty() && contact.phoneNumbers.any { number ->
+            number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
+        }) {
+            return true
+        }
+
+        // 2. Direct string match on name or formatted representations
+        val formattedName = formatContactName(contact, displayOrder)
+        val displayName = contact.formattedDisplayName
+        if (contact.name.contains(q, ignoreCase = true) ||
+            formattedName.contains(q, ignoreCase = true) ||
+            displayName.contains(q, ignoreCase = true)
+        ) {
+            return true
+        }
+
+        // 3. Name parts: givenName, middleName, familyName, nickname, prefix, suffix
+        val nameParts = listOfNotNull(
+            contact.givenName?.ifBlank { null },
+            contact.middleName?.ifBlank { null },
+            contact.familyName?.ifBlank { null },
+            contact.nickname?.ifBlank { null },
+            contact.prefix?.ifBlank { null },
+            contact.suffix?.ifBlank { null }
+        )
+        if (nameParts.any { it.contains(q, ignoreCase = true) }) {
+            return true
+        }
+
+        // Fallback split if given/middle/family were not separated
+        val (splitGiven, splitMiddle, splitFamily) = splitDisplayName(contact.name)
+        val fallbackParts = listOfNotNull(
+            splitGiven.ifBlank { null },
+            splitMiddle.ifBlank { null },
+            splitFamily.ifBlank { null }
+        )
+        if (fallbackParts.any { it.contains(q, ignoreCase = true) }) {
+            return true
+        }
+
+        // 4. Email, Organization
+        if (contact.emails.any { it.contains(q, ignoreCase = true) }) return true
+        if (contact.organizations.any {
+            it.company.contains(q, ignoreCase = true) ||
+            it.title?.contains(q, ignoreCase = true) == true ||
+            it.department?.contains(q, ignoreCase = true) == true
+        }) return true
+
+        // 5. Multi-token query (e.g. "Doe John", "Michael Doe", "John Michael", "Dr. Smith")
+        val tokens = q.split("\\s+".toRegex()).filter { it.isNotBlank() }
+        if (tokens.size > 1) {
+            val allSearchableText = (nameParts + fallbackParts + listOf(
+                contact.name,
+                formattedName,
+                displayName
+            )).joinToString(" ")
+
+            val allTokensMatch = tokens.all { token ->
+                allSearchableText.contains(token, ignoreCase = true)
+            }
+            if (allTokensMatch) return true
+        }
+
+        return false
+    }
 }

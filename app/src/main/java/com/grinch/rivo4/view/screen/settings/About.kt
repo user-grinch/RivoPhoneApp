@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.RateReview
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SystemUpdate
+import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,6 +50,7 @@ import com.grinch.rivo4.view.theme.rivoPolygonShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.ContributorsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.PermissionsChecklistScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SupportDevelopmentScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ThirdPartyLicensesScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -219,6 +221,14 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             }
 
             RivoExpressiveGroup {
+                item {
+                    RivoListItem(
+                        headline = stringResource(R.string.loc_permissions_app_setup),
+                        supporting = stringResource(R.string.loc_review_granted_permissions_and_system_capabilities),
+                        leadingIcon = Icons.Outlined.VerifiedUser,
+                        onClick = { navigator.navigate(PermissionsChecklistScreenDestination) }
+                    )
+                }
                 item {
                     RivoListItem(
                         headline = stringResource(R.string.contributors_title),

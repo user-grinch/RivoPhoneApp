@@ -69,6 +69,7 @@ import com.grinch.rivo4.view.theme.RivoEasing
 import kotlin.math.roundToInt
 import androidx.navigation.NavController
 import com.grinch.rivo4.controller.util.PreferenceManager
+import com.grinch.rivo4.controller.util.findActivity
 import com.grinch.rivo4.controller.ads.RewardedAdManager
 import com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
 import com.grinch.rivo4.view.components.BottomBar
@@ -181,9 +182,17 @@ fun MainScreen(
 
     LaunchedEffect(currentTabId, settingsState) {
         isToolbarVisible = true
-        showVideoAdFab = IS_ADS_SUPPORTED && prefs.shouldShowVideoAdReminder()
-        if (showVideoAdFab && reminderMode == PreferenceManager.VIDEO_AD_REMINDER_SIX_HOURS) {
-            prefs.markVideoAdReminderShown()
+        val hasPro = prefs.isProStatus() || prefs.hasAdSupportedPro()
+        showVideoAdFab = IS_ADS_SUPPORTED && !hasPro && prefs.shouldShowVideoAdReminder()
+    }
+
+    LaunchedEffect(Unit) {
+        rewardedAdManager.adWatched.collect {
+            android.widget.Toast.makeText(
+                context,
+                "Thank you for your support!",
+                android.widget.Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -421,7 +430,10 @@ fun MainScreen(
             if (showVideoAdFab) {
                 SmallFloatingActionButton(
                     onClick = {
-                        (context as? Activity)?.let { rewardedAdManager.showAd(it) {} }
+                        val activity = context.findActivity()
+                        if (activity != null) {
+                            rewardedAdManager.showAd(activity)
+                        }
                     },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)

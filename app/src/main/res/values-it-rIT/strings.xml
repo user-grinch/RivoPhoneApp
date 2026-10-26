@@ -941,7 +941,7 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Elimina Tutto</string>
     <string name="loc_refresh">Aggiorna</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Ottimizzazione</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Ottimizzazione</string>
     <string name="loc_dismiss">Ignora</string>
     <string name="loc_saved_call_recordings">Registrazioni Di Chiamata Salvate</string>
     <string name="loc_recording_controls">Controlli Di Registrazione</string>
@@ -954,13 +954,13 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="loc_minimum_duration_filter">Filtro Di Durata Minima</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Scarta le chiamate ultra-brevi sotto la soglia</string>
     <string name="loc_delete_all_recordings">Eliminare tutte le registrazioni?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Tutte le registrazioni ${recordings.size} verranno rimosse definitivamente dal tuo dispositivo. Questa azione non può essere annullata.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Tutte le registrazioni %1$d verranno rimosse definitivamente dal tuo dispositivo. Questa azione non può essere annullata.</string>
     <string name="loc_select_start_date_from">Seleziona Data Di Inizio (From)</string>
     <string name="loc_select_end_date_to">Seleziona Data Di Fine (To)</string>
     <string name="loc_play">Gioca</string>
     <string name="loc_rewind_10s">Riavvolgi 10s</string>
     <string name="loc_forward_10s">Inoltra 10s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} selezionato</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d selezionato</string>
     <string name="loc_privatecontacts_size_secured">%1$d protetto</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Conservato localmente nella cassaforte sandbox di Rivo • Nascosto da WhatsApp e applicazioni di sistema</string>
     <string name="loc_select_contacts_for_private_storage">Seleziona contatti per memoria privata</string>
@@ -973,7 +973,7 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="loc_hide_from_settings">Nascondi dalle impostazioni</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Rimuovi memoria privata dal menu impostazioni (accessibile solo tramite codice segreto)</string>
     <string name="loc_pick_contacts_for_vault">Scegli contatti per la cassaforte</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Eliminare permanentemente ${selectedContactIds.size} contatti selezionati dalla memoria privata?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Eliminare permanentemente %1$d contatti selezionati dalla memoria privata?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Digitare questo codice segreto sul tastierino per rivelare i contatti nella memoria privata.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Solo il codice segreto del tastierino accederà alla memoria privata</string>
     <string name="loc_security_protection">Sicurezza &amp; Protezione</string>

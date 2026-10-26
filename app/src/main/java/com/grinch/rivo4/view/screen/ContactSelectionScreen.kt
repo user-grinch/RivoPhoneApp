@@ -83,9 +83,7 @@ fun ContactSelectionScreen(
         if (searchQuery.isNotBlank()) {
             val cleanSearch = searchQuery.trim()
             list = list.filter {
-                it.name.contains(cleanSearch, ignoreCase = true) ||
-                ContactUtils.formatContactName(it, displayOrder).contains(cleanSearch, ignoreCase = true) ||
-                it.phoneNumbers.any { num -> num.contains(cleanSearch) }
+                ContactUtils.matchesContact(it, cleanSearch, displayOrder = displayOrder)
             }
         }
         list.sortedWith { c1, c2 -> ContactUtils.compareContacts(c1, c2, displayOrder) }

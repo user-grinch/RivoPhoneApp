@@ -899,8 +899,8 @@
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Видалити все</string>
     <string name="loc_refresh">Оновити</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">Всього записів ${recordings.size} збережено на цьому пристрої</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Оптимізації</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">Всього записів %1$d збережено на цьому пристрої</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Оптимізації</string>
     <string name="loc_dismiss">Відхилити</string>
     <string name="loc_saved_call_recordings">Записи викликів збережено</string>
     <string name="loc_recording_controls">Контроль запису</string>
@@ -912,13 +912,13 @@
     <string name="loc_minimum_duration_filter">Мінімальний фільтр тривалості</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Відхилити ультракороткі виклики нижче порогу</string>
     <string name="loc_delete_all_recordings">Видалити всі записи?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Записи ${recordings.size} будуть остаточно вилучені з вашого пристрою. Цю дію неможливо скасувати.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Записи %1$d будуть остаточно вилучені з вашого пристрою. Цю дію неможливо скасувати.</string>
     <string name="loc_select_start_date_from">Оберіть початкову дату (з)</string>
     <string name="loc_select_end_date_to">Виберіть кінцеву дату (До)</string>
     <string name="loc_play">Відтворити</string>
     <string name="loc_rewind_10s">Перемотати 10 сек</string>
     <string name="loc_forward_10s">Переслати 10 сек</string>
-    <string name="loc_selectedcontactids_size_selected">Вибрано ${selectedContactIds.size}</string>
+    <string name="loc_selectedcontactids_size_selected">Вибрано %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Зберігається на місці в ізольованому сховищі Ріво • Приховано з WhatsApp і системних додатків</string>
     <string name="loc_select_contacts_for_private_storage">Виберіть контакти для приватного сховища</string>
     <string name="loc_move_to_private_storage">Перемістити в приватне сховище</string>

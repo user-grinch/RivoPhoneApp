@@ -45,9 +45,13 @@ data class PrivateContactEntity(
         // Legacy rows (v5) have no typed entries: derive them from the plain list with default types
         val effectiveAddressEntries = if (decodedAddressEntries.isNotEmpty()) decodedAddressEntries
         else decodedAddresses.map { com.grinch.rivo4.modal.data.PostalAddressEntry(address = it) }
+        val (splitGiven, splitMiddle, splitFamily) = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName(name)
         return Contact(
             id = "p$localId",
             name = name,
+            givenName = splitGiven.ifBlank { null },
+            middleName = splitMiddle.ifBlank { null },
+            familyName = splitFamily.ifBlank { null },
             nickname = nickname,
             phoneNumbers = decodedPhones,
             phones = decodedPhones.map { PhoneNumberEntry(it) },

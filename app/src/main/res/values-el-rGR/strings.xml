@@ -919,7 +919,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Διαγραφή Όλων</string>
     <string name="loc_refresh">Ανανέωση</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Βελτιστοποίηση</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Βελτιστοποίηση</string>
     <string name="loc_dismiss">Απόρριψη</string>
     <string name="loc_saved_call_recordings">Αποθηκευμένες Καταγραφές Κλήσεων</string>
     <string name="loc_recording_controls">Έλεγχοι Εγγραφής</string>
@@ -932,7 +932,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_minimum_duration_filter">Ελάχιστο Φίλτρο Διάρκειας</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Απόρριψη εξαιρετικά σύντομων κλήσεων κάτω από το όριο</string>
     <string name="loc_delete_all_recordings">Διαγραφή όλων των ηχογραφήσεων?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Όλες οι ${recordings.size} εγγραφές θα αφαιρεθούν οριστικά από τη συσκευή σας. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Όλες οι %1$d εγγραφές θα αφαιρεθούν οριστικά από τη συσκευή σας. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
     <string name="loc_select_start_date_from">Επιλέξτε Ημερομηνία Έναρξης (Από)</string>
     <string name="loc_select_end_date_to">Επιλέξτε Ημερομηνία Λήξης (Προς)</string>
     <string name="loc_play">Αναπαραγωγή</string>

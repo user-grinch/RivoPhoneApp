@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.outlined.ContactSupport
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Visibility
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.outlined.PhoneInTalk
 import androidx.compose.material.icons.outlined.ScreenLockPortrait
 import androidx.compose.material.icons.outlined.Wallpaper
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.CallBackgroundStore
+import com.grinch.rivo4.view.components.CallBackgroundDialog
 import com.grinch.rivo4.view.components.MenuTopAppBar
 import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.RivoExpressiveCard
@@ -81,16 +84,31 @@ fun CallScreenCustomizationScreen(
     var pocketMode by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_POCKET_MODE, false)) }
     var defaultCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.defaultModel(context)) }
     var unknownCallBg by remember(settingsState) { mutableStateOf(CallBackgroundStore.unknownModel(context)) }
+    var showDefaultBgDialog by remember { mutableStateOf(false) }
+    var showUnknownBgDialog by remember { mutableStateOf(false) }
+    var savingDefaultBg by remember { mutableStateOf(false) }
+    var savingUnknownBg by remember { mutableStateOf(false) }
+
     val defaultCallBgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
             runCatching { context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
-            scope.launch { if (CallBackgroundStore.saveDefault(context, uri)) defaultCallBg = CallBackgroundStore.defaultModelAsync(context) }
+            savingDefaultBg = true
+            scope.launch {
+                val ok = CallBackgroundStore.saveDefault(context, uri)
+                savingDefaultBg = false
+                if (ok) defaultCallBg = CallBackgroundStore.defaultModelAsync(context)
+            }
         }
     }
     val unknownCallBgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
             runCatching { context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
-            scope.launch { if (CallBackgroundStore.saveUnknown(context, uri)) unknownCallBg = CallBackgroundStore.unknownModelAsync(context) }
+            savingUnknownBg = true
+            scope.launch {
+                val ok = CallBackgroundStore.saveUnknown(context, uri)
+                savingUnknownBg = false
+                if (ok) unknownCallBg = CallBackgroundStore.unknownModelAsync(context)
+            }
         }
     }
 
@@ -220,7 +238,21 @@ fun CallScreenCustomizationScreen(
                             headline = stringResource(R.string.settings_call_default_background),
                             supporting = if (defaultCallBg != null) stringResource(R.string.settings_call_default_background_set) else stringResource(R.string.settings_call_default_background_none),
                             leadingIcon = Icons.Outlined.Wallpaper,
-                            onClick = { defaultCallBgLauncher.launch(arrayOf("image/*")) }
+                            trailingContent = if (defaultCallBg != null) {
+                                {
+                                    IconButton(onClick = {
+                                        CallBackgroundStore.clearDefault(context)
+                                        defaultCallBg = null
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Delete,
+                                            contentDescription = stringResource(R.string.settings_call_background_remove),
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            } else null,
+                            onClick = { showDefaultBgDialog = true }
                         )
                     }
                     item {
@@ -228,7 +260,21 @@ fun CallScreenCustomizationScreen(
                             headline = stringResource(R.string.settings_call_unknown_background),
                             supporting = if (unknownCallBg != null) stringResource(R.string.settings_call_unknown_background_set) else stringResource(R.string.settings_call_unknown_background_none),
                             leadingIcon = Icons.Outlined.Image,
-                            onClick = { unknownCallBgLauncher.launch(arrayOf("image/*")) }
+                            trailingContent = if (unknownCallBg != null) {
+                                {
+                                    IconButton(onClick = {
+                                        CallBackgroundStore.clearUnknown(context)
+                                        unknownCallBg = null
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Delete,
+                                            contentDescription = stringResource(R.string.settings_call_background_remove),
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            } else null,
+                            onClick = { showUnknownBgDialog = true }
                         )
                     }
                 }
@@ -359,6 +405,47 @@ fun CallScreenCustomizationScreen(
                 )
             }
         }
-    }
 
+        if (showDefaultBgDialog) {
+            CallBackgroundDialog(
+                title = stringResource(R.string.settings_call_default_background),
+                icon = Icons.Outlined.Wallpaper,
+                backgroundModel = defaultCallBg,
+                supportingText = stringResource(R.string.settings_call_default_background_supporting),
+                isUnknown = false,
+                saving = savingDefaultBg,
+                onDismissRequest = { showDefaultBgDialog = false },
+                onChoose = {
+                    showDefaultBgDialog = false
+                    defaultCallBgLauncher.launch(arrayOf("image/*"))
+                },
+                onRemove = {
+                    showDefaultBgDialog = false
+                    CallBackgroundStore.clearDefault(context)
+                    defaultCallBg = null
+                }
+            )
+        }
+
+        if (showUnknownBgDialog) {
+            CallBackgroundDialog(
+                title = stringResource(R.string.settings_call_unknown_background),
+                icon = Icons.AutoMirrored.Outlined.ContactSupport,
+                backgroundModel = unknownCallBg,
+                supportingText = stringResource(R.string.settings_call_unknown_background_supporting),
+                isUnknown = true,
+                saving = savingUnknownBg,
+                onDismissRequest = { showUnknownBgDialog = false },
+                onChoose = {
+                    showUnknownBgDialog = false
+                    unknownCallBgLauncher.launch(arrayOf("image/*"))
+                },
+                onRemove = {
+                    showUnknownBgDialog = false
+                    CallBackgroundStore.clearUnknown(context)
+                    unknownCallBg = null
+                }
+            )
+        }
+    }
 }

@@ -941,8 +941,8 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Smazat vše</string>
     <string name="loc_refresh">Aktualizovat</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} celkové nahrávky jsou uloženy na tomto zařízení</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optimalizace ${OemPermissionHelper.getOemBrandDisplayName()}</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d celkové nahrávky jsou uloženy na tomto zařízení</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optimalizace %1$s</string>
     <string name="loc_dismiss">Odmítnout</string>
     <string name="loc_saved_call_recordings">Uložené nahrávky hovorů</string>
     <string name="loc_recording_controls">Ovládání záznamů</string>
@@ -955,13 +955,13 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_minimum_duration_filter">Minimální trvání filtru</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Zahodit ultra krátké hovory pod prahovou hodnotou</string>
     <string name="loc_delete_all_recordings">Smazat všechny záznamy?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Všechny ${recordings.size} nahrávky budou trvale odstraněny z vašeho zařízení. Tuto akci nelze vrátit zpět.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Všechny %1$d nahrávky budou trvale odstraněny z vašeho zařízení. Tuto akci nelze vrátit zpět.</string>
     <string name="loc_select_start_date_from">Vyberte počáteční datum (od)</string>
     <string name="loc_select_end_date_to">Vyberte koncové datum (do)</string>
     <string name="loc_play">Hrát</string>
     <string name="loc_rewind_10s">Převrátit 10 s</string>
     <string name="loc_forward_10s">Přeposlat 10 s</string>
-    <string name="loc_selectedcontactids_size_selected">${selectedContactIds.size} vybrán</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d vybrán</string>
     <string name="loc_privatecontacts_size_secured">%1$d zabezpečeno</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Uloženo lokálně v trezoru Rivo s pískem • Skryté v WhatsApp a systémové aplikace</string>
     <string name="loc_select_contacts_for_private_storage">Vyberte kontakty pro soukromé úložiště</string>
@@ -975,7 +975,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_hide_from_settings">Skrýt v nastavení</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Odstranit soukromé úložiště z menu nastavení (přístupné pouze prostřednictvím tajného kódu)</string>
     <string name="loc_pick_contacts_for_vault">Vybrat kontakty pro trezor</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Trvale odstranit ${selectedContactIds.size} vybraný kontakt ze soukromého úložiště?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Trvale odstranit %1$d vybraný kontakt ze soukromého úložiště?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Napište tento tajný kód na číselník pro zobrazení kontaktů v soukromém úložišti.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Pouze tajný kód číselníku bude přistupovat k soukromému úložišti</string>
     <string name="loc_security_protection">Bezpečnost &amp; Ochrana</string>

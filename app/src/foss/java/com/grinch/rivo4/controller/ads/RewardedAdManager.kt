@@ -41,7 +41,7 @@ class RewardedAdManager(private val context: Context) {
         // No-op for FOSS build
     }
 
-    fun showAd(activity: Activity, onRewardEarned: () -> Unit) {
+    fun showAd(activity: Activity, onRewardEarned: () -> Unit = {}) {
         // No-op for FOSS build - ads not supported
     }
 

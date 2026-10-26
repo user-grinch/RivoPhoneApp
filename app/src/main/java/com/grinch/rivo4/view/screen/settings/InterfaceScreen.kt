@@ -71,6 +71,11 @@ import com.grinch.rivo4.view.theme.RivoPaletteStyle
 import com.grinch.rivo4.view.theme.rivoPaletteSwatches
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AvatarSettingsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.BottomNavScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.CallScreenCustomizationScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SwipeActionsScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.TypographyScreenDestination
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -109,8 +114,8 @@ fun InterfaceScreen(
     var transitionTimeScale by remember(settingsState) {
         mutableFloatStateOf(prefs.getTransitionTimeScale())
     }
-    var predictiveBackEnabled by remember(settingsState) {
-        mutableStateOf(prefs.isPredictiveBackEnabled())
+    var mergeFavorites by remember(settingsState) {
+        mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, true))
     }
     var customPrimaryColor by remember(settingsState) {
         mutableIntStateOf(prefs.getInt("custom_primary_color", Color(0xFF6750A4).toArgb()))
@@ -118,9 +123,7 @@ fun InterfaceScreen(
     var cardRoundness by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CARD_ROUNDNESS, 28).coerceAtLeast(5))
     }
-    var dualSimButtons by remember(settingsState) {
-        mutableStateOf(prefs.isDualSimDialpadButtonsEnabled())
-    }
+
     var themeMode by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_THEME_MODE, PreferenceManager.THEME_MODE_SYSTEM))
     }
@@ -173,14 +176,13 @@ fun InterfaceScreen(
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_card_roundness)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_interface_transition_animation)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_transition_speed)) ||
-            SettingsHighlightManager.matches(context.getString(R.string.settings_predictive_back_title)) ||
             target.contains("Card", ignoreCase = true) ||
             target.contains("Roundness", ignoreCase = true) ||
-            target.contains("Transition", ignoreCase = true) ||
-            target.contains("Predictive", ignoreCase = true) -> 1
+            target.contains("Transition", ignoreCase = true) -> 1
 
-            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_dual_sim_buttons_title)) ||
-            target.contains("Dual SIM", ignoreCase = true) -> 2
+            SettingsHighlightManager.matches(context.getString(R.string.settings_interface_merge_favorites)) ||
+            target.contains("Favorites", ignoreCase = true) ||
+            target.contains("Recents", ignoreCase = true) -> 2
 
             target.contains("Navigation Bar", ignoreCase = true) ||
             target.contains("Avatar", ignoreCase = true) -> 3
@@ -502,33 +504,67 @@ fun InterfaceScreen(
                                 )
                             }
                         }
+                    }
+                }
+
+                // 3. Navigation & Appearance Customizations
+                item {
+                    RivoExpressiveGroup(title = stringResource(R.string.loc_personalization_display), icon = Icons.Outlined.Palette) {
                         item {
-                            RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_predictive_back_title),
-                                supporting = stringResource(R.string.settings_predictive_back_supporting),
-                                leadingIcon = Icons.AutoMirrored.Outlined.ArrowBack,
-                                checked = predictiveBackEnabled,
-                                onCheckedChange = {
-                                    predictiveBackEnabled = it
-                                    prefs.setPredictiveBackEnabled(it)
-                                }
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_avatars_contact_cards),
+                                supporting = stringResource(R.string.loc_11_avatar_shapes_contact_photos_initials_cards),
+                                leadingIcon = Icons.Outlined.AccountCircle,
+                                onClick = { navigator.navigate(AvatarSettingsScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_typography),
+                                supporting = stringResource(R.string.loc_font_text_size_and_system_font),
+                                leadingIcon = Icons.Outlined.FormatSize,
+                                onClick = { navigator.navigate(TypographyScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_navigation_bar),
+                                supporting = stringResource(R.string.loc_floating_bar_style_navigation_dock_and_tab_layout),
+                                leadingIcon = Icons.Outlined.Dock,
+                                onClick = { navigator.navigate(BottomNavScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.settings_swipe_actions_title),
+                                supporting = stringResource(R.string.settings_swipe_actions_supporting),
+                                leadingIcon = Icons.Outlined.Swipe,
+                                onClick = { navigator.navigate(SwipeActionsScreenDestination) }
+                            )
+                        }
+                        item {
+                            RivoListItem(
+                                headline = stringResource(R.string.loc_call_screen_buttons),
+                                supporting = stringResource(R.string.loc_choose_the_position_of_each_in_call_button),
+                                leadingIcon = Icons.Outlined.Dialpad,
+                                onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
                             )
                         }
                     }
                 }
 
-                // 3. Dialpad Interface
+                // 4. Recents
                 item {
-                    RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialpad_calling), icon = Icons.Outlined.SimCard) {
+                    RivoExpressiveGroup(title = stringResource(R.string.nav_recents), icon = Icons.Outlined.History) {
                         item {
                             RivoSwitchListItem(
-                                headline = stringResource(R.string.settings_interface_dual_sim_buttons_title),
-                                supporting = stringResource(R.string.settings_interface_dual_sim_buttons_supporting),
-                                leadingIcon = Icons.Outlined.SimCard,
-                                checked = dualSimButtons,
+                                headline = stringResource(R.string.settings_interface_merge_favorites),
+                                supporting = stringResource(R.string.settings_interface_merge_favorites_supporting),
+                                leadingIcon = Icons.Outlined.Star,
+                                checked = mergeFavorites,
                                 onCheckedChange = {
-                                    dualSimButtons = it
-                                    prefs.setDualSimDialpadButtonsEnabled(it)
+                                    mergeFavorites = it
+                                    prefs.setBoolean(PreferenceManager.KEY_MERGE_FAVORITES_RECENTS, it)
                                 }
                             )
                         }

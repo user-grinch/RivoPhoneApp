@@ -1,37 +1,30 @@
 package com.grinch.rivo4.view.screen.settings
-import com.grinch.rivo4.view.components.MenuTopAppBar
 
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import com.grinch.rivo4.controller.util.SettingsHighlightManager
-import kotlinx.coroutines.delay
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.automirrored.outlined.PhoneMissed
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.util.PreferenceManager
-import com.grinch.rivo4.view.components.RivoDivider
-import com.grinch.rivo4.view.components.RivoExpressiveCard
+import com.grinch.rivo4.controller.util.SettingsHighlightManager
+import com.grinch.rivo4.view.components.MenuTopAppBar
 import com.grinch.rivo4.view.components.RivoExpressiveGroup
 import com.grinch.rivo4.view.components.RivoListItem
-import com.grinch.rivo4.view.components.RivoSectionHeader
-import com.grinch.rivo4.view.components.RivoSelectListItem
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.generated.destinations.PriorityContactsScreenDestination
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,15 +35,10 @@ fun SoundVibrationScreen(
 ) {
     val prefs = koinInject<PreferenceManager>()
     val context = LocalContext.current
-    
-    var dtmfTone by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) }
-    var dialpadVibration by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, true)) }
-    var holdZeroForPlus by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HOLD_ZERO_FOR_PLUS, true)) }
-    var vibrateOnAnswer by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, true)) }
-    var vibrateOnHangup by remember { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, false)) }
     val settingsState by prefs.settingsChanged.collectAsState()
 
-    var hapticListScroll by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, false)) }
+    var dtmfTone by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) }
+    var appwideVibration by remember(settingsState) { mutableStateOf(prefs.isAppwideVibrationEnabled()) }
     var missedCallNotifications by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_MISSED_CALL_NOTIFICATIONS, true)) }
     var flipToSilence by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_FLIP_TO_SILENCE, false)) }
     var volumeSqueezeDnd by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_VOLUME_SQUEEZE_DND, false)) }
@@ -62,17 +50,15 @@ fun SoundVibrationScreen(
         if (SettingsHighlightManager.highlightEpoch == 0L) return@LaunchedEffect
         val target = SettingsHighlightManager.highlightedSettingTitle ?: return@LaunchedEffect
         val targetIndex = when {
-            target.contains("DTMF", ignoreCase = true) ||
-            target.contains("Dialpad Vibration", ignoreCase = true) ||
-            target.contains("Hold 0", ignoreCase = true) -> 0
+            target.contains("DTMF", ignoreCase = true) -> 0
 
-            target.contains("Vibrate", ignoreCase = true) ||
-            target.contains("Haptic", ignoreCase = true) -> 1
+            target.contains("Vibrat", ignoreCase = true) ||
+            target.contains("Haptic", ignoreCase = true) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_appwide_vibration_title)) -> 1
 
             target.contains("Flip", ignoreCase = true) ||
             target.contains("Disturb", ignoreCase = true) ||
-            target.contains("DND", ignoreCase = true) ||
-            target.contains("Priority", ignoreCase = true) -> 2
+            target.contains("DND", ignoreCase = true) -> 2
 
             target.contains("Missed", ignoreCase = true) ||
             target.contains("Ringtone", ignoreCase = true) ||
@@ -103,8 +89,9 @@ fun SoundVibrationScreen(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            // 1. Dialpad Tones
             item {
-                RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialpad_tones)) {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_dialpad_tones), icon = Icons.Outlined.Audiotrack) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_dtmf_tone),
@@ -117,76 +104,30 @@ fun SoundVibrationScreen(
                             }
                         )
                     }
+                }
+            }
+
+            // 2. Call Vibration & Haptics (Consolidated Appwide Vibration)
+            item {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_call_vibration_haptics), icon = Icons.Outlined.Vibration) {
                     item {
                         RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_sound_dialpad_vibration),
-                            supporting = stringResource(R.string.settings_sound_dialpad_vibration_supporting),
+                            headline = stringResource(R.string.settings_appwide_vibration_title),
+                            supporting = stringResource(R.string.settings_appwide_vibration_supporting),
                             leadingIcon = Icons.Outlined.Vibration,
-                            checked = dialpadVibration,
+                            checked = appwideVibration,
                             onCheckedChange = {
-                                dialpadVibration = it
-                                prefs.setBoolean(PreferenceManager.KEY_DIALPAD_VIBRATION, it)
-                            }
-                        )
-                    }
-                    item {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_sound_hold_zero_for_plus),
-                            supporting = stringResource(R.string.settings_sound_hold_zero_for_plus_supporting),
-                            leadingIcon = Icons.Outlined.Add,
-                            checked = holdZeroForPlus,
-                            onCheckedChange = {
-                                holdZeroForPlus = it
-                                prefs.setBoolean(PreferenceManager.KEY_HOLD_ZERO_FOR_PLUS, it)
+                                appwideVibration = it
+                                prefs.setAppwideVibrationEnabled(it)
                             }
                         )
                     }
                 }
             }
 
+            // 3. Gestures & DND
             item {
-                RivoExpressiveGroup(title = stringResource(R.string.settings_group_call_vibration_haptics)) {
-                    item {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_sound_vibrate_on_answer),
-                            supporting = stringResource(R.string.settings_sound_vibrate_on_answer_supporting),
-                            leadingIcon = Icons.Outlined.Vibration,
-                            checked = vibrateOnAnswer,
-                            onCheckedChange = {
-                                vibrateOnAnswer = it
-                                prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_ANSWER, it)
-                            }
-                        )
-                    }
-                    item {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_sound_vibrate_on_hangup),
-                            supporting = stringResource(R.string.settings_sound_vibrate_on_hangup_supporting),
-                            leadingIcon = Icons.Outlined.Vibration,
-                            checked = vibrateOnHangup,
-                            onCheckedChange = {
-                                vibrateOnHangup = it
-                                prefs.setBoolean(PreferenceManager.KEY_VIBRATE_ON_HANGUP, it)
-                            }
-                        )
-                    }
-                    item {
-                        RivoSwitchListItem(
-                            headline = stringResource(R.string.settings_sound_haptic_scroll),
-                            supporting = stringResource(R.string.settings_sound_haptic_scroll_supporting),
-                            leadingIcon = Icons.Outlined.Gesture,
-                            checked = hapticListScroll,
-                            onCheckedChange = {
-                                hapticListScroll = it
-                                prefs.setBoolean(PreferenceManager.KEY_HAPTIC_LIST_SCROLL, it)
-                            }
-                        )
-                    }
-                }
-            }
-
-            item {
-                RivoExpressiveGroup(title = stringResource(R.string.settings_group_gestures_dnd)) {
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_gestures_dnd), icon = Icons.Outlined.DoNotDisturbOn) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_flip_to_silence),
@@ -240,16 +181,9 @@ fun SoundVibrationScreen(
                 }
             }
 
+            // 4. Alerts & Ringtones
             item {
-                RivoExpressiveGroup(title = stringResource(R.string.settings_group_alerts_ringtones)) {
-                    item {
-                        RivoListItem(
-                            headline = stringResource(R.string.priority_contacts_title),
-                            supporting = stringResource(R.string.priority_contacts_supporting),
-                            leadingIcon = Icons.Outlined.NotificationImportant,
-                            onClick = { navigator.navigate(PriorityContactsScreenDestination) }
-                        )
-                    }
+                RivoExpressiveGroup(title = stringResource(R.string.settings_group_alerts_ringtones), icon = Icons.Outlined.Notifications) {
                     item {
                         RivoSwitchListItem(
                             headline = stringResource(R.string.settings_sound_missed_call_notifications),
@@ -274,8 +208,6 @@ fun SoundVibrationScreen(
                     }
                 }
             }
-            
-
         }
     }
 }

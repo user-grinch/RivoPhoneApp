@@ -16,6 +16,7 @@ import android.telephony.PhoneNumberUtils
 import android.widget.Toast
 import com.grinch.rivo4.controller.CallActivity
 import com.grinch.rivo4.controller.CallService
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -863,7 +864,13 @@ fun rememberVideoLauncher(): VideoLauncher {
     val videoLauncher = remember {
         VideoLauncher { number, contact ->
             val cleanNum = number.trim().ifBlank {
-                contact?.phoneNumbers?.firstOrNull()?.trim().orEmpty()
+                val fav = contact?.id?.let { prefs.getFavoriteNumber(it) }
+                val valid = contact?.phoneNumbers?.filter { it.isNotBlank() } ?: emptyList()
+                if (fav != null && valid.any { areNumbersEqual(it, fav) }) {
+                    fav
+                } else {
+                    valid.firstOrNull()?.trim().orEmpty()
+                }
             }
             if (cleanNum.isBlank()) {
                 Toast.makeText(context, context.getString(R.string.video_call_no_number), Toast.LENGTH_SHORT).show()

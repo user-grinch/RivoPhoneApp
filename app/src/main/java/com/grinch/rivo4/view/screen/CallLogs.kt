@@ -631,77 +631,56 @@ fun CallLogFullScreen(
                                                             } else Modifier
                                                         )
                                                 ) {
-                                                    Row(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Box(modifier = Modifier.weight(1f)) {
-                                                            RivoListItem(
-                                                                headline = callTypeLabel,
-                                                                headlineColor = if (isBlocked || isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified,
-                                                                supporting = if ((!callLogConfig.showSim || lgSimNumber == null) && !lg.isHd) supportingText else null,
-                                                                supportingContent = if ((callLogConfig.showSim && lgSimNumber != null) || lg.isHd) {
-                                                                    {
-                                                                        Row(
-                                                                            verticalAlignment = Alignment.CenterVertically,
-                                                                            modifier = Modifier.padding(top = 1.dp)
-                                                                        ) {
-                                                                            if (callLogConfig.showSim && lgSimNumber != null) {
-                                                                                SimBadge(simNumber = lgSimNumber)
-                                                                                Spacer(modifier = Modifier.width(6.dp))
-                                                                            }
-                                                                            if (lg.isHd) {
-                                                                                HdBadge()
-                                                                                Spacer(modifier = Modifier.width(6.dp))
-                                                                            }
-                                                                            Text(
-                                                                                text = supportingText,
-                                                                                style = RivoListItemDefaults.supportingStyle(),
-                                                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                                            )
-                                                                        }
+                                                    RivoListItem(
+                                                        headline = callTypeLabel,
+                                                        headlineColor = if (isBlocked || isMissedOrRejected) MaterialTheme.colorScheme.error else Color.Unspecified,
+                                                        supporting = if ((!callLogConfig.showSim || lgSimNumber == null) && !lg.isHd) supportingText else null,
+                                                        supportingContent = if ((callLogConfig.showSim && lgSimNumber != null) || lg.isHd) {
+                                                            {
+                                                                Row(
+                                                                    verticalAlignment = Alignment.CenterVertically,
+                                                                    modifier = Modifier.padding(top = 1.dp)
+                                                                ) {
+                                                                    if (callLogConfig.showSim && lgSimNumber != null) {
+                                                                        SimBadge(simNumber = lgSimNumber)
+                                                                        Spacer(modifier = Modifier.width(6.dp))
                                                                     }
-                                                                } else null,
-                                                                leadingContent = {
-                                                                    Icon(
-                                                                        imageVector = leadingIcon,
-                                                                        contentDescription = null,
-                                                                        tint = iconTint,
-                                                                        modifier = Modifier.size(24.dp)
+                                                                    if (lg.isHd) {
+                                                                        HdBadge()
+                                                                        Spacer(modifier = Modifier.width(6.dp))
+                                                                    }
+                                                                    Text(
+                                                                        text = supportingText,
+                                                                        style = RivoListItemDefaults.supportingStyle(),
+                                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                                                     )
-                                                                },
-                                                                selected = isSelected,
-                                                                onClick = {
-                                                                    if (selectedEntries.isNotEmpty()) {
-                                                                        selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
-                                                                            selectedEntries.filter { it.id != lg.id }.toSet()
-                                                                        } else {
-                                                                            selectedEntries + lg
-                                                                        }
-                                                                    }
-                                                                },
-                                                                onLongClick = {
-                                                                    if (selectedEntries.none { it.id == lg.id }) {
-                                                                        selectedEntries = selectedEntries + lg
-                                                                    }
                                                                 }
+                                                            }
+                                                        } else null,
+                                                        leadingContent = {
+                                                            Icon(
+                                                                imageVector = leadingIcon,
+                                                                contentDescription = null,
+                                                                tint = iconTint,
+                                                                modifier = Modifier.size(24.dp)
                                                             )
-                                                        }
-
-                                                        if (!isSelected) {
-                                                            IconButton(
-                                                                onClick = { handleCallNumber(lg.number, lg.contactId ?: contactId) },
-                                                                modifier = Modifier.padding(end = 10.dp)
-                                                            ) {
-                                                                Icon(
-                                                                    imageVector = Icons.Default.Call,
-                                                                    contentDescription = stringResource(R.string.action_call),
-                                                                    tint = MaterialTheme.colorScheme.primary,
-                                                                    modifier = Modifier.size(22.dp)
-                                                                )
+                                                        },
+                                                        selected = isSelected,
+                                                        onClick = {
+                                                            if (selectedEntries.isNotEmpty()) {
+                                                                selectedEntries = if (selectedEntries.any { it.id == lg.id }) {
+                                                                    selectedEntries.filter { it.id != lg.id }.toSet()
+                                                                } else {
+                                                                    selectedEntries + lg
+                                                                }
+                                                            }
+                                                        },
+                                                        onLongClick = {
+                                                            if (selectedEntries.none { it.id == lg.id }) {
+                                                                selectedEntries = selectedEntries + lg
                                                             }
                                                         }
-                                                    }
+                                                    )
                                                 }
                                                 if (!showCards && index < logsInGroup.size - 1) {
                                                     HorizontalDivider(

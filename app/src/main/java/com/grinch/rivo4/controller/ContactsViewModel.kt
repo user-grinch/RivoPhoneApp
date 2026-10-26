@@ -362,6 +362,14 @@ class ContactsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val newFavStatus = !contact.isFavorite
+
+                // Optimistically update memory state
+                withContext(Dispatchers.Main) {
+                    _allContacts.value = _allContacts.value.map {
+                        if (it.id == contact.id) it.copy(isFavorite = newFavStatus) else it
+                    }
+                }
+
                 contactsRepo.toggleFavorite(contact.id, newFavStatus)
                 
                 val currentOrder = preferenceManager.getFavoritesOrder().toMutableList()

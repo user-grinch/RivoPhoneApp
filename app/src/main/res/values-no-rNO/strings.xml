@@ -933,8 +933,8 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Slett alle</string>
     <string name="loc_refresh">Oppdater</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">${recordings.size} totalt opptak lagres på denne enheten</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">${OemPermissionHelper.getOemBrandDisplayName()} Optimalisering</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d totalt opptak lagres på denne enheten</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimalisering</string>
     <string name="loc_dismiss">Avvis</string>
     <string name="loc_saved_call_recordings">Lagrede Opptak av anrop</string>
     <string name="loc_recording_controls">Kontroller for opptak</string>
@@ -947,7 +947,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_minimum_duration_filter">Minimum varighet Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Forkast ultra-korte samtaler under terskelen</string>
     <string name="loc_delete_all_recordings">Slett alle opptak?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle ${recordings.size} opptakene vil fjernes permanent fra enheten. Denne handlingen kan ikke angres.</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d opptakene vil fjernes permanent fra enheten. Denne handlingen kan ikke angres.</string>
     <string name="loc_select_start_date_from">Velg startdato (Fra)</string>
     <string name="loc_select_end_date_to">Velg sluttdato (Til)</string>
     <string name="loc_play">Spill</string>
@@ -966,7 +966,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_hide_from_settings">Skjul i innstillinger</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Fjern privat lagring fra innstillingsmenyen (tilgjengelig kun via hemmelig kode)</string>
     <string name="loc_pick_contacts_for_vault">Velg kontakter for hvelvet</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slett ${selectedContactIds.size} valgte kontakter permanent fra privat lagring?</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slett %1$d valgte kontakter permanent fra privat lagring?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Skriv inn denne hemmelige koden på ringetasten for å vise kontakter i privat lagring.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Kun den hemmelige mobilnøkkelen vil få tilgang til privat lagring</string>
     <string name="loc_security_protection">Sikkerhet &amp; Beskyttelse</string>

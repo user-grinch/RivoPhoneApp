@@ -31,8 +31,14 @@ object DynamicShortcutManager {
 
             val shortcuts = mutableListOf<ShortcutInfo>()
 
+            val prefs = PreferenceManager(context)
             top2Favorites.forEachIndexed { index, contact ->
-                val primaryPhone = contact.phoneNumbers.firstOrNull { it.isNotBlank() } ?: return@forEachIndexed
+                val defaultPhone = prefs.getFavoriteNumber(contact.id)
+                val primaryPhone = if (defaultPhone != null && contact.phoneNumbers.any { areNumbersEqual(it, defaultPhone) }) {
+                    defaultPhone
+                } else {
+                    contact.phoneNumbers.firstOrNull { it.isNotBlank() } ?: return@forEachIndexed
+                }
                 val displayName = contact.formattedDisplayName.ifBlank { contact.name.ifBlank { primaryPhone } }
                 val shortcutId = "dial_favorite_${contact.id}"
 

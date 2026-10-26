@@ -44,6 +44,15 @@ class PreferenceManager(context: Context) {
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        if (key == KEY_DIALPAD_VIBRATION ||
+            key == KEY_VIBRATE_ON_ANSWER ||
+            key == KEY_VIBRATE_ON_HANGUP
+        ) {
+            return false
+        }
+        if (key == KEY_HAPTIC_LIST_SCROLL) {
+            return isAppwideVibrationEnabled()
+        }
         return try {
             prefs.getBoolean(key, defaultValue)
         } catch (e: Exception) {
@@ -457,6 +466,7 @@ class PreferenceManager(context: Context) {
         const val KEY_FLIP_BOTTOM_NAV = "flip_bottom_nav"
         const val KEY_DEFAULT_BOTTOM_NAV = "default_bottom_nav"
         const val KEY_DTMF_TONE = "dtmf_tone"
+        const val KEY_APPWIDE_VIBRATION = "appwide_vibration"
         const val KEY_DIALPAD_VIBRATION = "dialpad_vibration"
         const val KEY_HOLD_ZERO_FOR_PLUS = "hold_zero_for_plus"
         const val KEY_SPEED_DIAL = "speed_dial"
@@ -704,6 +714,7 @@ class PreferenceManager(context: Context) {
             KEY_ICON_ONLY_NAV to false,
             KEY_FLIP_BOTTOM_NAV to false,
             KEY_DTMF_TONE to true,
+            KEY_APPWIDE_VIBRATION to true,
             KEY_DIALPAD_VIBRATION to true,
             KEY_HOLD_ZERO_FOR_PLUS to true,
             KEY_SPEED_DIAL to true,
@@ -815,11 +826,11 @@ class PreferenceManager(context: Context) {
         )
     }
 
-    fun getCallLogLimit(): Int = getInt(KEY_CALL_LOG_LIMIT, CALL_LOG_LIMIT_DEFAULT)
-    fun setCallLogLimit(limit: Int) = setInt(KEY_CALL_LOG_LIMIT, limit)
+    fun getCallLogLimit(): Int = 500
+    fun setCallLogLimit(limit: Int) = setInt(KEY_CALL_LOG_LIMIT, 500)
 
-    fun isAutoPasteClipboardEnabled(): Boolean = getBoolean(KEY_AUTO_PASTE_CLIPBOARD, false)
-    fun setAutoPasteClipboardEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_PASTE_CLIPBOARD, enabled)
+    fun isAutoPasteClipboardEnabled(): Boolean = false
+    fun setAutoPasteClipboardEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_PASTE_CLIPBOARD, false)
 
     fun isContactBackupEncryptionEnabled(): Boolean = getBoolean(KEY_CONTACT_BACKUP_ENCRYPTION, false)
     fun setContactBackupEncryptionEnabled(enabled: Boolean) = setBoolean(KEY_CONTACT_BACKUP_ENCRYPTION, enabled)
@@ -956,8 +967,23 @@ class PreferenceManager(context: Context) {
         setSupporter(true)
     }
     fun hasAdSupportedPro(): Boolean = System.currentTimeMillis() < getLong(KEY_PRO_AD_EXPIRY, 0L)
-    fun grantAdSupportedPro(durationMillis: Long = 24 * 60 * 60 * 1000L) {
+    fun grantAdSupportedPro(durationMillis: Long = 6 * 60 * 60 * 1000L) {
         setLong(KEY_PRO_AD_EXPIRY, System.currentTimeMillis() + durationMillis)
+    }
+
+    fun isAppwideVibrationEnabled(): Boolean =
+        try {
+            prefs.getBoolean(KEY_APPWIDE_VIBRATION, true)
+        } catch (_: Exception) {
+            true
+        }
+
+    fun setAppwideVibrationEnabled(enabled: Boolean) {
+        setBoolean(KEY_APPWIDE_VIBRATION, enabled)
+        setBoolean(KEY_HAPTIC_LIST_SCROLL, enabled)
+        setBoolean(KEY_DIALPAD_VIBRATION, false)
+        setBoolean(KEY_VIBRATE_ON_ANSWER, false)
+        setBoolean(KEY_VIBRATE_ON_HANGUP, false)
     }
 
     fun getDefaultVideoApp(): String = getString(KEY_DEFAULT_VIDEO_APP, "") ?: ""
@@ -987,8 +1013,8 @@ class PreferenceManager(context: Context) {
     fun isAutoSpeakerProximityEnabled(): Boolean = getBoolean(KEY_AUTO_SPEAKER_PROXIMITY, false)
     fun setAutoSpeakerProximityEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_SPEAKER_PROXIMITY, enabled)
 
-    fun isContactsTrashEnabled(): Boolean = getBoolean(KEY_CONTACTS_TRASH_ENABLED, true)
-    fun setContactsTrashEnabled(enabled: Boolean) = setBoolean(KEY_CONTACTS_TRASH_ENABLED, enabled)
+    fun isContactsTrashEnabled(): Boolean = true
+    fun setContactsTrashEnabled(enabled: Boolean) = setBoolean(KEY_CONTACTS_TRASH_ENABLED, true)
 
     fun resetSwipeActions() {
         setBoolean(KEY_SWIPE_ACTIONS_ENABLED, false)
@@ -996,14 +1022,14 @@ class PreferenceManager(context: Context) {
         setInt(KEY_SWIPE_LEFT_ACTION, SWIPE_ACTION_MESSAGE)
     }
 
-    fun isShowCarrierInRecents(): Boolean = getBoolean(KEY_SHOW_SIM_ICON_HISTORY, true)
+    fun isShowCarrierInRecents(): Boolean = true
     fun setShowCarrierInRecents(enabled: Boolean) {
-        setBoolean(KEY_SHOW_SIM_ICON_HISTORY, enabled)
+        setBoolean(KEY_SHOW_SIM_ICON_HISTORY, true)
     }
 
-    fun isShowCountryCodeEnabled(): Boolean = getBoolean(KEY_SHOW_COUNTRY_CODE, true)
+    fun isShowCountryCodeEnabled(): Boolean = true
     fun setShowCountryCodeEnabled(enabled: Boolean) {
-        setBoolean(KEY_SHOW_COUNTRY_CODE, enabled)
+        setBoolean(KEY_SHOW_COUNTRY_CODE, true)
         clearFormattedNumberCache()
     }
 
