@@ -123,6 +123,7 @@
     <string name="action_allow">Toestaan</string>
     <string name="action_manage">Beheren</string>
     <string name="action_settings">Instellingen</string>
+    <string name="action_change">Veranderen</string>
     <string name="action_add_existing_contact">Toevoegen aan bestaand contact</string>
     <string name="action_merge_calls">Oproepen samenvoegen</string>
     <string name="conference_call">Telefonische vergadering</string>
@@ -225,6 +226,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Versleutelde contacten met succes geëxporteerd</string>
     <string name="backup_settings_export_success">App instellingen succesvol geëxporteerd</string>
     <string name="backup_settings_import_success">App-instellingen succesvol hersteld</string>
     <!-- Settings > root -->
@@ -308,22 +310,48 @@ witte tekst</string>
     <string name="settings_call_dialpad_size_large">Ruime</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Standaard Contacten Back-up</string>
+    <string name="settings_backup_encrypted_header">Versleutelde back-ups</string>
+    <string name="settings_backup_automatic_header">Automatische Back-ups</string>
+    <string name="settings_backup_export_contacts_supporting">Contacten opslaan in een niet-versleuteld VCF-bestand</string>
+    <string name="settings_backup_import_contacts_supporting">Contacten herstellen vanaf een standaard VCF back-up bestand</string>
+    <string name="settings_backup_export_encrypted_contacts">Versleutelde back-up exporteren</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Contacten opslaan als AES-256 versleuteld .vcf.enc bestand</string>
+    <string name="settings_backup_import_encrypted_contacts">Versleutelde back-up importeren</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Contacten herstellen van een versleuteld .vcf.enc bestand</string>
     <string name="settings_backup_encryption">Back-ups van contacten versleutelen</string>
+    <string name="settings_backup_encryption_supporting">Gebruik AES-256-GCM-encryptie voor contact back-ups</string>
     <string name="settings_backup_password">Back-up wachtwoord</string>
     <string name="settings_backup_password_supporting">Vereist om versleutelen en versleutelde back-up van contact te importeren</string>
     <string name="settings_backup_password_not_set">Geen wachtwoord ingesteld</string>
     <string name="settings_backup_password_set">Wachtwoord veilig opgeslagen</string>
+    <string name="settings_backup_password_status_configured">Geconfigureerd</string>
+    <string name="settings_backup_password_status_not_set">Niet ingesteld</string>
+    <string name="settings_backup_password_desc_configured">Beschermd met AES-256-GCM. Vereist om back-ups te decoderen en te herstellen.</string>
+    <string name="settings_backup_password_desc_not_set">Stel een wachtwoord in om uw geëxporteerde back-ups te versleutelen en beveiligen.</string>
+    <string name="settings_backup_confirm_password">Bevestig wachtwoord</string>
+    <string name="settings_backup_password_mismatch">Wachtwoorden komen niet overeen</string>
+    <string name="settings_backup_remove_password">Wachtwoord verwijderen</string>
+    <string name="settings_backup_remove_password_confirm">Verwijder het back-upwachtwoord? Contact back-up encryptie wordt uitgeschakeld.</string>
+    <string name="settings_backup_password_helper">Dit wachtwoord beschermt je contacten met AES-256 encryptie. Houd het veilig - het kan niet hersteld worden als je het verliest.</string>
+    <string name="settings_backup_password_saved">Back-up wachtwoord opgeslagen</string>
+    <string name="settings_backup_password_cleared">Back-upwachtwoord verwijderd</string>
     <string name="settings_backup_set_password">Wachtwoord instellen</string>
     <string name="settings_backup_change_password">Wachtwoord wijzigen</string>
     <string name="settings_backup_password_dialog_title">Wachtwoord voor back-up invoeren</string>
     <string name="settings_backup_import_progress_title">Contacten importeren</string>
     <string name="settings_backup_import_progress_count">%1$d van %2$d contacten geïmporteerd</string>
+    <string name="settings_backup_auto_export">Contactpersonen automatisch exporteren</string>
+    <string name="settings_backup_auto_export_supporting">Exporteer back-ups wanneer contactpersonen worden aangemaakt, bewerkt of verwijderd</string>
+    <string name="settings_backup_auto_encrypt">Automatische back-ups versleutelen</string>
+    <string name="settings_backup_auto_encrypt_supporting">Automatische back-ups opslaan als AES-256 versleutelde .vcf.enc bestanden</string>
     <string name="settings_backup_folder">Back-up map automatisch</string>
     <string name="settings_backup_folder_supporting">Kies een lokale map waar de laatste back-up zal worden opgeslagen</string>
     <string name="settings_backup_folder_not_set">Geen lokale map geselecteerd</string>
     <string name="settings_backup_choose_folder">Back-upmap kiezen</string>
     <string name="settings_backup_retention">Automatische back-up versies</string>
     <string name="settings_backup_retention_supporting">Houd deze vele tijdgestuurde back-ups om oudere contactlijsten te herstellen</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">App-instellingen &amp; Voorkeuren</string>
     <string name="settings_backup_export_settings">App instellingen exporteren</string>
     <string name="settings_backup_export_settings_supporting">Maak een backup van thema\'s, telefoonstijlen en configuraties naar JSON</string>
@@ -352,6 +380,7 @@ witte tekst</string>
     <string name="call_recording_shizuku_attribution_desc">Interne opnames via Shizuku bevat code van het open-source ShizuCallRecorderproject door kitsumed (GPLv3). Niet verbonden met of goedgekeurd door ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Bezoek ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Auteur</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder auteur</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

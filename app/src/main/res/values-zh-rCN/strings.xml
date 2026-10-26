@@ -129,6 +129,7 @@
     <string name="action_settings">设置</string>
     <string name="action_back">返回</string>
     <string name="action_edit">编辑</string>
+    <string name="action_change">更改</string>
     <string name="action_done">完成</string>
     <string name="action_clear">清除</string>
     <string name="action_clear_selection">清除所选</string>
@@ -377,6 +378,7 @@
     <string name="notif_via_sim">通过 %1$s</string>
     <string name="notif_active_call">通话中</string>
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">已成功导出加密联系人</string>
     <string name="backup_settings_export_success">成功导出应用设置</string>
     <string name="backup_settings_import_success">成功恢复应用设置</string>
     <!-- Settings > root -->
@@ -460,22 +462,48 @@
     <string name="settings_call_dialpad_size_large">Spacious</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">标准联系人备份</string>
+    <string name="settings_backup_encrypted_header">加密备份</string>
+    <string name="settings_backup_automatic_header">自动备份</string>
+    <string name="settings_backup_export_contacts_supporting">将联系人保存到未加密的 VCF 文件</string>
+    <string name="settings_backup_import_contacts_supporting">从标准的 VCF 备份文件恢复联系人</string>
+    <string name="settings_backup_export_encrypted_contacts">导出加密备份</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">将联系人保存为 AES-256 加密.vcf.enc 文件</string>
+    <string name="settings_backup_import_encrypted_contacts">导入加密备份</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">从加密的 .vcf.enc 文件恢复联系人</string>
     <string name="settings_backup_encryption">加密联系人备份</string>
+    <string name="settings_backup_encryption_supporting">使用AES-256-GCM加密联系人备份</string>
     <string name="settings_backup_password">备份密码</string>
     <string name="settings_backup_password_supporting">需要加密并导入加密的联系人备份</string>
     <string name="settings_backup_password_not_set">未设置密码</string>
     <string name="settings_backup_password_set">密码安全保存</string>
+    <string name="settings_backup_password_status_configured">已配置</string>
+    <string name="settings_backup_password_status_not_set">未设置</string>
+    <string name="settings_backup_password_desc_configured">使用 AES-256-GCM 保护。需要解密并恢复备份。</string>
+    <string name="settings_backup_password_desc_not_set">设置密码来加密和保护您导出的备份。</string>
+    <string name="settings_backup_confirm_password">确认密码</string>
+    <string name="settings_backup_password_mismatch">密码不匹配</string>
+    <string name="settings_backup_remove_password">删除密码</string>
+    <string name="settings_backup_remove_password_confirm">删除备份密码？联系人备份加密将被禁用。</string>
+    <string name="settings_backup_password_helper">此密码保护您与 AES-256 加密的联系人。保持安全 — 如果丢失，无法恢复。</string>
+    <string name="settings_backup_password_saved">备份密码已保存</string>
+    <string name="settings_backup_password_cleared">备份密码已删除</string>
     <string name="settings_backup_set_password">设置密码</string>
     <string name="settings_backup_change_password">更改密码</string>
     <string name="settings_backup_password_dialog_title">输入备份密码</string>
     <string name="settings_backup_import_progress_title">正在导入联系人</string>
     <string name="settings_backup_import_progress_count">导入的 %1$d 联系人中的 %2$d</string>
+    <string name="settings_backup_auto_export">自动导出联系人</string>
+    <string name="settings_backup_auto_export_supporting">每次创建、编辑或删除联系人时导出备份</string>
+    <string name="settings_backup_auto_encrypt">加密自动备份</string>
+    <string name="settings_backup_auto_encrypt_supporting">自动备份另存为 AES-256 加密.vcf.enc 文件</string>
     <string name="settings_backup_folder">自动备份文件夹</string>
     <string name="settings_backup_folder_supporting">选择保存最新备份的本地文件夹</string>
     <string name="settings_backup_folder_not_set">未选择本地文件夹</string>
     <string name="settings_backup_choose_folder">选择备份文件夹</string>
     <string name="settings_backup_retention">自动备份版本</string>
     <string name="settings_backup_retention_supporting">保留这么多时间戳备份以恢复旧的联系人列表</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">应用设置 &amp;</string>
     <string name="settings_backup_export_settings">导出应用设置</string>
     <string name="settings_backup_export_settings_supporting">备份主题、拨号键盘样式和配置到 JSON</string>
@@ -503,6 +531,7 @@
     <string name="call_recording_shizuku_attribution_desc">通过 Shizuku 进行的内部通话录制包含了 Kitsumed 开源的 ShizuCallRecorder 项目(GPLv3) 的代码。不附属于ShizuCallRecorder 或由 ShizuCallRecorder 认可。</string>
     <string name="call_recording_shizuku_attribution_action">访问 ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">作者</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder 作者</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

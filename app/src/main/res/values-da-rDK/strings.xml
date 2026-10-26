@@ -313,22 +313,45 @@ Hvid tekst</string>
     <string name="settings_backup_standard_contacts_header">Standard Kontaktsikkerhedskopi</string>
     <string name="settings_backup_encrypted_header">Krypterede Sikkerhedskopier</string>
     <string name="settings_backup_automatic_header">Automatiske Sikkerhedskopier</string>
+    <string name="settings_backup_export_contacts_supporting">Gem kontakter til en ukrypteret VCF-fil</string>
+    <string name="settings_backup_import_contacts_supporting">Gendan kontakter fra en standard VCF backup fil</string>
+    <string name="settings_backup_export_encrypted_contacts">Eksporter Krypteret Backup</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Gem kontakter som en AES-256 krypteret .vcf.enc fil</string>
+    <string name="settings_backup_import_encrypted_contacts">Import Krypteret Sikkerhedskopi</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Gendan kontakter fra en krypteret .vcf.enc fil</string>
     <string name="settings_backup_encryption">Kryptér kontaktsikkerhedskopier</string>
+    <string name="settings_backup_encryption_supporting">Brug AES-256-GCM-kryptering til kontaktsikkerhedskopier</string>
     <string name="settings_backup_password">Sikkerhedskopiér adgangskode</string>
     <string name="settings_backup_password_supporting">Kræves for at kryptere og importere krypterede kontaktsikkerhedskopier</string>
     <string name="settings_backup_password_not_set">Ingen adgangskode angivet</string>
     <string name="settings_backup_password_set">Adgangskode gemt sikkert</string>
+    <string name="settings_backup_password_status_configured">Konfigureret</string>
+    <string name="settings_backup_password_status_not_set">Ikke Sat</string>
+    <string name="settings_backup_password_desc_configured">Beskyttet med AES-256-GCM. Kræves for at dekryptere og gendanne sikkerhedskopier.</string>
+    <string name="settings_backup_password_desc_not_set">Angiv en adgangskode for at kryptere og sikre dine eksporterede sikkerhedskopier.</string>
+    <string name="settings_backup_confirm_password">Bekræft Adgangskode</string>
+    <string name="settings_backup_password_mismatch">Adgangskoder stemmer ikke overens</string>
+    <string name="settings_backup_remove_password">Fjern Adgangskode</string>
+    <string name="settings_backup_remove_password_confirm">Fjern sikkerhedskopi adgangskoden? Kontakt backup kryptering vil blive deaktiveret.</string>
+    <string name="settings_backup_password_helper">Denne adgangskode beskytter dine kontakter med AES-256 kryptering. Holde det sikkert - det kan ikke genoprettes, hvis tabt.</string>
+    <string name="settings_backup_password_saved">Backup adgangskode gemt</string>
+    <string name="settings_backup_password_cleared">Backup adgangskode fjernet</string>
     <string name="settings_backup_set_password">Angiv adgangskode</string>
     <string name="settings_backup_change_password">Skift adgangskode</string>
     <string name="settings_backup_password_dialog_title">Indtast adgangskode til sikkerhedskopi</string>
     <string name="settings_backup_import_progress_title">Importerer kontakter</string>
     <string name="settings_backup_import_progress_count">%1$d af %2$d kontakter importeret</string>
+    <string name="settings_backup_auto_export">Eksporter automatisk kontakter</string>
+    <string name="settings_backup_auto_export_supporting">Eksporter sikkerhedskopier når kontakter oprettes, redigeres eller slettes</string>
+    <string name="settings_backup_auto_encrypt">Kryptér automatiske sikkerhedskopier</string>
+    <string name="settings_backup_auto_encrypt_supporting">Gem automatiske sikkerhedskopier som AES-256 krypteret .vcf.enc filer</string>
     <string name="settings_backup_folder">Automatisk sikkerhedsmappe</string>
     <string name="settings_backup_folder_supporting">Vælg en lokal mappe, hvor den nyeste sikkerhedskopi vil blive gemt</string>
     <string name="settings_backup_folder_not_set">Ingen lokal mappe valgt</string>
     <string name="settings_backup_choose_folder">Vælg sikkerhedsmappe</string>
     <string name="settings_backup_retention">Automatiske sikkerhedskopieringsversioner</string>
     <string name="settings_backup_retention_supporting">Behold dette mange tidsstemplede sikkerhedskopier til at gendanne ældre kontaktlister</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">Appindstillinger &amp; Præferencer</string>
     <string name="settings_backup_export_settings">Eksporter App-indstillinger</string>
     <string name="settings_backup_export_settings_supporting">Sikkerhedskopiere temaer, dialpad stilarter og konfigurationer til JSON</string>
@@ -357,6 +380,7 @@ Hvid tekst</string>
     <string name="call_recording_shizuku_attribution_desc">Intern opkald optagelse via Shizuku inkorporerer kode fra open source ShizuCallRecorder projekt af kitsumed (GPLv3). Ikke tilknyttet eller godkendt af ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Besøg ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Forfatter</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

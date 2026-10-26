@@ -314,22 +314,45 @@ Text alb</string>
     <string name="settings_backup_standard_contacts_header">Backup contacte standard</string>
     <string name="settings_backup_encrypted_header">Copii de rezervă criptate</string>
     <string name="settings_backup_automatic_header">Backup-uri automate</string>
+    <string name="settings_backup_export_contacts_supporting">Salvează contactele într-un fişier VCF necriptat</string>
+    <string name="settings_backup_import_contacts_supporting">Restaurează contactele dintr-un fișier de backup VCF standard</string>
+    <string name="settings_backup_export_encrypted_contacts">Exportă backup criptat</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Salvează contactele ca fișier AES-256 criptat .vcf.enc</string>
+    <string name="settings_backup_import_encrypted_contacts">Importă backup criptat</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Restaurează contactele dintr-un fișier criptat .vcf.enc</string>
     <string name="settings_backup_encryption">Criptează copiile de rezervă ale contactelor</string>
+    <string name="settings_backup_encryption_supporting">Utilizează criptarea AES-256-GCM pentru copiile de rezervă ale contactelor</string>
     <string name="settings_backup_password">Parolă de rezervă</string>
     <string name="settings_backup_password_supporting">Necesar pentru criptarea și importarea copiilor de siguranță criptate ale contactelor</string>
     <string name="settings_backup_password_not_set">Nicio parolă setată</string>
     <string name="settings_backup_password_set">Parola salvată în siguranță</string>
+    <string name="settings_backup_password_status_configured">Configurat</string>
+    <string name="settings_backup_password_status_not_set">Nu este setat</string>
+    <string name="settings_backup_password_desc_configured">Protejat cu AES-256-GCM. Necesar pentru decriptare și restaurare backup-uri.</string>
+    <string name="settings_backup_password_desc_not_set">Setați o parolă pentru a cripta și securiza copiile de siguranță exportate.</string>
+    <string name="settings_backup_confirm_password">Confirmare parolă</string>
+    <string name="settings_backup_password_mismatch">Parolele nu corespund</string>
+    <string name="settings_backup_remove_password">Elimină parola</string>
+    <string name="settings_backup_remove_password_confirm">Ștergeți parola copiei de rezervă? Criptarea copiei de rezervă va fi dezactivată.</string>
+    <string name="settings_backup_password_helper">Această parolă protejează contactele dvs. cu criptarea AES-256. Păstrați-o în siguranță - nu poate fi recuperată dacă este pierdută.</string>
+    <string name="settings_backup_password_saved">Parolă de rezervă salvată</string>
+    <string name="settings_backup_password_cleared">Parolă de rezervă eliminată</string>
     <string name="settings_backup_set_password">Setează parola</string>
     <string name="settings_backup_change_password">Schimbă parola</string>
     <string name="settings_backup_password_dialog_title">Introduceți parola de rezervă</string>
     <string name="settings_backup_import_progress_title">Importare contacte</string>
     <string name="settings_backup_import_progress_count">%1$d din %2$d contacte importate</string>
+    <string name="settings_backup_auto_export">Export automat contacte</string>
+    <string name="settings_backup_auto_export_supporting">Exportă copii de rezervă ori de câte ori sunt create, editate sau șterse contacte</string>
+    <string name="settings_backup_auto_encrypt">Criptează copiile de rezervă automate</string>
+    <string name="settings_backup_auto_encrypt_supporting">Salvează copiile de rezervă automate ca fişiere AES-256 criptate .vcf.enc</string>
     <string name="settings_backup_folder">Dosar de rezervă automat</string>
     <string name="settings_backup_folder_supporting">Alegeți un folder local unde va fi salvată ultima copie de rezervă</string>
     <string name="settings_backup_folder_not_set">Nici un folder local selectat</string>
     <string name="settings_backup_choose_folder">Alege directorul de backup</string>
     <string name="settings_backup_retention">Versiuni de rezervă automate</string>
     <string name="settings_backup_retention_supporting">Păstrați atâtea copii de rezervă încărcate pentru a recupera listele de contacte mai vechi</string>
+    <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_app_settings_header">Setări aplicație &amp; Preferințe</string>
     <string name="settings_backup_export_settings">Exportă setările aplicației</string>
     <string name="settings_backup_export_settings_supporting">Creaţi o copie de rezervă a temelor, stilurilor de tastatură şi configuraţiilor JSON</string>
@@ -358,6 +381,7 @@ Text alb</string>
     <string name="call_recording_shizuku_attribution_desc">Înregistrarea internă a apelurilor prin Shizuku încorporează codul din proiectul ShizuCallRecorder open-source prin kitsumed (GPLv3). Nu este afiliat sau aprobat de ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Vizitați ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Autor</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->

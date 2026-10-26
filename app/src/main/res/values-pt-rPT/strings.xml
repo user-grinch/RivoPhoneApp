@@ -123,6 +123,7 @@
     <string name="action_allow">Autorizar</string>
     <string name="action_manage">Administrar</string>
     <string name="action_settings">Confirgurações</string>
+    <string name="action_change">Troca</string>
     <string name="action_add_existing_contact">Adicionar a contato existente</string>
     <string name="action_merge_calls">Mesclar chamadas</string>
     <string name="conference_call">Chamada de conferência</string>
@@ -225,6 +226,7 @@
     <!-- Call screen -->
     <!-- Call notifications (CallService) -->
     <!-- Backup & restore (status messages) -->
+    <string name="backup_encrypted_contacts_export_success">Contatos criptografados exportados com sucesso</string>
     <string name="backup_settings_export_success">Configurações do aplicativo exportadas com sucesso</string>
     <string name="backup_settings_import_success">Configurações do aplicativo restauradas com sucesso</string>
     <!-- Settings > root -->
@@ -308,16 +310,41 @@ Texto branco</string>
     <string name="settings_call_dialpad_size_large">Indomável</string>
     <!-- Settings > Blocked numbers -->
     <!-- Settings > Backup & Restore -->
+    <string name="settings_backup_standard_contacts_header">Backup Padrão de Contatos</string>
+    <string name="settings_backup_encrypted_header">Backups criptografados</string>
+    <string name="settings_backup_automatic_header">Backups Automáticos</string>
+    <string name="settings_backup_export_contacts_supporting">Salvar contatos em um arquivo VCF não criptografado</string>
+    <string name="settings_backup_import_contacts_supporting">Restaurar contatos de um arquivo de backup padrão VCF</string>
+    <string name="settings_backup_export_encrypted_contacts">Exportar backup criptografado</string>
+    <string name="settings_backup_export_encrypted_contacts_supporting">Salvar contatos como um arquivo AES-256 criptografado .vcf.enc</string>
+    <string name="settings_backup_import_encrypted_contacts">Importar Backup Criptografado</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Restaurar contatos de um arquivo .vcf.enc criptografado</string>
     <string name="settings_backup_encryption">Criptografar backups de contatos</string>
+    <string name="settings_backup_encryption_supporting">Usar criptografia AES-256-GCM para backups de contatos</string>
     <string name="settings_backup_password">Senha de backup</string>
     <string name="settings_backup_password_supporting">Necessário para criptografar e importar backups dos contatos criptografados</string>
     <string name="settings_backup_password_not_set">Nenhuma senha definida</string>
     <string name="settings_backup_password_set">Senha salva com segurança</string>
+    <string name="settings_backup_password_status_configured">Configurado</string>
+    <string name="settings_backup_password_status_not_set">Não definido</string>
+    <string name="settings_backup_password_desc_configured">Protegido com AES-256-GCM. Necessário para descriptografar e restaurar backups.</string>
+    <string name="settings_backup_password_desc_not_set">Defina uma senha para criptografar e proteger seus backups exportados. (Automatic Translation)</string>
+    <string name="settings_backup_confirm_password">Confirmar senha</string>
+    <string name="settings_backup_password_mismatch">As senhas não coincidem</string>
+    <string name="settings_backup_remove_password">Remover senha</string>
+    <string name="settings_backup_remove_password_confirm">Remover a senha do backup? A criptografia do backup será desabilitada.</string>
+    <string name="settings_backup_password_helper">Esta senha protege seus contatos com criptografia AES-256. Mantenha-a segura — ela não pode ser recuperada se perdida.</string>
+    <string name="settings_backup_password_saved">Senha de backup salva</string>
+    <string name="settings_backup_password_cleared">Senha de backup removida</string>
     <string name="settings_backup_set_password">Definir senha</string>
     <string name="settings_backup_change_password">Mudar Senha</string>
     <string name="settings_backup_password_dialog_title">Inserir senha do backup</string>
     <string name="settings_backup_import_progress_title">Importando contatos</string>
     <string name="settings_backup_import_progress_count">%1$d dos contatos %2$d importados</string>
+    <string name="settings_backup_auto_export">Exportar contatos automaticamente</string>
+    <string name="settings_backup_auto_export_supporting">Exportar backups sempre que os contatos são criados, editados ou excluídos</string>
+    <string name="settings_backup_auto_encrypt">Criptografar backups automáticos</string>
+    <string name="settings_backup_auto_encrypt_supporting">Salvar backups automáticos como arquivos AES-256 criptografados .vcf.enc</string>
     <string name="settings_backup_folder">Pasta de backup automática</string>
     <string name="settings_backup_folder_supporting">Escolha uma pasta local onde o backup mais recente será salvo</string>
     <string name="settings_backup_folder_not_set">Nenhuma pasta local selecionada</string>
@@ -351,6 +378,7 @@ Texto branco</string>
     <string name="call_recording_shizuku_attribution_desc">A gravação de chamadas internas via Shizuku incorpora código do projeto ShizuCallRecorder de código aberto por kitsumed (GPLv3). Não afiliado ou endossado por ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Visitar ShizuCallRecorder</string>
     <!-- Settings > Contributors -->
+    <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">Autor ShizuCallRecorder</string>
     <!-- OEM & Xiaomi Call Recording Optimization -->
     <!-- Favorites -->
