@@ -47,13 +47,14 @@ class CallLogViewModel(
     val selectedFilter = _selectedFilter.asStateFlow()
 
     private var debounceFetchJob: Job? = null
+    private var fetchJob: Job? = null
 
     private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
             debounceFetchJob?.cancel()
             debounceFetchJob = viewModelScope.launch(Dispatchers.IO) {
                 delay(250)
-                fetchLogsInternal()
+                startFetch()
             }
         }
     }
@@ -70,6 +71,7 @@ class CallLogViewModel(
     override fun onCleared() {
         super.onCleared()
         debounceFetchJob?.cancel()
+        fetchJob?.cancel()
         try {
             contentResolver.unregisterContentObserver(contentObserver)
         } catch (e: Exception) {
@@ -83,7 +85,12 @@ class CallLogViewModel(
 
     fun fetchLogs() {
         debounceFetchJob?.cancel()
-        viewModelScope.launch(Dispatchers.IO) {
+        startFetch()
+    }
+
+    private fun startFetch() {
+        if (fetchJob?.isActive == true) return
+        fetchJob = viewModelScope.launch(Dispatchers.IO) {
             fetchLogsInternal()
         }
     }

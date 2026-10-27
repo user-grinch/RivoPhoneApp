@@ -12,7 +12,7 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 [![Crowdin](https://img.shields.io/badge/Localization-Crowdin-0EA5E9?logo=crowdin&style=flat-square)](https://crowdin.com/project/rivophone)
 
 <p align="center">
-  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/latest/download/RivoPhone.apk">
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk">
     <img src="images/download_stable.png" alt="Direct Download | STABLE" height="42">
   </a>
   &nbsp;

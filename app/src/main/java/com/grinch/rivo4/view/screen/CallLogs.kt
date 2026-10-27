@@ -97,10 +97,6 @@ fun CallLogFullScreen(
     val viewModel: CallLogViewModel = koinActivityViewModel()
     val prefs: PreferenceManager = koinInject()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchLogs()
-    }
-
     val allLogs by viewModel.allCallLogs.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()

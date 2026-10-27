@@ -891,51 +891,6 @@ fun ContactDetailsScreen(
                             icon = Icons.Default.Share,
                             contentDescription = shareContactLabel
                         )
-                        Box {
-                            RivoTopBarIconButton(
-                                onClick = { showOverflowMenu = true },
-                                icon = Icons.Default.MoreVert,
-                                contentDescription = null
-                            )
-                            DropdownMenu(
-                                expanded = showOverflowMenu,
-                                onDismissRequest = { showOverflowMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.action_add_contact)) },
-                                    leadingIcon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        navigator.navigate(ContactEditScreenDestination(initialPhone = phoneNumber))
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            if (contactBlocked) stringResource(R.string.contact_unblock)
-                                            else stringResource(R.string.contact_block)
-                                        )
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            if (contactBlocked) Icons.Default.CheckCircle else Icons.Default.Block,
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        contactNumbers.forEach { number ->
-                                            if (contactBlocked) {
-                                                BlockedNumbersManager.unblock(context, number)
-                                            } else {
-                                                BlockedNumbersManager.block(context, number)
-                                            }
-                                        }
-                                        blockedVersion++
-                                    }
-                                )
-                            }
-                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -1378,7 +1333,15 @@ fun ContactDetailsScreen(
                                         supporting = stringResource(R.string.label_mobile),
                                         leadingIcon = Icons.Default.Phone,
                                         isCompact = true,
-                                        onClick = { callLauncher.dial(phoneNumber, null) }
+                                        onClick = { callLauncher.dial(phoneNumber, null) },
+                                        onLongClick = {
+                                            clipboardManager.setText(AnnotatedString(phoneNumber))
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.number_copied_toast),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     )
                                 }
                             }
