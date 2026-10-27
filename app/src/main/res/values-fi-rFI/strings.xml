@@ -974,7 +974,6 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_export_vcf">Vie VCF</string>
     <string name="loc_vault_access_security">Holvi Pääsy &amp; Turvallisuus</string>
     <string name="loc_secret_dialpad_code">Salainen Näppäimistön Koodi</string>
-    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Valitse nimi: $currentSecretCode valintaikkunassa avataksesi nopeasti yksityisen holvin</string>
     <string name="loc_hide_from_settings">Piilota asetuksista</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Poista Yksityinen tallennustila asetusvalikosta (käytettävissä vain salaisen koodin kautta)</string>
     <string name="loc_pick_contacts_for_vault">Valitse holvin yhteystiedot</string>
@@ -1050,14 +1049,8 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_processing_blocklist">Käsitellään Lohkoluetteloa</string>
     <string name="loc_importing_blocked_numbers">Tuodaan estettyjä numeroita...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Ota Älä häiritse -tila käyttöön painamalla molempia äänenvoimakkuuspainikkeita</string>
-    <string name="loc_totalduplicates">$totalDuplicates</string>
     <string name="loc_manage_storage_tools">Hallitse tallennustilaa &amp; työkalut</string>
     <string name="loc_remove_from_priority">Poista prioriteetilta</string>
-    <string name="loc_all_countsuffix">Kaikki$countSuffix</string>
-    <string name="loc_contacts_count">Yhteystiedot ($count)</string>
-    <string name="loc_favorites_count">Suosikit ($count)</string>
-    <string name="loc_call_logs_count">Puhelulokit ($count)</string>
-    <string name="loc_missed_count">Vastaamaton ($count)</string>
     <string name="loc_granted">Myönnetty</string>
     <string name="loc_private_storage_hidden">Yksityinen Tallennustila (piilotettu)</string>
     <string name="call_customization_behavior">Puhelun käyttäytyminen</string>
