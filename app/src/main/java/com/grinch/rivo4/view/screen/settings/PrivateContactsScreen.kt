@@ -354,7 +354,7 @@ fun PrivateContactsScreen(
                         item {
                             RivoListItem(
                                 headline = context.getString(R.string.loc_secret_dialpad_code),
-                                supporting = context.getString(R.string.loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault),
+                                supporting = context.getString(R.string.loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault, currentSecretCode),
                                 leadingIcon = Icons.Outlined.Password,
                                 trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                 onClick = { showSecurityDialog = true }
@@ -444,7 +444,7 @@ fun PrivateContactsScreen(
                                 Spacer(Modifier.height(4.dp))
                                 Text(
                                     text = if (searchQuery.isNotBlank()) {
-                                        "No private contacts match \"$searchQuery\""
+                                        context.getString(R.string.private_contacts_no_search_results, searchQuery)
                                     } else {
                                         context.getString(R.string.settings_manage_private_contacts_supporting)
                                     },
@@ -745,7 +745,7 @@ private fun PrivateContactListItem(
                             )
                             Spacer(Modifier.width(2.dp))
                             Text(
-                                text = if (contact.isHidden) "Hidden" else "Private",
+                                text = stringResource(if (contact.isHidden) R.string.settings_bottom_nav_hidden else R.string.storage_private),
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }

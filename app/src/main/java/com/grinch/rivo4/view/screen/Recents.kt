@@ -1124,7 +1124,7 @@ fun RecentsDailyStatusHeader(
         item(key = "today_total") {
             DailyStatCard(
                 value = "$totalCalls",
-                label = "Today",
+                label = stringResource(R.string.date_today),
                 icon = Icons.AutoMirrored.Filled.CallReceived,
                 containerColor = if (isDark) Color(0xFF253138) else Color(0xFFE2EFF6),
                 badgeColor = if (isDark) Color(0xFF3F596C) else Color(0xFFBEDEEF),
@@ -1139,7 +1139,7 @@ fun RecentsDailyStatusHeader(
         item(key = "today_call_time") {
             DailyStatCard(
                 value = formatShortDuration(totalDurationSeconds),
-                label = "Call Time",
+                label = stringResource(R.string.recents_call_time),
                 icon = Icons.Outlined.Schedule,
                 containerColor = if (isDark) Color(0xFF3B2E1E) else Color(0xFFFFF4E5),
                 badgeColor = if (isDark) Color(0xFF614A2E) else Color(0xFFFFE0B8),
@@ -1155,7 +1155,7 @@ fun RecentsDailyStatusHeader(
             item(key = "today_incoming") {
                 DailyStatCard(
                     value = "$incomingCalls",
-                    label = "Incoming",
+                    label = stringResource(R.string.call_type_incoming),
                     icon = Icons.AutoMirrored.Filled.CallReceived,
                     containerColor = if (isDark) Color(0xFF1E2F38) else Color(0xFFE0F4FF),
                     badgeColor = if (isDark) Color(0xFF335566) else Color(0xFFB8E4FF),
@@ -1171,7 +1171,7 @@ fun RecentsDailyStatusHeader(
         item(key = "today_missed") {
             DailyStatCard(
                 value = "$missedCalls",
-                label = "Missed",
+                label = stringResource(R.string.call_type_missed),
                 icon = Icons.AutoMirrored.Filled.CallMissed,
                 containerColor = if (isDark) Color(0xFF3B252B) else Color(0xFFFFECEF),
                 badgeColor = if (isDark) Color(0xFF6B3B48) else Color(0xFFFFCDD6),
@@ -1186,7 +1186,7 @@ fun RecentsDailyStatusHeader(
         item(key = "today_outgoing") {
             DailyStatCard(
                 value = "$outgoingCalls",
-                label = "Outgoing",
+                label = stringResource(R.string.call_type_outgoing),
                 icon = Icons.AutoMirrored.Filled.CallMade,
                 containerColor = if (isDark) Color(0xFF253422) else Color(0xFFEBF7EA),
                 badgeColor = if (isDark) Color(0xFF3D5936) else Color(0xFFC7ECC4),

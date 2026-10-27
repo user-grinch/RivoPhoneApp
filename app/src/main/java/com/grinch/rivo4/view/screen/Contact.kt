@@ -730,7 +730,7 @@ fun ContactManagementTopCard(
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer
                             ) {
                                 Text(
-                                    text = stringResource(R.string.loc_totalduplicates),
+                                    text = stringResource(R.string.loc_totalduplicates, totalDuplicates),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)

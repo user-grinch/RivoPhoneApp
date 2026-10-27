@@ -844,7 +844,7 @@ fun FakeCallSchedulerScreen(
                                         modifier = Modifier.size(14.dp)
                                     )
                                     Text(
-                                        text = stringResource(R.string.loc_formatteddate_countdownstr),
+                                        text = stringResource(R.string.loc_formatteddate_countdownstr, formattedDate, countdownStr),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Medium

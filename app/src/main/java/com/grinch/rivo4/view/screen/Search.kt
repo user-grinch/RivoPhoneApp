@@ -424,7 +424,7 @@ fun ContactSearchContent(
                                 onClick = { selectedFilter = SearchTabFilter.ALL },
                                 label = {
                                     val countSuffix = if (query.isNotBlank()) " (${filteredContacts.size + filteredCallLogs.size})" else ""
-                                    Text(stringResource(R.string.loc_all_countsuffix))
+                                    Text(stringResource(R.string.loc_all_countsuffix, countSuffix))
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = FilterChipDefaults.filterChipColors(
@@ -446,7 +446,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.CONTACTS || query.isNotBlank()) filteredContacts.size else contacts.size
-                                    Text(stringResource(R.string.loc_contacts_count))
+                                    Text(stringResource(R.string.loc_contacts_count, count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Contacts, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -471,7 +471,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.FAVORITES) filteredContacts.size else favoritesCount
-                                    Text(stringResource(R.string.loc_favorites_count))
+                                    Text(stringResource(R.string.loc_favorites_count, count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.StarOutline, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -496,7 +496,7 @@ fun ContactSearchContent(
                                 },
                                 label = {
                                     val count = if (selectedFilter == SearchTabFilter.RECENTS || query.isNotBlank()) filteredCallLogs.size else callLogs.size
-                                    Text(stringResource(R.string.loc_call_logs_count))
+                                    Text(stringResource(R.string.loc_call_logs_count, count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Outlined.Call, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -523,7 +523,7 @@ fun ContactSearchContent(
                                     val count = if (selectedFilter == SearchTabFilter.MISSED) filteredCallLogs.size else callLogs.count {
                                         it.type == CallLog.Calls.MISSED_TYPE || it.types.contains(CallLog.Calls.MISSED_TYPE)
                                     }
-                                    Text(stringResource(R.string.loc_missed_count))
+                                    Text(stringResource(R.string.loc_missed_count, count))
                                 },
                                 leadingIcon = {
                                     Icon(Icons.AutoMirrored.Outlined.CallMissed, contentDescription = null, modifier = Modifier.size(16.dp))

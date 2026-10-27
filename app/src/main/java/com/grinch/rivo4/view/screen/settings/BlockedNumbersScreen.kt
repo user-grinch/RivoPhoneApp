@@ -751,7 +751,7 @@ fun BlockedNumbersScreen(
                 refreshKey++
             },
             title = stringResource(R.string.action_unblock),
-            message = stringResource(R.string.loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag),
+            message = stringResource(R.string.loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag, targetDisplayName),
             confirmLabel = stringResource(R.string.action_unblock),
             dismissLabel = stringResource(R.string.action_cancel),
             icon = Icons.Outlined.LockOpen

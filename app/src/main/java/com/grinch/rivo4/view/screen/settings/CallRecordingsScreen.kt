@@ -434,9 +434,9 @@ fun CallRecordingsContent(
             DateFilterPreset.ALL -> stringResource(R.string.filter_all)
             DateFilterPreset.TODAY -> stringResource(R.string.date_today)
             DateFilterPreset.YESTERDAY -> stringResource(R.string.date_yesterday)
-            DateFilterPreset.THIS_WEEK -> "This Week"
-            DateFilterPreset.THIS_MONTH -> "This Month"
-            DateFilterPreset.CUSTOM -> "Custom"
+            DateFilterPreset.THIS_WEEK -> stringResource(R.string.analytics_time_this_week)
+            DateFilterPreset.THIS_MONTH -> stringResource(R.string.analytics_time_this_month)
+            DateFilterPreset.CUSTOM -> stringResource(R.string.ringtone_custom)
         }
     }
 
@@ -605,7 +605,7 @@ fun CallRecordingsContent(
                                 text = if (recordings.isEmpty()) {
                                     stringResource(R.string.call_recordings_empty)
                                 } else {
-                                    "No recordings match the active filter"
+                                    stringResource(R.string.call_recordings_no_filter_matches)
                                 },
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -723,7 +723,7 @@ fun CallRecordingsContent(
                                         }
                                     },
                                     onShareClick = {
-                                        CallRecorder.share(context, item.file, "Share Recording")
+                                        CallRecorder.share(context, item.file, context.getString(R.string.call_recordings_share))
                                     },
                                     onDeleteClick = {
                                         pendingDelete = item.file
@@ -916,19 +916,19 @@ fun CallRecordingsContent(
                                 RivoSelectListItem(
                                     headline = stringResource(R.string.loc_auto_record_filter),
                                     supporting = when (autoRecordFilter) {
-                                        PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> "Recording incoming calls only"
-                                        PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> "Recording outgoing calls only"
-                                        PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY -> "Recording unknown numbers only"
-                                        PreferenceManager.RECORD_FILTER_CONTACTS_ONLY -> "Recording saved contacts only"
-                                        else -> "Recording all calls"
+                                        PreferenceManager.RECORD_FILTER_INCOMING_ONLY -> stringResource(R.string.call_recordings_filter_incoming_only_desc)
+                                        PreferenceManager.RECORD_FILTER_OUTGOING_ONLY -> stringResource(R.string.call_recordings_filter_outgoing_only_desc)
+                                        PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY -> stringResource(R.string.call_recordings_filter_unknown_only_desc)
+                                        PreferenceManager.RECORD_FILTER_CONTACTS_ONLY -> stringResource(R.string.call_recordings_filter_contacts_only_desc)
+                                        else -> stringResource(R.string.call_recordings_filter_all_desc)
                                     },
                                     leadingIcon = Icons.Outlined.FilterList,
                                     options = listOf(
-                                        "All Calls" to PreferenceManager.RECORD_FILTER_ALL,
-                                        "Incoming Calls Only" to PreferenceManager.RECORD_FILTER_INCOMING_ONLY,
-                                        "Outgoing Calls Only" to PreferenceManager.RECORD_FILTER_OUTGOING_ONLY,
-                                        "Unknown Numbers Only" to PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY,
-                                        "Saved Contacts Only" to PreferenceManager.RECORD_FILTER_CONTACTS_ONLY
+                                        stringResource(R.string.call_recordings_filter_all) to PreferenceManager.RECORD_FILTER_ALL,
+                                        stringResource(R.string.call_recordings_filter_incoming_only) to PreferenceManager.RECORD_FILTER_INCOMING_ONLY,
+                                        stringResource(R.string.call_recordings_filter_outgoing_only) to PreferenceManager.RECORD_FILTER_OUTGOING_ONLY,
+                                        stringResource(R.string.call_recordings_filter_unknown_only) to PreferenceManager.RECORD_FILTER_UNKNOWN_ONLY,
+                                        stringResource(R.string.call_recordings_filter_contacts_only) to PreferenceManager.RECORD_FILTER_CONTACTS_ONLY
                                     ),
                                     selectedValue = autoRecordFilter,
                                     onValueChange = {
@@ -1324,7 +1324,7 @@ fun CallRecordEntryCard(
                     ) {
                         Icon(
                             imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                            contentDescription = if (isPlaying) "Pause" else "Play",
+                            contentDescription = stringResource(if (isPlaying) R.string.call_recordings_pause else R.string.call_recordings_play),
                             modifier = Modifier.size(22.dp)
                         )
                     }

@@ -463,7 +463,7 @@ fun ActiveCallControls(
         ) {
             AuxiliaryPillButton(
                 icon = Icons.AutoMirrored.Filled.Notes,
-                label = "Notes",
+                label = stringResource(R.string.label_notes),
                 compact = compact,
                 onClick = onNotesClick
             )
