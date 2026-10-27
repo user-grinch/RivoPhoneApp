@@ -311,7 +311,6 @@
     <string name="contact_details_video">Wideo</string>
     <string name="contact_details_info_title">Informacje o kontakcie</string>
     <string name="contact_bullet_favorite">" • Ulubione"</string>
-    <string name="contact_bullet_default">" • Domyślny"</string>
     <string name="contact_bullet_recent">" • Ostatnie"</string>
     <string name="content_desc_favorite">Ulubione</string>
     <string name="contact_clear_favorite">Usuń z ulubionych</string>
@@ -374,8 +373,8 @@
     <string name="contact_edit_select_date">Wybierz datę</string>
     <string name="contact_edit_organization_header">Organizacja</string>
     <string name="contact_edit_add_organization">Dodaj organizację</string>
-    <string name="contact_edit_company">W związku z tym Komisja odrzuciła ten argument.</string>
-    <string name="contact_edit_job_title">Tytuł pracy</string>
+    <string name="contact_edit_company">Firma</string>
+    <string name="contact_edit_job_title">Stanowisko</string>
     <string name="contact_edit_department">Departament</string>
     <string name="contact_edit_websites_header">Strony internetowe</string>
     <string name="contact_edit_add_website">Dodaj stronę</string>
@@ -400,7 +399,7 @@
     <string name="relation_type_parent">Rodzic</string>
     <string name="relation_type_partner">Partner</string>
     <string name="relation_type_referred_by">Polecane przez</string>
-    <string name="relation_type_relative">Względny</string>
+    <string name="relation_type_relative">Krewny</string>
     <string name="relation_type_sister">Siostra</string>
     <string name="relation_type_spouse">Małżonek</string>
     <string name="contact_edit_notes_header">Notatki</string>
@@ -845,7 +844,6 @@ Biały tekst</string>
     <string name="call_recording_shizuku_attribution_title">Silnik nagrywania połączeń</string>
     <string name="call_recording_shizuku_attribution_desc">Nagrywanie połączeń wewnętrznych za pośrednictwem Shizuku zawiera kod z projektu ShizuCallRecorder open-source przez kitsumed (GPLv3). Nie jest powiązane z ShizuCallRecorder ani przez niego zatwierdzone.</string>
     <string name="call_recording_shizuku_attribution_action">Odwiedź ShizuCallRecorder</string>
-    <string name="settings_top_card_subtext">Sprawdź aktualizacje • Współtwórcy • Darowizna</string>
     <string name="settings_top_card_updates">Aktualizacje</string>
     <string name="settings_top_card_donate">Darowizna</string>
     <!-- Settings > Contributors -->
@@ -1320,7 +1318,7 @@ Biały tekst</string>
     <string name="settings_group_system_integration">Integracja systemu</string>
     <string name="settings_blocked_system_supporting">Otwórz menedżera numerów zablokowanych przez system Android</string>
     <!-- Multi-call & Conference Management -->
-    <string name="action_swap">Przełącz</string>
+    <string name="action_swap">Przenieś</string>
     <string name="action_swap_calls">Przełącz połączenia</string>
     <string name="conference_manage">Zarządzaj</string>
     <string name="conference_participants">Uczestnicy konferencji (%1$d)</string>
@@ -1497,7 +1495,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Zastosuj dynamiczne tła gradientu do kontaktu z początkowymi awatarami</string>
     <string name="loc_typography">Typografia</string>
     <string name="loc_font_text_size_and_system_font">Czcionka, rozmiar tekstu i czcionka systemowa</string>
-    <string name="loc_call_screen_buttons">Przyciski ekranu połączenia</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Wybierz położenie każdego przycisku połączenia</string>
     <string name="loc_hide_avatar_with_wallpaper">Ukryj awatar za pomocą tapety</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Pomiń koło awatara, gdy ustawiona jest pełna tapeta w tle</string>
@@ -1679,8 +1676,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Usuń wszystkie</string>
     <string name="loc_refresh">Odśwież</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d wszystkie nagrania są zapisywane na tym urządzeniu</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optymalizacja %1$s</string>
     <string name="loc_dismiss">Odrzuć</string>
     <string name="loc_saved_call_recordings">Zapisane nagrania połączeń</string>
     <string name="loc_recording_controls">Sterowanie nagrywaniem</string>
@@ -1693,14 +1688,12 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_minimum_duration_filter">Filtr minimalnego czasu trwania</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Odrzuć bardzo krótkie połączenia poniżej progu</string>
     <string name="loc_delete_all_recordings">Usunąć wszystkie nagrania?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Wszystkie nagrania %1$d zostaną trwale usunięte z Twojego urządzenia. Tej czynności nie można cofnąć.</string>
     <string name="loc_select_start_date_from">Wybierz datę rozpoczęcia (Od)</string>
     <string name="loc_select_end_date_to">Wybierz datę zakończenia (To)</string>
     <string name="loc_play">Odtwórz</string>
     <string name="loc_rewind_10s">Przewiń 10s</string>
     <string name="loc_forward_10s">Do przodu 10s</string>
-    <string name="loc_selectedcontactids_size_selected">Wybrano %1$d</string>
-    <string name="loc_privatecontacts_size_secured">%1$d zabezpieczony</string>
+    <string name="loc_privatecontacts_size_secured">Zabezpieczonych: %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Przechowywane lokalnie w bezpiecznym schowku Rivo • Ukryte przed WhatsAppem i aplikacjami systemowymi</string>
     <string name="loc_select_contacts_for_private_storage">Wybierz kontakty do pamięci prywatnej</string>
     <string name="loc_move_to_private_storage">Przenieś do pamięci prywatnej</string>
@@ -1713,7 +1706,6 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_hide_from_settings">Ukryj w ustawieniach</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Usuń pamięć prywatną z menu ustawień (dostępna tylko za pomocą tajnego kodu)</string>
     <string name="loc_pick_contacts_for_vault">Wybierz kontakty do sejfu</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Czy na stałe usunąć wybrane kontakty (%1$d) z pamięci prywatnej?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Wpisz ten tajny kod na klawiaturze numerycznej, aby ujawnić kontakty w pamięci prywatnej.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Tylko tajny kod klawiatury będzie miał dostęp do pamięci prywatnej</string>
     <string name="loc_security_protection">Bezpieczeństwo i ochrona</string>
@@ -1781,7 +1773,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_save_to_call_history">Zapisz do historii połączeń</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Odebrane i nieodebrane fałszywe połączenia będą widoczne w historii</string>
     <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
-    <string name="loc_blockednumbers_size_blocked">%1$d zablokowany</string>
+    <string name="loc_blockednumbers_size_blocked">Zablokowane: %1$d</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Połączenia i wiadomości tekstowe z tego numeru zostaną natychmiast zablokowane.</string>
     <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokuj $targetDisplayName? Będą mogli zadzwonić i wysłać Ci wiadomość ponownie.</string>
     <string name="loc_processing_blocklist">Przetwarzanie listy zablokowanych</string>
@@ -1864,8 +1856,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="app_lock_enabled_summary">Włączone (Face, Odcisk palca, PIN)</string>
     <!-- Call Analytics -->
     <string name="analytics_time_today">Dziś</string>
-    <string name="analytics_time_this_week">W tym tygodniu</string>
-    <string name="analytics_time_this_month">Ten Miesiąc</string>
+    <string name="analytics_time_this_week">Ten tydzień</string>
+    <string name="analytics_time_this_month">Ten miesiąc</string>
     <string name="analytics_time_all_time">Cały okres</string>
     <string name="call_analytics_contact_calls_breakdown">%1$d wywołań (%2$d , %3$d out)</string>
     <string name="call_analytics_talked">rozmawiał</string>
@@ -1879,4 +1871,5 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Odkryj w sejfie</string>
     <string name="private_vault_hide_completely">Ukryj całkowicie</string>
+    <!-- Settings Groups -->
 </resources>

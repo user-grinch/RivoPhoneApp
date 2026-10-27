@@ -739,7 +739,6 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Εφαρμόστε δυναμικά υπόβαθρα βαθμίδας σε επαφή με τα αρχικά avatars</string>
     <string name="loc_typography">Τυπογραφία</string>
     <string name="loc_font_text_size_and_system_font">Γραμματοσειρά, μέγεθος κειμένου και γραμματοσειρά συστήματος</string>
-    <string name="loc_call_screen_buttons">Πλήκτρα Οθόνης Κλήσεων</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Επιλέξτε τη θέση κάθε κουμπιού κατά την κλήση</string>
     <string name="loc_hide_avatar_with_wallpaper">Απόκρυψη Avatar με ταπετσαρία</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Παράλειψη κύκλου avatar όταν έχει οριστεί μια πλήρης ταπετσαρία φόντου επαφής</string>
@@ -919,7 +918,6 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Διαγραφή Όλων</string>
     <string name="loc_refresh">Ανανέωση</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Βελτιστοποίηση</string>
     <string name="loc_dismiss">Απόρριψη</string>
     <string name="loc_saved_call_recordings">Αποθηκευμένες Καταγραφές Κλήσεων</string>
     <string name="loc_recording_controls">Έλεγχοι Εγγραφής</string>
@@ -932,7 +930,6 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_minimum_duration_filter">Ελάχιστο Φίλτρο Διάρκειας</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Απόρριψη εξαιρετικά σύντομων κλήσεων κάτω από το όριο</string>
     <string name="loc_delete_all_recordings">Διαγραφή όλων των ηχογραφήσεων?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Όλες οι %1$d εγγραφές θα αφαιρεθούν οριστικά από τη συσκευή σας. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
     <string name="loc_select_start_date_from">Επιλέξτε Ημερομηνία Έναρξης (Από)</string>
     <string name="loc_select_end_date_to">Επιλέξτε Ημερομηνία Λήξης (Προς)</string>
     <string name="loc_play">Αναπαραγωγή</string>
@@ -1105,4 +1102,5 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Επανεμφάνιση στο Θησαυ/κιο</string>
     <string name="private_vault_hide_completely">Απόκρυψη Εντελώς</string>
+    <!-- Settings Groups -->
 </resources>

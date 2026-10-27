@@ -758,7 +758,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Tillämpa dynamiska lutning bakgrunder för att kontakta ursprungliga avatarer</string>
     <string name="loc_typography">Typografi</string>
     <string name="loc_font_text_size_and_system_font">Typsnitt, textstorlek och systemtypsnitt</string>
-    <string name="loc_call_screen_buttons">Skärm samtalsknappar</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Välj position för varje samtalsknapp</string>
     <string name="loc_hide_avatar_with_wallpaper">Dölj Avatar med bakgrundsbild</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Utelämna avatar cirkel när en full kontakt bakgrund bakgrund är inställd</string>
@@ -940,8 +939,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Ta bort alla</string>
     <string name="loc_refresh">Uppdatera</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d totalt antal inspelningar sparas på denna enhet</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimering</string>
     <string name="loc_dismiss">Avfärda</string>
     <string name="loc_saved_call_recordings">Sparade samtalsinspelningar</string>
     <string name="loc_recording_controls">Inspelning kontroller</string>
@@ -954,13 +951,11 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_minimum_duration_filter">Minsta varaktighet Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Kasta ultrakorta samtal under tröskeln</string>
     <string name="loc_delete_all_recordings">Ta bort alla inspelningar?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alla %1$d inspelningar kommer att tas bort permanent från din enhet. Denna åtgärd kan inte ångras.</string>
     <string name="loc_select_start_date_from">Välj startdatum (From)</string>
     <string name="loc_select_end_date_to">Välj slutdatum (Till)</string>
     <string name="loc_play">Spela</string>
     <string name="loc_rewind_10s">Spola tillbaka 10s</string>
     <string name="loc_forward_10s">Vidarebefordra 10s</string>
-    <string name="loc_selectedcontactids_size_selected">%1$d vald</string>
     <string name="loc_privatecontacts_size_secured">%1$d säkrad</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagrad lokalt i Rivos sandlådade valv • Gömd från WhatsApp och systemappar</string>
     <string name="loc_select_contacts_for_private_storage">Välj kontakter för privat lagring</string>
@@ -974,7 +969,6 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_hide_from_settings">Dölj från inställningar</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Ta bort privat lagring från inställningsmenyn (endast tillgänglig via hemlig kod)</string>
     <string name="loc_pick_contacts_for_vault">Välj kontakter för valv</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Radera %1$d valda kontakter permanent från privat lagring?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Skriv den här hemliga koden på knappsatsen för att visa kontakter i privat lagring.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Endast den hemliga dialpad-koden kommer åt privat lagring</string>
     <string name="loc_security_protection">Säkerhet &amp; Skydd</string>
@@ -1139,4 +1133,5 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Visa i valvet</string>
     <string name="private_vault_hide_completely">Dölj helt</string>
+    <!-- Settings Groups -->
 </resources>

@@ -307,7 +307,7 @@
     <string name="contact_details_video">Vidéo</string>
     <string name="contact_details_info_title">Informations du contact</string>
     <string name="contact_bullet_favorite">" • Favori"</string>
-    <string name="contact_bullet_default">" • Par défaut"</string>
+    <string name="contact_bullet_default">" • Défaut"</string>
     <string name="contact_bullet_recent">" • Récent"</string>
     <string name="content_desc_favorite">Favori</string>
     <string name="contact_clear_favorite">Retirer des favoris</string>
@@ -594,6 +594,10 @@ blanc</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Inverse la position des onglets contacts et récents</string>
     <string name="settings_interface_icon_only_bar">Barre inférieure avec icônes seules</string>
     <string name="settings_interface_icon_only_bar_supporting">Supprime les libellés textuels de la navigation</string>
+    <string name="settings_avatar_style">Style de l\'avatar</string>
+    <string name="settings_avatar_style_supporting">Choisissez entre des avatars colorés, dégradés ou simples</string>
+    <string name="avatar_style_colorful">Coloré</string>
+    <string name="avatar_style_gradient">Dégradé</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Son et vibration</string>
     <string name="settings_sound_dtmf_tone">Tonalité DTMF</string>
@@ -841,7 +845,6 @@ blanc</string>
     <string name="call_recording_shizuku_attribution_title">Moteur d\'enregistrement d\'appels</string>
     <string name="call_recording_shizuku_attribution_desc">L\'enregistrement d\'appels internes via Shizuku intègre du code du projet ShizuCallRecorder open-source par kitsumed (GPLv3). Non affilié ou approuvé par ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Visiter ShizuCallRecorder</string>
-    <string name="settings_top_card_subtext">Vérifier les mises à jour • Contributeurs • Faire un don</string>
     <string name="settings_top_card_updates">Mises à jour</string>
     <string name="settings_top_card_donate">Faire un don</string>
     <!-- Settings > Contributors -->
@@ -1491,7 +1494,6 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Appliquer les arrière-plans du dégradé dynamique aux avatars initiaux</string>
     <string name="loc_typography">Typographie</string>
     <string name="loc_font_text_size_and_system_font">Police, taille du texte et police système</string>
-    <string name="loc_call_screen_buttons">Écran d\'appel</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Choisir la position de chaque bouton d\'appel</string>
     <string name="loc_hide_avatar_with_wallpaper">Cacher l\'avatar avec fond d\'écran</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omettre le cercle d\'avatar quand un fond d\'écran de contact complet est défini</string>
@@ -1673,8 +1675,6 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Tout supprimer</string>
     <string name="loc_refresh">Rafraîchir</string>
-    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">Les enregistrements totaux %1$d sont enregistrés sur cet appareil</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimisation</string>
     <string name="loc_dismiss">Refuser</string>
     <string name="loc_saved_call_recordings">Enregistrements d\'appel enregistrés</string>
     <string name="loc_recording_controls">Contrôles d\'enregistrement</string>
@@ -1687,13 +1687,11 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="loc_minimum_duration_filter">Filtre de durée minimum</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Ignorer les appels ultra-courts en dessous du seuil</string>
     <string name="loc_delete_all_recordings">Supprimer tous les enregistrements ?</string>
-    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Tous les enregistrements %1$d seront définitivement supprimés de votre appareil. Cette action ne peut pas être annulée.</string>
     <string name="loc_select_start_date_from">Sélectionnez la date de début (From)</string>
     <string name="loc_select_end_date_to">Sélectionnez la date de fin (À)</string>
     <string name="loc_play">Jouer</string>
     <string name="loc_rewind_10s">Revenir en arrière de 10s</string>
     <string name="loc_forward_10s">Avancer de 10s</string>
-    <string name="loc_selectedcontactids_size_selected">%1$d sélectionné</string>
     <string name="loc_privatecontacts_size_secured">%1$d sécurisé</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Stocké localement dans le coffre en bac à sable de Rivo • Caché sur WhatsApp et les applications système</string>
     <string name="loc_select_contacts_for_private_storage">Sélectionnez les contacts pour le stockage privé</string>
@@ -1707,7 +1705,6 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="loc_hide_from_settings">Masquer dans les paramètres</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Retirer le stockage privé du menu des paramètres (accessible uniquement par code secret)</string>
     <string name="loc_pick_contacts_for_vault">Choisir les contacts pour le coffre</string>
-    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Supprimer définitivement le ou les contacts sélectionnés %1$d du stockage privé?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Tapez ce code secret sur le pavé numérique pour révéler les contacts dans le stockage privé.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Seul le code clavier secret accèdera au stockage privé</string>
     <string name="loc_security_protection">Protection de sécurité &amp;</string>
@@ -1873,4 +1870,5 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">Démasquer dans le coffre</string>
     <string name="private_vault_hide_completely">Masquer Complètement</string>
+    <!-- Settings Groups -->
 </resources>

@@ -281,7 +281,6 @@
     <string name="contact_details_video">视频通话</string>
     <string name="contact_details_info_title">联系人信息</string>
     <string name="contact_bullet_favorite">" • 收藏"</string>
-    <string name="contact_bullet_default">" • 默认"</string>
     <string name="contact_bullet_recent">" • 最近通话"</string>
     <string name="content_desc_favorite">收藏</string>
     <string name="contact_clear_favorite">清除收藏</string>
@@ -904,7 +903,6 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">应用动态渐变后退来联系初始头像</string>
     <string name="loc_typography">图形</string>
     <string name="loc_font_text_size_and_system_font">字体、文本大小和系统字体</string>
-    <string name="loc_call_screen_buttons">调用屏幕按钮</string>
     <string name="loc_choose_the_position_of_each_in_call_button">选择每个通话按钮的位置</string>
     <string name="loc_hide_avatar_with_wallpaper">用壁纸隐藏头像</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">设置完整的联系人背景壁纸时忽略头像圆</string>
@@ -1084,7 +1082,6 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">全部删除</string>
     <string name="loc_refresh">刷新</string>
-    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s 优化</string>
     <string name="loc_dismiss">关闭</string>
     <string name="loc_saved_call_recordings">已保存通话记录</string>
     <string name="loc_recording_controls">录制控制</string>
@@ -1268,4 +1265,5 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <!-- Private Contacts -->
     <string name="private_vault_unhide_in_vault">在保险库中取消隐藏</string>
     <string name="private_vault_hide_completely">完全隐藏</string>
+    <!-- Settings Groups -->
 </resources>
