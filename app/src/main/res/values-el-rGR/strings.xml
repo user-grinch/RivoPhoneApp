@@ -957,7 +957,6 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_export_vcf">Εξαγωγή VCF</string>
     <string name="loc_vault_access_security">Vault Access &amp; Ασφάλεια</string>
     <string name="loc_secret_dialpad_code">Μυστικός Κωδικός Πληκτρολόγησης</string>
-    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Κλήση $currentSecretCode στο dialpad για γρήγορο άνοιγμα ιδιωτικού θησαυ/κιου</string>
     <string name="loc_hide_from_settings">Απόκρυψη από τις Ρυθμίσεις</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Αφαίρεση ιδιωτικού χώρου αποθήκευσης από το μενού ρυθμίσεων (προσβάσιμο μόνο μέσω μυστικού κωδικού)</string>
     <string name="loc_pick_contacts_for_vault">Επιλογή επαφών για το θησαυ/κιο</string>
@@ -1027,7 +1026,6 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_call_history_settings">Ρυθμίσεις Ιστορικού Κλήσεων</string>
     <string name="loc_save_to_call_history">Αποθήκευση στο ιστορικό κλήσεων</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Απαντημένες και αναπάντητες ψεύτικες κλήσεις θα εμφανιστούν στα πρόσφατα</string>
-    <string name="loc_formatteddate_countdownstr">$formattedDate ($countdownStr)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d μπλοκαρισμένο</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Κλήσεις και μηνύματα κειμένου από αυτόν τον αριθμό θα αποκλειστούν αμέσως.</string>
     <string name="loc_processing_blocklist">Επεξεργασία Λίστας Αποκλεισμού</string>

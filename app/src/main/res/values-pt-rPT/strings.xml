@@ -973,7 +973,6 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_import_vcf">Importar VCF</string>
     <string name="loc_export_vcf">Exportar VCF</string>
     <string name="loc_secret_dialpad_code">Código de teclado secreto</string>
-    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Discar $currentSecretCode no teclado de discagem para abrir rapidamente o cofre privado</string>
     <string name="loc_hide_from_settings">Ocultar das configurações</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Remover Armazenamento Privado do menu de configurações (acessível apenas através do código secreto)</string>
     <string name="loc_pick_contacts_for_vault">Escolher Contatos para o Cofre</string>
@@ -1046,17 +1045,11 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Chamadas falsas atendidas e perdidas aparecerão em Recentes</string>
     <string name="loc_blockednumbers_size_blocked">%1$d bloqueado</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Chamadas e mensagens de texto deste número serão bloqueadas imediatamente.</string>
-    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Desbloquear $targetDisplayName? Ele poderá ligar e enviar mensagens novamente.</string>
     <string name="loc_processing_blocklist">Processando Bloqueio</string>
     <string name="loc_importing_blocked_numbers">Importando números bloqueados...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Pressione os dois botões de volume juntos para alternar o modo Não perturbe</string>
     <string name="loc_manage_storage_tools">Gerenciar armazenamento &amp; ferramentas</string>
     <string name="loc_remove_from_priority">Remover da prioridade</string>
-    <string name="loc_all_countsuffix">Todos$countSuffix</string>
-    <string name="loc_contacts_count">Contatos ($count)</string>
-    <string name="loc_favorites_count">Favoritos ($count)</string>
-    <string name="loc_call_logs_count">Registro de chamadas ($count)</string>
-    <string name="loc_missed_count">Perdida ($count)</string>
     <string name="loc_granted">Concedido</string>
     <string name="loc_private_storage_hidden">Armazenamento Privado (Hidden)</string>
     <string name="call_customization_behavior">Ligar para comportamento</string>
