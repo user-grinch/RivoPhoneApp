@@ -125,7 +125,7 @@ jobs:
           body: |
             ### ⚠️ Preview / Pre-Release Build
             > This is an **automated preview build** compiled directly from the latest `main` branch. It contains the newest features, bug fixes, and improvements ahead of official releases, but may occasionally contain experimental changes or bugs.
-            > 
+            >
             > *Found an issue? Please [open a bug report](https://github.com/user-grinch/RivoPhoneApp/issues).*
 
             ---
@@ -135,15 +135,7 @@ jobs:
             | Flavor | File | Description |
             | :--- | :--- | :--- |
             | 🌟 **Standard (Recommended)** | [`RivoPhone.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk) | Full-featured build. Supports the **in-app Tip Jar** to help support ongoing development. |
-            | 🍃 **De-Googled** | [`RivoPhone_degoogled.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone_degoogled.apk) | Stripped build intended for F-Droid / microG / CalyxOS. Proprietary Google Play libraries are excluded (support via [Patreon](https://www.patreon.com/c/grinch_)). |
-
-            <details>
-            <summary><b>📦 Developer Artifacts & Checksums</b></summary>
-
-            * **Play Console Bundle**: `RivoPhone_bundle.aab`
-            * **Integrity Check**: Compare checksums in `SHA256SUMS.txt`
-            * **Signing Certificate**: `SIGNING_CERTIFICATE_SHA256.txt`
-            </details>
+            | 🍃 **De-Googled** | [`RivoPhone_degoogled.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone_degoogled.apk) | Stripped build intended for F-Droid / IzzyOnDroid. Proprietary Google Play libraries are excluded. |
 
       - name: Publish Production Release (Version Tags)
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
