@@ -175,6 +175,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • За замовчуванням"</string>
     <string name="contact_create_new">Створити новий контакт</string>
     <string name="contact_create_new_desc">Зберегти як новий контакт</string>
     <string name="contact_add_to_existing">Додати до існуючого контакту</string>
@@ -286,7 +287,14 @@
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Масштабування</string>
     <string name="settings_interface_transition_stack">Глибина стека</string>
+    <string name="settings_avatar_style">Стиль Аватарів</string>
+    <string name="settings_avatar_style_supporting">Обрати між кольоровими, градієнтами та звичайними аватарами</string>
+    <string name="avatar_style_colorful">Кольорова</string>
+    <string name="avatar_style_gradient">Градієнт</string>
+    <string name="avatar_style_none">Без ефекту</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Всього тактильна реакція</string>
+    <string name="settings_appwide_vibration_supporting">Вібрація при прокручуванні алфавітної прокрутки на сторінці контактів</string>
     <string name="settings_sound_hold_zero_for_plus">Утримуйте 0 для +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Тип + , утримуючи кнопку 0 на номеронабирачі</string>
     <!-- Settings > Call accounts -->
@@ -372,6 +380,7 @@
     <string name="call_recording_shizuku_attribution_title">Засіб запису дзвінків</string>
     <string name="call_recording_shizuku_attribution_desc">Запис внутрішнього виклику через Shizuku включає код з проекту ShizuCallRecorder з відкритим кодом (kitsumed (GPLv3). Не пов\'язаний з або схваленим ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Відвідати ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Перевірка оновлень • Авторизація • Інформація</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Автор</string>
     <string name="contributor_role_upstream_call_recording">Автор ShizuCallRecorder</string>
@@ -722,6 +731,7 @@
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Застосовувати динамічні градієнти для контакту з початковими аватарами</string>
     <string name="loc_typography">Типографія</string>
     <string name="loc_font_text_size_and_system_font">Шрифт, розмір тексту, та шрифт системи</string>
+    <string name="loc_call_screen_buttons">Екран виклику</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Вибрати позицію кожної кнопки під час виклику</string>
     <string name="loc_hide_avatar_with_wallpaper">Приховати Аватар з шпалерами</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Коло користувача при встановленні фону для повного контакту</string>
@@ -898,6 +908,7 @@
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Видалити все</string>
     <string name="loc_refresh">Оновити</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s оптимізація</string>
     <string name="loc_dismiss">Відхилити</string>
     <string name="loc_saved_call_recordings">Записи викликів збережено</string>
     <string name="loc_recording_controls">Контроль запису</string>
@@ -909,6 +920,7 @@
     <string name="loc_minimum_duration_filter">Мінімальний фільтр тривалості</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Відхилити ультракороткі виклики нижче порогу</string>
     <string name="loc_delete_all_recordings">Видалити всі записи?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Усі записи %1$d буде остаточно видалено з вашого пристрою. Цю дію не можна скасувати.</string>
     <string name="loc_select_start_date_from">Оберіть початкову дату (з)</string>
     <string name="loc_select_end_date_to">Виберіть кінцеву дату (До)</string>
     <string name="loc_play">Відтворити</string>
@@ -926,6 +938,7 @@
     <string name="loc_hide_from_settings">Не показувати з налаштувань</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Видалити приватне сховище з меню налаштувань (доступне тільки через секретний код)</string>
     <string name="loc_pick_contacts_for_vault">Вибрати контакти для сховища</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Остаточно видалити %1$d вибрані контакти з приватної сховища?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Введіть цей секретний код на панелі номеронабирача для розкриття контактів у приватному сховищі.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Тільки секретний код набору номера отримає доступ до приватного сховища даних</string>
     <string name="loc_security_protection">Безпека &amp; Захист</string>
@@ -1080,4 +1093,8 @@
     <string name="private_vault_unhide_in_vault">Відкрити у сховищі</string>
     <string name="private_vault_hide_completely">Приховати повністю</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Дзвінки &amp; Контакти</string>
+    <string name="settings_group_appearance_preferences">Вигляд &amp; Налаштування</string>
+    <string name="settings_group_system_about">Системний &amp; Про</string>
+    <string name="thank_you_for_your_support">Дякуємо за вашу підтримку!</string>
 </resources>

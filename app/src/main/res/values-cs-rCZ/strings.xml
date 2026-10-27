@@ -298,7 +298,10 @@ Bílý text</string>
     <string name="settings_avatar_style_supporting">Vyberte si mezi barevnými, gradientními nebo prostými avatary</string>
     <string name="avatar_style_colorful">Barevné</string>
     <string name="avatar_style_gradient">Sklon</string>
+    <string name="avatar_style_none">Nic</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Zpětná vazba pro celou aplikaci</string>
+    <string name="settings_appwide_vibration_supporting">Vibrovat při posouvání pomocí posuvníku na stránce kontaktů</string>
     <string name="settings_sound_hold_zero_for_plus">Držet 0 pro +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Napište + podržením tlačítka 0 na číselníku</string>
     <!-- Settings > Call accounts -->
@@ -384,6 +387,7 @@ Bílý text</string>
     <string name="call_recording_shizuku_attribution_title">Modul nahrávání hovorů</string>
     <string name="call_recording_shizuku_attribution_desc">Interní nahrávání hovorů přes Shizuku obsahuje kód z open-source projektu ShizuCallRecorder po kitsumu (GPLv3). Není přidružen k ani schválen ShizuCRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Navštívit ShizuCall Recorder</string>
+    <string name="settings_top_card_subtext">Kontrola aktualizací • Přispěvatelé • Informace</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">Zapisovač ShizuCallOrorder autor</string>
@@ -764,6 +768,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Použít dynamické pozadí sklonu pro kontakt s počátečními avatary</string>
     <string name="loc_typography">Typografie</string>
     <string name="loc_font_text_size_and_system_font">Písmo, velikost textu a systémové písmo</string>
+    <string name="loc_call_screen_buttons">Obrazovka volání</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Vyberte pozici každého tlačítka v hovoru</string>
     <string name="loc_hide_avatar_with_wallpaper">Skrýt Avatar s tapetou</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Zrušit kruh avataru, když je nastavena tapeta na pozadí celého kontaktu</string>
@@ -945,6 +950,8 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Smazat vše</string>
     <string name="loc_refresh">Aktualizovat</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d celkem nahrávek je uloženo na tomto zařízení</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optimalizace %1$s</string>
     <string name="loc_dismiss">Odmítnout</string>
     <string name="loc_saved_call_recordings">Uložené nahrávky hovorů</string>
     <string name="loc_recording_controls">Ovládání záznamů</string>
@@ -957,11 +964,13 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_minimum_duration_filter">Minimální trvání filtru</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Zahodit ultra krátké hovory pod prahovou hodnotou</string>
     <string name="loc_delete_all_recordings">Smazat všechny záznamy?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Všechny %1$d nahrávky budou trvale odstraněny z vašeho zařízení. Tuto akci nelze vrátit zpět.</string>
     <string name="loc_select_start_date_from">Vyberte počáteční datum (od)</string>
     <string name="loc_select_end_date_to">Vyberte koncové datum (do)</string>
     <string name="loc_play">Hrát</string>
     <string name="loc_rewind_10s">Převrátit 10 s</string>
     <string name="loc_forward_10s">Přeposlat 10 s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d vybráno</string>
     <string name="loc_privatecontacts_size_secured">%1$d zabezpečeno</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Uloženo lokálně v trezoru Rivo s pískem • Skryté v WhatsApp a systémové aplikace</string>
     <string name="loc_select_contacts_for_private_storage">Vyberte kontakty pro soukromé úložiště</string>
@@ -975,6 +984,7 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="loc_hide_from_settings">Skrýt v nastavení</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Odstranit soukromé úložiště z menu nastavení (přístupné pouze prostřednictvím tajného kódu)</string>
     <string name="loc_pick_contacts_for_vault">Vybrat kontakty pro trezor</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Trvale odstranit %1$d vybraných kontaktů ze soukromého úložiště?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Napište tento tajný kód na číselník pro zobrazení kontaktů v soukromém úložišti.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Pouze tajný kód číselníku bude přistupovat k soukromému úložišti</string>
     <string name="loc_security_protection">Bezpečnost &amp; Ochrana</string>
@@ -1140,4 +1150,8 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="private_vault_unhide_in_vault">Odkrýt v trezoru</string>
     <string name="private_vault_hide_completely">Skrýt kompletně</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Volání &amp; Kontakty</string>
+    <string name="settings_group_appearance_preferences">Vzhled &amp; Předvolby</string>
+    <string name="settings_group_system_about">Systém &amp; O</string>
+    <string name="thank_you_for_your_support">Děkujeme za vaši podporu!</string>
 </resources>

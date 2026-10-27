@@ -299,7 +299,10 @@ Text alb</string>
     <string name="settings_avatar_style_supporting">Alege între culoare, gradient sau avatar simplu</string>
     <string name="avatar_style_colorful">Colorant</string>
     <string name="avatar_style_gradient">Gradient</string>
+    <string name="avatar_style_none">Niciunul</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Feedback Haptic Appwide</string>
+    <string name="settings_appwide_vibration_supporting">Vibrează la derulare folosind bara de alfabet pe pagina de contacte</string>
     <string name="settings_sound_hold_zero_for_plus">Țineți apăsat 0 pentru +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Scrie + prin apăsarea butonului 0 pe tastatura numerică</string>
     <!-- Settings > Call accounts -->
@@ -385,6 +388,7 @@ Text alb</string>
     <string name="call_recording_shizuku_attribution_title">Motor Înregistrare Apel</string>
     <string name="call_recording_shizuku_attribution_desc">Înregistrarea internă a apelurilor prin Shizuku încorporează codul din proiectul ShizuCallRecorder open-source prin kitsumed (GPLv3). Nu este afiliat sau aprobat de ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Vizitați ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Verificare actualizări • Colaboratori • Informații</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Autor</string>
@@ -765,6 +769,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Aplică gradient dinamic de fundal pentru a contacta avatarele inițiale</string>
     <string name="loc_typography">Tipografie</string>
     <string name="loc_font_text_size_and_system_font">Font, dimensiunea textului și fontul sistemului</string>
+    <string name="loc_call_screen_buttons">Sună Ecran</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Alegeţi poziţia fiecărui buton de apel</string>
     <string name="loc_hide_avatar_with_wallpaper">Ascunde avatarul cu imaginea de fundal</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omite cercul de avatar atunci când un fundal de fundal de contact complet este setat</string>
@@ -945,6 +950,8 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Şterge tot</string>
     <string name="loc_refresh">Împrospătează</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d total înregistrări sunt salvate pe acest dispozitiv</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimizare</string>
     <string name="loc_dismiss">Renunţaţi</string>
     <string name="loc_saved_call_recordings">Înregistrări de apeluri salvate</string>
     <string name="loc_recording_controls">Controale de înregistrare</string>
@@ -957,11 +964,13 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_minimum_duration_filter">Filtru minim de durată</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Renunță la apelurile ultra-scurte sub prag</string>
     <string name="loc_delete_all_recordings">Ștergeți toate înregistrările?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Toate înregistrările %1$d vor fi eliminate permanent de pe dispozitivul dvs. Această acțiune nu poate fi anulată.</string>
     <string name="loc_select_start_date_from">Selectați data de început (de la)</string>
     <string name="loc_select_end_date_to">Selectaţi data de încheiere (la)</string>
     <string name="loc_play">Redare</string>
     <string name="loc_rewind_10s">Rulează 10s</string>
     <string name="loc_forward_10s">Redirecționează 10s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d selectat</string>
     <string name="loc_privatecontacts_size_secured">%1$d securizat</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Stocat local în seiful sandboxat al Rivo-ului • Ascuns din WhatsApp și aplicații de sistem</string>
     <string name="loc_select_contacts_for_private_storage">Selectați Contactele pentru Depozitare Privată</string>
@@ -975,6 +984,7 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_hide_from_settings">Ascunde din Setări</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Elimină stocarea privată din meniul de setări (accesibil doar prin codul secret)</string>
     <string name="loc_pick_contacts_for_vault">Alege Contacte pentru seif</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Ștergeți permanent contactele selectate %1$d din stocarea privată?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Introduceţi acest cod secret pe fereastra de apel pentru a dezvălui contactele din stocarea privată.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Doar codul de apel secret va accesa stocarea privată</string>
     <string name="loc_security_protection">Securitate &amp; Protecție</string>
@@ -1139,4 +1149,8 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="private_vault_unhide_in_vault">Reafişează în seif</string>
     <string name="private_vault_hide_completely">Ascunde complet</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Apeluri &amp; Contacte</string>
+    <string name="settings_group_appearance_preferences">Aspectul &amp; Preferințe</string>
+    <string name="settings_group_system_about">Sistemul &amp; Despre</string>
+    <string name="thank_you_for_your_support">Vă mulțumim pentru sprijin!</string>
 </resources>

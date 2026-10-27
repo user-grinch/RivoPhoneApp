@@ -179,6 +179,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • Standard"</string>
     <string name="contact_create_new">Opprett ny kontakt</string>
     <string name="contact_create_new_desc">Lagre som ny kontakt</string>
     <string name="contact_add_to_existing">Legg til eksisterende kontakt</string>
@@ -293,7 +294,14 @@ Hvit tekst</string>
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Forstørre</string>
     <string name="settings_interface_transition_stack">Dybde stabel</string>
+    <string name="settings_avatar_style">Avatar stil</string>
+    <string name="settings_avatar_style_supporting">Velg mellom fargere, gradiente eller rene avatarer</string>
+    <string name="avatar_style_colorful">Fargerik</string>
+    <string name="avatar_style_gradient">Gradert</string>
+    <string name="avatar_style_none">Ingen</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Tilskuende Haptisk tilbakemelding</string>
+    <string name="settings_appwide_vibration_supporting">Vibrer når du ruller med alfabetisk rullefelt på kontaktsiden</string>
     <string name="settings_sound_hold_zero_for_plus">Hold 0 til +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Skriv + ved å holde 0 knappen på talltastaturet</string>
     <!-- Settings > Call accounts -->
@@ -378,6 +386,7 @@ Hvit tekst</string>
     <string name="call_recording_shizuku_attribution_title">Anrops opptaksmotor</string>
     <string name="call_recording_shizuku_attribution_desc">Intern samtaleopptak via Shizuku har kode fra ShizuCallRecorder prosjektet fra kitran (GPLv3). Ikke tilknyttet eller godkjent av ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Besøk ShizuCallOpptak</string>
+    <string name="settings_top_card_subtext">Sjekk oppdateringer • Bidragsytere • Info</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Forfatter</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Forfatter</string>
@@ -753,6 +762,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Bruk dynamiske gradient bakover for å kontakte initielle avatarer</string>
     <string name="loc_typography">Typografi</string>
     <string name="loc_font_text_size_and_system_font">Skrift, tekststørrelse og systemskrift</string>
+    <string name="loc_call_screen_buttons">Anrops skjerm</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Velg plasseringen til hver Samtaleknapp</string>
     <string name="loc_hide_avatar_with_wallpaper">Skjul Avatar med bakgrunnsbilde</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Utelat avatarsirkel når en full kontakt bakgrunnsbakgrunn er satt</string>
@@ -932,6 +942,8 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Slett alle</string>
     <string name="loc_refresh">Oppdater</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d totale opptak lagres på denne enheten</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optimalisering av %1$s</string>
     <string name="loc_dismiss">Avvis</string>
     <string name="loc_saved_call_recordings">Lagrede Opptak av anrop</string>
     <string name="loc_recording_controls">Kontroller for opptak</string>
@@ -944,11 +956,13 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_minimum_duration_filter">Minimum varighet Filter</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Forkast ultra-korte samtaler under terskelen</string>
     <string name="loc_delete_all_recordings">Slett alle opptak?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d opptak vil fjernes permanent fra enheten. Denne handlingen kan ikke angres.</string>
     <string name="loc_select_start_date_from">Velg startdato (Fra)</string>
     <string name="loc_select_end_date_to">Velg sluttdato (Til)</string>
     <string name="loc_play">Spill</string>
     <string name="loc_rewind_10s">Tilbakespoling av 10</string>
     <string name="loc_forward_10s">Videresend 10 sekunder</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d valgt</string>
     <string name="loc_privatecontacts_size_secured">%1$d sikret</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Lagret lokalt i Rivastigmine sitt sandbokserte hvelv • Skjult fra WhatsApp og systemapper</string>
     <string name="loc_select_contacts_for_private_storage">Velg kontakter for privat lagring</string>
@@ -962,6 +976,7 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="loc_hide_from_settings">Skjul i innstillinger</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Fjern privat lagring fra innstillingsmenyen (tilgjengelig kun via hemmelig kode)</string>
     <string name="loc_pick_contacts_for_vault">Velg kontakter for hvelvet</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Slett %1$d valgte kontakter permanent fra privat lagring?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Skriv inn denne hemmelige koden på ringetasten for å vise kontakter i privat lagring.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Kun den hemmelige mobilnøkkelen vil få tilgang til privat lagring</string>
     <string name="loc_security_protection">Sikkerhet &amp; Beskyttelse</string>
@@ -1127,4 +1142,8 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="private_vault_unhide_in_vault">Ikke skjul i hvelvet</string>
     <string name="private_vault_hide_completely">Skjul helt</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Samtaler &amp; Kontakter</string>
+    <string name="settings_group_appearance_preferences">Utseende &amp; Innstillinger</string>
+    <string name="settings_group_system_about">System &amp; om</string>
+    <string name="thank_you_for_your_support">Takk for din støtte!</string>
 </resources>

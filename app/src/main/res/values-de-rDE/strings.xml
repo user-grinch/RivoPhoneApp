@@ -33,8 +33,8 @@
     <string name="toast_note_copied">Hinweis in Zwischenablage kopiert</string>
     <string name="content_desc_copy_note">Notiz kopieren</string>
     <string name="content_desc_delete_note">Notiz löschen</string>
-    <string name="toast_failed_load_image">Fehler beim Laden des Bildes</string>
-    <string name="toast_failed_crop_avatar">Avatar konnte nicht zugeschnitten werden</string>
+    <string name="toast_failed_load_image">Laden des Bilds fehlgeschlagen</string>
+    <string name="toast_failed_crop_avatar">Zuschneiden des Avatars fehlgeschlagen</string>
     <string name="call_analytics_refresh">Aktualisieren</string>
     <string name="call_analytics_no_records">Keine Anruflisten für diesen Zeitraum gefunden</string>
     <string name="call_analytics_sim_breakdown">SIM-Auslastung</string>
@@ -48,11 +48,11 @@
     <string name="action_options">Optionen</string>
     <string name="toast_unblocked_number">Entsperrt %1$s</string>
     <string name="call_reminder_set">Erinnerung für %1$s gesetzt</string>
-    <string name="call_dismiss_touch_guard">Berührungswächter schließen</string>
+    <string name="call_dismiss_touch_guard">Bedienungsschutz schließen</string>
     <string name="call_write_custom_message">Eigene Nachricht schreiben...</string>
     <string name="call_type_custom_message">Eigene Nachricht eingeben...</string>
     <string name="content_desc_open_sms">SMS-App öffnen</string>
-    <string name="install_shizuku_title">Install Shizuku</string>
+    <string name="install_shizuku_title">Shizuku installieren</string>
     <string name="shizuku_google_play">Google Play Store</string>
     <string name="shizuku_recommended_updates">Für automatische Updates empfohlen</string>
     <string name="shizuku_official_website">Offizielle Website / APK</string>
@@ -63,49 +63,49 @@
     <string name="settings_transition_speed_supporting">Zeitfaktor der Übergangsanimation anpassen</string>
     <string name="settings_more_display">Weitere Anzeigeeinstellungen</string>
     <string name="settings_navigation_bar">Navigationsleiste</string>
-    <string name="settings_navigation_bar_supporting">Schwebender Balken-Stil, Rundheit &amp; Tab Layout</string>
+    <string name="settings_navigation_bar_supporting">Schwebender Stil, Rundheit &amp; Tab Layout</string>
     <string name="settings_avatars_cards">Avatare &amp; Kontaktkarten</string>
     <string name="settings_avatars_cards_supporting">11 Avatar-Formen, Kontaktbilder, Initialen &amp; Karten</string>
     <string name="settings_display_options">Anzeigeoptionen</string>
     <string name="settings_behavior_defaults">Verhalten &amp; Standardwerte</string>
     <string name="settings_default_start_screen">Standard-Startbildschirm</string>
-    <string name="settings_default_start_screen_supporting">Beim Öffnen der App anzuzeigender Bildschirm</string>
+    <string name="settings_default_start_screen_supporting">Bei Appstart anzuzeigender Bildschirm</string>
     <string name="settings_quick_responses">Schnellantworten</string>
     <string name="settings_quick_responses_supporting">Verwalten Sie vorbereitete SMS-Antworten für eingehende Anrufe</string>
     <string name="settings_post_call_summary">Verhalten nach Anruf</string>
     <string name="settings_post_call_summary_supporting">Nach Anrufende Anrufdauer und Schnell-Aktionen anzeigen (Rückruf, SMS, Notiz)</string>
-    <string name="settings_work_in_progress">Arbeit läuft</string>
+    <string name="settings_work_in_progress">In der Entwicklungsphase</string>
     <string name="support_ways_title">Unterstützungsformen</string>
-    <string name="support_video_reminders">Video-Werbe-Erinnerungen</string>
+    <string name="support_video_reminders">Werbeclip-Erinnerungen</string>
     <string name="support_video_reminders_supporting">Unterstützen-Button alle 6 Stunden anzeigen</string>
-    <string name="support_patreon_instead">Unterstütze stattdessen Patreon</string>
+    <string name="support_patreon_instead">Unterstützen Sie uns stattdessen über Patreon</string>
     <string name="support_restart_required">Neustart erforderlich</string>
     <string name="support_restart_now">Jetzt neu starten</string>
     <string name="support_dont_apply">Nicht anwenden</string>
-    <string name="support_restart_message">Rivo muss neu gestartet werden, um die Änderung des Dialer Launcher Icons und der Bezeichnung abzuschließen. Ihre Einstellungen werden beibehalten.</string>
-    <string name="support_feature_unavailable">Funktion nicht verfügbar</string>
-    <string name="support_on_patreon">Unterstützung auf Patreon</string>
+    <string name="support_restart_message">Rivo muss neu gestartet werden, um die Änderung des Dialer-App-Icons und der Bezeichnung abzuschließen. Ihre Einstellungen werden beibehalten.</string>
+    <string name="support_feature_unavailable">Feature nicht verfügbar</string>
+    <string name="support_on_patreon">Unterstützung über Patreon</string>
     <string name="contact_delete_recording">Aufnahme löschen</string>
     <string name="contact_hide_completely">Kontakt komplett ausblenden</string>
     <string name="contact_unhide">Kontakt anzeigen</string>
     <string name="contact_callback_reminder">Rückruf-Erinnerung</string>
     <string name="contact_callback_reminder_supporting">Erinnerung für Rückruf setzen</string>
     <string name="favorites_choose_number">Nummer auswählen</string>
-    <string name="main_enjoying_rivo">Gefällt Ihnen Rivo Phone?</string>
+    <string name="main_enjoying_rivo">Gefällt Ihnen Rivo?</string>
     <string name="main_remind_later">Später erinnern</string>
     <string name="content_desc_custom_color_picker">Benutzerdefinierte Farbauswahl</string>
-    <string name="content_desc_pick_custom_color">Wähle eigene Farbe</string>
+    <string name="content_desc_pick_custom_color">Wählen Sie eine eigene Farbe</string>
     <string name="content_desc_brightness">Helligkeit</string>
-    <string name="app_lock_unlock_title">Rivo Phone freischalten</string>
-    <string name="app_lock_unlock_subtitle">Benutze dein Gesicht, Fingerabdruck, PIN oder Passwort</string>
-    <string name="volume_squeeze_grant_permission">Erlaube nicht störende Berechtigung um Volume Squeeze zu verwenden</string>
-    <string name="volume_squeeze_settings_error">Kann \"Nicht stören\" Einstellungen nicht öffnen</string>
+    <string name="app_lock_unlock_title">Rivo Phone entsperren</string>
+    <string name="app_lock_unlock_subtitle">Benutzen Sie Face ID, Fingerabdruck, PIN oder Passwort</string>
+    <string name="volume_squeeze_grant_permission">\"Nicht stören-Berechtigung\" gewähren, um Lautstärke-Tasten zu verwenden</string>
+    <string name="volume_squeeze_settings_error">\"Nicht stören\"-Einstellungen können nicht geöffnet werden</string>
     <string name="volume_squeeze_off">Nicht stören: AUS</string>
     <string name="volume_squeeze_on">Nicht stören: AN</string>
-    <string name="volume_squeeze_toggle_error">Fehler beim Umschalten \"Nicht stören\"</string>
+    <string name="volume_squeeze_toggle_error">Fehler beim Aktivieren von \"Nicht stören\"</string>
     <string name="contact_call_recordings_count">Anrufaufzeichnungen (%1$d)</string>
     <string name="floating_call_channel_description">Zeigt schwebende Steuerelemente für aktiven Anruf</string>
-    <string name="floating_call_ongoing">Laufender Anruf</string>
+    <string name="floating_call_ongoing">Aktiver Anruf</string>
     <string name="floating_call_return">Tippen, um zum Anruf zurückzukehren</string>
     <string name="floating_call_back">Zurück zum Anruf</string>
     <string name="callback_reminder_channel_description">Benachrichtigungen zur Erinnerung an Rückrufe</string>
@@ -117,8 +117,8 @@
     <string name="support_off">Aus</string>
     <string name="support_always">Immer</string>
     <string name="support_keep_button">Den Unterstützen-Button sichtbar halten</string>
-    <string name="support_hide_button">Keine Unterstützen-Button anzeigen</string>
-    <string name="support_dialer_icon_label">Dialer Launcher Icon und Label</string>
+    <string name="support_hide_button">Keinen Unterstützen-Button anzeigen</string>
+    <string name="support_dialer_icon_label">Icon und Name der Telefon-App</string>
     <string name="app_name_pro">Rivo Pro</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <string name="action_cancel">Abbrechen</string>
@@ -223,7 +223,7 @@
     <string name="permission_shizuku_service_stopped_status">Dienst gestoppt</string>
     <string name="permission_shizuku_grant">Zuschuss</string>
     <string name="permission_shizuku_needs_permission_status">Erfordert Berechtigung</string>
-    <string name="permission_shizuku_audio_title">Shizuku 2-Weg-Audio</string>
+    <string name="permission_shizuku_audio_title">Shizuku 2-Wege-Audio</string>
     <string name="call_recorded">Anruf aufgezeichnet: %1$s</string>
     <string name="call_summary_title">Anrufübersicht</string>
     <string name="call_ended">Anruf beendet</string>
@@ -594,8 +594,15 @@ Weißer Text</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Tauscht Tab-Position von \"Kontakte\" &amp; \"Zuletzt\"</string>
     <string name="settings_interface_icon_only_bar">Nur Icons</string>
     <string name="settings_interface_icon_only_bar_supporting">Entfernt Text-Labels</string>
+    <string name="settings_avatar_style">Avatar-Stil</string>
+    <string name="settings_avatar_style_supporting">Wählen Sie zwischen Farben, Farbverläufen oder einfachen Avataren</string>
+    <string name="avatar_style_colorful">Bunt</string>
+    <string name="avatar_style_gradient">Farbverlauf</string>
+    <string name="avatar_style_none">Keine</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Töne &amp; Vibration</string>
+    <string name="settings_appwide_vibration_title">Anwendbares Haptisches Feedback</string>
+    <string name="settings_appwide_vibration_supporting">Beim Scrollen vibrieren mit der Alphabet Scrollleiste auf der Kontaktseite</string>
     <string name="settings_sound_dtmf_tone">DTMF-Ton</string>
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
@@ -704,7 +711,7 @@ Weißer Text</string>
     <string name="settings_backup_export_encrypted_contacts">Verschlüsselte Sicherung exportieren</string>
     <string name="settings_backup_export_encrypted_contacts_supporting">Kontakte als AES-256 verschlüsselte .vcf.enc Datei speichern</string>
     <string name="settings_backup_import_encrypted_contacts">Verschlüsselte Sicherung importieren</string>
-    <string name="settings_backup_import_encrypted_contacts_supporting">Kontakte aus einer verschlüsselten .vcf.enc-Datei wiederherstellen</string>
+    <string name="settings_backup_import_encrypted_contacts_supporting">Kontakte aus verschlüsselter .vcf.enc-Datei wiederherstellen</string>
     <string name="settings_backup_encryption">Kontakt-Sicherungen verschlüsseln</string>
     <string name="settings_backup_encryption_supporting">AES-256-GCM-Verschlüsselung für Kontaktsicherungen verwenden</string>
     <string name="settings_backup_password">Passwort sichern</string>
@@ -726,7 +733,7 @@ Weißer Text</string>
     <string name="settings_backup_change_password">Passwort ändern</string>
     <string name="settings_backup_password_dialog_title">Sicherungspasswort eingeben</string>
     <string name="settings_backup_import_progress_title">Kontakte importieren</string>
-    <string name="settings_backup_import_progress_count">%1$d von %2$d Kontakte importiert</string>
+    <string name="settings_backup_import_progress_count">%1$d von %2$d Kontakten importiert</string>
     <string name="settings_backup_auto_export">Kontakte automatisch exportieren</string>
     <string name="settings_backup_auto_export_supporting">Backups exportieren, wenn Kontakte erstellt, bearbeitet oder gelöscht werden</string>
     <string name="settings_backup_auto_encrypt">Automatische Sicherungen verschlüsseln</string>
@@ -738,12 +745,12 @@ Weißer Text</string>
     <string name="settings_backup_retention">Automatische Sicherung: Versionen</string>
     <string name="settings_backup_retention_supporting">Behalte so viele Timestamped Backups um ältere Kontaktlisten wiederherzustellen</string>
     <string name="settings_backup_retention_count">%1$d</string>
-    <string name="settings_backup_call_logs_header">Anrufliste</string>
+    <string name="settings_backup_call_logs_header">Anrufliste sichern</string>
     <string name="settings_backup_export_logs">Anrufliste exportieren</string>
     <string name="settings_backup_export_logs_supporting">Anrufliste als JSON-Datei speichern</string>
     <string name="settings_backup_import_logs">Anrufliste importieren</string>
     <string name="settings_backup_import_logs_supporting">Anrufliste aus JSON-Datei wiederherstellen</string>
-    <string name="settings_backup_app_settings_header">App-Einstellungen &amp; Einstellungen</string>
+    <string name="settings_backup_app_settings_header">App-Einstellungen &amp; Optionen sichern</string>
     <string name="settings_backup_export_settings">App-Einstellungen exportieren</string>
     <string name="settings_backup_export_settings_supporting">Themen, Tastenfeld-Stile und Konfigurationen als JSON-Datei sichern</string>
     <string name="settings_backup_import_settings">App-Einstellungen wiederherstellen</string>
@@ -841,6 +848,7 @@ Weißer Text</string>
     <string name="call_recording_shizuku_attribution_title">Engine für Anruf-Aufzeichnung</string>
     <string name="call_recording_shizuku_attribution_desc">Die interne Anrufaufnahme über Shizuku beinhaltet Code aus dem Open-Source ShizuCallRecorder Projekt nach kitsumed (GPLv3).</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorder besuchen</string>
+    <string name="settings_top_card_subtext">Überprüfe Updates • Mitwirkende • Info</string>
     <string name="settings_top_card_updates">Updates</string>
     <string name="settings_top_card_donate">Spenden</string>
     <!-- Settings > Contributors -->
@@ -1356,7 +1364,7 @@ Weißer Text</string>
     <!-- Additional Call Log & Reminder Strings -->
     <string name="call_log_clear_contact_confirm">Sind Sie sicher, dass Sie alle Anruflisteneinträge für diesen Kontakt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="content_desc_clear_history">Verlauf löschen</string>
-    <string name="reminder_custom_preset">Eigene…</string>
+    <string name="reminder_custom_preset">Benutzerdefiniert…</string>
     <string name="reminder_pick_date_time">Datum &amp; Zeit auswählen</string>
     <string name="action_clear_all">Alles löschen</string>
     <!-- Predictive Back Gestures -->
@@ -1490,6 +1498,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Dynamischen Verlaufshintergrund anwenden, um erste Avatare zu kontaktieren</string>
     <string name="loc_typography">Schrift</string>
     <string name="loc_font_text_size_and_system_font">Schriftart, Textgröße und Systemschriftart</string>
+    <string name="loc_call_screen_buttons">Anrufbildschirm</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Wählen Sie die Position jeder Anrufschaltfläche</string>
     <string name="loc_hide_avatar_with_wallpaper">Avatar mit Hintergrundbild ausblenden</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Avatar-Kreis abbrechen, wenn ein vollständiger Kontakthintergrund-Hintergrund gesetzt ist</string>
@@ -1580,7 +1589,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_app_lock">App-Sperre</string>
     <string name="loc_call_protection_security">Anrufschutz &amp; Sicherheit</string>
     <string name="loc_biometric_unlock">Biometrisches Entsperren</string>
-    <string name="loc_use_fingerprint_sensor_or_face_unlock_to_open_rivo_phone">Fingerabdrucksensor oder Gesichts-ID verwenden, um Rivo zu öffnen</string>
+    <string name="loc_use_fingerprint_sensor_or_face_unlock_to_open_rivo_phone">Fingerabdruck oder Face ID verwenden, um Rivo zu öffnen</string>
     <string name="loc_custom_app_pin">Benutzerdefinierte App-PIN</string>
     <string name="loc_set_or_change_fallback_4_digit_security_pin_for_app_lock">4-stellige Sicherheits-PIN für App-Sperre festlegen oder ändern</string>
     <string name="loc_app_lock_timeout">App Sperre Timeout</string>
@@ -1600,7 +1609,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_blocked_call_notifications">Benachrichtigungen bei blockierten Anrufen</string>
     <string name="loc_toggle_notifications_when_a_call_from_a_blocked_number_is_rejected">Benachrichtigung, wenn Anruf von blockierten Nummer abgelehnt wird</string>
     <string name="loc_system_blocked_numbers_manager">Systemverwaltung für blockierte Nummern</string>
-    <string name="loc_open_android_system_dialer_blocked_list_to_sync_blocked_numbers">Öffne die Android-Systemverwaltung für blockierte Nummern, um blockierte Nummern zu synchronisieren</string>
+    <string name="loc_open_android_system_dialer_blocked_list_to_sync_blocked_numbers">Öffne Android-Systemverwaltung für blockierte Nummern, um blockierte Nummern zu synchronisieren</string>
     <string name="loc_schedule_fake_call_timer">Simulierten Anruf planen</string>
     <string name="loc_set_delay_timer_or_exact_time_to_trigger_an_incoming_fake_call">Setzen Sie Verzögerungs-Timer oder genaue Uhrzeit, um einen simulierten Anruf auszulösen</string>
     <string name="loc_fake_caller_details">Anrufer-Details des simulierten Anrufs</string>
@@ -1654,7 +1663,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_source_code_github">Source Code &amp; GitHub</string>
     <string name="loc_view_source_code_report_issues_and_star_rivo_on_github">Zeige Quellcode, melde Probleme und starte Rivo auf GitHub</string>
     <string name="loc_discord_community">Discord Community</string>
-    <string name="loc_join_rivo_phone_discussions_and_feature_requests_on_discord">Rivo Phone Diskussionen und Feature-Anfragen auf Discord beitreten</string>
+    <string name="loc_join_rivo_phone_discussions_and_feature_requests_on_discord">Rivo Phone-Diskussionen und Feature-Anfragen auf Discord beitreten</string>
     <string name="loc_contributors">Mitwirkende</string>
     <string name="loc_people_who_helped_make_rivo_possible">Menschen, die geholfen haben, Rivo möglich zu machen</string>
     <string name="loc_clear_search">Suche löschen</string>
@@ -1671,6 +1680,8 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Alle löschen</string>
     <string name="loc_refresh">Aktualisieren</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d Gesamtaufnahmen werden auf diesem Gerät gespeichert</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimierung</string>
     <string name="loc_dismiss">Verwerfen</string>
     <string name="loc_saved_call_recordings">Gespeicherte Anrufaufnahmen</string>
     <string name="loc_recording_controls">Aufnahmeeinstellungen</string>
@@ -1683,11 +1694,13 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_minimum_duration_filter">Filter: Mindestdauer</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Sehr kurze Anrufe unter Grenzwert ignorieren</string>
     <string name="loc_delete_all_recordings">Alle Aufnahmen löschen?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Alle %1$d Aufnahmen werden dauerhaft von Ihrem Gerät entfernt. Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="loc_select_start_date_from">Startdatum auswählen (ab)</string>
     <string name="loc_select_end_date_to">Enddatum auswählen (bis)</string>
     <string name="loc_play">Abspielen</string>
     <string name="loc_rewind_10s">10 Sekunden zurückspulen</string>
-    <string name="loc_forward_10s">10 Sekunden vorspulen</string>
+    <string name="loc_forward_10s">10 Sek vorspulen</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d ausgewählt</string>
     <string name="loc_privatecontacts_size_secured">%1$d gesichert</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Ausschließlich in Rivo gespeichert • Verborgen vor WhatsApp und System-Apps</string>
     <string name="loc_select_contacts_for_private_storage">Kontakte für den privaten Speicher auswählen</string>
@@ -1701,6 +1714,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_hide_from_settings">In Einstellungen ausblenden</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Privaten Speicher aus Einstellungsmenü entfernen (nur über Geheimcode erreichbar)</string>
     <string name="loc_pick_contacts_for_vault">Kontakte für privaten Speicher auswählen</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">%1$d ausgewählte(n) Kontakt(e) dauerhaft aus privatem Speicher löschen?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Geben Sie diesen geheimen Code auf Tastenfeld ein, um Kontakte im privaten Speicher anzuzeigen.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Nur der geheime Tastenfeld-Code gewährt Zugriff auf den privaten Speicher</string>
     <string name="loc_security_protection">Sicherheit &amp; Schutz</string>
@@ -1712,7 +1726,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_use_face_fingerprint_or_device_pin_password">Benutze Gesicht-ID, Fingerabdruck oder Geräte-PIN/Passwort</string>
     <string name="loc_lock_timeout">Sperre-Timeout</string>
     <string name="loc_supports_face_unlock_fingerprint_device_pin_pattern_password_and_custo">Unterstützt Face ID, Fingerabdruck, Geräte-PIN/Muster/Passwort und benutzerdefinierte App-PIN.</string>
-    <string name="loc_unlock_rivo_phone">Rivo Telefon freischalten</string>
+    <string name="loc_unlock_rivo_phone">Rivo Phone entsperren</string>
     <string name="loc_use_face_fingerprint_pin_or_password">Benutzen Sie Face ID, Fingerabdruck, PIN oder Passwort</string>
     <string name="loc_app_locked">App gesperrt</string>
     <string name="loc_rivo_phone_is_locked">Rivo Phone ist gesperrt</string>
@@ -1741,7 +1755,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="app_lock_change_pin">App-PIN ändern</string>
     <string name="app_lock_set_pin">Benutzerdefinierte App-PIN festlegen</string>
     <string name="app_lock_pin_configured">Benutzerdefinierte App-PIN ist konfiguriert</string>
-    <string name="app_lock_pin_optional">Optionale separate PIN für Rivo Phone</string>
+    <string name="app_lock_pin_optional">Optionale separate App-PIN für Rivo Phone</string>
     <string name="app_lock_set_four_digit_pin">4-stellige App-PIN festlegen</string>
     <string name="app_lock_confirm_pin">PIN bestätigen</string>
     <string name="action_next">Weiter</string>
@@ -1808,7 +1822,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="contact_management_private_vault_supporting">Verwalten Sie geheime Kontakte, die ausschließlich lokal in der App-Datenbank gespeichert sind</string>
     <string name="contact_mgmt_total_contacts">Kontakte insgesamt</string>
     <string name="contact_mgmt_duplicates_empty_desc">Alle Kontaktnamen, Telefonnummern und E-Mails sind einzigartig.</string>
-    <string name="contact_mgmt_merge_desc">Führen Sie redundante Details zusammen und bereinigen Sie Kontakte.</string>
+    <string name="contact_mgmt_merge_desc">Führen Sie doppelte Kontaktdaten zusammen und bereinigen Sie das Adressbuch.</string>
     <string name="contact_mgmt_merged_for">Zusammengeführte Kontakte für %1$s</string>
     <string name="contact_mgmt_ready_to_move">%1$d Kontakte bereit zum Verschieben nach %2$s</string>
     <string name="contact_mgmt_matching_contacts">%1$d passende Kontakte • %2$s</string>
@@ -1867,4 +1881,8 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="private_vault_unhide_in_vault">Im privaten Speicher anzeigen</string>
     <string name="private_vault_hide_completely">Komplett ausblenden</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Anrufe &amp; Kontakte</string>
+    <string name="settings_group_appearance_preferences">Aussehen &amp; Einstellungen</string>
+    <string name="settings_group_system_about">System &amp; Über</string>
+    <string name="thank_you_for_your_support">Vielen Dank für Ihre Unterstützung!</string>
 </resources>
