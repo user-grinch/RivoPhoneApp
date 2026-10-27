@@ -311,6 +311,7 @@
     <string name="contact_details_video">Видео</string>
     <string name="contact_details_info_title">Информация о контакте</string>
     <string name="contact_bullet_favorite">" • Избранные"</string>
+    <string name="contact_bullet_default">" • По умолчанию"</string>
     <string name="contact_bullet_recent">" • Недавние"</string>
     <string name="content_desc_favorite">Изар</string>
     <string name="contact_clear_favorite">Очистить избранное</string>

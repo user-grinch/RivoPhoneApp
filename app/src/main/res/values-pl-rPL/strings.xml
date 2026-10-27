@@ -311,6 +311,7 @@
     <string name="contact_details_video">Wideo</string>
     <string name="contact_details_info_title">Informacje o kontakcie</string>
     <string name="contact_bullet_favorite">" • Ulubione"</string>
+    <string name="contact_bullet_default">" • Domyślny"</string>
     <string name="contact_bullet_recent">" • Ostatnie"</string>
     <string name="content_desc_favorite">Ulubione</string>
     <string name="contact_clear_favorite">Usuń z ulubionych</string>

@@ -281,6 +281,7 @@
     <string name="contact_details_video">视频通话</string>
     <string name="contact_details_info_title">联系人信息</string>
     <string name="contact_bullet_favorite">" • 收藏"</string>
+    <string name="contact_bullet_default">" • 默认"</string>
     <string name="contact_bullet_recent">" • 最近通话"</string>
     <string name="content_desc_favorite">收藏</string>
     <string name="contact_clear_favorite">清除收藏</string>
