@@ -119,9 +119,9 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def flavorSuffix = (variant.flavorName == "foss") ? "-foss" : ""
+            def flavorSuffix = (variant.flavorName == "foss") ? "_degoogled" : ""
             def buildTypeSuffix = (variant.buildType.name == "debug") ? "-debug" : ""
-            outputFileName = "RivoPhone-${variant.versionName}${flavorSuffix}${buildTypeSuffix}.apk"
+            outputFileName = "RivoPhone${flavorSuffix}${buildTypeSuffix}.apk"
         }
     }
 }
@@ -132,8 +132,8 @@ afterEvaluate {
             def outDir = layout.buildDirectory.dir("outputs/bundle/playRelease").get().asFile
             if (outDir.exists()) {
                 outDir.listFiles()?.each { file ->
-                    if (file.name.endsWith(".aab") && !file.name.contains("RivoPhone")) {
-                        file.renameTo(new File(outDir, "RivoPhone-${android.defaultConfig.versionName}.aab"))
+                    if (file.name.endsWith(".aab") && !file.name.contains("RivoPhone_bundle")) {
+                        file.renameTo(new File(outDir, "RivoPhone_bundle.aab"))
                     }
                 }
             }

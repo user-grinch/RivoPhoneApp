@@ -12,6 +12,16 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 [![Crowdin](https://img.shields.io/badge/Localization-Crowdin-0EA5E9?logo=crowdin&style=flat-square)](https://crowdin.com/project/rivophone)
 
 <p align="center">
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/latest/download/RivoPhone.apk">
+    <img src="images/download_stable.png" alt="Direct Download | STABLE" height="42">
+  </a>
+  &nbsp;
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk">
+    <img src="images/download_preview.png" alt="Direct Download | PREVIEW" height="42">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4">
     <img src="https://raw.githubusercontent.com/user-grinch/RivoPhoneApp/main/images/play.png" alt="Get it on Google Play" height="42">
   </a>
@@ -81,9 +91,10 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 
 ## Downloads
 
+- **Stable Release (Recommended)**: Download the latest [RivoPhone.apk](https://github.com/user-grinch/RivoPhoneApp/releases/latest/download/RivoPhone.apk) (includes in-app Tip Jar support).
+- **Preview Builds**: Download automated cutting-edge [RivoPhone.apk](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk) from the preview release.
 - **Google Play**: Get the official release from the [Play Store](https://play.google.com/store/apps/details?id=com.grinch.rivo4).
 - **Obtainium**: Add via [Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}) for automated GitHub release updates.
-- **GitHub Releases**: Download pre-built APKs directly from [Releases](https://github.com/user-grinch/RivoPhoneApp/releases).
 
 <details>
 <summary><b>APK Signing Certificate Hash (SHA-256)</b></summary>
