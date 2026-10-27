@@ -446,7 +446,14 @@
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">缩放</string>
     <string name="settings_interface_transition_stack">深度应用</string>
+    <string name="settings_avatar_style">头像样式</string>
+    <string name="settings_avatar_style_supporting">选择颜色、渐变或普通头像</string>
+    <string name="avatar_style_colorful">多彩的</string>
+    <string name="avatar_style_gradient">渐变</string>
+    <string name="avatar_style_none">无</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">应用范围的振动反馈</string>
+    <string name="settings_appwide_vibration_supporting">使用联系人页面上的字母滚动条滚动时振动</string>
     <string name="settings_sound_hold_zero_for_plus">按 0 键++</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">按住拨号键键盘上的 0 按钮键输入 +</string>
     <!-- Settings > Call accounts -->
@@ -531,6 +538,7 @@
     <string name="call_recording_shizuku_attribution_title">通话录音引擎</string>
     <string name="call_recording_shizuku_attribution_desc">通过 Shizuku 进行的内部通话录制包含了 Kitsumed 开源的 ShizuCallRecorder 项目(GPLv3) 的代码。不附属于ShizuCallRecorder 或由 ShizuCallRecorder 认可。</string>
     <string name="call_recording_shizuku_attribution_action">访问 ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">检查更新 • 贡献者 • 信息</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">作者</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder 作者</string>
@@ -904,6 +912,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">应用动态渐变后退来联系初始头像</string>
     <string name="loc_typography">图形</string>
     <string name="loc_font_text_size_and_system_font">字体、文本大小和系统字体</string>
+    <string name="loc_call_screen_buttons">通话屏幕</string>
     <string name="loc_choose_the_position_of_each_in_call_button">选择每个通话按钮的位置</string>
     <string name="loc_hide_avatar_with_wallpaper">用壁纸隐藏头像</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">设置完整的联系人背景壁纸时忽略头像圆</string>
@@ -1083,6 +1092,8 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">全部删除</string>
     <string name="loc_refresh">刷新</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d 总录音已保存在此设备上</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s 优化</string>
     <string name="loc_dismiss">关闭</string>
     <string name="loc_saved_call_recordings">已保存通话记录</string>
     <string name="loc_recording_controls">录制控制</string>
@@ -1095,11 +1106,13 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_minimum_duration_filter">最小持续时间滤镜</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">丢弃低于阈值的超短电话</string>
     <string name="loc_delete_all_recordings">删除所有录制？</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">所有 %1$d 录音文件将从您的设备中永久删除。此操作无法撤消。</string>
     <string name="loc_select_start_date_from">选择开始日期 (rom)</string>
     <string name="loc_select_end_date_to">选择结束日期(截止日期)</string>
     <string name="loc_play">播放</string>
     <string name="loc_rewind_10s">倒退10秒</string>
     <string name="loc_forward_10s">转发10秒</string>
+    <string name="loc_selectedcontactids_size_selected">已选择 %1$d</string>
     <string name="loc_privatecontacts_size_secured">已保护 %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">在 Rivo sandbox 保险库 • 从WhatsApp 和系统应用程序隐藏中</string>
     <string name="loc_select_contacts_for_private_storage">选择私人存储的联系人</string>
@@ -1112,6 +1125,7 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="loc_hide_from_settings">从设置中隐藏</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">从设置菜单中删除私有存储(只能通过秘密代码访问)</string>
     <string name="loc_pick_contacts_for_vault">选择私密库的联系人</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">从私有存储中永久删除 %1$d 选中的联系人？</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">在拨号盘输入此密钥以显示私人存储中的联系人。</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">只有私密拨号键盘代码才能访问私有存储</string>
     <string name="loc_security_protection">安全 &amp; 保护</string>
@@ -1267,4 +1281,8 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="private_vault_unhide_in_vault">在保险库中取消隐藏</string>
     <string name="private_vault_hide_completely">完全隐藏</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">调用 &amp; 联系人</string>
+    <string name="settings_group_appearance_preferences">外观 &amp; 首选项</string>
+    <string name="settings_group_system_about">系统 &amp; 关于</string>
+    <string name="thank_you_for_your_support">感谢您的支持！</string>
 </resources>

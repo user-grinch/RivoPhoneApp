@@ -178,6 +178,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • Προεπιλογή"</string>
     <string name="contact_create_new">Δημιουργία νέας επαφής</string>
     <string name="contact_create_new_desc">Αποθήκευση ως νέα επαφή</string>
     <string name="contact_add_to_existing">Προσθήκη σε υπάρχουσα επαφή</string>
@@ -286,7 +287,14 @@
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Εστίαση</string>
     <string name="settings_interface_transition_stack">Στοίβα Βάθους</string>
+    <string name="settings_avatar_style">Στυλ Avatar</string>
+    <string name="settings_avatar_style_supporting">Επιλέξτε ανάμεσα σε πολύχρωμα, διαβαθμισμένα ή απλά avatars</string>
+    <string name="avatar_style_colorful">Πολύχρωμο</string>
+    <string name="avatar_style_gradient">Διαβάθμιση</string>
+    <string name="avatar_style_none">Κανένα</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Εφαρμογή Απτικής Ανατροφοδότησης</string>
+    <string name="settings_appwide_vibration_supporting">Δόνηση κατά την κύλιση χρησιμοποιώντας τη γραμμή κύλισης του αλφαβήτου στη σελίδα επαφών</string>
     <string name="settings_sound_hold_zero_for_plus">Κρατήστε 0 για +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Πληκτρολογήστε + κρατώντας πατημένο το κουμπί 0 στο πληκτρολόγιο κλήσης</string>
     <!-- Settings > Call accounts -->
@@ -371,6 +379,7 @@
     <string name="call_recording_shizuku_attribution_title">Μηχανή Καταγραφής Κλήσεων</string>
     <string name="call_recording_shizuku_attribution_desc">Η εσωτερική καταγραφή κλήσεων μέσω Shizuku ενσωματώνει κώδικα από το έργο ShizuCallRecorder μέσω kitsumed (GPLv3). Δεν συνδέεται ούτε υποστηρίζεται από την ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Επισκεφθείτε Το ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Έλεγχος ενημερώσεων • Συνεργάτες • Πληροφορίες</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Συγγραφέας</string>
     <string name="contributor_role_upstream_call_recording">Συγγραφέας ShizuCallRecorder</string>
@@ -739,6 +748,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Εφαρμόστε δυναμικά υπόβαθρα βαθμίδας σε επαφή με τα αρχικά avatars</string>
     <string name="loc_typography">Τυπογραφία</string>
     <string name="loc_font_text_size_and_system_font">Γραμματοσειρά, μέγεθος κειμένου και γραμματοσειρά συστήματος</string>
+    <string name="loc_call_screen_buttons">Οθόνη Κλήσεων</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Επιλέξτε τη θέση κάθε κουμπιού κατά την κλήση</string>
     <string name="loc_hide_avatar_with_wallpaper">Απόκρυψη Avatar με ταπετσαρία</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Παράλειψη κύκλου avatar όταν έχει οριστεί μια πλήρης ταπετσαρία φόντου επαφής</string>
@@ -918,6 +928,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Διαγραφή Όλων</string>
     <string name="loc_refresh">Ανανέωση</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Βελτιστοποίηση %1$s</string>
     <string name="loc_dismiss">Απόρριψη</string>
     <string name="loc_saved_call_recordings">Αποθηκευμένες Καταγραφές Κλήσεων</string>
     <string name="loc_recording_controls">Έλεγχοι Εγγραφής</string>
@@ -930,11 +941,13 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_minimum_duration_filter">Ελάχιστο Φίλτρο Διάρκειας</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Απόρριψη εξαιρετικά σύντομων κλήσεων κάτω από το όριο</string>
     <string name="loc_delete_all_recordings">Διαγραφή όλων των ηχογραφήσεων?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Όλες οι %1$d εγγραφές θα αφαιρεθούν οριστικά από τη συσκευή σας. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
     <string name="loc_select_start_date_from">Επιλέξτε Ημερομηνία Έναρξης (Από)</string>
     <string name="loc_select_end_date_to">Επιλέξτε Ημερομηνία Λήξης (Προς)</string>
     <string name="loc_play">Αναπαραγωγή</string>
     <string name="loc_rewind_10s">Επαναφορά 10S</string>
     <string name="loc_forward_10s">Προώθηση 10δ</string>
+    <string name="loc_selectedcontactids_size_selected">Επιλέχθηκε %1$d</string>
     <string name="loc_privatecontacts_size_secured">%1$d ασφαλές</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Αποθηκεύεται τοπικά στο sandboxed θόλο του Rivo • Κρυφό από εφαρμογές WhatsApp και συστήματος</string>
     <string name="loc_select_contacts_for_private_storage">Επιλέξτε Επαφές για ιδιωτικό χώρο αποθήκευσης</string>
@@ -948,6 +961,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_hide_from_settings">Απόκρυψη από τις Ρυθμίσεις</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Αφαίρεση ιδιωτικού χώρου αποθήκευσης από το μενού ρυθμίσεων (προσβάσιμο μόνο μέσω μυστικού κωδικού)</string>
     <string name="loc_pick_contacts_for_vault">Επιλογή επαφών για το θησαυ/κιο</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Μόνιμη διαγραφή %1$d επιλεγμένων επαφών από ιδιωτικό χώρο αποθήκευσης?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Πληκτρολογήστε αυτόν τον μυστικό κωδικό στο πληκτρολόγιο κλήσης για να αποκαλύψετε επαφές στον ιδιωτικό χώρο αποθήκευσης.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Μόνο ο μυστικός κωδικός κλήσης θα έχει πρόσβαση στον ιδιωτικό χώρο αποθήκευσης</string>
     <string name="loc_security_protection">Ασφάλεια &amp; Προστασία</string>
@@ -1103,4 +1117,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="private_vault_unhide_in_vault">Επανεμφάνιση στο Θησαυ/κιο</string>
     <string name="private_vault_hide_completely">Απόκρυψη Εντελώς</string>
     <!-- Settings Groups -->
+    <string name="settings_group_appearance_preferences">Προτιμήσεις &amp; Εμφάνισης</string>
+    <string name="settings_group_system_about">Σύστημα &amp; Σχετικά</string>
+    <string name="thank_you_for_your_support">Σας ευχαριστούμε για την υποστήριξή σας!</string>
 </resources>

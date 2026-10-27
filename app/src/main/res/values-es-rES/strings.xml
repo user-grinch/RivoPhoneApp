@@ -598,8 +598,11 @@ texto blanco</string>
     <string name="settings_avatar_style_supporting">Elija entre avatares coloridos, degradados o llanos</string>
     <string name="avatar_style_colorful">Coloroso</string>
     <string name="avatar_style_gradient">Gradiente</string>
+    <string name="avatar_style_none">Ninguna</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Sonido &amp; Vibración</string>
+    <string name="settings_appwide_vibration_title">Comentarios de Appwide Haptic</string>
+    <string name="settings_appwide_vibration_supporting">Vibrar al desplazarse usando la barra de desplazamiento del alfabeto en la página de contactos</string>
     <string name="settings_sound_dtmf_tone">Tonos DTMF</string>
     <string name="settings_sound_dtmf_tone_supporting">Tono de teclado que se reproduce durante la pulsación</string>
     <string name="settings_sound_dialpad_vibration">Vibración de marcador</string>
@@ -845,6 +848,7 @@ texto blanco</string>
     <string name="call_recording_shizuku_attribution_title">Motor de grabación de llamadas</string>
     <string name="call_recording_shizuku_attribution_desc">La grabación interna de llamadas a través de Shizuku incorpora código del proyecto open source ShizuCallRecorder por kitsumed (GPLv3).</string>
     <string name="call_recording_shizuku_attribution_action">Visita ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Comprobar actualizaciones • Colaboradores • Información</string>
     <string name="settings_top_card_updates">Actualizaciones</string>
     <string name="settings_top_card_donate">Donar</string>
     <!-- Settings > Contributors -->
@@ -1494,6 +1498,7 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Aplicar fondos de gradiente dinámicos para contactar los avatares iniciales</string>
     <string name="loc_typography">Tipografía</string>
     <string name="loc_font_text_size_and_system_font">Fuente, tamaño de texto y fuente del sistema</string>
+    <string name="loc_call_screen_buttons">Pantalla de llamada</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Elige la posición de cada botón de llamada</string>
     <string name="loc_hide_avatar_with_wallpaper">Ocultar avatar con fondo de pantalla</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omitir círculo de avatar cuando se establece un fondo de pantalla de contacto completo</string>
@@ -1674,6 +1679,8 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Borrar todo</string>
     <string name="loc_refresh">Refrescar</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d grabaciones totales se guardan en este dispositivo</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optimización %1$s</string>
     <string name="loc_dismiss">Descartar</string>
     <string name="loc_saved_call_recordings">Grabaciones de llamadas guardadas</string>
     <string name="loc_recording_controls">Controles de grabación</string>
@@ -1686,11 +1693,13 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_minimum_duration_filter">Filtro de duración mínimo</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Descartar llamadas ultrarrápidas por debajo del umbral</string>
     <string name="loc_delete_all_recordings">¿Borrar todas las grabaciones?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Todas las grabaciones de %1$d se eliminarán permanentemente de tu dispositivo. Esta acción no se puede deshacer.</string>
     <string name="loc_select_start_date_from">Seleccionar fecha de inicio (From)</string>
     <string name="loc_select_end_date_to">Seleccionar fecha final (hasta)</string>
     <string name="loc_play">Jugar</string>
     <string name="loc_rewind_10s">Rebobinar 10 s</string>
     <string name="loc_forward_10s">Reenviar 10s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d seleccionado</string>
     <string name="loc_privatecontacts_size_secured">%1$d asegurado</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Almacenado localmente en la bóveda de arena de Rivo • oculto de las aplicaciones de WhatsApp y del sistema</string>
     <string name="loc_select_contacts_for_private_storage">Seleccionar contactos para almacenamiento privado</string>
@@ -1869,4 +1878,8 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="private_vault_unhide_in_vault">Mostrar en bóveda</string>
     <string name="private_vault_hide_completely">Ocultar Completamente</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Llamadas &amp; Contactos</string>
+    <string name="settings_group_appearance_preferences">Apariencia &amp; Preferencias</string>
+    <string name="settings_group_system_about">Sistema &amp; Acerca</string>
+    <string name="thank_you_for_your_support">¡Gracias por tu apoyo!</string>
 </resources>

@@ -311,7 +311,7 @@
     <string name="contact_details_video">Wideo</string>
     <string name="contact_details_info_title">Informacje o kontakcie</string>
     <string name="contact_bullet_favorite">" • Ulubione"</string>
-    <string name="contact_bullet_default">" • Domyślny"</string>
+    <string name="contact_bullet_default">" • Domyślne"</string>
     <string name="contact_bullet_recent">" • Ostatnie"</string>
     <string name="content_desc_favorite">Ulubione</string>
     <string name="contact_clear_favorite">Usuń z ulubionych</string>
@@ -392,14 +392,14 @@
     <string name="relation_type_assistant">Asystent</string>
     <string name="relation_type_brother">Brat</string>
     <string name="relation_type_child">Dziecko</string>
-    <string name="relation_type_domestic_partner">Partner krajowy</string>
+    <string name="relation_type_domestic_partner">Partner życiowy</string>
     <string name="relation_type_father">Ojciec</string>
-    <string name="relation_type_friend">Znajomi</string>
+    <string name="relation_type_friend">Znajomy</string>
     <string name="relation_type_manager">Menedżer</string>
     <string name="relation_type_mother">Matka</string>
     <string name="relation_type_parent">Rodzic</string>
     <string name="relation_type_partner">Partner</string>
-    <string name="relation_type_referred_by">Polecane przez</string>
+    <string name="relation_type_referred_by">Polecony</string>
     <string name="relation_type_relative">Krewny</string>
     <string name="relation_type_sister">Siostra</string>
     <string name="relation_type_spouse">Małżonek</string>
@@ -598,8 +598,15 @@ Biały tekst</string>
     <string name="settings_interface_flip_bottom_bar_supporting">Zamienia pozycjami karty „Kontakty” i „Ostatnie”</string>
     <string name="settings_interface_icon_only_bar">Dolny pasek z samymi ikonami</string>
     <string name="settings_interface_icon_only_bar_supporting">Usuwa etykiety tekstowe z nawigacji dolnej</string>
+    <string name="settings_avatar_style">Styl awatara</string>
+    <string name="settings_avatar_style_supporting">Wybierz między kolorem, gradientem lub zwykłymi awatarami</string>
+    <string name="avatar_style_colorful">Kolorowe</string>
+    <string name="avatar_style_gradient">Gradient</string>
+    <string name="avatar_style_none">Brak</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Dźwięk i wibracje</string>
+    <string name="settings_appwide_vibration_title">Wibracje haptyczne w aplikacji</string>
+    <string name="settings_appwide_vibration_supporting">Wibracja podczas przewijania paskiem alfabetu na liście kontaktów</string>
     <string name="settings_sound_dtmf_tone">Tony DTMF</string>
     <string name="settings_sound_dtmf_tone_supporting">Dźwięk klawiatury podczas wybierania numeru</string>
     <string name="settings_sound_dialpad_vibration">Wibracje klawiatury</string>
@@ -837,7 +844,7 @@ Biały tekst</string>
     <string name="about_current_version">Aktualna wersja: %1$s</string>
     <string name="about_copyright">©️ 2025-2026 Projekt RivoPhone</string>
     <string name="about_attributions_title">Specjalne atrybuty</string>
-    <string name="about_third_party_libraries_title">Biblioteki &amp; Frameworks</string>
+    <string name="about_third_party_libraries_title">Biblioteki i frameworki</string>
     <string name="about_shizucallrecorder_title">Atrybut ShizuCallRecorder</string>
     <string name="about_shizucallrecorder_short_desc">Silnik nagrywania połączeń przez: kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo zawiera kod nagrywania wywołań ze ShizuCallRecorder (licencjonowany na mocy GPLv3 z dodatkowymi warunkami w sekcji 7). Rivo jest niezależnym projektem i nie jest oficjalnie powiązany z ShizuCallRecorder ani przez niego zatwierdzony.\n\nSzukasz dedykowanego, darmowego i otwartego źródła oraz szanującego prywatność alternatywy bez reklam lub monetyzacji? Sprawdź oryginalny projekt ShizuCallRecorder</string>
@@ -845,6 +852,7 @@ Biały tekst</string>
     <string name="call_recording_shizuku_attribution_title">Silnik nagrywania połączeń</string>
     <string name="call_recording_shizuku_attribution_desc">Nagrywanie połączeń wewnętrznych za pośrednictwem Shizuku zawiera kod z projektu ShizuCallRecorder open-source przez kitsumed (GPLv3). Nie jest powiązane z ShizuCallRecorder ani przez niego zatwierdzone.</string>
     <string name="call_recording_shizuku_attribution_action">Odwiedź ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Sprawdź aktualizacje • Współtwórcy • Informacje</string>
     <string name="settings_top_card_updates">Aktualizacje</string>
     <string name="settings_top_card_donate">Darowizna</string>
     <!-- Settings > Contributors -->
@@ -1212,7 +1220,7 @@ Biały tekst</string>
     <string name="settings_call_waiting_system_settings">Ustawienia połączeń systemowych</string>
     <!-- Call Analytics & Tracking -->
     <string name="settings_call_analytics_title">Analiza połączeń i śledzenie</string>
-    <string name="settings_call_analytics_supporting">Śledź wskaźniki połączeń, statystyki czasu mowy, godziny szczytu i częste spostrzeżenia kontaktów</string>
+    <string name="settings_call_analytics_supporting">Śledź statystyki połączeń, czas rozmów, godziny szczytu i informacje o najczęstszych kontaktach</string>
     <string name="settings_call_analytics_disabled_supporting">Śledzenie połączeń i ich użycie są wyłączone</string>
     <string name="settings_call_analytics_view_title">Zobacz analizy i spostrzeżenia</string>
     <string name="settings_call_analytics_view_supporting">Ranking czasu rozmów, godziny szczytu i rozkład połączeń</string>
@@ -1496,6 +1504,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Zastosuj dynamiczne tła gradientu do kontaktu z początkowymi awatarami</string>
     <string name="loc_typography">Typografia</string>
     <string name="loc_font_text_size_and_system_font">Czcionka, rozmiar tekstu i czcionka systemowa</string>
+    <string name="loc_call_screen_buttons">Ekran połączeń</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Wybierz położenie każdego przycisku połączenia</string>
     <string name="loc_hide_avatar_with_wallpaper">Ukryj awatar za pomocą tapety</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Pomiń koło awatara, gdy ustawiona jest pełna tapeta w tle</string>
@@ -1629,7 +1638,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_contact_management_card_on_contacts_tab">Karta zarządzania kontaktami na karcie Kontakty</string>
     <string name="loc_show_quick_storage_duplicate_cleaner_card_at_top_of_contacts_list">Pokaż kartę szybkiego czyszczenia pamięci i duplikatów na górze listy kontaktów</string>
     <string name="loc_contacts_launcher_icon">Ikona kontaktów w launcherze</string>
-    <string name="loc_add_standalone_contacts_shortcut_icon_to_your_home_screen_launcher">Dodaj samodzielną ikonę skrótu \'Kontakty\' do ekranu głównego</string>
+    <string name="loc_add_standalone_contacts_shortcut_icon_to_your_home_screen_launcher">Dodaj oddzielną ikonę skrótu \'Kontakty\' do ekranu głównego</string>
     <string name="loc_sort_contacts_by_name">Sortuj Kontakty według Nazwy</string>
     <string name="loc_sort_address_book_list_by_first_name_or_last_name">Sortuj listę książki adresowej według imienia lub nazwiska</string>
     <string name="loc_contact_name_format">Format nazwy kontaktu</string>
@@ -1677,6 +1686,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Usuń wszystkie</string>
     <string name="loc_refresh">Odśwież</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d wszystkie nagrania są zapisywane na tym urządzeniu</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Optymalizacja %1$s</string>
     <string name="loc_dismiss">Odrzuć</string>
     <string name="loc_saved_call_recordings">Zapisane nagrania połączeń</string>
     <string name="loc_recording_controls">Sterowanie nagrywaniem</string>
@@ -1689,11 +1700,13 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_minimum_duration_filter">Filtr minimalnego czasu trwania</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Odrzuć bardzo krótkie połączenia poniżej progu</string>
     <string name="loc_delete_all_recordings">Usunąć wszystkie nagrania?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Wszystkie nagrania %1$d zostaną trwale usunięte z urządzenia. Tej akcji nie można cofnąć.</string>
     <string name="loc_select_start_date_from">Wybierz datę rozpoczęcia (Od)</string>
     <string name="loc_select_end_date_to">Wybierz datę zakończenia (To)</string>
     <string name="loc_play">Odtwórz</string>
     <string name="loc_rewind_10s">Przewiń 10s</string>
     <string name="loc_forward_10s">Do przodu 10s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d zaznaczone</string>
     <string name="loc_privatecontacts_size_secured">Zabezpieczonych: %1$d</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Przechowywane lokalnie w bezpiecznym schowku Rivo • Ukryte przed WhatsAppem i aplikacjami systemowymi</string>
     <string name="loc_select_contacts_for_private_storage">Wybierz kontakty do pamięci prywatnej</string>
@@ -1703,10 +1716,11 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_export_vcf">Eksportuj VCF</string>
     <string name="loc_vault_access_security">Dostęp do sejfu i bezpieczeństwo</string>
     <string name="loc_secret_dialpad_code">Sekretny kod klawiatury</string>
-    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Wybieraj $currentSecretCode na klawiaturze numerycznej, aby szybko otworzyć prywatny sejf</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Wpisz kod $currentSecretCode na klawiaturze, aby szybko otworzyć prywatny sejf</string>
     <string name="loc_hide_from_settings">Ukryj w ustawieniach</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Usuń pamięć prywatną z menu ustawień (dostępna tylko za pomocą tajnego kodu)</string>
     <string name="loc_pick_contacts_for_vault">Wybierz kontakty do sejfu</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Trwale usunąć %1$d wybranych kontaktów z prywatnego przechowywania?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Wpisz ten tajny kod na klawiaturze numerycznej, aby ujawnić kontakty w pamięci prywatnej.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Tylko tajny kod klawiatury będzie miał dostęp do pamięci prywatnej</string>
     <string name="loc_security_protection">Bezpieczeństwo i ochrona</string>
@@ -1873,4 +1887,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="private_vault_unhide_in_vault">Odkryj w sejfie</string>
     <string name="private_vault_hide_completely">Ukryj całkowicie</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Połączenia i kontakty</string>
+    <string name="settings_group_appearance_preferences">Wygląd i ustawienia</string>
+    <string name="settings_group_system_about">System i informacje</string>
+    <string name="thank_you_for_your_support">Dziękujemy za wsparcie!</string>
 </resources>

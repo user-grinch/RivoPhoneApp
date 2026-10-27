@@ -176,6 +176,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • Oletus"</string>
     <string name="contact_create_new">Luo uusi yhteystieto</string>
     <string name="contact_create_new_desc">Tallenna uutena yhteystietona</string>
     <string name="contact_add_to_existing">Lisää olemassa olevaan yhteystietoon</string>
@@ -290,7 +291,14 @@ valkoinen teksti</string>
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Zoomaus</string>
     <string name="settings_interface_transition_stack">Syvyys Pino</string>
+    <string name="settings_avatar_style">Profiilikuvan Tyyli</string>
+    <string name="settings_avatar_style_supporting">Valitse värikkäiden, kaltevuuksien tai pelkkien hahmojen välillä</string>
+    <string name="avatar_style_colorful">Värikäs</string>
+    <string name="avatar_style_gradient">Gradientti</string>
+    <string name="avatar_style_none">Ei Mitään</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Sovelluksen Haptinen Palaute</string>
+    <string name="settings_appwide_vibration_supporting">Värinä vieritettäessä aakkosten vierityspalkkia yhteystietojen sivulla</string>
     <string name="settings_sound_hold_zero_for_plus">Pidä 0 pohjassa +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Kirjoita + pitämällä 0-näppäintä painettuna valintaikkunassa</string>
     <!-- Settings > Call accounts -->
@@ -376,6 +384,7 @@ valkoinen teksti</string>
     <string name="call_recording_shizuku_attribution_title">Soita Tallennusmoottoriin</string>
     <string name="call_recording_shizuku_attribution_desc">Sisäinen puhelun tallennus Shizuku sisältää koodia avoimen lähdekoodin ShizuCallRecorder projekti kissanvedolla (GPLv3). Ei sidoksissa tai vahvistanut ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Vieraile ShizuCallRecorderissa</string>
+    <string name="settings_top_card_subtext">Tarkista päivitykset • Avustajat • Tiedot</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Tekijä</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Tekijä</string>
@@ -754,6 +763,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Käytä dynaamisia gradientin taustakuvia ottaaksesi yhteyttä alkuhahmoihin</string>
     <string name="loc_typography">Typografia</string>
     <string name="loc_font_text_size_and_system_font">Kirjasin, tekstin koko ja järjestelmän kirjasin</string>
+    <string name="loc_call_screen_buttons">Soita Näyttöön</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Valitse jokaisen puhelu-painikkeen sijainti</string>
     <string name="loc_hide_avatar_with_wallpaper">Piilota profiilikuva taustakuvalla</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Poista profiilikuva ympyrä, kun kontaktin taustakuva on asetettu</string>
@@ -934,6 +944,8 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Poista Kaikki</string>
     <string name="loc_refresh">Päivitä</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d äänityksiä yhteensä tallennetaan tähän laitteeseen</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s Optimointi</string>
     <string name="loc_dismiss">Hylkää</string>
     <string name="loc_saved_call_recordings">Tallennetut Puheluäänitykset</string>
     <string name="loc_recording_controls">Tallennuksen Ohjaimet</string>
@@ -946,11 +958,13 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_minimum_duration_filter">Pienin Kesto Suodatin</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Hylkää erittäin lyhyet puhelut kynnysarvon alle</string>
     <string name="loc_delete_all_recordings">Poista kaikki nauhoitukset?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Kaikki %1$d äänitteet poistetaan laitteestasi pysyvästi. Tätä toimintoa ei voi peruuttaa.</string>
     <string name="loc_select_start_date_from">Valitse Aloituspäivä (tyhjä)</string>
     <string name="loc_select_end_date_to">Valitse Päättymispäivä (Päättyessä)</string>
     <string name="loc_play">Toista</string>
     <string name="loc_rewind_10s">Rewind 10s</string>
     <string name="loc_forward_10s">Eteenpäin 10s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d valittu</string>
     <string name="loc_privatecontacts_size_secured">%1$d suojattu</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Paikallisesti tallennettu Rivan hiekkalaatikkoon • Piilotettu WhatsAppista ja järjestelmäsovelluksista</string>
     <string name="loc_select_contacts_for_private_storage">Valitse Yksityisen tallennustilan yhteystiedot</string>
@@ -964,6 +978,7 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="loc_hide_from_settings">Piilota asetuksista</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Poista Yksityinen tallennustila asetusvalikosta (käytettävissä vain salaisen koodin kautta)</string>
     <string name="loc_pick_contacts_for_vault">Valitse holvin yhteystiedot</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Poistetaanko %1$d valitut yhteystiedot pysyvästi yksityisestä tallennustilasta?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Kirjoita tämä salainen koodi dialpadille paljastaaksesi yksityisvarastossa olevat yhteystiedot.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Vain salainen dialpad koodi käyttää yksityistä tallennustilaa</string>
     <string name="loc_security_protection">Turvallisuus &amp; Suojaus</string>
@@ -1126,4 +1141,8 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="private_vault_unhide_in_vault">Näytä holvissa</string>
     <string name="private_vault_hide_completely">Piilota Täysin</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Puhelut &amp; Yhteystiedot</string>
+    <string name="settings_group_appearance_preferences">Ulkoasu &amp; Asetukset</string>
+    <string name="settings_group_system_about">Järjestelmä &amp; Tietoja</string>
+    <string name="thank_you_for_your_support">Kiitos tuestanne!</string>
 </resources>

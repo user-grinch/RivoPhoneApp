@@ -179,6 +179,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • Padrão"</string>
     <string name="contact_create_new">Criar novo contato</string>
     <string name="contact_create_new_desc">Salvar como um novo contato</string>
     <string name="contact_add_to_existing">Adicionar a contato existente</string>
@@ -293,7 +294,14 @@ Texto branco</string>
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">Ampliar</string>
     <string name="settings_interface_transition_stack">Pilha de Profundidade</string>
+    <string name="settings_avatar_style">Estilo de avatar</string>
+    <string name="settings_avatar_style_supporting">Escolha entre avatares coloridos, gradientes ou simples</string>
+    <string name="avatar_style_colorful">Colorido</string>
+    <string name="avatar_style_gradient">Degradê</string>
+    <string name="avatar_style_none">Nenhuma</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">Feedback Háptico para Appwide</string>
+    <string name="settings_appwide_vibration_supporting">Vibrar ao rolar o alfabeto na página de contatos</string>
     <string name="settings_sound_hold_zero_for_plus">Segure 0 para +</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">Digite + segurando o botão 0 no teclado de discagem</string>
     <!-- Settings > Call accounts -->
@@ -377,6 +385,7 @@ Texto branco</string>
     <string name="call_recording_shizuku_attribution_title">Mecanismo de Gravação</string>
     <string name="call_recording_shizuku_attribution_desc">A gravação de chamadas internas via Shizuku incorpora código do projeto ShizuCallRecorder de código aberto por kitsumed (GPLv3). Não afiliado ou endossado por ShizuCallRecorder.</string>
     <string name="call_recording_shizuku_attribution_action">Visitar ShizuCallRecorder</string>
+    <string name="settings_top_card_subtext">Verificar atualizações • Colaboradores • Informações</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_upstream_call_recording">Autor ShizuCallRecorder</string>
@@ -753,6 +762,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Aplicar panos de fundo dinâmicos para contatar avatares iniciais</string>
     <string name="loc_typography">Tipografia</string>
     <string name="loc_font_text_size_and_system_font">Fonte, tamanho do texto e fonte do sistema</string>
+    <string name="loc_call_screen_buttons">Tela de chamada</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Escolha a posição de cada botão durante a chamada</string>
     <string name="loc_hide_avatar_with_wallpaper">Ocultar avatar com papel de parede</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Omitir círculo de avatar quando um papel de parede de fundo do contato completo for definido</string>
@@ -934,6 +944,8 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">Excluir todos os</string>
     <string name="loc_refresh">atualizar</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">O total de gravações %1$d está salvo neste dispositivo</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">Otimização %1$s</string>
     <string name="loc_dismiss">Descartar</string>
     <string name="loc_saved_call_recordings">Gravações de chamadas salvas</string>
     <string name="loc_recording_controls">Controles de gravação</string>
@@ -946,11 +958,13 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_minimum_duration_filter">Filtro Mínimo de Duração</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">Descartar chamadas ultra-curtas abaixo do limite</string>
     <string name="loc_delete_all_recordings">Excluir todas as gravações?</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">Todas as gravações %1$d serão permanentemente removidas do seu dispositivo. Esta ação não pode ser desfeita.</string>
     <string name="loc_select_start_date_from">Selecionar Data de Início (From)</string>
     <string name="loc_select_end_date_to">Selecione Data Final (Para)</string>
     <string name="loc_play">Reproduzir</string>
     <string name="loc_rewind_10s">Retroceder 10s</string>
     <string name="loc_forward_10s">Avançar 10s</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d selecionado</string>
     <string name="loc_privatecontacts_size_secured">%1$d protegido</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Armazenado localmente no sandboxed vault do Rivo • Oculto para aplicativos do WhatsApp e sistema</string>
     <string name="loc_select_contacts_for_private_storage">Selecionar Contatos para Armazenamento Privado</string>
@@ -963,6 +977,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_hide_from_settings">Ocultar das configurações</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Remover Armazenamento Privado do menu de configurações (acessível apenas através do código secreto)</string>
     <string name="loc_pick_contacts_for_vault">Escolher Contatos para o Cofre</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">Excluir permanentemente os contatos selecionados de %1$d do armazenamento privado?</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">Digite este código secreto no teclado de discagem para revelar os contatos no armazenamento privado.</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">Somente o código secreto do teclado de discagem acessará o armazenamento privado</string>
     <string name="loc_security_protection">Segurança &amp; Proteção</string>
@@ -1126,4 +1141,8 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="private_vault_unhide_in_vault">Reexibir no Cofre</string>
     <string name="private_vault_hide_completely">Ocultar Completamente</string>
     <!-- Settings Groups -->
+    <string name="settings_group_calls_contacts">Chamadas &amp; Contatos</string>
+    <string name="settings_group_appearance_preferences">Preferências de Aparência &amp;</string>
+    <string name="settings_group_system_about">Sistema &amp; Sobre</string>
+    <string name="thank_you_for_your_support">Obrigado pelo seu apoio!</string>
 </resources>

@@ -178,6 +178,7 @@
     <!-- Recents / Call log -->
     <!-- Contacts list -->
     <!-- Contact details -->
+    <string name="contact_bullet_default">" • デフォルト"</string>
     <string name="contact_create_new">新しい連絡先を作成</string>
     <string name="contact_create_new_desc">新しい連絡先として保存</string>
     <string name="contact_add_to_existing">既存の連絡先に追加</string>
@@ -290,7 +291,14 @@
     <!-- Settings > Interface -->
     <string name="settings_interface_transition_zoom">ズーム</string>
     <string name="settings_interface_transition_stack">深さスタック</string>
+    <string name="settings_avatar_style">アバタースタイル</string>
+    <string name="settings_avatar_style_supporting">カラフル、グラデーション、プレーンなアバターのいずれかを選択します</string>
+    <string name="avatar_style_colorful">カラフルな</string>
+    <string name="avatar_style_gradient">Gradient</string>
+    <string name="avatar_style_none">なし</string>
     <!-- Settings > Sound & Vibration -->
+    <string name="settings_appwide_vibration_title">アプリ全体の振動フィードバック</string>
+    <string name="settings_appwide_vibration_supporting">連絡先ページのアルファベットスクロールバーを使用してスクロールすると振動します</string>
     <string name="settings_sound_hold_zero_for_plus">0を長押しして+にする</string>
     <string name="settings_sound_hold_zero_for_plus_supporting">ダイヤルパッドの0ボタンを長押しして+と入力します</string>
     <!-- Settings > Call accounts -->
@@ -376,6 +384,7 @@
     <string name="call_recording_shizuku_attribution_title">通話録音エンジン</string>
     <string name="call_recording_shizuku_attribution_desc">Shizukuによる内部通話録音には、ShitiCallRecorderとは提携していない、または承認されていないkitumed(GPLv3)によるオープンソースShizuCallRecorderプロジェクトのコードが組み込まれています。</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorderをご覧ください</string>
+    <string name="settings_top_card_subtext">アップデートの確認 • 貢献者 • 情報</string>
     <!-- Settings > Contributors -->
     <string name="contributor_role_author">作成者</string>
     <string name="contributor_role_upstream_call_recording">ShizuCallRecorder著者</string>
@@ -732,6 +741,7 @@
     <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">最初のアバターに連絡するには、ダイナミックグラデーションの背景を適用します</string>
     <string name="loc_typography">タイポグラフィー（文法）</string>
     <string name="loc_font_text_size_and_system_font">フォント、テキストサイズ、システムフォント</string>
+    <string name="loc_call_screen_buttons">通話画面</string>
     <string name="loc_choose_the_position_of_each_in_call_button">通話中ボタンの位置を選択してください</string>
     <string name="loc_hide_avatar_with_wallpaper">壁紙でアバターを隠す</string>
     <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">完全な連絡先の背景壁紙が設定されているときにアバターサークルを省略する</string>
@@ -910,6 +920,8 @@
     <string name="loc_1_555_123_4567">+1 (555) 123-4567</string>
     <string name="loc_delete_all">すべて削除</string>
     <string name="loc_refresh">更新</string>
+    <string name="loc_recordings_size_total_recordings_are_saved_on_this_device">%1$d 総録音はこのデバイスに保存されています</string>
+    <string name="loc_oempermissionhelper_getoembranddisplayname_optimization">%1$s 最適化</string>
     <string name="loc_dismiss">却下する</string>
     <string name="loc_saved_call_recordings">通話録音を保存しました</string>
     <string name="loc_recording_controls">録音コントロール</string>
@@ -922,11 +934,13 @@
     <string name="loc_minimum_duration_filter">最小持続時間フィルタ</string>
     <string name="loc_discard_ultra_short_calls_below_threshold">しきい値以下の超短い通話を破棄する</string>
     <string name="loc_delete_all_recordings">すべての録音を削除しますか？</string>
+    <string name="loc_all_recordings_size_recordings_will_be_permanently_removed_from_your_d">すべての %1$d 録音はあなたのデバイスから完全に削除されます。この操作は元に戻せません。</string>
     <string name="loc_select_start_date_from">開始日を選択してください（検索）</string>
     <string name="loc_select_end_date_to">終了日を選択 (終了日)</string>
     <string name="loc_play">再生</string>
     <string name="loc_rewind_10s">10秒巻き戻し</string>
     <string name="loc_forward_10s">10秒進む</string>
+    <string name="loc_selectedcontactids_size_selected">%1$d を選択しました</string>
     <string name="loc_privatecontacts_size_secured">%1$d セキュア化</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">ローカルにRivoのサンドボックス入り保管庫に保存されています。• WhatsAppとシステムアプリから非表示になります</string>
     <string name="loc_select_contacts_for_private_storage">プライベートストレージの連絡先を選択</string>
@@ -939,6 +953,7 @@
     <string name="loc_hide_from_settings">設定から隠す</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">設定メニューからプライベートストレージを削除（シークレットコードでのみアクセス可能）</string>
     <string name="loc_pick_contacts_for_vault">保管庫の連絡先を選択</string>
+    <string name="loc_permanently_delete_selectedcontactids_size_selected_contact_s_from_pri">プライベートストレージから %1$d 選択した連絡先を完全に削除しますか？</string>
     <string name="loc_type_this_secret_code_on_the_dialpad_to_reveal_contacts_in_private_sto">ダイヤルパッドにこのシークレットコードを入力すると、プライベートストレージの連絡先が表示されます。</string>
     <string name="loc_only_the_secret_dialpad_code_will_access_private_storage">秘密のダイヤルパッドコードだけがプライベートストレージにアクセスします</string>
     <string name="loc_security_protection">セキュリティ &amp; 保護</string>
@@ -1101,4 +1116,7 @@
     <string name="private_vault_unhide_in_vault">保管庫で再表示する</string>
     <string name="private_vault_hide_completely">完全に隠す</string>
     <!-- Settings Groups -->
+    <string name="settings_group_appearance_preferences">外観 &amp; 設定</string>
+    <string name="settings_group_system_about">システム &amp; について</string>
+    <string name="thank_you_for_your_support">ご支援ありがとうございます！</string>
 </resources>
