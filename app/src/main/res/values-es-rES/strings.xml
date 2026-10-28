@@ -832,6 +832,7 @@ texto blanco</string>
     <string name="about_contributors_supporting">Conoce al equipo detrás del proyecto</string>
     <string name="about_patreon">Apóyanos</string>
     <string name="about_patreon_supporting">Ayuda a mantener el proyecto vivo</string>
+    <string name="about_support">Soporte</string>
     <string name="about_discord">Servidor de Discord</string>
     <string name="about_discord_supporting">Únase a la comunidad</string>
     <string name="about_source_code">Código fuente</string>
@@ -1630,6 +1631,7 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_standardize_phone_numbers_e_164">Estandarizar números de teléfono (E.164)</string>
     <string name="loc_format_phone_numbers_with_proper_country_code_and_spacing">Formatear números de teléfono con el código de país adecuado y el espaciado</string>
     <string name="loc_contact_management_card_on_contacts_tab">Tarjeta de gestión de contactos en la pestaña de contactos</string>
+    <string name="loc_show_quick_storage_duplicate_cleaner_card_at_top_of_contacts_list">Mostrar almacenamiento rápido &amp; duplicar tarjeta limpiadora en la parte superior de la lista de contactos</string>
     <string name="loc_contacts_launcher_icon">Icono de Lanzador de Contactos</string>
     <string name="loc_add_standalone_contacts_shortcut_icon_to_your_home_screen_launcher">Añade el icono de acceso directo de \'Contactos\' a tu launcher de pantalla de inicio</string>
     <string name="loc_sort_contacts_by_name">Ordenar contactos por nombre</string>
@@ -1790,6 +1792,10 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="loc_manage_storage_tools">Administrar almacenamiento &amp; herramientas</string>
     <string name="loc_remove_from_priority">Eliminar de la prioridad</string>
     <string name="loc_all_countsuffix">Todos%1$s</string>
+    <string name="loc_contacts_count">Contactos (%1$d)</string>
+    <string name="loc_favorites_count">Favoritos (%1$d)</string>
+    <string name="loc_call_logs_count">Registros de llamadas (%1$d)</string>
+    <string name="loc_missed_count">Perdido (%1$d)</string>
     <string name="loc_granted">Concedido</string>
     <string name="loc_private_storage_hidden">Almacenamiento Privado (Oculto)</string>
     <string name="call_customization_behavior">Comportamiento de llamadas</string>
@@ -1878,4 +1884,24 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="settings_group_appearance_preferences">Apariencia &amp; Preferencias</string>
     <string name="settings_group_system_about">Sistema &amp; Acerca</string>
     <string name="thank_you_for_your_support">¡Gracias por tu apoyo!</string>
+    <string name="recents_call_time">Tiempo de llamada</string>
+    <string name="contacts_available_count">%1$d contactos disponibles</string>
+    <string name="contact_selection_ready_to_proceed">Listo para continuar</string>
+    <string name="contact_selection_use_number">Usar número: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Pulse para seleccionar este número personalizado</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d más)</string>
+    <string name="action_select">Seleccionar</string>
+    <string name="private_contacts_no_search_results">No hay contactos privados que coincidan con \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Ninguna grabación coincide con el filtro activo</string>
+    <string name="call_recordings_pause">Pausa</string>
+    <string name="call_recordings_filter_all">Todas las llamadas</string>
+    <string name="call_recordings_filter_incoming_only">Solo llamadas entrantes</string>
+    <string name="call_recordings_filter_outgoing_only">Solo llamadas salientes</string>
+    <string name="call_recordings_filter_unknown_only">Sólo números desconocidos</string>
+    <string name="call_recordings_filter_contacts_only">Sólo contactos guardados</string>
+    <string name="call_recordings_filter_all_desc">Grabando todas las llamadas</string>
+    <string name="call_recordings_filter_incoming_only_desc">Grabando solo llamadas entrantes</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Grabando solo llamadas salientes</string>
+    <string name="call_recordings_filter_unknown_only_desc">Grabando sólo números desconocidos</string>
+    <string name="call_recordings_filter_contacts_only_desc">Grabando sólo contactos guardados</string>
 </resources>

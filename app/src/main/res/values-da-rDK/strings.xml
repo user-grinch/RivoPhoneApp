@@ -378,6 +378,7 @@ Hvid tekst</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Dit luftfartsselskabs telefonsvarertelefonnummer.</string>
     <!-- Settings > About -->
+    <string name="about_support">Support</string>
     <string name="about_attributions_title">Særlige Attributter</string>
     <string name="about_third_party_libraries_title">Biblioteker &amp; Rammer</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Attribution</string>
@@ -980,6 +981,7 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_export_vcf">Eksporter VCF</string>
     <string name="loc_vault_access_security">Boks Adgang &amp; Sikkerhed</string>
     <string name="loc_secret_dialpad_code">Hemmelig Dialpad Kode</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Ring til %1$s på opkaldsblokken for hurtigt at åbne den private boks</string>
     <string name="loc_hide_from_settings">Skjul i Indstillinger</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Fjern Privat lagerplads fra indstillingsmenuen (kun tilgængelig via hemmelig kode)</string>
     <string name="loc_pick_contacts_for_vault">Vælg kontakter til boks</string>
@@ -1050,13 +1052,21 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="loc_call_history_settings">Indstillinger For Kaldhistorik</string>
     <string name="loc_save_to_call_history">Gem i opkaldshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Besvaret og savnet falske opkald vil dukke op i Seneste</string>
+    <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d blokeret</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Opkald og sms-beskeder fra dette nummer vil blive blokeret straks.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Fjern blokering af %1$s? De vil være i stand til at ringe og sende besked til dig igen.</string>
     <string name="loc_processing_blocklist">Behandler Blokeringsliste</string>
     <string name="loc_importing_blocked_numbers">Importerer blokerede numre...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Tryk på begge lydstyrkeknapper sammen for at skifte Forstyr Ikke</string>
+    <string name="loc_totalduplicates">%1$d</string>
     <string name="loc_manage_storage_tools">Administrer lagring &amp; værktøjer</string>
     <string name="loc_remove_from_priority">Fjern fra prioritet</string>
+    <string name="loc_all_countsuffix">Alle%1$s</string>
+    <string name="loc_contacts_count">Kontakter (%1$d)</string>
+    <string name="loc_favorites_count">Favoritter (%1$d)</string>
+    <string name="loc_call_logs_count">Call Logs (%1$d)</string>
+    <string name="loc_missed_count">Glemt (%1$d)</string>
     <string name="loc_granted">Tildelt</string>
     <string name="loc_private_storage_hidden">Privat Opbevaring (Hidden)</string>
     <string name="call_customization_behavior">Opkald opførsel</string>
@@ -1145,4 +1155,24 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="settings_group_appearance_preferences">Udseende &amp; Indstillinger</string>
     <string name="settings_group_system_about">System &amp; Om</string>
     <string name="thank_you_for_your_support">Tak for din støtte!</string>
+    <string name="recents_call_time">Kald Tid</string>
+    <string name="contacts_available_count">%1$d tilgængelige kontakter</string>
+    <string name="contact_selection_ready_to_proceed">Klar til at fortsætte</string>
+    <string name="contact_selection_use_number">Brug nummer: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Tryk for at vælge dette brugerdefinerede nummer</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d mere)</string>
+    <string name="action_select">Vælg</string>
+    <string name="private_contacts_no_search_results">Ingen private kontakter matcher \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Ingen optagelser matcher det aktive filter</string>
+    <string name="call_recordings_pause">Pause</string>
+    <string name="call_recordings_filter_all">Alle Opkald</string>
+    <string name="call_recordings_filter_incoming_only">Kun Indgående Opkald</string>
+    <string name="call_recordings_filter_outgoing_only">Kun Udgående Opkald</string>
+    <string name="call_recordings_filter_unknown_only">Kun Ukendt Tal</string>
+    <string name="call_recordings_filter_contacts_only">Kun Gemte Kontakter</string>
+    <string name="call_recordings_filter_all_desc">Optager alle opkald</string>
+    <string name="call_recordings_filter_incoming_only_desc">Kun optagelse af indgående opkald</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Kun optagelse af udgående opkald</string>
+    <string name="call_recordings_filter_unknown_only_desc">Optagelse af ukendte numre</string>
+    <string name="call_recordings_filter_contacts_only_desc">Kun optagelse af gemte kontakter</string>
 </resources>

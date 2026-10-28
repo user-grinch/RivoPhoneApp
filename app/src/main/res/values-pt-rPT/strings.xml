@@ -377,6 +377,7 @@ Texto branco</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Número de acesso do correio de voz da sua operadora.</string>
     <!-- Settings > About -->
+    <string name="about_support">SUPORTE</string>
     <string name="about_attributions_title">Atribuições Especiais</string>
     <string name="about_third_party_libraries_title">Bibliotecas &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">Atribuição de CallRecorder</string>
@@ -973,6 +974,7 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_import_vcf">Importar VCF</string>
     <string name="loc_export_vcf">Exportar VCF</string>
     <string name="loc_secret_dialpad_code">Código de teclado secreto</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Discar %1$s no teclado de discagem para abrir rapidamente o cofre privado</string>
     <string name="loc_hide_from_settings">Ocultar das configurações</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Remover Armazenamento Privado do menu de configurações (acessível apenas através do código secreto)</string>
     <string name="loc_pick_contacts_for_vault">Escolher Contatos para o Cofre</string>
@@ -1043,13 +1045,20 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="loc_call_history_settings">Configurações do histórico de chamadas</string>
     <string name="loc_save_to_call_history">Salvar no Histórico de Chamadas</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Chamadas falsas atendidas e perdidas aparecerão em Recentes</string>
+    <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d bloqueado</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Chamadas e mensagens de texto deste número serão bloqueadas imediatamente.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Desbloquear %1$s? Eles poderão ligar e enviar mensagens de novo para você.</string>
     <string name="loc_processing_blocklist">Processando Bloqueio</string>
     <string name="loc_importing_blocked_numbers">Importando números bloqueados...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Pressione os dois botões de volume juntos para alternar o modo Não perturbe</string>
     <string name="loc_manage_storage_tools">Gerenciar armazenamento &amp; ferramentas</string>
     <string name="loc_remove_from_priority">Remover da prioridade</string>
+    <string name="loc_all_countsuffix">Todas%1$s</string>
+    <string name="loc_contacts_count">Contatos (%1$d)</string>
+    <string name="loc_favorites_count">Favoritos (%1$d)</string>
+    <string name="loc_call_logs_count">Registro de chamadas (%1$d)</string>
+    <string name="loc_missed_count">Perdida (%1$d)</string>
     <string name="loc_granted">Concedido</string>
     <string name="loc_private_storage_hidden">Armazenamento Privado (Hidden)</string>
     <string name="call_customization_behavior">Ligar para comportamento</string>
@@ -1138,4 +1147,24 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="settings_group_appearance_preferences">Preferências de Aparência &amp;</string>
     <string name="settings_group_system_about">Sistema &amp; Sobre</string>
     <string name="thank_you_for_your_support">Obrigado pelo seu apoio!</string>
+    <string name="recents_call_time">Tempo da chamada</string>
+    <string name="contacts_available_count">Contatos %1$d disponíveis</string>
+    <string name="contact_selection_ready_to_proceed">Pronto para prosseguir</string>
+    <string name="contact_selection_use_number">Usar número: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Toque para selecionar este número personalizado</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d mais)</string>
+    <string name="action_select">Selecionar</string>
+    <string name="private_contacts_no_search_results">Nenhum contato privado corresponde \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Nenhuma gravação corresponde ao filtro ativo</string>
+    <string name="call_recordings_pause">Suspender</string>
+    <string name="call_recordings_filter_all">Todas as chamadas</string>
+    <string name="call_recordings_filter_incoming_only">Apenas chamadas recebidas</string>
+    <string name="call_recordings_filter_outgoing_only">Somente chamadas efetuadas</string>
+    <string name="call_recordings_filter_unknown_only">Somente números desconhecidos</string>
+    <string name="call_recordings_filter_contacts_only">Apenas contatos salvos</string>
+    <string name="call_recordings_filter_all_desc">Gravando todas as chamadas</string>
+    <string name="call_recordings_filter_incoming_only_desc">Gravando apenas chamadas recebidas</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Gravando apenas chamadas efetuadas</string>
+    <string name="call_recordings_filter_unknown_only_desc">Gravando apenas números desconhecidos</string>
+    <string name="call_recordings_filter_contacts_only_desc">Gravando apenas contatos salvos</string>
 </resources>
