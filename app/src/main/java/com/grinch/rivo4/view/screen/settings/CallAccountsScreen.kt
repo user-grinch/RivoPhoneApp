@@ -188,6 +188,8 @@ fun CallAccountsScreen(
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_incoming_ui)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_call_always_fullscreen)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_open_call_screen_on_answer_title)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_group_call_logs)) ||
+            SettingsHighlightManager.matches(context.getString(R.string.settings_post_call_summary)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_missed_call_card_title)) ||
             SettingsHighlightManager.matches(context.getString(R.string.settings_floating_call_bubble)) -> 1
 

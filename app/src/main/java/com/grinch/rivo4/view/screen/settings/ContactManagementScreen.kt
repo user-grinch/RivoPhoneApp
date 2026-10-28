@@ -311,10 +311,10 @@ fun ContactManagementScreen(
                             .padding(16.dp)
                     ) {
                         if (duplicateGroups.isEmpty()) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Surface(
                                 modifier = Modifier.size(44.dp),
                                 shape = CircleShape,
@@ -330,7 +330,7 @@ fun ContactManagementScreen(
                                 }
                             }
                             Spacer(Modifier.width(14.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = stringResource(R.string.contact_management_no_duplicates),
                                     style = MaterialTheme.typography.bodyLarge,
@@ -347,28 +347,28 @@ fun ContactManagementScreen(
                         val totalDups = duplicateGroups.sumOf { it.size }
                         val totalSets = duplicateGroups.size
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = stringResource(R.string.contact_management_duplicates_found, totalDups, totalSets),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                                Text(
-                                    text = stringResource(R.string.contact_mgmt_merge_desc),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.contact_management_duplicates_found, totalDups, totalSets),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(R.string.contact_mgmt_merge_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(Modifier.height(12.dp))
                             Button(
                                 onClick = { showMergeAllDialog = true },
                                 enabled = !isMerging,
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                             ) {
@@ -857,7 +857,11 @@ fun DuplicateGroupItem(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -872,7 +876,8 @@ fun DuplicateGroupItem(
                     Text(
                         text = primary.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Text(
                         text = stringResource(
@@ -881,26 +886,37 @@ fun DuplicateGroupItem(
                             primary.phoneNumbers.firstOrNull() ?: ""
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_dismiss), modifier = Modifier.size(18.dp))
-                    }
-                    FilledTonalButton(
-                        onClick = onMerge,
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        modifier = Modifier.height(34.dp)
-                    ) {
-                        Text(stringResource(R.string.contact_management_merge_group_btn), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
+                Spacer(Modifier.width(4.dp))
+                IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_dismiss), modifier = Modifier.size(18.dp))
                 }
             }
 
+            Spacer(Modifier.height(8.dp))
+
+            FilledTonalButton(
+                onClick = onMerge,
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(36.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Outlined.CallMerge, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.contact_management_merge_group_btn), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+
             AnimatedVisibility(visible = isExpanded) {
-                Column(modifier = Modifier.padding(top = 10.dp, start = 8.dp, end = 8.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, start = 8.dp, end = 8.dp)
+                ) {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     Text(
                         text = stringResource(R.string.contact_mgmt_contacts_to_combine),
@@ -910,27 +926,29 @@ fun DuplicateGroupItem(
                     )
                     Spacer(Modifier.height(6.dp))
                     group.forEachIndexed { idx, c ->
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 4.dp)
                         ) {
                             Text(
                                 text = if (idx == 0) stringResource(R.string.contact_mgmt_primary) else stringResource(R.string.contact_mgmt_duplicate_number, idx),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = if (idx == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.width(80.dp)
+                                color = if (idx == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Column {
-                                Text(c.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                                Text(
-                                    text = c.phoneNumbers.joinToString(", ").ifEmpty { stringResource(R.string.contact_mgmt_no_numbers) },
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                            Text(
+                                text = c.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Text(
+                                text = c.phoneNumbers.joinToString(", ").ifEmpty { stringResource(R.string.contact_mgmt_no_numbers) },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }

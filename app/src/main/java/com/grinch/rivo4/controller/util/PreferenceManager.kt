@@ -650,7 +650,7 @@ class PreferenceManager(context: Context) {
         const val KEY_AUTO_DECLINE_NON_CONTACTS = "auto_decline_non_contacts"
         const val KEY_DUAL_SIM_DIALPAD_BUTTONS = "dual_sim_dialpad_buttons"
         const val KEY_CALL_LOG_LIMIT = "call_log_limit"
-        const val CALL_LOG_LIMIT_DEFAULT = 500
+        const val CALL_LOG_LIMIT_DEFAULT = 200
         const val KEY_AUTO_PASTE_CLIPBOARD = "auto_paste_clipboard"
         const val KEY_CONTACT_BACKUP_ENCRYPTION = "contact_backup_encryption"
         const val KEY_CONTACT_AUTO_BACKUP_ENCRYPTION = "contact_auto_backup_encryption"
@@ -826,8 +826,8 @@ class PreferenceManager(context: Context) {
         )
     }
 
-    fun getCallLogLimit(): Int = 500
-    fun setCallLogLimit(limit: Int) = setInt(KEY_CALL_LOG_LIMIT, 500)
+    fun getCallLogLimit(): Int = 200
+    fun setCallLogLimit(limit: Int) = setInt(KEY_CALL_LOG_LIMIT, 200)
 
     fun isAutoPasteClipboardEnabled(): Boolean = false
     fun setAutoPasteClipboardEnabled(enabled: Boolean) = setBoolean(KEY_AUTO_PASTE_CLIPBOARD, false)

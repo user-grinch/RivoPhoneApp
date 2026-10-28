@@ -257,6 +257,7 @@ class CallLogRepository(
 
         val tempLogs = mutableListOf<CallLogEntry>()
         val simCache = mutableMapOf<String, String>()
+        val callerNameCache = mutableMapOf<String, String>()
         val unknownLabel = context.getString(R.string.label_unknown)
         val hiddenNumbers = if (!preferenceManager.isHiddenContactsVisible()) {
             try { contactsRepo.getHiddenNumbers() } catch (e: Exception) { emptyList() }
@@ -334,7 +335,23 @@ class CallLogRepository(
                 rawCachedName.none { it.isLetter() }
             )
             val effectiveCachedName = if (isCachedNameJustNumber) null else rawCachedName
-            val displayName = matchedContact?.name ?: effectiveCachedName
+            if (effectiveCachedName != null && number != unknownLabel) {
+                ContactUtils.getLookupKeys(number).forEach { key ->
+                    callerNameCache.putIfAbsent(key, effectiveCachedName)
+                }
+            }
+            val resolvedCallerName = effectiveCachedName ?: run {
+                var found: String? = null
+                for (k in ContactUtils.getLookupKeys(number)) {
+                    val n = callerNameCache[k]
+                    if (n != null) {
+                        found = n
+                        break
+                    }
+                }
+                found
+            }
+            val displayName = matchedContact?.name ?: resolvedCallerName
             val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
             val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
                 contactIdFromLookupUri(it)
@@ -380,7 +397,33 @@ class CallLogRepository(
                 tempLogs.add(singleEntry)
             }
         }
-        callLogs.addAll(tempLogs)
+        val finalLogs = if (callerNameCache.isNotEmpty()) {
+            tempLogs.map { entry ->
+                val isEntryNameJustNumber = entry.name == null ||
+                    areNumbersEqual(entry.name, entry.number) ||
+                    entry.name.none { it.isLetter() }
+                if (isEntryNameJustNumber && entry.number != unknownLabel && entry.contactId == null) {
+                    var foundName: String? = null
+                    for (k in ContactUtils.getLookupKeys(entry.number)) {
+                        val n = callerNameCache[k]
+                        if (n != null) {
+                            foundName = n
+                            break
+                        }
+                    }
+                    if (foundName != null) {
+                        entry.copy(name = foundName)
+                    } else {
+                        entry
+                    }
+                } else {
+                    entry
+                }
+            }
+        } else {
+            tempLogs
+        }
+        callLogs.addAll(finalLogs)
     }
 
     override fun deleteCallLog(number: String) {

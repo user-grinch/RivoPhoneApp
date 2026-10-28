@@ -216,6 +216,22 @@ class CallService : InCallService() {
             instance?.setAudioRoute(route)
         }
 
+        fun toggleSpeaker() {
+            val state = _audioState.value
+            val current = state?.route ?: CallAudioState.ROUTE_EARPIECE
+            if (current == CallAudioState.ROUTE_SPEAKER) {
+                val supported = state?.supportedRouteMask ?: CallAudioState.ROUTE_EARPIECE
+                val targetRoute = when {
+                    (supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0 -> CallAudioState.ROUTE_WIRED_HEADSET
+                    (supported and CallAudioState.ROUTE_BLUETOOTH) != 0 -> CallAudioState.ROUTE_BLUETOOTH
+                    else -> CallAudioState.ROUTE_EARPIECE
+                }
+                setAudioRoute(targetRoute)
+            } else {
+                setAudioRoute(CallAudioState.ROUTE_SPEAKER)
+            }
+        }
+
         fun cycleAudioRoute() {
             val state = _audioState.value ?: return
             val supported = state.supportedRouteMask
@@ -452,9 +468,9 @@ class CallService : InCallService() {
             updateCallState()
             
             if (state != Call.STATE_RINGING) {
-                com.grinch.rivo4.controller.util.PriorityRinger.stopRinging()
                 val hasRinging = getCalls()?.any { it.state == Call.STATE_RINGING } == true
                 if (!hasRinging) {
+                    com.grinch.rivo4.controller.util.PriorityRinger.stopRinging()
                     flipToSilenceManager?.stopListening()
                     releaseScreenWakeLock()
                 }
@@ -466,6 +482,7 @@ class CallService : InCallService() {
 
             if (state == Call.STATE_ACTIVE) {
                 redialCount = 0
+                applyDndIfEnabled()
                 startAutoRecordingIfEnabled(call)
             }
 
@@ -872,9 +889,13 @@ class CallService : InCallService() {
         if (call.state == Call.STATE_RINGING) {
             callRingStartTimes[call] = System.currentTimeMillis()
             checkAndStartPriorityRinger(call)
+        } else if (
+            call.state == Call.STATE_ACTIVE ||
+            call.state == Call.STATE_DIALING ||
+            call.state == Call.STATE_CONNECTING
+        ) {
+            applyDndIfEnabled()
         }
-
-        applyDndIfEnabled()
 
         // Prime CallRecorder asynchronously so recording starts with zero delay when call answers
         CallRecorder.prepare(this)
@@ -995,7 +1016,7 @@ class CallService : InCallService() {
             }
             "DECLINE_CALL", CallActionReceiver.ACTION_DECLINE_CALL -> declineCall()
             "TOGGLE_MUTE", CallActionReceiver.ACTION_TOGGLE_MUTE -> toggleMute()
-            "TOGGLE_SPEAKER", CallActionReceiver.ACTION_TOGGLE_SPEAKER -> cycleAudioRoute()
+            "TOGGLE_SPEAKER", CallActionReceiver.ACTION_TOGGLE_SPEAKER -> toggleSpeaker()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -1227,11 +1248,14 @@ class CallService : InCallService() {
             } else null
 
             val isPriority = preferenceManager.isPriorityContact(contact?.id, number)
-            if (isPriority) {
+            if (isPriority && call.state == Call.STATE_RINGING) {
                 val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val ringVolume = audioManager?.getStreamVolume(AudioManager.STREAM_RING) ?: 1
-                val isSilentOrVibrate = audioManager?.ringerMode != AudioManager.RINGER_MODE_NORMAL || ringVolume == 0
+                val isRingMuted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    audioManager?.isStreamMute(AudioManager.STREAM_RING) == true
+                } else false
+                val isSilentOrVibrate = audioManager?.ringerMode != AudioManager.RINGER_MODE_NORMAL || ringVolume == 0 || isRingMuted
                 val isDnd = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val filter = notificationManager?.currentInterruptionFilter ?: NotificationManager.INTERRUPTION_FILTER_ALL
                     filter != NotificationManager.INTERRUPTION_FILTER_ALL

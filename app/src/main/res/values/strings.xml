@@ -867,6 +867,7 @@ White text</string>
     <string name="about_contributors_supporting">Meet the team behind the project</string>
     <string name="about_patreon">Support Us</string>
     <string name="about_patreon_supporting">Help keep the project alive</string>
+    <string name="about_support">Support</string>
     <string name="about_discord">Discord Server</string>
     <string name="about_discord_supporting">Join the community</string>
     <string name="about_source_code">Source Code</string>

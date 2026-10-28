@@ -504,15 +504,6 @@ val searchItems = remember(isSearchActive) {
                 onClick = { navigator.navigate(CallScreenCustomizationScreenDestination) }
             ),
             SettingSearchItem(
-                title = context.getString(R.string.loc_call_log_history_limit),
-                supporting = context.getString(R.string.loc_configure_maximum_retained_call_logs_500_1000_or_unlimited),
-                category = context.getString(R.string.loc_calling_behavior),
-                icon = Icons.Outlined.History,
-                keywords = listOf("call log limit", "call history retention", "max call logs", "delete old logs"),
-                targetHeadline = context.getString(R.string.settings_call_log_limit),
-                onClick = { navigator.navigate(CallAccountsScreenDestination) }
-            ),
-            SettingSearchItem(
                 title = context.getString(R.string.loc_post_call_summary),
                 supporting = context.getString(R.string.loc_display_call_duration_note_option_and_quick_actions_after_hanging_up),
                 category = context.getString(R.string.loc_calling_behavior),

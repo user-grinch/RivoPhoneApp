@@ -33,4 +33,5 @@ interface IContactsRepository {
     fun permanentlyDeleteTrashedContact(localId: Long)
     fun emptyTrash()
     fun pruneOldTrash()
+    fun invalidateCache() {}
 }

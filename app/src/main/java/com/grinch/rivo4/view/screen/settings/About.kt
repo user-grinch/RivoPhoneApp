@@ -213,9 +213,11 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Support",
+                        text = stringResource(R.string.about_support),
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

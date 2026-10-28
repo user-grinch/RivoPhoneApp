@@ -75,6 +75,7 @@ class ContactsViewModel(
     }
 
     fun scheduleRefresh(delayMs: Long = 400) {
+        contactsRepo.invalidateCache()
         debounceJob?.cancel()
         debounceJob = viewModelScope.launch(Dispatchers.IO) {
             delay(delayMs)
@@ -259,7 +260,10 @@ class ContactsViewModel(
         com.grinch.rivo4.controller.util.DynamicShortcutManager.updateDynamicShortcuts(context, sortedFavs)
     }
 
-    fun fetchContacts() {
+    fun fetchContacts(forceRefresh: Boolean = false) {
+        if (forceRefresh) {
+            contactsRepo.invalidateCache()
+        }
         registerObserver()
         if (_allContacts.value.isEmpty()) {
             _isLoading.value = true

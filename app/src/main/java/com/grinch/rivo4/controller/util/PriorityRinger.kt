@@ -1,5 +1,6 @@
 package com.grinch.rivo4.controller.util
 
+import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -22,7 +23,24 @@ object PriorityRinger {
     private var vibrator: Vibrator? = null
     private var audioFocusRequest: AudioFocusRequest? = null
     private var originalAlarmVolume: Int? = null
+    private var wasAlarmMuted: Boolean = false
+    private var originalInterruptionFilter: Int? = null
     private var appContext: Context? = null
+
+    private val focusChangeListener = AudioManager.OnAudioFocusChangeListener { _ ->
+        synchronized(this) {
+            try {
+                mediaPlayer?.let { mp ->
+                    mp.setVolume(1.0f, 1.0f)
+                    if (!mp.isPlaying) {
+                        mp.start()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Error maintaining priority ringer playback on focus change: ${e.message}")
+            }
+        }
+    }
 
     @Synchronized
     fun startRinging(context: Context, customRingtoneUri: String? = null) {
@@ -53,7 +71,6 @@ object PriorityRinger {
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                 .build()
 
             vib.vibrate(effect, audioAttributes)
@@ -66,19 +83,40 @@ object PriorityRinger {
     private fun startAudio(context: Context, customRingtoneUri: String?) {
         try {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                notificationManager != null &&
+                notificationManager.isNotificationPolicyAccessGranted
+            ) {
+                try {
+                    val currentFilter = notificationManager.currentInterruptionFilter
+                    if (currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
+                        originalInterruptionFilter = currentFilter
+                        notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                        Log.d(TAG, "Temporarily lifted DND filter from $currentFilter for priority call")
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not adjust DND interruption filter: ${e.message}")
+                }
+            }
+
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                 .build()
 
             if (audioManager != null) {
                 try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && audioManager.isStreamMute(AudioManager.STREAM_ALARM)) {
+                        wasAlarmMuted = true
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_UNMUTE, 0)
+                    }
                     val currentVol = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
                     val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-                    if (currentVol == 0 && maxVol > 0) {
-                        originalAlarmVolume = 0
-                        val targetVol = (maxVol * 0.75f).toInt().coerceAtLeast(1)
+                    if (currentVol <= 0 && maxVol > 0) {
+                        originalAlarmVolume = currentVol
+                        val targetVol = (maxVol * 0.8f).toInt().coerceAtLeast(1)
                         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, targetVol, 0)
                         Log.d(TAG, "Temporarily boosted alarm stream volume to $targetVol")
                     }
@@ -87,8 +125,9 @@ object PriorityRinger {
                 }
 
                 try {
-                    val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+                    val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
                         .setAudioAttributes(audioAttributes)
+                        .setOnAudioFocusChangeListener(focusChangeListener)
                         .build()
                     audioFocusRequest = focusRequest
                     audioManager.requestAudioFocus(focusRequest)
@@ -97,11 +136,11 @@ object PriorityRinger {
                 }
             }
 
-            // Build candidate URIs in priority order
-            val candidateUris = mutableListOf<Uri>()
+            val candidateUris = linkedSetOf<Uri>()
             if (!customRingtoneUri.isNullOrBlank()) {
                 try { candidateUris.add(Uri.parse(customRingtoneUri)) } catch (_: Exception) {}
             }
+            candidateUris.add(Settings.System.DEFAULT_RINGTONE_URI)
             try {
                 RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE)?.let {
                     candidateUris.add(it)
@@ -112,50 +151,58 @@ object PriorityRinger {
                     candidateUris.add(it)
                 }
             } catch (_: Exception) {}
+            candidateUris.add(Settings.System.DEFAULT_ALARM_ALERT_URI)
+            try {
+                RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM)?.let {
+                    candidateUris.add(it)
+                }
+            } catch (_: Exception) {}
             try {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)?.let {
                     candidateUris.add(it)
                 }
             } catch (_: Exception) {}
-            candidateUris.add(Settings.System.DEFAULT_RINGTONE_URI)
-            candidateUris.add(Settings.System.DEFAULT_ALARM_ALERT_URI)
+            candidateUris.add(Settings.System.DEFAULT_NOTIFICATION_URI)
 
-            // 1. Try RingtoneManager first: uses IRingtonePlayer IPC in system_server,
-            // which has permissions to play ringtone content URIs that MediaPlayer cannot access.
             var started = false
             for (uri in candidateUris) {
+                var mp: MediaPlayer? = null
                 try {
-                    val r = RingtoneManager.getRingtone(context, uri)
-                    if (r != null) {
-                        r.audioAttributes = audioAttributes
-                        r.isLooping = true
-                        r.play()
-                        ringtone = r
-                        started = true
-                        Log.d(TAG, "Priority ringer playing via Ringtone with uri: $uri")
-                        break
+                    mp = MediaPlayer().apply {
+                        setAudioAttributes(audioAttributes)
+                        setDataSource(context, uri)
+                        isLooping = true
+                        setVolume(1.0f, 1.0f)
+                        prepare()
+                        start()
                     }
+                    mediaPlayer = mp
+                    started = true
+                    Log.d(TAG, "Priority ringer playing via MediaPlayer with uri: $uri")
+                    break
                 } catch (e: Exception) {
-                    Log.w(TAG, "Failed Ringtone with uri $uri: ${e.message}")
+                    try { mp?.release() } catch (_: Exception) {}
+                    Log.w(TAG, "Failed MediaPlayer with uri $uri: ${e.message}")
                 }
             }
 
-            // 2. Fallback to MediaPlayer if RingtoneManager did not start
             if (!started) {
                 for (uri in candidateUris) {
                     try {
-                        val mp = MediaPlayer().apply {
-                            setDataSource(context, uri)
-                            setAudioAttributes(audioAttributes)
-                            isLooping = true
-                            prepare()
-                            start()
+                        val r = RingtoneManager.getRingtone(context, uri)
+                        if (r != null) {
+                            r.audioAttributes = audioAttributes
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                r.isLooping = true
+                                r.volume = 1.0f
+                            }
+                            r.play()
+                            ringtone = r
+                            Log.d(TAG, "Priority ringer playing via Ringtone fallback with uri: $uri")
+                            break
                         }
-                        mediaPlayer = mp
-                        Log.d(TAG, "Priority ringer playing via MediaPlayer with uri: $uri")
-                        break
                     } catch (e: Exception) {
-                        Log.w(TAG, "Failed MediaPlayer with uri $uri: ${e.message}")
+                        Log.w(TAG, "Failed Ringtone fallback with uri $uri: ${e.message}")
                     }
                 }
             }
@@ -219,11 +266,35 @@ object PriorityRinger {
                         Log.e(TAG, "Error restoring alarm volume", e)
                     }
                 }
+
+                if (wasAlarmMuted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, 0)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error restoring alarm mute state", e)
+                    }
+                }
+            }
+
+            originalInterruptionFilter?.let { origFilter ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                        if (notificationManager?.isNotificationPolicyAccessGranted == true) {
+                            notificationManager.setInterruptionFilter(origFilter)
+                            Log.d(TAG, "Restored original DND filter to $origFilter")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error restoring DND interruption filter", e)
+                    }
+                }
             }
         }
 
         audioFocusRequest = null
         originalAlarmVolume = null
+        wasAlarmMuted = false
+        originalInterruptionFilter = null
         appContext = null
         Log.d(TAG, "Priority ringer stopped")
     }

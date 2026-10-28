@@ -175,9 +175,8 @@ class CallActivity : ComponentActivity() {
                                 moveTaskToBack(true)
                             }
                         })
-                    } else {
-                        moveTaskToBack(true)
                     }
+                    moveTaskToBack(true)
                 } else {
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
@@ -588,16 +587,26 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun turnScreenOnAndShowWhileLocked() {
+        val km = getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
+        val isLocked = km?.isKeyguardLocked == true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
+            setShowWhenLocked(isLocked)
             setTurnScreenOn(true)
         }
         @Suppress("DEPRECATION")
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        )
+        if (isLocked) {
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            )
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            )
+        }
     }
 
     override fun onStart() {

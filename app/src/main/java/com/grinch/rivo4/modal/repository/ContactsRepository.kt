@@ -52,6 +52,16 @@ class ContactsRepository(
     private val preferenceManager = com.grinch.rivo4.controller.util.PreferenceManager(context)
     private val unknownLabel: String get() = context.getString(R.string.label_unknown)
 
+    @Volatile
+    private var cachedContactsList: List<Contact>? = null
+    @Volatile
+    private var cachedIncludeHidden: Boolean? = null
+
+    override fun invalidateCache() {
+        cachedContactsList = null
+        cachedIncludeHidden = null
+    }
+
     private fun formatName(rawName: String): String {
         return rawName
     }
@@ -77,6 +87,10 @@ class ContactsRepository(
     }
 
     override fun getContacts(includePrivate: Boolean, includeHidden: Boolean): List<Contact> {
+        val cached = cachedContactsList
+        if (cached != null && cachedIncludeHidden == includeHidden) {
+            return if (includePrivate) cached else cached.filter { !it.isPrivate }
+        }
         val contactsMap = LinkedHashMap<String, Contact>()
 
         if (includePrivate) {
@@ -384,7 +398,10 @@ class ContactsRepository(
             )
         }
 
-        return finalList.sortedBy { it.name.lowercase() }
+        val sorted = finalList.sortedBy { it.name.lowercase() }
+        cachedContactsList = sorted
+        cachedIncludeHidden = includeHidden
+        return if (includePrivate) sorted else sorted.filter { !it.isPrivate }
     }
 
     private fun resolveLookupKey(lookupKey: String): String? {

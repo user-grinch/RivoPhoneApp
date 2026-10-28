@@ -603,7 +603,7 @@ fun CallLogFullContent(
             isRefreshing = isLoading && logs.isNotEmpty(),
             onRefresh = {
                 viewModel.fetchLogs()
-                contactsVM.fetchContacts()
+                contactsVM.fetchContacts(forceRefresh = true)
             },
             modifier = Modifier.fillMaxSize(),
             state = pullToRefreshState,

@@ -25,7 +25,7 @@ class CallActionReceiver : BroadcastReceiver() {
             }
             ACTION_DECLINE_CALL -> CallService.declineCall()
             ACTION_TOGGLE_MUTE -> CallService.toggleMute()
-            ACTION_TOGGLE_SPEAKER -> CallService.cycleAudioRoute()
+            ACTION_TOGGLE_SPEAKER -> CallService.toggleSpeaker()
         }
     }
 
