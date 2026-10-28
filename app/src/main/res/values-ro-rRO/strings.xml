@@ -1062,6 +1062,10 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="loc_manage_storage_tools">Gestionează instrumentele de stocare &amp;</string>
     <string name="loc_remove_from_priority">Elimină din prioritate</string>
     <string name="loc_all_countsuffix">Toate%1$s</string>
+    <string name="loc_contacts_count">Contacte (%1$d)</string>
+    <string name="loc_favorites_count">Favorite (%1$d)</string>
+    <string name="loc_call_logs_count">Jurnale de apeluri (%1$d)</string>
+    <string name="loc_missed_count">Pierdut (%1$d)</string>
     <string name="loc_granted">Oferit</string>
     <string name="loc_private_storage_hidden">Stocare Privată (Hidden)</string>
     <string name="call_customization_behavior">Comportament apel</string>
@@ -1150,4 +1154,24 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="settings_group_appearance_preferences">Aspectul &amp; Preferințe</string>
     <string name="settings_group_system_about">Sistemul &amp; Despre</string>
     <string name="thank_you_for_your_support">Vă mulțumim pentru sprijin!</string>
+    <string name="recents_call_time">Timp apel</string>
+    <string name="contacts_available_count">%1$d contacte disponibile</string>
+    <string name="contact_selection_ready_to_proceed">Gata de a continua</string>
+    <string name="contact_selection_use_number">Utilizare număr: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Atingeți pentru a selecta acest număr personalizat</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d mai mult)</string>
+    <string name="action_select">Selectare</string>
+    <string name="private_contacts_no_search_results">Nicio conexiune privată nu se potrivește cu \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Nicio înregistrare nu corespunde filtrului activ</string>
+    <string name="call_recordings_pause">Întrerupeți</string>
+    <string name="call_recordings_filter_all">Toate apelurile</string>
+    <string name="call_recordings_filter_incoming_only">Numai apeluri primite</string>
+    <string name="call_recordings_filter_outgoing_only">Numai apeluri efectuate</string>
+    <string name="call_recordings_filter_unknown_only">Doar numere necunoscute</string>
+    <string name="call_recordings_filter_contacts_only">Doar contacte salvate</string>
+    <string name="call_recordings_filter_all_desc">Înregistrarea tuturor apelurilor</string>
+    <string name="call_recordings_filter_incoming_only_desc">Se înregistrează numai apelurile primite</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Se înregistrează numai apelurile efectuate</string>
+    <string name="call_recordings_filter_unknown_only_desc">Se înregistrează numai numerele necunoscute</string>
+    <string name="call_recordings_filter_contacts_only_desc">Doar înregistrările contactelor salvate</string>
 </resources>
