@@ -832,6 +832,7 @@ blanc</string>
     <string name="about_contributors_supporting">Découvrez l’équipe derrière le projet</string>
     <string name="about_patreon">Soutenez-nous sur Patreon</string>
     <string name="about_patreon_supporting">Aidez à maintenir le projet en vie</string>
+    <string name="about_support">Soutien</string>
     <string name="about_discord">Serveur Discord</string>
     <string name="about_discord_supporting">Rejoignez la communauté</string>
     <string name="about_source_code">Code source</string>
@@ -1791,6 +1792,10 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="loc_manage_storage_tools">Gérer les outils de stockage &amp;</string>
     <string name="loc_remove_from_priority">Retirer de la priorité</string>
     <string name="loc_all_countsuffix">Tous les%1$s</string>
+    <string name="loc_contacts_count">Contacts (%1$d)</string>
+    <string name="loc_favorites_count">Favoris (%1$d)</string>
+    <string name="loc_call_logs_count">Journal d\'appels (%1$d)</string>
+    <string name="loc_missed_count">Manqué (%1$d)</string>
     <string name="loc_granted">Consacré</string>
     <string name="loc_private_storage_hidden">Stockage privé masqué</string>
     <string name="call_customization_behavior">Comportement de l\'appel</string>
@@ -1878,4 +1883,24 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <!-- Settings Groups -->
     <string name="settings_group_system_about">Système &amp; À propos</string>
     <string name="thank_you_for_your_support">Merci pour votre soutien!</string>
+    <string name="recents_call_time">Heure d\'appel</string>
+    <string name="contacts_available_count">%1$d contacts disponibles</string>
+    <string name="contact_selection_ready_to_proceed">Prêt à continuer</string>
+    <string name="contact_selection_use_number">Utiliser le numéro : %1$s</string>
+    <string name="contact_selection_tap_custom_number">Appuyez pour sélectionner ce numéro personnalisé</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d de plus)</string>
+    <string name="action_select">Sélectionner</string>
+    <string name="private_contacts_no_search_results">Aucun contact privé ne correspond à «%1$s»</string>
+    <string name="call_recordings_no_filter_matches">Aucun enregistrement ne correspond au filtre actif</string>
+    <string name="call_recordings_pause">Mettre en pause</string>
+    <string name="call_recordings_filter_all">Tous les appels</string>
+    <string name="call_recordings_filter_incoming_only">Appels entrants seulement</string>
+    <string name="call_recordings_filter_outgoing_only">Appels sortants uniquement</string>
+    <string name="call_recordings_filter_unknown_only">Nombres inconnus uniquement</string>
+    <string name="call_recordings_filter_contacts_only">Contacts enregistrés uniquement</string>
+    <string name="call_recordings_filter_all_desc">Enregistrement de tous les appels</string>
+    <string name="call_recordings_filter_incoming_only_desc">Enregistrement des appels entrants uniquement</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Enregistrement des appels sortants uniquement</string>
+    <string name="call_recordings_filter_unknown_only_desc">Enregistrement des numéros inconnus uniquement</string>
+    <string name="call_recordings_filter_contacts_only_desc">Enregistrement seulement des contacts enregistrés</string>
 </resources>

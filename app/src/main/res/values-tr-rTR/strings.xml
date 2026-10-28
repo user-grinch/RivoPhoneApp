@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rivo</string>
+    <string name="permission_default_phone_app_title">Varsayılan Telefon Uygulaması</string>
+    <string name="permission_default_phone_app_description">Aramaları yanıtlamak, gelen telefon aramalarını yönetmek ve arama engellemeyi kontrol etmek için gereklidir.</string>
+    <string name="permission_phone_sim_title">Telefon &amp; SIM Erişimi</string>
+    <string name="permission_phone_sim_description">Doğrudan arama yapmak, çift SIM kartları yönetmek ve arama durumunu algılamak için gereklidir.</string>
+    <string name="permission_contacts_title">Kişiler</string>
+    <string name="permission_contacts_description">Kişi adlarını görüntülemek, arayan bilgilerini göstermek ve T9 tuş takımıyla kişileri aramak için gereklidir.</string>
+    <string name="permission_call_history_title">Arama Geçmişi</string>
+    <string name="permission_call_history_description">Gelen, giden ve cevapsız arama geçmişinizi Son Aramalar bölümünde görüntülemek için gereklidir.</string>
+    <string name="permission_call_notifications_title">Çağrı Bildirimleri</string>
+    <string name="permission_call_notifications_description">Gelen arama başlıklarını, anlık bildirimleri ve arama durumunu göstermek için gereklidir.</string>
+    <string name="permission_lock_screen_title">Kilit ekranında göster</string>
+    <string name="permission_lock_screen_description">Cihazınız kilitliyken gelen ve devam eden arama ekranlarını görüntülemek için Xiaomi\'de (MIUI / HyperOS) gereklidir.</string>
+    <string name="permission_background_popup_title">Yazdıktan sonra sağdaki mavi disket simgesine dokunarak kaydedebilirsin</string>
+    <string name="permission_background_popup_description">Diğer uygulamaları kullanırken Rivo\'nun arama anlık bildirimlerini ve gelen uyarı başlıklarını göstermesine izin verir.</string>
+    <string name="permission_autostart_title">Otomatik Başlatma &amp; Arka Plan Koruması</string>
+    <string name="permission_autostart_description">Yeniden başlatma sonrasında MIUI / HyperOS\'in arka plan telefon servislerini kapatmasını ve aramaların kaçırılmasını önler.</string>
+    <string name="permission_floating_bubble_title">Yüzen Çağrı Balonu</string>
+    <string name="permission_floating_bubble_description">Sessize alma, hoparlör ve aramayı sonlandırma kontrollerine sahip yüzen kapsül katmanıyla arama sırasında çoklu görev yapın.</string>
     <!-- Shared actions / generic labels reused across multiple screens -->
     <!-- Onboarding -->
     <!-- Permission Popup -->

@@ -934,6 +934,7 @@
     <string name="loc_export_vcf">Експорт VCF</string>
     <string name="loc_vault_access_security">Vault доступ &amp; безпека</string>
     <string name="loc_secret_dialpad_code">Код секретної клавіатури</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Набрати номер %1$s в номеронабирачі для швидкого відкриття приватного сховища</string>
     <string name="loc_hide_from_settings">Не показувати з налаштувань</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Видалити приватне сховище з меню налаштувань (доступне тільки через секретний код)</string>
     <string name="loc_pick_contacts_for_vault">Вибрати контакти для сховища</string>
@@ -1003,9 +1004,11 @@
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">В Нещодавніх випадках, на які ви відповіли та пропущені дзвінки будуть відображені</string>
     <string name="loc_blockednumbers_size_blocked">%1$d заблоковано</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Виклики та текстові повідомлення з цього номера будуть блокуватися відразу.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Розблокувати %1$s? Вони зможуть зателефонувати та надіслати вам повідомлення.</string>
     <string name="loc_processing_blocklist">Обробка списку блокування</string>
     <string name="loc_importing_blocked_numbers">Імпортування заблокованих ном...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Натисніть обидві кнопки гучності разом, щоб перемкнути режим \"Не турбувати\"</string>
+    <string name="loc_totalduplicates">%1$d</string>
     <string name="loc_manage_storage_tools">Управління сховищем &amp; інструментами</string>
     <string name="loc_remove_from_priority">Видалити з пріоритету</string>
     <string name="loc_granted">Дозволити</string>
@@ -1088,4 +1091,22 @@
     <string name="settings_group_appearance_preferences">Вигляд &amp; Налаштування</string>
     <string name="settings_group_system_about">Системний &amp; Про</string>
     <string name="thank_you_for_your_support">Дякуємо за вашу підтримку!</string>
+    <string name="recents_call_time">Час виклику</string>
+    <string name="contact_selection_ready_to_proceed">Готовий до продовження</string>
+    <string name="contact_selection_use_number">Використовувати номер: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Натисніть, щоб обрати цей номер</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d ще)</string>
+    <string name="action_select">Вибрати</string>
+    <string name="call_recordings_no_filter_matches">Немає записів, що відповідають поточному фільтру</string>
+    <string name="call_recordings_pause">Пауза</string>
+    <string name="call_recordings_filter_all">Усі дзвінки</string>
+    <string name="call_recordings_filter_incoming_only">Лише вхідні дзвінки</string>
+    <string name="call_recordings_filter_outgoing_only">Вихідні дзвінки</string>
+    <string name="call_recordings_filter_unknown_only">Невідомі лише номери</string>
+    <string name="call_recordings_filter_contacts_only">Збережені контакти</string>
+    <string name="call_recordings_filter_all_desc">Запис всіх викликів</string>
+    <string name="call_recordings_filter_incoming_only_desc">Записується тільки вхідні дзвінки</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Записую тільки вихідні дзвінки</string>
+    <string name="call_recordings_filter_unknown_only_desc">Запис лише з невідомих номерів</string>
+    <string name="call_recordings_filter_contacts_only_desc">Запис збережених контактів тільки</string>
 </resources>

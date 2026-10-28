@@ -378,6 +378,7 @@ Vit text</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Din operatörs röstbrevlåda åtkomstnummer.</string>
     <!-- Settings > About -->
+    <string name="about_support">Stöd</string>
     <string name="about_attributions_title">Särskilda Erkännanden</string>
     <string name="about_third_party_libraries_title">Bibliotek &amp; Ramverk</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Erkännande</string>
@@ -979,6 +980,7 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_export_vcf">Exportera VCF</string>
     <string name="loc_vault_access_security">Valv Åtkomst &amp; Säkerhet</string>
     <string name="loc_secret_dialpad_code">Hemlig uppringningskod</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Slå %1$s på knappsatsen för att snabbt öppna privat valv</string>
     <string name="loc_hide_from_settings">Dölj från inställningar</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Ta bort privat lagring från inställningsmenyn (endast tillgänglig via hemlig kod)</string>
     <string name="loc_pick_contacts_for_vault">Välj kontakter för valv</string>
@@ -1049,13 +1051,21 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="loc_call_history_settings">Inställningar för samtalshistorik</string>
     <string name="loc_save_to_call_history">Spara till samtalshistorik</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Svarade och missade falska samtal kommer att dyka upp i Senaste</string>
+    <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d blockerad</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Samtal och sms från detta nummer kommer att blockeras omedelbart.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Avblockera %1$s? De kommer att kunna ringa och meddela dig igen.</string>
     <string name="loc_processing_blocklist">Bearbetar blocklista</string>
     <string name="loc_importing_blocked_numbers">Importerar blockerade nummer...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Tryck ihop båda volymknapparna för att växla Stör ej</string>
+    <string name="loc_totalduplicates">%1$d</string>
     <string name="loc_manage_storage_tools">Hantera lagring &amp; verktyg</string>
     <string name="loc_remove_from_priority">Ta bort från prioritet</string>
+    <string name="loc_all_countsuffix">Alla%1$s</string>
+    <string name="loc_contacts_count">Kontakter (%1$d)</string>
+    <string name="loc_favorites_count">Favoriter (%1$d)</string>
+    <string name="loc_call_logs_count">Samtalsloggar (%1$d)</string>
+    <string name="loc_missed_count">Missade (%1$d)</string>
     <string name="loc_granted">Beviljad</string>
     <string name="loc_private_storage_hidden">Privat lagring (dold)</string>
     <string name="call_customization_behavior">Samtal beteende</string>
@@ -1144,4 +1154,24 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="settings_group_appearance_preferences">Utseende &amp; Inställningar</string>
     <string name="settings_group_system_about">System &amp; Om</string>
     <string name="thank_you_for_your_support">Tack för ditt stöd!</string>
+    <string name="recents_call_time">Tid för samtal</string>
+    <string name="contacts_available_count">%1$d kontakter tillgängliga</string>
+    <string name="contact_selection_ready_to_proceed">Redo att fortsätta</string>
+    <string name="contact_selection_use_number">Använd nummer: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Tryck för att välja detta anpassade nummer</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d till)</string>
+    <string name="action_select">Välj</string>
+    <string name="private_contacts_no_search_results">Inga privata kontakter matchar \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Inga inspelningar matchar det aktiva filtret</string>
+    <string name="call_recordings_pause">Pausa</string>
+    <string name="call_recordings_filter_all">Alla samtal</string>
+    <string name="call_recordings_filter_incoming_only">Endast inkommande samtal</string>
+    <string name="call_recordings_filter_outgoing_only">Endast utgående samtal</string>
+    <string name="call_recordings_filter_unknown_only">Endast okända tal</string>
+    <string name="call_recordings_filter_contacts_only">Endast sparade kontakter</string>
+    <string name="call_recordings_filter_all_desc">Spelar in alla samtal</string>
+    <string name="call_recordings_filter_incoming_only_desc">Endast inkommande samtal</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Inspelning endast utgående samtal</string>
+    <string name="call_recordings_filter_unknown_only_desc">Endast inspelning av okända nummer</string>
+    <string name="call_recordings_filter_contacts_only_desc">Endast sparade kontakter</string>
 </resources>

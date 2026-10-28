@@ -78,13 +78,13 @@
     <string name="support_ways_title">Sposoby wsparcia</string>
     <string name="support_video_reminders">Przypomnienia o reklamach wideo</string>
     <string name="support_video_reminders_supporting">Pokaż przycisk wsparcia co 6 godzin</string>
-    <string name="support_patreon_instead">Zamiast tego wsparcie dla Patreon</string>
+    <string name="support_patreon_instead">Zamiast tego wsparcie na Patreon</string>
     <string name="support_restart_required">Wymagane ponowne uruchomienie</string>
     <string name="support_restart_now">Uruchom ponownie teraz</string>
     <string name="support_dont_apply">Nie stosuj</string>
     <string name="support_restart_message">Rivo musi zostać zrestartowany, aby zakończyć zmianę ikony i etykiety launchera. Twoje ustawienia zostaną zachowane.</string>
     <string name="support_feature_unavailable">Funkcja niedostępna</string>
-    <string name="support_on_patreon">Wsparcie dla Patreon</string>
+    <string name="support_on_patreon">Wsparcie na Patreon</string>
     <string name="contact_delete_recording">Usuń nagranie</string>
     <string name="contact_hide_completely">Ukryj kontakt całkowicie</string>
     <string name="contact_unhide">Odkryj kontakt</string>
@@ -183,7 +183,7 @@
     <string name="label_local_memory">Urządzenie</string>
     <string name="option_standard">Standardowy</string>
     <string name="ringtone_default">Domyślny</string>
-    <string name="ringtone_custom">Własny</string>
+    <string name="ringtone_custom">Niestandardowy</string>
     <string name="empty_state_try_clearing_filters">Spróbuj wyczyścić filtry lub dodaj nowy kontakt.</string>
     <string name="date_today">Dzisiaj</string>
     <string name="date_yesterday">Wczoraj</string>
@@ -644,7 +644,7 @@ Biały tekst</string>
     <string name="settings_call_proximity_sensor">Czujnik zbliżeniowy</string>
     <string name="settings_call_proximity_sensor_supporting">Wyłączaj ekran podczas rozmowy, gdy telefon znajduje się przy uchu</string>
     <string name="settings_call_auto_speaker_proximity">Auto głośnik</string>
-    <string name="settings_call_auto_speaker_proximity_supporting">Przełącz się na głośnik, gdy oddali się od ucha, gdy słuchawka jest bliska ucha (tłumiona po podłączeniu słuchawek)</string>
+    <string name="settings_call_auto_speaker_proximity_supporting">Przełączaj na głośnik po odsunięciu od ucha i na słuchawkę po przyłożeniu do ucha (funkcja wyłączona, gdy podłączone są słuchawki)</string>
     <string name="settings_call_incoming_ui">Interfejs połączenia przychodzącego</string>
     <string name="settings_call_incoming_ui_supporting">Wybierz sposób odbierania połączeń przychodzących</string>
     <string name="settings_call_incoming_ui_horizontal_swipe">Przesunięcie poziome</string>
@@ -836,6 +836,7 @@ Biały tekst</string>
     <string name="about_contributors_supporting">Poznaj zespół stojący za tym projektem</string>
     <string name="about_patreon">Wesprzyj nas</string>
     <string name="about_patreon_supporting">Pomóż utrzymać projekt przy życiu</string>
+    <string name="about_support">Wsparcie</string>
     <string name="about_discord">Serwer Discord</string>
     <string name="about_discord_supporting">Dołącz do społeczności</string>
     <string name="about_source_code">Kod źródłowy</string>
@@ -1716,6 +1717,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_export_vcf">Eksportuj VCF</string>
     <string name="loc_vault_access_security">Dostęp do sejfu i bezpieczeństwo</string>
     <string name="loc_secret_dialpad_code">Sekretny kod klawiatury</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Wpjsz kod %1$s na klawiaturze, aby szybko otworzyć prywatny sejf</string>
     <string name="loc_hide_from_settings">Ukryj w ustawieniach</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Usuń pamięć prywatną z menu ustawień (dostępna tylko za pomocą tajnego kodu)</string>
     <string name="loc_pick_contacts_for_vault">Wybierz kontakty do sejfu</string>
@@ -1786,13 +1788,21 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_call_history_settings">Ustawienia historii połączeń</string>
     <string name="loc_save_to_call_history">Zapisz do historii połączeń</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Odebrane i nieodebrane fałszywe połączenia będą widoczne w historii</string>
+    <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">Zablokowane: %1$d</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Połączenia i wiadomości tekstowe z tego numeru zostaną natychmiast zablokowane.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Odblokować %1$s? Będą mogli zadzwonić i wysłać Ci wiadomość ponownie.</string>
     <string name="loc_processing_blocklist">Przetwarzanie listy zablokowanych</string>
     <string name="loc_importing_blocked_numbers">Importowanie zablokowanych numerów...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Naciśnij oba przyciski głośności razem, aby przełączyć tryb Nie przeszkadzać</string>
+    <string name="loc_totalduplicates">%1$d</string>
     <string name="loc_manage_storage_tools">Zarządzaj pamięcią i narzędzia</string>
     <string name="loc_remove_from_priority">Usuń z priorytetowych</string>
+    <string name="loc_all_countsuffix">Wszystkie%1$s</string>
+    <string name="loc_contacts_count">Kontakty (%1$d)</string>
+    <string name="loc_favorites_count">Ulubione (%1$d)</string>
+    <string name="loc_call_logs_count">Dzienniki połączeń (%1$d)</string>
+    <string name="loc_missed_count">Nieodebrane (%1$d)</string>
     <string name="loc_granted">Przyznane</string>
     <string name="loc_private_storage_hidden">Pamięć prywatna (ukryta)</string>
     <string name="call_customization_behavior">Zachowanie połączenia</string>
@@ -1811,7 +1821,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="font_size_granular_label">Precyzyjny rozmiar czcionki</string>
     <string name="font_size_reset">Reset</string>
     <!-- Shortcuts -->
-    <string name="shortcut_recents">Recents</string>
+    <string name="shortcut_recents">Ostatnie</string>
     <string name="shortcut_settings">Ustawienia</string>
     <string name="shortcut_new_contact">Nowy kontakt</string>
     <!-- Contact Management -->
@@ -1865,8 +1875,8 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="analytics_time_this_week">Ten tydzień</string>
     <string name="analytics_time_this_month">Ten miesiąc</string>
     <string name="analytics_time_all_time">Cały okres</string>
-    <string name="call_analytics_contact_calls_breakdown">%1$d wywołań (%2$d , %3$d out)</string>
-    <string name="call_analytics_talked">rozmawiał</string>
+    <string name="call_analytics_contact_calls_breakdown">%1$d połącz. (%2$d przych., %3$d wych.)</string>
+    <string name="call_analytics_talked">czas rozmowy</string>
     <!-- Settings Search -->
     <string name="settings_category_personalization">Personalizacja</string>
     <string name="settings_category_calling">Połączenia</string>
@@ -1882,4 +1892,24 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="settings_group_appearance_preferences">Wygląd i ustawienia</string>
     <string name="settings_group_system_about">System i informacje</string>
     <string name="thank_you_for_your_support">Dziękujemy za wsparcie!</string>
+    <string name="recents_call_time">Czas połączeń</string>
+    <string name="contacts_available_count">%1$d dostępnych kontaktów</string>
+    <string name="contact_selection_ready_to_proceed">Gotowy do kontynuowania</string>
+    <string name="contact_selection_use_number">Użyj numeru: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Dotknij, aby wybrać ten numer niestandardowy</string>
+    <string name="contact_selection_more_numbers">%1$s (+%2$d więcej)</string>
+    <string name="action_select">Wybierz</string>
+    <string name="private_contacts_no_search_results">Żaden prywatny kontakt nie pasuje \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Brak nagrań pasujących do aktywnego filtra</string>
+    <string name="call_recordings_pause">Wstrzymaj</string>
+    <string name="call_recordings_filter_all">Wszystkie połączenia</string>
+    <string name="call_recordings_filter_incoming_only">Tylko połączenia przychodzące</string>
+    <string name="call_recordings_filter_outgoing_only">Tylko połączenia wychodzące</string>
+    <string name="call_recordings_filter_unknown_only">Tylko nieznane numery</string>
+    <string name="call_recordings_filter_contacts_only">Tylko zapisane kontakty</string>
+    <string name="call_recordings_filter_all_desc">Nagrywanie wszystkich połączeń</string>
+    <string name="call_recordings_filter_incoming_only_desc">Nagrywanie tylko połączeń przychodzących</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Nagrywanie tylko połączeń wychodzących</string>
+    <string name="call_recordings_filter_unknown_only_desc">Nagrywanie tylko nieznanych numerów</string>
+    <string name="call_recordings_filter_contacts_only_desc">Nagrywanie tylko zapisanych kontaktów</string>
 </resources>

@@ -371,6 +371,7 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Ο αριθμός πρόσβασης του τηλεφωνητή σας.</string>
     <!-- Settings > About -->
+    <string name="about_support">Υποστήριξη</string>
     <string name="about_attributions_title">Ειδικές Ιδιότητες</string>
     <string name="about_third_party_libraries_title">Βιβλιοθήκες &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder Αναφορά</string>
@@ -957,6 +958,7 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_export_vcf">Εξαγωγή VCF</string>
     <string name="loc_vault_access_security">Vault Access &amp; Ασφάλεια</string>
     <string name="loc_secret_dialpad_code">Μυστικός Κωδικός Πληκτρολόγησης</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Κλήση %1$s στο πληκτρολόγιο κλήσης για γρήγορο άνοιγμα ιδιωτικού θησαυ/κιου</string>
     <string name="loc_hide_from_settings">Απόκρυψη από τις Ρυθμίσεις</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Αφαίρεση ιδιωτικού χώρου αποθήκευσης από το μενού ρυθμίσεων (προσβάσιμο μόνο μέσω μυστικού κωδικού)</string>
     <string name="loc_pick_contacts_for_vault">Επιλογή επαφών για το θησαυ/κιο</string>
@@ -1026,13 +1028,21 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="loc_call_history_settings">Ρυθμίσεις Ιστορικού Κλήσεων</string>
     <string name="loc_save_to_call_history">Αποθήκευση στο ιστορικό κλήσεων</string>
     <string name="loc_answered_and_missed_fake_calls_will_show_up_in_recents">Απαντημένες και αναπάντητες ψεύτικες κλήσεις θα εμφανιστούν στα πρόσφατα</string>
+    <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d μπλοκαρισμένο</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Κλήσεις και μηνύματα κειμένου από αυτόν τον αριθμό θα αποκλειστούν αμέσως.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">Ξεμπλοκάρετε %1$s? Θα μπορούν να σας καλέσουν και να σας στείλουν μήνυμα ξανά.</string>
     <string name="loc_processing_blocklist">Επεξεργασία Λίστας Αποκλεισμού</string>
     <string name="loc_importing_blocked_numbers">Εισαγωγή μπλοκαρισμένων αριθμών...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Πατήστε και τα δύο κουμπιά έντασης μαζί για εναλλαγή \"Μην ενοχλείτε\"</string>
+    <string name="loc_totalduplicates">%1$d</string>
     <string name="loc_manage_storage_tools">Διαχείριση αποθηκευτικού χώρου &amp; εργαλεία</string>
     <string name="loc_remove_from_priority">Αφαίρεση από την προτεραιότητα</string>
+    <string name="loc_all_countsuffix">Όλα%1$s</string>
+    <string name="loc_contacts_count">Επαφές (%1$d)</string>
+    <string name="loc_favorites_count">Αγαπημένα (%1$d)</string>
+    <string name="loc_call_logs_count">Αρχεία Καταγραφής Κλήσεων (%1$d)</string>
+    <string name="loc_missed_count">Αναπάντητη (%1$d)</string>
     <string name="loc_granted">Χορηγήθηκε</string>
     <string name="loc_private_storage_hidden">Ιδιωτικός Χώρος Αποθήκευσης (Hidden)</string>
     <string name="call_customization_behavior">Συμπεριφορά κλήσης</string>
@@ -1118,4 +1128,22 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="settings_group_appearance_preferences">Προτιμήσεις &amp; Εμφάνισης</string>
     <string name="settings_group_system_about">Σύστημα &amp; Σχετικά</string>
     <string name="thank_you_for_your_support">Σας ευχαριστούμε για την υποστήριξή σας!</string>
+    <string name="recents_call_time">Ώρα Κλήσης</string>
+    <string name="contact_selection_ready_to_proceed">Έτοιμο για συνέχιση</string>
+    <string name="contact_selection_use_number">Χρήση αριθμού: %1$s</string>
+    <string name="contact_selection_tap_custom_number">Πατήστε για να επιλέξετε αυτόν τον προσαρμοσμένο αριθμό</string>
+    <string name="action_select">Επιλογή</string>
+    <string name="private_contacts_no_search_results">Δεν ταιριάζουν ιδιωτικές επαφές \"%1$s\"</string>
+    <string name="call_recordings_no_filter_matches">Καμία εγγραφή δεν ταιριάζει με το ενεργό φίλτρο</string>
+    <string name="call_recordings_pause">Παύση</string>
+    <string name="call_recordings_filter_all">Όλες Οι Κλήσεις</string>
+    <string name="call_recordings_filter_incoming_only">Μόνο Εισερχόμενες Κλήσεις</string>
+    <string name="call_recordings_filter_outgoing_only">Μόνο Εξερχόμενες Κλήσεις</string>
+    <string name="call_recordings_filter_unknown_only">Μόνο Άγνωστοι Αριθμοί</string>
+    <string name="call_recordings_filter_contacts_only">Αποθηκευμένες Επαφές Μόνο</string>
+    <string name="call_recordings_filter_all_desc">Καταγραφή όλων των κλήσεων</string>
+    <string name="call_recordings_filter_incoming_only_desc">Καταγραφή μόνο εισερχόμενων κλήσεων</string>
+    <string name="call_recordings_filter_outgoing_only_desc">Καταγραφή μόνο εξερχόμενων κλήσεων</string>
+    <string name="call_recordings_filter_unknown_only_desc">Μόνο η εγγραφή άγνωστων αριθμών</string>
+    <string name="call_recordings_filter_contacts_only_desc">Μόνο η εγγραφή αποθηκευμένων επαφών</string>
 </resources>
