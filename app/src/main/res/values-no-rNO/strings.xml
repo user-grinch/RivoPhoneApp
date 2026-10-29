@@ -292,6 +292,8 @@ Hvit tekst</string>
     <string name="dynamic_color">Dynamisk farge</string>
     <string name="enable_dynamic_color">Aktiver dynamisk farge fra bakgrunn</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Ring skjermbilde form</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Velg figuren for profilbildet i samtale</string>
     <string name="settings_interface_transition_zoom">Forstørre</string>
     <string name="settings_interface_transition_stack">Dybde stabel</string>
     <string name="settings_avatar_style">Avatar stil</string>
@@ -307,6 +309,16 @@ Hvit tekst</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk høyttalertelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Bytt til høyttaler når man ikke er fra øret, ørestykket når det er nær øret (undertrykkes når hodetelefoner kobles til)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Dobbel loddrett sveip</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbital skyveknapp</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbital skyveknapp</string>
+    <string name="call_action_reminder">Påminnelse</string>
+    <string name="huawei_reminder">Påminnelse</string>
+    <string name="settings_call_background_blur">Gjør bakgrunn utydelig</string>
+    <string name="settings_call_background_blur_supporting">Bruk en myk uskarphet på egendefinerte ringebakgrunner</string>
+    <string name="settings_call_background_blur_strength">Uskarp styrke</string>
+    <string name="huawei_swipe_up_to_answer">Dra opp for å svare</string>
+    <string name="huawei_swipe_up_to_decline">Dra opp for å avslå</string>
     <string name="settings_call_dialpad_style_circle">Sirkel</string>
     <string name="settings_call_dialpad_style_organic">Økologisk</string>
     <string name="settings_call_dialpad_style_outlined">Skissert</string>
@@ -401,6 +413,42 @@ Hvit tekst</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Hvordan sette opp</string>
+    <string name="call_recording_how_it_works_subtitle">Android restriksjoner &amp; Shizuku toveis lydoppsett</string>
+    <string name="call_recording_compact_intro">Android begrenser opptak av ekstern ringerlyd. Shizuku gjør det mulig å forhøyet ADB tilgang for å ta opp ringelyd på 2 måter.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Fra Play Store eller offisielt nettsted</string>
+    <string name="call_recording_step2_compact_title">Start tjenesten</string>
+    <string name="call_recording_step2_compact_desc">Via trådløs feilsøking i innstillinger for utviklere</string>
+    <string name="call_recording_step3_compact_title">Autoriser Naglo</string>
+    <string name="call_recording_step3_compact_desc">Tillat forhøyet ADB lydopptak</string>
+    <string name="call_recording_ready_banner_desc">2-veis samtaleopptak er ferdig konfigurert og aktiv.</string>
+    <string name="call_recording_restrictions_title">Personvernbegrensinger for Android</string>
+    <string name="call_recording_restrictions_desc">På moderne Android (9, 10, 11+) blokkerer Google tredjepartsapper fra å ta opp intern samtalelyd. Standard mikrofonopptak kan bare høre stemmen din og la den andre innringeren besvime eller helt stille.</string>
+    <string name="call_recording_shizuku_solution_title">The Shizuku Solution (2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku gir erifo forhøyet ADB-nivå tillatelse uten å behøve root. Dette gjør det mulig å fange krystallklar og neglisjerende to-veis lyd direkte fra systemet.</string>
+    <string name="call_recording_setup_guide_title">Hvordan sette opp Shizuku (3 trinn)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Last ned gratis, åpen kildekode Shizuku app fra Google Play eller det offisielle nettstedet.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Start via trådløs feilsøking i utvikleralternativer på Android 11+. På Android 10 eller eldre, koble til en PC via USB. På rootede enheter trykk Start direkte.</string>
+    <string name="call_recording_step3_title">3. Gi tillatelse til Nagle</string>
+    <string name="call_recording_step3_desc">Åpne Shizuku -&gt; Autoriserte programmer -&gt; aktivere Naglacone, eller trykk på knappen nedenfor.</string>
+    <string name="call_recording_status_title">Nåværende status</string>
+    <string name="call_recording_status_ready">2-veis lydklar</string>
+    <string name="call_recording_status_needs_perm">Tilgang nødvendig</string>
+    <string name="call_recording_status_stopped">Tjenesten er stoppet</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku Service</string>
+    <string name="call_recording_status_permission">Nagling-autorisasjon</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Gi tillatelse</string>
+    <string name="call_recording_action_guide">Online oppsettshåndbok</string>
+    <string name="call_recording_action_active">2-veis lyd aktiv</string>
+    <string name="call_recording_action_got_it">Har det</string>
+    <string name="call_recording_tile_details">Detaljer</string>
     <string name="call_recording_saved">Samtaleopptak lagret</string>
     <string name="call_recording_deleted">Opptak slettet</string>
     <!-- Video calling app picker -->

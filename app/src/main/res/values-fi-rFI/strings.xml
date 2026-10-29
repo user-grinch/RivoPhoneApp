@@ -289,6 +289,8 @@ valkoinen teksti</string>
     <string name="dynamic_color">Dynaaminen Väri</string>
     <string name="enable_dynamic_color">Ota dynaaminen väri käyttöön taustakuvasta</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Soita näytön profiilikuva</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Valitse puhelun sisäinen profiilikuva</string>
     <string name="settings_interface_transition_zoom">Zoomaus</string>
     <string name="settings_interface_transition_stack">Syvyys Pino</string>
     <string name="settings_avatar_style">Profiilikuvan Tyyli</string>
@@ -304,6 +306,16 @@ valkoinen teksti</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automaattinen Kaiutinpuhelin</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Vaihda kaiuttimeen, kun se on poissa korvasta, kuuloke kun se on lähellä korvaa (sammutetaan kuulokkeet yhdistettynä)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Kaksoispystysuora Pyyhkäisy</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbital Slider</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbital Slider</string>
+    <string name="call_action_reminder">Muistutus</string>
+    <string name="huawei_reminder">Muistutus</string>
+    <string name="settings_call_background_blur">Sumentaa taustakuva</string>
+    <string name="settings_call_background_blur_supporting">Käytä pehmeää sumennusta mukautettuihin puhelun taustoihin</string>
+    <string name="settings_call_background_blur_strength">Sumennuksen voimakkuus</string>
+    <string name="huawei_swipe_up_to_answer">Liu\'uta ylös vastataksesi</string>
+    <string name="huawei_swipe_up_to_decline">Liu\'uta ylös laskeaksesi</string>
     <string name="settings_call_dialpad_style_circle">Ympyrä</string>
     <string name="settings_call_dialpad_style_organic">Orgaaninen</string>
     <string name="settings_call_dialpad_style_outlined">Ääriviivattu</string>
@@ -399,6 +411,42 @@ valkoinen teksti</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Miten asettaa ylös</string>
+    <string name="call_recording_how_it_works_subtitle">Android-rajoitukset &amp; Shizuku 2-way audio asennus</string>
+    <string name="call_recording_compact_intro">Android rajoittaa etäsoittajan äänen tallennusta. Shizuku mahdollistaa kohonneen ADB-käyttöoikeuden tallentaa selkeä 2-tie puhelun ääni ilman roottia.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Play Storesta tai virallisesta sivustosta</string>
+    <string name="call_recording_step2_compact_title">Käynnistä Palvelu</string>
+    <string name="call_recording_step2_compact_desc">Langattoman vianjäljityksen kautta kehittäjän valinnoissa</string>
+    <string name="call_recording_step3_compact_title">Valtuuta Rivo</string>
+    <string name="call_recording_step3_compact_desc">Salli ADB äänen tallennus</string>
+    <string name="call_recording_ready_banner_desc">2-tie puhelun tallennus on täysin määritetty ja aktiivinen.</string>
+    <string name="call_recording_restrictions_title">Android Yksityisyyden Rajoitukset</string>
+    <string name="call_recording_restrictions_desc">Nykyaikaisella Androidilla (9, 10, 11 + ) Google estää kolmannen osapuolen sovelluksia tallentamasta sisäistä puheluääntä. Tavallinen mikrofonin tallennus voi vain kuulla äänen, jättää toisen soittajan heikon tai täysin hiljaiseksi.</string>
+    <string name="call_recording_shizuku_solution_title">Shizuku Ratkaisu (2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku myöntää Rivon korkeammat ADB-tason oikeudet tarvitsematta juuria. Tämä mahdollistaa kristallinkirkkaan ja koskemattoman kaksisuuntaisen äänen kaappaamisen suoraan järjestelmästä.</string>
+    <string name="call_recording_setup_guide_title">Miten perustaa Shizuku (3 vaihetta)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Lataa ilmainen avoimen lähdekoodin Shizuku sovellus Google Playsta tai virallisilta verkkosivuilta.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Käynnistä Android 11+:ssa Wireless Debugging in Developer Options (tietokonetta ei tarvita). Yhdistä kerran tietokoneeseen USB-yhteyden kautta. Napauta rootatuissa laitteissa Käynnistä suoraan Android 10:ssä tai uudemmassa versiossa.</string>
+    <string name="call_recording_step3_title">3. Myönnä lupa Rivoon</string>
+    <string name="call_recording_step3_desc">Avaa Shizuku -&gt; Valtuutetut sovellukset -&gt; ota Rivo Phone käyttöön tai napauta alla olevaa painiketta.</string>
+    <string name="call_recording_status_title">Nykyinen Tila</string>
+    <string name="call_recording_status_ready">2-suuntainen Ääni Valmis</string>
+    <string name="call_recording_status_needs_perm">Käyttöoikeus Tarvitaan</string>
+    <string name="call_recording_status_stopped">Palvelu Pysäytetty</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku Palvelu</string>
+    <string name="call_recording_status_permission">Rivo Valtuutus</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Myönnä Käyttöoikeus</string>
+    <string name="call_recording_action_guide">Online Asennusopas</string>
+    <string name="call_recording_action_active">2-suuntainen Ääni Käytössä</string>
+    <string name="call_recording_action_got_it">Asia ymmärretty</string>
+    <string name="call_recording_tile_details">Yksityiskohdat</string>
     <string name="call_recording_saved">Puhelun nauhoitus tallennettu</string>
     <string name="call_recording_deleted">Tallennus poistettu</string>
     <!-- Video calling app picker -->

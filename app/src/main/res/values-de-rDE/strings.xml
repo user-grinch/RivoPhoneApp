@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rivo</string>
+    <string name="app_name">Rivo
+</string>
     <string name="permission_default_phone_app_title">Standard-Telefon-App</string>
     <string name="permission_default_phone_app_description">Erforderlich, um Anrufe anzunehmen, eingehende Anrufe zu verarbeiten und Anrufblockierungen zu verwalten.</string>
     <string name="permission_phone_sim_title">Telefon &amp; SIM-Zugriff</string>
@@ -12,25 +13,25 @@
     <string name="permission_call_notifications_title">Anrufbenachrichtigungen</string>
     <string name="permission_call_notifications_description">Erforderlich, um Fenster bei eingehenden Anrufen, Benachrichtigungen und den Anrufstatus anzuzeigen.</string>
     <string name="permission_lock_screen_title">Auf Sperrbildschirm anzeigen</string>
-    <string name="permission_lock_screen_description">Erforderlich auf Xiaomi (MIUI / HyperOS), um Bildschirme für eingehende und aktive Anrufe anzuzeigen, wenn Ihr Gerät gesperrt ist.</string>
+    <string name="permission_lock_screen_description">Erforderlich auf Xiaomi (MIUI / HyperOS), um eingehende und aktive Anrufe anzuzeigen, wenn Ihr Gerät gesperrt ist.</string>
     <string name="permission_background_popup_title">Hintergrund-Pop-up Fenster</string>
     <string name="permission_background_popup_description">Ermöglicht Rivo Anruf-Heads-Up Benachrichtigungen und eingehende Alarm-Banner anzuzeigen, während andere Apps verwendet werden.</string>
     <string name="permission_autostart_title">Auto-Start &amp; Hintergrundschutz</string>
-    <string name="permission_autostart_description">Verhindert das Schließen von Hintergrundtelefondiensten und fehlende Anrufe nach einem Neustart.</string>
+    <string name="permission_autostart_description">Verhindert Schließen von Hintergrundtelefondiensten und Verpassen von Anrufen nach einem Neustart.</string>
     <string name="permission_floating_bubble_title">Schwebendes Anruf-Fenster</string>
     <string name="permission_floating_bubble_description">Multitasking während Anrufs mit schwebendem Fenster mit Anrufsteuerung.</string>
     <string name="permission_reliable_calls_title">Zuverlässige Hintergrundanrufe</string>
     <string name="permission_reliable_calls_description">Verhindert, dass Energiesparmodus eingehende Anrufe unterdrückt, wenn Bildschirm gesperrt ist.</string>
     <string name="permission_recording_title">Anrufaufzeichnung (Mikrofon)</string>
-    <string name="permission_recording_description">Erfassen Sie eingehende und ausgehende Anrufe und Sprachnotizen direkt innerhalb der App.</string>
+    <string name="permission_recording_description">Nehmen Sie eingehende und ausgehende Anrufe und Sprachnotizen direkt innerhalb der App auf.</string>
     <string name="dialog_callback_reminder_title">Rückruf-Erinnerung</string>
     <string name="dialog_callback_reminder_set">Erinnerung setzen</string>
     <string name="dialog_callback_note_optional">Notiz (optional)</string>
-    <string name="dialog_callback_note_hint">z.B. über den Vorschlag aufrufen</string>
+    <string name="dialog_callback_note_hint">z.B. Anruf wegen des Vorschlags</string>
     <string name="dialog_tip_jar_title">Rivo Tip Jar</string>
     <string name="dialog_add_call_note_title">Anrufnotiz hinzufügen</string>
     <string name="action_save_note">Notiz speichern</string>
-    <string name="toast_note_copied">Hinweis in Zwischenablage kopiert</string>
+    <string name="toast_note_copied">Notiz in Zwischenablage kopiert</string>
     <string name="content_desc_copy_note">Notiz kopieren</string>
     <string name="content_desc_delete_note">Notiz löschen</string>
     <string name="toast_failed_load_image">Laden des Bilds fehlgeschlagen</string>
@@ -111,7 +112,7 @@
     <string name="callback_reminder_channel_description">Benachrichtigungen zur Erinnerung an Rückrufe</string>
     <string name="callback_reminders_channel_name">Rückruf-Erinnerungen</string>
     <string name="callback_reminder_call_now">Jetzt anrufen</string>
-    <string name="call_analytics_most_talked">Meistgesprochene Personen</string>
+    <string name="call_analytics_most_talked">Häufigste Gesprächspartner</string>
     <string name="call_analytics_total_talk_time">Gesamte Gesprächszeit</string>
     <string name="support_always_show">Immer einen Unterstützen-Button anzeigen</string>
     <string name="support_off">Aus</string>
@@ -215,13 +216,13 @@
     <string name="permission_shizuku_audio_description">Für kristallklare 2-Wege-Aufzeichnungen ist die interne Audioaufnahme aktiviert.</string>
     <string name="permission_shizuku_not_installed">Shizuku ist nicht installiert. Tippen Sie hier, um die Installationsoptionen anzuzeigen (Play Store / Website).</string>
     <string name="permission_shizuku_service_stopped">Shizuku-Dienst wird gestoppt. Öffne Shizuku und starte über drahtloses Debugging oder Root.</string>
-    <string name="permission_shizuku_needs_permission">Shizuku-Dienst wird ausgeführt. Erteilen Sie die Erlaubnis, interne 2-Wege-Audiodateien aufzunehmen.</string>
-    <string name="permission_shizuku_granted">Bewilligt</string>
+    <string name="permission_shizuku_needs_permission">Shizuku-Dienst wird ausgeführt. Gewähren Sie die Berechtigung, interne 2-Wege-Audiodateien aufzunehmen.</string>
+    <string name="permission_shizuku_granted">Gewährt</string>
     <string name="permission_shizuku_install">Installieren</string>
     <string name="permission_shizuku_not_installed_status">Nicht installiert</string>
     <string name="permission_shizuku_open">Öffnen</string>
     <string name="permission_shizuku_service_stopped_status">Dienst gestoppt</string>
-    <string name="permission_shizuku_grant">Zuschuss</string>
+    <string name="permission_shizuku_grant">Gewähren</string>
     <string name="permission_shizuku_needs_permission_status">Erfordert Berechtigung</string>
     <string name="permission_shizuku_audio_title">Shizuku 2-Wege-Audio</string>
     <string name="call_recorded">Anruf aufgezeichnet: %1$s</string>
@@ -325,7 +326,7 @@
     <string name="contact_event_generic">Ereignis</string>
     <string name="contact_recent_activity_title">Letzte Aktivität</string>
     <string name="contact_show_full_history">Gesamten Verlauf anzeigen</string>
-    <string name="contact_show_all_social_apps">Alle sozialen Apps anzeigen (%1$d)</string>
+    <string name="contact_show_all_social_apps">Alle Social Media Apps anzeigen (%1$d)</string>
     <string name="contact_show_less">Weniger anzeigen</string>
     <string name="contact_settings_title">Kontakt-Einstellungen</string>
     <string name="contact_custom_ringtone">Benutzerdefinierter Klingelton</string>
@@ -371,7 +372,7 @@
     <string name="contact_edit_organization_header">Organisation</string>
     <string name="contact_edit_add_organization">Organisation hinzufügen</string>
     <string name="contact_edit_company">Firma</string>
-    <string name="contact_edit_job_title">Job Titel</string>
+    <string name="contact_edit_job_title">Job-Titel</string>
     <string name="contact_edit_department">Abteilung</string>
     <string name="contact_edit_websites_header">Webseiten</string>
     <string name="contact_edit_add_website">Webseite hinzufügen</string>
@@ -388,7 +389,7 @@
     <string name="relation_type_assistant">Assistent</string>
     <string name="relation_type_brother">Bruder</string>
     <string name="relation_type_child">Kind</string>
-    <string name="relation_type_domestic_partner">Partner im Inland</string>
+    <string name="relation_type_domestic_partner">Privater Partner</string>
     <string name="relation_type_father">Vater</string>
     <string name="relation_type_friend">Freund</string>
     <string name="relation_type_manager">Manager</string>
@@ -396,7 +397,7 @@
     <string name="relation_type_parent">Elternteil</string>
     <string name="relation_type_partner">Partner</string>
     <string name="relation_type_referred_by">Verwiesen von</string>
-    <string name="relation_type_relative">Relativ</string>
+    <string name="relation_type_relative">Verwandter</string>
     <string name="relation_type_sister">Schwester</string>
     <string name="relation_type_spouse">Ehepartner</string>
     <string name="contact_edit_notes_header">Notizen</string>
@@ -566,6 +567,8 @@ Weißer Text</string>
     <string name="settings_interface_avatar_shape_burst">Weiche Explosion</string>
     <string name="settings_interface_call_screen_avatar">Anrufbildschirm Avatar</string>
     <string name="settings_interface_call_screen_avatar_supporting">Kontaktbild auf Anrufbildschirm</string>
+    <string name="settings_interface_call_screen_avatar_shape">Avatar-Form (Anrufbildschirm)</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Wählen Sie die Form für den Anruf-Avatar</string>
     <string name="settings_interface_show_dividers">Trenner</string>
     <string name="settings_interface_show_dividers_supporting">Linien zwischen Listeneinträgen</string>
     <string name="settings_interface_expressive_cards">Expressive Cards</string>
@@ -575,7 +578,7 @@ Weißer Text</string>
     <string name="settings_interface_transition_slide">Streichen</string>
     <string name="settings_interface_transition_fade">Verblassen</string>
     <string name="settings_interface_transition_zoom">Zoom</string>
-    <string name="settings_interface_transition_stack">Tiefenstapel</string>
+    <string name="settings_interface_transition_stack">Aufruftiefe</string>
     <string name="settings_interface_transition_none">Keine</string>
     <string name="settings_interface_search_matching_mode">Suchmodus</string>
     <string name="settings_interface_search_matching_mode_supporting">Verhalten des Filter-Algorithmus für Kontakte</string>
@@ -601,8 +604,8 @@ Weißer Text</string>
     <string name="avatar_style_none">Keine</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Töne &amp; Vibration</string>
-    <string name="settings_appwide_vibration_title">Anwendbares Haptisches Feedback</string>
-    <string name="settings_appwide_vibration_supporting">Beim Scrollen vibrieren mit der Alphabet Scrollleiste auf der Kontaktseite</string>
+    <string name="settings_appwide_vibration_title">Haptisches Feedback (Gesamtapp)</string>
+    <string name="settings_appwide_vibration_supporting">Beim Scrollen der alphabetischen Leiste unter \"Kontakte\" vibrieren</string>
     <string name="settings_sound_dtmf_tone">DTMF-Ton</string>
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
     <string name="settings_sound_dialpad_vibration">Tastenfeld: Vibration</string>
@@ -647,6 +650,16 @@ Weißer Text</string>
     <string name="settings_call_incoming_ui_buttons">Schaltflächen</string>
     <string name="settings_call_incoming_ui_slide_ios">Streichen zur Annahme (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Vertikales Wischen</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Duales vertikales Wische</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbitaler Slider</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbitaler Slider</string>
+    <string name="call_action_reminder">Erinnerung</string>
+    <string name="huawei_reminder">Erinnerung</string>
+    <string name="settings_call_background_blur">Unscharfes Hintergrundbild</string>
+    <string name="settings_call_background_blur_supporting">Unschärfe-Effekt auf benutzerdefinierten Anruf-Hintergründen anwenden</string>
+    <string name="settings_call_background_blur_strength">Unschärfe-Stärke</string>
+    <string name="huawei_swipe_up_to_answer">Zur Annahme nach oben Wischen</string>
+    <string name="huawei_swipe_up_to_decline">Zum Ablehnen nach oben wischen</string>
     <string name="settings_call_always_fullscreen">Bei Anruf stets Vollbildanzeige</string>
     <string name="settings_call_always_fullscreen_supporting">Falls deaktiviert Anzeige als schwebendes Banner, während andere Apps benutzt werden.</string>
     <string name="settings_call_dialpad_style">Tastenfeld-Stil</string>
@@ -743,7 +756,7 @@ Weißer Text</string>
     <string name="settings_backup_folder_not_set">Kein lokaler Ordner ausgewählt</string>
     <string name="settings_backup_choose_folder">Sicherungsordner auswählen</string>
     <string name="settings_backup_retention">Automatische Sicherung: Versionen</string>
-    <string name="settings_backup_retention_supporting">Behalte so viele Timestamped Backups um ältere Kontaktlisten wiederherzustellen</string>
+    <string name="settings_backup_retention_supporting">Zahl der gespeicherten Backups zur Wiederherstellung älterer Kontaktlisten</string>
     <string name="settings_backup_retention_count">%1$d</string>
     <string name="settings_backup_call_logs_header">Anrufliste sichern</string>
     <string name="settings_backup_export_logs">Anrufliste exportieren</string>
@@ -840,14 +853,14 @@ Weißer Text</string>
     <string name="about_check_updates">Auf Updates überprüfen</string>
     <string name="about_current_version">Aktuelle Version: %1$s</string>
     <string name="about_copyright">© 2025-2026 RivoPhone Project</string>
-    <string name="about_attributions_title">Besondere Attribute</string>
+    <string name="about_attributions_title">Besondere Komponenten</string>
     <string name="about_third_party_libraries_title">Bibliotheken &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder-Hinweis</string>
-    <string name="about_shizucallrecorder_short_desc">Aufzeichnungs-Engine nach Kits aufrufen</string>
+    <string name="about_shizucallrecorder_short_desc">Anruf-Aufzeichnungs-Engine von kitsumed</string>
     <string name="about_shizucallrecorder_desc">Rivo enthält den Code zur Aufzeichnung von Anrufen von ShizuCallRecorder nach Kitsumed (lizenziert unter GPLv3 mit weiteren Bedingungen von Abschnitt 7). Rivo ist ein unabhängiges Projekt und ist nicht offiziell mit ShizuCallRecorder verbunden.\n\nSuchen Sie nach einer Alternative ohne Werbung oder Monetarisierung? Schauen Sie sich das ursprüngliche ShizuCallRecorder Projekt an.</string>
     <string name="about_shizucallrecorder_action">ShizuCallRecorder auf GitHub ansehen</string>
     <string name="call_recording_shizuku_attribution_title">Engine für Anruf-Aufzeichnung</string>
-    <string name="call_recording_shizuku_attribution_desc">Die interne Anrufaufnahme über Shizuku beinhaltet Code aus dem Open-Source ShizuCallRecorder Projekt nach kitsumed (GPLv3).</string>
+    <string name="call_recording_shizuku_attribution_desc">Die interne Anrufaufnahme über Shizuku beinhaltet Code aus dem Open-Source ShizuCallRecorder Projekt von kitsumed (GPLv3).</string>
     <string name="call_recording_shizuku_attribution_action">ShizuCallRecorder besuchen</string>
     <string name="settings_top_card_subtext">Überprüfe Updates • Mitwirkende • Info</string>
     <string name="settings_top_card_updates">Updates</string>
@@ -856,7 +869,7 @@ Weißer Text</string>
     <string name="contributor_role_author">Autor</string>
     <string name="contributor_role_lead_developer">Leitender Entwickler</string>
     <string name="contributor_role_developer">Entwickler</string>
-    <string name="contributor_role_upstream_call_recording">ShizuCallRecorder Autor</string>
+    <string name="contributor_role_upstream_call_recording">Autor von ShizuCallRecorder</string>
     <string name="contributor_role_localization">Lokalisierung &amp; Übersetzungen</string>
     <string name="contributor_role_contributor">Mitwirkende/r</string>
     <string name="contributor_commits">%1$d trägt bei</string>
@@ -963,6 +976,42 @@ Weißer Text</string>
     <string name="call_recording_in_progress">Wird aufgenommen</string>
     <string name="call_recordings_title">Aufnahmen</string>
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">So einrichten</string>
+    <string name="call_recording_how_it_works_subtitle">Android-Einschränkungen &amp; Shizuku 2-Wege-Audio-Einrichtung</string>
+    <string name="call_recording_compact_intro">Android schränkt die Aufnahme von Remote-Anrufer-Audio ein. Shizuku ermöglicht einen erhöhten ADB-Zugriff, um klare 2-Wege-Anrufe ohne Root aufzunehmen.</string>
+    <string name="call_recording_step1_compact_title">Shizuku installieren</string>
+    <string name="call_recording_step1_compact_desc">Vom Play Store oder von offizieller Seite</string>
+    <string name="call_recording_step2_compact_title">Dienst starten</string>
+    <string name="call_recording_step2_compact_desc">Über Wireless Debugging in Entwickleroptionen</string>
+    <string name="call_recording_step3_compact_title">Rivo autorisieren</string>
+    <string name="call_recording_step3_compact_desc">Ermöglicht verbesserte ADB-Audioaufnahme</string>
+    <string name="call_recording_ready_banner_desc">Die 2-Wege-Aufzeichnung ist vollständig konfiguriert und aktiv.</string>
+    <string name="call_recording_restrictions_title">Android-Datenschutzbeschränkungen</string>
+    <string name="call_recording_restrictions_desc">Auf modernem Android (9, 10, 11+) blockiert Google Drittanbieter-Apps die Aufnahme von internem Anruf-Audio. Die normale Mikrofon-Aufnahme kann nur Ihre Stimme hören, so dass der andere Anrufer schwach oder völlig stumm ist.</string>
+    <string name="call_recording_shizuku_solution_title">Die Shizuku-Lösung (2-Wege-Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku gewährt Rivo erhöhte ADB-Level Berechtigungen ohne Root zu benötigen.</string>
+    <string name="call_recording_setup_guide_title">Shizuku einrichten (3 Schritte)</string>
+    <string name="call_recording_step1_title">1. Shizuku installieren</string>
+    <string name="call_recording_step1_desc">Laden Sie die kostenlose Open-Source Shizuku App von Google Play oder der offiziellen Website herunter.</string>
+    <string name="call_recording_step2_title">2. Shizuku Dienst starten</string>
+    <string name="call_recording_step2_desc">Auf Android 11+ starten Sie über Wireless Debugging in Entwickleroptionen (kein PC erforderlich). Bei Android 10 oder älter verbinden Sie sich einmal mit einem PC über USB. Auf gerooteten Geräten tippen Sie direkt auf Starten.</string>
+    <string name="call_recording_step3_title">3. Rivo Berechtigungen erteilen</string>
+    <string name="call_recording_step3_desc">Shizuku öffnen -&gt; Authorized Applications -&gt; Rivo Phone aktivieren oder auf den Button unten tippen.</string>
+    <string name="call_recording_status_title">Aktueller Status</string>
+    <string name="call_recording_status_ready">2-Wege-Audio bereit</string>
+    <string name="call_recording_status_needs_perm">Berechtigung erforderlich</string>
+    <string name="call_recording_status_stopped">Dienst gestoppt</string>
+    <string name="call_recording_status_not_installed">Nur Mikrophon (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku-Dienst</string>
+    <string name="call_recording_status_permission">Rivo-Autorisierung</string>
+    <string name="call_recording_action_install">Shizuku installieren</string>
+    <string name="call_recording_action_open">Shizuku öffnen</string>
+    <string name="call_recording_action_grant">Berechtigung erteilen</string>
+    <string name="call_recording_action_guide">Online-Setup-Anleitung</string>
+    <string name="call_recording_action_active">2-Wege-Audio aktiv</string>
+    <string name="call_recording_action_got_it">Verstanden</string>
+    <string name="call_recording_tile_details">Details</string>
     <string name="call_recordings_supporting">Abspielen, Teilen oder Löschen von Aufnahmen</string>
     <string name="call_recordings_empty">Keine Aufnahmen</string>
     <string name="call_recordings_empty_description">Aufnahmen von Anrufen erscheinen hier.</string>
@@ -978,11 +1027,11 @@ Weißer Text</string>
     <string name="video_call_system">System Video-Anruf</string>
     <string name="video_call_carrier">Videoanruf</string>
     <string name="video_call_carrier_desc">Mobilfunk/VoLTE-Videoanruf</string>
-    <string name="video_call_whatsapp_desc">WhatsApp Videoanruf</string>
-    <string name="video_call_meet_desc">Google Meet Videoanruf</string>
+    <string name="video_call_whatsapp_desc">WhatsApp-Videoanruf</string>
+    <string name="video_call_meet_desc">Google Meet-Videoanruf</string>
     <string name="video_call_telegram_desc">Telegram-Videoanruf</string>
     <string name="video_call_signal_desc">Videoanruf signalisieren</string>
-    <string name="video_call_wechat_desc">WeChat Videoanruf</string>
+    <string name="video_call_wechat_desc">WeChat-Videoanruf</string>
     <string name="video_call_line_desc">Line-Videoanruf</string>
     <string name="video_call_viber_desc">Viber-Videoanruf</string>
     <string name="video_call_skype_desc">Skype-Videoanruf</string>
@@ -1062,9 +1111,9 @@ Weißer Text</string>
     <string name="fake_call_incoming_channel_desc">Benachrichtigungen für simulierte eingehende und aktive Anrufe</string>
     <string name="settings_sound_flip_to_silence">Umdrehen zur Stummschaltung</string>
     <string name="settings_sound_flip_to_silence_supporting">Zur Stummschaltung des Klingelns Telefon mit Display nach unten hinlegen</string>
-    <string name="settings_blocked_export_csv">Blockliste exportieren (CSV)</string>
+    <string name="settings_blocked_export_csv">Blockliste exportieren (CSV-Datei)</string>
     <string name="settings_blocked_export_csv_desc">Speichern Sie die blockierten Nummern als CSV-Datei</string>
-    <string name="settings_blocked_import_csv">Blockliste importieren (CSV)</string>
+    <string name="settings_blocked_import_csv">Blockliste importieren (CSV-Datei)</string>
     <string name="settings_blocked_import_csv_desc">Zu blockierende Nummern aus CSV-Datei importieren</string>
     <string name="settings_blocked_export_success">%1$d Nummern als CSV-Datei exportiert</string>
     <string name="settings_blocked_import_success">%1$d neue Nummern importiert (%2$d schon blockiert)</string>
@@ -1176,9 +1225,9 @@ Weißer Text</string>
     <string name="settings_auto_decline_non_contacts_title">Auto-Ablehnen: Anrufe von Nicht-Kontakten</string>
     <string name="settings_auto_decline_non_contacts_supporting">Anrufe von nicht gespeicherten Nummern ablehnen</string>
     <string name="missed_call_msg_call_me_back">Ist ein Rückruf möglich?</string>
-    <string name="missed_call_msg_sorry_busy">Tut mir leid, ich bin beschäftigt</string>
-    <string name="missed_call_msg_call_right_back">Ich rufe dich gleich zurück</string>
-    <string name="missed_call_msg_cant_talk">Kann momentan nicht reden</string>
+    <string name="missed_call_msg_sorry_busy">Entschuldigung, ich bin derzeit beschäftigt</string>
+    <string name="missed_call_msg_call_right_back">Ich rufe gleich zurück</string>
+    <string name="missed_call_msg_cant_talk">Ich kann derzeit nicht ans Telefon gehen</string>
     <!-- Favorites Modernization -->
     <string name="favorites_count_pill">%1$d Favoriten</string>
     <string name="favorites_one_pill">1 Favorit</string>
@@ -1298,8 +1347,8 @@ Weißer Text</string>
     <string name="action_continue_anyway">Trotzdem fortfahren</string>
     <string name="blocked_action_block_contact">Kontakt blockieren</string>
     <string name="blocked_action_add_number">Nummer hinzufügen</string>
-    <string name="blocked_action_import_csv">CSV importieren</string>
-    <string name="blocked_action_export_csv">CSV exportieren</string>
+    <string name="blocked_action_import_csv">CSV-Datei importieren</string>
+    <string name="blocked_action_export_csv">CSV-Datei exportieren</string>
     <string name="blocked_search_placeholder">Blockierte Nummern durchsuchen…</string>
     <string name="settings_group_support_about">Unterstützen &amp; Über</string>
     <string name="settings_display_banner_ads">Nicht aufdringliche Werbung</string>
@@ -1407,7 +1456,7 @@ Weißer Text</string>
     <string name="call_screen_customization_title">Anpassung des Anrufbildschirms</string>
     <string name="call_screen_customization_supporting">Wählen Sie, in welcher Zeile jede Anrufschaltfläche angezeigt wird.</string>
     <string name="about_third_party_licenses">Drittlizenzen</string>
-    <string name="about_third_party_licenses_supporting">In Rivo verwendete Open Source Komponenten</string>
+    <string name="about_third_party_licenses_supporting">In Rivo verwendete Open Source-Komponenten</string>
     <string name="about_third_party_licenses_title">Drittlizenzen</string>
     <string name="about_third_party_licenses_body">Kotlin, Kotlinx Serialization &amp; Coroutines — Apache 2.0
 Jetpack Compose, Material 3 &amp; AndroidX — Apache 2.0
@@ -1472,7 +1521,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_calling_sim_accounts">Anruf &amp; SIM-Konten</string>
     <string name="loc_group_call_logs">Anruflisteneinträge gruppieren</string>
     <string name="loc_merge_repeated_calls_from_the_same_contact_into_a_single_entry">Anrufe vom gleichen Kontakt zu einem Eintrag zusammenführen</string>
-    <string name="loc_dialpad_dual_sim_buttons">Dialpad Dual SIM Buttons</string>
+    <string name="loc_dialpad_dual_sim_buttons">Tastenfeld Dual SIM-Schaltflächen</string>
     <string name="loc_show_separate_sim_1_and_sim_2_call_buttons_directly_on_dialpad">Auf Tastenfeld SIM 1/2-Tasten anzeigen</string>
     <string name="loc_navigation_bar">Navigationsleiste</string>
     <string name="loc_floating_bar_style_navigation_dock_and_tab_layout">Stil, Tab-Layout und Start-Tab</string>
@@ -1659,7 +1708,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_back_up_entire_app_preferences_themes_dialpad_style_and_configurations">Komplette App-Einstellungen, Themes, Tastenfeld und Konfigurationen als JSON-Datei sichern</string>
     <string name="loc_restore_app_settings">App-Einstellungen wiederherstellen</string>
     <string name="loc_restore_all_app_preferences_and_configurations_from_a_saved_backup_jso">Alle App-Einstellungen und Konfigurationen aus JSON-Datei wiederherstellen</string>
-    <string name="loc_support_about">Unterstütze &amp; über</string>
+    <string name="loc_support_about">Unterstützen &amp; Über</string>
     <string name="loc_check_for_updates">Nach Updates suchen</string>
     <string name="loc_check_latest_github_releases_for_updates_to_rivo_phone">Überprüfen Sie die neuesten GitHub-Versionen für Updates von Rivo Phone</string>
     <string name="loc_source_code_github">Source Code &amp; GitHub</string>
@@ -1705,7 +1754,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_selectedcontactids_size_selected">%1$d ausgewählt</string>
     <string name="loc_privatecontacts_size_secured">%1$d gesichert</string>
     <string name="loc_stored_locally_in_rivo_s_sandboxed_vault_hidden_from_whatsapp_and_syst">Ausschließlich in Rivo gespeichert • Verborgen vor WhatsApp und System-Apps</string>
-    <string name="loc_select_contacts_for_private_storage">Kontakte für den privaten Speicher auswählen</string>
+    <string name="loc_select_contacts_for_private_storage">Kontakte für privaten Speicher auswählen</string>
     <string name="loc_move_to_private_storage">In privaten Speicher verschieben</string>
     <string name="loc_add_contacts_to_vault">Kontakte zum privaten Speicher hinzufügen</string>
     <string name="loc_import_vcf">Aus VCF-Datei importieren</string>
@@ -1786,7 +1835,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_formatteddate_countdownstr">%1$s (%2$s)</string>
     <string name="loc_blockednumbers_size_blocked">%1$d blockiert</string>
     <string name="loc_calls_and_text_messages_from_this_number_will_be_blocked_immediately">Anrufe und Textnachrichten von dieser Nummer werden sofort gesperrt.</string>
-    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">%1$sentsperren? Sie können Sie erneut anrufen und benachrichtigen.</string>
+    <string name="loc_unblock_targetdisplayname_they_will_be_able_to_call_and_message_you_ag">%1$s entsperren? Dieser Kontakt kann Sie dann erneut anrufen und benachrichtigen.</string>
     <string name="loc_processing_blocklist">Blockliste wird verarbeitet...</string>
     <string name="loc_importing_blocked_numbers">Blockierte Nummern werden importiert...</string>
     <string name="loc_press_both_volume_buttons_together_to_toggle_do_not_disturb">Drücken Sie beide Lautstärketasten gleichzeitig, um \"Nicht stören\" zu aktivieren</string>

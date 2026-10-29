@@ -292,6 +292,8 @@ Bílý text</string>
     <string name="dynamic_color">Dynamická barva</string>
     <string name="enable_dynamic_color">Povolit dynamickou barvu z tapety</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Tvar avataru hovoru</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Vyberte tvar avataru v hovoru</string>
     <string name="settings_interface_transition_zoom">Přiblížení</string>
     <string name="settings_interface_transition_stack">Hloubkový zásobník</string>
     <string name="settings_avatar_style">Styl avataru</string>
@@ -307,6 +309,16 @@ Bílý text</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatický reproduktor</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Přepnout na reproduktor, když je mimo uš, sluchátka, když je poblíž ucha (potlačeno při připojení sluchátek)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Dvojité svislé přejetí</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbitální slider</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbitální slider</string>
+    <string name="call_action_reminder">Připomenutí</string>
+    <string name="huawei_reminder">Připomenutí</string>
+    <string name="settings_call_background_blur">Rozostřit obrázek pozadí</string>
+    <string name="settings_call_background_blur_supporting">Použít měkké rozostření na vlastní pozadí volání</string>
+    <string name="settings_call_background_blur_strength">Síla rozostření</string>
+    <string name="huawei_swipe_up_to_answer">Posunutím nahoru odpovězte</string>
+    <string name="huawei_swipe_up_to_decline">Posunutím nahoru odmítněte</string>
     <string name="settings_call_dialpad_style_circle">Kruh</string>
     <string name="settings_call_dialpad_style_organic">Organické</string>
     <string name="settings_call_dialpad_style_outlined">Označeno</string>
@@ -402,6 +414,42 @@ Bílý text</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Jak nastavit</string>
+    <string name="call_recording_how_it_works_subtitle">Android omezení &amp; Shizuku dvoucestné nastavení zvuku</string>
+    <string name="call_recording_compact_intro">Android omezuje nahrávání zvuku dálkového volajícího. Shizuku umožňuje zvýšený přístup ADB k zachycení čirého dvousměrného zvuku volání bez rootu.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Z Obchodu Play nebo z oficiálních stránek</string>
+    <string name="call_recording_step2_compact_title">Spustit službu</string>
+    <string name="call_recording_step2_compact_desc">Via bezdrátové ladění v možnostech vývojáře</string>
+    <string name="call_recording_step3_compact_title">Autorizovat Rivo</string>
+    <string name="call_recording_step3_compact_desc">Povolit zvýšený ADB zvukový záznam</string>
+    <string name="call_recording_ready_banner_desc">Dvousměrné nahrávání hovorů je plně konfigurováno a aktivní.</string>
+    <string name="call_recording_restrictions_title">Omezení ochrany osobních údajů Android</string>
+    <string name="call_recording_restrictions_desc">Na moderním Androidu (9, 10, 11+) Google blokuje aplikace třetích stran z nahrávání interních hovorů. Standardní nahrávání mikrofonu může slyšet pouze váš hlas, takže druhý volající zmáčkne nebo úplně zticha.</string>
+    <string name="call_recording_shizuku_solution_title">Šizuku řešení (2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku uděluje Rivo zvýšená ADB-oprávnění bez nutnosti rootu. To umožňuje zachycovat křišťálově čiré, neformální obousměrné audio přímo ze systému.</string>
+    <string name="call_recording_setup_guide_title">Jak nastavit Šizuku (3 kroky)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Stáhněte si bezplatnou, open-source aplikaci Shizuku z Google Play nebo oficiálních webových stránek.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Na Androidu 11+, spustit přes bezdrátové ladění ve vývojářských volbách (není vyžadován žádný PC. Na Android 10 nebo starším, připojte se jednou k počítači přes USB. Na rootovaných zařízeních klepněte na tlačítko Start přímo.</string>
+    <string name="call_recording_step3_title">3. Udělit oprávnění Rivo</string>
+    <string name="call_recording_step3_desc">Otevřít Shizuku -&gt; Autorizované aplikace -&gt; povolte telefon Rivo nebo klepněte na tlačítko níže.</string>
+    <string name="call_recording_status_title">Aktuální stav</string>
+    <string name="call_recording_status_ready">2-Way zvuk připraven</string>
+    <string name="call_recording_status_needs_perm">Potřebné oprávnění</string>
+    <string name="call_recording_status_stopped">Služba zastavena</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Služba Shizuku</string>
+    <string name="call_recording_status_permission">Rivo autorizace</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Udělit oprávnění</string>
+    <string name="call_recording_action_guide">Online průvodce nastavením</string>
+    <string name="call_recording_action_active">2-Way zvuk aktivní</string>
+    <string name="call_recording_action_got_it">Rozumím</string>
+    <string name="call_recording_tile_details">Detaily</string>
     <string name="call_recording_saved">Záznam hovoru uložen</string>
     <string name="call_recording_deleted">Nahrávání smazáno</string>
     <!-- Video calling app picker -->
