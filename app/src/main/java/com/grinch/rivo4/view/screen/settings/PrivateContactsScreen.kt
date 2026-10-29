@@ -110,10 +110,8 @@ fun PrivateContactsScreen(
         if (searchQuery.isBlank()) {
             privateContacts
         } else {
-            val q = searchQuery.trim()
             privateContacts.filter {
-                it.name.contains(q, ignoreCase = true) ||
-                it.phoneNumbers.any { num -> num.contains(q) }
+                com.grinch.rivo4.controller.util.ContactUtils.matchesContact(it, searchQuery)
             }
         }
     }

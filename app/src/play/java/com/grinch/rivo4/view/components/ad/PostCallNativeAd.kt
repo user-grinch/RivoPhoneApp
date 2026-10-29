@@ -227,6 +227,8 @@ private fun createExpressiveNativeAdView(
             cornerRadius = 12 * dp
         }
     }
+    nativeAdView.keepScreenOn = false
+    mediaView.keepScreenOn = false
     nativeAdView.mediaView = mediaView
     root.addView(mediaView)
 
@@ -304,4 +306,6 @@ private fun populateNativeAdView(nativeAdView: NativeAdView, nativeAd: NativeAd)
     }
 
     nativeAdView.setNativeAd(nativeAd)
+    nativeAdView.keepScreenOn = false
+    mediaView?.keepScreenOn = false
 }

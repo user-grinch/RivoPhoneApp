@@ -255,7 +255,20 @@ fun ContactSearchContent(
         }
     }
 
-    val filteredCallLogs = remember(query, callLogs, selectedFilter) {
+    val contactByIdMap = remember(contacts) { contacts.associateBy { it.id } }
+    val contactByNumberKeyMap = remember(contacts) {
+        val map = mutableMapOf<String, com.grinch.rivo4.modal.data.Contact>()
+        contacts.forEach { c ->
+            c.phoneNumbers.forEach { num ->
+                ContactUtils.getLookupKeys(num).forEach { key ->
+                    map.putIfAbsent(key, c)
+                }
+            }
+        }
+        map
+    }
+
+    val filteredCallLogs = remember(query, callLogs, selectedFilter, contactByIdMap, contactByNumberKeyMap, displayOrder) {
         val baseLogs = if (selectedFilter == SearchTabFilter.MISSED) {
             callLogs.asSequence().filter {
                 it.type == CallLog.Calls.MISSED_TYPE || it.types.contains(CallLog.Calls.MISSED_TYPE)
@@ -271,12 +284,20 @@ fun ContactSearchContent(
                 emptyList()
             }
         } else {
+            val q = query.trim()
             val cleanQuery = query.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+            val tokens = q.split("\\s+".toRegex()).filter { it.isNotBlank() }
             baseLogs.filter { log ->
-                val matchesName = log.name?.contains(query, ignoreCase = true) == true
+                val matchedContact = log.contactId?.let { contactByIdMap[it] }
+                    ?: ContactUtils.getLookupKeys(log.number).firstNotNullOfOrNull { contactByNumberKeyMap[it] }
+                val matchesContact = matchedContact != null &&
+                    ContactUtils.matchesContact(matchedContact, query, cleanQuery, displayOrder)
+                val logName = log.name ?: ""
+                val matchesName = logName.contains(q, ignoreCase = true) ||
+                    (tokens.size > 1 && tokens.all { token -> logName.contains(token, ignoreCase = true) })
                 val matchesNumber = cleanQuery.isNotEmpty() &&
                     log.number.filter { ch -> ch.isDigit() || ch == '+' || ch == '*' || ch == '#' }.contains(cleanQuery)
-                matchesName || matchesNumber
+                matchesContact || matchesName || matchesNumber
             }.take(30).toList()
         }
     }

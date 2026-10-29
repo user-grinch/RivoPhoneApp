@@ -100,17 +100,18 @@ data class Contact(
 ) {
     val formattedDisplayName: String
         get() {
-            val parts = listOfNotNull(
-                prefix?.trim()?.ifBlank { null },
-                givenName?.trim()?.ifBlank { null },
-                middleName?.trim()?.ifBlank { null },
-                familyName?.trim()?.ifBlank { null },
-                suffix?.trim()?.ifBlank { null }
+            val sanitized = com.grinch.rivo4.controller.util.ContactUtils.sanitizeStructuredName(
+                prefix = prefix,
+                givenName = givenName,
+                middleName = middleName,
+                familyName = familyName,
+                suffix = suffix,
+                fallbackFullName = name.takeIf { it.isNotBlank() && it != "Unnamed" && it != "Unknown" }
             )
-            return if (parts.isNotEmpty()) {
-                parts.joinToString(" ")
+            return if (sanitized.fullName.isNotBlank() && sanitized.fullName != "Unnamed" && sanitized.fullName != "Unknown") {
+                sanitized.fullName
             } else if (name.isNotBlank() && name != "Unnamed" && name != "Unknown") {
-                name
+                com.grinch.rivo4.controller.util.ContactUtils.collapseAdjacentDuplicateTokens(name)
             } else if (!nickname.isNullOrBlank()) {
                 nickname
             } else if (emails.isNotEmpty()) {

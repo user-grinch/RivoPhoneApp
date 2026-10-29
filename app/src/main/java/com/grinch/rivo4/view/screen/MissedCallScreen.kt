@@ -1,8 +1,11 @@
 package com.grinch.rivo4.view.screen
 
+import android.app.Activity
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.ContactsContract
 import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
@@ -298,8 +301,10 @@ fun MissedCallScreen(
                                         ),
                                         onClick = {
                                             val body = if (text.startsWith("Type custom")) "" else text
-                                            sendOrComposeSms(context, phoneNumber, body)
-                                            onDismiss()
+                                            runAfterUnlockIfNeeded(context) {
+                                                sendOrComposeSms(context, phoneNumber, body)
+                                                onDismiss()
+                                            }
                                         }
                                     ) {
                                         Text(
@@ -337,8 +342,10 @@ fun MissedCallScreen(
                                 // Message
                                 FilledTonalButton(
                                     onClick = {
-                                        SocialUtils.openSms(context, phoneNumber)
-                                        onDismiss()
+                                        runAfterUnlockIfNeeded(context) {
+                                            SocialUtils.openSms(context, phoneNumber)
+                                            onDismiss()
+                                        }
                                     },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(14.dp),
@@ -393,8 +400,10 @@ fun MissedCallScreen(
                                             color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                             border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
                                             onClick = {
-                                                app.action(context, phoneNumber)
-                                                onDismiss()
+                                                runAfterUnlockIfNeeded(context) {
+                                                    app.action(context, phoneNumber)
+                                                    onDismiss()
+                                                }
                                             }
                                         ) {
                                             Row(
@@ -430,11 +439,13 @@ fun MissedCallScreen(
                             // View Call Logs Pill Button
                             Surface(
                                 onClick = {
-                                    val intent = Intent(context, MainActivity::class.java).apply {
-                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    runAfterUnlockIfNeeded(context) {
+                                        val intent = Intent(context, MainActivity::class.java).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        }
+                                        context.startActivity(intent)
+                                        onDismiss()
                                     }
-                                    context.startActivity(intent)
-                                    onDismiss()
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -491,26 +502,44 @@ fun MissedCallScreen(
                 onDismissRequest = { showAddToContactSheet = false },
                 onCreateNewContact = {
                     showAddToContactSheet = false
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        action = Intent.ACTION_INSERT
-                        putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    runAfterUnlockIfNeeded(context) {
+                        val intent = Intent(context, MainActivity::class.java).apply {
+                            action = Intent.ACTION_INSERT
+                            putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        }
+                        context.startActivity(intent)
+                        onDismiss()
                     }
-                    context.startActivity(intent)
-                    onDismiss()
                 },
                 onAddToExistingContact = {
                     showAddToContactSheet = false
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        action = "com.grinch.rivo4.ACTION_ADD_TO_EXISTING_CONTACT"
-                        putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    runAfterUnlockIfNeeded(context) {
+                        val intent = Intent(context, MainActivity::class.java).apply {
+                            action = "com.grinch.rivo4.ACTION_ADD_TO_EXISTING_CONTACT"
+                            putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        }
+                        context.startActivity(intent)
+                        onDismiss()
                     }
-                    context.startActivity(intent)
-                    onDismiss()
                 }
             )
         }
+    }
+}
+
+private fun runAfterUnlockIfNeeded(context: Context, action: () -> Unit) {
+    val km = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+    val activity = context as? Activity
+    if (km != null && km.isKeyguardLocked && activity != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        km.requestDismissKeyguard(activity, object : KeyguardManager.KeyguardDismissCallback() {
+            override fun onDismissSucceeded() {
+                action()
+            }
+        })
+    } else {
+        action()
     }
 }
 

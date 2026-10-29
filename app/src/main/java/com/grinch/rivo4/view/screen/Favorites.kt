@@ -879,13 +879,12 @@ private fun AddFavoriteBottomSheet(
     onAddFavorite: (Contact) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val filteredContacts = remember(contacts, searchQuery) {
+    val filteredContacts = remember(contacts, searchQuery, displayOrder) {
         if (searchQuery.isBlank()) {
             contacts.sortedBy { it.name }
         } else {
             contacts.filter { contact ->
-                contact.name.contains(searchQuery, ignoreCase = true) ||
-                    contact.phoneNumbers.any { it.contains(searchQuery) }
+                ContactUtils.matchesContact(contact, searchQuery, displayOrder = displayOrder)
             }.sortedBy { it.name }
         }
     }

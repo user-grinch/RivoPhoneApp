@@ -360,14 +360,13 @@ fun AddFavoriteDialog(
     onContactSelected: (Contact) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val availableContacts = remember(allContacts, searchQuery) {
+    val availableContacts = remember(allContacts, searchQuery, displayOrder) {
         val nonFavs = allContacts.filter { !it.isFavorite }
         if (searchQuery.isBlank()) {
             nonFavs
         } else {
             nonFavs.filter {
-                it.name.contains(searchQuery, ignoreCase = true) ||
-                it.phoneNumbers.any { num -> num.contains(searchQuery) }
+                ContactUtils.matchesContact(it, searchQuery, displayOrder = displayOrder)
             }
         }
     }

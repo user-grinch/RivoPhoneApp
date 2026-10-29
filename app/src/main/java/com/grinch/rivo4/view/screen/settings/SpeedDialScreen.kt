@@ -183,10 +183,9 @@ fun ContactPickerDialog(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val filteredContacts = remember(searchQuery, contacts) {
-        if (searchQuery.isEmpty()) contacts
-        else contacts.filter { 
-            it.name.contains(searchQuery, ignoreCase = true) || 
-            it.phoneNumbers.any { num -> num.contains(searchQuery) }
+        if (searchQuery.isBlank()) contacts
+        else contacts.filter {
+            com.grinch.rivo4.controller.util.ContactUtils.matchesContact(it, searchQuery)
         }
     }
 

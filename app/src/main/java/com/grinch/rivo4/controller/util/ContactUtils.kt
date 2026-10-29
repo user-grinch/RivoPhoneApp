@@ -81,37 +81,195 @@ object ContactUtils {
         }
     }
 
+    data class SanitizedNameParts(
+        val prefix: String?,
+        val givenName: String?,
+        val middleName: String?,
+        val familyName: String?,
+        val suffix: String?,
+        val fullName: String
+    )
+
+    fun collapseAdjacentDuplicateTokens(text: String): String {
+        val tokens = text.trim().split(Regex("\\s+")).filter { it.isNotBlank() }
+        if (tokens.size <= 1) return text.trim()
+        val result = mutableListOf<String>()
+        for (token in tokens) {
+            if (result.isEmpty() || !result.last().equals(token, ignoreCase = true)) {
+                result.add(token)
+            }
+        }
+        return result.joinToString(" ")
+    }
+
+    fun sanitizeStructuredName(
+        prefix: String? = null,
+        givenName: String? = null,
+        middleName: String? = null,
+        familyName: String? = null,
+        suffix: String? = null,
+        fallbackFullName: String? = null
+    ): SanitizedNameParts {
+        val cleanPrefix = prefix?.trim()?.ifBlank { null }
+        var cleanGiven = givenName?.trim()?.ifBlank { null }?.let { collapseAdjacentDuplicateTokens(it) }
+        var cleanMiddle = middleName?.trim()?.ifBlank { null }?.let { collapseAdjacentDuplicateTokens(it) }
+        var cleanFamily = familyName?.trim()?.ifBlank { null }?.let { collapseAdjacentDuplicateTokens(it) }
+        val cleanSuffix = suffix?.trim()?.ifBlank { null }
+
+        // Strip duplicate middleName from the end of givenName or start of familyName
+        if (cleanMiddle != null) {
+            if (cleanGiven != null) {
+                while (cleanGiven != null && cleanGiven.length > cleanMiddle.length &&
+                    cleanGiven.endsWith(" $cleanMiddle", ignoreCase = true)
+                ) {
+                    cleanGiven = cleanGiven.substring(0, cleanGiven.length - cleanMiddle.length).trim().ifBlank { null }
+                }
+                if (cleanGiven != null && cleanGiven.equals(cleanMiddle, ignoreCase = true)) {
+                    cleanMiddle = null
+                }
+            }
+            if (cleanMiddle != null && cleanFamily != null) {
+                while (cleanFamily != null && cleanFamily.length > cleanMiddle.length &&
+                    cleanFamily.startsWith("$cleanMiddle ", ignoreCase = true)
+                ) {
+                    cleanFamily = cleanFamily.substring(cleanMiddle.length).trim().ifBlank { null }
+                }
+                if (cleanFamily != null && cleanFamily.equals(cleanMiddle, ignoreCase = true)) {
+                    cleanMiddle = null
+                }
+            }
+        }
+
+        // If middleName is missing, recover it from multi-word givenName or fallbackFullName
+        if (cleanMiddle == null) {
+            val cleanFallback = fallbackFullName?.trim()?.takeIf {
+                it.isNotBlank() && !it.equals("Unnamed", ignoreCase = true) && !it.equals("Unknown", ignoreCase = true)
+            }?.let { collapseAdjacentDuplicateTokens(it) }
+
+            val fallbackWithoutAffixes = cleanFallback?.let { fb ->
+                var s = fb
+                if (cleanPrefix != null && s.startsWith("$cleanPrefix ", ignoreCase = true)) {
+                    s = s.substring(cleanPrefix.length).trim()
+                }
+                if (cleanSuffix != null && s.endsWith(" $cleanSuffix", ignoreCase = true)) {
+                    s = s.substring(0, s.length - cleanSuffix.length).trim()
+                }
+                s
+            }
+
+            if (cleanGiven == null && cleanFamily == null && !fallbackWithoutAffixes.isNullOrBlank()) {
+                val (sg, sm, sf) = splitDisplayName(fallbackWithoutAffixes)
+                cleanGiven = sg.ifBlank { null }
+                cleanMiddle = sm.ifBlank { null }
+                cleanFamily = sf.ifBlank { null }
+            } else if (cleanGiven != null && cleanFamily != null) {
+                val gParts = cleanGiven.split(Regex("\\s+")).filter { it.isNotBlank() }
+                if (gParts.size > 1) {
+                    cleanGiven = gParts.first()
+                    cleanMiddle = gParts.drop(1).joinToString(" ")
+                } else if (!fallbackWithoutAffixes.isNullOrBlank()) {
+                    val (sg, sm, sf) = splitDisplayName(fallbackWithoutAffixes)
+                    if (sm.isNotBlank() && sg.equals(cleanGiven, ignoreCase = true) && sf.equals(cleanFamily, ignoreCase = true)) {
+                        cleanMiddle = collapseAdjacentDuplicateTokens(sm)
+                    } else if (sm.isNotBlank() && sg.equals(cleanGiven, ignoreCase = true) &&
+                        cleanFamily.equals("$sm $sf", ignoreCase = true)
+                    ) {
+                        cleanMiddle = collapseAdjacentDuplicateTokens(sm)
+                        cleanFamily = sf.ifBlank { null }
+                    }
+                }
+            } else if (cleanGiven != null && cleanFamily == null) {
+                val gParts = cleanGiven.split(Regex("\\s+")).filter { it.isNotBlank() }
+                if (gParts.size >= 3) {
+                    cleanGiven = gParts.first()
+                    cleanMiddle = gParts.subList(1, gParts.size - 1).joinToString(" ")
+                    cleanFamily = gParts.last()
+                } else if (!fallbackWithoutAffixes.isNullOrBlank()) {
+                    val (sg, sm, sf) = splitDisplayName(fallbackWithoutAffixes)
+                    if (sg.equals(cleanGiven, ignoreCase = true) && (sm.isNotBlank() || sf.isNotBlank())) {
+                        cleanMiddle = sm.ifBlank { null }
+                        cleanFamily = sf.ifBlank { null }
+                    }
+                }
+            }
+        }
+
+        // Re-verify no overlap between givenName/middleName/familyName
+        if (cleanMiddle != null) {
+            if (cleanGiven != null && cleanGiven.length > cleanMiddle.length &&
+                cleanGiven.endsWith(" $cleanMiddle", ignoreCase = true)
+            ) {
+                cleanGiven = cleanGiven.substring(0, cleanGiven.length - cleanMiddle.length).trim().ifBlank { null }
+            }
+            if (cleanFamily != null && cleanFamily.length > cleanMiddle.length &&
+                cleanFamily.startsWith("$cleanMiddle ", ignoreCase = true)
+            ) {
+                cleanFamily = cleanFamily.substring(cleanMiddle.length).trim().ifBlank { null }
+            }
+        }
+
+        val joined = listOfNotNull(cleanPrefix, cleanGiven, cleanMiddle, cleanFamily, cleanSuffix)
+            .joinToString(" ")
+            .let { collapseAdjacentDuplicateTokens(it) }
+
+        val finalFullName = if (joined.isNotBlank()) {
+            joined
+        } else {
+            fallbackFullName?.trim()?.let { collapseAdjacentDuplicateTokens(it) } ?: ""
+        }
+
+        return SanitizedNameParts(
+            prefix = cleanPrefix,
+            givenName = cleanGiven,
+            middleName = cleanMiddle,
+            familyName = cleanFamily,
+            suffix = cleanSuffix,
+            fullName = finalFullName
+        )
+    }
+
     fun formatContactName(name: String, displayOrder: Int): String {
+        val cleanName = collapseAdjacentDuplicateTokens(name)
         if (displayOrder == 1) {
-            val parts = name.trim().split("\\s+".toRegex())
+            val parts = cleanName.trim().split("\\s+".toRegex())
             if (parts.size > 1) {
                 return "${parts.last()}, ${parts.dropLast(1).joinToString(" ")}"
             }
         }
-        return name
+        return cleanName
     }
 
     fun formatContactName(contact: Contact, displayOrder: Int): String {
-        val baseName = if (contact.name.isNotBlank() && contact.name != "Unnamed") {
-            contact.name
+        val sanitized = sanitizeStructuredName(
+            prefix = contact.prefix,
+            givenName = contact.givenName,
+            middleName = contact.middleName,
+            familyName = contact.familyName,
+            suffix = contact.suffix,
+            fallbackFullName = contact.name
+        )
+        val baseName = if (sanitized.fullName.isNotBlank() && sanitized.fullName != "Unnamed") {
+            sanitized.fullName
+        } else if (contact.name.isNotBlank() && contact.name != "Unnamed") {
+            collapseAdjacentDuplicateTokens(contact.name)
         } else {
             contact.emails.firstOrNull() ?: contact.phoneNumbers.firstOrNull() ?: contact.name
         }
         return if (displayOrder == 1) {
-            if (!contact.familyName.isNullOrBlank()) {
-                val prefixPart = contact.prefix?.trim()?.ifBlank { null }
+            if (!sanitized.familyName.isNullOrBlank()) {
+                val prefixPart = sanitized.prefix
                 val givenMiddlePart = listOfNotNull(
-                    contact.givenName?.trim()?.ifBlank { null },
-                    contact.middleName?.trim()?.ifBlank { null }
+                    sanitized.givenName,
+                    sanitized.middleName
                 ).joinToString(" ").ifBlank { null }
 
                 when {
-                    prefixPart != null && givenMiddlePart != null -> "$prefixPart ${contact.familyName}, $givenMiddlePart"
-                    prefixPart != null -> "$prefixPart ${contact.familyName}"
-                    givenMiddlePart != null -> "${contact.familyName}, $givenMiddlePart"
-                    else -> contact.familyName
+                    prefixPart != null && givenMiddlePart != null -> "$prefixPart ${sanitized.familyName}, $givenMiddlePart"
+                    prefixPart != null -> "$prefixPart ${sanitized.familyName}"
+                    givenMiddlePart != null -> "${sanitized.familyName}, $givenMiddlePart"
+                    else -> sanitized.familyName
                 }
-            } else if (!contact.givenName.isNullOrBlank()) {
+            } else if (!sanitized.givenName.isNullOrBlank()) {
                 baseName
             } else {
                 formatContactName(baseName, displayOrder)
@@ -268,14 +426,25 @@ object ContactUtils {
         }
 
         // 3. Name parts: givenName, middleName, familyName, nickname, prefix, suffix
+        val sanitized = sanitizeStructuredName(
+            prefix = contact.prefix,
+            givenName = contact.givenName,
+            middleName = contact.middleName,
+            familyName = contact.familyName,
+            suffix = contact.suffix,
+            fallbackFullName = contact.name
+        )
         val nameParts = listOfNotNull(
             contact.givenName?.ifBlank { null },
             contact.middleName?.ifBlank { null },
             contact.familyName?.ifBlank { null },
+            sanitized.givenName,
+            sanitized.middleName,
+            sanitized.familyName,
             contact.nickname?.ifBlank { null },
             contact.prefix?.ifBlank { null },
             contact.suffix?.ifBlank { null }
-        )
+        ).distinct()
         if (nameParts.any { it.contains(q, ignoreCase = true) }) {
             return true
         }

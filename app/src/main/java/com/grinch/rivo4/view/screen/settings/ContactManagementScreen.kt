@@ -1117,8 +1117,7 @@ fun MoveContactsSelectionDialog(
     val filtered = remember(contacts, searchQuery) {
         if (searchQuery.isBlank()) contacts
         else contacts.filter {
-            it.name.contains(searchQuery, ignoreCase = true) ||
-            it.phoneNumbers.any { num -> num.contains(searchQuery) }
+            ContactUtils.matchesContact(it, searchQuery)
         }
     }
 

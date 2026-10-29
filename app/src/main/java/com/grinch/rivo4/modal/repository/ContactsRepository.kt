@@ -348,11 +348,13 @@ class ContactsRepository(
                     if (existing == null) {
                         structuredNameMap[id] = StructuredNameData(p, g, m, f, s)
                     } else {
+                        val preferNewGiven = existing.middleName == null && m != null && g != null
+                        val preferNewFamily = existing.middleName == null && m != null && f != null
                         structuredNameMap[id] = StructuredNameData(
                             prefix = existing.prefix ?: p,
-                            givenName = existing.givenName ?: g,
+                            givenName = if (preferNewGiven) g else (existing.givenName ?: g),
                             middleName = existing.middleName ?: m,
-                            familyName = existing.familyName ?: f,
+                            familyName = if (preferNewFamily) f else (existing.familyName ?: f),
                             suffix = existing.suffix ?: s
                         )
                     }
@@ -363,18 +365,22 @@ class ContactsRepository(
         val finalList = list.map { contact ->
             val nameData = structuredNameMap[contact.id]
             val nickname = nicknameMap[contact.id]
+            val rawDisplayName = contact.name.takeIf {
+                it.isNotBlank() && it != unknownLabel && it != "Unnamed"
+            }
 
-            val constructedName = listOfNotNull(
-                nameData?.prefix?.trim()?.ifBlank { null },
-                nameData?.givenName?.trim()?.ifBlank { null },
-                nameData?.middleName?.trim()?.ifBlank { null },
-                nameData?.familyName?.trim()?.ifBlank { null },
-                nameData?.suffix?.trim()?.ifBlank { null }
-            ).joinToString(" ").ifBlank { null }
+            val sanitized = ContactUtils.sanitizeStructuredName(
+                prefix = nameData?.prefix ?: contact.prefix,
+                givenName = nameData?.givenName ?: contact.givenName,
+                middleName = nameData?.middleName ?: contact.middleName,
+                familyName = nameData?.familyName ?: contact.familyName,
+                suffix = nameData?.suffix ?: contact.suffix,
+                fallbackFullName = rawDisplayName
+            )
 
             val resolvedName = when {
-                constructedName != null -> constructedName
-                contact.name.isNotBlank() && contact.name != unknownLabel && contact.name != "Unnamed" -> contact.name
+                sanitized.fullName.isNotBlank() -> sanitized.fullName
+                rawDisplayName != null -> ContactUtils.collapseAdjacentDuplicateTokens(rawDisplayName)
                 nickname?.isNotBlank() == true -> nickname
                 contact.phoneNumbers.isNotEmpty() -> contact.phoneNumbers.first()
                 contact.emails.isNotEmpty() -> contact.emails.first()
@@ -383,17 +389,17 @@ class ContactsRepository(
             }
 
             val (splitGiven, splitMiddle, splitFamily) = ContactUtils.splitDisplayName(resolvedName)
-            val effectiveGiven = nameData?.givenName ?: contact.givenName ?: splitGiven.ifBlank { null }
-            val effectiveMiddle = nameData?.middleName ?: contact.middleName ?: splitMiddle.ifBlank { null }
-            val effectiveFamily = nameData?.familyName ?: contact.familyName ?: splitFamily.ifBlank { null }
+            val effectiveGiven = sanitized.givenName ?: splitGiven.ifBlank { null }
+            val effectiveMiddle = sanitized.middleName ?: splitMiddle.ifBlank { null }
+            val effectiveFamily = sanitized.familyName ?: splitFamily.ifBlank { null }
 
             contact.copy(
                 name = resolvedName,
-                prefix = nameData?.prefix ?: contact.prefix,
+                prefix = sanitized.prefix,
                 givenName = effectiveGiven,
                 middleName = effectiveMiddle,
                 familyName = effectiveFamily,
-                suffix = nameData?.suffix ?: contact.suffix,
+                suffix = sanitized.suffix,
                 nickname = nickname ?: contact.nickname
             )
         }
@@ -517,25 +523,30 @@ class ContactsRepository(
 
                     contact = when (mimeType) {
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE -> {
-                            val prefix = if (data4Idx != -1) cursor.getString(data4Idx) else null
-                            val given = cursor.getString(data2Idx)
-                            val family = cursor.getString(data3Idx)
-                            val middle = if (data5Idx != -1) cursor.getString(data5Idx) else null
-                            val suffix = if (data6Idx != -1) cursor.getString(data6Idx) else null
-                            val constructed = listOfNotNull(
-                                prefix?.trim()?.ifBlank { null },
-                                given?.trim()?.ifBlank { null },
-                                middle?.trim()?.ifBlank { null },
-                                family?.trim()?.ifBlank { null },
-                                suffix?.trim()?.ifBlank { null }
-                            ).joinToString(" ")
+                            val prefix = if (data4Idx != -1) cursor.getString(data4Idx)?.trim()?.ifBlank { null } else null
+                            val given = cursor.getString(data2Idx)?.trim()?.ifBlank { null }
+                            val family = cursor.getString(data3Idx)?.trim()?.ifBlank { null }
+                            val middle = if (data5Idx != -1) cursor.getString(data5Idx)?.trim()?.ifBlank { null } else null
+                            val suffix = if (data6Idx != -1) cursor.getString(data6Idx)?.trim()?.ifBlank { null } else null
+                            val preferNewGiven = currentContact.middleName == null && middle != null && given != null
+                            val preferNewFamily = currentContact.middleName == null && middle != null && family != null
+                            val sanitized = ContactUtils.sanitizeStructuredName(
+                                prefix = currentContact.prefix ?: prefix,
+                                givenName = if (preferNewGiven) given else (currentContact.givenName ?: given),
+                                middleName = currentContact.middleName ?: middle,
+                                familyName = if (preferNewFamily) family else (currentContact.familyName ?: family),
+                                suffix = currentContact.suffix ?: suffix,
+                                fallbackFullName = currentContact.name.takeIf {
+                                    it.isNotBlank() && it != unknownLabel && it != "Unnamed"
+                                }
+                            )
                             currentContact.copy(
-                                name = if (constructed.isNotBlank()) constructed else currentContact.name,
-                                prefix = prefix,
-                                givenName = given,
-                                middleName = middle,
-                                familyName = family,
-                                suffix = suffix
+                                name = if (sanitized.fullName.isNotBlank()) sanitized.fullName else currentContact.name,
+                                prefix = sanitized.prefix,
+                                givenName = sanitized.givenName,
+                                middleName = sanitized.middleName,
+                                familyName = sanitized.familyName,
+                                suffix = sanitized.suffix
                             )
                         }
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
@@ -981,14 +992,24 @@ class ContactsRepository(
         val effectiveWebsites = if (isSim) emptyList() else contact.websites.filter { it.url.isNotBlank() }
         val effectiveRelations = if (isSim) emptyList() else contact.relations.filter { it.name.isNotBlank() }
 
-        val effectiveName = if (contact.name.isNotBlank() && contact.name != "Unnamed" && contact.name != unknownLabel) {
-            contact.name
+        val sanitizedToSave = ContactUtils.sanitizeStructuredName(
+            prefix = contact.prefix,
+            givenName = contact.givenName,
+            middleName = contact.middleName,
+            familyName = contact.familyName,
+            suffix = contact.suffix,
+            fallbackFullName = contact.name.takeIf { it.isNotBlank() && it != "Unnamed" && it != unknownLabel }
+        )
+        val effectiveName = if (sanitizedToSave.fullName.isNotBlank()) {
+            sanitizedToSave.fullName
+        } else if (contact.name.isNotBlank() && contact.name != "Unnamed" && contact.name != unknownLabel) {
+            ContactUtils.collapseAdjacentDuplicateTokens(contact.name)
         } else {
             effectiveEmails.firstOrNull()?.address ?: effectivePhones.firstOrNull()?.number ?: contact.name
         }
-        val effectiveGivenName = if (!contact.givenName.isNullOrBlank()) {
-            contact.givenName
-        } else if (contact.familyName.isNullOrBlank() && contact.middleName.isNullOrBlank()) {
+        val effectiveGivenName = if (!sanitizedToSave.givenName.isNullOrBlank()) {
+            sanitizedToSave.givenName
+        } else if (sanitizedToSave.familyName.isNullOrBlank() && sanitizedToSave.middleName.isNullOrBlank()) {
             effectiveName
         } else {
             null
@@ -1032,11 +1053,11 @@ class ContactsRepository(
                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
                     )
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, effectiveName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, sanitizedToSave.prefix)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, effectiveGivenName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, sanitizedToSave.middleName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, sanitizedToSave.familyName)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, sanitizedToSave.suffix)
                     .build()
             )
 
@@ -1189,29 +1210,32 @@ class ContactsRepository(
                 return Pair(false, null)
             }
 
-            ops.add(
-                ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(
-                        "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
-                        arrayOf(primaryRawContactId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                    )
-                    .build()
-            )
-            ops.add(
-                ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValue(ContactsContract.Data.RAW_CONTACT_ID, primaryRawContactId)
-                    .withValue(
-                        ContactsContract.Data.MIMETYPE,
-                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
-                    )
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, effectiveName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, contact.prefix)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, effectiveGivenName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, contact.middleName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contact.familyName)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, contact.suffix)
-                    .build()
-            )
+            val validRawIds = existingRawContactIds.filter { it.isNotBlank() && it != "0" && it != "null" }
+            for (rawId in validRawIds) {
+                ops.add(
+                    ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(
+                            "${ContactsContract.Data.RAW_CONTACT_ID}=? AND ${ContactsContract.Data.MIMETYPE}=?",
+                            arrayOf(rawId, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                        )
+                        .build()
+                )
+                ops.add(
+                    ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, rawId)
+                        .withValue(
+                            ContactsContract.Data.MIMETYPE,
+                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+                        )
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, effectiveName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, sanitizedToSave.prefix)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, effectiveGivenName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, sanitizedToSave.middleName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, sanitizedToSave.familyName)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, sanitizedToSave.suffix)
+                        .build()
+                )
+            }
 
             if (contact.photoUri == null) {
                 ops.add(
@@ -1848,9 +1872,18 @@ class ContactsRepository(
                         }
 
                         val (accInfo, linked) = if (id.isNotBlank()) getAccountInfoWithLinked(id) else Pair(Pair(null, null), emptyList())
+                        val formatted = ContactUtils.collapseAdjacentDuplicateTokens(formatName(name ?: unknownLabel))
+                        val (sg, sm, sf) = if (formatted != unknownLabel && formatted != "Unnamed") {
+                            ContactUtils.splitDisplayName(formatted)
+                        } else {
+                            Triple("", "", "")
+                        }
                         return Contact(
                             id = id,
-                            name = formatName(name ?: unknownLabel),
+                            name = formatted,
+                            givenName = sg.ifBlank { null },
+                            middleName = sm.ifBlank { null },
+                            familyName = sf.ifBlank { null },
                             photoUri = photoUri,
                             isFavorite = starred,
                             phoneNumbers = numbers,

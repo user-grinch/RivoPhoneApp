@@ -99,11 +99,8 @@ fun PriorityContactsScreen(
         if (searchQuery.isBlank()) {
             priorityContactsList
         } else {
-            val q = searchQuery.trim().lowercase()
             priorityContactsList.filter {
-                it.name.lowercase().contains(q) ||
-                        ContactUtils.formatContactName(it, displayOrder).lowercase().contains(q) ||
-                        it.phoneNumbers.any { num -> num.contains(q) }
+                ContactUtils.matchesContact(it, searchQuery, displayOrder = displayOrder)
             }
         }
     }

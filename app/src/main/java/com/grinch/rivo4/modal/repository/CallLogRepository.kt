@@ -334,7 +334,9 @@ class CallLogRepository(
                 areNumbersEqual(rawCachedName, number) ||
                 rawCachedName.none { it.isLetter() }
             )
-            val effectiveCachedName = if (isCachedNameJustNumber) null else rawCachedName
+            val effectiveCachedName = if (isCachedNameJustNumber) null else rawCachedName?.let {
+                ContactUtils.collapseAdjacentDuplicateTokens(it)
+            }
             if (effectiveCachedName != null && number != unknownLabel) {
                 ContactUtils.getLookupKeys(number).forEach { key ->
                     callerNameCache.putIfAbsent(key, effectiveCachedName)
@@ -351,7 +353,9 @@ class CallLogRepository(
                 }
                 found
             }
-            val displayName = matchedContact?.name ?: resolvedCallerName
+            val displayName = (matchedContact?.name ?: resolvedCallerName)?.let {
+                ContactUtils.collapseAdjacentDuplicateTokens(it)
+            }
             val photoUri = matchedContact?.photoUri ?: cursor.getString(cachedPhotoIdx)
             val contactId = matchedContact?.id ?: cursor.getString(cachedLookupIdx)?.let {
                 contactIdFromLookupUri(it)

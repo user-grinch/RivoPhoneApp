@@ -325,11 +325,18 @@ fun DialPadScreen(
                         val matchesNumber = contact.phoneNumbers.any { num ->
                             num.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }.contains(cleanQueryChars)
                         }
+                        val (splitGiven, splitMiddle, splitFamily) = com.grinch.rivo4.controller.util.ContactUtils.splitDisplayName(contact.name)
+                        val firstLastCombined = listOfNotNull(
+                            (contact.givenName ?: splitGiven).takeIf { it.isNotBlank() },
+                            (contact.familyName ?: splitFamily).takeIf { it.isNotBlank() }
+                        ).joinToString(" ")
                         val matchesName = t9Enabled && (
                             T9Matcher.isMatch(contact.name, cleanQuery) ||
                             contact.givenName?.let { T9Matcher.isMatch(it, cleanQuery) } == true ||
                             contact.middleName?.let { T9Matcher.isMatch(it, cleanQuery) } == true ||
                             contact.familyName?.let { T9Matcher.isMatch(it, cleanQuery) } == true ||
+                            (splitMiddle.isNotBlank() && T9Matcher.isMatch(splitMiddle, cleanQuery)) ||
+                            (firstLastCombined.isNotBlank() && T9Matcher.isMatch(firstLastCombined, cleanQuery)) ||
                             T9Matcher.isMatch(contact.formattedDisplayName, cleanQuery)
                         )
                         val matchesNickname = t9Enabled && contact.nickname?.let { T9Matcher.isMatch(it, cleanQuery) } ?: false

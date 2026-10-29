@@ -198,6 +198,26 @@ class CallActivity : ComponentActivity() {
                 }
             }
         }
+        lifecycleScope.launch {
+            CallService.allCalls.collect { calls ->
+                if (calls.none { it.state != Call.STATE_DISCONNECTED && it.state != Call.STATE_DISCONNECTING }) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                        setTurnScreenOn(false)
+                    }
+                    @Suppress("DEPRECATION")
+                    window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    )
+                    releaseProximityLock()
+                    stopProximitySensorRouting()
+                    delay(400)
+                    if (CallService.allCalls.value.none { it.state != Call.STATE_DISCONNECTED }) {
+                        dismissCallScreen()
+                    }
+                }
+            }
+        }
         applySystemBarStyle(isNightMode())
 
         setContent {
@@ -247,7 +267,10 @@ class CallActivity : ComponentActivity() {
                 LaunchedEffect(callState, settingsState) {
                     val keepScreenOn =
                         preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)
-                    if (keepScreenOn) {
+                    val isCallAlive = callState != null &&
+                        callState != Call.STATE_DISCONNECTED &&
+                        callState != Call.STATE_DISCONNECTING
+                    if (keepScreenOn && isCallAlive) {
                         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     } else {
                         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -587,6 +610,23 @@ class CallActivity : ComponentActivity() {
     }
 
     private fun turnScreenOnAndShowWhileLocked() {
+        val hasActiveCall = CallService.allCalls.value.any {
+            it.state != Call.STATE_DISCONNECTED && it.state != Call.STATE_DISCONNECTING
+        }
+        if (!hasActiveCall && CallService.currentCallSession.value == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(false)
+                setTurnScreenOn(false)
+            }
+            @Suppress("DEPRECATION")
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            )
+            return
+        }
+        val keepScreenOn = preferenceManager.getBoolean(PreferenceManager.KEY_KEEP_SCREEN_ON, true)
         val km = getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
         val isLocked = km?.isKeyguardLocked == true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -594,18 +634,15 @@ class CallActivity : ComponentActivity() {
             setTurnScreenOn(true)
         }
         @Suppress("DEPRECATION")
+        val baseFlags = WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+            (if (keepScreenOn) WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON else 0)
         if (isLocked) {
             window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or baseFlags
             )
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-            window.addFlags(
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-            )
+            window.addFlags(baseFlags)
         }
     }
 
