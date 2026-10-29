@@ -566,6 +566,8 @@ blanc</string>
     <string name="settings_interface_avatar_shape_burst">Éclatement doux</string>
     <string name="settings_interface_call_screen_avatar">Avatar sur l’écran d’appel</string>
     <string name="settings_interface_call_screen_avatar_supporting">Afficher la photo du contact sur l’écran d’appel</string>
+    <string name="settings_interface_call_screen_avatar_shape">Appelez la forme de l\'avatar de l\'écran</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Choisir la forme pour l\'avatar de l\'appel</string>
     <string name="settings_interface_show_dividers">Afficher les séparateurs</string>
     <string name="settings_interface_show_dividers_supporting">Afficher des lignes entre les éléments de liste</string>
     <string name="settings_interface_expressive_cards">Utiliser des cartes expressives</string>
@@ -647,6 +649,9 @@ blanc</string>
     <string name="settings_call_incoming_ui_buttons">Boutons</string>
     <string name="settings_call_incoming_ui_slide_ios">Glisser pour répondre (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Glissement vertical</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Double balayage vertical</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Curseur orbital</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Curseur orbital</string>
     <string name="settings_call_always_fullscreen">Toujours passer en plein écran</string>
     <string name="settings_call_always_fullscreen_supporting">Ouvrez les appels entrants directement en plein écran. Lorsque cette option est désactivée, les appels s\'affichent sous forme de bannière flottante lorsque vous utilisez d\'autres applications.</string>
     <string name="settings_call_dialpad_style">Style du clavier</string>
@@ -962,6 +967,7 @@ blanc</string>
     <string name="action_stop_recording">Arrêter</string>
     <string name="call_recording_in_progress">Enregistrement</string>
     <string name="call_recordings_title">Enregistrements</string>
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recordings_supporting">Lire, partager ou supprimer les enregistrements sauvegardés</string>
     <string name="call_recordings_empty">Aucun enregistrement</string>
     <string name="call_recordings_empty_description">Les enregistrements que vous effectuez pendant les appels s\'afficheront ici.</string>

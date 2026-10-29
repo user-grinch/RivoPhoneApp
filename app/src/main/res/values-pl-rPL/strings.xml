@@ -89,7 +89,7 @@
     <string name="contact_hide_completely">Ukryj kontakt całkowicie</string>
     <string name="contact_unhide">Odkryj kontakt</string>
     <string name="contact_callback_reminder">Przypomnienie o oddzwonieniu</string>
-    <string name="contact_callback_reminder_supporting">Zaplanuj przypomnienie o oddzwanianiu</string>
+    <string name="contact_callback_reminder_supporting">Zaplanuj przypomnienie o oddzwonieniu</string>
     <string name="favorites_choose_number">Wybierz numer</string>
     <string name="main_enjoying_rivo">Podoba Ci się Rivo Phone?</string>
     <string name="main_remind_later">Przypomnij mi później</string>
@@ -183,7 +183,7 @@
     <string name="label_local_memory">Urządzenie</string>
     <string name="option_standard">Standardowy</string>
     <string name="ringtone_default">Domyślny</string>
-    <string name="ringtone_custom">Niestandardowy</string>
+    <string name="ringtone_custom">Własne</string>
     <string name="empty_state_try_clearing_filters">Spróbuj wyczyścić filtry lub dodaj nowy kontakt.</string>
     <string name="date_today">Dzisiaj</string>
     <string name="date_yesterday">Wczoraj</string>
@@ -968,6 +968,7 @@ Biały tekst</string>
     <string name="action_stop_recording">Zatrzymaj</string>
     <string name="call_recording_in_progress">Nagrywanie</string>
     <string name="call_recordings_title">Nagrania</string>
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recordings_supporting">Odtwórz, udostępniaj lub usuń zapisane nagrania</string>
     <string name="call_recordings_empty">Brak nagrań</string>
     <string name="call_recordings_empty_description">Tutaj pojawią się nagrania wykonywane podczas połączeń.</string>
@@ -1108,7 +1109,7 @@ Biały tekst</string>
     <string name="contact_management_card_clean_sub">Wszystkie kontakty są unikalne • Dotknij, aby zarządzać pamięcią</string>
     <string name="contact_management_card_dup_sub">Dotknij, aby przejrzeć i scalić numery, e-maile i informacje</string>
     <string name="settings_contact_management_card">Pokaż kartę zarządzania kontaktami</string>
-    <string name="settings_contact_management_card_supporting">Wyświetl podgląd pamięci, status czyszczenia i zduplikowane powiadomienia o kontaktach powyżej kontaktów</string>
+    <string name="settings_contact_management_card_supporting">Wyświetlaj podsumowanie pamięci, status czyszczenia i alerty o duplikatach nad kontaktami</string>
     <!-- Floating Bar Customization & Blur -->
     <string name="settings_floating_bar_roundness">Zaokrąglenie rogów pływającego paska</string>
     <string name="settings_floating_bar_roundness_supporting">Dostosuj zaokrąglenie rogu i kształt pływającego paska nawigacji</string>
@@ -1307,7 +1308,7 @@ Biały tekst</string>
     <string name="blocked_action_export_csv">Eksportuj CSV</string>
     <string name="blocked_search_placeholder">Szukaj zablokowanych numerów…</string>
     <string name="settings_group_support_about">Wsparcie i informacje</string>
-    <string name="settings_display_banner_ads">Nierówne reklamy</string>
+    <string name="settings_display_banner_ads">Dyskretne reklamy</string>
     <string name="settings_display_banner_ads_supporting">Pokaż małe reklamy na listach do wsparcia rozwoju</string>
     <string name="settings_support_development">Wspomóż rozwój</string>
     <string name="settings_support_development_supporting">Wesprzyj rozwój Rivo</string>
@@ -1438,7 +1439,7 @@ ShizuCallRecorder (kod nagrywania rozmów) — GPLv3 z dodatkowymi warunkami Sek
     <string name="support_rivo_pro_unlocked">Odblokowano Rivo Pro! Ciesz się swoimi umiejętnościami.</string>
     <string name="support_rivo_pro_perks_title">Rivo Pro Perks</string>
     <string name="support_rivo_pro_perk_app_icon">Własna ikona aplikacji</string>
-    <string name="support_foss_only_donate">Umiejętności Rivo Pro są niedostępne w wersjach FOSS. Użyj kompilacji Sklep Play, aby odblokować Pro, lub wesprze rozwój poprzez Patreon.
+    <string name="support_foss_only_donate">Umiejętności Rivo Pro są niedostępne w wersjach FOSS. Użyj kompilacji Sklep Play, aby odblokować Pro, lub wesprzeć rozwój poprzez Patreon.
 Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="support_custom_app_icon">Własna ikona aplikacji</string>
     <string name="support_custom_app_icon_desc">Wybierz preferowaną ikonę aplikacji</string>
@@ -1717,7 +1718,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_export_vcf">Eksportuj VCF</string>
     <string name="loc_vault_access_security">Dostęp do sejfu i bezpieczeństwo</string>
     <string name="loc_secret_dialpad_code">Sekretny kod klawiatury</string>
-    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Wpjsz kod %1$s na klawiaturze, aby szybko otworzyć prywatny sejf</string>
+    <string name="loc_dial_currentsecretcode_on_the_dialpad_to_quickly_open_private_vault">Wpisz kod %1$s na klawiaturze, aby szybko otworzyć prywatny sejf</string>
     <string name="loc_hide_from_settings">Ukryj w ustawieniach</string>
     <string name="loc_remove_private_storage_from_the_settings_menu_accessible_only_via_secr">Usuń pamięć prywatną z menu ustawień (dostępna tylko za pomocą tajnego kodu)</string>
     <string name="loc_pick_contacts_for_vault">Wybierz kontakty do sejfu</string>

@@ -401,6 +401,7 @@ Vit text</string>
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">Samtalsinspelning sparad</string>
     <string name="call_recording_deleted">Inspelning raderad</string>
     <!-- Video calling app picker -->

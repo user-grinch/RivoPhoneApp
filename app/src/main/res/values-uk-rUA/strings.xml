@@ -371,6 +371,7 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Номер голосової пошти вашого перевізника.</string>
     <!-- Settings > About -->
+    <string name="about_support">Підтримка</string>
     <string name="about_attributions_title">Спеціальні атрибути</string>
     <string name="about_third_party_libraries_title">Бібліотеки &amp; фреймворки</string>
     <string name="about_shizucallrecorder_title">Посилання на СідзуКаллек</string>
@@ -393,6 +394,7 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">Запис дзвінка збережено</string>
     <string name="call_recording_deleted">Запис видалено</string>
     <!-- Video calling app picker -->

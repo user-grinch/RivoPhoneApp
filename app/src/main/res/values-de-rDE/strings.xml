@@ -962,6 +962,7 @@ Weißer Text</string>
     <string name="action_stop_recording">Stop</string>
     <string name="call_recording_in_progress">Wird aufgenommen</string>
     <string name="call_recordings_title">Aufnahmen</string>
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recordings_supporting">Abspielen, Teilen oder Löschen von Aufnahmen</string>
     <string name="call_recordings_empty">Keine Aufnahmen</string>
     <string name="call_recordings_empty_description">Aufnahmen von Anrufen erscheinen hier.</string>

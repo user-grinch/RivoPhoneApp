@@ -836,6 +836,7 @@
     <string name="about_contributors_supporting">Команда разработчиков</string>
     <string name="about_patreon">Поддержите нас</string>
     <string name="about_patreon_supporting">Внести вклад в развитие проекта</string>
+    <string name="about_support">Поддержка</string>
     <string name="about_discord">Discord</string>
     <string name="about_discord_supporting">Присоединяйтесь к сообществу</string>
     <string name="about_source_code">Исходный код</string>
@@ -967,6 +968,7 @@
     <string name="action_stop_recording">Стоп</string>
     <string name="call_recording_in_progress">Запись</string>
     <string name="call_recordings_title">Идет запись</string>
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recordings_supporting">Воспроизведение, отправка или удаление сохраненных записей</string>
     <string name="call_recordings_empty">Нет записей</string>
     <string name="call_recordings_empty_description">Здесь будут появляться записи, сделанные во время звонков.</string>
