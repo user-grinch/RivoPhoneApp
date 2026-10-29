@@ -293,6 +293,8 @@ Text alb</string>
     <string name="dynamic_color">Culoare dinamică</string>
     <string name="enable_dynamic_color">Activează culoarea dinamică din imaginea de fundal</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Formă avatar ecran</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Alegeți forma pentru avatarul în apel</string>
     <string name="settings_interface_transition_zoom">Mareste</string>
     <string name="settings_interface_transition_stack">Stivă de adâncime</string>
     <string name="settings_avatar_style">Stil Avatar</string>
@@ -308,6 +310,9 @@ Text alb</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Difuzor automat</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Comutaţi la difuzor atunci când nu sunteţi în ureche, căşti în apropierea urechii (suprimate atunci când sunt conectate căşti)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Glisare verticală dublă</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Slider Orbital</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Slider Orbital</string>
     <string name="settings_call_dialpad_style_circle">Cerc</string>
     <string name="settings_call_dialpad_style_organic">Organic</string>
     <string name="settings_call_dialpad_style_outlined">Expediat</string>
@@ -402,6 +407,7 @@ Text alb</string>
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">Înregistrare apel salvată</string>
     <string name="call_recording_deleted">Înregistrare ștearsă</string>
     <!-- Video calling app picker -->

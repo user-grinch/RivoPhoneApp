@@ -401,6 +401,7 @@ Testo bianco</string>
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">Registrazione chiamata salvata</string>
     <string name="call_recording_deleted">Registrazione eliminata</string>
     <!-- Video calling app picker -->

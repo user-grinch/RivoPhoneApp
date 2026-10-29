@@ -377,6 +377,7 @@ Texto branco</string>
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">Número de acesso do correio de voz da sua operadora.</string>
     <!-- Settings > About -->
+    <string name="about_support">SUPORTE</string>
     <string name="about_attributions_title">Atribuições Especiais</string>
     <string name="about_third_party_libraries_title">Bibliotecas &amp; Frameworks</string>
     <string name="about_shizucallrecorder_title">Atribuição de CallRecorder</string>
@@ -398,6 +399,7 @@ Texto branco</string>
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">Gravação de chamada salva</string>
     <string name="call_recording_deleted">Gravação excluída</string>
     <!-- Video calling app picker -->

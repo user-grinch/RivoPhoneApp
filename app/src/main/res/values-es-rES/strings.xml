@@ -566,6 +566,8 @@ texto blanco</string>
     <string name="settings_interface_avatar_shape_burst">Soft Burst</string>
     <string name="settings_interface_call_screen_avatar">Avatar de la pantalla de llamada</string>
     <string name="settings_interface_call_screen_avatar_supporting">Mostrar imagen del contacto en la pantalla de llamada</string>
+    <string name="settings_interface_call_screen_avatar_shape">Forma del avatar de la pantalla de llamada</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Elige la forma para el avatar en llamada</string>
     <string name="settings_interface_show_dividers">Mostrar separadores</string>
     <string name="settings_interface_show_dividers_supporting">Mostrar líneas entre los elementos de la lista</string>
     <string name="settings_interface_expressive_cards">Utilizar tarjetas expresivas</string>
@@ -647,6 +649,9 @@ texto blanco</string>
     <string name="settings_call_incoming_ui_buttons">Botones</string>
     <string name="settings_call_incoming_ui_slide_ios">Deslizar para responder (iOS)</string>
     <string name="settings_call_incoming_ui_vertical_swipe">Deslizamiento vertical</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Deslizar doble vertical</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Slider orbital</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Slider orbital</string>
     <string name="settings_call_always_fullscreen">Ir siempre a pantalla completa</string>
     <string name="settings_call_always_fullscreen_supporting">Abrir llamadas entrantes en pantalla completa. Al desactivar, las llamadas se muestran como una notificación mientras usas otras aplicaciones.</string>
     <string name="settings_call_dialpad_style">Estilo del marcador</string>
@@ -962,6 +967,7 @@ texto blanco</string>
     <string name="action_stop_recording">Detener</string>
     <string name="call_recording_in_progress">Grabando</string>
     <string name="call_recordings_title">Grabaciones</string>
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recordings_supporting">Reproducir, compartir o eliminar grabaciones guardadas</string>
     <string name="call_recordings_empty">No hay grabaciones</string>
     <string name="call_recordings_empty_description">Las grabaciones que realices durante las llamadas aparecerán aquí.</string>

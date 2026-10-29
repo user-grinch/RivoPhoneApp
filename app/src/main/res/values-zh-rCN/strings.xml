@@ -530,6 +530,7 @@
     <!-- Settings > Voicemail -->
     <string name="settings_voicemail_number_hint">您的运营商的语音信箱访问号码。</string>
     <!-- Settings > About -->
+    <string name="about_support">支持</string>
     <string name="about_attributions_title">特殊属性</string>
     <string name="about_shizucallrecorder_title">ShizuCallRecorder 属性</string>
     <string name="about_shizucallrecorder_short_desc">通话录音引擎</string>
@@ -551,6 +552,7 @@
     <!-- Contact call screen background -->
     <!-- Call waiting -->
     <!-- Call recording -->
+    <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_saved">通话录制已保存</string>
     <string name="call_recording_deleted">录制已删除</string>
     <!-- Video calling app picker -->
