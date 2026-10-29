@@ -285,6 +285,8 @@
     <string name="dynamic_color">Динамічний колір</string>
     <string name="enable_dynamic_color">Увімкнути динамічний колір шпалер</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Форма аватара екрану</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Виберіть форму для аватара під час дзвінка</string>
     <string name="settings_interface_transition_zoom">Масштабування</string>
     <string name="settings_interface_transition_stack">Глибина стека</string>
     <string name="settings_avatar_style">Стиль Аватарів</string>
@@ -300,6 +302,16 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Автоматичний гучний зв\'язок</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Динамік при відхиленні від вуха, елементи у режимі навушників (придушується при підключенні навушників)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Подвійний вертикальний свайп</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Орбітальний слайдер</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Орбітальний слайдер</string>
+    <string name="call_action_reminder">Нагадування</string>
+    <string name="huawei_reminder">Нагадування</string>
+    <string name="settings_call_background_blur">Розмиття фонового зображення</string>
+    <string name="settings_call_background_blur_supporting">Застосувати м\'яке розмиття для довільних фонів виклику</string>
+    <string name="settings_call_background_blur_strength">Сила розмиття</string>
+    <string name="huawei_swipe_up_to_answer">Проведіть пальцем угору, щоб відповісти</string>
+    <string name="huawei_swipe_up_to_decline">Проведіть пальцем угору, щоб відхилити</string>
     <string name="settings_call_dialpad_style_circle">Коло</string>
     <string name="settings_call_dialpad_style_organic">Органіка</string>
     <string name="settings_call_dialpad_style_outlined">З контуром</string>
@@ -395,6 +407,41 @@
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Як налаштувати</string>
+    <string name="call_recording_compact_intro">Android обмежує запис звуку дистанційного виклику. Shizuku дозволяє підняти доступ ADB для доступу до ясного двостороння виклику без root.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">З Play Store чи офіційного сайту</string>
+    <string name="call_recording_step2_compact_title">Запустити службу</string>
+    <string name="call_recording_step2_compact_desc">Віа Бездротова налагодження у параметрах розробника</string>
+    <string name="call_recording_step3_compact_title">Авторизувати Rivo</string>
+    <string name="call_recording_step3_compact_desc">Дозволити підвищений ADB аудіозапис</string>
+    <string name="call_recording_ready_banner_desc">Запис дзвінка повністю налаштований та активний.</string>
+    <string name="call_recording_restrictions_title">Обмеження конфіденційності Android</string>
+    <string name="call_recording_restrictions_desc">На сучасному Android (9, 10, 11+), Google блокує сторонні програми від запису внутрішнього звуку виклику. Стандартний мікрофон може записувати тільки голос , залишивши слабке місце абонента або повністю без звуку.</string>
+    <string name="call_recording_shizuku_solution_title">Рішення Shizuku (2-шляхове аудіо)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku надає Rivo підвищений дозвіл на доступ до ADB-рівня без необхідного кореня. Це дозволяє запис в кристалі очистці та ручне двостороннє аудіо безпосередньо в системі.</string>
+    <string name="call_recording_setup_guide_title">Як налаштувати Shizuku (3 кроки)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Завантажте безкоштовний додаток Shizuku з Google Play або офіційний сайт.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">На Android 11+, починайте через бездротове налагодження в параметрах розробника (не потребує ПК). На Android 10 або на старшому сервері, під’єднайтеся до комп\'ютера через USB. Для пристроїв натисніть \"Запускати безпосередньо.</string>
+    <string name="call_recording_step3_title">3. Надати дозвіл Ріво</string>
+    <string name="call_recording_step3_desc">Відкрийте Shizuku -&gt; Авторизовані програми -&gt; увімкніть Rivo Phone, або натисніть кнопку нижче.</string>
+    <string name="call_recording_status_title">Поточний статус</string>
+    <string name="call_recording_status_ready">Двостороння аудіо готове</string>
+    <string name="call_recording_status_needs_perm">Потрібен дозвіл</string>
+    <string name="call_recording_status_stopped">Служба зупинена</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Послуга Сідзуку</string>
+    <string name="call_recording_status_permission">Авторизація в Ріво</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Надати право</string>
+    <string name="call_recording_action_guide">Онлайн Інструкція зі встановлення</string>
+    <string name="call_recording_action_active">2-канальний аудіо активний</string>
+    <string name="call_recording_action_got_it">Зрозуміло</string>
+    <string name="call_recording_tile_details">Подробиці</string>
     <string name="call_recording_saved">Запис дзвінка збережено</string>
     <string name="call_recording_deleted">Запис видалено</string>
     <!-- Video calling app picker -->

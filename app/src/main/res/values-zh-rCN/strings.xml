@@ -444,6 +444,8 @@
     <string name="dynamic_color">动态颜色</string>
     <string name="enable_dynamic_color">启用壁纸中的动态颜色</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">调用屏幕头像形状</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">选择调用头像的形状</string>
     <string name="settings_interface_transition_zoom">缩放</string>
     <string name="settings_interface_transition_stack">深度应用</string>
     <string name="settings_avatar_style">头像样式</string>
@@ -459,6 +461,16 @@
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">自动扬声器</string>
     <string name="settings_call_auto_speaker_proximity_supporting">离开耳朵时切换到扬声器，靠近耳机时的耳机(耳机连接时被抑制)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">双向垂直滑动</string>
+    <string name="settings_call_incoming_ui_orbital_slider">轨道滑块</string>
+    <string name="settings_call_incoming_ui_huawei_ring">轨道滑块</string>
+    <string name="call_action_reminder">提醒</string>
+    <string name="huawei_reminder">提醒</string>
+    <string name="settings_call_background_blur">模糊背景图像</string>
+    <string name="settings_call_background_blur_supporting">将软模糊应用于自定义通话背景</string>
+    <string name="settings_call_background_blur_strength">模糊强度</string>
+    <string name="huawei_swipe_up_to_answer">向上滑动以答案</string>
+    <string name="huawei_swipe_up_to_decline">向上滑动以拒绝</string>
     <string name="settings_call_dialpad_style_circle">圆圈</string>
     <string name="settings_call_dialpad_style_organic">有机的</string>
     <string name="settings_call_dialpad_style_outlined">外观</string>
@@ -553,6 +565,42 @@
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">如何设置</string>
+    <string name="call_recording_how_it_works_subtitle">Android 限制 &amp; Shizuku 双向音频设置</string>
+    <string name="call_recording_compact_intro">Android 限制录制远程呼叫者音频。Shizuku允许更高版本的 ADB 访问权限在没有root的情况下捕获清晰的双向呼叫音频。</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">从 Play 商店或官方网站</string>
+    <string name="call_recording_step2_compact_title">开始服务</string>
+    <string name="call_recording_step2_compact_desc">通过开发者选项中的无线调试</string>
+    <string name="call_recording_step3_compact_title">授权 Rivo</string>
+    <string name="call_recording_step3_compact_desc">允许 ADB 音频录制</string>
+    <string name="call_recording_ready_banner_desc">双向通话录制已配置完备且正在运行。</string>
+    <string name="call_recording_restrictions_title">Android 隐私限制</string>
+    <string name="call_recording_restrictions_desc">在现代Android (9, 10, 11+), Google 会阻止第三方应用程序录制内部语音。 标准麦克风录制只能听到您的声音，让其他打电话者变得很弱或完全静音。</string>
+    <string name="call_recording_shizuku_solution_title">Shizuku解决方案(2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku在无需root的情况下授予Rivo更高的ADB级权限。这使得能够直接从系统捕获水晶清晰、原始的双向音频。</string>
+    <string name="call_recording_setup_guide_title">如何设置Shizuku (3 步进)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">从 Google Play 或官方网站下载免费开源的 Shizuku 应用程序。</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">在 Android 11+ 上，通过开发者选项中的无线调试启动 (不需要 PC )。 在 Android 10 或更高版本上，通过 USB 连接到PC 一次。当已Root的设备上，点击开始直接。</string>
+    <string name="call_recording_step3_title">3. 授予Rivo 权限</string>
+    <string name="call_recording_step3_desc">打开 Shizuku -&gt; 授权应用程序 -&gt; 启用 Rivo Phone，或点击下面的按钮。</string>
+    <string name="call_recording_status_title">当前状态</string>
+    <string name="call_recording_status_ready">双向音频已就绪</string>
+    <string name="call_recording_status_needs_perm">需要权限</string>
+    <string name="call_recording_status_stopped">服务已停止</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku 服务</string>
+    <string name="call_recording_status_permission">Rivo 授权</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">授予权限</string>
+    <string name="call_recording_action_guide">在线安装指南</string>
+    <string name="call_recording_action_active">2-路径音频激活</string>
+    <string name="call_recording_action_got_it">明白了</string>
+    <string name="call_recording_tile_details">详细信息</string>
     <string name="call_recording_saved">通话录制已保存</string>
     <string name="call_recording_deleted">录制已删除</string>
     <!-- Video calling app picker -->

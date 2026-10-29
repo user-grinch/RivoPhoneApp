@@ -292,6 +292,8 @@ Testo bianco</string>
     <string name="dynamic_color">Colore Dinamico</string>
     <string name="enable_dynamic_color">Abilita colore dinamico dallo sfondo</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Chiama forma avatar schermo</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Scegli la forma per l\'avatar in chiamata</string>
     <string name="settings_interface_transition_zoom">Zoom</string>
     <string name="settings_interface_transition_stack">Pila Di Profondità</string>
     <string name="settings_avatar_style">Stile Avatar</string>
@@ -307,6 +309,16 @@ Testo bianco</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Altoparlante Automatico</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Passare all\'altoparlante quando lontano dall\'orecchio, auricolare quando vicino all\'orecchio (soppresso quando le cuffie si sono collegate)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Doppio Scorrimento Verticale</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Cursore Orbitale</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Cursore Orbitale</string>
+    <string name="call_action_reminder">Promemoria</string>
+    <string name="huawei_reminder">Promemoria</string>
+    <string name="settings_call_background_blur">Sfoca immagine di sfondo</string>
+    <string name="settings_call_background_blur_supporting">Applica una sfocatura morbida agli sfondi di chiamata personalizzati</string>
+    <string name="settings_call_background_blur_strength">Resistenza sfocatura</string>
+    <string name="huawei_swipe_up_to_answer">Scorri verso l\'alto per rispondere</string>
+    <string name="huawei_swipe_up_to_decline">Scorri verso l\'alto per declinare</string>
     <string name="settings_call_dialpad_style_circle">Cerchio</string>
     <string name="settings_call_dialpad_style_organic">Organico</string>
     <string name="settings_call_dialpad_style_outlined">Contornato</string>
@@ -402,6 +414,42 @@ Testo bianco</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Come configurare</string>
+    <string name="call_recording_how_it_works_subtitle">Restrizioni Android &amp; Configurazione audio a 2 vie Shizuku</string>
+    <string name="call_recording_compact_intro">Android limita la registrazione audio del chiamante remoto. Shizuku consente un elevato accesso ADB per catturare un chiaro audio a 2 vie senza root.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Dal Play Store o dal sito ufficiale</string>
+    <string name="call_recording_step2_compact_title">Avvia Servizio</string>
+    <string name="call_recording_step2_compact_desc">Mediante il debug wireless nelle opzioni sviluppatore</string>
+    <string name="call_recording_step3_compact_title">Autorizza Rivo</string>
+    <string name="call_recording_step3_compact_desc">Consenti una registrazione audio ADB elevata</string>
+    <string name="call_recording_ready_banner_desc">La registrazione delle chiamate a 2 vie è completamente configurata e attiva.</string>
+    <string name="call_recording_restrictions_title">Restrizioni Privacy Android</string>
+    <string name="call_recording_restrictions_desc">Su Android moderno (9, 10, 11+), Google blocca le applicazioni di terze parti dalla registrazione audio interno. La registrazione del microfono standard può solo sentire la voce, lasciando debole l\'altro chiamante o completamente silenzioso.</string>
+    <string name="call_recording_shizuku_solution_title">La Soluzione Shizuku (2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku concede a Rivo permessi di livello ADB elevati senza bisogno di root. Questo consente di catturare l\'audio cristallino, incontaminato a due vie direttamente dal sistema.</string>
+    <string name="call_recording_setup_guide_title">Come impostare Shizuku (3 passaggi)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Scarica l\'app gratuita e open-source Shizuku da Google Play o dal sito ufficiale.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Su Android 11+, inizia tramite il debug wireless in Opzioni sviluppatore (nessun PC richiesto). Su Android 10 o più vecchio, connettersi una volta a un PC tramite USB. Sui dispositivi rootati, toccare Avvia direttamente.</string>
+    <string name="call_recording_step3_title">3. Concedi il permesso a Rivo</string>
+    <string name="call_recording_step3_desc">Apri Shizuku -&gt; Applicazioni Autorizzate -&gt; abilita Rivo Phone, o tocca il pulsante qui sotto.</string>
+    <string name="call_recording_status_title">Stato Attuale</string>
+    <string name="call_recording_status_ready">Audio 2-Way Pronto</string>
+    <string name="call_recording_status_needs_perm">Permesso Necessario</string>
+    <string name="call_recording_status_stopped">Servizio Fermato</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Servizio Shizuku</string>
+    <string name="call_recording_status_permission">Autorizzazione Rivo</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Concedi Il Permesso</string>
+    <string name="call_recording_action_guide">Guida All\'Installazione Online</string>
+    <string name="call_recording_action_active">Audio 2-Way Attivo</string>
+    <string name="call_recording_action_got_it">Ho capito</string>
+    <string name="call_recording_tile_details">Dettagli</string>
     <string name="call_recording_saved">Registrazione chiamata salvata</string>
     <string name="call_recording_deleted">Registrazione eliminata</string>
     <!-- Video calling app picker -->

@@ -292,6 +292,8 @@ Hvid tekst</string>
     <string name="dynamic_color">Dynamisk Farve</string>
     <string name="enable_dynamic_color">Aktivér dynamisk farve fra baggrund</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Formular til skærmavatar</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Vælg formen for avataren under opkald</string>
     <string name="settings_interface_transition_zoom">Zoom</string>
     <string name="settings_interface_transition_stack">Dybde Stak</string>
     <string name="settings_avatar_style">Avatar Stil</string>
@@ -307,6 +309,16 @@ Hvid tekst</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk Højttalertelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Skift til højttaler, når den er væk fra øret, øreemnet når nær øret (undertrykket, når hovedtelefoner er tilsluttet)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Dobbelt Lodret Stryg</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbital Slider</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbital Slider</string>
+    <string name="call_action_reminder">Påmindelse</string>
+    <string name="huawei_reminder">Påmindelse</string>
+    <string name="settings_call_background_blur">Slør baggrundsbillede</string>
+    <string name="settings_call_background_blur_supporting">Anvend en blød sløring til brugerdefinerede opkaldsbaggrunde</string>
+    <string name="settings_call_background_blur_strength">Sløring styrke</string>
+    <string name="huawei_swipe_up_to_answer">Glid op for at svare</string>
+    <string name="huawei_swipe_up_to_decline">Glid op for at falde</string>
     <string name="settings_call_dialpad_style_circle">Cirkel</string>
     <string name="settings_call_dialpad_style_organic">Økologisk</string>
     <string name="settings_call_dialpad_style_outlined">Gennemstreget</string>
@@ -402,6 +414,42 @@ Hvid tekst</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Sådan opsætter du</string>
+    <string name="call_recording_how_it_works_subtitle">Android begrænsninger &amp; Shizuku 2-vejs lydopsætning</string>
+    <string name="call_recording_compact_intro">Android begrænser optagelse fjernopkald lyd. Shizuku giver forhøjet ADB adgang til at fange klar 2-vejs opkald lyd uden rod.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Fra Play Butik eller officielle hjemmeside</string>
+    <string name="call_recording_step2_compact_title">Start Service</string>
+    <string name="call_recording_step2_compact_desc">Via trådløs fejlfinding i udviklerindstillinger</string>
+    <string name="call_recording_step3_compact_title">Godkend Rivo</string>
+    <string name="call_recording_step3_compact_desc">Tillad forhøjet ADB lyd optagelse</string>
+    <string name="call_recording_ready_banner_desc">2-vejs opkald optagelse er fuldt konfigureret og aktiv.</string>
+    <string name="call_recording_restrictions_title">Android Privacy Restriktioner</string>
+    <string name="call_recording_restrictions_desc">På moderne Android (9, 10, 11+) blokerer Google tredjepartsapps fra optagelse af intern opkaldslyd. Standard mikrofon optagelse kan kun høre din stemme, forlader den anden opkalder svag eller helt lydløs.</string>
+    <string name="call_recording_shizuku_solution_title">Shizuku Løsningen (2-vejs Lyd)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku giver Rivo forhøjede ADB-niveau tilladelser uden at behøve root. Dette gør det muligt at fange krystalklar, uberørt to-vejs lyd direkte fra systemet.</string>
+    <string name="call_recording_setup_guide_title">Sådan opsættes Shizuku (3 trin)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Download den gratis, open source Shizuku app fra Google Play eller den officielle hjemmeside.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">På Android 11+, start via trådløs fejlretning i udviklerindstillinger (ingen pc påkrævet). På Android 10 eller ældre skal du oprette forbindelse én gang til en pc via USB. På rootede enheder skal du trykke på Start direkte.</string>
+    <string name="call_recording_step3_title">3. Tildel tilladelse til Rivo</string>
+    <string name="call_recording_step3_desc">Åbn Shizuku -&gt; Autoriserede programmer -&gt; aktiver Rivo Phone, eller tryk på knappen nedenfor.</string>
+    <string name="call_recording_status_title">Nuværende Status</string>
+    <string name="call_recording_status_ready">2-vejs Lyd Klar</string>
+    <string name="call_recording_status_needs_perm">Tilladelse Nødvendig</string>
+    <string name="call_recording_status_stopped">Tjeneste Stoppet</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku Service</string>
+    <string name="call_recording_status_permission">Rivo Godkendelse</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Giv Tilladelse</string>
+    <string name="call_recording_action_guide">Online Setup Guide</string>
+    <string name="call_recording_action_active">2-vejs Lyd Aktiv</string>
+    <string name="call_recording_action_got_it">Fik det</string>
+    <string name="call_recording_tile_details">Detaljer</string>
     <string name="call_recording_saved">Opkaldsoptagelse gemt</string>
     <string name="call_recording_deleted">Optagelse slettet</string>
     <!-- Video calling app picker -->

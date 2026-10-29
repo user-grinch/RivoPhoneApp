@@ -292,6 +292,8 @@ witte tekst</string>
     <string name="dynamic_color">Dynamische kleur</string>
     <string name="enable_dynamic_color">Activeer dynamische kleur van achtergrond</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Oproepscherm avatar vorm</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Kies de vorm van de avatar in gesprek</string>
     <string name="settings_interface_transition_zoom">Inzoomen</string>
     <string name="settings_interface_transition_stack">Diepte Stack</string>
     <string name="settings_avatar_style">Avatar stijl</string>
@@ -307,6 +309,16 @@ witte tekst</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatische luidspreker</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Schakel over naar de luidspreker wanneer weg van oor, oortelefoon wanneer dichtbij oor staat (onderdrukt wanneer een koptelefoon is aangesloten)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Dubbele verticale veeg</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Orbitale slider</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Orbitale slider</string>
+    <string name="call_action_reminder">Herinnering</string>
+    <string name="huawei_reminder">Herinnering</string>
+    <string name="settings_call_background_blur">Achtergrondafbeelding vervagen</string>
+    <string name="settings_call_background_blur_supporting">Een zachte vervaging toepassen op aangepaste gespreksachtergronden</string>
+    <string name="settings_call_background_blur_strength">Vervaag sterkte</string>
+    <string name="huawei_swipe_up_to_answer">Veeg omhoog om te antwoorden</string>
+    <string name="huawei_swipe_up_to_decline">Veeg omhoog om te weigeren</string>
     <string name="settings_call_dialpad_style_circle">Cirkel</string>
     <string name="settings_call_dialpad_style_organic">Biologisch</string>
     <string name="settings_call_dialpad_style_outlined">Omlijnd</string>
@@ -402,6 +414,42 @@ witte tekst</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Hoe te configureren</string>
+    <string name="call_recording_how_it_works_subtitle">Android restricties &amp; Shizuku 2-way audio setup</string>
+    <string name="call_recording_compact_intro">Android beperkt de opname van externe beller audio. Shizuku maakt verhoogde ADB toegang mogelijk om zonder root in 2 richtingen gespreksgeluid op te nemen.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Van Play Store of officiële site</string>
+    <string name="call_recording_step2_compact_title">Service starten</string>
+    <string name="call_recording_step2_compact_desc">Via Draadloze Debugging in de opties voor ontwikkelaars</string>
+    <string name="call_recording_step3_compact_title">Rivo autoriseren</string>
+    <string name="call_recording_step3_compact_desc">Hoogte ADB audio-opname toestaan</string>
+    <string name="call_recording_ready_banner_desc">2-weg gespreksopname is volledig geconfigureerd en actief.</string>
+    <string name="call_recording_restrictions_title">Android Privacy Beperkingen</string>
+    <string name="call_recording_restrictions_desc">Op moderne Android (9, 10, 11+) blokkeert Google apps van derden om interne oproepen audio op te nemen. Standaard microfoon opname kan alleen je stem horen, de andere beller vervaagd of volledig stilzwijgen.</string>
+    <string name="call_recording_shizuku_solution_title">De Shizuku oplossing (2-weg Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku verleent Rivo verhoogde machtigingen op ADB-niveau zonder dat ze root nodig hebben. Dit maakt het vastleggen van kristal-clear en pristine audio rechtstreeks vanuit het systeem mogelijk.</string>
+    <string name="call_recording_setup_guide_title">Hoe Shizuku instellen (3 stappen)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Download de gratis, open-source Shizuku app van Google Play of de officiële website.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Op Android 11+, start via Draadloze Debugging in Opties voor Ontwikkelaar (geen pc vereist). Op Android 10 of ouder verbindt u eenmalig met een PC via USB. Tik op Start op \'Starten\'.</string>
+    <string name="call_recording_step3_title">3. Toestemming verlenen aan Rivo</string>
+    <string name="call_recording_step3_desc">Open Shizuku -&gt; Geautoriseerde toepassingen -&gt; schakel Rivo telefoon in, of klik op de knop hieronder.</string>
+    <string name="call_recording_status_title">Huidige status</string>
+    <string name="call_recording_status_ready">2-weg audio klaar</string>
+    <string name="call_recording_status_needs_perm">Machtiging vereist</string>
+    <string name="call_recording_status_stopped">Service gestopt</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Shizuku service</string>
+    <string name="call_recording_status_permission">Rivo Autorisatie</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Toestemming verlenen</string>
+    <string name="call_recording_action_guide">Online installatiehandleiding</string>
+    <string name="call_recording_action_active">2-weg audio actief</string>
+    <string name="call_recording_action_got_it">Ik snap het</string>
+    <string name="call_recording_tile_details">Beschrijving</string>
     <string name="call_recording_saved">Oproepopname opgeslagen</string>
     <string name="call_recording_deleted">Opname verwijderd</string>
     <!-- Video calling app picker -->

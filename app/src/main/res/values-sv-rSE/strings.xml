@@ -292,6 +292,8 @@ Vit text</string>
     <string name="dynamic_color">Dynamisk färg</string>
     <string name="enable_dynamic_color">Aktivera dynamisk färg från bakgrundsbild</string>
     <!-- Settings > Interface -->
+    <string name="settings_interface_call_screen_avatar_shape">Forma anropsskärmens avatar</string>
+    <string name="settings_interface_call_screen_avatar_shape_supporting">Välj form för inkommande avatar</string>
     <string name="settings_interface_transition_zoom">Zooma</string>
     <string name="settings_interface_transition_stack">Djup stapel</string>
     <string name="settings_avatar_style">Avatar stil</string>
@@ -307,6 +309,16 @@ Vit text</string>
     <!-- Settings > Call accounts -->
     <string name="settings_call_auto_speaker_proximity">Automatisk högtalartelefon</string>
     <string name="settings_call_auto_speaker_proximity_supporting">Växla till högtalare när du är borta från örat, öronsnöre när du är nära örat (dämpad när hörlurar är anslutna)</string>
+    <string name="settings_call_incoming_ui_dual_swipe">Dubbla vertikala svep</string>
+    <string name="settings_call_incoming_ui_orbital_slider">Omloppsbana matare</string>
+    <string name="settings_call_incoming_ui_huawei_ring">Omloppsbana matare</string>
+    <string name="call_action_reminder">Påminnelse</string>
+    <string name="huawei_reminder">Påminnelse</string>
+    <string name="settings_call_background_blur">Oskärpa bakgrundsbild</string>
+    <string name="settings_call_background_blur_supporting">Tillämpa en mjuk oskärpa på anpassade samtal bakgrunder</string>
+    <string name="settings_call_background_blur_strength">Oskärpa styrka</string>
+    <string name="huawei_swipe_up_to_answer">Svep uppåt för att svara</string>
+    <string name="huawei_swipe_up_to_decline">Glid upp för att avböja</string>
     <string name="settings_call_dialpad_style_circle">Cirkel</string>
     <string name="settings_call_dialpad_style_organic">Organisk</string>
     <string name="settings_call_dialpad_style_outlined">Konturerad</string>
@@ -402,6 +414,42 @@ Vit text</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Hur man ställer in</string>
+    <string name="call_recording_how_it_works_subtitle">Android begränsningar &amp; Shizuku 2-vägs ljudinställning</string>
+    <string name="call_recording_compact_intro">Android begränsar inspelningen av fjärrsamtalsljud. Shizuku möjliggör förhöjd ADB-åtkomst för att fånga klart 2-vägs samtalsljud utan rot.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Från Play Store eller officiell sajt</string>
+    <string name="call_recording_step2_compact_title">Starta tjänst</string>
+    <string name="call_recording_step2_compact_desc">Via trådlös felsökning i utvecklaralternativ</string>
+    <string name="call_recording_step3_compact_title">Auktorisera Rivo</string>
+    <string name="call_recording_step3_compact_desc">Tillåt förhöjd ADB-ljudinspelning</string>
+    <string name="call_recording_ready_banner_desc">2-vägs samtalsinspelning är fullt konfigurerad och aktiv.</string>
+    <string name="call_recording_restrictions_title">Androids sekretessbegränsningar</string>
+    <string name="call_recording_restrictions_desc">På moderna Android (9, 10, 11+), Google blockerar appar från tredje part från att spela in internt samtalsljud. Standardmikrofoninspelning kan bara höra din röst, vilket gör att den andra ringer svagt eller helt tyst.</string>
+    <string name="call_recording_shizuku_solution_title">Shizuku-lösningen (2-vägs ljud)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku beviljar Rivo förhöjda ADB-nivåbehörigheter utan att behöva rot. Detta gör det möjligt att fånga kristallklara, orörda tvåvägsljud direkt från systemet.</string>
+    <string name="call_recording_setup_guide_title">Hur man ställer in Shizuku (3 steg)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Ladda ner den kostnadsfria Shizuku-appen med öppen källkod från Google Play eller den officiella hemsidan.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">På Android 11+, starta via trådlös felsökning i utvecklaralternativ (ingen PC krävs). På Android 10 eller äldre, anslut en gång till en dator via USB. På rotade enheter trycker du på Starta direkt.</string>
+    <string name="call_recording_step3_title">3. Bevilja tillstånd till Rivo</string>
+    <string name="call_recording_step3_desc">Öppna Shizuku -&gt; Auktoriserade program -&gt; aktivera Rivo-telefon, eller tryck på knappen nedan.</string>
+    <string name="call_recording_status_title">Nuvarande status</string>
+    <string name="call_recording_status_ready">2-vägs ljud redo</string>
+    <string name="call_recording_status_needs_perm">Behörighet krävs</string>
+    <string name="call_recording_status_stopped">Tjänsten avbröts</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Tjänsten Shizuku</string>
+    <string name="call_recording_status_permission">Rivo auktorisering</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Bevilja tillstånd</string>
+    <string name="call_recording_action_guide">Installationsguide online</string>
+    <string name="call_recording_action_active">2-vägs ljud aktivt</string>
+    <string name="call_recording_action_got_it">Jag fattar</string>
+    <string name="call_recording_tile_details">Detaljer</string>
     <string name="call_recording_saved">Samtalsinspelning sparad</string>
     <string name="call_recording_deleted">Inspelning raderad</string>
     <!-- Video calling app picker -->

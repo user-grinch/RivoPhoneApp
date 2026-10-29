@@ -313,6 +313,13 @@ Text alb</string>
     <string name="settings_call_incoming_ui_dual_swipe">Glisare verticală dublă</string>
     <string name="settings_call_incoming_ui_orbital_slider">Slider Orbital</string>
     <string name="settings_call_incoming_ui_huawei_ring">Slider Orbital</string>
+    <string name="call_action_reminder">Memento</string>
+    <string name="huawei_reminder">Memento</string>
+    <string name="settings_call_background_blur">Blur imagine de fundal</string>
+    <string name="settings_call_background_blur_supporting">Aplică o blur moale pentru fundaluri de apel personalizate</string>
+    <string name="settings_call_background_blur_strength">Putere încețoșare</string>
+    <string name="huawei_swipe_up_to_answer">Glisați în sus pentru a răspunde</string>
+    <string name="huawei_swipe_up_to_decline">Glisați în sus pentru a refuza</string>
     <string name="settings_call_dialpad_style_circle">Cerc</string>
     <string name="settings_call_dialpad_style_organic">Organic</string>
     <string name="settings_call_dialpad_style_outlined">Expediat</string>
@@ -408,6 +415,42 @@ Text alb</string>
     <!-- Call waiting -->
     <!-- Call recording -->
     <!-- Call Recording How It Works & Shizuku Guide -->
+    <string name="call_recording_how_it_works_title">Cum se configurează</string>
+    <string name="call_recording_how_it_works_subtitle">Restricții Android &amp; Shizuku configurare audio în două direcții</string>
+    <string name="call_recording_compact_intro">Android restricționează înregistrarea audio a apelantului de la distanță. Shizuku permite accesul ADB crescut la captarea audio cu două căi, fără root.</string>
+    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_desc">Din Magazinul Play sau site-ul oficial</string>
+    <string name="call_recording_step2_compact_title">Începe serviciul</string>
+    <string name="call_recording_step2_compact_desc">Prin depanare Wireless în opțiunile dezvoltatorului</string>
+    <string name="call_recording_step3_compact_title">Autorizează Rivo</string>
+    <string name="call_recording_step3_compact_desc">Permiteți înregistrarea audio ADB ridicată</string>
+    <string name="call_recording_ready_banner_desc">Înregistrarea în două direcții a apelului este complet configurată și activă.</string>
+    <string name="call_recording_restrictions_title">Restricții de confidențialitate Android</string>
+    <string name="call_recording_restrictions_desc">Pe Android modern (9, 10, 11+), Google blochează aplicațiile terțe de la înregistrarea apelurilor interne. Înregistrarea standard a microfonului vă poate auzi doar vocea, lăsând celălalt apelant lejer sau complet silențios.</string>
+    <string name="call_recording_shizuku_solution_title">Soluția Shizuku (2-Way Audio)</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku acordă permisiuni crescute ale nivelului ADB Rivo fără a avea nevoie de root. Acest lucru permite capturarea de cristal-clear şi pristine audio bidirecţional direct din sistem.</string>
+    <string name="call_recording_setup_guide_title">Cum se configurează Shizuku (3 pași)</string>
+    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_desc">Descarcă aplicația gratuită Shizuku de pe Google Play sau de pe site-ul oficial.</string>
+    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_desc">Pe Android 11+, începeți prin Wireless Debugging în Developer Options (nu este necesar PC). Pe Android 10 sau mai vechi, conectați o dată la un PC prin USB. Pe dispozitive rootate, apăsați butonul Pornire direct.</string>
+    <string name="call_recording_step3_title">3. Acordă permisiunea pentru Rivo</string>
+    <string name="call_recording_step3_desc">Deschide Shizuku -&gt; Aplicații autorizate -&gt; activează Telefonul Rivo, sau apasă butonul de mai jos.</string>
+    <string name="call_recording_status_title">Starea curentă</string>
+    <string name="call_recording_status_ready">2-Calea audio gata</string>
+    <string name="call_recording_status_needs_perm">Permisiune necesară</string>
+    <string name="call_recording_status_stopped">Serviciu oprit</string>
+    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
+    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_service">Serviciu Shizuku</string>
+    <string name="call_recording_status_permission">Autorizarea Rivo</string>
+    <string name="call_recording_action_install">Install Shizuku</string>
+    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_grant">Acordă permisiuni</string>
+    <string name="call_recording_action_guide">Ghid de configurare online</string>
+    <string name="call_recording_action_active">Sunet 2-Calea Activ</string>
+    <string name="call_recording_action_got_it">Am înțeles</string>
+    <string name="call_recording_tile_details">Detalii</string>
     <string name="call_recording_saved">Înregistrare apel salvată</string>
     <string name="call_recording_deleted">Înregistrare ștearsă</string>
     <!-- Video calling app picker -->
