@@ -258,6 +258,7 @@ class PreferenceManager(context: Context) {
         setBottomNavOrder(DEFAULT_BOTTOM_NAV_ORDER)
         setHiddenBottomNavTabs(emptySet())
         setBoolean(KEY_FLIP_BOTTOM_NAV, false)
+        setInt(KEY_DEFAULT_BOTTOM_NAV, TAB_RECENTS)
     }
 
     fun contactBackgroundIdKey(contactId: String): String {
@@ -516,6 +517,7 @@ class PreferenceManager(context: Context) {
         const val KEY_GROUP_CALL_LOGS = "group_call_logs"
         const val KEY_DIALPAD_LAYOUT = "dialpad_layout_style"
         const val KEY_AVATAR_SHAPE = "avatar_shape"
+        const val KEY_CALL_SCREEN_AVATAR_SHAPE = "call_screen_avatar_shape"
         const val KEY_SWIPE_TO_CALL = "swipe_to_call"
         const val KEY_DIALPAD_VIBRATION_STRENGTH = "dialpad_vibration_strength"
         const val KEY_DTMF_TONE_VOLUME = "dtmf_tone_volume"
@@ -530,6 +532,8 @@ class PreferenceManager(context: Context) {
         const val KEY_SHOW_CARDS = "show_cards"
         const val KEY_SHOW_CALL_SCREEN_AVATAR = "show_call_screen_avatar"
         const val KEY_HIDE_AVATAR_WITH_BACKGROUND = "hide_avatar_with_background"
+        const val KEY_CALL_BACKGROUND_BLUR = "call_background_blur"
+        const val KEY_CALL_BACKGROUND_BLUR_STRENGTH = "call_background_blur_strength"
         const val KEY_CARD_ROUNDNESS = "card_roundness"
         const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
         const val KEY_PERMISSION_POPUP_SHOWN = "permission_popup_shown"
@@ -774,7 +778,8 @@ class PreferenceManager(context: Context) {
             KEY_CALL_ANALYTICS_TRACKING to true,
             KEY_SHOW_CONTACT_MANAGEMENT_CARD to true,
             KEY_SHOW_COUNTRY_CODE to true,
-            KEY_GROUP_CALL_LOGS to true
+            KEY_GROUP_CALL_LOGS to true,
+            KEY_CALL_BACKGROUND_BLUR to false
         )
 
         fun getKnownDefaultFloats(): Map<String, Float> = mapOf(
@@ -794,7 +799,9 @@ class PreferenceManager(context: Context) {
             KEY_CALL_LOG_GROUPING to 0,
             KEY_DIALPAD_LAYOUT to 0,
             KEY_AVATAR_SHAPE to 0,
+            KEY_CALL_SCREEN_AVATAR_SHAPE to 20,
             KEY_CARD_ROUNDNESS to 24,
+            KEY_CALL_BACKGROUND_BLUR_STRENGTH to 25,
             KEY_DIALPAD_VIBRATION_STRENGTH to 2,
             KEY_DTMF_TONE_VOLUME to 80,
             KEY_SEARCH_MATCH_MODE to 0,

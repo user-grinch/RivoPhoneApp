@@ -1,4 +1,9 @@
 package com.grinch.rivo4.view.screen.settings
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.grinch.rivo4.controller.permission.PermissionChecklistHelper
+import com.grinch.rivo4.controller.shizuku.ShizukuConnectionManager
 import com.grinch.rivo4.view.components.WavyAudioSlider
 import com.grinch.rivo4.view.theme.LocalCardRoundness
 import com.grinch.rivo4.view.theme.rivoCornerDp
@@ -20,11 +25,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +42,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.*
@@ -178,6 +186,31 @@ fun CallRecordingsContent(
     var isLoadingRecordings by remember { mutableStateOf(true) }
 
     var showingRecordingsList by remember { mutableStateOf(initialShowList) }
+    var showHowItWorksDialog by remember { mutableStateOf(false) }
+    var shizukuCheckTrigger by remember { mutableIntStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                shizukuCheckTrigger++
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    val isShizukuInstalled = remember(shizukuCheckTrigger) {
+        PermissionChecklistHelper.isShizukuInstalled(context)
+    }
+    val isShizukuRunning = remember(shizukuCheckTrigger) {
+        PermissionChecklistHelper.isShizukuRunning()
+    }
+    val hasShizukuPermission = remember(shizukuCheckTrigger) {
+        PermissionChecklistHelper.hasShizukuPermission(context)
+    }
 
     // Settings state
     var autoRecordEnabled by remember {
@@ -454,22 +487,42 @@ fun CallRecordingsContent(
                         }
                     },
                     actions = {
-                        if (showingRecordingsList) {
-                            if (filteredRecordings.isNotEmpty()) {
-                                IconButton(onClick = { showDeleteAllConfirm = true }) {
+                        Surface(
+                            onClick = { refreshKey++ },
+                            shape = RoundedCornerShape(14.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(end = if (showingRecordingsList && filteredRecordings.isNotEmpty()) 8.dp else 12.dp)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Refresh,
+                                    contentDescription = stringResource(R.string.loc_refresh),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        if (showingRecordingsList && filteredRecordings.isNotEmpty()) {
+                            Surface(
+                                onClick = { showDeleteAllConfirm = true },
+                                shape = RoundedCornerShape(14.dp),
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                                modifier = Modifier.padding(end = 12.dp)
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.size(40.dp)
+                                ) {
                                     Icon(
                                         imageVector = Icons.Outlined.DeleteSweep,
                                         contentDescription = stringResource(R.string.loc_delete_all),
-                                        tint = MaterialTheme.colorScheme.error
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
-                            }
-                        } else {
-                            IconButton(onClick = { refreshKey++ }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Refresh,
-                                    contentDescription = stringResource(R.string.loc_refresh)
-                                )
                             }
                         }
                     }
@@ -777,6 +830,86 @@ fun CallRecordingsContent(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
+                            }
+                        }
+                    }
+                }
+
+                // 2. How to Set Up Card (Compact & Modern MD3 Expressive)
+                item {
+                    Surface(
+                        onClick = { showHowItWorksDialog = true },
+                        shape = RoundedCornerShape(20.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RivoLeadingIconTile(
+                                icon = Icons.AutoMirrored.Outlined.HelpOutline,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(14.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.call_recording_how_it_works_title),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(Modifier.height(3.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .background(
+                                                color = when {
+                                                    hasShizukuPermission -> MaterialTheme.colorScheme.primary
+                                                    isShizukuRunning -> MaterialTheme.colorScheme.tertiary
+                                                    isShizukuInstalled -> MaterialTheme.colorScheme.secondary
+                                                    else -> MaterialTheme.colorScheme.outline
+                                                },
+                                                shape = CircleShape
+                                            )
+                                    )
+                                    Text(
+                                        text = when {
+                                            hasShizukuPermission -> stringResource(R.string.call_recording_status_ready)
+                                            isShizukuRunning -> stringResource(R.string.call_recording_status_needs_perm)
+                                            isShizukuInstalled -> stringResource(R.string.call_recording_status_stopped)
+                                            else -> stringResource(R.string.call_recording_status_not_installed)
+                                        },
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -1121,6 +1254,15 @@ fun CallRecordingsContent(
                 }
             )
         }
+    }
+
+    if (showHowItWorksDialog) {
+        HowCallRecordingWorksDialog(
+            onDismissRequest = { showHowItWorksDialog = false },
+            isInstalled = isShizukuInstalled,
+            isRunning = isShizukuRunning,
+            hasPermission = hasShizukuPermission
+        )
     }
 }
 
@@ -1546,4 +1688,309 @@ private fun formatTimeMs(ms: Int): String {
     val min = totalSec / 60
     val sec = totalSec % 60
     return String.format(Locale.US, "%d:%02d", min, sec)
+}
+
+@Composable
+fun HowCallRecordingWorksDialog(
+    onDismissRequest: () -> Unit,
+    isInstalled: Boolean,
+    isRunning: Boolean,
+    hasPermission: Boolean
+) {
+    val context = LocalContext.current
+    val allReady = isInstalled && isRunning && hasPermission
+
+    RivoDialog(
+        onDismissRequest = onDismissRequest,
+        title = stringResource(R.string.call_recording_how_it_works_title),
+        icon = Icons.Outlined.GraphicEq,
+        confirmAction = RivoDialogAction(
+            label = stringResource(R.string.call_recording_action_got_it),
+            onClick = onDismissRequest
+        )
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Compact Modern Explainer
+            Text(
+                text = stringResource(R.string.call_recording_compact_intro),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            // Status Bar / Card
+            if (allReady) {
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.call_recording_ready_banner_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            } else {
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CompactStatusChip(
+                            label = stringResource(R.string.call_recording_status_app_installed),
+                            isOk = isInstalled
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(16.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        )
+                        CompactStatusChip(
+                            label = stringResource(R.string.call_recording_status_service),
+                            isOk = isRunning
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(16.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        )
+                        CompactStatusChip(
+                            label = stringResource(R.string.call_recording_status_permission),
+                            isOk = hasPermission
+                        )
+                    }
+                }
+            }
+
+            // Compact 3-Step Setup Section
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Step 1: Install
+                    CompactStepRow(
+                        stepNumber = "1",
+                        title = stringResource(R.string.call_recording_step1_compact_title),
+                        description = stringResource(R.string.call_recording_step1_compact_desc),
+                        isComplete = isInstalled,
+                        action = if (!isInstalled) {
+                            {
+                                FilledTonalButton(
+                                    onClick = {
+                                        try {
+                                            val marketIntent = Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("market://details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")
+                                            ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                                            context.startActivity(marketIntent)
+                                        } catch (_: Exception) {
+                                            val webIntent = Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("https://play.google.com/store/apps/details?id=${PermissionChecklistHelper.SHIZUKU_PACKAGE}")
+                                            ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                                            context.startActivity(webIntent)
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                                    modifier = Modifier.height(32.dp)
+                                ) {
+                                    Text(stringResource(R.string.call_recording_action_install), fontSize = 12.sp)
+                                }
+                            }
+                        } else null
+                    )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+
+                    // Step 2: Start Service
+                    CompactStepRow(
+                        stepNumber = "2",
+                        title = stringResource(R.string.call_recording_step2_compact_title),
+                        description = stringResource(R.string.call_recording_step2_compact_desc),
+                        isComplete = isRunning,
+                        action = if (!isRunning) {
+                            {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    if (isInstalled) {
+                                        FilledTonalButton(
+                                            onClick = {
+                                                try {
+                                                    val launchIntent = context.packageManager.getLaunchIntentForPackage(
+                                                        PermissionChecklistHelper.SHIZUKU_PACKAGE
+                                                    )?.apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                                                    if (launchIntent != null) context.startActivity(launchIntent)
+                                                } catch (_: Exception) {}
+                                            },
+                                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                                            modifier = Modifier.height(32.dp)
+                                        ) {
+                                            Text(stringResource(R.string.call_recording_action_open), fontSize = 12.sp)
+                                        }
+                                    }
+                                    IconButton(
+                                        onClick = { openLink(context, "https://shizuku.rikka.app/guide/setup/") },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Outlined.Launch,
+                                            contentDescription = stringResource(R.string.call_recording_action_guide),
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        } else null
+                    )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+
+                    // Step 3: Authorize
+                    CompactStepRow(
+                        stepNumber = "3",
+                        title = stringResource(R.string.call_recording_step3_compact_title),
+                        description = stringResource(R.string.call_recording_step3_compact_desc),
+                        isComplete = hasPermission,
+                        action = if (isRunning && !hasPermission) {
+                            {
+                                Button(
+                                    onClick = {
+                                        try {
+                                            ShizukuConnectionManager.requestPermission()
+                                        } catch (_: Exception) {}
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                                    modifier = Modifier.height(32.dp)
+                                ) {
+                                    Text(stringResource(R.string.call_recording_action_grant), fontSize = 12.sp)
+                                }
+                            }
+                        } else null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompactStepRow(
+    stepNumber: String,
+    title: String,
+    description: String,
+    isComplete: Boolean,
+    action: (@Composable () -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = if (isComplete) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+            },
+            contentColor = if (isComplete) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+            modifier = Modifier.size(28.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                if (isComplete) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                } else {
+                    Text(
+                        text = stepNumber,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        if (action != null) {
+            Spacer(Modifier.width(8.dp))
+            action()
+        }
+    }
+}
+
+@Composable
+private fun CompactStatusChip(label: String, isOk: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Icon(
+            imageVector = if (isOk) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+            contentDescription = null,
+            tint = if (isOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+            modifier = Modifier.size(13.dp)
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = if (isOk) FontWeight.SemiBold else FontWeight.Normal,
+            color = if (isOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }

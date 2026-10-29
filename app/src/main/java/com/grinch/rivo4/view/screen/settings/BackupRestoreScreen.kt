@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.grinch.rivo4.R
 import com.grinch.rivo4.controller.BackupViewModel
-import com.grinch.rivo4.controller.ContactsViewModel
 import com.grinch.rivo4.controller.util.SettingsHighlightManager
 import com.grinch.rivo4.view.components.*
 import com.ramcosta.composedestinations.annotation.Destination
@@ -50,7 +49,6 @@ fun BackupRestoreScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val viewModel: BackupViewModel = koinActivityViewModel()
-    val contactsVM: ContactsViewModel = koinActivityViewModel()
     val prefs = koinInject<com.grinch.rivo4.controller.util.PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsState()
 
@@ -80,7 +78,6 @@ fun BackupRestoreScreen(
     val status by viewModel.status.collectAsState()
     val contactImportProgress by viewModel.contactImportProgress.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    var showStandardizeConfirm by remember { mutableStateOf(false) }
 
     LaunchedEffect(status) {
         status?.let {
@@ -196,9 +193,6 @@ fun BackupRestoreScreen(
             target.contains("Setting", ignoreCase = true) ||
             target.contains("Preference", ignoreCase = true) ||
             target.contains("Configuration", ignoreCase = true) -> 4
-
-            target.contains("Standardize", ignoreCase = true) ||
-            target.contains("E.164", ignoreCase = true) -> 5
 
             else -> -1
         }
@@ -574,43 +568,7 @@ fun BackupRestoreScreen(
                     }
                 }
             }
-
-            // 6. Number Standardization
-            item {
-                RivoExpressiveGroup(
-                    title = stringResource(R.string.settings_manage_contacts_headline),
-                    icon = Icons.Outlined.Numbers
-                ) {
-                    item {
-                        RivoListItem(
-                            headline = stringResource(R.string.settings_manage_standardize_numbers),
-                            supporting = stringResource(R.string.settings_manage_standardize_numbers_supporting),
-                            leadingIcon = Icons.Outlined.Numbers,
-                            trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            onClick = { showStandardizeConfirm = true }
-                        )
-                    }
-                }
-            }
         }
-    }
-
-    if (showStandardizeConfirm) {
-        val completedMessage = stringResource(R.string.settings_manage_standardize_completed)
-        RivoConfirmationDialog(
-            onDismissRequest = { showStandardizeConfirm = false },
-            onConfirm = {
-                showStandardizeConfirm = false
-                contactsVM.formatAllPhoneNumbers()
-                scope.launch {
-                    snackbarHostState.showSnackbar(completedMessage)
-                }
-            },
-            title = stringResource(R.string.settings_manage_standardize_numbers),
-            message = stringResource(R.string.settings_manage_standardize_confirm_message),
-            confirmLabel = stringResource(R.string.action_confirm),
-            icon = Icons.Outlined.Numbers
-        )
     }
 
     if (pendingSettingsRestoreUri != null) {

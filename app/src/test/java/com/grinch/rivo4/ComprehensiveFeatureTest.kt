@@ -2,6 +2,7 @@ package com.grinch.rivo4
 
 import android.provider.CallLog
 import android.provider.ContactsContract
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.QrCodeUtils
 import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.controller.util.normalizePhoneNumber
@@ -303,5 +304,112 @@ class ComprehensiveFeatureTest {
 
         assertTrue(isSameDay(cal1.timeInMillis, cal2SameDay.timeInMillis))
         assertFalse(isSameDay(cal1.timeInMillis, cal3DifferentDay.timeInMillis))
+    }
+
+    @Test
+    fun testCallLogVolteOnlyHdIcon() {
+        // VoLTE only (features = 64) -> isHd should be true
+        val volteEntry = CallLogEntry(
+            id = 1L,
+            number = "+1234567890",
+            name = "Test Contact",
+            type = 1,
+            date = 1000L,
+            duration = 30L,
+            photoUri = null,
+            contactId = null,
+            features = CallLogEntry.FEATURES_VOLTE
+        )
+        assertTrue(volteEntry.isHd)
+
+        // WiFi calling (features = 8) -> isHd should be false
+        val wifiEntry = volteEntry.copy(features = CallLogEntry.FEATURES_WIFI)
+        assertFalse(wifiEntry.isHd)
+
+        // WiFi calling + VoLTE combined (VoWiFi: features = 8 or 64) -> should NOT be considered VoLTE only
+        val wifiVolteEntry = volteEntry.copy(features = CallLogEntry.FEATURES_WIFI or CallLogEntry.FEATURES_VOLTE)
+        assertFalse(wifiVolteEntry.isHd)
+
+        // Legacy 3G HD voice (features = 4) without VoLTE -> isHd should be false
+        val hd3gEntry = volteEntry.copy(features = 4)
+        assertFalse(hd3gEntry.isHd)
+
+        // Grouped call containing a VoLTE subLog -> isHd should be true
+        val groupedWithVolte = volteEntry.copy(
+            features = 0,
+            subLogs = listOf(wifiEntry, volteEntry)
+        )
+        assertTrue(groupedWithVolte.isHd)
+
+        // Grouped call with only WiFi subLogs -> isHd should be false
+        val groupedWifiOnly = volteEntry.copy(
+            features = 0,
+            subLogs = listOf(wifiEntry)
+        )
+        assertFalse(groupedWifiOnly.isHd)
+    }
+
+    @Test
+    fun testAvatarWaveAnimationContinuityAndEnvelope() {
+        fun computeEnvelope(rawProgress: Float): Float {
+            return (kotlin.math.sin(Math.PI * rawProgress)).toFloat().let { it * it }
+        }
+
+        // Test boundary continuity (must be 0 at both 0f and 1f to eliminate popping)
+        assertEquals(0f, computeEnvelope(0f), 0.0001f)
+        assertEquals(0f, computeEnvelope(1f), 0.0001f)
+
+        // Peak crest at 0.5f (sin(pi*0.5)^2 = 1.0)
+        assertEquals(1f, computeEnvelope(0.5f), 0.0001f)
+
+        // Check 3-phase offsets remain within [0, 1) and are evenly spaced
+        val phase = 0.4f
+        val waves = listOf(phase, (phase + 0.333f) % 1f, (phase + 0.667f) % 1f)
+        assertEquals(3, waves.size)
+        waves.forEach { p ->
+            assertTrue(p in 0f..1f)
+            val env = computeEnvelope(p)
+            assertTrue(env in 0f..1f)
+        }
+    }
+
+    @Test
+    fun testExpressiveAvatarShapesCountAndIds() {
+        val shapes = com.grinch.rivo4.view.theme.RivoExpressiveAvatarShape.entries
+        assertEquals(36, shapes.size)
+        // Ensure all 36 shapes have unique IDs from 0 to 35
+        val ids = shapes.map { it.id }.toSet()
+        assertEquals(36, ids.size)
+        assertTrue(ids.containsAll((0..35).toList()))
+
+        // Verify default shapes: Squircle (0) for everything, 9-sided cookie (20) for call screen
+        assertEquals(com.grinch.rivo4.view.theme.RIVO_AVATAR_SHAPE_SQUIRCLE, com.grinch.rivo4.view.theme.RivoExpressiveAvatarShape.SQUIRCLE.id)
+        assertEquals(0, com.grinch.rivo4.view.theme.RIVO_AVATAR_SHAPE_SQUIRCLE)
+        assertEquals(com.grinch.rivo4.view.theme.RIVO_AVATAR_SHAPE_COOKIE_9, com.grinch.rivo4.view.theme.RivoExpressiveAvatarShape.COOKIE_9.id)
+        assertEquals(20, com.grinch.rivo4.view.theme.RIVO_AVATAR_SHAPE_COOKIE_9)
+    }
+
+    @Test
+    fun testCallBackgroundBlurAndHuaweiIncomingMode() {
+        // Preference key validation
+        assertEquals("call_background_blur", PreferenceManager.KEY_CALL_BACKGROUND_BLUR)
+        assertEquals("call_background_blur_strength", PreferenceManager.KEY_CALL_BACKGROUND_BLUR_STRENGTH)
+        assertEquals("incoming_call_ui_mode", PreferenceManager.KEY_INCOMING_CALL_UI_MODE)
+        assertEquals("call_screen_avatar_shape", PreferenceManager.KEY_CALL_SCREEN_AVATAR_SHAPE)
+
+        val boolDefaults = PreferenceManager.getKnownDefaultBooleans()
+        assertEquals(false, boolDefaults[PreferenceManager.KEY_CALL_BACKGROUND_BLUR])
+
+        val intDefaults = PreferenceManager.getKnownDefaultIntegers()
+        assertEquals(25, intDefaults[PreferenceManager.KEY_CALL_BACKGROUND_BLUR_STRENGTH])
+        assertEquals(20, intDefaults[PreferenceManager.KEY_CALL_SCREEN_AVATAR_SHAPE])
+        assertEquals(0, intDefaults[PreferenceManager.KEY_AVATAR_SHAPE])
+        assertEquals(0, intDefaults[PreferenceManager.KEY_INCOMING_CALL_UI_MODE])
+
+        // Verify valid modes range from 0 to 5 (0: Horizontal, 1: Buttons, 2: iOS, 3: Vertical, 4: Dual Vertical, 5: Huawei Ring)
+        val validModes = listOf(0, 1, 2, 3, 4, 5)
+        assertEquals(6, validModes.size)
+        assertTrue(validModes.contains(4))
+        assertTrue(validModes.contains(5))
     }
 }

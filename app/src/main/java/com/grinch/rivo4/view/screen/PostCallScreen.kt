@@ -54,6 +54,7 @@ import android.media.MediaPlayer
 import androidx.compose.material.icons.filled.Delete
 import com.grinch.rivo4.view.components.RivoConfirmationDialog
 import java.io.File
+import com.grinch.rivo4.view.components.RivoAvatar
 import com.grinch.rivo4.view.components.AddToContactBottomSheet
 import com.grinch.rivo4.view.components.CallNotesSheet
 import com.grinch.rivo4.view.components.WavyAudioSlider
@@ -309,31 +310,11 @@ fun PostCallScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Surface(
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                RivoAvatar(
+                                    name = contactName.ifEmpty { phoneNumber },
+                                    photoUri = photoUri,
                                     modifier = Modifier.size(52.dp)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        if (!photoUri.isNullOrEmpty()) {
-                                            AsyncImage(
-                                                model = photoUri,
-                                                contentDescription = contactName,
-                                                contentScale = ContentScale.Crop,
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .clip(CircleShape)
-                                            )
-                                        } else {
-                                            Icon(
-                                                imageVector = Icons.Default.Person,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                modifier = Modifier.size(28.dp)
-                                            )
-                                        }
-                                    }
-                                }
+                                )
 
                                 Spacer(modifier = Modifier.width(14.dp))
 

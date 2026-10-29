@@ -245,6 +245,12 @@ fun BottomNavScreen(
                                     enabled = !isVisible || visibleTabs.size > 1,
                                     onCheckedChange = { checked ->
                                         val newHidden = if (checked) hidden - tabId else hidden + tabId
+                                        if (!checked && tabId == defaultBottomBar) {
+                                            val remaining = visibleTabs.filter { it != tabId }
+                                            val newDefault = remaining.firstOrNull() ?: PreferenceManager.TAB_RECENTS
+                                            defaultBottomBar = newDefault
+                                            prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, newDefault)
+                                        }
                                         persist(order, newHidden)
                                     }
                                 )
@@ -260,6 +266,7 @@ fun BottomNavScreen(
                         prefs.resetBottomNavLayout()
                         order = prefs.getBottomNavOrder()
                         hidden = prefs.getHiddenBottomNavTabs()
+                        defaultBottomBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)
                     },
                     text = stringResource(R.string.settings_bottom_nav_reset),
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -297,12 +304,10 @@ fun BottomNavScreen(
                                 onValueChange = {
                                     defaultBottomBar = it
                                     prefs.setInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, it)
-                                    if (it == PreferenceManager.TAB_RECORDINGS) {
-                                        val currentHidden = prefs.getHiddenBottomNavTabs().toMutableSet()
-                                        if (currentHidden.remove(PreferenceManager.TAB_RECORDINGS)) {
-                                            prefs.setHiddenBottomNavTabs(currentHidden)
-                                            hidden = currentHidden
-                                        }
+                                    val currentHidden = prefs.getHiddenBottomNavTabs().toMutableSet()
+                                    if (currentHidden.remove(it)) {
+                                        prefs.setHiddenBottomNavTabs(currentHidden)
+                                        hidden = currentHidden
                                     }
                                 }
                             ) { value, selected ->

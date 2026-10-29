@@ -116,19 +116,31 @@ fun MainScreen(
         }
         tabs.toList()
     }
-    val defaultTab = remember(settingsState) {
+    val defaultTab = remember(settingsState, visibleTabs) {
         val startLoc = prefs.getInt(PreferenceManager.KEY_START_LOCATION, PreferenceManager.START_LOCATION_NORMAL)
-        when (startLoc) {
+        val tab = when (startLoc) {
             PreferenceManager.START_LOCATION_DIALPAD_RECENTS -> PreferenceManager.TAB_RECENTS
             PreferenceManager.START_LOCATION_DIALPAD_CONTACTS -> PreferenceManager.TAB_CONTACTS
             else -> prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, PreferenceManager.TAB_RECENTS)
         }
+        if (visibleTabs.contains(tab)) tab else (visibleTabs.firstOrNull() ?: PreferenceManager.TAB_RECENTS)
     }
 
-    val lastActiveTab = savedTab ?: prefs.getLastSelectedTab()
-    val requestedTab = externalRequestedTab ?: initialTab ?: lastActiveTab ?: defaultTab
+    val requestedTab = externalRequestedTab ?: initialTab ?: defaultTab
 
     var currentTabId by rememberSaveable { mutableIntStateOf(requestedTab) }
+    var lastKnownDefaultTab by remember { mutableIntStateOf(defaultTab) }
+
+    LaunchedEffect(defaultTab) {
+        if (defaultTab != lastKnownDefaultTab) {
+            lastKnownDefaultTab = defaultTab
+            if (visibleTabs.contains(defaultTab)) {
+                currentTabId = defaultTab
+                savedTab = defaultTab
+                prefs.setLastSelectedTab(defaultTab)
+            }
+        }
+    }
     val saveableStateHolder = rememberSaveableStateHolder()
     val scope = rememberCoroutineScope()
 

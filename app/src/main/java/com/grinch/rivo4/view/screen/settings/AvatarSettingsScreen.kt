@@ -34,6 +34,7 @@ import com.grinch.rivo4.view.components.RivoPreviewTile
 import com.grinch.rivo4.view.components.RivoSwitchListItem
 import com.grinch.rivo4.view.components.gradientAvatarBrush
 import com.grinch.rivo4.view.components.rivoAvatarColors
+import com.grinch.rivo4.view.theme.RivoExpressiveAvatarShape
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -127,19 +128,7 @@ fun AvatarSettingsScreen(
                         RivoAvatarShapeSelectorRow(
                             headline = stringResource(R.string.settings_interface_avatar_shape),
                             supporting = stringResource(R.string.settings_interface_avatar_shape_supporting),
-                            options = listOf(
-                                stringResource(R.string.settings_interface_avatar_shape_squircle) to 0,
-                                stringResource(R.string.settings_interface_avatar_shape_circle) to 1,
-                                stringResource(R.string.settings_interface_avatar_shape_square) to 2,
-                                stringResource(R.string.settings_interface_avatar_shape_cookie) to 3,
-                                stringResource(R.string.settings_interface_avatar_shape_clover) to 4,
-                                stringResource(R.string.settings_interface_avatar_shape_arch) to 5,
-                                stringResource(R.string.settings_interface_avatar_shape_pill) to 6,
-                                stringResource(R.string.settings_interface_avatar_shape_gem) to 7,
-                                stringResource(R.string.settings_interface_avatar_shape_sunny) to 8,
-                                stringResource(R.string.settings_interface_avatar_shape_heart) to 9,
-                                stringResource(R.string.settings_interface_avatar_shape_burst) to 10
-                            ),
+                            options = RivoExpressiveAvatarShape.entries.map { it.label to it.id },
                             selectedValue = avatarShape,
                             onValueChange = { selected ->
                                 avatarShape = selected

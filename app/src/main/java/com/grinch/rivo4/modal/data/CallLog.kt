@@ -22,6 +22,12 @@ data class CallLogEntry(
     val ids: List<Long> = emptyList(),
     val subLogs: List<CallLogEntry> = emptyList()
 ) {
-    val isHd: Boolean get() = (features and (4 or 8 or 64 or 128 or 256)) != 0 || subLogs.any { it.isHd }
+    companion object {
+        const val FEATURES_WIFI = 8
+        const val FEATURES_VOLTE = 64
+    }
+
+    val isVolte: Boolean get() = (features and FEATURES_VOLTE) != 0 && (features and FEATURES_WIFI) == 0
+    val isHd: Boolean get() = isVolte || subLogs.any { it.isVolte }
     val count: Int get() = types.size.coerceAtLeast(1)
 }

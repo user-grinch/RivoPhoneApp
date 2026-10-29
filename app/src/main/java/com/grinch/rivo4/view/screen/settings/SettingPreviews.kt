@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -120,23 +122,102 @@ fun IncomingCallUiPreview(mode: Int) {
                 modifier = Modifier.size(12.dp).align(Alignment.CenterEnd)
             )
         }
-        else -> Column(
+        3 -> Column(
             modifier = Modifier
                 .width(22.dp)
-                .height(52.dp)
-                .background(scheme.surfaceContainerHigh, RoundedCornerShape(11.dp)),
+                .height(52.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(Icons.Filled.ArrowUpward, contentDescription = null, tint = scheme.onSurfaceVariant, modifier = Modifier.size(12.dp))
+            Icon(Icons.Filled.ArrowUpward, contentDescription = null, tint = scheme.onSurfaceVariant.copy(alpha = 0.8f), modifier = Modifier.size(12.dp))
             Box(
                 modifier = Modifier
                     .offset(y = (-slideAnim).dp)
                     .size(20.dp)
+                    .background(Color.White, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Filled.Phone, contentDescription = null, tint = Color.Black, modifier = Modifier.size(10.dp))
+            }
+        }
+        4 -> Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(18.dp)
+                    .height(48.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(Icons.Filled.ArrowUpward, contentDescription = null, tint = decline, modifier = Modifier.size(10.dp))
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .background(decline.copy(alpha = 0.9f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Filled.CallEnd, contentDescription = null, tint = scheme.surface, modifier = Modifier.size(8.dp))
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .width(18.dp)
+                    .height(48.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(Icons.Filled.ArrowUpward, contentDescription = null, tint = answer, modifier = Modifier.size(10.dp))
+                Box(
+                    modifier = Modifier
+                        .offset(y = (-slideAnim * 0.7f).dp)
+                        .size(16.dp)
+                        .scale(pulseAnim)
+                        .background(answer.copy(alpha = 0.9f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Filled.Phone, contentDescription = null, tint = scheme.surface, modifier = Modifier.size(8.dp))
+                }
+            }
+        }
+        5 -> Row(
+            modifier = Modifier.width(66.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(13.dp)
+                    .background(decline, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Filled.CallEnd, contentDescription = null, tint = Color.White, modifier = Modifier.size(7.dp))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(1.5.dp)) {
+                Box(modifier = Modifier.size(2.dp).background(scheme.onSurfaceVariant.copy(alpha = 0.4f), CircleShape))
+                Box(modifier = Modifier.size(2.dp).background(scheme.onSurfaceVariant.copy(alpha = 0.8f), CircleShape))
+            }
+            Box(
+                modifier = Modifier
+                    .size(18.dp)
+                    .scale(pulseAnim)
+                    .border(1.5.dp, scheme.onSurface, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(modifier = Modifier.size(6.dp).background(scheme.onSurface.copy(alpha = 0.25f), CircleShape))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(1.5.dp)) {
+                Box(modifier = Modifier.size(2.dp).background(scheme.onSurfaceVariant.copy(alpha = 0.8f), CircleShape))
+                Box(modifier = Modifier.size(2.dp).background(scheme.onSurfaceVariant.copy(alpha = 0.4f), CircleShape))
+            }
+            Box(
+                modifier = Modifier
+                    .size(13.dp)
                     .background(answer, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Phone, contentDescription = null, tint = scheme.surface, modifier = Modifier.size(10.dp))
+                Icon(Icons.Filled.Phone, contentDescription = null, tint = Color.White, modifier = Modifier.size(7.dp))
             }
         }
     }

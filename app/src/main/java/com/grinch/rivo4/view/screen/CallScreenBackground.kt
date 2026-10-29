@@ -35,7 +35,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.theme.RivoDurations
+import org.koin.compose.koinInject
 
 private const val TopScrimFraction = 0.36f
 private const val BottomScrimFraction = 0.54f
@@ -43,9 +45,13 @@ private const val BottomScrimFraction = 0.54f
 @Composable
 fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
     val context = LocalContext.current
+    val prefs = koinInject<PreferenceManager>()
     val isDark = isSystemInDarkTheme()
     val scheme = MaterialTheme.colorScheme
     val surface = scheme.surface
+
+    val blurEnabled = prefs.getBoolean(PreferenceManager.KEY_CALL_BACKGROUND_BLUR, false)
+    val blurStrength = prefs.getInt(PreferenceManager.KEY_CALL_BACKGROUND_BLUR_STRENGTH, 25)
 
     val hasCustomBackground = !backgroundUri.isNullOrEmpty()
     var customFailed by remember(backgroundUri) { mutableStateOf(false) }
@@ -89,10 +95,13 @@ fun ExpressiveBackground(photoUri: String?, backgroundUri: String? = null) {
         }
 
         if (request != null) {
+            val imageModifier = Modifier
+                .fillMaxSize()
+                .then(if (blurEnabled && blurStrength > 0) Modifier.blur(blurStrength.dp) else Modifier)
             AsyncImage(
                 model = request,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
+                modifier = imageModifier,
                 onSuccess = { customFailed = false },
                 onError = { customFailed = true },
                 contentScale = ContentScale.Crop

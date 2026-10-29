@@ -14,6 +14,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -1150,7 +1151,14 @@ fun RivoPreviewTile(
     val selectedDescription = stringResource(R.string.content_desc_selected_item)
 
     Column(
-        modifier = modifier.width(width),
+        modifier = modifier
+            .width(width)
+            .clickable(
+                enabled = enabled,
+                onClick = onClick,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

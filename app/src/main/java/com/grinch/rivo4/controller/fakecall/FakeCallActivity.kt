@@ -87,8 +87,11 @@ import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.view.screen.ActiveCallControls
 import com.grinch.rivo4.view.screen.CallActionButton
 import com.grinch.rivo4.view.screen.ExpressiveBackground
+import com.grinch.rivo4.view.screen.DualVerticalSwipeToAnswer
 import com.grinch.rivo4.view.screen.HeroAvatar
 import com.grinch.rivo4.view.screen.HorizontalSwipeToAnswer
+import com.grinch.rivo4.view.screen.OrbitalSliderToAnswer
+import com.grinch.rivo4.view.screen.HuaweiRingSliderToAnswer
 import com.grinch.rivo4.view.screen.IPhoneSwipeToAnswer
 import com.grinch.rivo4.view.screen.InCallKeypad
 import com.grinch.rivo4.view.screen.InCallKeypadBottomSheet
@@ -710,7 +713,7 @@ private fun FakeCallScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 24.dp)
         ) {
-            if (useCustomUI != 2 && useCustomUI != 3) {
+            if (useCustomUI != 2 && useCustomUI != 3 && useCustomUI != 4 && useCustomUI != 5) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
@@ -753,6 +756,34 @@ private fun FakeCallScreenContent(
                 3 -> VerticalSwipeToAnswer(
                     onAnswer = onAnswerAction,
                     onDecline = onDeclineAction
+                )
+                4 -> DualVerticalSwipeToAnswer(
+                    onAnswer = onAnswerAction,
+                    onDecline = onDeclineAction,
+                    onMessage = {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        onDeclineAction()
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("smsto:$phoneNumber")
+                        }
+                        try { context.startActivity(intent) } catch (e: Exception) {}
+                    }
+                )
+                5 -> OrbitalSliderToAnswer(
+                    onAnswer = onAnswerAction,
+                    onDecline = onDeclineAction,
+                    onMessage = {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        onDeclineAction()
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("smsto:$phoneNumber")
+                        }
+                        try { context.startActivity(intent) } catch (e: Exception) {}
+                    },
+                    onReminder = {
+                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        onDeclineAction()
+                    }
                 )
                 else -> HorizontalSwipeToAnswer(
                     onAnswer = onAnswerAction,

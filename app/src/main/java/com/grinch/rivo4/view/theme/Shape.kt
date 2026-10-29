@@ -121,32 +121,93 @@ object RivoMaterialShapes {
     val AvatarMorphEnd: RoundedPolygon get() = Cookie9Sided
 }
 
+enum class RivoExpressiveAvatarShape(val id: Int, val label: String) {
+    SQUIRCLE(0, "Squircle"),
+    CIRCLE(1, "Circle"),
+    SQUARE(2, "Square"),
+    SLANTED(3, "Slanted"),
+    ARCH(4, "Arch"),
+    SEMICIRCLE(5, "Semicircle"),
+    OVAL(6, "Oval"),
+    PILL(7, "Pill"),
+    TRIANGLE(8, "Triangle"),
+    ARROW(9, "Arrow"),
+    FAN(10, "Fan"),
+    DIAMOND(11, "Diamond"),
+    CLAMSHELL(12, "Clamshell"),
+    PENTAGON(13, "Pentagon"),
+    GEM(14, "Gem"),
+    SUNNY(15, "Sunny"),
+    VERY_SUNNY(16, "Very sunny"),
+    COOKIE_4(17, "4-sided cookie"),
+    COOKIE_6(18, "6-sided cookie"),
+    COOKIE_7(19, "7-sided cookie"),
+    COOKIE_9(20, "9-sided cookie"),
+    COOKIE_12(21, "12-sided cookie"),
+    CLOVER_4(22, "4-leaf clover"),
+    CLOVER_8(23, "8-leaf clover"),
+    BURST(24, "Burst"),
+    SOFT_BURST(25, "Soft burst"),
+    BOOM(26, "Boom"),
+    SOFT_BOOM(27, "Soft boom"),
+    FLOWER(28, "Flower"),
+    PUFFY(29, "Puffy"),
+    PUFFY_DIAMOND(30, "Puffy diamond"),
+    GHOSTISH(31, "Ghost-ish"),
+    PIXEL_CIRCLE(32, "Pixel circle"),
+    PIXEL_TRIANGLE(33, "Pixel triangle"),
+    BUN(34, "Bun"),
+    HEART(35, "Heart");
+
+    companion object {
+        fun fromId(id: Int): RivoExpressiveAvatarShape =
+            entries.firstOrNull { it.id == id } ?: SQUIRCLE
+    }
+}
+
 const val RIVO_AVATAR_SHAPE_SQUIRCLE: Int = 0
 const val RIVO_AVATAR_SHAPE_CIRCLE: Int = 1
-const val RIVO_AVATAR_SHAPE_SQUARE: Int = 2
-const val RIVO_AVATAR_SHAPE_COOKIE: Int = 3
-const val RIVO_AVATAR_SHAPE_CLOVER: Int = 4
-const val RIVO_AVATAR_SHAPE_ARCH: Int = 5
-const val RIVO_AVATAR_SHAPE_PILL: Int = 6
-const val RIVO_AVATAR_SHAPE_GEM: Int = 7
-const val RIVO_AVATAR_SHAPE_SUNNY: Int = 8
-const val RIVO_AVATAR_SHAPE_HEART: Int = 9
-const val RIVO_AVATAR_SHAPE_BURST: Int = 10
+const val RIVO_AVATAR_SHAPE_COOKIE_9: Int = 20
 
 @Composable
 fun rivoAvatarShape(shapeIndex: Int): Shape = when (shapeIndex) {
-    RIVO_AVATAR_SHAPE_SQUIRCLE -> MaterialTheme.shapes.large
-    RIVO_AVATAR_SHAPE_CIRCLE -> CircleShape
-    RIVO_AVATAR_SHAPE_SQUARE -> RoundedCornerShape(8.dp)
-    RIVO_AVATAR_SHAPE_COOKIE -> MaterialShapes.Cookie9Sided.toShape()
-    RIVO_AVATAR_SHAPE_CLOVER -> MaterialShapes.Clover4Leaf.toShape()
-    RIVO_AVATAR_SHAPE_ARCH -> MaterialShapes.Arch.toShape()
-    RIVO_AVATAR_SHAPE_PILL -> MaterialShapes.Pill.toShape()
-    RIVO_AVATAR_SHAPE_GEM -> MaterialShapes.Gem.toShape()
-    RIVO_AVATAR_SHAPE_SUNNY -> MaterialShapes.Sunny.toShape()
-    RIVO_AVATAR_SHAPE_HEART -> MaterialShapes.Heart.toShape()
-    RIVO_AVATAR_SHAPE_BURST -> MaterialShapes.SoftBurst.toShape()
-    else -> CircleShape
+    0 -> MaterialTheme.shapes.large
+    1 -> CircleShape
+    2 -> RivoMaterialShapes.Square.toShape()
+    3 -> RivoMaterialShapes.Slanted.toShape()
+    4 -> RivoMaterialShapes.Arch.toShape()
+    5 -> RivoMaterialShapes.SemiCircle.toShape()
+    6 -> RivoMaterialShapes.Oval.toShape()
+    7 -> RivoMaterialShapes.Pill.toShape()
+    8 -> RivoMaterialShapes.Triangle.toShape()
+    9 -> RivoMaterialShapes.Arrow.toShape()
+    10 -> RivoMaterialShapes.Fan.toShape()
+    11 -> RivoMaterialShapes.Diamond.toShape()
+    12 -> RivoMaterialShapes.ClamShell.toShape()
+    13 -> RivoMaterialShapes.Pentagon.toShape()
+    14 -> RivoMaterialShapes.Gem.toShape()
+    15 -> RivoMaterialShapes.Sunny.toShape()
+    16 -> RivoMaterialShapes.VerySunny.toShape()
+    17 -> RivoMaterialShapes.Cookie4Sided.toShape()
+    18 -> RivoMaterialShapes.Cookie6Sided.toShape()
+    19 -> RivoMaterialShapes.Cookie7Sided.toShape()
+    20 -> RivoMaterialShapes.Cookie9Sided.toShape()
+    21 -> RivoMaterialShapes.Cookie12Sided.toShape()
+    22 -> RivoMaterialShapes.Clover4Leaf.toShape()
+    23 -> RivoMaterialShapes.Clover8Leaf.toShape()
+    24 -> RivoMaterialShapes.Burst.toShape()
+    25 -> RivoMaterialShapes.SoftBurst.toShape()
+    26 -> RivoMaterialShapes.Boom.toShape()
+    27 -> RivoMaterialShapes.SoftBoom.toShape()
+    28 -> RivoMaterialShapes.Flower.toShape()
+    29 -> RivoMaterialShapes.Puffy.toShape()
+    30 -> RivoMaterialShapes.PuffyDiamond.toShape()
+    31 -> RivoMaterialShapes.Ghostish.toShape()
+    32 -> RivoMaterialShapes.PixelCircle.toShape()
+    33 -> RivoMaterialShapes.PixelTriangle.toShape()
+    34 -> RivoMaterialShapes.Bun.toShape()
+    35 -> RivoMaterialShapes.Heart.toShape()
+    else -> MaterialTheme.shapes.large
 }
 
 @Composable
