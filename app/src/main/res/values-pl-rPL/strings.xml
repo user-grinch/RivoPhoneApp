@@ -215,8 +215,8 @@
     <string name="permission_oem_autostart_title">Automatyczne uruchamianie %1$s</string>
     <string name="permission_oem_autostart_description">Zezwalaj Rivo na automatyczne uruchamianie usług połączeń w tle.</string>
     <string name="permission_shizuku_audio_description">Wewnętrzne przechwytywanie dźwięku wywołania jest włączone dla krystalicznie czystych 2-kierunkowych nagrań połączeń.</string>
-    <string name="permission_shizuku_not_installed">Shizuku nie jest zainstalowany. Dotknij, aby wyświetlić opcje instalacji (Play Store / Website).</string>
-    <string name="permission_shizuku_service_stopped">Usługa Shizuku jest zatrzymana. Otwórz Shizuku i zacznij przez Debugowanie Wireless lub Root.</string>
+    <string name="permission_shizuku_not_installed">Aplikacja Shizuku nie jest zainstalowana. Dotknij, aby wyświetlić opcje instalacji (Sklep Play / Strona internetowa).</string>
+    <string name="permission_shizuku_service_stopped">Usługa Shizuku jest zatrzymana. Otwórz Shizuku i uruchom ją przez debugowanie bezprzewodowe lub Root.</string>
     <string name="permission_shizuku_needs_permission">Usługa Shizuku jest uruchomiona. Przyznaj uprawnienie do przechwytywania wewnątrzeuropejskiego połączenia audio.</string>
     <string name="permission_shizuku_granted">Przyznane</string>
     <string name="permission_shizuku_install">Zainstaluj</string>
@@ -602,7 +602,7 @@ Biały tekst</string>
     <string name="settings_interface_icon_only_bar_supporting">Usuwa etykiety tekstowe z nawigacji dolnej</string>
     <string name="settings_avatar_style">Styl awatara</string>
     <string name="settings_avatar_style_supporting">Wybierz między kolorem, gradientem lub zwykłymi awatarami</string>
-    <string name="avatar_style_colorful">Kolorowe</string>
+    <string name="avatar_style_colorful">Kolorowy</string>
     <string name="avatar_style_gradient">Gradient</string>
     <string name="avatar_style_none">Brak</string>
     <!-- Settings > Sound & Vibration -->
@@ -669,7 +669,7 @@ Biały tekst</string>
     <string name="settings_call_dialpad_style_supporting">Wygląd klawiatury telefonu</string>
     <string name="settings_call_dialpad_style_modern">Nowoczesny</string>
     <string name="settings_call_dialpad_style_classic">Klasyczny</string>
-    <string name="settings_call_dialpad_style_circle">Okrąg</string>
+    <string name="settings_call_dialpad_style_circle">Koło</string>
     <string name="settings_call_dialpad_style_organic">Organiczny</string>
     <string name="settings_call_dialpad_style_outlined">Zarys</string>
     <string name="settings_call_dialpad_style_unified">Zunifikowany</string>
@@ -982,9 +982,9 @@ Biały tekst</string>
     <string name="call_recordings_title">Nagrania</string>
     <!-- Call Recording How It Works & Shizuku Guide -->
     <string name="call_recording_how_it_works_title">Jak skonfigurować</string>
-    <string name="call_recording_how_it_works_subtitle">Android ograniczenia &amp; Konfiguracja dźwięku Shizuku 2-kierunkowego</string>
+    <string name="call_recording_how_it_works_subtitle">Ograniczenia systemu Android i konfiguracja dwustronnego audio w Shizuku</string>
     <string name="call_recording_compact_intro">Android ogranicza nagrywanie dźwięku zdalnego dzwoniącego. Shizuku umożliwia podwyższony dostęp ADB do przechwytywania 2-kierunkowego dźwięku bez roota.</string>
-    <string name="call_recording_step1_compact_title">Install Shizuku</string>
+    <string name="call_recording_step1_compact_title">Zainstaluj Shizuku</string>
     <string name="call_recording_step1_compact_desc">Z Sklepu Play lub oficjalnej witryny</string>
     <string name="call_recording_step2_compact_title">Uruchom usługę</string>
     <string name="call_recording_step2_compact_desc">Poprzez debugowanie bezprzewodowe w opcjach dewelopera</string>
@@ -993,12 +993,12 @@ Biały tekst</string>
     <string name="call_recording_ready_banner_desc">2-kierunkowe nagrywanie połączeń jest w pełni skonfigurowane i aktywne.</string>
     <string name="call_recording_restrictions_title">Ograniczenia prywatności Androida</string>
     <string name="call_recording_restrictions_desc">Na nowoczesnym Androidzie (9, 10, 11+) Google blokuje aplikacje firm trzecich z nagrywania dźwięku połączeń wewnętrznych. Standardowe nagrywanie mikrofonu może usłyszeć tylko twój głos, pozostawiając drugi dzwoniący słaby lub całkowicie ciszy.</string>
-    <string name="call_recording_shizuku_solution_title">Roztwór Shizuku (2 Way Audio)</string>
+    <string name="call_recording_shizuku_solution_title">Rozwiązanie Shizuku (dwustronny dźwięk)</string>
     <string name="call_recording_shizuku_solution_desc">Shizuku udziela Rivo uprawnień podwyższonego poziomu ADB bez potrzeby roota. Umożliwia to przechwytywanie krystalicznie przezroczystego, nieskazitelnego dźwięku bezpośrednio z systemu.</string>
     <string name="call_recording_setup_guide_title">Jak skonfigurować Shizuku (3 kroki)</string>
-    <string name="call_recording_step1_title">1. Install Shizuku</string>
+    <string name="call_recording_step1_title">1. Zainstaluj Shizuku</string>
     <string name="call_recording_step1_desc">Pobierz darmową, otwarto-źródłową aplikację Shizuku z Google Play lub oficjalnej strony internetowej.</string>
-    <string name="call_recording_step2_title">2. Start Shizuku Service</string>
+    <string name="call_recording_step2_title">2. Uruchom usługę Shizuku</string>
     <string name="call_recording_step2_desc">Na Androidzie 11+ uruchom debugowanie bezprzewodowe w opcjach dewelopera (nie jest wymagane działanie komputera). Na Androidzie 10 lub starszym, połącz się raz z komputerem za pośrednictwem USB. Na zrootowanych urządzeniach naciśnij Start bezpośrednio.</string>
     <string name="call_recording_step3_title">3. Udziel zezwolenia Rivo</string>
     <string name="call_recording_step3_desc">Otwórz Shizuku -&gt; Autoryzowane aplikacje -&gt; włącz Rivo Phone, lub naciśnij przycisk poniżej.</string>
@@ -1006,16 +1006,16 @@ Biały tekst</string>
     <string name="call_recording_status_ready">Dwukierunkowy dźwięk gotowy</string>
     <string name="call_recording_status_needs_perm">Wymagane uprawnienia</string>
     <string name="call_recording_status_stopped">Usługa zatrzymana</string>
-    <string name="call_recording_status_not_installed">Mic Only (Setup Shizuku)</string>
-    <string name="call_recording_status_app_installed">Shizuku App</string>
+    <string name="call_recording_status_not_installed">Tylko mikrofon (Skonfiguruj Shizuku)</string>
+    <string name="call_recording_status_app_installed">Aplikacja Shizuku</string>
     <string name="call_recording_status_service">Usługa Shizuku</string>
     <string name="call_recording_status_permission">Autoryzacja Rivo</string>
-    <string name="call_recording_action_install">Install Shizuku</string>
-    <string name="call_recording_action_open">Open Shizuku</string>
+    <string name="call_recording_action_install">Zainstaluj Shizuku</string>
+    <string name="call_recording_action_open">Otwórz Shizuku</string>
     <string name="call_recording_action_grant">Przyznaj uprawnienia</string>
     <string name="call_recording_action_guide">Przewodnik konfiguracji online</string>
     <string name="call_recording_action_active">Dwukierunkowy dźwięk aktywny</string>
-    <string name="call_recording_action_got_it">Zrozumiałe</string>
+    <string name="call_recording_action_got_it">Zrozumiałem</string>
     <string name="call_recording_tile_details">Szczegóły</string>
     <string name="call_recordings_supporting">Odtwórz, udostępniaj lub usuń zapisane nagrania</string>
     <string name="call_recordings_empty">Brak nagrań</string>
@@ -1623,7 +1623,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_set_action_when_swiping_contact_or_call_log_right_call_sms_etc">Ustaw akcję podczas przesuwania w prawo lub przeciągania w kontakcie (połączenie, SMS, itp.)</string>
     <string name="loc_swipe_left_action">Akcja przesunięcia w lewo</string>
     <string name="loc_set_action_when_swiping_contact_or_call_log_left_message_details">Ustaw akcję podczas przesuwania kontaktu lub dziennika połączeń w lewo (wiadomość, szczegóły)</string>
-    <string name="loc_auto_recording_shizuku_internal_audio_saved_recordings">Automatyczne nagrywanie, Wewnętrzny dźwięk Shizuku i zapisane nagrania</string>
+    <string name="loc_auto_recording_shizuku_internal_audio_saved_recordings">Automatyczne nagrywanie, wewnętrzny dźwięk Shizuku i zapisane nagrania</string>
     <string name="loc_auto_record_calls">Automatyczne nagrywanie połączeń</string>
     <string name="loc_automatically_start_recording_as_soon_as_a_call_is_connected">Automatycznie rozpoczynaj nagrywanie natychmiast po nawiązaniu połączenia</string>
     <string name="loc_auto_record_filter">Automatyczny filtr rekordów</string>
