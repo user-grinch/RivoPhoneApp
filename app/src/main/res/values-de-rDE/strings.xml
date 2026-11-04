@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rivo
-</string>
+    <string name="app_name">Rivo</string>
     <string name="permission_default_phone_app_title">Standard-Telefon-App</string>
     <string name="permission_default_phone_app_description">Erforderlich, um Anrufe anzunehmen, eingehende Anrufe zu verarbeiten und Anrufblockierungen zu verwalten.</string>
     <string name="permission_phone_sim_title">Telefon &amp; SIM-Zugriff</string>
@@ -14,7 +13,7 @@
     <string name="permission_call_notifications_description">Erforderlich, um Fenster bei eingehenden Anrufen, Benachrichtigungen und den Anrufstatus anzuzeigen.</string>
     <string name="permission_lock_screen_title">Auf Sperrbildschirm anzeigen</string>
     <string name="permission_lock_screen_description">Erforderlich auf Xiaomi (MIUI / HyperOS), um eingehende und aktive Anrufe anzuzeigen, wenn Ihr Gerät gesperrt ist.</string>
-    <string name="permission_background_popup_title">Hintergrund-Pop-up Fenster</string>
+    <string name="permission_background_popup_title">Hintergrund-Pop-up-Fenster</string>
     <string name="permission_background_popup_description">Ermöglicht Rivo Anruf-Heads-Up Benachrichtigungen und eingehende Alarm-Banner anzuzeigen, während andere Apps verwendet werden.</string>
     <string name="permission_autostart_title">Auto-Start &amp; Hintergrundschutz</string>
     <string name="permission_autostart_description">Verhindert Schließen von Hintergrundtelefondiensten und Verpassen von Anrufen nach einem Neustart.</string>
@@ -680,7 +679,7 @@ Weißer Text</string>
     <string name="settings_call_dialpad_layout_supporting">Ausrichtung für Einhand-Nutzung</string>
     <string name="settings_call_dialpad_layout_left">Links</string>
     <string name="settings_call_dialpad_layout_right">Rechts</string>
-    <string name="settings_call_auto_redial">Autom. Wahlwiederholung</string>
+    <string name="settings_call_auto_redial">Automatische Wahlwiederholung</string>
     <string name="settings_call_auto_redial_supporting">Bei \"Besetzt\" Wahlwiederholung</string>
     <string name="settings_call_redial_attempts">Versuche der Wahlwiederholung</string>
     <string name="settings_call_redial_attempts_supporting">Maximale Zahl der Wahlwiederholungen</string>
