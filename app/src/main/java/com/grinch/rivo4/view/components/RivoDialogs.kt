@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -271,6 +272,7 @@ fun RivoDialog(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .imePadding()
                     .drawBehind { drawRect(color = scrimColor, alpha = currentScrimAlpha * fade) }
                     .then(
                         if (dismissOnClickOutside) {

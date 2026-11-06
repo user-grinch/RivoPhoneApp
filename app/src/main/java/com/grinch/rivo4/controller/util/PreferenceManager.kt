@@ -25,11 +25,8 @@ class PreferenceManager(context: Context) {
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(listener)
-        if (!prefs.contains("transition_speed_default_2_5")) {
-            if (!prefs.contains(KEY_TRANSITION_TIME_SCALE) || prefs.getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f) == 1.0f) {
-                prefs.edit().putFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).apply()
-            }
-            prefs.edit().putBoolean("transition_speed_default_2_5", true).apply()
+        if (!prefs.contains("transition_speed_default_1_0")) {
+            prefs.edit().putFloat(KEY_TRANSITION_TIME_SCALE, 1.0f).putBoolean("transition_speed_default_1_0", true).apply()
         }
         if (!prefs.contains("transition_style_v2")) {
             if (prefs.getInt(KEY_TRANSITION_STYLE, 0) == 3) {
@@ -783,7 +780,7 @@ class PreferenceManager(context: Context) {
         )
 
         fun getKnownDefaultFloats(): Map<String, Float> = mapOf(
-            KEY_TRANSITION_TIME_SCALE to 2.5f
+            KEY_TRANSITION_TIME_SCALE to 1.0f
         )
 
         fun getKnownDefaultIntegers(): Map<String, Int> = mapOf(
@@ -877,7 +874,7 @@ class PreferenceManager(context: Context) {
     fun isPredictiveBackEnabled(): Boolean = getBoolean(KEY_PREDICTIVE_BACK_ENABLED, true)
     fun setPredictiveBackEnabled(enabled: Boolean) = setBoolean(KEY_PREDICTIVE_BACK_ENABLED, enabled)
 
-    fun getTransitionTimeScale(): Float = getFloat(KEY_TRANSITION_TIME_SCALE, 2.5f).coerceIn(0.2f, 5.0f)
+    fun getTransitionTimeScale(): Float = getFloat(KEY_TRANSITION_TIME_SCALE, 1.0f).coerceIn(0.2f, 5.0f)
     fun setTransitionTimeScale(scale: Float) = setFloat(KEY_TRANSITION_TIME_SCALE, scale.coerceIn(0.2f, 5.0f))
 
     fun getFontScale(): Float {

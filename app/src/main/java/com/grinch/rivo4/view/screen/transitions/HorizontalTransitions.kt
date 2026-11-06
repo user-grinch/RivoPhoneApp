@@ -12,7 +12,7 @@ import com.grinch.rivo4.view.theme.RivoEasing
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import kotlin.math.roundToInt
 
-val LocalTransitionTimeScale: ProvidableCompositionLocal<Float> = compositionLocalOf { 2.5f }
+val LocalTransitionTimeScale: ProvidableCompositionLocal<Float> = compositionLocalOf { 1.0f }
 val LocalTransitionStyle: ProvidableCompositionLocal<Int> = compositionLocalOf { 0 }
 
 val SmoothDecelerateEasing: Easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1.0f)
@@ -24,7 +24,7 @@ fun scaledDuration(baseMs: Int, timeScale: Float): Int =
     (baseMs * timeScale.coerceIn(0.1f, 5.0f)).roundToInt().coerceAtLeast(1)
 
 fun createExpressiveSharedAxisTransitions(
-    timeScale: Float = 2.5f,
+    timeScale: Float = 1.0f,
     predictiveBack: Boolean = true
 ): NavHostAnimatedDestinationStyle =
     object : NavHostAnimatedDestinationStyle() {
@@ -334,11 +334,11 @@ fun createDepthStackTransitions(
         }
     }
 
-val ExpressiveSharedAxisTransitions: NavHostAnimatedDestinationStyle = createExpressiveSharedAxisTransitions(2.5f, true)
-val ParallaxSlideTransitions: NavHostAnimatedDestinationStyle = createParallaxSlideTransitions(2.5f, true)
-val ExpressiveFloatTransitions: NavHostAnimatedDestinationStyle = createExpressiveFloatTransitions(2.5f, true)
-val ExpressiveZoomTransitions: NavHostAnimatedDestinationStyle = createExpressiveZoomTransitions(2.5f, true)
-val DepthStackTransitions: NavHostAnimatedDestinationStyle = createDepthStackTransitions(2.5f, true)
+val ExpressiveSharedAxisTransitions: NavHostAnimatedDestinationStyle = createExpressiveSharedAxisTransitions(1.0f, true)
+val ParallaxSlideTransitions: NavHostAnimatedDestinationStyle = createParallaxSlideTransitions(1.0f, true)
+val ExpressiveFloatTransitions: NavHostAnimatedDestinationStyle = createExpressiveFloatTransitions(1.0f, true)
+val ExpressiveZoomTransitions: NavHostAnimatedDestinationStyle = createExpressiveZoomTransitions(1.0f, true)
+val DepthStackTransitions: NavHostAnimatedDestinationStyle = createDepthStackTransitions(1.0f, true)
 
 val AppTransitions: NavHostAnimatedDestinationStyle = ExpressiveSharedAxisTransitions
 val ZoomTransitions: NavHostAnimatedDestinationStyle = ParallaxSlideTransitions
@@ -347,7 +347,7 @@ val FadeTransitions: NavHostAnimatedDestinationStyle = ExpressiveFloatTransition
 fun getAppTransition(
     style: Int,
     predictiveBack: Boolean = true,
-    timeScale: Float = 2.5f
+    timeScale: Float = 1.0f
 ): NavHostAnimatedDestinationStyle {
     if (style == 5 || timeScale <= 0.05f) return NoTransitionsDestinationStyle
     return when (style) {

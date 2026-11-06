@@ -55,6 +55,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +64,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -82,6 +85,7 @@ import com.grinch.rivo4.view.theme.RivoShapeDefaults
 import com.grinch.rivo4.view.theme.rivoCornerDp
 import com.grinch.rivo4.view.theme.RivoMaterialShapes
 import com.grinch.rivo4.view.theme.rememberRivoMorphShape
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
@@ -413,19 +417,18 @@ fun AddCallNoteDialog(
     var noteText by remember { mutableStateOf("") }
     val cleanPhone = phoneNumber.takeIf { it.isNotBlank() && it != "null" }
     val cleanName = contactName.takeIf { it.isNotBlank() && it != "null" }
+    val focusRequester = remember { FocusRequester() }
 
-    val supportingText = when {
-        cleanName != null && cleanPhone != null -> "$cleanName • $cleanPhone"
-        cleanName != null -> cleanName
-        cleanPhone != null -> cleanPhone
-        else -> null
+    LaunchedEffect(Unit) {
+        delay(200)
+        focusRequester.requestFocus()
     }
 
     RivoDialog(
         onDismissRequest = onDismissRequest,
         title = title,
         icon = Icons.AutoMirrored.Filled.Notes,
-        supportingText = supportingText,
+        supportingText = null,
         confirmAction = RivoDialogAction(
             label = stringResource(R.string.action_save_note),
             enabled = noteText.isNotBlank(),
@@ -457,7 +460,7 @@ fun AddCallNoteDialog(
                 .padding(horizontal = 4.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Text Input
+            // Text Input with clear border, background, and readable text
             OutlinedTextField(
                 value = noteText,
                 onValueChange = { noteText = it },
@@ -465,18 +468,27 @@ fun AddCallNoteDialog(
                     Text(
                         "Enter your note or callback reminder...",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = 22.sp
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 minLines = 3,
                 maxLines = 6,
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.25f),
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 ),
                 trailingIcon = {
                     if (noteText.isNotBlank()) {
