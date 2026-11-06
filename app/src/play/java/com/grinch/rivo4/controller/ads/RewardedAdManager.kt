@@ -64,10 +64,13 @@ class RewardedAdManager(private val context: Context) {
     val adDismissed: SharedFlow<Unit> = _adDismissed.asSharedFlow()
 
     init {
-        initializeAds()
+        if (ConsentManager.canRequestAds(context)) {
+            initializeAds()
+        }
     }
 
     private fun initializeAds() {
+        if (!ConsentManager.canRequestAds(context)) return
         if (adsInitializationRequested) return
         adsInitializationRequested = true
         MobileAds.initialize(context) {
@@ -79,6 +82,11 @@ class RewardedAdManager(private val context: Context) {
     fun loadAd() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             scope.launch { loadAd() }
+            return
+        }
+
+        if (!ConsentManager.canRequestAds(context)) {
+            Log.d(TAG, "Cannot load rewarded ad: consent not granted or CMP not gathered yet.")
             return
         }
 

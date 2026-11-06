@@ -134,8 +134,8 @@ jobs:
 
             | Flavor | File | Description |
             | :--- | :--- | :--- |
-            | 🌟 **Standard (Recommended)** | [`RivoPhone.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk) | Full-featured build. Supports the **in-app Tip Jar** to help support ongoing development. |
-            | 🍃 **De-Googled** | [`RivoPhone_degoogled.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone_degoogled.apk) | Stripped build intended for F-Droid / IzzyOnDroid. Proprietary Google Play libraries are excluded. |
+            | 🌟 **Standard (Recommended)** | [`RivoPhone.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk) | Full featured build including all Google libraries and features. |
+            | 🍃 **De-Googled** | [`RivoPhone_degoogled.apk`](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone_degoogled.apk) | Stripped build intended for F-Droid / IzzyOnDroid. Google Play libraries are excluded. May have some features missing or partially broken. |
 
       - name: Publish Production Release (Version Tags)
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

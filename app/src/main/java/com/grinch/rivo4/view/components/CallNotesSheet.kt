@@ -74,6 +74,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.grinch.rivo4.controller.util.areNumbersEqual
 import com.grinch.rivo4.modal.db.CallNoteDao
 import com.grinch.rivo4.modal.db.CallNoteEntity
 import com.grinch.rivo4.view.theme.LocalCardRoundness
@@ -93,6 +94,7 @@ fun CallNotesSheet(
     phoneNumber: String,
     contactName: String,
     onDismiss: () -> Unit,
+    phoneNumbers: List<String> = emptyList(),
     callNoteDao: CallNoteDao = koinInject()
 ) {
     val context = LocalContext.current
@@ -100,7 +102,17 @@ fun CallNotesSheet(
     @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
-    val notes by callNoteDao.getNotesForNumber(phoneNumber).collectAsState(initial = emptyList())
+    val allNotes by callNoteDao.getAllNotes().collectAsState(initial = emptyList())
+    val cleanPhone = phoneNumber.takeIf { it.isNotBlank() && it != "null" }
+    val cleanName = contactName.takeIf { it.isNotBlank() && it != "null" }
+    val notes = remember(allNotes, cleanPhone, phoneNumbers, cleanName) {
+        val targets = (phoneNumbers + listOfNotNull(cleanPhone)).filter { it.isNotBlank() }
+        allNotes.filter { note ->
+            (targets.isNotEmpty() && targets.any { areNumbersEqual(it, note.phoneNumber) }) ||
+            (cleanName != null && note.contactName?.equals(cleanName, ignoreCase = true) == true) ||
+            (targets.isEmpty() && cleanName == null && cleanPhone != null && note.phoneNumber == cleanPhone)
+        }
+    }
     var noteInput by remember { mutableStateOf("") }
     val dateFormat = remember { SimpleDateFormat("MMM d · HH:mm", Locale.getDefault()) }
 
@@ -231,10 +243,11 @@ fun CallNotesSheet(
                                 if (text.isNotEmpty()) {
                                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                                     scope.launch {
+                                        val savePhone = cleanPhone ?: phoneNumbers.firstOrNull { it.isNotBlank() } ?: ""
                                         callNoteDao.insertNote(
                                             CallNoteEntity(
-                                                phoneNumber = phoneNumber,
-                                                contactName = contactName.ifBlank { null },
+                                                phoneNumber = savePhone,
+                                                contactName = cleanName,
                                                 note = text
                                             )
                                         )
@@ -392,17 +405,27 @@ fun AddCallNoteDialog(
     phoneNumber: String,
     contactName: String,
     onDismissRequest: () -> Unit,
+    title: String = stringResource(R.string.action_add_note),
     callNoteDao: CallNoteDao = koinInject()
 ) {
     val view = LocalView.current
     val scope = rememberCoroutineScope()
     var noteText by remember { mutableStateOf("") }
+    val cleanPhone = phoneNumber.takeIf { it.isNotBlank() && it != "null" }
+    val cleanName = contactName.takeIf { it.isNotBlank() && it != "null" }
+
+    val supportingText = when {
+        cleanName != null && cleanPhone != null -> "$cleanName • $cleanPhone"
+        cleanName != null -> cleanName
+        cleanPhone != null -> cleanPhone
+        else -> null
+    }
 
     RivoDialog(
         onDismissRequest = onDismissRequest,
-        title = stringResource(R.string.dialog_add_call_note_title),
+        title = title,
         icon = Icons.AutoMirrored.Filled.Notes,
-        supportingText = if (contactName.isNotBlank()) "$contactName • $phoneNumber" else phoneNumber,
+        supportingText = supportingText,
         confirmAction = RivoDialogAction(
             label = stringResource(R.string.action_save_note),
             enabled = noteText.isNotBlank(),
@@ -413,8 +436,8 @@ fun AddCallNoteDialog(
                     scope.launch {
                         callNoteDao.insertNote(
                             CallNoteEntity(
-                                phoneNumber = phoneNumber,
-                                contactName = contactName.ifBlank { null },
+                                phoneNumber = cleanPhone ?: "",
+                                contactName = cleanName,
                                 note = text
                             )
                         )

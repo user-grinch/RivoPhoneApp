@@ -317,10 +317,11 @@ fun ContactDetailsScreen(
     }
     val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
 
-    val matchedCallNotes = remember(allCallNotes, contactNumbers, fullContact?.name) {
+    val matchedCallNotes = remember(allCallNotes, contactNumbers, fullContact?.name, displayName, unknownLabel) {
+        val targetName = fullContact?.name ?: displayName.takeIf { it != unknownLabel }
         allCallNotes.filter { note ->
             contactNumbers.any { num -> areNumbersEqual(note.phoneNumber, num) } ||
-            (fullContact?.name != null && !note.contactName.isNullOrBlank() && note.contactName.equals(fullContact?.name, ignoreCase = true))
+            (!targetName.isNullOrBlank() && !note.contactName.isNullOrBlank() && note.contactName.equals(targetName, ignoreCase = true))
         }
     }
 
@@ -470,10 +471,12 @@ fun ContactDetailsScreen(
                 addAll(ContactUtils.getLookupKeys(phoneNumber))
             }
         }
-        allLogs.filter { log ->
+        val matched = allLogs.filter { log ->
             (targetId != null && log.contactId == targetId) ||
                     ContactUtils.getLookupKeys(log.number).any { it in targetKeys }
         }
+        matched.flatMap { if (it.subLogs.isNotEmpty()) it.subLogs else listOf(it) }
+            .sortedByDescending { it.date }
     }
 
     val isFavorite = fullContact?.isFavorite ?: false
@@ -578,10 +581,21 @@ fun ContactDetailsScreen(
         )
     }
 
+    val noteTargetPhone = remember(phoneNumber, fullContact, unknownLabel) {
+        when {
+            phoneNumber != null && phoneNumber != unknownLabel -> phoneNumber
+            fullContact?.phoneNumbers?.firstOrNull() != null -> fullContact!!.phoneNumbers.first()
+            else -> ""
+        }
+    }
+    val noteTargetName = remember(displayName, unknownLabel) {
+        if (displayName != unknownLabel) displayName else ""
+    }
+
     if (showAddNoteDialog) {
         AddCallNoteDialog(
-            phoneNumber = displayPhone,
-            contactName = displayName,
+            phoneNumber = noteTargetPhone,
+            contactName = noteTargetName,
             onDismissRequest = { showAddNoteDialog = false }
         )
     }
@@ -1349,12 +1363,23 @@ fun ContactDetailsScreen(
                     }
 
                     val hasContactNotes = fullContact != null && !fullContact!!.notes.isNullOrBlank()
-                    if (hasContactNotes || matchedCallNotes.isNotEmpty()) {
-                        item {
-                            RivoExpressiveGroup(
-                                title = stringResource(R.string.label_notes),
-                                icon = Icons.Outlined.EditNote
-                            ) {
+                    val hasAnyNotes = hasContactNotes || matchedCallNotes.isNotEmpty()
+                    item {
+                        RivoExpressiveGroup(
+                            title = stringResource(R.string.label_notes),
+                            icon = Icons.Outlined.EditNote
+                        ) {
+                            if (!hasAnyNotes) {
+                                item {
+                                    RivoListItem(
+                                        headline = stringResource(R.string.contact_no_notes_title),
+                                        supporting = stringResource(R.string.contact_no_notes_description),
+                                        leadingIcon = Icons.AutoMirrored.Filled.Notes,
+                                        isCompact = true,
+                                        onClick = { showAddNoteDialog = true }
+                                    )
+                                }
+                            } else {
                                 if (hasContactNotes) {
                                     item {
                                         val notesText = fullContact!!.notes!!
@@ -1397,23 +1422,23 @@ fun ContactDetailsScreen(
                                         )
                                     }
                                 }
-                                item {
-                                    TextButton(
-                                        onClick = { showCallNotesSheet = true },
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Add,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = stringResource(R.string.action_add_note),
-                                            style = MaterialTheme.typography.labelLarge,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                            }
+                            item {
+                                TextButton(
+                                    onClick = { showAddNoteDialog = true },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = stringResource(R.string.action_add_note),
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
@@ -1438,9 +1463,15 @@ fun ContactDetailsScreen(
                                             android.provider.CallLog.Calls.VOICEMAIL_TYPE -> stringResource(R.string.call_type_voicemail)
                                             else -> stringResource(R.string.call_type_call)
                                         }
+                                        val relativeDateTime = formatRelativeCallDateTime(context, log.date)
+                                        val supportingText = if (log.duration > 0) {
+                                            "$relativeDateTime • ${android.text.format.DateUtils.formatElapsedTime(log.duration)}"
+                                        } else {
+                                            relativeDateTime
+                                        }
                                         RivoListItem(
                                             headline = callTypeLabel,
-                                            supporting = formatRelativeCallDateTime(context, log.date),
+                                            supporting = supportingText,
                                             leadingIcon = when (log.type) {
                                                 android.provider.CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
                                                 android.provider.CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
@@ -1903,8 +1934,9 @@ fun ContactDetailsScreen(
 
         if (showCallNotesSheet) {
             CallNotesSheet(
-                phoneNumber = if (displayPhone != unknownLabel) displayPhone else (fullContact?.phoneNumbers?.firstOrNull() ?: ""),
-                contactName = displayName,
+                phoneNumber = noteTargetPhone,
+                contactName = noteTargetName,
+                phoneNumbers = contactNumbers,
                 onDismiss = { showCallNotesSheet = false }
             )
         }

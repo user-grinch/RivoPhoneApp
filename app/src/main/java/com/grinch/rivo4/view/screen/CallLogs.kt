@@ -156,11 +156,13 @@ fun CallLogFullScreen(
     val isHistoryWithContact = (contactId != null && contactId != "null") || phoneNumber != null
 
     val filteredLogsByContact = remember(allLogs, contactId, phoneNumber) {
-        if (contactId == null && phoneNumber == null) allLogs
+        val logs = if (contactId == null && phoneNumber == null) allLogs
         else allLogs.filter { log ->
             (contactId != null && contactId != "null" && log.contactId == contactId) || 
             (phoneNumber != null && log.number.replace(" ", "").contains(phoneNumber.replace(" ", "")))
         }
+        logs.flatMap { if (it.subLogs.isNotEmpty()) it.subLogs else listOf(it) }
+            .sortedByDescending { it.date }
     }
 
     val targetPhoneNumber = remember(phoneNumber, filteredLogsByContact) {
@@ -712,6 +714,7 @@ fun CallLogFullScreen(
                                                         contact = itemContact,
                                                         displayOrder = displayOrder,
                                                         showSim = callLogConfig.showSim,
+                                                        showDate = false,
                                                         swipeEnabled = callLogConfig.swipeEnabled,
                                                         swipeRightAction = callLogConfig.swipeRightAction,
                                                         swipeLeftAction = callLogConfig.swipeLeftAction,

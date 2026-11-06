@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grinch.rivo4.R
+import com.grinch.rivo4.controller.ads.ConsentManager
 import com.grinch.rivo4.controller.ads.RewardedAdManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 import com.grinch.rivo4.controller.util.findActivity
@@ -77,6 +78,7 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
     val isPlayStoreBuild = com.grinch.rivo4.view.components.ad.IS_ADS_SUPPORTED
     val isBillingSupported = com.grinch.rivo4.controller.billing.BillingManager.IS_BILLING_SUPPORTED
     val canUseProFeatures = isPlayStoreBuild && isBillingSupported
+    val isPrivacyOptionsRequired = remember { ConsentManager.isPrivacyOptionsRequired(context) }
 
     val scope = rememberCoroutineScope()
     // Observe rewarded ad events
@@ -282,6 +284,22 @@ fun SupportDevelopmentScreen(navigator: DestinationsNavigator) {
                             }
                         }
                     )
+                }
+
+                if (isPlayStoreBuild && isPrivacyOptionsRequired) {
+                    item {
+                        RivoListItem(
+                            headline = stringResource(R.string.settings_ad_privacy_options),
+                            supporting = stringResource(R.string.settings_ad_privacy_options_supporting),
+                            leadingIcon = Icons.Outlined.Security,
+                            onClick = {
+                                val activity = context.findActivity()
+                                if (activity != null) {
+                                    ConsentManager.showPrivacyOptionsForm(activity)
+                                }
+                            }
+                        )
+                    }
                 }
 
             }

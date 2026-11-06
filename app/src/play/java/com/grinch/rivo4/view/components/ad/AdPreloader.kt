@@ -17,6 +17,7 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.grinch.rivo4.controller.ads.ConsentManager
 import com.grinch.rivo4.controller.util.PreferenceManager
 
 val TEST_DEVICE_IDS = listOf(
@@ -58,6 +59,10 @@ object AdPreloader {
         if (!prefs.getBoolean(PreferenceManager.KEY_ENABLE_ADS, true)) {
             return
         }
+        if (!ConsentManager.canRequestAds(context)) {
+            Log.d(TAG, "AdPreloader: Consent not granted or CMP not yet gathered. Postponing init.")
+            return
+        }
         if (!isInitialized && !isInitializing) {
             isInitializing = true
             val appContext = context.applicationContext
@@ -89,7 +94,7 @@ object AdPreloader {
     fun requestBannerAd(context: Context, forceRefresh: Boolean = false) {
         val appContext = context.applicationContext
         init(appContext)
-        if (!isInitialized) return
+        if (!isInitialized || !ConsentManager.canRequestAds(appContext)) return
 
         val now = System.currentTimeMillis()
         val hasValidAd = _bannerAdState.value != null
@@ -146,7 +151,7 @@ object AdPreloader {
     fun requestPostCallAd(context: Context, forceRefresh: Boolean = false) {
         val appContext = context.applicationContext
         init(appContext)
-        if (!isInitialized) return
+        if (!isInitialized || !ConsentManager.canRequestAds(appContext)) return
 
         val now = System.currentTimeMillis()
         val hasValidAd = _postCallAdState.value != null

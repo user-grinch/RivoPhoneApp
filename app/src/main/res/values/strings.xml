@@ -177,6 +177,8 @@
     <string name="label_notes">Notes</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Add Note</string>
+    <string name="contact_no_notes_title">No notes yet</string>
+    <string name="contact_no_notes_description">Add a note or reminder for this contact</string>
     <string name="call_notes_title">Call Notes</string>
     <string name="label_social_apps">Social Apps</string>
     <string name="label_local_memory">Device</string>
@@ -1415,6 +1417,8 @@ White text</string>
     <string name="settings_group_support_about">Support &amp; About</string>
     <string name="settings_display_banner_ads">Non-Intrusive ads</string>
     <string name="settings_display_banner_ads_supporting">Show small ads in lists to support development</string>
+    <string name="settings_ad_privacy_options">Ad privacy &amp; consent</string>
+    <string name="settings_ad_privacy_options_supporting">Manage your advertising privacy choices and consent</string>
     <string name="settings_support_development">Support Development</string>
     <string name="settings_support_development_supporting">Support Rivo development</string>
     <string name="settings_provide_tip">Provide a Tip</string>

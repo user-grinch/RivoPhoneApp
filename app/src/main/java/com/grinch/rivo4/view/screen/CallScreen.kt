@@ -832,6 +832,8 @@ fun ExpressiveCallScreen(
         val currentVideoCall = call.videoCall
         var peerWidth by remember { mutableIntStateOf(0) }
         var peerHeight by remember { mutableIntStateOf(0) }
+        var cameraWidth by remember { mutableIntStateOf(0) }
+        var cameraHeight by remember { mutableIntStateOf(0) }
 
         LaunchedEffect(isVideoCall) {
             if (isVideoCall) {
@@ -859,12 +861,19 @@ fun ExpressiveCallScreen(
                     ) {}
                     override fun onCallSessionEvent(event: Int) {}
                     override fun onPeerDimensionsChanged(width: Int, height: Int) {
-                        peerWidth = width
-                        peerHeight = height
+                        if (width > 0 && height > 0) {
+                            peerWidth = width
+                            peerHeight = height
+                        }
                     }
                     override fun onVideoQualityChanged(videoQuality: Int) {}
                     override fun onCallDataUsageChanged(dataUsage: Long) {}
-                    override fun onCameraCapabilitiesChanged(cameraCapabilities: VideoProfile.CameraCapabilities?) {}
+                    override fun onCameraCapabilitiesChanged(cameraCapabilities: VideoProfile.CameraCapabilities?) {
+                        if (cameraCapabilities != null && cameraCapabilities.width > 0 && cameraCapabilities.height > 0) {
+                            cameraWidth = cameraCapabilities.width
+                            cameraHeight = cameraCapabilities.height
+                        }
+                    }
                 }
                 try {
                     currentVideoCall.registerCallback(callback)
@@ -886,6 +895,8 @@ fun ExpressiveCallScreen(
                 videoCall = currentVideoCall,
                 peerWidth = peerWidth,
                 peerHeight = peerHeight,
+                cameraWidth = cameraWidth,
+                cameraHeight = cameraHeight,
                 callState = callState,
                 contactName = contactName,
                 phoneNumber = phoneNumber,
@@ -3040,6 +3051,8 @@ fun FullScreenVideoCallLayout(
     videoCall: InCallService.VideoCall?,
     peerWidth: Int = 0,
     peerHeight: Int = 0,
+    cameraWidth: Int = 0,
+    cameraHeight: Int = 0,
     callState: Int,
     contactName: String,
     phoneNumber: String,
@@ -3089,6 +3102,11 @@ fun FullScreenVideoCallLayout(
     var pipOffsetX by remember { mutableFloatStateOf(0f) }
     var pipOffsetY by remember { mutableFloatStateOf(0f) }
     var remoteTextureView by remember { mutableStateOf<TextureView?>(null) }
+    var localPreviewWidth by remember { mutableIntStateOf(640) }
+    var localPreviewHeight by remember { mutableIntStateOf(480) }
+
+    val effectivePeerWidth = if (peerWidth > 0) peerWidth else cameraWidth
+    val effectivePeerHeight = if (peerHeight > 0) peerHeight else cameraHeight
 
     // Auto-hide controls after 4.5 seconds when the call is active
     LaunchedEffect(areControlsVisible, callState) {
@@ -3098,8 +3116,8 @@ fun FullScreenVideoCallLayout(
         }
     }
 
-    LaunchedEffect(peerWidth, peerHeight, remoteTextureView) {
-        remoteTextureView?.let { applyVideoAspectRatio(it, peerWidth, peerHeight) }
+    LaunchedEffect(effectivePeerWidth, effectivePeerHeight, remoteTextureView) {
+        remoteTextureView?.let { applyVideoAspectRatio(it, effectivePeerWidth, effectivePeerHeight) }
     }
 
     LaunchedEffect(videoCall, useFrontCamera, hasCameraPermission, isCameraEnabled) {
@@ -3183,12 +3201,12 @@ fun FullScreenVideoCallLayout(
                                     displaySurface?.release()
                                     displaySurface = Surface(surface)
                                     videoCall.setDisplaySurface(displaySurface)
-                                    applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
+                                    applyVideoAspectRatio(this@apply, effectivePeerWidth, effectivePeerHeight)
                                 } catch (_: Exception) {}
                             }
 
                             override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
-                                applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
+                                applyVideoAspectRatio(this@apply, effectivePeerWidth, effectivePeerHeight)
                             }
 
                             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -3202,14 +3220,14 @@ fun FullScreenVideoCallLayout(
                             }
 
                             override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
-                                applyVideoAspectRatio(this@apply, peerWidth, peerHeight)
+                                applyVideoAspectRatio(this@apply, effectivePeerWidth, effectivePeerHeight)
                             }
                         }
                     }
                 },
                 update = { textureView ->
                     remoteTextureView = textureView
-                    applyVideoAspectRatio(textureView, peerWidth, peerHeight)
+                    applyVideoAspectRatio(textureView, effectivePeerWidth, effectivePeerHeight)
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -3365,7 +3383,13 @@ fun FullScreenVideoCallLayout(
 
                                             val chars = cameraId?.let { cameraManager?.getCameraCharacteristics(it) }
                                             val map = chars?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                                            val optimalSize = map?.getOutputSizes(SurfaceTexture::class.java)?.firstOrNull { it.width in 480..1280 } ?: Size(640, 480)
+                                            val sizes = map?.getOutputSizes(SurfaceTexture::class.java) ?: emptyArray()
+                                            val optimalSize = sizes.firstOrNull { it.width == 640 && it.height == 480 }
+                                                ?: sizes.firstOrNull { it.width == 1280 && it.height == 720 }
+                                                ?: sizes.firstOrNull { it.width in 480..1280 }
+                                                ?: Size(640, 480)
+                                            localPreviewWidth = optimalSize.width
+                                            localPreviewHeight = optimalSize.height
                                             surface.setDefaultBufferSize(optimalSize.width, optimalSize.height)
 
                                             previewSurface?.release()
@@ -3388,7 +3412,14 @@ fun FullScreenVideoCallLayout(
                                             }
 
                                             val sensorOrientation = chars?.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
-                                            applyLocalPreviewTransform(this@apply, useFrontCamera, sensorOrientation, displayRotation)
+                                            applyLocalPreviewTransform(
+                                                this@apply,
+                                                useFrontCamera,
+                                                sensorOrientation,
+                                                displayRotation,
+                                                optimalSize.width,
+                                                optimalSize.height
+                                            )
                                         } catch (_: Exception) {}
                                     }
 
@@ -3404,7 +3435,14 @@ fun FullScreenVideoCallLayout(
                                                 Surface.ROTATION_270 -> 270
                                                 else -> 0
                                             }
-                                            applyLocalPreviewTransform(this@apply, useFrontCamera, sensorOrientation, displayRotation)
+                                            applyLocalPreviewTransform(
+                                                this@apply,
+                                                useFrontCamera,
+                                                sensorOrientation,
+                                                displayRotation,
+                                                localPreviewWidth,
+                                                localPreviewHeight
+                                            )
                                         } catch (_: Exception) {}
                                     }
 
@@ -3444,7 +3482,14 @@ fun FullScreenVideoCallLayout(
                                     videoCall.setCamera(cameraId)
                                     videoCall.setDeviceOrientation(displayRotation)
                                 }
-                                applyLocalPreviewTransform(textureView, useFrontCamera, sensorOrientation, displayRotation)
+                                applyLocalPreviewTransform(
+                                    textureView,
+                                    useFrontCamera,
+                                    sensorOrientation,
+                                    displayRotation,
+                                    localPreviewWidth,
+                                    localPreviewHeight
+                                )
                             } catch (_: Exception) {}
                         },
                         modifier = Modifier.fillMaxSize()
@@ -3576,8 +3621,28 @@ private fun applyVideoAspectRatio(textureView: TextureView, videoW: Int, videoH:
     val viewH = textureView.height.toFloat()
     if (viewW <= 0f || viewH <= 0f) return
 
-    val vW = if (videoW > 0) videoW.toFloat() else 720f
-    val vH = if (videoH > 0) videoH.toFloat() else 1280f
+    val isPortrait = viewH >= viewW
+    val vW: Float
+    val vH: Float
+
+    if (videoW > 0 && videoH > 0) {
+        if (isPortrait) {
+            vW = minOf(videoW, videoH).toFloat()
+            vH = maxOf(videoW, videoH).toFloat()
+        } else {
+            vW = maxOf(videoW, videoH).toFloat()
+            vH = minOf(videoW, videoH).toFloat()
+        }
+    } else {
+        // Standard ViLTE default portrait aspect ratio is 3:4 (480x640 / 240x320)
+        if (isPortrait) {
+            vW = 480f
+            vH = 640f
+        } else {
+            vW = 640f
+            vH = 480f
+        }
+    }
 
     val viewAspect = viewW / viewH
     val videoAspect = vW / vH
@@ -3603,27 +3668,42 @@ private fun applyLocalPreviewTransform(
     textureView: TextureView,
     useFrontCamera: Boolean,
     sensorOrientation: Int,
-    displayRotation: Int
+    displayRotation: Int,
+    previewWidth: Int = 0,
+    previewHeight: Int = 0
 ) {
     val viewW = textureView.width.toFloat()
     val viewH = textureView.height.toFloat()
     if (viewW <= 0f || viewH <= 0f) return
 
-    val matrix = Matrix()
-    val isRotated = (sensorOrientation - displayRotation + 360) % 180 != 0
-    val bufferW = if (isRotated) 480f else 640f
-    val bufferH = if (isRotated) 640f else 480f
+    val pW = if (previewWidth > 0) previewWidth.toFloat() else 480f
+    val pH = if (previewHeight > 0) previewHeight.toFloat() else 640f
+
+    val isViewPortrait = viewH >= viewW
+    val bufferW: Float
+    val bufferH: Float
+
+    if (isViewPortrait) {
+        bufferW = minOf(pW, pH)
+        bufferH = maxOf(pW, pH)
+    } else {
+        bufferW = maxOf(pW, pH)
+        bufferH = minOf(pW, pH)
+    }
 
     val viewAspect = viewW / viewH
     val bufferAspect = bufferW / bufferH
 
+    val matrix = Matrix()
     val scaleX: Float
     val scaleY: Float
+
+    // Center-crop to fill the view without vertical or horizontal stretching
     if (bufferAspect > viewAspect) {
         scaleX = bufferAspect / viewAspect
-        scaleY = 1f
+        scaleY = 1.0f
     } else {
-        scaleX = 1f
+        scaleX = 1.0f
         scaleY = viewAspect / bufferAspect
     }
 
@@ -3637,6 +3717,61 @@ private fun applyLocalPreviewTransform(
     textureView.setTransform(matrix)
 }
 
+private fun applyLocalCamera2Transform(
+    textureView: TextureView,
+    useFrontCamera: Boolean,
+    sensorOrientation: Int,
+    displayRotation: Int,
+    previewWidth: Int,
+    previewHeight: Int
+) {
+    val viewW = textureView.width.toFloat()
+    val viewH = textureView.height.toFloat()
+    if (viewW <= 0f || viewH <= 0f) return
+
+    val pW = if (previewWidth > 0) previewWidth.toFloat() else 640f
+    val pH = if (previewHeight > 0) previewHeight.toFloat() else 480f
+
+    val bufW = maxOf(pW, pH)
+    val bufH = minOf(pW, pH)
+
+    val rotationDegrees = if (useFrontCamera) {
+        (sensorOrientation + displayRotation) % 360
+    } else {
+        (sensorOrientation - displayRotation + 360) % 360
+    }
+
+    val isRotated = rotationDegrees == 90 || rotationDegrees == 270
+    val matrix = Matrix()
+    val centerX = viewW / 2f
+    val centerY = viewH / 2f
+
+    if (isRotated) {
+        val scale = maxOf(viewW / bufH, viewH / bufW)
+        val targetW = scale * bufH
+        val targetH = scale * bufW
+        val scaleX = targetH / viewW
+        val scaleY = targetW / viewH
+
+        matrix.setScale(scaleX, scaleY, centerX, centerY)
+        matrix.postRotate(rotationDegrees.toFloat(), centerX, centerY)
+    } else {
+        val scale = maxOf(viewW / bufW, viewH / bufH)
+        val scaleX = (scale * bufW) / viewW
+        val scaleY = (scale * bufH) / viewH
+        matrix.setScale(scaleX, scaleY, centerX, centerY)
+        if (rotationDegrees == 180) {
+            matrix.postRotate(180f, centerX, centerY)
+        }
+    }
+
+    if (useFrontCamera) {
+        matrix.postScale(-1f, 1f, centerX, centerY)
+    }
+
+    textureView.setTransform(matrix)
+}
+
 @Composable
 private fun LocalCamera2Preview(
     useFrontCamera: Boolean,
@@ -3645,6 +3780,9 @@ private fun LocalCamera2Preview(
     val context = LocalContext.current
     var surfaceTextureRef by remember { mutableStateOf<SurfaceTexture?>(null) }
     var textureViewRef by remember { mutableStateOf<TextureView?>(null) }
+    var cameraOptimalWidth by remember { mutableIntStateOf(640) }
+    var cameraOptimalHeight by remember { mutableIntStateOf(480) }
+    var cameraSensorOrientation by remember { mutableIntStateOf(90) }
 
     DisposableEffect(useFrontCamera, surfaceTextureRef) {
         val st = surfaceTextureRef
@@ -3674,11 +3812,18 @@ private fun LocalCamera2Preview(
                 if (cameraId != null) {
                     val chars = cameraManager.getCameraCharacteristics(cameraId)
                     val map = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                    val optimalSize = map?.getOutputSizes(SurfaceTexture::class.java)?.firstOrNull { it.width in 480..1280 } ?: Size(640, 480)
+                    val sizes = map?.getOutputSizes(SurfaceTexture::class.java) ?: emptyArray()
+                    val optimalSize = sizes.firstOrNull { it.width == 640 && it.height == 480 }
+                        ?: sizes.firstOrNull { it.width == 1280 && it.height == 720 }
+                        ?: sizes.firstOrNull { it.width in 480..1280 }
+                        ?: Size(640, 480)
+                    cameraOptimalWidth = optimalSize.width
+                    cameraOptimalHeight = optimalSize.height
                     st.setDefaultBufferSize(optimalSize.width, optimalSize.height)
                     previewSurface = Surface(st)
 
                     val sensorOrientation = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+                    cameraSensorOrientation = sensorOrientation
                     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
                     val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
                         Surface.ROTATION_90 -> 90
@@ -3687,7 +3832,7 @@ private fun LocalCamera2Preview(
                         else -> 0
                     }
                     textureViewRef?.let {
-                        applyLocalPreviewTransform(it, useFrontCamera, sensorOrientation, displayRotation)
+                        applyLocalCamera2Transform(it, useFrontCamera, sensorOrientation, displayRotation, optimalSize.width, optimalSize.height)
                     }
 
                     cameraManager.openCamera(
@@ -3748,7 +3893,16 @@ private fun LocalCamera2Preview(
                     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
                         surfaceTextureRef = surface
                     }
-                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+                    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+                        val windowManager = ctx.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+                        val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                            Surface.ROTATION_90 -> 90
+                            Surface.ROTATION_180 -> 180
+                            Surface.ROTATION_270 -> 270
+                            else -> 0
+                        }
+                        applyLocalCamera2Transform(this@apply, useFrontCamera, cameraSensorOrientation, displayRotation, cameraOptimalWidth, cameraOptimalHeight)
+                    }
                     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                         surfaceTextureRef = null
                         if (textureViewRef == this@apply) textureViewRef = null
@@ -3760,6 +3914,14 @@ private fun LocalCamera2Preview(
         },
         update = { textureView ->
             textureViewRef = textureView
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+            val displayRotation = when (windowManager?.defaultDisplay?.rotation) {
+                Surface.ROTATION_90 -> 90
+                Surface.ROTATION_180 -> 180
+                Surface.ROTATION_270 -> 270
+                else -> 0
+            }
+            applyLocalCamera2Transform(textureView, useFrontCamera, cameraSensorOrientation, displayRotation, cameraOptimalWidth, cameraOptimalHeight)
         },
         modifier = modifier
     )

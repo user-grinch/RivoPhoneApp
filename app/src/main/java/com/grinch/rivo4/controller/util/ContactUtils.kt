@@ -485,4 +485,101 @@ object ContactUtils {
 
         return false
     }
+
+    fun findContactDuplicates(allContacts: List<Contact>, unknownLabel: String = "Unknown"): List<List<Contact>> {
+        if (allContacts.size < 2) return emptyList()
+
+        val parent = IntArray(allContacts.size) { it }
+        fun find(i: Int): Int {
+            var root = i
+            while (root != parent[root]) root = parent[root]
+            var curr = i
+            while (curr != root) {
+                val nxt = parent[curr]
+                parent[curr] = root
+                curr = nxt
+            }
+            return root
+        }
+        fun union(i: Int, j: Int) {
+            val rootI = find(i)
+            val rootJ = find(j)
+            if (rootI != rootJ) {
+                parent[rootI] = rootJ
+            }
+        }
+
+        val nameMap = mutableMapOf<String, Int>()
+        val phoneBuckets = mutableMapOf<String, MutableList<Pair<String, Int>>>()
+        val emailMap = mutableMapOf<String, MutableList<Int>>()
+
+        val invalidNames = setOf("", "unnamed", "(no name)", "no name", unknownLabel.lowercase(), "unknown", "null")
+        allContacts.forEachIndexed { index, contact ->
+            val cleanName = contact.name.trim().lowercase()
+            val validNumbers = contact.phoneNumbers.filter { it.filter { c -> c.isDigit() }.length >= 5 }
+            val validEmails = contact.emails.map { it.trim().lowercase() }.filter { it.length >= 5 && it.contains('@') }
+
+            if (cleanName.isNotBlank() && !invalidNames.contains(cleanName)) {
+                val existing = nameMap[cleanName]
+                if (existing != null) {
+                    val other = allContacts[existing]
+                    val otherNumbers = other.phoneNumbers.filter { it.filter { c -> c.isDigit() }.length >= 5 }
+                    if (validNumbers.isEmpty() || otherNumbers.isEmpty()) {
+                        union(index, existing)
+                        if (otherNumbers.isEmpty() && validNumbers.isNotEmpty()) {
+                            nameMap[cleanName] = index
+                        }
+                    }
+                } else {
+                    nameMap[cleanName] = index
+                }
+            }
+
+            validNumbers.forEach { cleanNum ->
+                val digits = cleanNum.filter { it.isDigit() }
+                val bucketKey = if (digits.length >= 7) digits.takeLast(7) else digits
+                val bucket = phoneBuckets.getOrPut(bucketKey) { mutableListOf() }
+                val match = bucket.find { areNumbersEqual(it.first, cleanNum) }
+                if (match != null) {
+                    union(index, match.second)
+                } else {
+                    bucket.add(Pair(cleanNum, index))
+                }
+            }
+
+            validEmails.forEach { cleanEmail ->
+                val list = emailMap.getOrPut(cleanEmail) { mutableListOf() }
+                // An email match only indicates duplicate contacts if they also share the same valid name.
+                // Sharing an email (e.g. company info@ or support@) across different names does NOT mean duplicate contacts.
+                if (cleanName.isNotBlank() && !invalidNames.contains(cleanName)) {
+                    for (otherIndex in list) {
+                        val other = allContacts[otherIndex]
+                        val otherCleanName = other.name.trim().lowercase()
+                        if (otherCleanName.isNotBlank() && !invalidNames.contains(otherCleanName) && cleanName == otherCleanName) {
+                            union(index, otherIndex)
+                        }
+                    }
+                }
+                list.add(index)
+            }
+        }
+
+        val groups = mutableMapOf<Int, MutableList<Contact>>()
+        allContacts.forEachIndexed { index, contact ->
+            val root = find(index)
+            groups.getOrPut(root) { mutableListOf() }.add(contact)
+        }
+
+        return groups.values
+            .filter { it.size > 1 }
+            .map { group ->
+                group.sortedWith(
+                    compareByDescending<Contact> { it.photoUri != null }
+                        .thenByDescending { it.phoneNumbers.size }
+                        .thenByDescending { it.emails.size }
+                        .thenByDescending { !it.isPrivate }
+                        .thenBy { it.id }
+                )
+            }
+    }
 }

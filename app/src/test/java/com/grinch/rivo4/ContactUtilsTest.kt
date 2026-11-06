@@ -218,4 +218,65 @@ class ContactUtilsTest {
         assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(c, "Hr"))
         assertTrue(com.grinch.rivo4.controller.util.ContactUtils.matchesContact(c, "Ahmed Ram"))
     }
+
+    @Test
+    fun testDuplicateContactsNotTriggeredBySharedEmailWithDifferentNames() {
+        val employee1 = Contact(
+            id = "1",
+            name = "Alice Johnson",
+            phoneNumbers = listOf("+1 555-0100"),
+            emails = listOf("support@company.com")
+        )
+        val employee2 = Contact(
+            id = "2",
+            name = "Bob Smith",
+            phoneNumbers = listOf("+1 555-0200"),
+            emails = listOf("support@company.com")
+        )
+        val contacts = listOf(employee1, employee2)
+
+        val duplicates = com.grinch.rivo4.controller.util.ContactUtils.findContactDuplicates(contacts)
+        assertTrue("Employees sharing a company email with different names must NOT be detected as duplicates", duplicates.isEmpty())
+    }
+
+    @Test
+    fun testDuplicateContactsDetectedForSameNameAndSameEmail() {
+        val contact1 = Contact(
+            id = "1",
+            name = "Alice Johnson",
+            phoneNumbers = listOf("+1 555-0100"),
+            emails = listOf("alice.johnson@example.com")
+        )
+        val contact2 = Contact(
+            id = "2",
+            name = "Alice Johnson",
+            phoneNumbers = listOf("+1 555-0200"),
+            emails = listOf("alice.johnson@example.com")
+        )
+        val contacts = listOf(contact1, contact2)
+
+        val duplicates = com.grinch.rivo4.controller.util.ContactUtils.findContactDuplicates(contacts)
+        assertEquals("Contacts with identical name and matching email should be detected as duplicates", 1, duplicates.size)
+        assertEquals(2, duplicates[0].size)
+    }
+
+    @Test
+    fun testDuplicateContactsDetectedForMatchingPhone() {
+        val contact1 = Contact(
+            id = "1",
+            name = "Alice J.",
+            phoneNumbers = listOf("+1 555-0100"),
+            emails = listOf("alice1@example.com")
+        )
+        val contact2 = Contact(
+            id = "2",
+            name = "Alice Johnson",
+            phoneNumbers = listOf("+1 555-0100"),
+            emails = listOf("alice2@example.com")
+        )
+        val contacts = listOf(contact1, contact2)
+
+        val duplicates = com.grinch.rivo4.controller.util.ContactUtils.findContactDuplicates(contacts)
+        assertEquals("Contacts with matching phone numbers should be detected as duplicates", 1, duplicates.size)
+    }
 }
