@@ -176,6 +176,8 @@
     <string name="label_notes">Notas</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Añadir nota</string>
+    <string name="contact_no_notes_title">Aún no hay notas</string>
+    <string name="contact_no_notes_description">Añadir una nota o recordatorio para este contacto</string>
     <string name="call_notes_title">Notas de llamada</string>
     <string name="label_social_apps">Redes sociales</string>
     <string name="label_local_memory">Dispositivo</string>

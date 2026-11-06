@@ -132,6 +132,8 @@
     <string name="content_desc_send">Poslat</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Přidat poznámku</string>
+    <string name="contact_no_notes_title">Zatím žádné poznámky</string>
+    <string name="contact_no_notes_description">Přidat poznámku nebo připomínku pro tento kontakt</string>
     <string name="call_notes_title">Poznámky k hovoru</string>
     <string name="label_local_memory">Zařízení</string>
     <string name="main_rate_google_play">Ohodnoťte na Google Play</string>

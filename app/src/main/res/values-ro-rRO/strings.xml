@@ -133,6 +133,8 @@
     <string name="content_desc_send">Trimite</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Adaugă Notă</string>
+    <string name="contact_no_notes_title">Încă nu există note</string>
+    <string name="contact_no_notes_description">Adaugă o notă sau memento pentru acest contact</string>
     <string name="call_notes_title">Sună note</string>
     <string name="label_local_memory">Dispozitiv</string>
     <string name="main_rate_google_play">Evaluează pe Google Play</string>

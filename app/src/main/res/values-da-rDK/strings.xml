@@ -132,6 +132,7 @@
     <string name="content_desc_send">Send</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Tilføj Note</string>
+    <string name="contact_no_notes_title">Ingen noter endnu</string>
     <string name="call_notes_title">Opkald Noter</string>
     <string name="label_local_memory">Enhed</string>
     <string name="main_rate_google_play">Bedøm på Google Play</string>
