@@ -72,8 +72,8 @@
     <string name="settings_default_start_screen_supporting">Bei Appstart anzuzeigender Bildschirm</string>
     <string name="settings_quick_responses">Schnellantworten</string>
     <string name="settings_quick_responses_supporting">Verwalten Sie vorbereitete SMS-Antworten für eingehende Anrufe</string>
-    <string name="settings_post_call_summary">Verhalten nach Anruf</string>
-    <string name="settings_post_call_summary_supporting">Nach Anrufende Anrufdauer und Schnell-Aktionen anzeigen (Rückruf, SMS, Notiz)</string>
+    <string name="settings_post_call_summary">Verhalten nach Anrufende</string>
+    <string name="settings_post_call_summary_supporting">Anrufdauer und Schnell-Aktionen anzeigen (Rückruf, SMS, Notiz)</string>
     <string name="settings_work_in_progress">In der Entwicklungsphase</string>
     <string name="support_ways_title">Unterstützungsformen</string>
     <string name="support_video_reminders">Werbeclip-Erinnerungen</string>
@@ -403,7 +403,7 @@
     <!-- Dialpad -->
     <string name="dialpad_title">Tastenfeld</string>
     <string name="dialpad_start_dialing">Wählvorgang beginnen</string>
-    <string name="dialpad_start_hint">Zum Beginnen Name oder Nummer eingegeben</string>
+    <string name="dialpad_start_hint">Zum Beginnen Name oder Nummer eingeben</string>
     <string name="content_desc_call_named">Anruf %1$s</string>
     <string name="content_desc_backspace">Zurücktaste</string>
     <string name="dialpad_connect_via_social">Über Messenger-Apps verbinden</string>
@@ -1408,7 +1408,7 @@ Weißer Text</string>
     <string name="action_reset">Zurücksetzen</string>
     <!-- Floating Call Bubble -->
     <string name="settings_floating_call_bubble">Schwebendes Anruf-Fenster</string>
-    <string name="settings_floating_call_bubble_supporting">Verschiebbares Fenster mit Anrufsteuerung anzeigen, wenn Anrufbildschirm verlassen wird</string>
+    <string name="settings_floating_call_bubble_supporting">Fenster mit Anrufsteuerung anzeigen, wenn Anrufbildschirm verlassen wird</string>
     <string name="floating_bubble_overlay_permission_desc">Berechtigung zur Anzeige über anderen Apps ist erforderlich, um schwebendes Anruf-Fenster anzuzeigen</string>
     <string name="floating_bubble_permission_required_toast">Bitte gewähren Sie die Berechtigung \"Über anderen Apps anzeigen\", um schwebendes Anruf-Fenster zu verwenden</string>
     <!-- Additional Call Log & Reminder Strings -->
@@ -1539,7 +1539,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_avatars_contact_cards">Avatare &amp; Kontaktkarten</string>
     <string name="loc_contact_photos_initials_and_contact_card_styling">Kontaktbilder, Initialen und Kontaktkartenstil</string>
     <string name="loc_avatar_shapes">Avatar-Formen</string>
-    <string name="loc_choose_from_circle_squircle_hexagon_flower_cookie_more">Wähle aus Kreis, abgerundetem Kreis, Hexagon, Blumen, Cookie &amp; mehr</string>
+    <string name="loc_choose_from_circle_squircle_hexagon_flower_cookie_more">Wähle Kreis, abgerundetem Quadrat, Hexagon, Blume, Cookie &amp; mehr</string>
     <string name="loc_show_contact_pictures">Kontaktbilder anzeigen</string>
     <string name="loc_display_contact_photos_in_avatar_tiles_when_available">Kontaktbilder in Avatar-Kacheln anzeigen, wenn verfügbar</string>
     <string name="loc_colorful_avatars">Farbige Avatare</string>
@@ -1551,7 +1551,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_call_screen_buttons">Anrufbildschirm</string>
     <string name="loc_choose_the_position_of_each_in_call_button">Wählen Sie die Position jeder Anrufschaltfläche</string>
     <string name="loc_hide_avatar_with_wallpaper">Avatar mit Hintergrundbild ausblenden</string>
-    <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Avatar-Kreis abbrechen, wenn ein vollständiger Kontakthintergrund-Hintergrund gesetzt ist</string>
+    <string name="loc_omit_avatar_circle_when_a_full_contact_background_wallpaper_is_set">Avatar-Kreis nicht anzeigen, wenn vollständiger Kontakt-Hintergrund gesetzt ist</string>
     <string name="loc_dialpad_dtmf_tones">Tastenfeld: DTMF-Töne</string>
     <string name="loc_play_audible_audio_tones_when_tapping_keys_on_the_dialpad">Hörbare Tontöne beim Bedienen des Tastenfelds</string>
     <string name="loc_dialpad_vibration">Tastenfeld Vibration</string>
@@ -1599,7 +1599,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_prevent_accidental_touches_and_maximize_ringtone_volume_inside_pocket">Verhindern Sie versehentliche Berührungen und maximiere Klingeltonlautstärke in der Tasche</string>
     <string name="loc_call_log_history_limit">Limit für Anrufliste</string>
     <string name="loc_configure_maximum_retained_call_logs_500_1000_or_unlimited">Maximale Anzahl der Einträge (500, 1.000 oder unbegrenzt) konfigurieren</string>
-    <string name="loc_post_call_summary">Verhalten nach Anruf</string>
+    <string name="loc_post_call_summary">Verhalten nach Anrufende</string>
     <string name="loc_display_call_duration_note_option_and_quick_actions_after_hanging_up">Anrufdauer, Notizoption und Schnell-Aktionen nach Auflegen anzeigen</string>
     <string name="loc_auto_redial">Auto-Wahlwiederholung</string>
     <string name="loc_automatically_redial_busy_declined_or_unreachable_outgoing_calls">Automatische Wahlwiederholung bei besetzten, abgelehnten oder nicht erreichbaren Anrufen</string>
