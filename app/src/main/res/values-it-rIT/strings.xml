@@ -132,6 +132,8 @@
     <string name="content_desc_send">Invia</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Aggiungi Nota</string>
+    <string name="contact_no_notes_title">Ancora nessuna nota</string>
+    <string name="contact_no_notes_description">Aggiungi una nota o un promemoria per questo contatto</string>
     <string name="call_notes_title">Note Di Chiamata</string>
     <string name="label_local_memory">Dispositivo</string>
     <string name="main_rate_google_play">Valuta su Google Play</string>
@@ -622,6 +624,8 @@ Testo bianco</string>
     <string name="settings_group_support_about">Supporto &amp; Informazioni</string>
     <string name="settings_display_banner_ads">Annunci non invadenti</string>
     <string name="settings_display_banner_ads_supporting">Mostra piccoli annunci nelle liste per supportare lo sviluppo</string>
+    <string name="settings_ad_privacy_options">Privacy annuncio &amp; consenso</string>
+    <string name="settings_ad_privacy_options_supporting">Gestisci le tue scelte pubblicitarie sulla privacy e il consenso</string>
     <string name="settings_support_development">Sostieni Lo Sviluppo</string>
     <string name="settings_support_development_supporting">Supporta sviluppo Rivo</string>
     <string name="settings_provide_tip">Fornisci un suggerimento</string>

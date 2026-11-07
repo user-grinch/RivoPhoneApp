@@ -178,6 +178,8 @@
     <string name="label_notes">Notatki</string>
     <string name="label_sms">SMS-y</string>
     <string name="action_add_note">Dodaj notatkę</string>
+    <string name="contact_no_notes_title">Brak notatek</string>
+    <string name="contact_no_notes_description">Dodaj notatkę lub przypomnienie dla tego kontaktu</string>
     <string name="call_notes_title">Notatki połączeń</string>
     <string name="label_social_apps">Aplikacje społecznościowe</string>
     <string name="label_local_memory">Urządzenie</string>
@@ -1358,6 +1360,8 @@ Biały tekst</string>
     <string name="settings_group_support_about">Wsparcie i informacje</string>
     <string name="settings_display_banner_ads">Dyskretne reklamy</string>
     <string name="settings_display_banner_ads_supporting">Pokaż małe reklamy na listach do wsparcia rozwoju</string>
+    <string name="settings_ad_privacy_options">Prywatność reklamy &amp; zgoda</string>
+    <string name="settings_ad_privacy_options_supporting">Zarządzaj swoimi decyzjami dotyczącymi prywatności i zgody na reklamę</string>
     <string name="settings_support_development">Wspomóż rozwój</string>
     <string name="settings_support_development_supporting">Wesprzyj rozwój Rivo</string>
     <string name="settings_provide_tip">Daj napiwek</string>

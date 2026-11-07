@@ -178,6 +178,8 @@
     <string name="label_notes">Заметки</string>
     <string name="label_sms">СМС</string>
     <string name="action_add_note">Добавить заметку</string>
+    <string name="contact_no_notes_title">Пока нет заметок</string>
+    <string name="contact_no_notes_description">Добавить заметку или напоминание для этого контакта</string>
     <string name="call_notes_title">Заметки к звонку</string>
     <string name="label_social_apps">Социальные сети и мессенджеры</string>
     <string name="label_local_memory">Устройство</string>
@@ -1358,6 +1360,8 @@
     <string name="settings_group_support_about">Поддержка &amp; О программе</string>
     <string name="settings_display_banner_ads">Ненавязчивая реклама</string>
     <string name="settings_display_banner_ads_supporting">Показывать маленькую рекламу в списках для поддержки разработки</string>
+    <string name="settings_ad_privacy_options">Объявление &amp; согласие</string>
+    <string name="settings_ad_privacy_options_supporting">Управляйте выбором рекламы и согласием</string>
     <string name="settings_support_development">Поддержать разработку</string>
     <string name="settings_support_development_supporting">Поддержать разработку Rivo</string>
     <string name="settings_provide_tip">Написать подсказку</string>

@@ -132,6 +132,8 @@
     <string name="content_desc_send">Skicka</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Lägg till anteckning</string>
+    <string name="contact_no_notes_title">Inga anteckningar ännu</string>
+    <string name="contact_no_notes_description">Lägg till en anteckning eller påminnelse för denna kontakt</string>
     <string name="call_notes_title">Anteckningar för samtal</string>
     <string name="label_local_memory">Enhet</string>
     <string name="main_rate_google_play">Betygsätt på Google Play</string>
@@ -622,6 +624,8 @@ Vit text</string>
     <string name="settings_group_support_about">Support &amp; Om</string>
     <string name="settings_display_banner_ads">Icke-inkräktande annonser</string>
     <string name="settings_display_banner_ads_supporting">Visa små annonser i listor för att stödja utvecklingen</string>
+    <string name="settings_ad_privacy_options">Ad sekretess &amp; samtycke</string>
+    <string name="settings_ad_privacy_options_supporting">Hantera dina reklamsekretessval och samtycke</string>
     <string name="settings_support_development">Stöd utveckling</string>
     <string name="settings_support_development_supporting">Stöd Rivo utveckling</string>
     <string name="settings_provide_tip">Ge ett tips</string>

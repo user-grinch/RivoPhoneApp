@@ -625,6 +625,8 @@ Text alb</string>
     <string name="settings_group_support_about">Suport &amp; Despre</string>
     <string name="settings_display_banner_ads">Reclame discrete</string>
     <string name="settings_display_banner_ads_supporting">Arată reclame mici în liste pentru a sprijini dezvoltarea</string>
+    <string name="settings_ad_privacy_options">Confidențialitate reclamă &amp; consimțământ</string>
+    <string name="settings_ad_privacy_options_supporting">Gestionează-ți opțiunile de confidențialitate și consimțământul pentru publicitate</string>
     <string name="settings_support_development">Sprijină dezvoltarea</string>
     <string name="settings_support_development_supporting">Sprijină dezvoltarea Rivo</string>
     <string name="settings_provide_tip">Oferă un sfat</string>

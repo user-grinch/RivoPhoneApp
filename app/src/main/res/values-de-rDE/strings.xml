@@ -176,6 +176,8 @@
     <string name="label_notes">Notizen</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Notiz hinzufügen</string>
+    <string name="contact_no_notes_title">Noch keine Notizen</string>
+    <string name="contact_no_notes_description">Notiz oder Erinnerung für diesen Kontakt hinzufügen</string>
     <string name="call_notes_title">Anrufnotizen</string>
     <string name="label_social_apps">Messenger Apps</string>
     <string name="label_local_memory">Gerät</string>
@@ -1352,6 +1354,8 @@ Weißer Text</string>
     <string name="settings_group_support_about">Unterstützen &amp; Über</string>
     <string name="settings_display_banner_ads">Nicht aufdringliche Werbung</string>
     <string name="settings_display_banner_ads_supporting">Zeige kleine Anzeigen in Listen, um die Entwicklung zu unterstützen</string>
+    <string name="settings_ad_privacy_options">Einwilligung zum Datenschutz &amp;</string>
+    <string name="settings_ad_privacy_options_supporting">Verwalten Sie Ihre Privatsphäre-Optionen und Ihre Zustimmung</string>
     <string name="settings_support_development">Unterstützen Sie die Entwicklung</string>
     <string name="settings_support_development_supporting">Rivo-Entwicklung unterstützen</string>
     <string name="settings_provide_tip">Trinkgeld geben</string>
