@@ -169,6 +169,8 @@
     <string name="label_notes">备注</string>
     <string name="label_sms">短信</string>
     <string name="action_add_note">添加备注</string>
+    <string name="contact_no_notes_title">尚无备注</string>
+    <string name="contact_no_notes_description">为此联系人添加备注或提醒</string>
     <string name="call_notes_title">通话笔记</string>
     <string name="label_social_apps">社交网络</string>
     <string name="label_local_memory">设备</string>
@@ -769,6 +771,7 @@
     <string name="settings_group_support_about">关于支持 &amp;</string>
     <string name="settings_display_banner_ads">非侵扰性广告</string>
     <string name="settings_display_banner_ads_supporting">在列表中显示支持开发的小广告</string>
+    <string name="settings_ad_privacy_options_supporting">管理您的广告隐私选择和同意</string>
     <string name="settings_support_development">支持开发</string>
     <string name="settings_support_development_supporting">支持里沃发展</string>
     <string name="settings_provide_tip">提供提示</string>

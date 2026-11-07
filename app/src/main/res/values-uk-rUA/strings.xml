@@ -128,6 +128,8 @@
     <string name="content_desc_send">Відправити</string>
     <string name="label_sms">СМС</string>
     <string name="action_add_note">Додати примітку</string>
+    <string name="contact_no_notes_title">Поки немає нотаток</string>
+    <string name="contact_no_notes_description">Додайте примітку або нагадування для цього контакту</string>
     <string name="call_notes_title">Нотатки під час викликів</string>
     <string name="label_local_memory">Пристрій</string>
     <string name="main_rate_google_play">Оцінити в Google Play</string>
@@ -605,6 +607,7 @@
     <string name="blocked_action_export_csv">Експортувати в CSV</string>
     <string name="settings_display_banner_ads">ненав\'язливі оголошення</string>
     <string name="settings_display_banner_ads_supporting">Показати невелику рекламу в списках для підтримки розробки</string>
+    <string name="settings_ad_privacy_options_supporting">Керуйте вашим рекламним вибором та згодою</string>
     <string name="settings_support_development">Підтримати розробку</string>
     <string name="settings_support_development_supporting">Підтримати розробку Rivo</string>
     <string name="settings_provide_tip">Вкажіть підказку</string>

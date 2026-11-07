@@ -131,6 +131,8 @@
     <string name="content_desc_send">Αποστολή</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">Προσθήκη Σημείωσης</string>
+    <string name="contact_no_notes_title">Χωρίς σημειώσεις ακόμα</string>
+    <string name="contact_no_notes_description">Προσθήκη σημείωσης ή υπενθύμισης για αυτήν την επαφή</string>
     <string name="call_notes_title">Σημειώσεις Κλήσης</string>
     <string name="label_local_memory">Συσκευή</string>
     <string name="main_rate_google_play">Βαθμολογήστε στο Google Play</string>
@@ -608,6 +610,7 @@
     <string name="settings_group_support_about">Υποστήριξη &amp; Σχετικά</string>
     <string name="settings_display_banner_ads">Μη παρεμβατικές διαφημίσεις</string>
     <string name="settings_display_banner_ads_supporting">Εμφάνιση μικρών διαφημίσεων σε λίστες για υποστήριξη ανάπτυξης</string>
+    <string name="settings_ad_privacy_options_supporting">Διαχειριστείτε τις επιλογές προστασίας προσωπικών δεδομένων διαφημίσεων και τη συγκατάθεσή σας</string>
     <string name="settings_support_development">Υποστήριξη Ανάπτυξης</string>
     <string name="settings_support_development_supporting">Υποστήριξη ανάπτυξης Rivo</string>
     <string name="settings_provide_tip">Δώστε μια Συμβουλή</string>

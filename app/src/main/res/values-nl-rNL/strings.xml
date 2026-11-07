@@ -132,6 +132,8 @@
     <string name="content_desc_send">Verzenden</string>
     <string name="label_sms">sms</string>
     <string name="action_add_note">Notitie toevoegen</string>
+    <string name="contact_no_notes_title">Nog geen notities</string>
+    <string name="contact_no_notes_description">Voeg een notitie of herinnering toe voor deze contactpersoon</string>
     <string name="call_notes_title">Oproep notities</string>
     <string name="label_local_memory">Apparaat</string>
     <string name="main_rate_google_play">Beoordeel op Google Play</string>
@@ -620,6 +622,8 @@ witte tekst</string>
     <string name="settings_group_support_about">Ondersteuning &amp; Over</string>
     <string name="settings_display_banner_ads">Niet-opdringerige advertenties</string>
     <string name="settings_display_banner_ads_supporting">Kleine advertenties in lijsten tonen om de ontwikkeling te ondersteunen</string>
+    <string name="settings_ad_privacy_options">Advertentie privacy &amp; toestemming</string>
+    <string name="settings_ad_privacy_options_supporting">Beheer uw privacykeuzes en toestemming van uw advertenties</string>
     <string name="settings_support_development">Ondersteun ontwikkeling</string>
     <string name="settings_support_development_supporting">Steun Rivo ontwikkeling</string>
     <string name="settings_provide_tip">Voorzie een tip</string>

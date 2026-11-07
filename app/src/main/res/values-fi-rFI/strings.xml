@@ -130,6 +130,8 @@
     <string name="content_desc_send">Lähetä</string>
     <string name="label_sms">Tekstiviesti</string>
     <string name="action_add_note">Lisää Huomautus</string>
+    <string name="contact_no_notes_title">Ei vielä merkintöjä</string>
+    <string name="contact_no_notes_description">Lisää muistiinpano tai muistutus tälle yhteyshenkilölle</string>
     <string name="call_notes_title">Soita Muistiinpanoja</string>
     <string name="label_local_memory">Laite</string>
     <string name="main_rate_google_play">Arvostele Google Playssa</string>
@@ -618,6 +620,7 @@ valkoinen teksti</string>
     <string name="settings_group_support_about">Tuki &amp; Tietoja</string>
     <string name="settings_display_banner_ads">Ei-häiritsevät mainokset</string>
     <string name="settings_display_banner_ads_supporting">Näytä pienet mainokset listoissa tukemaan kehitystä</string>
+    <string name="settings_ad_privacy_options_supporting">Hallitse mainonnan yksityisyysvalintoja ja suostumusta</string>
     <string name="settings_support_development">Tue Kehitystä</string>
     <string name="settings_support_development_supporting">Tue Rivon kehittämistä</string>
     <string name="settings_provide_tip">Anna vihje</string>

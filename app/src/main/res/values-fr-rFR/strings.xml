@@ -1354,6 +1354,8 @@ blanc</string>
     <string name="settings_group_support_about">Soutenir et informations</string>
     <string name="settings_display_banner_ads">Publicités non intrusives</string>
     <string name="settings_display_banner_ads_supporting">Afficher les petites annonces dans les listes pour soutenir le développement</string>
+    <string name="settings_ad_privacy_options">Consentement sur la confidentialité des publicités &amp;</string>
+    <string name="settings_ad_privacy_options_supporting">Gérez vos choix de confidentialité et votre consentement publicitaire</string>
     <string name="settings_support_development">Soutenir le développement</string>
     <string name="settings_support_development_supporting">Soutenir le développement de Rivo</string>
     <string name="settings_provide_tip">Fournir un conseil</string>

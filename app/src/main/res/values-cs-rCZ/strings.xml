@@ -624,6 +624,8 @@ Bílý text</string>
     <string name="settings_group_support_about">Podpora &amp; O</string>
     <string name="settings_display_banner_ads">Neúnavné reklamy</string>
     <string name="settings_display_banner_ads_supporting">Zobrazit malé reklamy v seznamech pro podporu vývoje</string>
+    <string name="settings_ad_privacy_options">Souhlas s ochranou osobních údajů &amp;</string>
+    <string name="settings_ad_privacy_options_supporting">Spravujte své možnosti ochrany osobních údajů reklamy a souhlasu</string>
     <string name="settings_support_development">Podpořit vývoj</string>
     <string name="settings_support_development_supporting">Podpořte vývoj Rivo</string>
     <string name="settings_provide_tip">Poskytnout Tip</string>

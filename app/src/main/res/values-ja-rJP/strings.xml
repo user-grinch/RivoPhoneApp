@@ -131,6 +131,8 @@
     <string name="content_desc_send">送信</string>
     <string name="label_sms">SMS</string>
     <string name="action_add_note">メモを追加</string>
+    <string name="contact_no_notes_title">まだメモはありません</string>
+    <string name="contact_no_notes_description">この連絡先のメモまたはリマインダーを追加</string>
     <string name="call_notes_title">通話ノート</string>
     <string name="label_local_memory">デバイス</string>
     <string name="main_rate_google_play">Google Playで評価</string>
@@ -612,6 +614,8 @@
     <string name="blocked_action_export_csv">CSVエクスポート</string>
     <string name="settings_display_banner_ads">控えめな広告</string>
     <string name="settings_display_banner_ads_supporting">開発をサポートするリストに小さな広告を表示する</string>
+    <string name="settings_ad_privacy_options">広告プライバシー &amp; 同意</string>
+    <string name="settings_ad_privacy_options_supporting">広告のプライバシーの選択肢と同意を管理します</string>
     <string name="settings_support_development">開発を支援する</string>
     <string name="settings_support_development_supporting">Rivo の開発を支援する</string>
     <string name="settings_provide_tip">先端を提供する</string>

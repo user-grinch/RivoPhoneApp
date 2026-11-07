@@ -1354,6 +1354,8 @@ texto blanco</string>
     <string name="settings_group_support_about">Soporte &amp; Acerca</string>
     <string name="settings_display_banner_ads">Anuncios no intrusivos</string>
     <string name="settings_display_banner_ads_supporting">Mostrar anuncios pequeños en listas para apoyar el desarrollo</string>
+    <string name="settings_ad_privacy_options">Privacidad de anuncios &amp; consentimiento</string>
+    <string name="settings_ad_privacy_options_supporting">Administra tus opciones de privacidad y consentimiento</string>
     <string name="settings_support_development">Apoyar el desarrollo</string>
     <string name="settings_support_development_supporting">Apoyar el desarrollo de Rivo</string>
     <string name="settings_provide_tip">Proporcionar un consejo</string>
