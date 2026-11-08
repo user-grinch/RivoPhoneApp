@@ -987,14 +987,14 @@ Biały tekst</string>
     <string name="call_recording_how_it_works_subtitle">Ograniczenia systemu Android i konfiguracja dwustronnego audio w Shizuku</string>
     <string name="call_recording_compact_intro">Android ogranicza nagrywanie dźwięku zdalnego dzwoniącego. Shizuku umożliwia podwyższony dostęp ADB do przechwytywania 2-kierunkowego dźwięku bez roota.</string>
     <string name="call_recording_step1_compact_title">Zainstaluj Shizuku</string>
-    <string name="call_recording_step1_compact_desc">Z Sklepu Play lub oficjalnej witryny</string>
+    <string name="call_recording_step1_compact_desc">Ze Sklepu Play lub oficjalnej witryny</string>
     <string name="call_recording_step2_compact_title">Uruchom usługę</string>
     <string name="call_recording_step2_compact_desc">Poprzez debugowanie bezprzewodowe w opcjach dewelopera</string>
     <string name="call_recording_step3_compact_title">Autoryzuj Rivo</string>
     <string name="call_recording_step3_compact_desc">Zezwalaj na nagrywanie dźwięku ADB</string>
     <string name="call_recording_ready_banner_desc">2-kierunkowe nagrywanie połączeń jest w pełni skonfigurowane i aktywne.</string>
     <string name="call_recording_restrictions_title">Ograniczenia prywatności Androida</string>
-    <string name="call_recording_restrictions_desc">Na nowoczesnym Androidzie (9, 10, 11+) Google blokuje aplikacje firm trzecich z nagrywania dźwięku połączeń wewnętrznych. Standardowe nagrywanie mikrofonu może usłyszeć tylko twój głos, pozostawiając drugi dzwoniący słaby lub całkowicie ciszy.</string>
+    <string name="call_recording_restrictions_desc">W nowoczesnych wersjach systemu Android (9, 10, 11+) Google blokuje aplikacjom firm trzecich możliwość nagrywania wewnętrznego dźwięku rozmów telefonicznych. Standardowe nagrywanie z mikrofonu rejestruje wyłącznie Twój głos, przez co drugiego rozmówcę słychać bardzo cicho lub nie słychać go wcale.</string>
     <string name="call_recording_shizuku_solution_title">Rozwiązanie Shizuku (dwustronny dźwięk)</string>
     <string name="call_recording_shizuku_solution_desc">Shizuku udziela Rivo uprawnień podwyższonego poziomu ADB bez potrzeby roota. Umożliwia to przechwytywanie krystalicznie przezroczystego, nieskazitelnego dźwięku bezpośrednio z systemu.</string>
     <string name="call_recording_setup_guide_title">Jak skonfigurować Shizuku (3 kroki)</string>
@@ -1360,7 +1360,7 @@ Biały tekst</string>
     <string name="settings_group_support_about">Wsparcie i informacje</string>
     <string name="settings_display_banner_ads">Dyskretne reklamy</string>
     <string name="settings_display_banner_ads_supporting">Pokaż małe reklamy na listach do wsparcia rozwoju</string>
-    <string name="settings_ad_privacy_options">Prywatność reklamy &amp; zgoda</string>
+    <string name="settings_ad_privacy_options">Prywatność reklam i zgoda</string>
     <string name="settings_ad_privacy_options_supporting">Zarządzaj swoimi decyzjami dotyczącymi prywatności i zgody na reklamę</string>
     <string name="settings_support_development">Wspomóż rozwój</string>
     <string name="settings_support_development_supporting">Wesprzyj rozwój Rivo</string>
@@ -1555,7 +1555,7 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="loc_colorful_avatars">Kolorowe awatary</string>
     <string name="loc_tint_letter_avatars_with_unique_accent_colors_per_contact">Zabarwiaj awatary literowe unikalnymi akcentami kolorystycznymi dla każdego kontaktu</string>
     <string name="loc_gradient_avatars">Awatary z gradientem</string>
-    <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Zastosuj dynamiczne tła gradientu do kontaktu z początkowymi awatarami</string>
+    <string name="loc_apply_dynamic_gradient_backdrops_to_contact_initial_avatars">Zastosuj dynamiczne tła gradientowe w awatarach z inicjałami kontaktów</string>
     <string name="loc_typography">Typografia</string>
     <string name="loc_font_text_size_and_system_font">Czcionka, rozmiar tekstu i czcionka systemowa</string>
     <string name="loc_call_screen_buttons">Ekran połączeń</string>
