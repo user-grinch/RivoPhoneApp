@@ -1228,4 +1228,9 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="call_recordings_filter_outgoing_only_desc">Se înregistrează numai apelurile efectuate</string>
     <string name="call_recordings_filter_unknown_only_desc">Se înregistrează numai numerele necunoscute</string>
     <string name="call_recordings_filter_contacts_only_desc">Doar înregistrările contactelor salvate</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Etichetă</string>
+    <string name="action_add_tag">Adaugă etichetă</string>
+    <string name="action_edit_tag">Editare etichetă</string>
+    <string name="action_remove_tag">Elimină eticheta</string>
 </resources>

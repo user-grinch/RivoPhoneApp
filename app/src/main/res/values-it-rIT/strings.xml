@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Italian</string>
     <string name="permission_default_phone_app_title">App Telefono Predefinita</string>
     <string name="permission_default_phone_app_description">Richiesto per rispondere alle chiamate, gestire le chiamate in arrivo e gestire il blocco delle chiamate.</string>
     <string name="permission_phone_sim_title">Telefono &amp; Accesso Sim</string>
@@ -1228,4 +1229,5 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="call_recordings_filter_outgoing_only_desc">Registrazione solo delle chiamate in uscita</string>
     <string name="call_recordings_filter_unknown_only_desc">Registrazione solo numeri sconosciuti</string>
     <string name="call_recordings_filter_contacts_only_desc">Registrazione solo dei contatti salvati</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

@@ -1220,4 +1220,5 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="call_recordings_filter_outgoing_only_desc">Gravando apenas chamadas efetuadas</string>
     <string name="call_recordings_filter_unknown_only_desc">Gravando apenas números desconhecidos</string>
     <string name="call_recordings_filter_contacts_only_desc">Gravando apenas contatos salvos</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

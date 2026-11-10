@@ -1228,4 +1228,9 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="call_recordings_filter_outgoing_only_desc">Nahrávání pouze odchozích hovorů</string>
     <string name="call_recordings_filter_unknown_only_desc">Pouze nahrávání neznámých čísel</string>
     <string name="call_recordings_filter_contacts_only_desc">Nahrávání pouze uložených kontaktů</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Značka</string>
+    <string name="action_add_tag">Přidat štítek</string>
+    <string name="action_edit_tag">Upravit štítek</string>
+    <string name="action_remove_tag">Odstranit štítek</string>
 </resources>

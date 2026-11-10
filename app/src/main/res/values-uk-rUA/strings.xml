@@ -1161,4 +1161,5 @@
     <string name="call_recordings_filter_outgoing_only_desc">Записую тільки вихідні дзвінки</string>
     <string name="call_recordings_filter_unknown_only_desc">Запис лише з невідомих номерів</string>
     <string name="call_recordings_filter_contacts_only_desc">Запис збережених контактів тільки</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

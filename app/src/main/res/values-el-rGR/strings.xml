@@ -1198,4 +1198,5 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="call_recordings_filter_outgoing_only_desc">Καταγραφή μόνο εξερχόμενων κλήσεων</string>
     <string name="call_recordings_filter_unknown_only_desc">Μόνο η εγγραφή άγνωστων αριθμών</string>
     <string name="call_recordings_filter_contacts_only_desc">Μόνο η εγγραφή αποθηκευμένων επαφών</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

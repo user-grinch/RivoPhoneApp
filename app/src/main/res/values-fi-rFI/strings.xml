@@ -1219,4 +1219,5 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="call_recordings_filter_outgoing_only_desc">Tallennetaan vain soitetut puhelut</string>
     <string name="call_recordings_filter_unknown_only_desc">Vain tuntemattomien numeroiden tallentaminen</string>
     <string name="call_recordings_filter_contacts_only_desc">Vain tallennetut yhteystiedot</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>
