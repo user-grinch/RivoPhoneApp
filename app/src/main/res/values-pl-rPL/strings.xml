@@ -1965,4 +1965,5 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="call_recordings_filter_outgoing_only_desc">Nagrywanie tylko połączeń wychodzących</string>
     <string name="call_recordings_filter_unknown_only_desc">Nagrywanie tylko nieznanych numerów</string>
     <string name="call_recordings_filter_contacts_only_desc">Nagrywanie tylko zapisanych kontaktów</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

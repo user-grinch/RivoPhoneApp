@@ -1227,4 +1227,5 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="call_recordings_filter_outgoing_only_desc">Inspelning endast utgående samtal</string>
     <string name="call_recordings_filter_unknown_only_desc">Endast inspelning av okända nummer</string>
     <string name="call_recordings_filter_contacts_only_desc">Endast sparade kontakter</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

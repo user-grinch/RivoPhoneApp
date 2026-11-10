@@ -1957,4 +1957,9 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="call_recordings_filter_outgoing_only_desc">Grabando solo llamadas salientes</string>
     <string name="call_recordings_filter_unknown_only_desc">Grabando sólo números desconocidos</string>
     <string name="call_recordings_filter_contacts_only_desc">Grabando sólo contactos guardados</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Etiqueta</string>
+    <string name="action_add_tag">Añadir etiqueta</string>
+    <string name="action_edit_tag">Editar etiqueta</string>
+    <string name="action_remove_tag">Eliminar etiqueta</string>
 </resources>

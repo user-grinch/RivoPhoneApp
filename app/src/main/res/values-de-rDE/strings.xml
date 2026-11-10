@@ -1959,4 +1959,9 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="call_recordings_filter_outgoing_only_desc">Nur ausgehende Anrufe aufnehmen</string>
     <string name="call_recordings_filter_unknown_only_desc">Nur unbekannte Nummern aufzeichnen</string>
     <string name="call_recordings_filter_contacts_only_desc">Nur gespeicherte Kontakte aufnehmen</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Markierung</string>
+    <string name="action_add_tag">Tag hinzufügen</string>
+    <string name="action_edit_tag">Tag bearbeiten</string>
+    <string name="action_remove_tag">Tag entfernen</string>
 </resources>

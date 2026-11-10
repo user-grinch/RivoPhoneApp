@@ -1193,4 +1193,5 @@
     <string name="call_recordings_filter_outgoing_only_desc">通話の録音のみ</string>
     <string name="call_recordings_filter_unknown_only_desc">不明な番号のみを記録する</string>
     <string name="call_recordings_filter_contacts_only_desc">保存された連絡先のみを記録</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>

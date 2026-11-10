@@ -1228,4 +1228,9 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="call_recordings_filter_outgoing_only_desc">Kun optagelse af udgående opkald</string>
     <string name="call_recordings_filter_unknown_only_desc">Optagelse af ukendte numre</string>
     <string name="call_recordings_filter_contacts_only_desc">Kun optagelse af gemte kontakter</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Mærke</string>
+    <string name="action_add_tag">Tilføj tag</string>
+    <string name="action_edit_tag">Rediger tag</string>
+    <string name="action_remove_tag">Fjern tag</string>
 </resources>

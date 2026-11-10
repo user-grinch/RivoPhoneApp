@@ -1956,4 +1956,9 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="call_recordings_filter_outgoing_only_desc">Enregistrement des appels sortants uniquement</string>
     <string name="call_recordings_filter_unknown_only_desc">Enregistrement des numéros inconnus uniquement</string>
     <string name="call_recordings_filter_contacts_only_desc">Enregistrement seulement des contacts enregistrés</string>
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Étiquette</string>
+    <string name="action_add_tag">Ajouter un tag</string>
+    <string name="action_edit_tag">Modifier le tag</string>
+    <string name="action_remove_tag">Supprimer le tag</string>
 </resources>

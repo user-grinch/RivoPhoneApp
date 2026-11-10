@@ -1367,4 +1367,5 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="call_recordings_filter_outgoing_only_desc">仅录制传出来电</string>
     <string name="call_recordings_filter_unknown_only_desc">仅录制未知号码</string>
     <string name="call_recordings_filter_contacts_only_desc">仅录制已保存的联系人</string>
+    <!-- Number Tags & Notes/Reminders -->
 </resources>
