@@ -241,6 +241,7 @@ fun CallRecordingsContent(
             }
             val displayName = CallRecorder.getFolderDisplayName(context, uri)
             prefs.saveCustomRecordingFolder(uri.toString(), displayName)
+            CallRecorder.cleanupEmptyStandardRecordingsDir(context)
             refreshKey++
             android.widget.Toast.makeText(
                 context,

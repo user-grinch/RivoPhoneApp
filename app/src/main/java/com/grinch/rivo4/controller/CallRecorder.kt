@@ -202,17 +202,59 @@ object CallRecorder {
     }
 
     fun isWritableDirectory(dir: File): Boolean {
+        var existedBefore = false
         return runCatching {
-            if (!dir.exists() && !dir.mkdirs()) return false
+            existedBefore = dir.exists()
+            if (!existedBefore && !dir.mkdirs()) return false
             val testFile = File(dir, ".probe_${System.currentTimeMillis()}")
             val created = testFile.createNewFile()
             if (created) {
                 testFile.delete()
                 true
             } else {
+                if (!existedBefore) dir.delete()
                 false
             }
-        }.getOrDefault(false)
+        }.getOrElse {
+            if (!existedBefore) runCatching { dir.delete() }
+            false
+        }
+    }
+
+    fun hasCustomRecordingLocation(context: Context): Boolean {
+        val prefs = try {
+            val deviceContext = context.createDeviceProtectedStorageContext()
+            deviceContext.getSharedPreferences("rivo_prefs", Context.MODE_PRIVATE)
+        } catch (_: Exception) {
+            null
+        }
+        return !prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null).isNullOrBlank()
+    }
+
+    fun getCustomRecordingsCacheDir(context: Context): File {
+        val dir = File(context.filesDir, "custom_recordings_cache")
+        if (!dir.exists()) dir.mkdirs()
+        return dir
+    }
+
+    fun cleanupEmptyStandardRecordingsDir(context: Context) {
+        if (!hasCustomRecordingLocation(context)) return
+        runCatching {
+            val pubRecordingsParent = Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR)
+            val rivoDir = File(pubRecordingsParent, DIRECTORY_NAME)
+            if (rivoDir.exists() && rivoDir.isDirectory) {
+                val contents = rivoDir.listFiles()
+                if (contents.isNullOrEmpty()) {
+                    rivoDir.delete()
+                }
+            }
+            if (pubRecordingsParent.exists() && pubRecordingsParent.isDirectory) {
+                val parentContents = pubRecordingsParent.listFiles()
+                if (parentContents.isNullOrEmpty()) {
+                    pubRecordingsParent.delete()
+                }
+            }
+        }
     }
 
     fun getCustomRecordingDirectory(context: Context): File? {
@@ -275,33 +317,29 @@ object CallRecorder {
     }
 
     fun getStandardRecordingsDirectory(context: Context): File {
-        // 1. If All Files Access is granted, allow direct root storage
+        // 1. If All Files Access is granted, allow direct root storage or public directories
         if (hasStoragePermission(context)) {
             val directInternal = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
             if (isWritableDirectory(directInternal)) {
                 return directInternal
             }
+            val pubRecordings = File(
+                Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR),
+                DIRECTORY_NAME
+            )
+            if (isWritableDirectory(pubRecordings)) {
+                return pubRecordings
+            }
+            val pubMusic = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                DIRECTORY_NAME
+            )
+            if (isWritableDirectory(pubMusic)) {
+                return pubMusic
+            }
         }
 
-        // 2. Standard public Recordings folder: /storage/emulated/0/Recordings/Rivo Recordings
-        val pubRecordings = File(
-            Environment.getExternalStoragePublicDirectory(RECORDINGS_STORAGE_DIR),
-            DIRECTORY_NAME
-        )
-        if (isWritableDirectory(pubRecordings)) {
-            return pubRecordings
-        }
-
-        // 3. Standard public Music folder: /storage/emulated/0/Music/Rivo Recordings
-        val pubMusic = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-            DIRECTORY_NAME
-        )
-        if (isWritableDirectory(pubMusic)) {
-            return pubMusic
-        }
-
-        // 4. App-specific external storage (always writable)
+        // 2. App-specific external storage (always writable without special permissions on Android 10+)
         val extDir = context.getExternalFilesDir(RECORDINGS_STORAGE_DIR)
             ?: context.getExternalFilesDir(null)
         if (extDir != null) {
@@ -311,18 +349,21 @@ object CallRecorder {
             }
         }
 
-        // 5. Ultimate fallback: internal app sandbox
+        // 3. Ultimate fallback: internal app sandbox
         val internalDir = File(context.filesDir, DIRECTORY_NAME)
         if (!internalDir.exists()) internalDir.mkdirs()
         return internalDir
     }
 
     fun getRecordingsDirectory(context: Context): File {
-        // 0. Custom user-defined directory if directly writable
-        getCustomRecordingDirectory(context)?.let { customDir ->
-            if (isWritableDirectory(customDir)) {
-                return customDir
+        // If a custom recording location is selected, NEVER fall back to standard recordings directory
+        if (hasCustomRecordingLocation(context)) {
+            getCustomRecordingDirectory(context)?.let { customDir ->
+                if (isWritableDirectory(customDir)) {
+                    return customDir
+                }
             }
+            return getCustomRecordingsCacheDir(context)
         }
         return getStandardRecordingsDirectory(context)
     }
@@ -333,6 +374,10 @@ object CallRecorder {
             if (customDir.exists() && customDir.isDirectory) {
                 dirs.add(customDir)
             }
+        }
+        val customCache = File(context.filesDir, "custom_recordings_cache")
+        if (customCache.exists() && customCache.isDirectory) {
+            dirs.add(customCache)
         }
         runCatching {
             val d = File(Environment.getExternalStorageDirectory(), DIRECTORY_NAME)
@@ -907,14 +952,16 @@ object CallRecorder {
         val extension = cleanName.substringAfterLast(".", "m4a")
         val mimeType = if (extension.equals("m4a", ignoreCase = true)) "audio/mp4" else "audio/*"
 
-        val customUriStr =
+        val hasCustom = hasCustomRecordingLocation(ctx)
+        val customUriStr = if (hasCustom) {
             prefs?.getString(com.grinch.rivo4.controller.util.PreferenceManager.KEY_CALL_RECORDING_FOLDER_URI, null)
-        val customDir = getCustomRecordingDirectory(ctx)
+        } else null
+        val customDir = if (hasCustom) getCustomRecordingDirectory(ctx) else null
         var destinationFile: File? = null
         var wroteToCustom = false
 
         // Attempt 1: Direct File copy if customDir is a writable filesystem directory
-        if (customDir != null && isWritableDirectory(customDir)) {
+        if (hasCustom && customDir != null && isWritableDirectory(customDir)) {
             try {
                 if (!customDir.exists()) customDir.mkdirs()
                 val target = File(customDir, cleanName)
@@ -932,7 +979,7 @@ object CallRecorder {
         }
 
         // Attempt 2: SAF DocumentFile write if direct copy failed or directory requires SAF
-        if (!wroteToCustom && !customUriStr.isNullOrBlank()) {
+        if (hasCustom && !wroteToCustom && !customUriStr.isNullOrBlank()) {
             try {
                 val treeUri = Uri.parse(customUriStr)
                 val docDir = DocumentFile.fromTreeUri(ctx, treeUri)
@@ -970,17 +1017,36 @@ object CallRecorder {
             }
         }
 
-        // Always ensure a valid local File exists in standard directory so MediaScanner, MediaPlayer,
-        // and listRecordings() have a reliable zero-latency playback target
-        val standardDir = getStandardRecordingsDirectory(ctx)
-        val standardTargetFile = File(standardDir, cleanName)
-
-        val effectiveFile: File = if (destinationFile != null && destinationFile.exists() && destinationFile.length() > 0L) {
-            if (saved.canonicalPath != destinationFile.canonicalPath) {
-                saved.delete()
+        val effectiveFile: File = if (hasCustom) {
+            cleanupEmptyStandardRecordingsDir(ctx)
+            if (destinationFile != null && destinationFile.exists() && destinationFile.length() > 0L) {
+                if (saved.canonicalPath != destinationFile.canonicalPath) {
+                    saved.delete()
+                }
+                destinationFile
+            } else if (wroteToCustom) {
+                // Recording was saved to custom location via SAF!
+                // Cache a local copy in app-private storage so MediaPlayer & cache have direct access
+                val privateCacheDir = getCustomRecordingsCacheDir(ctx)
+                val cacheTargetFile = File(privateCacheDir, cleanName)
+                try {
+                    if (saved.canonicalPath != cacheTargetFile.canonicalPath) {
+                        saved.copyTo(cacheTargetFile, overwrite = true)
+                        saved.delete()
+                    }
+                    cacheTargetFile
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not cache recording to private cache: ${e.message}", e)
+                    saved
+                }
+            } else {
+                Log.w(TAG, "Custom save failed, keeping file in cacheDir")
+                saved
             }
-            destinationFile
         } else {
+            // Default save location (no custom folder set)
+            val standardDir = getStandardRecordingsDirectory(ctx)
+            val standardTargetFile = File(standardDir, cleanName)
             try {
                 standardDir.mkdirs()
                 if (saved.canonicalPath != standardTargetFile.canonicalPath) {
@@ -1054,6 +1120,11 @@ object CallRecorder {
             }
         }
 
+        // Clean up empty standard directory if user configured a custom save location
+        if (hasCustomRecordingLocation(context)) {
+            cleanupEmptyStandardRecordingsDir(context)
+        }
+
         // 2. Scan recording directories
         val dirs = getAllRecordingDirectories(context)
         val files = mutableListOf<File>()
@@ -1084,7 +1155,7 @@ object CallRecorder {
                 val treeUri = Uri.parse(customUriStr)
                 val docDir = DocumentFile.fromTreeUri(context, treeUri)
                 val customDir = getCustomRecordingDirectory(context)
-                val standardDir = getStandardRecordingsDirectory(context)
+                val privateCacheDir = getCustomRecordingsCacheDir(context)
                 docDir?.listFiles()?.forEach { docFile ->
                     val name = docFile.name ?: return@forEach
                     if (docFile.isFile && docFile.length() > 0L && supportedExts.any { name.endsWith(it, ignoreCase = true) }) {
@@ -1092,11 +1163,10 @@ object CallRecorder {
                         if (directFile != null && directFile.exists() && directFile.length() > 0L) {
                             files.add(directFile)
                         } else {
-                            // Ensure mirror in standardDir exists so MediaPlayer & cache have direct access
-                            val mirrorFile = File(standardDir, name)
+                            // Ensure mirror in privateCacheDir exists so MediaPlayer & cache have direct access
+                            val mirrorFile = File(privateCacheDir, name)
                             if (!mirrorFile.exists() || mirrorFile.length() != docFile.length()) {
                                 runCatching {
-                                    standardDir.mkdirs()
                                     context.contentResolver.openInputStream(docFile.uri)?.use { inStream ->
                                         mirrorFile.outputStream().use { outStream -> inStream.copyTo(outStream) }
                                     }
@@ -1187,6 +1257,12 @@ object CallRecorder {
                 val doc = docDir?.findFile(file.name)
                 if (doc != null && doc.exists()) {
                     deletedSaf = doc.delete()
+                }
+            }
+            runCatching {
+                val mirror = File(getCustomRecordingsCacheDir(context), file.name)
+                if (mirror.exists() && mirror.canonicalPath != file.canonicalPath) {
+                    mirror.delete()
                 }
             }
         }
