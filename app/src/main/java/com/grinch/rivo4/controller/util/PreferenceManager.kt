@@ -635,7 +635,7 @@ class PreferenceManager(context: Context) {
         const val KEY_CALL_LOG_TRAILING_BUTTON_ACTION = "call_log_trailing_button_action"
 
         val DEFAULT_CALL_LOG_ACTIONS_SAVED = listOf("view_contact", "block", "message")
-        val DEFAULT_CALL_LOG_ACTIONS_UNSAVED = listOf("save", "block", "message")
+        val DEFAULT_CALL_LOG_ACTIONS_UNSAVED = listOf("save", "tag", "block", "message")
         const val DEFAULT_CALL_LOG_TRAILING_BUTTON_ACTION = "call"
         val DEFAULT_CALL_LOG_ACTIONS = DEFAULT_CALL_LOG_ACTIONS_SAVED
 

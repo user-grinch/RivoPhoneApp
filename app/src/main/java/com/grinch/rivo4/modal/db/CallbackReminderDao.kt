@@ -9,6 +9,9 @@ interface CallbackReminderDao {
     @Query("SELECT * FROM callback_reminders WHERE isCompleted = 0 ORDER BY remindAtMillis ASC")
     fun getActiveReminders(): Flow<List<CallbackReminderEntity>>
 
+    @Query("SELECT * FROM callback_reminders WHERE isCompleted = 0 ORDER BY remindAtMillis ASC")
+    suspend fun getActiveRemindersList(): List<CallbackReminderEntity>
+
     @Query("SELECT * FROM callback_reminders ORDER BY remindAtMillis DESC")
     fun getAllReminders(): Flow<List<CallbackReminderEntity>>
 

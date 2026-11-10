@@ -1860,6 +1860,9 @@ class ContactsRepository(
                         val ringtoneIdx = cursor.getColumnIndex(ContactsContract.PhoneLookup.CUSTOM_RINGTONE)
 
                         val id = if (idIdx != -1) cursor.getString(idIdx).orEmpty() else ""
+                        if (id.isNotBlank()) {
+                            getContactById(id)?.let { return it }
+                        }
                         val name = if (nameIdx != -1) cursor.getString(nameIdx) else unknownLabel
                         val photoUri = if (photoIdx != -1) cursor.getString(photoIdx) else null
                         val starred = if (starredIdx != -1) cursor.getInt(starredIdx) == 1 else false
@@ -1918,7 +1921,9 @@ class ContactsRepository(
         // 4. Fallback: Search all contacts (including accounts and local) using areNumbersEqual
         try {
             val allContacts = getContacts(includePrivate = true, includeHidden = preferenceManager.isHiddenContactsVisible())
-            allContacts.firstOrNull { c -> c.phoneNumbers.any { areNumbersEqual(it, number) } }?.let { return it }
+            allContacts.firstOrNull { c -> c.phoneNumbers.any { areNumbersEqual(it, number) } }?.let { matched ->
+                return getContactById(matched.id) ?: matched
+            }
         } catch (_: Exception) {}
 
         return null

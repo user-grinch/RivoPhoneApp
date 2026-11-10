@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.EditNote
@@ -410,14 +411,44 @@ fun AddCallNoteDialog(
     contactName: String,
     onDismissRequest: () -> Unit,
     title: String = stringResource(R.string.action_add_note),
-    callNoteDao: CallNoteDao = koinInject()
+    callNoteDao: CallNoteDao = koinInject(),
+    reminderManager: com.grinch.rivo4.controller.reminder.CallbackReminderManager = koinInject(),
+    onNoteSaved: ((CallNoteEntity, com.grinch.rivo4.modal.db.CallbackReminderEntity?) -> Unit)? = null
 ) {
+    val context = LocalContext.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
     var noteText by remember { mutableStateOf("") }
     val cleanPhone = phoneNumber.takeIf { it.isNotBlank() && it != "null" }
     val cleanName = contactName.takeIf { it.isNotBlank() && it != "null" }
     val focusRequester = remember { FocusRequester() }
+
+    var scheduleReminder by remember { mutableStateOf(false) }
+    var selectedReminderMinutes by remember { mutableStateOf(15L) }
+    var selectedReminderLabel by remember { mutableStateOf("15 mins") }
+
+    val tomorrowMorningMinutes = remember {
+        val now = java.util.Calendar.getInstance()
+        val tomorrow = java.util.Calendar.getInstance().apply {
+            add(java.util.Calendar.DAY_OF_YEAR, 1)
+            set(java.util.Calendar.HOUR_OF_DAY, 9)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val diffMillis = tomorrow.timeInMillis - now.timeInMillis
+        (diffMillis / (1000 * 60)).coerceAtLeast(15)
+    }
+
+    val presets = remember(tomorrowMorningMinutes) {
+        listOf(
+            "15 mins" to 15L,
+            "30 mins" to 30L,
+            "1 hour" to 60L,
+            "3 hours" to 180L,
+            "Tomorrow 9 AM" to tomorrowMorningMinutes
+        )
+    }
 
     LaunchedEffect(Unit) {
         delay(200)
@@ -432,19 +463,51 @@ fun AddCallNoteDialog(
         confirmAction = RivoDialogAction(
             label = stringResource(R.string.action_save_note),
             enabled = noteText.isNotBlank(),
+            dismissOnClick = false,
             onClick = {
                 val text = noteText.trim()
                 if (text.isNotEmpty()) {
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                    scope.launch {
-                        callNoteDao.insertNote(
-                            CallNoteEntity(
-                                phoneNumber = cleanPhone ?: "",
-                                contactName = cleanName,
+                    val phoneToSave = cleanPhone ?: ""
+                    val nameToSave = cleanName
+                    val withReminder = scheduleReminder && phoneToSave.isNotBlank()
+                    val reminderDelay = selectedReminderMinutes
+                    val reminderLabel = selectedReminderLabel
+
+                    val noteEntity = CallNoteEntity(
+                        phoneNumber = phoneToSave,
+                        contactName = nameToSave,
+                        note = text
+                    )
+                    val reminderEntity = if (withReminder) {
+                        com.grinch.rivo4.modal.db.CallbackReminderEntity(
+                            phoneNumber = phoneToSave,
+                            contactName = nameToSave,
+                            remindAtMillis = System.currentTimeMillis() + (reminderDelay * 60 * 1000L),
+                            note = text
+                        )
+                    } else null
+
+                    // Immediately inform caller so UI updates with zero latency
+                    onNoteSaved?.invoke(noteEntity, reminderEntity)
+                    onDismissRequest()
+
+                    // Background persistence
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.NonCancellable).launch {
+                        callNoteDao.insertNote(noteEntity)
+                        if (withReminder) {
+                            reminderManager.scheduleReminder(
+                                phoneNumber = phoneToSave,
+                                contactName = nameToSave,
+                                delayMinutes = reminderDelay,
                                 note = text
                             )
-                        )
-                        onDismissRequest()
+                        }
+                        if (withReminder) {
+                            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                Toast.makeText(context, "Reminder set for $reminderLabel", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
             }
@@ -460,13 +523,12 @@ fun AddCallNoteDialog(
                 .padding(horizontal = 4.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Text Input with clear border, background, and readable text
             OutlinedTextField(
                 value = noteText,
                 onValueChange = { noteText = it },
                 placeholder = {
                     Text(
-                        "Enter your note or callback reminder...",
+                        stringResource(R.string.contact_no_notes_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -511,6 +573,81 @@ fun AddCallNoteDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )
+            }
+
+            // Optional Callback Reminder attachment
+            if (!cleanPhone.isNullOrBlank()) {
+                Spacer(Modifier.height(2.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (scheduleReminder) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+                            else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Alarm,
+                            contentDescription = null,
+                            tint = if (scheduleReminder) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.contact_callback_reminder),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    RivoSwitch(
+                        checked = scheduleReminder,
+                        onCheckedChange = { scheduleReminder = it }
+                    )
+                }
+
+                if (scheduleReminder) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        presets.forEach { (label, minutes) ->
+                            val isSelected = selectedReminderMinutes == minutes
+                            androidx.compose.material3.FilterChip(
+                                selected = isSelected,
+                                onClick = {
+                                    selectedReminderMinutes = minutes
+                                    selectedReminderLabel = label
+                                },
+                                label = { Text(label, style = MaterialTheme.typography.labelSmall) },
+                                leadingIcon = if (isSelected) {
+                                    {
+                                        Icon(
+                                            androidx.compose.material.icons.Icons.Outlined.CheckCircle,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    }
+                                } else null,
+                                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

@@ -57,9 +57,13 @@ fi
 
 echo "==> Installing to device(s):"
 for device in $DEVICES; do
+    echo "    Force-stopping existing app on $device..."
+    adb -s "$device" shell am force-stop com.grinch.rivo4 || true
     echo "    Installing on $device..."
     adb -s "$device" install -r -d -g "$APK_PATH"
     echo "    Installed successfully on $device!"
+    echo "    Restarting app on $device..."
+    adb -s "$device" shell monkey -p com.grinch.rivo4 -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1 || true
 done
 
 echo "==> Done!"

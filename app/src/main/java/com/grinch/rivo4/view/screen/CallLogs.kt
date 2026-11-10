@@ -28,6 +28,7 @@ import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.*
@@ -107,10 +108,12 @@ fun CallLogFullScreen(
     val scope = rememberCoroutineScope()
     
     val settingsState by prefs.settingsChanged.collectAsState(initial = 0)
+    val numberTags by viewModel.numberTags.collectAsState()
 
     var selectedEntries by remember { mutableStateOf(setOf<CallLogEntry>()) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var showAddContactSheet by remember { mutableStateOf(false) }
+    var showTagDialog by remember { mutableStateOf(false) }
     
     BackHandler(enabled = selectedEntries.isNotEmpty()) {
         selectedEntries = emptySet()
@@ -195,6 +198,7 @@ fun CallLogFullScreen(
         val formatted = formatPhoneNumber(targetPhoneNumber)
         if (phoneLabel != null) "$phoneLabel • $formatted" else formatted
     }
+    val numberTag = remember(targetPhoneNumber, numberTags) { viewModel.findTag(targetPhoneNumber, numberTags) }
 
     val handleCallNumber: (String, String?) -> Unit = { numberToCall, cid ->
         val hasPermission = androidx.core.content.ContextCompat.checkSelfPermission(
@@ -306,20 +310,39 @@ fun CallLogFullScreen(
                                                 }
                                             }
                                     ) {
-                                        Text(
-                                            text = contactName ?: formatPhoneNumber(targetPhoneNumber),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Text(
+                                                text = contactName ?: formatPhoneNumber(targetPhoneNumber),
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                modifier = Modifier.weight(1f, fill = false)
+                                            )
+                                            if (!numberTag.isNullOrBlank()) {
+                                                NumberTagBadge(
+                                                    tag = numberTag!!,
+                                                    modifier = Modifier.clickable { showTagDialog = true }
+                                                )
+                                            }
+                                        }
                                         Text(
                                             text = headerSubtitle,
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    if (targetPhoneNumber.isNotEmpty()) {
+                                        RivoTopBarIconButton(
+                                            onClick = { showTagDialog = true },
+                                            icon = Icons.AutoMirrored.Outlined.Label,
+                                            contentDescription = stringResource(R.string.action_tag)
                                         )
                                     }
                                     if (filteredLogsByContact.isNotEmpty()) {
@@ -481,6 +504,21 @@ fun CallLogFullScreen(
                                 initialPhoneToAssign = targetPhoneNumber
                             )
                         )
+                    }
+                )
+            }
+
+            if (showTagDialog && targetPhoneNumber.isNotEmpty()) {
+                val currentTag = viewModel.findTag(targetPhoneNumber, numberTags).orEmpty()
+                NumberTagDialog(
+                    phoneNumber = targetPhoneNumber,
+                    initialTag = currentTag,
+                    onDismissRequest = { showTagDialog = false },
+                    onSaveTag = { newTag ->
+                        viewModel.setNumberTag(targetPhoneNumber, newTag)
+                    },
+                    onDeleteTag = {
+                        viewModel.deleteNumberTag(targetPhoneNumber)
                     }
                 )
             }

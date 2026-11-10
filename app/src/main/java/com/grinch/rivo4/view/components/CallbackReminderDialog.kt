@@ -29,7 +29,7 @@ fun CallbackReminderDialog(
     phoneNumber: String,
     contactName: String?,
     onDismissRequest: () -> Unit,
-    onReminderScheduled: (() -> Unit)? = null,
+    onReminderScheduled: ((com.grinch.rivo4.modal.db.CallbackReminderEntity) -> Unit)? = null,
     reminderManager: CallbackReminderManager = koinInject()
 ) {
     val context = LocalContext.current
@@ -78,21 +78,38 @@ fun CallbackReminderDialog(
         icon = Icons.Outlined.Alarm,
         confirmAction = RivoDialogAction(
             label = stringResource(R.string.dialog_callback_reminder_set),
+            dismissOnClick = false,
             onClick = {
-                scope.launch {
+                val currentNote = noteText.trim().ifEmpty { null }
+                val minutes = selectedMinutes
+                val label = selectedLabel
+                val remindAt = System.currentTimeMillis() + (minutes * 60 * 1000L)
+
+                val entity = com.grinch.rivo4.modal.db.CallbackReminderEntity(
+                    phoneNumber = phoneNumber,
+                    contactName = contactName,
+                    remindAtMillis = remindAt,
+                    note = currentNote
+                )
+
+                // Optimistically inform caller immediately
+                onReminderScheduled?.invoke(entity)
+                onDismissRequest()
+
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.NonCancellable).launch {
                     reminderManager.scheduleReminder(
                         phoneNumber = phoneNumber,
                         contactName = contactName,
-                        delayMinutes = selectedMinutes,
-                        note = noteText.trim().ifEmpty { null }
+                        delayMinutes = minutes,
+                        note = currentNote
                     )
-                    Toast.makeText(
-                        context,
-                        "Reminder set for $selectedLabel",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    onReminderScheduled?.invoke()
-                    onDismissRequest()
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            "Reminder set for $label",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         )

@@ -31,8 +31,26 @@ data class TodayCallStats(
 
 class CallLogViewModel(
     private val callLogRepo: ICallLogRepository,
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
+    private val numberTagManager: com.grinch.rivo4.controller.util.NumberTagManager
 ) : ViewModel() {
+
+    val numberTags: StateFlow<Map<String, String>> = numberTagManager.tagsMap
+
+    fun findTag(number: String?, tags: Map<String, String> = numberTags.value): String? =
+        numberTagManager.findTag(number, tags)
+
+    fun setNumberTag(number: String, tag: String) {
+        viewModelScope.launch {
+            numberTagManager.setTag(number, tag)
+        }
+    }
+
+    fun deleteNumberTag(number: String) {
+        viewModelScope.launch {
+            numberTagManager.deleteTag(number)
+        }
+    }
 
     private val _allCallLogs = MutableStateFlow<List<CallLogEntry>>(emptyList())
     val allCallLogs: StateFlow<List<CallLogEntry>> = _allCallLogs.asStateFlow()

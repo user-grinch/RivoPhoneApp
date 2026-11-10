@@ -23,6 +23,7 @@ import android.media.MediaPlayer
 import com.grinch.rivo4.controller.util.ContactUtils
 import com.grinch.rivo4.view.screen.settings.CallRecordEntryCard
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -53,6 +54,7 @@ import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.SimCard
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Visibility
@@ -161,11 +163,29 @@ fun ContactDetailsScreen(
 
     var fullContact by remember { mutableStateOf<Contact?>(null) }
     var isFullLoading by remember { mutableStateOf(true) }
+    var refreshTrigger by remember { mutableIntStateOf(0) }
+
     val callNoteDao = org.koin.compose.koinInject<CallNoteDao>()
-    val allCallNotes by callNoteDao.getAllNotes().collectAsState(initial = emptyList())
-    var showCallNotesSheet by remember { mutableStateOf(false) }
-    var showReminderDialog by remember { mutableStateOf(false) }
-    var showAddNoteDialog by remember { mutableStateOf(false) }
+    val reminderDao = org.koin.compose.koinInject<com.grinch.rivo4.modal.db.CallbackReminderDao>()
+    val reminderManager = org.koin.compose.koinInject<com.grinch.rivo4.controller.reminder.CallbackReminderManager>()
+
+    val allCallNotesFlow = remember(callNoteDao) { callNoteDao.getAllNotes() }
+    val roomCallNotes by allCallNotesFlow.collectAsState(initial = emptyList())
+    var localCallNotes by remember { mutableStateOf<List<com.grinch.rivo4.modal.db.CallNoteEntity>?>(null) }
+    val allCallNotes = localCallNotes ?: roomCallNotes
+
+    val allRemindersFlow = remember(reminderDao) { reminderDao.getActiveReminders() }
+    val roomActiveReminders by allRemindersFlow.collectAsState(initial = emptyList())
+    var localActiveReminders by remember { mutableStateOf<List<com.grinch.rivo4.modal.db.CallbackReminderEntity>?>(null) }
+    val allActiveReminders = localActiveReminders ?: roomActiveReminders
+
+    LaunchedEffect(roomCallNotes) {
+        localCallNotes = null
+    }
+    LaunchedEffect(roomActiveReminders) {
+        localActiveReminders = null
+    }
+
     val scope = rememberCoroutineScope()
 
     suspend fun loadContact(): Contact? {
@@ -181,6 +201,20 @@ fun ContactDetailsScreen(
         }
     }
 
+    LaunchedEffect(refreshTrigger) {
+        if (refreshTrigger > 0) {
+            val updated = loadContact()
+            if (updated != null) fullContact = updated
+        }
+    }
+
+    val numberTags by callLogViewModel.numberTags.collectAsState()
+    var showTagDialog by remember { mutableStateOf(false) }
+
+    var showCallNotesSheet by remember { mutableStateOf(false) }
+    var showReminderDialog by remember { mutableStateOf(false) }
+    var showAddNoteDialog by remember { mutableStateOf(false) }
+
     val contactsById by contactsViewModel.contactsById.collectAsState()
 
     LaunchedEffect(contactId, phoneNumber) {
@@ -194,23 +228,9 @@ fun ContactDetailsScreen(
         if (targetId != null && targetId != "null") {
             val matching = contactsById[targetId]
             if (matching != null) {
-                val current = fullContact
-                if (current != null) {
-                    fullContact = current.copy(
-                        name = matching.name,
-                        givenName = matching.givenName,
-                        middleName = matching.middleName,
-                        familyName = matching.familyName,
-                        nickname = matching.nickname,
-                        photoUri = matching.photoUri,
-                        isFavorite = matching.isFavorite,
-                        phoneNumbers = matching.phoneNumbers,
-                        phones = if (matching.phones.isNotEmpty()) matching.phones else current.phones,
-                        emails = if (matching.emails.isNotEmpty()) matching.emails else current.emails,
-                        emailEntries = if (matching.emailEntries.isNotEmpty()) matching.emailEntries else current.emailEntries,
-                        accountName = matching.accountName,
-                        accountType = matching.accountType
-                    )
+                val updated = loadContact()
+                if (updated != null) {
+                    fullContact = updated
                 } else {
                     fullContact = matching
                 }
@@ -218,6 +238,9 @@ fun ContactDetailsScreen(
                 // Contact was deleted, return up
                 navigator.navigateUp()
             }
+        } else if (phoneNumber != null) {
+            val updated = loadContact()
+            if (updated != null) fullContact = updated
         }
     }
 
@@ -313,16 +336,31 @@ fun ContactDetailsScreen(
         blockedNumbers.any { areNumbersEqual(it, number) }
     }
     val contactNumbers = remember(fullContact, phoneNumber) {
-        fullContact?.phoneNumbers?.ifEmpty { null } ?: listOfNotNull(phoneNumber)
+        ((fullContact?.phoneNumbers ?: emptyList()) + listOfNotNull(phoneNumber)).filter { it.isNotBlank() }.distinct()
     }
     val contactBlocked = contactNumbers.isNotEmpty() && contactNumbers.all { isNumberBlocked(it) }
 
-    val matchedCallNotes = remember(allCallNotes, contactNumbers, fullContact?.name, displayName, unknownLabel) {
+    val matchedCallNotes = remember(allCallNotes, contactNumbers, fullContact?.name, displayName, unknownLabel, refreshTrigger) {
         val targetName = fullContact?.name ?: displayName.takeIf { it != unknownLabel }
         allCallNotes.filter { note ->
-            contactNumbers.any { num -> areNumbersEqual(note.phoneNumber, num) } ||
+            (note.phoneNumber.isNotBlank() && contactNumbers.any { num -> areNumbersEqual(note.phoneNumber, num) }) ||
             (!targetName.isNullOrBlank() && !note.contactName.isNullOrBlank() && note.contactName.equals(targetName, ignoreCase = true))
         }
+    }
+
+    val matchedReminders = remember(allActiveReminders, contactNumbers, fullContact?.name, displayName, unknownLabel, refreshTrigger) {
+        val targetName = fullContact?.name ?: displayName.takeIf { it != unknownLabel }
+        allActiveReminders.filter { reminder ->
+            (reminder.phoneNumber.isNotBlank() && contactNumbers.any { num -> areNumbersEqual(reminder.phoneNumber, num) }) ||
+            (!targetName.isNullOrBlank() && !reminder.contactName.isNullOrBlank() && reminder.contactName.equals(targetName, ignoreCase = true))
+        }
+    }
+
+    val effectiveTagPhone = remember(phoneNumber, fullContact) {
+        phoneNumber ?: fullContact?.phoneNumbers?.firstOrNull()
+    }
+    val currentNumberTag = remember(effectiveTagPhone, numberTags, refreshTrigger) {
+        callLogViewModel.findTag(effectiveTagPhone, numberTags)
     }
 
     val backgroundContactId = fullContact?.id?.takeIf { it.isNotBlank() }
@@ -573,14 +611,6 @@ fun ContactDetailsScreen(
         )
     }
 
-    if (showReminderDialog) {
-        CallbackReminderDialog(
-            phoneNumber = displayPhone,
-            contactName = displayName,
-            onDismissRequest = { showReminderDialog = false }
-        )
-    }
-
     val noteTargetPhone = remember(phoneNumber, fullContact, unknownLabel) {
         when {
             phoneNumber != null && phoneNumber != unknownLabel -> phoneNumber
@@ -592,11 +622,49 @@ fun ContactDetailsScreen(
         if (displayName != unknownLabel) displayName else ""
     }
 
+    if (showReminderDialog) {
+        val reminderPhone = noteTargetPhone.ifBlank { if (displayPhone != unknownLabel) displayPhone else "" }
+        val reminderName = noteTargetName.ifBlank { if (displayName != unknownLabel) displayName else "" }
+        CallbackReminderDialog(
+            phoneNumber = reminderPhone,
+            contactName = reminderName,
+            onDismissRequest = { showReminderDialog = false },
+            onReminderScheduled = { reminderEntity ->
+                localActiveReminders = (listOf(reminderEntity) + allActiveReminders).sortedBy { it.remindAtMillis }
+                refreshTrigger++
+            }
+        )
+    }
+
     if (showAddNoteDialog) {
         AddCallNoteDialog(
             phoneNumber = noteTargetPhone,
             contactName = noteTargetName,
-            onDismissRequest = { showAddNoteDialog = false }
+            onDismissRequest = { showAddNoteDialog = false },
+            onNoteSaved = { noteEntity, reminderEntity ->
+                localCallNotes = listOf(noteEntity) + allCallNotes
+                if (reminderEntity != null) {
+                    localActiveReminders = (listOf(reminderEntity) + allActiveReminders).sortedBy { it.remindAtMillis }
+                }
+                refreshTrigger++
+            }
+        )
+    }
+
+    if (showTagDialog && !effectiveTagPhone.isNullOrBlank()) {
+        val targetPhone = effectiveTagPhone!!
+        NumberTagDialog(
+            phoneNumber = targetPhone,
+            initialTag = currentNumberTag.orEmpty(),
+            onDismissRequest = { showTagDialog = false },
+            onSaveTag = { newTag ->
+                callLogViewModel.setNumberTag(targetPhone, newTag)
+                refreshTrigger++
+            },
+            onDeleteTag = {
+                callLogViewModel.deleteNumberTag(targetPhone)
+                refreshTrigger++
+            }
         )
     }
 
@@ -815,6 +883,14 @@ fun ContactDetailsScreen(
                                     }
                                 )
                                 DropdownMenuItem(
+                                    text = { Text(if (!currentNumberTag.isNullOrBlank()) stringResource(R.string.action_edit_tag) else stringResource(R.string.action_add_tag)) },
+                                    leadingIcon = { Icon(Icons.AutoMirrored.Outlined.Label, contentDescription = null) },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        showTagDialog = true
+                                    }
+                                )
+                                DropdownMenuItem(
                                     text = {
                                         Text(
                                             if (fc.isPrivate) stringResource(R.string.contact_move_to_public_storage)
@@ -961,6 +1037,41 @@ fun ContactDetailsScreen(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
+                            }
+                            if (!currentNumberTag.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                                NumberTagBadge(
+                                    tag = currentNumberTag!!,
+                                    modifier = Modifier.clickable { showTagDialog = true }
+                                )
+                            } else if (fullContact == null && !effectiveTagPhone.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable { showTagDialog = true }
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Outlined.Label,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.action_add_tag),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -1363,14 +1474,14 @@ fun ContactDetailsScreen(
                     }
 
                     val hasContactNotes = fullContact != null && !fullContact!!.notes.isNullOrBlank()
-                    val hasAnyNotes = hasContactNotes || matchedCallNotes.isNotEmpty()
+                    val hasAnyNotesOrReminders = hasContactNotes || matchedCallNotes.isNotEmpty() || matchedReminders.isNotEmpty()
                     item {
                         RivoExpressiveGroup(
-                            title = stringResource(R.string.label_notes),
+                            title = stringResource(R.string.notes_and_reminders_title),
                             icon = Icons.Outlined.EditNote
                         ) {
-                            if (!hasAnyNotes) {
-                                item {
+                            if (!hasAnyNotesOrReminders) {
+                                item(key = "notes_empty_state") {
                                     RivoListItem(
                                         headline = stringResource(R.string.contact_no_notes_title),
                                         supporting = stringResource(R.string.contact_no_notes_description),
@@ -1381,7 +1492,7 @@ fun ContactDetailsScreen(
                                 }
                             } else {
                                 if (hasContactNotes) {
-                                    item {
+                                    item(key = "contact_notes_text") {
                                         val notesText = fullContact!!.notes!!
                                         RivoListItem(
                                             headline = notesText,
@@ -1402,7 +1513,7 @@ fun ContactDetailsScreen(
                                     }
                                 }
                                 matchedCallNotes.forEach { callNote ->
-                                    item {
+                                    item(key = "call_note_${callNote.id}_${callNote.timestamp}") {
                                         val noteDate = remember(callNote.timestamp) {
                                             SimpleDateFormat("MMM d, yyyy · HH:mm", Locale.getDefault()).format(Date(callNote.timestamp))
                                         }
@@ -1412,6 +1523,27 @@ fun ContactDetailsScreen(
                                             leadingIcon = Icons.AutoMirrored.Filled.Notes,
                                             isCompact = true,
                                             headlineMaxLines = Int.MAX_VALUE,
+                                            trailingContent = {
+                                                IconButton(
+                                                    onClick = {
+                                                        localCallNotes = allCallNotes.filter { it.id != callNote.id }
+                                                        scope.launch {
+                                                            withContext(Dispatchers.IO + NonCancellable) {
+                                                                callNoteDao.deleteNoteById(callNote.id)
+                                                            }
+                                                            Toast.makeText(context, "Note removed", Toast.LENGTH_SHORT).show()
+                                                            refreshTrigger++
+                                                        }
+                                                    }
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = stringResource(R.string.action_delete),
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(18.dp)
+                                                     )
+                                                }
+                                            },
                                             onClick = {
                                                 showCallNotesSheet = true
                                             },
@@ -1422,23 +1554,82 @@ fun ContactDetailsScreen(
                                         )
                                     }
                                 }
+                                matchedReminders.forEach { reminder ->
+                                    item(key = "reminder_${reminder.id}_${reminder.remindAtMillis}") {
+                                        val reminderDate = remember(reminder.remindAtMillis) {
+                                            SimpleDateFormat("MMM d, yyyy · HH:mm", Locale.getDefault()).format(Date(reminder.remindAtMillis))
+                                        }
+                                        val isOverdue = reminder.remindAtMillis < System.currentTimeMillis()
+                                        RivoListItem(
+                                            headline = reminder.note.takeIf { !it.isNullOrBlank() } ?: stringResource(R.string.contact_callback_reminder),
+                                            supporting = if (isOverdue) "Overdue · $reminderDate" else "Scheduled · $reminderDate",
+                                            leadingIcon = Icons.Outlined.Alarm,
+                                            isCompact = true,
+                                            trailingContent = {
+                                                IconButton(
+                                                    onClick = {
+                                                        localActiveReminders = allActiveReminders.filter { it.id != reminder.id }
+                                                        scope.launch {
+                                                            withContext(Dispatchers.IO + NonCancellable) {
+                                                                reminderManager.cancelReminder(reminder.id)
+                                                            }
+                                                            Toast.makeText(context, "Reminder removed", Toast.LENGTH_SHORT).show()
+                                                            refreshTrigger++
+                                                        }
+                                                    }
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = stringResource(R.string.action_delete),
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
                             }
-                            item {
-                                TextButton(
-                                    onClick = { showAddNoteDialog = true },
-                                    modifier = Modifier.fillMaxWidth()
+                            item(key = "notes_action_buttons") {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Add,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = stringResource(R.string.action_add_note),
-                                        style = MaterialTheme.typography.labelLarge,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    TextButton(
+                                        onClick = { showAddNoteDialog = true },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = stringResource(R.string.action_add_note),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+
+                                    TextButton(
+                                        onClick = { showReminderDialog = true },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Alarm,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = stringResource(R.string.action_add_reminder),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1683,22 +1874,12 @@ fun ContactDetailsScreen(
                     }
 
                     if (fullContact == null) {
-                        item {
-                            RivoExpressiveGroup(
-                                title = stringResource(R.string.contact_personalization_title),
-                                icon = Icons.Default.Tune
-                            ) {
-                                item {
-                                    RivoListItem(
-                                        headline = stringResource(R.string.contact_callback_reminder),
-                                        supporting = stringResource(R.string.contact_callback_reminder_supporting),
-                                        leadingIcon = Icons.Outlined.Alarm,
-                                        isCompact = true,
-                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        onClick = { showReminderDialog = true }
-                                    )
-                                }
-                                if (backgroundAvailable) {
+                        if (backgroundAvailable) {
+                            item {
+                                RivoExpressiveGroup(
+                                    title = stringResource(R.string.contact_personalization_title),
+                                    icon = Icons.Default.Tune
+                                ) {
                                     item {
                                         CallBackgroundRow(
                                             background = callBackground,
@@ -1786,19 +1967,7 @@ fun ContactDetailsScreen(
                                     }
                                 }
 
-                                // 3. Callback Reminder
-                                item {
-                                    RivoListItem(
-                                        headline = stringResource(R.string.contact_callback_reminder),
-                                        supporting = stringResource(R.string.contact_callback_reminder_supporting),
-                                        leadingIcon = Icons.Outlined.Alarm,
-                                        isCompact = true,
-                                        trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        onClick = { showReminderDialog = true }
-                                    )
-                                }
-
-                                // 4. Priority Contact
+                                // 3. Priority Contact
                                 item {
                                     RivoListItem(
                                         headline = stringResource(R.string.priority_contact_title),
@@ -1937,7 +2106,10 @@ fun ContactDetailsScreen(
                 phoneNumber = noteTargetPhone,
                 contactName = noteTargetName,
                 phoneNumbers = contactNumbers,
-                onDismiss = { showCallNotesSheet = false }
+                onDismiss = {
+                    showCallNotesSheet = false
+                    refreshTrigger++
+                }
             )
         }
     }

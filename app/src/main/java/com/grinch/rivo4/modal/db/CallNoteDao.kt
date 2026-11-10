@@ -9,6 +9,9 @@ interface CallNoteDao {
     @Query("SELECT * FROM call_notes ORDER BY timestamp DESC")
     fun getAllNotes(): Flow<List<CallNoteEntity>>
 
+    @Query("SELECT * FROM call_notes ORDER BY timestamp DESC")
+    suspend fun getAllNotesList(): List<CallNoteEntity>
+
     @Query("SELECT * FROM call_notes WHERE phoneNumber = :number ORDER BY timestamp DESC")
     fun getNotesForNumber(number: String): Flow<List<CallNoteEntity>>
 

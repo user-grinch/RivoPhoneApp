@@ -33,6 +33,8 @@ val appModule = module {
     single { get<RivoDatabase>().callNoteDao() }
     single { get<RivoDatabase>().callbackReminderDao() }
     single { get<RivoDatabase>().trashedContactDao() }
+    single { get<RivoDatabase>().numberTagDao() }
+    single { com.grinch.rivo4.controller.util.NumberTagManager(get()) }
 
     single<IContactsRepository> {
         ContactsRepository(androidContext(), get(), get())
@@ -54,7 +56,7 @@ val appModule = module {
         RewardedAdManager(androidContext())
     }
     viewModel { ContactsViewModel(get(), get(), get(), androidContext(), get()) }
-    viewModel { CallLogViewModel(get(), androidContext().contentResolver) }
+    viewModel { CallLogViewModel(get(), androidContext().contentResolver, get()) }
     viewModel { BackupViewModel(get(), get(), get(), get()) }
     viewModel { CallAnalyticsViewModel(get(), get()) }
 }

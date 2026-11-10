@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.Call
@@ -72,6 +73,7 @@ fun CallLogCustomizationScreen(
     val availableUnsavedActions: List<Pair<String, Pair<Int, ImageVector>>> = remember {
         listOf(
             "save" to (R.string.action_save to Icons.Outlined.PersonAdd),
+            "tag" to (R.string.action_tag to Icons.AutoMirrored.Outlined.Label),
             "view_contact" to (R.string.swipe_action_view_contact to Icons.Outlined.Person),
             "block" to (R.string.swipe_action_block to Icons.Outlined.Block),
             "message" to (R.string.action_message to Icons.AutoMirrored.Outlined.Message),

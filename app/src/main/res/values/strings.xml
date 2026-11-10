@@ -2048,4 +2048,15 @@ Please consider donating via Patreon to support development.</string>
     <string name="call_recordings_filter_outgoing_only_desc">Recording outgoing calls only</string>
     <string name="call_recordings_filter_unknown_only_desc">Recording unknown numbers only</string>
     <string name="call_recordings_filter_contacts_only_desc">Recording saved contacts only</string>
+
+    <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tag</string>
+    <string name="action_add_tag">Add tag</string>
+    <string name="action_edit_tag">Edit tag</string>
+    <string name="action_remove_tag">Remove tag</string>
+    <string name="tag_dialog_title">Number Tag</string>
+    <string name="tag_dialog_supporting">Add a short note for this unsaved number (e.g., Buyer for guitar, Delivery, Plumber)</string>
+    <string name="tag_dialog_hint">Tag (up to 30 characters)</string>
+    <string name="notes_and_reminders_title">Notes &amp; Reminders</string>
+    <string name="action_add_reminder">Add reminder</string>
 </resources>

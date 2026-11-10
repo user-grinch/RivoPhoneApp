@@ -518,6 +518,8 @@ fun CallLogFullContent(
         var expandedLogId by remember { mutableStateOf<Long?>(null) }
         var logToBlock by remember { mutableStateOf<CallLogEntry?>(null) }
         var fullContentAddToContactNumber by remember { mutableStateOf<String?>(null) }
+        var tagTargetNumber by remember { mutableStateOf<String?>(null) }
+        val numberTags by viewModel.numberTags.collectAsState()
         val callLogSavedActions = remember(settingsState) { prefs.getCallLogSavedActions() }
         val callLogUnsavedActions = remember(settingsState) { prefs.getCallLogUnsavedActions() }
         val callLogTrailingAction = remember(settingsState) { prefs.getCallLogTrailingAction() }
@@ -848,6 +850,7 @@ fun CallLogFullContent(
                                     CallLogTile(
                                         log = lg,
                                         contact = matchedContact,
+                                        tag = viewModel.findTag(lg.number, numberTags),
                                         displayOrder = displayOrder,
                                         showSim = callLogConfig.showSim,
                                         isFavorite = lg.contactId != null && lg.contactId in favoriteContactIds,
@@ -909,6 +912,9 @@ fun CallLogFullContent(
                                             when (actionKey) {
                                                 "save" -> {
                                                     fullContentAddToContactNumber = log.number
+                                                }
+                                                "tag" -> {
+                                                    tagTargetNumber = log.number
                                                 }
                                                 "call" -> callLauncher.dial(log.number, contact)
                                                 "video_call" -> videoLauncher.startVideoCall(log.number, contact)
@@ -1033,6 +1039,24 @@ fun CallLogFullContent(
                             initialPhoneToAssign = targetPhone
                         )
                     )
+                }
+            )
+        }
+
+        if (tagTargetNumber != null) {
+            val targetNumber = tagTargetNumber!!
+            val initialTag = viewModel.findTag(targetNumber, numberTags).orEmpty()
+            NumberTagDialog(
+                phoneNumber = targetNumber,
+                initialTag = initialTag,
+                onDismissRequest = { tagTargetNumber = null },
+                onSaveTag = { newTag ->
+                    viewModel.setNumberTag(targetNumber, newTag)
+                    tagTargetNumber = null
+                },
+                onDeleteTag = {
+                    viewModel.deleteNumberTag(targetNumber)
+                    tagTargetNumber = null
                 }
             )
         }

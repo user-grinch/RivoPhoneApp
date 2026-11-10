@@ -44,6 +44,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.grinch.rivo4.controller.util.PreferenceManager
 import androidx.compose.ui.text.font.FontWeight
@@ -159,9 +160,43 @@ fun HdBadge(
 }
 
 @Composable
+fun NumberTagBadge(
+    tag: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.85f),
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(3.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.Label,
+                contentDescription = null,
+                modifier = Modifier.size(11.dp)
+            )
+            Text(
+                text = tag,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 11.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
 fun CallLogTileSimple(
     log: CallLogEntry,
     contact: Contact? = null,
+    tag: String? = null,
     displayOrder: Int = LocalCallLogTileConfig.current.displayOrder,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
@@ -242,7 +277,7 @@ fun CallLogTileSimple(
     }
 
     val resolvedSimNumber = log.simNumber ?: resolveSimNumber(log)
-    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd
+    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd || !tag.isNullOrBlank()
 
     @Composable
     fun ContentBox() {
@@ -279,6 +314,10 @@ fun CallLogTileSimple(
                                     }
                                     if (log.isHd) {
                                         HdBadge()
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    if (!tag.isNullOrBlank()) {
+                                        NumberTagBadge(tag = tag)
                                         Spacer(modifier = Modifier.width(6.dp))
                                     }
                                     Text(
@@ -344,6 +383,7 @@ data class CallLogActionInfo(
 @Composable
 fun getCallLogActionInfo(key: String): CallLogActionInfo? = when (key) {
     "save" -> CallLogActionInfo("save", stringResource(R.string.action_save), Icons.Outlined.PersonAdd)
+    "tag" -> CallLogActionInfo("tag", stringResource(R.string.action_tag), Icons.AutoMirrored.Outlined.Label)
     "view_contact" -> CallLogActionInfo("view_contact", stringResource(R.string.swipe_action_view_contact), Icons.Outlined.Person)
     "block" -> CallLogActionInfo("block", stringResource(R.string.swipe_action_block), Icons.Outlined.Block)
     "message" -> CallLogActionInfo("message", stringResource(R.string.action_message), Icons.AutoMirrored.Outlined.Message)
@@ -360,6 +400,7 @@ fun getCallLogActionInfo(key: String): CallLogActionInfo? = when (key) {
 fun CallLogTile(
     log: CallLogEntry,
     contact: Contact? = null,
+    tag: String? = null,
     onTileClick: (CallLogEntry) -> Unit,
     onButtonClick: (CallLogEntry) -> Unit,
     onAvatarClick: ((CallLogEntry) -> Unit)? = null,
@@ -451,7 +492,7 @@ fun CallLogTile(
     var isHistoryExpanded by remember { mutableStateOf(false) }
     val isUnsaved = contact == null && (log.contactId == null || log.contactId == "null") &&
         (log.name == null || log.name == log.number || areNumbersEqual(log.name, log.number) || log.name?.none { it.isLetter() } == true)
-    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd
+    val hasSupportingBadge = (showSim && resolvedSimNumber != null) || log.isHd || !tag.isNullOrBlank()
 
     val tileBgColor = when {
         selected -> MaterialTheme.colorScheme.secondaryContainer
@@ -499,6 +540,10 @@ fun CallLogTile(
                                     }
                                     if (log.isHd) {
                                         HdBadge()
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    if (!tag.isNullOrBlank()) {
+                                        NumberTagBadge(tag = tag)
                                         Spacer(modifier = Modifier.width(6.dp))
                                     }
                                     Text(
@@ -632,6 +677,36 @@ fun CallLogTile(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (!tag.isNullOrBlank()) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onActionClick?.invoke("tag", log) }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.Label,
+                                contentDescription = null,
+                                tint = if (!tag.isNullOrBlank()) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (!tag.isNullOrBlank()) tag else stringResource(R.string.action_tag),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 11.sp,
+                                color = if (!tag.isNullOrBlank()) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
