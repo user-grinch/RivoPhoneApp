@@ -1368,4 +1368,13 @@ ShizuCallRecorder (所有录制代码) - GPLv3 带第7节附加条款</string>
     <string name="call_recordings_filter_unknown_only_desc">仅录制未知号码</string>
     <string name="call_recordings_filter_contacts_only_desc">仅录制已保存的联系人</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">标签</string>
+    <string name="action_add_tag">添加标签</string>
+    <string name="action_edit_tag">编辑标签</string>
+    <string name="action_remove_tag">移除标签</string>
+    <string name="tag_dialog_title">数字标签</string>
+    <string name="tag_dialog_supporting">为这个未保存的号码添加简短记事(例如吉他、送货、Plumber的买家)</string>
+    <string name="tag_dialog_hint">标签 (最多30个字符)</string>
+    <string name="notes_and_reminders_title">笔记 &amp; 提醒</string>
+    <string name="action_add_reminder">添加提醒</string>
 </resources>

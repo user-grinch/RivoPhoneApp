@@ -1220,4 +1220,12 @@ Harkitse lahjoittamista Patreonin kautta tukemaan kehitystä.</string>
     <string name="call_recordings_filter_unknown_only_desc">Vain tuntemattomien numeroiden tallentaminen</string>
     <string name="call_recordings_filter_contacts_only_desc">Vain tallennetut yhteystiedot</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tunniste</string>
+    <string name="action_add_tag">Lisää tagi</string>
+    <string name="action_edit_tag">Muokkaa tagia</string>
+    <string name="action_remove_tag">Poista tagi</string>
+    <string name="tag_dialog_title">Numero Tagi</string>
+    <string name="tag_dialog_supporting">Lisää tähän tallentamattomaan numeroon lyhyt muistiinpano (esim. Ostaja kitaralle, toimituslle, putkistolle)</string>
+    <string name="tag_dialog_hint">Tagi (enintään 30 merkkiä)</string>
+    <string name="action_add_reminder">Lisää muistutus</string>
 </resources>

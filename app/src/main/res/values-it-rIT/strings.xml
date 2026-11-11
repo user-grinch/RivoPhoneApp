@@ -1230,4 +1230,13 @@ Si prega di considerare la possibilità di donare tramite Patreon per sostenere 
     <string name="call_recordings_filter_unknown_only_desc">Registrazione solo numeri sconosciuti</string>
     <string name="call_recordings_filter_contacts_only_desc">Registrazione solo dei contatti salvati</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tag</string>
+    <string name="action_add_tag">Aggiungi tag</string>
+    <string name="action_edit_tag">Modifica tag</string>
+    <string name="action_remove_tag">Rimuovi tag</string>
+    <string name="tag_dialog_title">Tag Numero</string>
+    <string name="tag_dialog_supporting">Aggiungi una breve nota per questo numero non salvato (ad esempio, Acquirente per chitarra, Consegna, Plumber)</string>
+    <string name="tag_dialog_hint">Tag (fino a 30 caratteri)</string>
+    <string name="notes_and_reminders_title">Note &amp; Promemoria</string>
+    <string name="action_add_reminder">Aggiungi promemoria</string>
 </resources>

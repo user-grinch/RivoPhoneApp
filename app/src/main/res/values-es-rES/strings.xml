@@ -1962,4 +1962,9 @@ Por favor considera donar a través de Patreon para apoyar el desarrollo.</strin
     <string name="action_add_tag">Añadir etiqueta</string>
     <string name="action_edit_tag">Editar etiqueta</string>
     <string name="action_remove_tag">Eliminar etiqueta</string>
+    <string name="tag_dialog_title">Etiqueta de número</string>
+    <string name="tag_dialog_supporting">Añadir una nota corta para este número sin guardar (por ejemplo, Comprador para guitar, entregar, plumber)</string>
+    <string name="tag_dialog_hint">Etiqueta (hasta 30 caracteres)</string>
+    <string name="notes_and_reminders_title">Notas &amp; Recordatorios</string>
+    <string name="action_add_reminder">Añadir recordatorio</string>
 </resources>

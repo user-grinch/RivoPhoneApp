@@ -1233,4 +1233,9 @@ Vă rugăm să luați în considerare donarea prin Patreon pentru a sprijini dez
     <string name="action_add_tag">Adaugă etichetă</string>
     <string name="action_edit_tag">Editare etichetă</string>
     <string name="action_remove_tag">Elimină eticheta</string>
+    <string name="tag_dialog_title">Numar Eticheta</string>
+    <string name="tag_dialog_supporting">Adăugați o notă scurtă pentru acest număr nesalvat (de exemplu, cumpărător pentru chitar, Livrare, Plumber)</string>
+    <string name="tag_dialog_hint">Etichetă (până la 30 de caractere)</string>
+    <string name="notes_and_reminders_title">Notele &amp; Memento-uri</string>
+    <string name="action_add_reminder">Adaugă memento</string>
 </resources>

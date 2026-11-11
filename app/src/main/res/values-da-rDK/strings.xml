@@ -1233,4 +1233,9 @@ Overvej venligst at donere via Patreon for at støtte udviklingen.</string>
     <string name="action_add_tag">Tilføj tag</string>
     <string name="action_edit_tag">Rediger tag</string>
     <string name="action_remove_tag">Fjern tag</string>
+    <string name="tag_dialog_title">Nummer Tag</string>
+    <string name="tag_dialog_supporting">Tilføj en kort note til dette ikke-gemte nummer (f.eks.Køber til guitar, Levering, Plumber)</string>
+    <string name="tag_dialog_hint">Tag (op til 30 tegn)</string>
+    <string name="notes_and_reminders_title">Noter &amp; Påmindelser</string>
+    <string name="action_add_reminder">Tilføj påmindelse</string>
 </resources>

@@ -1221,4 +1221,13 @@ ShizuCallRecorder (código de gravação de chamada) — GPLv3 com a Seção 7 t
     <string name="call_recordings_filter_unknown_only_desc">Gravando apenas números desconhecidos</string>
     <string name="call_recordings_filter_contacts_only_desc">Gravando apenas contatos salvos</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Etiqueta</string>
+    <string name="action_add_tag">Adicionar tag</string>
+    <string name="action_edit_tag">Editar etiqueta</string>
+    <string name="action_remove_tag">Remover tag</string>
+    <string name="tag_dialog_title">Tag de Números</string>
+    <string name="tag_dialog_supporting">Adicionar uma breve nota para este número não salvo (por exemplo, Comprador de violão, entrega, Plumber)</string>
+    <string name="tag_dialog_hint">Etiqueta (até 30 caracteres)</string>
+    <string name="notes_and_reminders_title">Notas &amp; Lembretes</string>
+    <string name="action_add_reminder">Adicionar lembrete</string>
 </resources>

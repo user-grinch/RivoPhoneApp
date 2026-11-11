@@ -1220,4 +1220,13 @@ Vurder å donere via Patreon for å støtte utvikling.</string>
     <string name="call_recordings_filter_unknown_only_desc">Kun ukjente tall</string>
     <string name="call_recordings_filter_contacts_only_desc">Opptak lagrede kontakter</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tagg</string>
+    <string name="action_add_tag">Legg til etikett</string>
+    <string name="action_edit_tag">Rediger merke</string>
+    <string name="action_remove_tag">Fjern tagg</string>
+    <string name="tag_dialog_title">Antall emneord</string>
+    <string name="tag_dialog_supporting">Legg til en kort merknad for dette ulagrede nummeret (f.eks Kjøper for gitar, Levering, Plumber)</string>
+    <string name="tag_dialog_hint">Tagg (opptil 30 tegn)</string>
+    <string name="notes_and_reminders_title">Notater &amp; Påminnelser</string>
+    <string name="action_add_reminder">Legg til påminnelse</string>
 </resources>
