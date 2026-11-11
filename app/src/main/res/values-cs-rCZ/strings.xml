@@ -1233,4 +1233,9 @@ Zvažte prosím darování přes Patreon na podporu vývoje.</string>
     <string name="action_add_tag">Přidat štítek</string>
     <string name="action_edit_tag">Upravit štítek</string>
     <string name="action_remove_tag">Odstranit štítek</string>
+    <string name="tag_dialog_title">Číslo značky</string>
+    <string name="tag_dialog_supporting">Přidat krátkou poznámku pro toto neuložené číslo (např. kupující kytaru, Doručení, Plumber)</string>
+    <string name="tag_dialog_hint">Značka (až 30 znaků)</string>
+    <string name="notes_and_reminders_title">Poznámky &amp; Připomínky</string>
+    <string name="action_add_reminder">Přidat připomenutí</string>
 </resources>

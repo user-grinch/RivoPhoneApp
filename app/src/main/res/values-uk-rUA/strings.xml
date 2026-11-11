@@ -1162,4 +1162,13 @@
     <string name="call_recordings_filter_unknown_only_desc">Запис лише з невідомих номерів</string>
     <string name="call_recordings_filter_contacts_only_desc">Запис збережених контактів тільки</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Тег</string>
+    <string name="action_add_tag">Додати тег</string>
+    <string name="action_edit_tag">Редагувати тег</string>
+    <string name="action_remove_tag">Вилучити мітку</string>
+    <string name="tag_dialog_title">Тег номер</string>
+    <string name="tag_dialog_supporting">Додайте коротку нотатку для цього незбереженого номера (наприклад, покупець для гітари, Доставлення, Стовпча)</string>
+    <string name="tag_dialog_hint">Тег (до 30 символів)</string>
+    <string name="notes_and_reminders_title">Нотатки &amp; нагадування</string>
+    <string name="action_add_reminder">Додати нагадування</string>
 </resources>

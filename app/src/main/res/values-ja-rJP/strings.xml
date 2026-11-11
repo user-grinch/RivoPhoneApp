@@ -1194,4 +1194,13 @@
     <string name="call_recordings_filter_unknown_only_desc">不明な番号のみを記録する</string>
     <string name="call_recordings_filter_contacts_only_desc">保存された連絡先のみを記録</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">タグ</string>
+    <string name="action_add_tag">タグを追加</string>
+    <string name="action_edit_tag">タグを編集</string>
+    <string name="action_remove_tag">タグを削除</string>
+    <string name="tag_dialog_title">ナンバータグ</string>
+    <string name="tag_dialog_supporting">この保存されていない番号に短いメモを追加してください（例：ギターの買い手、Delivery、Plumber）</string>
+    <string name="tag_dialog_hint">タグ (最大 30 文字)</string>
+    <string name="notes_and_reminders_title">メモ &amp; リマインダー</string>
+    <string name="action_add_reminder">リマインダーを追加</string>
 </resources>

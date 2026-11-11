@@ -1228,4 +1228,13 @@ ShizuCallRecorder (samtalsinspelningskod) — GPLv3 med avsnitt 7 ytterligare vi
     <string name="call_recordings_filter_unknown_only_desc">Endast inspelning av okända nummer</string>
     <string name="call_recordings_filter_contacts_only_desc">Endast sparade kontakter</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tagg</string>
+    <string name="action_add_tag">Lägg till tagg</string>
+    <string name="action_edit_tag">Redigera tagg</string>
+    <string name="action_remove_tag">Ta bort tagg</string>
+    <string name="tag_dialog_title">Nummer tagg</string>
+    <string name="tag_dialog_supporting">Lägg till en kort anteckning för detta osparade nummer (t.ex., Köpare för gitarr, Leverans, Plumber)</string>
+    <string name="tag_dialog_hint">Tagg (upp till 30 tecken)</string>
+    <string name="notes_and_reminders_title">Anteckningar &amp; Påminnelser</string>
+    <string name="action_add_reminder">Lägg till påminnelse</string>
 </resources>

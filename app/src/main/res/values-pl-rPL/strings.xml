@@ -1966,4 +1966,13 @@ Rozważ darowizny za pośrednictwem Patreona, aby wesprzeć rozwój.</string>
     <string name="call_recordings_filter_unknown_only_desc">Nagrywanie tylko nieznanych numerów</string>
     <string name="call_recordings_filter_contacts_only_desc">Nagrywanie tylko zapisanych kontaktów</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Znacznik</string>
+    <string name="action_add_tag">Dodaj tag</string>
+    <string name="action_edit_tag">Edytuj tag</string>
+    <string name="action_remove_tag">Usuń tag</string>
+    <string name="tag_dialog_title">Znacznik liczby</string>
+    <string name="tag_dialog_supporting">Dodaj krótką notatkę dla tego niezapisanego numeru (np. Kupujący gitar, Dostawa, Hydraulic)</string>
+    <string name="tag_dialog_hint">Tag (do 30 znaków)</string>
+    <string name="notes_and_reminders_title">Notatki &amp; Przypomnienia</string>
+    <string name="action_add_reminder">Dodaj przypomnienie</string>
 </resources>

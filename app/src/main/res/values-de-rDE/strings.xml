@@ -605,7 +605,7 @@ Weißer Text</string>
     <string name="avatar_style_none">Keine</string>
     <!-- Settings > Sound & Vibration -->
     <string name="settings_sound_title">Töne &amp; Vibration</string>
-    <string name="settings_appwide_vibration_title">Haptisches Feedback (Gesamtapp)</string>
+    <string name="settings_appwide_vibration_title">Haptisches Feedback (gesamte App)</string>
     <string name="settings_appwide_vibration_supporting">Beim Scrollen der alphabetischen Leiste unter \"Kontakte\" vibrieren</string>
     <string name="settings_sound_dtmf_tone">DTMF-Ton</string>
     <string name="settings_sound_dtmf_tone_supporting">Ton bei Wahltastendruck</string>
@@ -977,7 +977,7 @@ Weißer Text</string>
     <string name="call_recording_in_progress">Wird aufgenommen</string>
     <string name="call_recordings_title">Aufnahmen</string>
     <!-- Call Recording How It Works & Shizuku Guide -->
-    <string name="call_recording_how_it_works_title">So einrichten</string>
+    <string name="call_recording_how_it_works_title">Einrichtung</string>
     <string name="call_recording_how_it_works_subtitle">Android-Einschränkungen &amp; Shizuku 2-Wege-Audio-Einrichtung</string>
     <string name="call_recording_compact_intro">Android schränkt die Aufnahme von Remote-Anrufer-Audio ein. Shizuku ermöglicht einen erhöhten ADB-Zugriff, um klare 2-Wege-Anrufe ohne Root aufzunehmen.</string>
     <string name="call_recording_step1_compact_title">Shizuku installieren</string>
@@ -990,7 +990,7 @@ Weißer Text</string>
     <string name="call_recording_restrictions_title">Android-Datenschutzbeschränkungen</string>
     <string name="call_recording_restrictions_desc">Auf modernem Android (9, 10, 11+) blockiert Google Drittanbieter-Apps die Aufnahme von internem Anruf-Audio. Die normale Mikrofon-Aufnahme kann nur Ihre Stimme hören, so dass der andere Anrufer schwach oder völlig stumm ist.</string>
     <string name="call_recording_shizuku_solution_title">Die Shizuku-Lösung (2-Wege-Audio)</string>
-    <string name="call_recording_shizuku_solution_desc">Shizuku gewährt Rivo erhöhte ADB-Level Berechtigungen ohne Root zu benötigen.</string>
+    <string name="call_recording_shizuku_solution_desc">Shizuku gewährt Rivo erhöhte ADB-Level-Berechtigungen ohne Root zu benötigen.</string>
     <string name="call_recording_setup_guide_title">Shizuku einrichten (3 Schritte)</string>
     <string name="call_recording_step1_title">1. Shizuku installieren</string>
     <string name="call_recording_step1_desc">Laden Sie die kostenlose Open-Source Shizuku App von Google Play oder der offiziellen Website herunter.</string>
@@ -1543,7 +1543,7 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="loc_avatars_contact_cards">Avatare &amp; Kontaktkarten</string>
     <string name="loc_contact_photos_initials_and_contact_card_styling">Kontaktbilder, Initialen und Kontaktkartenstil</string>
     <string name="loc_avatar_shapes">Avatar-Formen</string>
-    <string name="loc_choose_from_circle_squircle_hexagon_flower_cookie_more">Wähle Kreis, abgerundetem Quadrat, Hexagon, Blume, Cookie &amp; mehr</string>
+    <string name="loc_choose_from_circle_squircle_hexagon_flower_cookie_more">Wähle Kreis, abgerundetes Quadrat, Hexagon, Blume, Cookie &amp; mehr</string>
     <string name="loc_show_contact_pictures">Kontaktbilder anzeigen</string>
     <string name="loc_display_contact_photos_in_avatar_tiles_when_available">Kontaktbilder in Avatar-Kacheln anzeigen, wenn verfügbar</string>
     <string name="loc_colorful_avatars">Farbige Avatare</string>
@@ -1960,8 +1960,13 @@ Bitte erwägen Sie, über Patreon zu spenden, um die Entwicklung zu unterstütze
     <string name="call_recordings_filter_unknown_only_desc">Nur unbekannte Nummern aufzeichnen</string>
     <string name="call_recordings_filter_contacts_only_desc">Nur gespeicherte Kontakte aufnehmen</string>
     <!-- Number Tags & Notes/Reminders -->
-    <string name="action_tag">Markierung</string>
-    <string name="action_add_tag">Tag hinzufügen</string>
-    <string name="action_edit_tag">Tag bearbeiten</string>
-    <string name="action_remove_tag">Tag entfernen</string>
+    <string name="action_tag">Zusatzinfo</string>
+    <string name="action_add_tag">Zusatzinfo hinzufügen</string>
+    <string name="action_edit_tag">Zusatzinfo bearbeiten</string>
+    <string name="action_remove_tag">Zusatzinfo entfernen</string>
+    <string name="tag_dialog_title">Nummern-Zusatzinfo</string>
+    <string name="tag_dialog_supporting">Füge eine kurze Notiz für diese ungespeicherte Nummer hinzu (z.B. Käufer für Gitarre, Lieferung, Klempner)</string>
+    <string name="tag_dialog_hint">Zusatzinfo (bis zu 30 Zeichen)</string>
+    <string name="notes_and_reminders_title">Notizen &amp; Erinnerungen</string>
+    <string name="action_add_reminder">Erinnerung hinzufügen</string>
 </resources>

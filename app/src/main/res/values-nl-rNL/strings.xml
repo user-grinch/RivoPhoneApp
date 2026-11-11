@@ -1224,4 +1224,13 @@ Overweeg om te doneren via Patreon om ontwikkeling te ondersteunen.</string>
     <string name="call_recordings_filter_unknown_only_desc">Alleen onbekende nummers opnemen</string>
     <string name="call_recordings_filter_contacts_only_desc">Alleen opgeslagen contactpersonen opnemen</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Tagnaam</string>
+    <string name="action_add_tag">Tag toevoegen</string>
+    <string name="action_edit_tag">Tag bewerken</string>
+    <string name="action_remove_tag">Label verwijderen</string>
+    <string name="tag_dialog_title">Nummer label</string>
+    <string name="tag_dialog_supporting">Voeg een korte notitie toe voor dit niet-opgeslagen nummer (bijv. koper voor gitar, bezorging, Plumber)</string>
+    <string name="tag_dialog_hint">Tag (tot 30 tekens)</string>
+    <string name="notes_and_reminders_title">Notities &amp; Herinneringen</string>
+    <string name="action_add_reminder">Herinnering toevoegen</string>
 </resources>

@@ -1955,4 +1955,13 @@
     <string name="call_recordings_filter_unknown_only_desc">Запись только неизвестных номеров</string>
     <string name="call_recordings_filter_contacts_only_desc">Запись только сохранённых контактов</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Тег</string>
+    <string name="action_add_tag">Добавить тег</string>
+    <string name="action_edit_tag">Изменить тег</string>
+    <string name="action_remove_tag">Удалить тег</string>
+    <string name="tag_dialog_title">Метка числа</string>
+    <string name="tag_dialog_supporting">Добавить краткую заметку для этого несохраненного номера (например, покупатель для гитары, доставки, сливки)</string>
+    <string name="tag_dialog_hint">Метка (до 30 символов)</string>
+    <string name="notes_and_reminders_title">Примечания &amp; Напоминания</string>
+    <string name="action_add_reminder">Добавить напоминание</string>
 </resources>

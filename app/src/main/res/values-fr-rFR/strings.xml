@@ -1961,4 +1961,9 @@ N\'hésitez pas à faire un don via Patreon pour soutenir le développement.</st
     <string name="action_add_tag">Ajouter un tag</string>
     <string name="action_edit_tag">Modifier le tag</string>
     <string name="action_remove_tag">Supprimer le tag</string>
+    <string name="tag_dialog_title">Nombre d\'étiquettes</string>
+    <string name="tag_dialog_supporting">Ajouter une courte note pour ce numéro non sauvegardé (par exemple, Acheteur pour la guitare, Livrer, Plombier)</string>
+    <string name="tag_dialog_hint">Étiquette (jusqu\'à 30 caractères)</string>
+    <string name="notes_and_reminders_title">Notes &amp; Rappels</string>
+    <string name="action_add_reminder">Ajouter un rappel</string>
 </resources>

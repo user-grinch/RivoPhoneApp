@@ -1199,4 +1199,12 @@ ShizuCallRecorder (κωδικός καταγραφής κλήσης) — GPLv3 �
     <string name="call_recordings_filter_unknown_only_desc">Μόνο η εγγραφή άγνωστων αριθμών</string>
     <string name="call_recordings_filter_contacts_only_desc">Μόνο η εγγραφή αποθηκευμένων επαφών</string>
     <!-- Number Tags & Notes/Reminders -->
+    <string name="action_tag">Ετικέτα</string>
+    <string name="action_add_tag">Προσθήκη ετικέτας</string>
+    <string name="action_edit_tag">Επεξεργασία ετικέτας</string>
+    <string name="action_remove_tag">Αφαίρεση ετικέτας</string>
+    <string name="tag_dialog_title">Ετικέτα Αριθμού</string>
+    <string name="tag_dialog_supporting">Προσθέστε μια σύντομη σημείωση για αυτόν τον μη αποθηκευμένο αριθμό (π.χ. Αγοραστής για κιθάρα, Παράδοση, Plumber)</string>
+    <string name="tag_dialog_hint">Ετικέτα (έως 30 χαρακτήρες)</string>
+    <string name="action_add_reminder">Προσθήκη υπενθύμισης</string>
 </resources>
