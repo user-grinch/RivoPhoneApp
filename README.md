@@ -12,12 +12,12 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 [![Crowdin](https://img.shields.io/badge/Localization-Crowdin-0EA5E9?logo=crowdin&style=flat-square)](https://crowdin.com/project/rivophone)
 
 <p align="center">
-  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk">
+  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/latest/download/RivoPhone.apk">
     <img src="images/download_stable.png" alt="Direct Download | STABLE" height="42">
   </a>
   &nbsp;
-  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk">
-    <img src="images/download_preview.png" alt="Direct Download | PREVIEW" height="42">
+  <a href="https://discord.gg/NtEvU3726e">
+    <img src="images/download_preview.png" alt="Direct Download | PREVIEW (Discord)" height="42">
   </a>
 </p>
 
@@ -47,6 +47,9 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
   </a>
   <br>
 </p>
+
+> [!NOTE]  
+> **Preview Builds:** Early access and cutting-edge preview builds are exclusively available on our **[Discord Server](https://discord.gg/NtEvU3726e)**. Join the community to test upcoming features and provide feedback!
 
 </div>
 
@@ -92,7 +95,7 @@ A clean, open-source dialer and contacts app for Android, built with Jetpack Com
 ## Downloads
 
 - **Stable Release (Recommended)**: Download the latest [RivoPhone.apk](https://github.com/user-grinch/RivoPhoneApp/releases/latest/download/RivoPhone.apk) (includes in-app Tip Jar support).
-- **Preview Builds**: Download automated cutting-edge [RivoPhone.apk](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk) from the preview release.
+- **Preview Builds**: Cutting-edge preview builds are available exclusively on our [Discord server](https://discord.gg/NtEvU3726e). Join us to test upcoming features and provide early feedback.
 - **Google Play**: Get the official release from the [Play Store](https://play.google.com/store/apps/details?id=com.grinch.rivo4).
 - **Obtainium**: Add via [Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/{%22id%22:%22com.grinch.rivo4%22,%22url%22:%22https://github.com/user-grinch/RivoPhoneApp%22,%22author%22:%22user-grinch%22,%22name%22:%22RivoPhoneApp%22}) for automated GitHub release updates.
 
@@ -114,7 +117,7 @@ Rivo is free and open-source software. If you find the app useful and want to su
 
 ## Community & Contributing
 
-* **Discord**: Join our [Discord server](https://discord.gg/NtEvU3726e) for discussions and support.
+* **Discord**: Join our [Discord server](https://discord.gg/NtEvU3726e) for discussions, preview builds, and support.
 * **Translations**: Help localize Rivo on [Crowdin](https://crowdin.com/project/rivophone).
 * **Issues & Bugs**: Report bugs or request features via [GitHub Issues](https://github.com/user-grinch/RivoPhoneApp/issues).
 
@@ -124,4 +127,12 @@ Rivo is free and open-source software. If you find the app useful and want to su
 
 ## License
 
-Licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://www.google.com/search?q=LICENSE).
+Licensed under the [GNU General Public License v3.0 (GPL-3.0)](LICENSE) with **Section 7 Additional Terms**.
+
+### Section 7 Additional Terms Summary:
+In accordance with GPL-3.0 Section 7, all downstream distributions, forks, and derivatives (in source or binary form, including app store releases) must:
+1. **Provide Prominent Attribution (Section 7(b)):** Prominently display notice of origin stating that the work is based on or forked from **RivoPhoneApp by Grinch_ (`https://github.com/user-grinch/RivoPhoneApp`)** in both the primary user interface (About / Contributors screen) and repository `README.md`.
+2. **Prohibit Misrepresentation of Origin (Section 7(c)):** Labeling RivoPhoneApp merely as an "inspiration", "reference", or "external contribution" while incorporating its source code is strictly prohibited. Modified versions must carry prominent notices stating that they are modified from RivoPhoneApp and giving the date of modification.
+3. **Preserve Copyright & License Headers (Section 7(b)):** Retain all copyright notices, author identifiers, and license headers verbatim in all source files.
+
+See the [LICENSE](LICENSE) file for the full text.

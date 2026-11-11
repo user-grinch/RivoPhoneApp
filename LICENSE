@@ -672,3 +672,37 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+----------------------------------------------------------------------
+ADDITIONAL TERMS UNDER GNU GENERAL PUBLIC LICENSE v3.0 SECTION 7
+
+In accordance with Section 7 of the GNU General Public License version 3,
+the following additional permissions and requirements apply to all material
+authored in this project (RivoPhoneApp):
+
+1. Mandatory Upstream Attribution (Section 7(b)):
+   Any downstream distribution of this work or any portion thereof, whether
+   modified or verbatim, in source or binary form (including application packages
+   distributed via public application stores such as Google Play, F-Droid, or
+   third-party repositories), must prominently display the following attribution:
+
+   a) In the primary interactive user interface (such as the main "About" or
+      "Contributors" screen), and
+   b) In the primary project documentation and repository homepage (e.g., README.md).
+
+   Required Attribution Notice:
+   "Based on / Forked from RivoPhoneApp by Grinch_ (https://github.com/user-grinch/RivoPhoneApp)
+    Copyright (C) 2025-2026 RivoPhone Project."
+
+2. Prohibition of Misrepresenting Origin (Section 7(c)):
+   You must not misrepresent the origin of this material. Specifically:
+   a) Labeling this software, its derivative works, or components thereof merely as
+      an "inspiration", "reference", or "external contribution" while incorporating
+      its source code is strictly prohibited.
+   b) Any modified version must carry prominent notices stating that it was modified
+      from RivoPhoneApp and indicating the date of modification.
+
+3. Preservation of Legal Notices and Headers (Section 7(b)):
+   All copyright notices, author identifiers, and license headers present in the
+   source files must be preserved verbatim in all downstream copies and modifications.
+----------------------------------------------------------------------
