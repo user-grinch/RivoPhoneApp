@@ -15,7 +15,7 @@ A clean, modern dialer and contacts app for Android, built with Jetpack Compose.
     <img src="images/download_stable.png" alt="Download from Google Play" height="42">
   </a>
   &nbsp;
-  <a href="https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk">
+  <a href="https://github.com/user-grinch/RivoPhone/releases/download/preview/RivoPhone.apk">
     <img src="images/download_preview.png" alt="Download Preview APK" height="42">
   </a>
 </p>
@@ -40,7 +40,7 @@ A clean, modern dialer and contacts app for Android, built with Jetpack Compose.
 </p>
 
 > [!NOTE]  
-> **Preview Builds:** Automated preview APKs are compiled directly from the latest codebase and published under **[Releases](https://github.com/user-grinch/RivoPhoneApp/releases)**. You can also join our **[Discord Server](https://discord.gg/NtEvU3726e)** to test upcoming features and chat with the community!
+> **Preview Builds:** Automated preview APKs are compiled directly from the latest codebase and published under **[Releases](https://github.com/user-grinch/RivoPhone/releases)**. You can also join our **[Discord Server](https://discord.gg/NtEvU3726e)** to test upcoming features and chat with the community!
 
 </div>
 
@@ -86,8 +86,8 @@ A clean, modern dialer and contacts app for Android, built with Jetpack Compose.
 ## Downloads
 
 - **Google Play (Recommended)**: Download the official stable release from [Google Play](https://play.google.com/store/apps/details?id=com.grinch.rivo4).
-- **Preview Builds (Direct APK)**: Direct APK builds compiled directly from the latest `main` branch are published under [Releases](https://github.com/user-grinch/RivoPhoneApp/releases).
-  - Download [RivoPhone.apk (Preview)](https://github.com/user-grinch/RivoPhoneApp/releases/download/preview/RivoPhone.apk)
+- **Preview Builds (Direct APK)**: Direct APK builds compiled directly from the latest `main` branch are published under [Releases](https://github.com/user-grinch/RivoPhone/releases).
+  - Download [RivoPhone.apk (Preview)](https://github.com/user-grinch/RivoPhone/releases/download/preview/RivoPhone.apk)
 - **Discord Community**: Join our [Discord Server](https://discord.gg/NtEvU3726e) to discuss upcoming features, test beta builds, and report issues.
 
 <details>
@@ -105,6 +105,10 @@ If you enjoy Rivo and would like to support its continued development:
 
 - **Patreon**: Support monthly on [Patreon](https://www.patreon.com/c/grinch_)
 - **Google Play**: Use the in-app tip jar located in **Settings $\rightarrow$ Support Development**
+
+## License
+
+Copyright &copy; 2025&ndash;2026 Grinch_. All rights reserved.
 
 ---
 
