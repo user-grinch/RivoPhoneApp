@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://user-grinch.github.io/RivoPhoneApp/sitemap.xml

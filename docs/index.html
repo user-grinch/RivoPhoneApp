@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-accent="blue">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rivo — Clean &amp; Expressive Dialer for Android</title>
+  <meta name="description" content="Rivo is a clean, modern dialer and contacts app for Android built with Jetpack Compose, Material 3 Expressive, T9 speed dial, integrated call recording, and a biometric Private Vault." />
+  <meta name="keywords" content="Rivo, Android dialer, Jetpack Compose phone app, call recording, call recorder, Private Contacts Vault, Material 3 Expressive, T9 dialer" />
+  <meta name="theme-color" content="#0461A3" />
+  <link rel="icon" type="image/png" href="assets/rivo-icon.png" />
+  <link rel="apple-touch-icon" href="assets/rivo-icon.png" />
+
+  <!-- Open Graph / Facebook / Discord -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rivo — Clean &amp; Expressive Dialer for Android" />
+  <meta property="og:description" content="Lightning-fast T9 speed dial, integrated call recording, biometric Private Vault, and Material 3 Expressive personalization for Android." />
+  <meta property="og:image" content="assets/screenshots/6.png" />
+
+  <!-- Twitter Meta -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rivo — Clean &amp; Expressive Dialer for Android" />
+  <meta name="twitter:description" content="Lightning-fast T9 speed dial, integrated call recording, biometric Private Vault, and Material 3 Expressive personalization for Android." />
+  <meta name="twitter:image" content="assets/screenshots/6.png" />
+
+  <!-- Google Rich Snippet Structured Data (Schema.org) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Rivo",
+    "operatingSystem": "ANDROID",
+    "applicationCategory": "CommunicationApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Clean, modern dialer and contacts app for Android built with Jetpack Compose, integrated call recording, and a biometric Private Vault.",
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.grinch.rivo4"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand">
+        <img class="brand-mark" src="assets/rivo-icon.png" alt="Rivo" width="30" height="30" />
+        <span>Rivo</span>
+      </a>
+
+      <nav id="primary-nav" class="nav-links" aria-label="Main navigation">
+        <a href="#features">Features</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#faq">FAQ</a>
+        <a href="#community">Community</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Material You Color Theme Picker -->
+        <div class="palette-wrapper">
+          <button id="palette-toggle" type="button" class="icon-btn" aria-label="Change accent color" title="Material You Palette">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2Z"/>
+            </svg>
+          </button>
+          <div id="palette-dropdown" class="palette-dropdown" aria-hidden="true">
+            <span class="palette-title">Material You Color</span>
+            <div class="palette-swatches">
+              <button type="button" class="swatch is-active" data-accent="blue" title="Oceanic Blue" style="--c:#0461a3"></button>
+              <button type="button" class="swatch" data-accent="emerald" title="Forest Emerald" style="--c:#0d7042"></button>
+              <button type="button" class="swatch" data-accent="purple" title="Amethyst Purple" style="--c:#6750a4"></button>
+              <button type="button" class="swatch" data-accent="coral" title="Sunset Coral" style="--c:#b3261e"></button>
+              <button type="button" class="swatch" data-accent="amber" title="Honey Amber" style="--c:#855400"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button id="theme-toggle" type="button" class="icon-btn" aria-label="Switch to dark mode" title="Switch to dark mode">
+          <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+
+        <a href="#download-banner" class="btn btn-primary header-cta-btn">
+          <span>Get Rivo</span>
+        </a>
+
+        <button id="menu-toggle" type="button" class="icon-btn menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg-glow" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="hero-eyebrow">
+            <span class="pill">
+              <span class="pill-dot"></span>
+              Material 3 Expressive · Privacy Focused
+            </span>
+          </div>
+
+          <h1 class="hero-title">A clean, <span>expressive</span> dialer for Android.</h1>
+
+          <p class="hero-subtitle">
+            Built with Jetpack Compose — featuring lightning-fast T9 speed dial, intelligent Dual SIM support, integrated call recording, and a biometric Private Vault.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn btn-primary btn-hero" href="https://play.google.com/store/apps/details?id=com.grinch.rivo4" target="_blank" rel="noopener noreferrer">
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M3.609 1.814L13.792 12 3.61 22.186a2.38 2.38 0 0 1-.61-1.614V3.428c0-.623.228-1.201.609-1.614z"/>
+                <path d="M17.464 8.328L5.19 1.242c-.443-.255-.934-.356-1.408-.316l10.875 10.875 2.807-3.473z" opacity="0.85"/>
+                <path d="M17.464 15.672l-2.807-3.473L3.782 23.074c.474.04 1.015-.061 1.458-.316l12.224-7.086z" opacity="0.85"/>
+                <path d="M21.05 10.428l-3.586-2.1-3.056 3.672 3.056 3.672 3.586-2.1c.95-.555.95-2.589 0-3.144z"/>
+              </svg>
+              <span>Download from Google Play</span>
+            </a>
+
+            <a class="btn btn-tonal btn-hero" href="https://discord.gg/NtEvU3726e" target="_blank" rel="noopener noreferrer">
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+              </svg>
+              <span>Download Beta</span>
+              <span class="btn-badge">Discord</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Interactive 3D Phone Stage -->
+        <div class="phone-showcase-wrapper">
+          <div id="phone-stage" class="phone-stage" data-tilt>
+            <div class="phone-frame phone-left" role="button" tabindex="0" data-open-shot="1.png" aria-label="View T9 Dialpad screenshot">
+              <img src="assets/screenshots/1.png" alt="Rivo T9 Dialpad" />
+            </div>
+            <div id="center-phone" class="phone-frame phone-center" role="button" tabindex="0" data-open-shot="2.png" aria-label="View Recents screenshot">
+              <img id="center-phone-img" src="assets/screenshots/2.png" alt="Rivo Recents" />
+              <div class="phone-notch"></div>
+            </div>
+            <div class="phone-frame phone-right" role="button" tabindex="0" data-open-shot="7.png" aria-label="View In-Call screenshot">
+              <img src="assets/screenshots/7.png" alt="Rivo In-Call screen" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Interactive Live T9 Dialpad Playground Section -->
+    <section id="demo" class="section demo-section">
+      <div class="container">
+        <div class="section-head text-center">
+          <div>
+            <span class="pill pill-subtle">Interactive Playground</span>
+            <h2 class="section-title">Experience T9 Dialing Live</h2>
+            <p class="section-sub">Tap keys below or type numbers on your keyboard to test Rivo's instant contact search.</p>
+          </div>
+        </div>
+
+        <div class="demo-grid">
+          <!-- Dialpad Simulation Widget -->
+          <div class="card dialer-card flagship-device">
+            <!-- Simulated Android 16 Status Bar -->
+            <div class="device-status-bar" aria-hidden="true">
+              <span class="status-time">9:41</span>
+              <div class="status-camera-dot"></div>
+              <div class="status-indicators">
+                <span class="status-net">5G</span>
+                <span class="status-icon">📶</span>
+                <span class="status-battery">100%</span>
+              </div>
+            </div>
+
+            <div class="dialer-topbar">
+              <div class="sim-badge" id="sim-selector" title="Click to toggle SIM">
+                <span class="sim-dot"></span>
+                <span id="sim-label">SIM 1 · Primary</span>
+                <span class="sim-switch-hint">⇄</span>
+              </div>
+              <button id="sound-toggle" type="button" class="icon-btn sound-btn" aria-label="Toggle DTMF sound effects" title="Audio feedback: ON">
+                <svg id="icon-sound-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                <svg id="icon-sound-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              </button>
+            </div>
+
+            <!-- Display -->
+            <div class="dialer-display">
+              <input id="dialer-input" type="text" class="dialer-input" placeholder="Type or tap digits..." readonly aria-label="Dialed phone number" />
+              <button id="dialer-backspace" type="button" class="dialer-bs-btn" aria-label="Backspace or clear" title="Backspace">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+              </button>
+            </div>
+
+            <!-- Keypad 3x4 Grid -->
+            <div class="dialpad-grid">
+              <button type="button" class="dial-key" data-digit="1" data-letters="">
+                <span class="key-digit">1</span>
+                <span class="key-sub">⚬</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="2" data-letters="ABC">
+                <span class="key-digit">2</span>
+                <span class="key-sub">ABC</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="3" data-letters="DEF">
+                <span class="key-digit">3</span>
+                <span class="key-sub">DEF</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="4" data-letters="GHI">
+                <span class="key-digit">4</span>
+                <span class="key-sub">GHI</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="5" data-letters="JKL">
+                <span class="key-digit">5</span>
+                <span class="key-sub">JKL</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="6" data-letters="MNO">
+                <span class="key-digit">6</span>
+                <span class="key-sub">MNO</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="7" data-letters="PQRS">
+                <span class="key-digit">7</span>
+                <span class="key-sub">PQRS</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="8" data-letters="TUV">
+                <span class="key-digit">8</span>
+                <span class="key-sub">TUV</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="9" data-letters="WXYZ">
+                <span class="key-digit">9</span>
+                <span class="key-sub">WXYZ</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="*" data-letters="">
+                <span class="key-digit">*</span>
+                <span class="key-sub">,</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="0" data-letters="+">
+                <span class="key-digit">0</span>
+                <span class="key-sub">+</span>
+              </button>
+              <button type="button" class="dial-key" data-digit="#" data-letters="">
+                <span class="key-digit">#</span>
+                <span class="key-sub">;</span>
+              </button>
+            </div>
+
+            <!-- Action Row -->
+            <div class="dialer-actions">
+              <button id="dialer-call-btn" type="button" class="call-fab" aria-label="Simulate outgoing call" title="Call">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Matching Contacts Sidebar -->
+          <div class="card matches-card">
+            <div class="matches-header">
+              <div class="matches-title-wrap">
+                <span class="live-pulse-dot"></span>
+                <h3>Live T9 Results</h3>
+              </div>
+              <span id="matches-count" class="badge">6 Contacts</span>
+            </div>
+            <p class="matches-hint">Contacts matching your keypad sequence appear instantly with search highlights:</p>
+
+            <div id="matches-list" class="matches-list">
+              <!-- Dynamically populated via JS -->
+            </div>
+
+            <div class="demo-shortcuts">
+              <span class="shortcuts-title">Try these T9 combos:</span>
+              <div class="quick-combos">
+                <button type="button" class="combo-btn" data-combo="7674">"7674" ➔ Sophia</button>
+                <button type="button" class="combo-btn" data-combo="2539">"2539" ➔ Alex</button>
+                <button type="button" class="combo-btn" data-combo="3662">"3662" ➔ Emma</button>
+                <button type="button" class="combo-btn" data-combo="5426">"5426" ➔ Liam</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated In-Call Overlay Modal -->
+        <div id="call-sim-modal" class="call-sim-modal" aria-hidden="true" role="dialog" aria-modal="true">
+          <div class="call-sim-backdrop" id="sim-call-backdrop" aria-hidden="true"></div>
+          <div class="call-sim-content">
+            <div class="call-sim-avatar" id="sim-call-avatar">
+              <div class="avatar-pulse-halo" aria-hidden="true"></div>
+              <img id="sim-call-avatar-img" class="call-sim-avatar-img" src="assets/avatars/sophia.jpg" alt="Call Avatar" />
+            </div>
+            <div class="call-sim-name" id="sim-call-name">Sophia Martinez</div>
+            <div class="call-sim-number" id="sim-call-number">+1 (212) 555-0198</div>
+            <div class="call-sim-status">
+              <span class="call-pulse"></span>
+              <span id="sim-call-status-text">Calling via SIM 1...</span>
+            </div>
+
+            <div class="call-sim-actions-grid" aria-hidden="true">
+              <div class="sim-action-chip"><span class="sim-act-icon">🔇</span><span>Mute</span></div>
+              <div class="sim-action-chip"><span class="sim-act-icon">🔢</span><span>Keypad</span></div>
+              <div class="sim-action-chip"><span class="sim-act-icon">🔊</span><span>Speaker</span></div>
+              <div class="sim-action-chip"><span class="sim-act-icon">⏺️</span><span>Record</span></div>
+            </div>
+
+            <div class="call-sim-controls">
+              <button id="end-call-btn" type="button" class="end-call-btn" aria-label="End call">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+                <span>End Call</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section with Modern Bento Grid -->
+    <section id="features" class="section features-section">
+      <div class="container">
+        <div class="section-head text-center">
+          <div>
+            <span class="pill pill-subtle">Engineered for Android</span>
+            <h2 class="section-title">Everything a modern dialer should be.</h2>
+            <p class="section-sub">Engineered with 100% on-device privacy, Material 3 Expressive aesthetics, and low-level system integrations.</p>
+          </div>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Bento 1: Built-in Call Recording (Wide 2-col) -->
+          <article class="card bento-card bento-wide" data-category="calling">
+            <div class="bento-badge-row">
+              <span class="feature-tag">Audio Recording</span>
+              <span class="badge-accent">On-Device · Direct Capture</span>
+            </div>
+            <div class="bento-content">
+              <h3>Integrated Call Audio Recording</h3>
+              <p>Capture call audio directly with zero latency. Features automatic call recording rules, customizable audio directories, and an integrated in-app audio player with speed controls.</p>
+            </div>
+            <div class="bento-visual bento-rec-visual">
+              <div class="rec-waveform">
+                <span class="wave-bar bar-1"></span>
+                <span class="wave-bar bar-2"></span>
+                <span class="wave-bar bar-3"></span>
+                <span class="wave-bar bar-4"></span>
+                <span class="wave-bar bar-5"></span>
+                <span class="wave-bar bar-6"></span>
+                <span class="wave-bar bar-7"></span>
+                <span class="wave-bar bar-8"></span>
+                <span class="wave-bar bar-9"></span>
+                <span class="wave-bar bar-10"></span>
+              </div>
+              <div class="rec-pill">
+                <span class="rec-dot"></span>
+                <span>REC 02:45 · AAC Audio</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Bento 2: Biometric Private Contacts Vault (1-col) -->
+          <article class="card bento-card" data-category="security">
+            <div class="bento-badge-row">
+              <span class="feature-tag">Security &amp; Privacy</span>
+            </div>
+            <div class="bento-icon-badge">🔒</div>
+            <div class="bento-content">
+              <h3>Biometric Private Vault</h3>
+              <p>Isolate confidential contacts completely from Android's shared provider. Call history is kept in an encrypted SQLite vault, and incoming call notifications remain hidden or masked until unlocked with fingerprint, face auth, or PIN.</p>
+            </div>
+            <div class="vault-chip-preview">
+              <span class="vault-status-indicator">● Biometric Lock Active</span>
+            </div>
+          </article>
+
+          <!-- Bento 3: 36 Expressive Avatar Shapes (1-col) -->
+          <article class="card bento-card" data-category="personalization">
+            <div class="bento-badge-row">
+              <span class="feature-tag">Material 3 Expressive</span>
+            </div>
+            <div class="bento-icon-badge">✨</div>
+            <div class="bento-content">
+              <h3>36 Expressive Shapes</h3>
+              <p>Transform standard round avatars into 36 geometric shapes—including our signature 9-sided Cookie (<code>COOKIE_9</code>), Scallop, Flower, and Star geometries with real-time Gaussian wallpaper blur.</p>
+            </div>
+            <div class="shapes-mini-preview">
+              <img src="assets/avatars/sophia.jpg" class="mini-shape mini-cookie" alt="Cookie 9" title="9-Sided Cookie" />
+              <img src="assets/avatars/alex.jpg" class="mini-shape mini-scallop" alt="Scallop" title="Scallop" />
+              <img src="assets/avatars/emma.jpg" class="mini-shape mini-flower" alt="Flower" title="Flower" />
+              <img src="assets/avatars/liam.jpg" class="mini-shape mini-star" alt="Star" title="Star" />
+            </div>
+          </article>
+
+          <!-- Bento 4: Intelligent Dual SIM (1-col) -->
+          <article class="card bento-card" data-category="calling">
+            <div class="bento-badge-row">
+              <span class="feature-tag">Connectivity</span>
+            </div>
+            <div class="bento-icon-badge">📶</div>
+            <div class="bento-content">
+              <h3>Intelligent Dual SIM</h3>
+              <p>Set preferred outbound SIMs per contact, toggle lines on the fly directly from the keypad with single-tap ease, and enjoy carrier branding and color-coded call logs.</p>
+            </div>
+            <div class="sim-switch-preview">
+              <span class="sim-tag active">SIM 1 · Primary</span>
+              <span class="sim-tag">SIM 2 · Work</span>
+            </div>
+          </article>
+
+          <!-- Bento 5: Lightning T9 & Power Dialing (Wide 2-col) -->
+          <article class="card bento-card bento-wide" data-category="calling">
+            <div class="bento-badge-row">
+              <span class="feature-tag">Performance</span>
+              <span class="badge-accent">Sub-millisecond Search</span>
+            </div>
+            <div class="bento-content">
+              <h3>Blazing-Fast T9 &amp; Daily Power Tools</h3>
+              <p>Lightning keypad search matching contact names and numbers simultaneously with zero lag, 1–9 speed dial shortcuts, automated spam blocking, detailed call analytics with contact frequency charts, and emergency fake incoming calls.</p>
+            </div>
+            <div class="tools-badges-row">
+              <span class="tool-badge">⚡ Sub-10ms T9 Lookup</span>
+              <span class="tool-badge">📊 Call Frequency Analytics</span>
+              <span class="tool-badge">🚫 Instant Spam Blocklist</span>
+              <span class="tool-badge">🎭 Fake Incoming Call</span>
+              <span class="tool-badge">🎨 Dynamic Theming</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshots Rail with Drag-to-Scroll & Indicator Dots -->
+    <section id="screenshots" class="section screenshots-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="pill pill-subtle">Visual Tour</span>
+            <h2 class="section-title">Crafted for your eyes.</h2>
+            <p class="section-sub">Explore full-resolution screens crafted with Jetpack Compose and Material 3 Expressive.</p>
+          </div>
+          <div class="rail-controls">
+            <button id="rail-prev" type="button" class="icon-btn rail-nav-btn" aria-label="Scroll screenshots left">←</button>
+            <button id="rail-next" type="button" class="icon-btn rail-nav-btn" aria-label="Scroll screenshots right">→</button>
+          </div>
+        </div>
+
+        <div id="screenshots-rail" class="screenshots-rail" tabindex="0" role="region" aria-label="App screenshots gallery">
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/1.png" alt="T9 Dialpad" loading="lazy" /></div>
+            <figcaption><span class="shot-num">01</span><span>T9 Dialpad</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/2.png" alt="Recents &amp; Summary" loading="lazy" /></div>
+            <figcaption><span class="shot-num">02</span><span>Recents &amp; Summary</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/3.png" alt="Contacts Directory" loading="lazy" /></div>
+            <figcaption><span class="shot-num">03</span><span>Contacts Directory</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/4.png" alt="Contact Details" loading="lazy" /></div>
+            <figcaption><span class="shot-num">04</span><span>Contact Details</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/5.png" alt="Favorites Grid" loading="lazy" /></div>
+            <figcaption><span class="shot-num">05</span><span>Favorites Grid</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/6.png" alt="Incoming Call" loading="lazy" /></div>
+            <figcaption><span class="shot-num">06</span><span>Cookie-9 Incoming Call</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/7.png" alt="Active In-Call" loading="lazy" /></div>
+            <figcaption><span class="shot-num">07</span><span>Active In-Call Screen</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/8.png" alt="Call Analytics" loading="lazy" /></div>
+            <figcaption><span class="shot-num">08</span><span>Call Analytics</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/9.png" alt="Private Contacts Vault" loading="lazy" /></div>
+            <figcaption><span class="shot-num">09</span><span>Biometric Private Vault</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/10.png" alt="UI Customization" loading="lazy" /></div>
+            <figcaption><span class="shot-num">10</span><span>Expressive Customization</span></figcaption>
+          </figure>
+          <figure class="shot-card" tabindex="0">
+            <div class="shot-img-wrapper"><img src="assets/screenshots/11.png" alt="Settings Overview" loading="lazy" /></div>
+            <figcaption><span class="shot-num">11</span><span>Settings &amp; Power Tools</span></figcaption>
+          </figure>
+        </div>
+
+        <!-- Pagination Dots -->
+        <div id="rail-dots" class="rail-dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Interactive FAQ Section -->
+    <section id="faq" class="section faq-section">
+      <div class="container">
+        <div class="section-head text-center">
+          <div>
+            <span class="pill pill-subtle">Got Questions?</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-sub">Clear answers regarding call recording, privacy, customization, and releases.</p>
+          </div>
+        </div>
+
+        <div class="faq-grid">
+          <details class="card faq-item" open>
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Call Recording</span>
+                <span>Does call recording require rooting my phone?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>No! Rivo's call recording works out of the box using standard Android audio recording permissions without requiring root access, unlocked bootloaders, or third-party background services.</p>
+            </div>
+          </details>
+
+          <details class="card faq-item">
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Material 3</span>
+                <span>What are Material 3 Expressive shapes &amp; atmospheric blur?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Rivo is built with the latest Material 3 Expressive design tokens. Choose from <strong>36 distinctive avatar shapes</strong>—including our signature 9-sided Cookie (<code>COOKIE_9</code>), Scalloped, Flower, Star, Pentagon, and Rounded Polygon geometries. In-call and incoming screens feature real-time Gaussian background blurs derived from the contact's photo and your dynamic Android wallpaper palette.</p>
+            </div>
+          </details>
+
+          <details class="card faq-item">
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Security</span>
+                <span>How does the Biometric Private Vault protect sensitive contacts?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Contacts assigned to your Private Vault are strictly sequestered from Android's shared contacts provider. Their call logs and frequency records are kept in an encrypted, isolated database, and their incoming call notifications can be masked or hidden until unlocked with your fingerprint, face authentication, or device PIN.</p>
+            </div>
+          </details>
+
+          <details class="card faq-item">
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Channels</span>
+                <span>What is the difference between Google Play and Discord Beta?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>The <strong>Google Play</strong> release is our thoroughly tested, stable production channel with seamless background auto-updates and support for the in-app Tip Jar. The <strong>Beta</strong> channel (available on our official Discord) provides immediate access to bleeding-edge features, new experimental UI animations, and rapid test builds before they reach public release.</p>
+            </div>
+          </details>
+
+          <details class="card faq-item">
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Dual SIM</span>
+                <span>Does Rivo support Dual SIM devices and speed dialing?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Yes! Rivo includes intelligent Dual SIM support. You can set preferred SIM cards per contact, switch SIMs on the fly directly from the dialpad with a single tap, and view clear carrier badges on all call logs. Long-pressing any digit 1–9 triggers instant speed dial to your configured favorite contacts.</p>
+            </div>
+          </details>
+
+          <details class="card faq-item">
+            <summary class="faq-question">
+              <div class="faq-q-left">
+                <span class="faq-cat-badge">Zero Telemetry</span>
+                <span>Is Rivo truly privacy-first? Does it track or upload any data?</span>
+              </div>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Rivo operates under a strict zero-telemetry policy. All contact indexing, T9 lookup calculations, call analytics, and audio recordings remain 100% on your local device. Rivo has no remote telemetry servers, requires no user account, serves zero advertisements, and never sells or uploads your personal information.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- High-Energy Download CTA Banner -->
+    <section id="download-banner" class="section download-banner-section">
+      <div class="container">
+        <div class="card download-banner-card">
+          <div class="banner-glow" aria-hidden="true"></div>
+          <div class="banner-content">
+            <span class="pill pill-bright">Get Started Today</span>
+            <h2 class="banner-title">Upgrade your Android calling experience.</h2>
+            <p class="banner-sub">Experience blazing-fast T9 dial search, integrated call recording, biometric contact isolation, and delightful Material 3 Expressive personalization.</p>
+
+            <div class="banner-trust-tags">
+              <span class="trust-tag">⚡ 120Hz Jetpack Compose</span>
+              <span class="trust-tag">🛡️ 100% On-Device Privacy</span>
+              <span class="trust-tag">✨ 36 Expressive Shapes</span>
+              <span class="trust-tag">🎙️ Audio Recording</span>
+            </div>
+
+            <div class="cta-row banner-cta-row">
+              <a class="btn btn-primary btn-hero" href="https://play.google.com/store/apps/details?id=com.grinch.rivo4" target="_blank" rel="noopener noreferrer">
+                <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3.609 1.814L13.792 12 3.61 22.186a2.38 2.38 0 0 1-.61-1.614V3.428c0-.623.228-1.201.609-1.614z"/>
+                  <path d="M17.464 8.328L5.19 1.242c-.443-.255-.934-.356-1.408-.316l10.875 10.875 2.807-3.473z" opacity="0.85"/>
+                  <path d="M17.464 15.672l-2.807-3.473L3.782 23.074c.474.04 1.015-.061 1.458-.316l12.224-7.086z" opacity="0.85"/>
+                  <path d="M21.05 10.428l-3.586-2.1-3.056 3.672 3.056 3.672 3.586-2.1c.95-.555.95-2.589 0-3.144z"/>
+                </svg>
+                <span>Download from Google Play</span>
+              </a>
+
+              <a class="btn btn-tonal btn-hero" href="https://discord.gg/NtEvU3726e" target="_blank" rel="noopener noreferrer">
+                <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+                <span>Download Beta</span>
+                <span class="btn-badge">Discord</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community & Support -->
+    <section id="community" class="section community-section">
+      <div class="container">
+        <div class="section-head text-center">
+          <div>
+            <span class="pill pill-subtle">Join the Movement</span>
+            <h2 class="section-title">Community &amp; Support</h2>
+            <p class="section-sub">Developed by Grinch_ with feedback from thousands of enthusiastic Android users.</p>
+          </div>
+        </div>
+
+        <div class="community-grid">
+          <a class="channel-card tile-discord" href="https://discord.gg/NtEvU3726e" target="_blank" rel="noopener noreferrer">
+            <div class="channel-card-top">
+              <div class="tile-icon-box">💬</div>
+              <span class="channel-badge">Active Server</span>
+            </div>
+            <div class="channel-info">
+              <h3>Discord Community</h3>
+              <p>Download preview APKs, report bugs directly to Grinch_, and suggest features.</p>
+            </div>
+            <div class="channel-action"><span>Join Server</span><span class="tile-arrow" aria-hidden="true">↗</span></div>
+          </a>
+
+          <a class="channel-card tile-play" href="https://play.google.com/store/apps/details?id=com.grinch.rivo4" target="_blank" rel="noopener noreferrer">
+            <div class="channel-card-top">
+              <div class="tile-icon-box">⭐</div>
+              <span class="channel-badge">Official Store</span>
+            </div>
+            <div class="channel-info">
+              <h3>Google Play Store</h3>
+              <p>Get verified stable releases, automated silent updates, and support via the in-app Tip Jar.</p>
+            </div>
+            <div class="channel-action"><span>View on Play Store</span><span class="tile-arrow" aria-hidden="true">↗</span></div>
+          </a>
+
+          <a class="channel-card tile-crowdin" href="https://crowdin.com/project/rivophone" target="_blank" rel="noopener noreferrer">
+            <div class="channel-card-top">
+              <div class="tile-icon-box">🌍</div>
+              <span class="channel-badge">30+ Locales</span>
+            </div>
+            <div class="channel-info">
+              <h3>Crowdin Translation</h3>
+              <p>Help translate Rivo into your native language and make it accessible across the globe.</p>
+            </div>
+            <div class="channel-action"><span>Help Translate</span><span class="tile-arrow" aria-hidden="true">↗</span></div>
+          </a>
+
+          <a class="channel-card tile-patreon" href="https://www.patreon.com/c/grinch_" target="_blank" rel="noopener noreferrer">
+            <div class="channel-card-top">
+              <div class="tile-icon-box">❤️</div>
+              <span class="channel-badge">Support Indie</span>
+            </div>
+            <div class="channel-info">
+              <h3>Patreon Backing</h3>
+              <p>Support ongoing development and gain early behind-the-scenes insights and backer perks.</p>
+            </div>
+            <div class="channel-action"><span>Become a Backer</span><span class="tile-arrow" aria-hidden="true">↗</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand-wrap">
+        <a href="#top" class="brand">
+          <img class="brand-mark" src="assets/rivo-icon.png" alt="Rivo" width="28" height="28" />
+          <span>Rivo</span>
+        </a>
+        <span class="status-pill"><span class="status-dot"></span> Version 4.x · Actively Maintained</span>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer links">
+        <a href="https://play.google.com/store/apps/details?id=com.grinch.rivo4" target="_blank" rel="noopener noreferrer">Google Play</a>
+        <a href="https://discord.gg/NtEvU3726e" target="_blank" rel="noopener noreferrer">Discord Beta</a>
+        <a href="https://crowdin.com/project/rivophone" target="_blank" rel="noopener noreferrer">Crowdin</a>
+        <a href="https://www.patreon.com/c/grinch_" target="_blank" rel="noopener noreferrer">Patreon</a>
+        <a href="app-ads.txt">app-ads.txt</a>
+      </nav>
+
+      <div class="footer-note">
+        <span>&copy; 2025&ndash;2026 Rivo. All rights reserved.</span>
+        <span>Built with Jetpack Compose · Material 3 Expressive · 100% On-Device Privacy</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="lightbox-title">
+    <div class="lightbox-dialog">
+      <div class="lightbox-media-wrap">
+        <img id="lightbox-img" class="lightbox-img" src="assets/screenshots/1.png" alt="" />
+      </div>
+      <div class="lightbox-meta">
+        <div id="lightbox-title" class="lightbox-title"></div>
+        <div id="lightbox-counter" class="lightbox-counter">1 / 11</div>
+      </div>
+      <div class="lightbox-controls">
+        <button id="lightbox-prev" type="button" class="lightbox-btn" aria-label="Previous screenshot">← Prev</button>
+        <button id="lightbox-close" type="button" class="lightbox-btn lightbox-btn-close" aria-label="Close lightbox">Close</button>
+        <button id="lightbox-next" type="button" class="lightbox-btn" aria-label="Next screenshot">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Back-to-Top Button -->
+  <button id="back-to-top" class="back-to-top" type="button" aria-label="Scroll back to top" title="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <script src="app.js"></script>
+</body>
+</html>
